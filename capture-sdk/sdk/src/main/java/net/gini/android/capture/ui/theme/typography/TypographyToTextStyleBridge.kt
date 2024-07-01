@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.ui.theme.typography
+package net.gini.android.capture.ui.theme.typography
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,10 +10,6 @@ import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StyleRes
-import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.CutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -26,9 +22,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.FontResourcesParserCompat

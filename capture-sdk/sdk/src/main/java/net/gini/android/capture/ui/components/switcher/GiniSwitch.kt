@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.capture.skonto.components.switcher
+package net.gini.android.capture.ui.components.switcher
 
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import net.gini.android.bank.sdk.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
 fun GiniSwitch(

@@ -1,9 +1,9 @@
-package net.gini.android.bank.sdk.capture.skonto.components.textinput
+package net.gini.android.capture.ui.components.textinput
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import net.gini.android.bank.sdk.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.GiniTheme
 
 @Immutable
 data class GiniTextInputColors(

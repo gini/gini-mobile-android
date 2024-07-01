@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.capture.skonto.components.textinput
+package net.gini.android.capture.ui.components.textinput
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import net.gini.android.bank.sdk.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
 fun GiniTextInput(

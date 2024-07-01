@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.ui.theme.colors
+package net.gini.android.capture.ui.theme.colors
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -114,26 +114,26 @@ internal fun giniLightColorScheme(
     giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives()
 ) = with(giniColorPrimitives) {
     GiniColorScheme(
-        background = GiniColorScheme.Background(
+        background = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Background(
             background = light02,
             surface = light01,
             bar = light01,
             border = light03,
             dialogs = light01
-        ), button = GiniColorScheme.Button(
+        ), button = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Button(
             surfacePrEnabled = accent01,
             textEnabled = light01,
-        ), icons = GiniColorScheme.Icons(
+        ), icons = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Icons(
             surfaceFilled = light02,
             leading = dark01,
             trailingPrimary = dark01,
             trailing = light06,
-        ), text = GiniColorScheme.Text(
+        ), text = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Text(
             system = accent01,
             primary = dark02,
             secondary = dark06,
             status = success01,
-        ), textField = GiniColorScheme.TextField(
+        ), textField = net.gini.android.capture.ui.theme.colors.GiniColorScheme.TextField(
             containerFocused = light01,
             containerUnfocused = light01,
             containerDisabled = Color.Transparent,
@@ -149,18 +149,18 @@ internal fun giniLightColorScheme(
             trailingContentUnfocused = dark06,
             trailingContentDisabled = dark06,
             trailingContentError = error02,
-        ), chips = GiniColorScheme.Chips(
+        ), chips = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Chips(
             suggestionEnabled = success01,
             assistEnabled = success04,
             textAssistEnabled = success01,
             textSuggestionEnabled = light01
-        ), toggles = GiniColorScheme.Toggles(
+        ), toggles = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Toggles(
             surfaceFocused = accent03,
             surfaceUnfocused = light03,
             surfaceDisabled = Color.White, // TODO
             thumbFocused = accent01,
             thumbUnfocused = light01,
-        ), datePicker = GiniColorScheme.DatePicker(
+        ), datePicker = net.gini.android.capture.ui.theme.colors.GiniColorScheme.DatePicker(
             dateSelected = accent01,
             borderDate = accent01,
             textHeadline = dark02,
@@ -185,26 +185,26 @@ internal fun giniDarkColorScheme(
     giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives()
 ) = with(giniColorPrimitives) {
     GiniColorScheme(
-        background = GiniColorScheme.Background(
+        background = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Background(
             background = dark01,
             surface = dark02,
             bar = dark02,
             border = dark03,
             dialogs = dark03
-        ), button = GiniColorScheme.Button(
+        ), button = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Button(
             surfacePrEnabled = accent01,
             textEnabled = light01
-        ), icons = GiniColorScheme.Icons(
+        ), icons = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Icons(
             surfaceFilled = dark04,
             leading = light01,
             trailingPrimary = light01,
             trailing = dark06
-        ), text = GiniColorScheme.Text(
+        ), text = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Text(
             system = accent01,
             primary = light01,
             secondary = light06,
             status = success01
-        ), textField = GiniColorScheme.TextField(
+        ), textField = net.gini.android.capture.ui.theme.colors.GiniColorScheme.TextField(
             containerFocused = dark02,
             containerUnfocused = dark02,
             containerDisabled = Color.Transparent,
@@ -220,18 +220,18 @@ internal fun giniDarkColorScheme(
             trailingContentUnfocused = light06,
             trailingContentDisabled = light06,
             trailingContentError = error02,
-        ), chips = GiniColorScheme.Chips(
+        ), chips = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Chips(
             suggestionEnabled = success01,
             assistEnabled = success04,
             textAssistEnabled = success01,
             textSuggestionEnabled = light01
-        ), toggles = GiniColorScheme.Toggles(
+        ), toggles = net.gini.android.capture.ui.theme.colors.GiniColorScheme.Toggles(
             surfaceFocused = accent03,
             surfaceUnfocused = dark03,
             surfaceDisabled = Color.White, // TODO
             thumbFocused = accent01,
             thumbUnfocused = light01,
-        ), datePicker = GiniColorScheme.DatePicker(
+        ), datePicker = net.gini.android.capture.ui.theme.colors.GiniColorScheme.DatePicker(
             dateSelected = accent01,
             borderDate = accent01,
             textHeadline = light01,

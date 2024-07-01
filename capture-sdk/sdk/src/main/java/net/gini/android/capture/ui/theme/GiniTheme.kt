@@ -1,19 +1,18 @@
-package net.gini.android.bank.sdk.ui.theme
+package net.gini.android.capture.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
-import net.gini.android.bank.sdk.ui.theme.colors.GiniColorPrimitives
-import net.gini.android.bank.sdk.ui.theme.colors.GiniColorScheme
-import net.gini.android.bank.sdk.ui.theme.colors.giniDarkColorScheme
-import net.gini.android.bank.sdk.ui.theme.colors.giniLightColorScheme
-import net.gini.android.bank.sdk.ui.theme.typography.GiniTypography
-import net.gini.android.bank.sdk.ui.theme.typography.extractGiniTypography
+import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
+import net.gini.android.capture.ui.theme.colors.GiniColorScheme
+import net.gini.android.capture.ui.theme.colors.giniDarkColorScheme
+import net.gini.android.capture.ui.theme.colors.giniLightColorScheme
+import net.gini.android.capture.ui.theme.typography.GiniTypography
+import net.gini.android.capture.ui.theme.typography.extractGiniTypography
 
 internal val LocalGiniColors = staticCompositionLocalOf {
     GiniColorScheme()
@@ -23,7 +22,7 @@ internal val LocalGiniTypography = staticCompositionLocalOf {
 }
 
 @Composable
-internal fun GiniTheme(
+fun GiniTheme(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -69,7 +68,7 @@ private fun giniColorSchemeBridge(
     )
 }
 
-internal object GiniTheme {
+object GiniTheme {
 
     val typography: GiniTypography
         @Composable

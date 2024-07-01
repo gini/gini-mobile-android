@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.capture.skonto.components.button.filled
+package net.gini.android.capture.ui.components.button.filled
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import net.gini.android.bank.sdk.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
 fun GiniButton(

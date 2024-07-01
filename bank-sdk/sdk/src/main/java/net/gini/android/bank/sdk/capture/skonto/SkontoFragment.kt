@@ -61,10 +61,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColorScheme
-import net.gini.android.bank.sdk.capture.skonto.components.button.filled.GiniButton
-import net.gini.android.bank.sdk.capture.skonto.components.picker.date.DatePickerDialog
-import net.gini.android.bank.sdk.capture.skonto.components.switcher.GiniSwitch
-import net.gini.android.bank.sdk.ui.theme.GiniTheme
+import net.gini.android.capture.ui.components.button.filled.GiniButton
+import net.gini.android.capture.ui.components.picker.date.DatePickerDialog
+import net.gini.android.capture.ui.components.switcher.GiniSwitch
+import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.GiniCapture
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

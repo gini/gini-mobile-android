@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.ui.theme.colors
+package net.gini.android.capture.ui.theme.colors
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color

@@ -3,9 +3,9 @@ package net.gini.android.bank.sdk.capture.skonto
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColorScheme
-import net.gini.android.bank.sdk.capture.skonto.components.button.filled.GiniButtonColors
-import net.gini.android.bank.sdk.capture.skonto.components.switcher.GiniSwitchColors
-import net.gini.android.bank.sdk.ui.theme.GiniTheme
+import net.gini.android.capture.ui.components.button.filled.GiniButtonColors
+import net.gini.android.capture.ui.components.switcher.GiniSwitchColors
+import net.gini.android.capture.ui.theme.GiniTheme
 
 object SkontoScreenDefaults {
 

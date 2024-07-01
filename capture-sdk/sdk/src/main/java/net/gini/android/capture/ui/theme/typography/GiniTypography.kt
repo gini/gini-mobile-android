@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.ui.theme.typography
+package net.gini.android.capture.ui.theme.typography
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable

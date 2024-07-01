@@ -4,9 +4,9 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import net.gini.android.bank.sdk.capture.skonto.components.button.filled.GiniButtonColors
-import net.gini.android.bank.sdk.capture.skonto.components.switcher.GiniSwitchColors
-import net.gini.android.bank.sdk.ui.theme.GiniTheme
+import net.gini.android.capture.ui.components.button.filled.GiniButtonColors
+import net.gini.android.capture.ui.components.switcher.GiniSwitchColors
+import net.gini.android.capture.ui.theme.GiniTheme
 
 @Immutable
 data class SkontoScreenColorScheme(
