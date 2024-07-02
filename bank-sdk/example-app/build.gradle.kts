@@ -189,6 +189,7 @@ dependencies {
     implementation(libs.hilt.library)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
+    implementation(libs.androidx.test.junit.ktx)
     kapt(libs.hilt.compiler)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -196,18 +197,20 @@ dependencies {
 
     testImplementation(libs.junit)
 
-    androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.truth)
-    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.androidx.multidex)
-    androidTestImplementation(libs.androidx.test.junit)
 
     androidTestUtil(libs.androidx.test.orchestrator)
+
 }
 
 // this is needed because of Dagger-Hilt
