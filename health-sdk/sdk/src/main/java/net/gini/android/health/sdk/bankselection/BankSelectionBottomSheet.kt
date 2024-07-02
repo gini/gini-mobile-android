@@ -1,19 +1,11 @@
 package net.gini.android.health.sdk.bankselection
 
-import android.app.Dialog
-import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Paint
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -21,10 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
@@ -35,7 +23,6 @@ import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
-import net.gini.android.health.sdk.util.setIntervalClickListener
 import net.gini.android.health.sdk.util.setIntervalClickListener
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
@@ -73,7 +60,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         binding.ghsMoreInformationLabel.apply {
             paintFlags = binding.ghsMoreInformationLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
-                paymentComponent?.listener?.onMoreInformationClicked()
+                viewModel.paymentComponent?.listener?.onMoreInformationClicked()
                 dismiss()
             }
         }
