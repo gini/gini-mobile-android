@@ -66,7 +66,7 @@ internal class BankSelectionBottomSheet private constructor(private val paymentC
         binding.gmsMoreInformationLabel.apply {
             paintFlags = binding.gmsMoreInformationLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
-                viewModel.paymentComponent?.listener?.onMoreInformationClicked()
+                paymentComponent?.listener?.onMoreInformationClicked()
                 dismiss()
             }
         }
