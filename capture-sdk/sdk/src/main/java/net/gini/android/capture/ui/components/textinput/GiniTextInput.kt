@@ -16,12 +16,12 @@ import net.gini.android.capture.ui.theme.GiniTheme
 fun GiniTextInput(
     text: String,
     label: String,
-    trailingContent: @Composable () -> Unit,
-    onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onValueChange: (String) -> Unit,
+    trailingContent: @Composable () -> Unit = {},
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    giniTextInputColors: GiniTextInputColors = GiniTextInputColors.colors(),
+    colors: GiniTextInputColors = GiniTextInputColors.colors(),
 ) {
     GiniTextInput(
         modifier = modifier,
@@ -36,7 +36,7 @@ fun GiniTextInput(
         },
         onValueChange = onValueChange,
         trailingContent = trailingContent,
-        giniTextInputColors = giniTextInputColors,
+        colors = colors,
     )
 }
 
@@ -44,12 +44,12 @@ fun GiniTextInput(
 fun GiniTextInput(
     text: String,
     label: @Composable () -> Unit,
-    trailingContent: @Composable () -> Unit,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    trailingContent: @Composable () -> Unit = {},
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    giniTextInputColors: GiniTextInputColors = GiniTextInputColors.colors(),
+    colors: GiniTextInputColors = GiniTextInputColors.colors(),
 ) {
     TextField(
         modifier = modifier,
@@ -58,11 +58,11 @@ fun GiniTextInput(
         keyboardOptions = keyboardOptions,
         textStyle = GiniTheme.typography.subtitle1,
         label = label,
-        colors = with(giniTextInputColors) {
+        colors = with(colors) {
             TextFieldDefaults.colors(
                 focusedContainerColor = containerFocused,
                 unfocusedContainerColor = containerUnfocused,
-                disabledContainerColor = containerDisabled,
+                disabledContainerColor = containerUnfocused,
                 focusedTextColor = textFocused,
                 unfocusedTextColor = textUnfocused,
                 disabledTextColor = textDisabled,
@@ -75,6 +75,7 @@ fun GiniTextInput(
                 unfocusedTrailingIconColor = trailingContentUnfocused,
                 disabledTrailingIconColor = trailingContentDisabled,
                 errorTrailingIconColor = trailingContentError,
+                errorContainerColor = containerUnfocused,
             )
         },
         onValueChange = onValueChange,

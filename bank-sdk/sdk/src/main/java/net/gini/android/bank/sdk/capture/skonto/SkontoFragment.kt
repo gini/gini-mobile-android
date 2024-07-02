@@ -32,9 +32,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,12 +57,19 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColorScheme
+import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
+import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
+import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoiceScanSectionColors
+import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColors
+import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.picker.date.DatePickerDialog
 import net.gini.android.capture.ui.components.switcher.GiniSwitch
+import net.gini.android.capture.ui.components.textinput.GiniTextInput
+import net.gini.android.capture.ui.components.topbar.GiniTopBar
+import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
-import net.gini.android.capture.GiniCapture
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -97,7 +101,7 @@ class SkontoFragment : Fragment() {
 private fun ScreenContent(
     viewModel: SkontoFragmentViewModel,
     modifier: Modifier = Modifier,
-    screenColorScheme: SkontoScreenColorScheme = SkontoScreenDefaults.colors()
+    screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors()
 ) {
     val state by viewModel.stateFlow.collectAsState()
     ScreenStateContent(
@@ -119,7 +123,7 @@ private fun ScreenStateContent(
     onFullAmountChange: (String) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
-    screenColorScheme: SkontoScreenColorScheme = SkontoScreenDefaults.colors()
+    screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors()
 ) {
     when (state) {
         SkontoFragmentContract.State.Idle -> TODO()
@@ -144,15 +148,15 @@ private fun ScreenReadyState(
     onDueDateChanged: (LocalDate) -> Unit,
     onFullAmountChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    screenColorScheme: SkontoScreenColorScheme = SkontoScreenDefaults.colors(),
+    screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
 ) {
     val scrollState = rememberScrollState()
     Scaffold(modifier = modifier,
         containerColor = screenColorScheme.backgroundColor,
-        topBar = { TopAppBar(colorScheme = screenColorScheme.topAppBarColors) },
+        topBar = { TopAppBar(colors = screenColorScheme.topAppBarColors) },
         bottomBar = {
             FooterSection(
-                colorScheme = screenColorScheme.footerSectionColorScheme,
+                colors = screenColorScheme.footerSectionColors,
                 discountValue = state.discountValue,
                 totalAmount = state.totalAmount,
                 currency = state.currency
@@ -169,7 +173,7 @@ private fun ScreenReadyState(
             )
             SkontoSection(
                 modifier = Modifier.padding(vertical = 16.dp),
-                colorScheme = screenColorScheme.discountSectionColors,
+                colors = screenColorScheme.skontoSectionColors,
                 amount = state.skontoAmount,
                 dueDate = state.discountDueDate,
                 infoPaymentInDays = state.paymentInDays,
@@ -181,7 +185,7 @@ private fun ScreenReadyState(
                 onDueDateChanged = onDueDateChanged,
             )
             WithoutSkontoSection(
-                colorScheme = screenColorScheme.withoutDiscountSectionColors,
+                colors = screenColorScheme.withoutSkontoSectionColors,
                 isActive = !state.isSkontoSectionActive,
                 amount = state.fullAmount,
                 currencyCode = "EUR",
@@ -191,42 +195,35 @@ private fun ScreenReadyState(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopAppBar(
     modifier: Modifier = Modifier,
-    colorScheme: SkontoScreenColorScheme.TopAppbarColorScheme,
+    colors: GiniTopBarColors,
 ) {
-    TopAppBar(modifier = modifier, colors = TopAppBarDefaults.topAppBarColors(
-        containerColor = colorScheme.backgroundColor,
-        titleContentColor = colorScheme.contentColor,
-        navigationIconContentColor = colorScheme.contentColor,
-        actionIconContentColor = colorScheme.contentColor,
-    ), title = {
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = stringResource(id = R.string.gbs_skonto_screen_title),
-            style = GiniTheme.typography.headline6,
-        )
-    }, navigationIcon = {
-        Icon(
-            modifier = Modifier.padding(16.dp),
-            painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.ArrowBack),
-            contentDescription = null,
-        )
-    }, actions = {
-        Icon(
-            modifier = Modifier.padding(16.dp),
-            painter = painterResource(net.gini.android.capture.R.drawable.gc_help_icon),
-            contentDescription = null,
-        )
-    })
+    GiniTopBar(
+        modifier = modifier,
+        colors = colors,
+        title = stringResource(id = R.string.gbs_skonto_screen_title),
+        navigationIcon = {
+            Icon(
+                modifier = Modifier.padding(16.dp),
+                painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.ArrowBack),
+                contentDescription = null,
+            )
+        },
+        actions = {
+            Icon(
+                modifier = Modifier.padding(16.dp),
+                painter = painterResource(net.gini.android.capture.R.drawable.gc_help_icon),
+                contentDescription = null,
+            )
+        })
 }
 
 @Composable
 private fun YourInvoiceScanSection(
     modifier: Modifier = Modifier,
-    colorScheme: SkontoScreenColorScheme.InvoiceScanSectionColorScheme,
+    colorScheme: SkontoInvoiceScanSectionColors,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -282,7 +279,7 @@ private fun YourInvoiceScanSection(
 
 @Composable
 private fun SkontoSection(
-    colorScheme: SkontoScreenColorScheme.SkontoSectionColorScheme,
+    colors: SkontoSectionColors,
     amount: Float,
     currencyCode: String,
     dueDate: LocalDate,
@@ -310,7 +307,7 @@ private fun SkontoSection(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RectangleShape,
-        colors = CardDefaults.cardColors(containerColor = colorScheme.cardBackgroundColor)
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -323,14 +320,14 @@ private fun SkontoSection(
                 Text(
                     text = stringResource(id = R.string.gbs_skonto_section_discount_title),
                     style = GiniTheme.typography.subtitle1,
-                    color = colorScheme.titleTextColor,
+                    color = colors.titleTextColor,
                 )
                 Box(modifier = modifier.weight(0.1f)) {
                     androidx.compose.animation.AnimatedVisibility(visible = isActive) {
                         Text(
                             text = stringResource(id = R.string.gbs_skonto_section_discount_hint_label_enabled),
                             style = GiniTheme.typography.subtitle2,
-                            color = colorScheme.enabledHintTextColor,
+                            color = colors.enabledHintTextColor,
                         )
                     }
                 }
@@ -343,35 +340,33 @@ private fun SkontoSection(
                 paymentIn = infoPaymentInDays.toString(),
                 discountValue = infoDiscountValue.toString(),
                 modifier = Modifier.fillMaxWidth(),
-                colorScheme = colorScheme.infoBannerColorScheme,
+                colors = colors.infoBannerColors,
             )
-            TextField(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-                value = amountText,
+
+            GiniTextInput(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
                 enabled = isActive,
+                colors = colors.amountFieldColors,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done,
                 ),
-                textStyle = GiniTheme.typography.subtitle1,
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.gbs_skonto_section_discount_field_amount_hint),
-                        style = GiniTheme.typography.caption1,
-                    )
-                },
-                colors = colorScheme.amountFieldColors,
                 onValueChange = onSkontoAmountChange,
-                trailingIcon = {
+                text = amountText,
+                label = stringResource(id = R.string.gbs_skonto_section_discount_field_amount_hint),
+                trailingContent = {
                     AnimatedVisibility(visible = isActive) {
                         Text(
-                            text = currencyCode, /*TODO*/
+                            text = currencyCode,
                             style = GiniTheme.typography.subtitle1,
                         )
                     }
-                })
-            TextField(
+                },
+            )
+
+            GiniTextInput(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
@@ -382,18 +377,16 @@ private fun SkontoSection(
                         }
                     }
                     .focusRequester(amountFieldFocusRequester),
-                value = dueDate.format(dateFormatter),
                 enabled = isActive,
-                colors = colorScheme.amountFieldColors,
-                textStyle = GiniTheme.typography.subtitle1,
+                colors = colors.dueDateTextFieldColor,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
                 onValueChange = { /* Ignored */ },
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.gbs_skonto_section_discount_field_due_date_hint),
-                        style = GiniTheme.typography.caption1,
-                    )
-                },
-                trailingIcon = {
+                text = dueDate.format(dateFormatter),
+                label = stringResource(id = R.string.gbs_skonto_section_discount_field_due_date_hint),
+                trailingContent = {
                     AnimatedVisibility(visible = isActive) {
                         Icon(
                             painter = painterResource(id = R.drawable.gbs_icon_calendar),
@@ -406,25 +399,23 @@ private fun SkontoSection(
     }
 
     if (isDatePickerVisible) {
-        DatePickerDialog(
-            onDismissRequest = { isDatePickerVisible = false },
-            onSaved = {
-                isDatePickerVisible = false
-                onDueDateChanged(it)
-            })
+        DatePickerDialog(onDismissRequest = { isDatePickerVisible = false }, onSaved = {
+            isDatePickerVisible = false
+            onDueDateChanged(it)
+        })
     }
 }
 
 @Composable
 private fun InfoBanner(
-    colorScheme: SkontoScreenColorScheme.SkontoSectionColorScheme.InfoBannerColorScheme,
+    colors: SkontoSectionColors.InfoBannerColors,
     paymentIn: String,
     discountValue: String,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.background(
-            color = colorScheme.backgroundColor, RoundedCornerShape(8.dp)
+            color = colors.backgroundColor, RoundedCornerShape(8.dp)
         ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -432,7 +423,7 @@ private fun InfoBanner(
             modifier = Modifier.padding(8.dp),
             painter = painterResource(id = R.drawable.gbs_icon_important_info),
             contentDescription = null,
-            tint = colorScheme.iconTint,
+            tint = colors.iconTint,
         )
         Text(
             text = stringResource(
@@ -441,14 +432,14 @@ private fun InfoBanner(
                 discountValue
             ),
             style = GiniTheme.typography.subtitle2,
-            color = colorScheme.textColor,
+            color = colors.textColor,
         )
     }
 }
 
 @Composable
 private fun WithoutSkontoSection(
-    colorScheme: SkontoScreenColorScheme.WithoutDiscountSectionColorScheme,
+    colors: WithoutSkontoSectionColors,
     amount: String,
     currencyCode: String,
     modifier: Modifier = Modifier,
@@ -458,7 +449,7 @@ private fun WithoutSkontoSection(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RectangleShape,
-        colors = CardDefaults.cardColors(containerColor = colorScheme.cardBackgroundColor)
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -471,44 +462,39 @@ private fun WithoutSkontoSection(
                 Text(
                     text = stringResource(id = R.string.gbs_skonto_section_without_discount_title),
                     style = GiniTheme.typography.subtitle1,
-                    color = colorScheme.titleTextColor,
+                    color = colors.titleTextColor,
                 )
                 AnimatedVisibility(visible = isActive) {
                     Text(
                         text = stringResource(id = R.string.gbs_skonto_section_discount_hint_label_enabled),
                         modifier = Modifier.weight(0.1f),
                         style = GiniTheme.typography.subtitle2,
-                        color = colorScheme.enabledHintTextColor,
+                        color = colors.enabledHintTextColor,
                     )
                 }
             }
-            TextField(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-                value = amount,
+            GiniTextInput(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
                 enabled = isActive,
-                textStyle = GiniTheme.typography.subtitle1,
+                colors = colors.amountFieldColors,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done,
-
-                    ),
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.gbs_skonto_section_without_discount_field_amount_hint),
-                        style = GiniTheme.typography.caption1,
-                    )
-                },
-                colors = colorScheme.amountFieldColors,
+                ),
                 onValueChange = { onFullAmountChange(it) },
-                trailingIcon = {
+                text = amount,
+                label = stringResource(id = R.string.gbs_skonto_section_without_discount_field_amount_hint),
+                trailingContent = {
                     AnimatedVisibility(visible = isActive) {
                         Text(
                             text = currencyCode,
                             style = GiniTheme.typography.subtitle1,
                         )
                     }
-                })
+                },
+            )
         }
     }
 }
@@ -518,13 +504,13 @@ private fun FooterSection(
     totalAmount: Float,
     discountValue: Float,
     currency: String,
-    colorScheme: SkontoScreenColorScheme.FooterSectionColorScheme,
+    colors: SkontoFooterSectionColors,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RectangleShape,
-        colors = CardDefaults.cardColors(containerColor = colorScheme.cardBackgroundColor)
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -532,7 +518,7 @@ private fun FooterSection(
             Text(
                 text = stringResource(id = R.string.gbs_skonto_section_footer_title),
                 style = GiniTheme.typography.body1,
-                color = colorScheme.titleTextColor,
+                color = colors.titleTextColor,
             )
             Row(
                 modifier = Modifier
@@ -545,14 +531,14 @@ private fun FooterSection(
                 Text(
                     text = "${"%.2f".format(amount)} $currency",
                     style = GiniTheme.typography.headline5,
-                    color = colorScheme.amountTextColor,
+                    color = colors.amountTextColor,
                 )
                 Box(
                     modifier = Modifier
                         .height(IntrinsicSize.Min)
                         .padding(horizontal = 12.dp)
                         .background(
-                            colorScheme.discountLabelColorScheme.backgroundColor,
+                            colors.discountLabelColorScheme.backgroundColor,
                             RoundedCornerShape(4.dp)
                         ),
                 ) {
@@ -563,7 +549,7 @@ private fun FooterSection(
                             "$discountValue%"
                         ),
                         style = GiniTheme.typography.caption1,
-                        color = colorScheme.discountLabelColorScheme.textColor,
+                        color = colors.discountLabelColorScheme.textColor,
                     )
                 }
             }
@@ -571,7 +557,7 @@ private fun FooterSection(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(id = R.string.gbs_skonto_section_footer_continue_button_text),
                 onClick = { /*TODO*/ },
-                giniButtonColors = colorScheme.continueButtonColors
+                giniButtonColors = colors.continueButtonColors
             )
         }
     }
