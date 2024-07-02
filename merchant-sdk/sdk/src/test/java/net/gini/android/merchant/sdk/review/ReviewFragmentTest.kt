@@ -86,6 +86,7 @@ class ReviewFragmentTest {
         every { viewModel.isInfoBarVisible } returns MutableStateFlow(mockk(relaxed = true))
         every { viewModel.paymentProviderApp } returns MutableStateFlow(mockk(relaxed = true))
         every { viewModel.viewModelScope } returns mockk(relaxed = true)
+        every { viewModel.shareWithFlowStarted } returns MutableStateFlow(false)
 
         viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
