@@ -140,7 +140,7 @@ class ReviewFragment private constructor(
 
     private var shareWithEventBroadcastReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            viewModel.emitFinishEvent()
+            viewModel.emitShareWithStartedEvent()
         }
     }
 
@@ -193,6 +193,13 @@ class ReviewFragment private constructor(
         }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.shareWithFlowStarted.collect {
+                        if (it) {
+                            viewModel.finishAfterShareWith()
+                        }
+                    }
+                }
                 launch {
                     requireActivity().registerReceiver(shareWithEventBroadcastReceiver, IntentFilter().also { it.addAction(GiniMerchant.SHARE_WITH_INTENT_FILTER) }, Context.RECEIVER_NOT_EXPORTED)
                 }

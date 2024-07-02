@@ -26,6 +26,7 @@ import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.FlowBottomSheetsManager
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import net.gini.android.merchant.sdk.util.PaymentNextStep
@@ -57,6 +58,8 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
         extraBufferCapacity = 1,
     )
     override val paymentRequestFlow: MutableStateFlow<PaymentRequest?> = MutableStateFlow(null)
+
+    override val shareWithFlowStarted: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val paymentNextStep: SharedFlow<PaymentNextStep> = paymentNextStepFlow
 
@@ -199,14 +202,19 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> =
         giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 
+    override fun finishAfterShareWith() {
+        giniMerchant.setDisplayedScreen(DisplayedScreen.Nothing)
+    }
+
     fun onPaymentButtonTapped(externalCacheDir: File?) {
         checkNextStep(paymentProviderApp.value, externalCacheDir, viewModelScope)
     }
 
-    fun emitFinishEvent() {
+    fun emitShareWithStartedEvent() {
         paymentRequestFlow.value?.let {
             giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(it, paymentProviderApp.value?.name ?: ""))
         }
+        shareWithFlowStarted.tryEmit(true)
     }
 
     class Factory(

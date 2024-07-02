@@ -3,7 +3,6 @@ package net.gini.android.merchant.sdk.integratedFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +43,8 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
     private val _backButtonEvent = MutableSharedFlow<Void?>(extraBufferCapacity = 1)
     val backButtonEvent: SharedFlow<Void?> = _backButtonEvent
+
+    override val shareWithFlowStarted: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     init {
         viewModelScope.launch {
@@ -90,9 +91,6 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
     private fun setDisplayedScreen() = viewModelScope.launch {
         giniMerchant.setDisplayedScreen(getLastBackstackEntry())
-        if (getLastBackstackEntry() is DisplayedScreen.Nothing) {
-            giniMerchant.setDisplayedScreen(null)
-        }
     }
 
     fun paymentProviderAppChanged(paymentProviderApp: PaymentProviderApp): Boolean {
@@ -124,10 +122,7 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
     fun onBankOpened() {
         // Schedule on the main dispatcher to allow all collectors to receive the current state before
         // the state is overridden
-        viewModelScope.launch(Dispatchers.Main) {
-            giniMerchant.setDisplayedScreen(null)
-            giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.NoAction)
-        }
+        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.NoAction)
     }
 
     fun getPaymentProviderApp() = initialSelectedPaymentProvider
@@ -136,10 +131,11 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         startObservingOpenWithCount(viewModelScope, paymentProviderAppId)
     }
 
-    fun emitFinishEvent() {
+    fun emitShareWithStartedEvent() {
         paymentRequestFlow.value?.let {
             giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Success(it, initialSelectedPaymentProvider?.name ?: ""))
         }
+        shareWithFlowStarted.tryEmit(true)
     }
 
     fun onPaymentButtonTapped(externalCacheDir: File?) {
@@ -148,6 +144,10 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
     fun onForwardToSharePdfTapped(externalCacheDir: File?) {
         sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
+    }
+
+    override fun finishAfterShareWith() {
+        giniMerchant.setDisplayedScreen(DisplayedScreen.Nothing)
     }
 
     override fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState) {

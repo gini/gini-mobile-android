@@ -125,7 +125,7 @@ class GiniMerchant(
      * successful payment requests or which screen is being displayed.
      */
 
-    private val _eventsFlow: MutableSharedFlow<MerchantSDKEvents> = MutableSharedFlow(extraBufferCapacity = 1,replay = 1)
+    private val _eventsFlow: MutableSharedFlow<MerchantSDKEvents> = MutableSharedFlow(extraBufferCapacity = 1)
 
     val eventsFlow: SharedFlow<MerchantSDKEvents> = _eventsFlow
 
@@ -246,7 +246,7 @@ class GiniMerchant(
 
             is PaymentState.Error -> _eventsFlow.tryEmit(MerchantSDKEvents.OnErrorOccurred(state.throwable))
             PaymentState.Loading -> _eventsFlow.tryEmit(MerchantSDKEvents.OnLoading)
-            else -> {}
+            PaymentState.NoAction -> _eventsFlow.tryEmit(MerchantSDKEvents.NoAction)
         }
     }
 
@@ -317,7 +317,7 @@ class GiniMerchant(
         )
     }
 
-    internal fun setDisplayedScreen(displayedScreen: DisplayedScreen?) {
+    internal fun setDisplayedScreen(displayedScreen: DisplayedScreen) {
         _eventsFlow.tryEmit(MerchantSDKEvents.OnScreenDisplayed(displayedScreen))
     }
 
@@ -366,7 +366,7 @@ class GiniMerchant(
     sealed class MerchantSDKEvents {
         object NoAction: MerchantSDKEvents()
         object OnLoading: MerchantSDKEvents()
-        class OnScreenDisplayed(val displayedScreen: DisplayedScreen?): MerchantSDKEvents()
+        class OnScreenDisplayed(val displayedScreen: DisplayedScreen): MerchantSDKEvents()
         class OnFinishedWithPaymentRequestCreated(val paymentRequestId: String, val paymentProviderName: String): MerchantSDKEvents()
         class OnFinishedWithCancellation(): MerchantSDKEvents()
         class OnErrorOccurred(val throwable: Throwable): MerchantSDKEvents()

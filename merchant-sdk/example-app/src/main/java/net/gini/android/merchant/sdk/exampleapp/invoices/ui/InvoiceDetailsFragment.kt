@@ -11,9 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.databinding.FragmentInvoiceDetailsBinding
-import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.setIntervalClickListener
 
 class InvoiceDetailsFragment: Fragment() {
@@ -33,6 +31,7 @@ class InvoiceDetailsFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.startObservingPaymentFlow()
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
@@ -46,18 +45,10 @@ class InvoiceDetailsFragment: Fragment() {
                     }
                 }
                 launch {
-                    viewModel.giniMerchant.eventsFlow.collect { event ->
-                        when (event) {
-                            is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated,
-                            is GiniMerchant.MerchantSDKEvents.OnFinishedWithCancellation -> {
-                                requireActivity().supportFragmentManager.popBackStack()
-                            }
-                            is GiniMerchant.MerchantSDKEvents.OnScreenDisplayed -> {
-                                if (event.displayedScreen == DisplayedScreen.Nothing) {
-                                    requireActivity().supportFragmentManager.popBackStack()
-                                }
-                            }
-                            else -> {}
+                    viewModel.finishPaymentFlow.collect {
+                        if (it == true) {
+                            requireActivity().supportFragmentManager.popBackStack()
+                            viewModel.resetFinishPaymentFlow()
                         }
                     }
                 }

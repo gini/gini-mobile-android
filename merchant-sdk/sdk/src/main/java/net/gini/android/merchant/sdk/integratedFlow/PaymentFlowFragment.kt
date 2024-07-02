@@ -93,7 +93,7 @@ class PaymentFlowFragment private constructor(
     private var snackbar: Snackbar? = null
     private var shareWithEventBroadcastReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            viewModel.emitFinishEvent()
+            viewModel.emitShareWithStartedEvent()
         }
     }
 
@@ -143,6 +143,13 @@ class PaymentFlowFragment private constructor(
         viewModel.loadPaymentProviderApps()
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                launch {
+                    viewModel.shareWithFlowStarted.collect {
+                        if (it) {
+                            viewModel.finishAfterShareWith()
+                        }
+                    }
+                }
                 launch {
                     requireActivity().registerReceiver(shareWithEventBroadcastReceiver, IntentFilter().also { it.addAction(GiniMerchant.SHARE_WITH_INTENT_FILTER) },
                         Context.RECEIVER_NOT_EXPORTED)
@@ -346,6 +353,11 @@ class PaymentFlowFragment private constructor(
         }
         viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
+    }
+
+    override fun onStop() {
+        requireActivity().unregisterReceiver(shareWithEventBroadcastReceiver)
+        super.onStop()
     }
 
     companion object {

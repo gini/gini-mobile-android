@@ -23,6 +23,7 @@ internal interface FlowBottomSheetsManager {
     var openWithCounter: Int
     val paymentNextStepFlow: MutableSharedFlow<PaymentNextStep>
     val paymentRequestFlow: MutableStateFlow<PaymentRequest?>
+    val shareWithFlowStarted: MutableStateFlow<Boolean>
 
     fun startObservingOpenWithCount(coroutineScope: CoroutineScope, paymentProviderAppId: String) {
         coroutineScope.launch {
@@ -101,6 +102,7 @@ internal interface FlowBottomSheetsManager {
 
     fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState)
     fun sendFeedback()
+    fun finishAfterShareWith()
     suspend fun getPaymentRequest(): PaymentRequest?
     suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray>
 
