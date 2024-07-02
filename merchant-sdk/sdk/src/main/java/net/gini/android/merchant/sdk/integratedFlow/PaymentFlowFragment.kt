@@ -338,7 +338,7 @@ class PaymentFlowFragment private constructor(
     }
 
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
-        requireActivity().supportFragmentManager.showOpenWithBottomSheet(
+        childFragmentManager.showOpenWithBottomSheet(
             paymentProviderApp = paymentProviderApp,
             backListener = viewModel
         ) {
