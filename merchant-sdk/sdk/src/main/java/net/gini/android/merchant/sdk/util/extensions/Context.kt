@@ -40,5 +40,5 @@ internal fun Context.getFontScale() = resources.configuration.fontScale
 internal fun Context.createShareWithPendingIntent() = PendingIntent.getBroadcast(
     this, 123,
     Intent(this, ShareWithBroadcastReceiver::class.java),
-    PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    PendingIntent.FLAG_IMMUTABLE
 )
