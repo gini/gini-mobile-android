@@ -6,4 +6,7 @@ sealed class DisplayedScreen {
     object BankSelectionBottomSheet : DisplayedScreen()
     object MoreInformationFragment : DisplayedScreen()
     object ReviewFragment : DisplayedScreen()
+    object InstallAppBottomSheet: DisplayedScreen()
+    object OpenWithBottomSheet: DisplayedScreen()
+    object ShareSheet: DisplayedScreen()
 }

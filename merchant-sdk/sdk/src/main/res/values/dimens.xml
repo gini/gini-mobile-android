@@ -27,6 +27,7 @@
 
     <dimen name="gms_accessibility_min_height">44dp</dimen>
     <dimen name="gms_payment_component_height">0dp</dimen>
+    <dimen name="gms_install_app_min_height">320dp</dimen>
 
     <item name="gms_float_0.7" format="float" type="dimen">0.7</item>
     <item name="gms_float_0.3" format="float" type="dimen">0.3</item>

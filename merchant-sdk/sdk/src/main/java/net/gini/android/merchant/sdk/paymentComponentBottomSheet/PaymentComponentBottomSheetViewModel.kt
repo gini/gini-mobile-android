@@ -2,19 +2,33 @@ package net.gini.android.merchant.sdk.paymentComponentBottomSheet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
 
-internal class PaymentComponentBottomSheetViewModel private constructor(val paymentComponent: PaymentComponent?, val backListener: BackListener?, val documentId: String) : ViewModel() {
+internal class PaymentComponentBottomSheetViewModel private constructor(val paymentComponent: PaymentComponent?, val backListener: BackListener?, val documentId: String, val reviewFragmentShown: Boolean) : ViewModel() {
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
-    class Factory(private val paymentComponent: PaymentComponent?, private val backListener: BackListener?, private val documentId: String) : ViewModelProvider.Factory {
+
+    init {
+        viewModelScope.launch {
+            paymentComponent?.selectedPaymentProviderAppFlow?.collect {
+                if (it is SelectedPaymentProviderAppState.AppSelected) {
+                    _paymentProviderApp.value = it.paymentProviderApp
+                }
+            }
+        }
+    }
+
+    class Factory(private val paymentComponent: PaymentComponent?, private val backListener: BackListener?, private val documentId: String, private val reviewFragmentShown: Boolean) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentComponentBottomSheetViewModel(paymentComponent, backListener, documentId) as T
+            return PaymentComponentBottomSheetViewModel(paymentComponent, backListener, documentId, reviewFragmentShown) as T
         }
     }
 }

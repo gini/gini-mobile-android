@@ -10,12 +10,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.util.DisplayedScreen
+import net.gini.android.merchant.sdk.util.PaymentNextStep
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,8 +45,10 @@ class PaymentFlowFragmentTest {
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
 
         paymentFlowViewModel = mockk<PaymentFlowViewModel>(relaxed = true)
-        every { paymentFlowViewModel!!.giniMerchant } returns giniMerchant
-        every { paymentFlowViewModel!!.paymentComponent } returns paymentComponent
+        every { paymentFlowViewModel!!.giniMerchant } returns giniMerchant!!
+        every { paymentFlowViewModel!!.paymentComponent } returns paymentComponent!!
+        every { paymentFlowViewModel!!.backButtonEvent } returns MutableSharedFlow()
+        every { paymentFlowViewModel!!.shareWithFlowStarted } returns MutableStateFlow(false)
         viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
@@ -57,6 +61,7 @@ class PaymentFlowFragmentTest {
     fun `shows payment component bottom sheet on startup`() = runTest {
         // Given
         every { paymentFlowViewModel!!.getLastBackstackEntry() } returns DisplayedScreen.Nothing
+        every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
         val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
             documentId = "1234",
@@ -106,12 +111,17 @@ class PaymentFlowFragmentTest {
     @Test
     fun `forwards payment request to viewModel when config doesn't allow showing ReviewFragment`() = runTest {
         // Given
+        val paymentFlow = MutableSharedFlow<PaymentNextStep>(extraBufferCapacity = 1)
         every { paymentFlowViewModel!!.getLastBackstackEntry() } returns DisplayedScreen.Nothing
+        every { paymentFlowViewModel!!.paymentNextStep } returns paymentFlow.also { it.tryEmit(PaymentNextStep.RedirectToBank) }
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns false
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
         val documentId = "1234"
         val fragment = PaymentFlowFragment.newInstance(
             giniMerchant = giniMerchant!!,
             documentId = documentId,
-            paymentFlowConfiguration = mockk(relaxed = true),
+            paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewFragment = false),
             viewModelFactory = viewModelFactory
         )
 
@@ -123,6 +133,6 @@ class PaymentFlowFragmentTest {
         fragment.handlePayFlow(documentId)
 
         // Then
-        verify { paymentFlowViewModel!!.onPayment() }
+        verify { paymentFlowViewModel!!.onPaymentButtonTapped(any()) }
     }
 }

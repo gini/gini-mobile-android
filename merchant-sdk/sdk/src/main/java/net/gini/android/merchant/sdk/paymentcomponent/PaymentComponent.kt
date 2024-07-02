@@ -25,7 +25,7 @@ internal class PaymentComponent(@get:VisibleForTesting internal val context: Con
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
 
-    private val _paymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
+    private val _paymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Nothing)
 
     /**
      * A [StateFlow] which emits the state of the payment provider apps. See [PaymentProviderAppsState] for the possible states.
@@ -232,6 +232,7 @@ internal class PaymentComponent(@get:VisibleForTesting internal val context: Con
  * The states of the payment provider apps loading process.
  */
 internal sealed class PaymentProviderAppsState {
+    object Nothing: PaymentProviderAppsState()
     /**
      * The payment provider apps are being loaded.
      */

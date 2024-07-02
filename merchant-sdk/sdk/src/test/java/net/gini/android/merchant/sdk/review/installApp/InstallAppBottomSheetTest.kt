@@ -46,6 +46,7 @@ class InstallAppBottomSheetTest {
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
             mockk(),
+            mockk(),
             0
         )
 
@@ -67,6 +68,7 @@ class InstallAppBottomSheetTest {
 
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
+            mockk(),
             mockk(),
             0
         )
@@ -93,6 +95,7 @@ class InstallAppBottomSheetTest {
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
             listener,
+            mockk(relaxed = true),
             0
         )
 

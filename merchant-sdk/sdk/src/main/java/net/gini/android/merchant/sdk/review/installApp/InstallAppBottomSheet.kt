@@ -1,5 +1,7 @@
 package net.gini.android.merchant.sdk.review.installApp
 
+import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,13 +12,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetInstallAppBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
+import net.gini.android.merchant.sdk.util.extensions.setBackListener
 import net.gini.android.merchant.sdk.util.setBackgroundTint
 import org.slf4j.LoggerFactory
 
@@ -30,16 +35,26 @@ interface InstallAppForwardListener {
 internal class InstallAppBottomSheet private constructor(
     private val paymentComponent: PaymentComponent?,
     private val listener: InstallAppForwardListener?,
+    backListener: BackListener?,
     private val minHeight: Int?
 ) :
     GmsBottomSheetDialogFragment() {
-    constructor() : this(null, null, null)
+    constructor() : this(null, null, null, null)
 
     private var binding: GmsBottomSheetInstallAppBinding by autoCleared()
     private val viewModel: InstallAppViewModel by viewModels {
         InstallAppViewModel.Factory(
-            paymentComponent
+            paymentComponent,
+            backListener
         )
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        viewModel.backListener?.let {
+            (dialog as BottomSheetDialog).setBackListener(it)
+        }
+        return dialog
     }
 
     override fun onCreateView(
@@ -48,9 +63,7 @@ internal class InstallAppBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GmsBottomSheetInstallAppBinding.inflate(inflater, container, false)
-        minHeight?.let {
-            binding.root.minHeight = it
-        }
+        binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gms_install_app_min_height).toInt()
         return binding.root
     }
 
@@ -61,6 +74,11 @@ internal class InstallAppBottomSheet private constructor(
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.paymentProviderApp.collect { paymentProviderApp ->
                     if (paymentProviderApp != null) {
+                        binding.gmsPaymentProviderIcon.gmsPaymentProviderIcon.setImageDrawable(
+                            paymentProviderApp.icon
+                        )
+                        binding.gmsPaymentProviderIcon.gmsPaymentProviderIcon.contentDescription =
+                            "${paymentProviderApp.name} ${getString(R.string.gms_payment_provider_logo_content_description)}"
                         binding.gmsInstallAppTitle.text = String.format(
                             getString(R.string.gms_install_app_title),
                             paymentProviderApp.paymentProvider.name
@@ -116,6 +134,11 @@ internal class InstallAppBottomSheet private constructor(
         startActivity(intent)
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.backListener?.backCalled()
+        super.onCancel(dialog)
+    }
+
     companion object {
         private val LOG = LoggerFactory.getLogger(InstallAppBottomSheet::class.java)
 
@@ -128,9 +151,10 @@ internal class InstallAppBottomSheet private constructor(
         fun newInstance(
             paymentComponent: PaymentComponent,
             listener: InstallAppForwardListener,
-            minHeight: Int
+            backListener: BackListener?,
+            minHeight: Int?
         ): InstallAppBottomSheet {
-            return InstallAppBottomSheet(paymentComponent, listener, minHeight)
+            return InstallAppBottomSheet(paymentComponent, listener, backListener, minHeight)
         }
     }
 

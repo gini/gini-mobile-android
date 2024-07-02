@@ -1,5 +1,7 @@
 package net.gini.android.merchant.sdk.review.openWith
 
+import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
@@ -18,11 +20,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.viewModels
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetOpenWithBinding
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
+import net.gini.android.merchant.sdk.util.extensions.setBackListener
 import net.gini.android.merchant.sdk.util.setBackgroundTint
 
 /**
@@ -31,12 +36,20 @@ import net.gini.android.merchant.sdk.util.setBackgroundTint
 internal interface OpenWithForwardListener {
     fun onForwardSelected()
 }
-internal class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?) : GmsBottomSheetDialogFragment() {
+internal class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?) : GmsBottomSheetDialogFragment() {
 
-    constructor(): this(null, null)
+    constructor(): this(null, null, null)
 
-    private val viewModel by viewModels<OpenWithViewModel> { OpenWithViewModel.Factory(paymentProviderApp) }
+    private val viewModel by viewModels<OpenWithViewModel> { OpenWithViewModel.Factory(paymentProviderApp, backListener) }
     private var binding: GmsBottomSheetOpenWithBinding by autoCleared()
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        viewModel.backListener?.let {
+            (dialog as BottomSheetDialog).setBackListener(it)
+        }
+        return dialog
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,13 +104,19 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
         }
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.backListener?.backCalled()
+        super.onCancel(dialog)
+    }
+
     companion object {
         /**
          * Create a new instance of the [OpenWithBottomSheet].
          *
          * @param paymentProviderApp the [PaymentProviderApp] which the user needs ti identify in the 'Share PDF' screen
          * @param listener the [OpenWithForwardListener] which will forward requests
+         * @param backListener the [BackListener] which will forward back events
          */
-        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener)
+        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener, backListener: BackListener? = null) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener, backListener = backListener)
     }
 }

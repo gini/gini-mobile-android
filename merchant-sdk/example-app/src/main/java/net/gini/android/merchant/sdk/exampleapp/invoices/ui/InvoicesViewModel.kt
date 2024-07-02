@@ -13,6 +13,7 @@ import net.gini.android.merchant.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
+import net.gini.android.merchant.sdk.util.DisplayedScreen
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
@@ -36,6 +37,26 @@ class InvoicesViewModel(
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
 
     private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
+
+    private var _finishPaymentFlow = MutableStateFlow<Boolean?>(null)
+    val finishPaymentFlow: StateFlow<Boolean?> = _finishPaymentFlow
+
+    fun startObservingPaymentFlow() = viewModelScope.launch {
+        giniMerchant.eventsFlow.collect { event ->
+            when (event) {
+                is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated,
+                is GiniMerchant.MerchantSDKEvents.OnFinishedWithCancellation -> {
+                    _finishPaymentFlow.tryEmit(true)
+                }
+                is GiniMerchant.MerchantSDKEvents.OnScreenDisplayed -> {
+                    if (event.displayedScreen == DisplayedScreen.Nothing) {
+                        _finishPaymentFlow.tryEmit(true)
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
 
     fun loadInvoicesWithExtractions() {
         viewModelScope.launch {
@@ -66,6 +87,10 @@ class InvoicesViewModel(
 
     fun setIntegratedFlowConfiguration(flowConfiguration: PaymentFlowConfiguration) {
         this.paymentFlowConfiguration = flowConfiguration
+    }
+
+    fun resetFinishPaymentFlow() {
+        _finishPaymentFlow.tryEmit(null)
     }
 
     companion object {
