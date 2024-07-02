@@ -51,6 +51,11 @@ android {
 
     buildFeatures {
         viewBinding = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.6"
     }
 
     buildTypes {
@@ -114,6 +119,13 @@ dependencies {
 
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
+
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.material3)
+    implementation(libs.compose.tools.uiToolingPreview)
+    implementation(libs.accompanist.themeAdapter)
+    debugImplementation(libs.compose.tools.uiTooling)
+
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

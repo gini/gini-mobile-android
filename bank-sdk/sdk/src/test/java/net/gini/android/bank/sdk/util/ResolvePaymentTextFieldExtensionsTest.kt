@@ -11,7 +11,7 @@ import org.junit.Test
  * Copyright (c) 2022 Gini GmbH.
  */
 
-class ResolvePaymentInputExtensionsTest {
+class ResolvePaymentTextFieldExtensionsTest {
 
     @Test
     fun `parses amount according to amount entity spec`() {
