@@ -268,7 +268,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun show() {
         LOG.debug("Showing payment component")
         binding.ghsSelectBankPicker.visibility = VISIBLE
-        binding.ghsPoweredByGini.visibility = VISIBLE
+        binding.ghsPoweredByGini.visibility = if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else GONE
         changeLabelsVisibilityIfNeeded()
         launchJobs()
     }
