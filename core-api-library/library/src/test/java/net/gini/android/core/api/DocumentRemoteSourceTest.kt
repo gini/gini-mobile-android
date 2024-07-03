@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.response.PaymentRequestResponse
+import net.gini.android.core.api.response.PaymentResponse
 import net.gini.android.core.api.test.DocumentRemoteSourceForTests
 import net.gini.android.core.api.test.MockGiniApiType
 import okhttp3.RequestBody
@@ -211,6 +212,14 @@ class DocumentRemoteSourceTest {
         override suspend fun getPaymentRequests(bearer: Map<String, String>): Response<List<PaymentRequestResponse>> {
             bearerAuthHeader = bearer["Authorization"]
             return Response.success(listOf(PaymentRequestResponse(null, null, "", "", null, "", "", "")))
+        }
+
+        override suspend fun getPayment(
+            bearer: Map<String, String>,
+            id: String
+        ): Response<PaymentResponse> {
+            bearerAuthHeader = bearer["Authorization"]
+            return Response.success(PaymentResponse("", "", "", null, "", "" ))
         }
 
         override suspend fun getFile(bearer: Map<String, String>, location: String): Response<ResponseBody> {
