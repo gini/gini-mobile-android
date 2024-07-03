@@ -146,10 +146,6 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
     }
 
-    override fun finishAfterShareWith() {
-        giniMerchant.setDisplayedScreen(DisplayedScreen.Nothing)
-    }
-
     override fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState) {
         giniMerchant.emitSDKEvent(sdkEvent)
     }

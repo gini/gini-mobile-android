@@ -13,7 +13,6 @@ import net.gini.android.merchant.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
-import net.gini.android.merchant.sdk.util.DisplayedScreen
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
@@ -47,11 +46,6 @@ class InvoicesViewModel(
                 is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated,
                 is GiniMerchant.MerchantSDKEvents.OnFinishedWithCancellation -> {
                     _finishPaymentFlow.tryEmit(true)
-                }
-                is GiniMerchant.MerchantSDKEvents.OnScreenDisplayed -> {
-                    if (event.displayedScreen == DisplayedScreen.Nothing) {
-                        _finishPaymentFlow.tryEmit(true)
-                    }
                 }
                 else -> {}
             }

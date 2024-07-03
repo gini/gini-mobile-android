@@ -102,7 +102,6 @@ internal interface FlowBottomSheetsManager {
 
     fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState)
     fun sendFeedback()
-    fun finishAfterShareWith()
     suspend fun getPaymentRequest(): PaymentRequest?
     suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray>
 

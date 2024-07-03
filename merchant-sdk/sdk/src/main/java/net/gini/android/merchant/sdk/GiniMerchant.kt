@@ -344,10 +344,6 @@ class GiniMerchant(
         }
     }
 
-    internal fun resetScreens() {
-        _eventsFlow.tryEmit(MerchantSDKEvents.OnScreenDisplayed(DisplayedScreen.Nothing))
-    }
-
     private sealed class CapturedArguments : Parcelable {
         @Parcelize
         class DocumentInstance(val value: Document) : CapturedArguments()

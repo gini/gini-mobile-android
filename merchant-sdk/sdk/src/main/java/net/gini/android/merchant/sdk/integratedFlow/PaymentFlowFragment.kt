@@ -144,13 +144,6 @@ class PaymentFlowFragment private constructor(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
-                    viewModel.shareWithFlowStarted.collect {
-                        if (it) {
-                            viewModel.finishAfterShareWith()
-                        }
-                    }
-                }
-                launch {
                     requireActivity().registerReceiver(shareWithEventBroadcastReceiver, IntentFilter().also { it.addAction(GiniMerchant.SHARE_WITH_INTENT_FILTER) },
                         Context.RECEIVER_NOT_EXPORTED)
                 }
@@ -245,6 +238,7 @@ class PaymentFlowFragment private constructor(
                     }
                 }
                 DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId, viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false, viewModel).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                DisplayedScreen.Nothing -> viewModel.giniMerchant.setFlowCancelled()
                 else -> {
 
                 }

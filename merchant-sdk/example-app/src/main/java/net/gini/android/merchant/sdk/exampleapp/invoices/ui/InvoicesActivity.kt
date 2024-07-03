@@ -109,6 +109,7 @@ class InvoicesActivity : AppCompatActivity() {
 
         viewModel.loadInvoicesWithExtractions()
         viewModel.loadPaymentProviderApps()
+        viewModel.startObservingPaymentFlow()
 
         IntentCompat.getParcelableExtra(intent, MainActivity.FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java)?.let {
             viewModel.setIntegratedFlowConfiguration(it)
