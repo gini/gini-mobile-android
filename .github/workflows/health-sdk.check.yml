@@ -107,6 +107,14 @@ jobs:
 
       - name: run android lint
         run: ./gradlew health-sdk:sdk:lint
+        with:
+          script: >
+            -PclientId="gini-mobile-test"
+            -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+            -PreleaseKeystoreFile="health_sdk_example.jks"
+            -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+            -PreleaseKeyAlias="health_sdk_example"
+            -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
 
       - name: archive android lint report
         uses: actions/upload-artifact@v3
