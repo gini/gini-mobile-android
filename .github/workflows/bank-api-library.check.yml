@@ -145,6 +145,13 @@ jobs:
 
       - name: run android lint
         run: ./gradlew bank-api-library:library:lint
+        with:
+          script: >
+            -PtestClientId="gini-mobile-test"
+            -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+            -PtestApiUri="https://pay-api.gini.net"
+            -PtestUserCenterUri="https://user.gini.net"
+            -PtestHealthApiUri="https://health-api.gini.net"
 
       - name: archive android lint report
         uses: actions/upload-artifact@v4
