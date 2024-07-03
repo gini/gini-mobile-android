@@ -7,6 +7,7 @@ import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSecti
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoiceScanSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors
+import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialogColors
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
 
@@ -18,6 +19,7 @@ data class SkontoScreenColors(
     val skontoSectionColors: SkontoSectionColors,
     val withoutSkontoSectionColors: WithoutSkontoSectionColors,
     val footerSectionColors: SkontoFooterSectionColors,
+    val datePickerColor: GiniDatePickerDialogColors,
 ) {
 
     companion object {
@@ -29,6 +31,7 @@ data class SkontoScreenColors(
             discountSectionColors: SkontoSectionColors = SkontoSectionColors.colors(),
             withoutSkontoSectionColors: WithoutSkontoSectionColors = WithoutSkontoSectionColors.colors(),
             skontoFooterSectionColors: SkontoFooterSectionColors = SkontoFooterSectionColors.colors(),
+            datePickerColor: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors()
         ) = SkontoScreenColors(
             backgroundColor = backgroundColor,
             topAppBarColors = topAppBarColors,
@@ -36,7 +39,7 @@ data class SkontoScreenColors(
             skontoSectionColors = discountSectionColors,
             withoutSkontoSectionColors = withoutSkontoSectionColors,
             footerSectionColors = skontoFooterSectionColors,
+            datePickerColor = datePickerColor,
         )
     }
-
 }

@@ -64,7 +64,7 @@ import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColo
 import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ui.components.button.filled.GiniButton
-import net.gini.android.capture.ui.components.picker.date.DatePickerDialog
+import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
 import net.gini.android.capture.ui.components.switcher.GiniSwitch
 import net.gini.android.capture.ui.components.textinput.GiniTextInput
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
@@ -399,7 +399,7 @@ private fun SkontoSection(
     }
 
     if (isDatePickerVisible) {
-        DatePickerDialog(onDismissRequest = { isDatePickerVisible = false }, onSaved = {
+        GiniDatePickerDialog(onDismissRequest = { isDatePickerVisible = false }, onSaved = {
             isDatePickerVisible = false
             onDueDateChanged(it)
         })

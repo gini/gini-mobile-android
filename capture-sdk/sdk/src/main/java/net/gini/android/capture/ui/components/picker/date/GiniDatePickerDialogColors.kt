@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Immutable
-data class DatePickerDialogColors(
+data class GiniDatePickerDialogColors(
     val dateSelected: Color = Color.Unspecified,
     val borderDate: Color = Color.Unspecified,
     val textHeadline: Color = Color.Unspecified,
@@ -39,7 +39,7 @@ data class DatePickerDialogColors(
             divider: Color = GiniTheme.colorScheme.datePicker.divider,
             iconMenu: Color = GiniTheme.colorScheme.datePicker.iconMenu,
             iconButton: Color = GiniTheme.colorScheme.datePicker.iconButton,
-        ) = DatePickerDialogColors(
+        ) = GiniDatePickerDialogColors(
             dateSelected = dateSelected,
             borderDate = borderDate,
             textHeadline = textHeadline,

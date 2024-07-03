@@ -27,12 +27,12 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 @Composable
-fun DatePickerDialog(
+fun GiniDatePickerDialog(
     onDismissRequest: () -> Unit,
     onSaved: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
     date: LocalDate = LocalDate.now(),
-    datePickerDialogColors: DatePickerDialogColors = DatePickerDialogColors.colors()
+    colors: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors()
 ) {
 
     val dateState = rememberDatePickerState(
@@ -51,7 +51,7 @@ fun DatePickerDialog(
             DatePicker(
                 state = dateState,
                 showModeToggle = false,
-                colors = with(datePickerDialogColors) {
+                colors = with(colors) {
                     DatePickerDefaults.colors(
                         titleContentColor = textSupporting,
                         headlineContentColor = textHeadline,
@@ -117,6 +117,6 @@ private fun DatePickerDialogPreviewDark() {
 @Composable
 private fun DatePickerDialogPreview() {
     GiniTheme {
-        DatePickerDialog(onDismissRequest = {}, onSaved = {})
+        GiniDatePickerDialog(onDismissRequest = {}, onSaved = {})
     }
 }
