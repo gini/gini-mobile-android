@@ -209,6 +209,13 @@ jobs:
 
       - name: run android lint
         run: ./gradlew health-api-library:library:lint
+        with:
+          script: >
+            -PtestClientId="${{ inputs.clientId != '' && inputs.clientId || 'gini-mobile-test'}}"
+            -PtestClientSecret="${{ inputs.clientSecret != '' && inputs.clientSecret || secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+            -PtestApiUri="${{ inputs.healthApiBaseUrl != '' && inputs.healthApiBaseUrl || 'https://health-api.gini.net' }}"
+            -PtestUserCenterUri="${{ inputs.userCenterBaseUrl != '' && inputs.userCenterBaseUrl || 'https://user.gini.net' }}"
+            -PtestBankApiUri="${{ inputs.payApiBaseUrl != '' && inputs.payApiBaseUrl || 'https://pay-api.gini.net' }}"
 
       - name: archive android lint report
         uses: actions/upload-artifact@v3
