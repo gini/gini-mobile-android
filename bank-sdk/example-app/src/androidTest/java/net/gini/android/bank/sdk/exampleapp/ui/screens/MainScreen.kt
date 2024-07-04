@@ -9,7 +9,7 @@ import net.gini.android.bank.sdk.exampleapp.R
 
 class MainScreen {
 
-    fun assertWelcomeTitle(): MainScreen {
+    fun checkWelcomeTitleIsDisplayed(): MainScreen {
         onView(withId(R.id.tv_welcomeToGini)).check(matches(isDisplayed()))
         return this
     }

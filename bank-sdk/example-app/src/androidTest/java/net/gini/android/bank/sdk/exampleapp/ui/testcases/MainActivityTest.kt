@@ -51,14 +51,14 @@ class MainActivityTest {
     }
     @Test
     fun test1_assertTitlesOnMainScreen() {
-        mainScreen.assertWelcomeTitle()
+        mainScreen.checkWelcomeTitleIsDisplayed()
         mainScreen.assertDescriptionTitle()
     }
     @Test
     fun test2_clickPhotoPaymentButton() {
         mainScreen.checkScannerButtonDisplayed()
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.assertSkipButton()
+        onboardingScreen.assertSkipButtonText()
         onboardingScreen.clickSkipButton()
         captureScreen.assertCameraTitle()
         captureScreen.clickCancelButton()
@@ -71,20 +71,32 @@ class MainActivityTest {
     }
 
     @Test
-    fun test4_verifyItemOfHelp() {
+    fun test4_verifyHelpItemTipsForBestResult() {
         mainScreen.clickPhotoPaymentButton()
         captureScreen.clickHelpButton()
         helpScreen.clickTipsForBestResults()
         helpScreen.clickBackButton()
+    }
+
+    @Test
+    fun test5_verifyHelpItemSupportedFormats() {
+        mainScreen.clickPhotoPaymentButton()
+        captureScreen.clickHelpButton()
         helpScreen.clickSupportedFormats()
         helpScreen.clickBackButton()
+    }
+
+    @Test
+    fun test6_verifyHelpItemImportDocuments() {
+        mainScreen.clickPhotoPaymentButton()
+        captureScreen.clickHelpButton()
         helpScreen.clickImportDocs()
         helpScreen.clickBackButton()
     }
 
 
     @Test
-    fun test5_pdfImportFromFiles() {
+    fun test7_pdfImportFromFiles() {
         mainScreen.clickPhotoPaymentButton()
         val resultData = Intent()
         val fileUri =

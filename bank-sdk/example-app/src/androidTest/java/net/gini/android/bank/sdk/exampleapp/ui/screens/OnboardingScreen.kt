@@ -8,7 +8,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 
 class OnboardingScreen {
 
-    fun assertSkipButton(): OnboardingScreen {
+    fun assertSkipButtonText(): OnboardingScreen {
         onView(withId(net.gini.android.capture.R.id.gc_skip)).check(matches(withText("Skip")))
         return this
     }

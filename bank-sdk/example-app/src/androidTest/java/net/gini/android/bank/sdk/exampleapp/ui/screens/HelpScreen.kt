@@ -50,9 +50,6 @@ class HelpScreen {
     }
 
     fun clickBackButton(): HelpScreen {
-        //onView(withText("Back")).perform(click())
-        //onView(withId(android.R.id.home)).perform(click())
-        //onView(withId(net.gini.android.capture.R.id.gc_navigation_bar)).perform(click())
         onView(withContentDescription(net.gini.android.capture.R.string.gc_back_button_description)).perform(click())
         return this
     }
