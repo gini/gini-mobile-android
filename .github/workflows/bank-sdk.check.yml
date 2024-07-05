@@ -205,7 +205,7 @@ jobs:
           cache: 'gradle'
 
       - name: run android lint
-        run: ./gradlew bank-sdk:sdk:lint
+        run: ./gradlew bank-sdk:sdk:lint -PclientId=gini-mobile-test -PclientSecret=secret -PreleaseKeystoreFile=screen_api_example.jks -PreleaseKeystorePassword=pass -PreleaseKeyAlias=screen_api_example -PreleaseKeyPassword=pass
 
       - name: archive android lint report
         uses: actions/upload-artifact@v3

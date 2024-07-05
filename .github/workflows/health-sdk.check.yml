@@ -106,7 +106,7 @@ jobs:
           cache: 'gradle'
 
       - name: run android lint
-        run: ./gradlew health-sdk:sdk:lint
+        run: ./gradlew health-sdk:sdk:lint -PclientId=gini-mobile-test -PclientSecret=secret -PreleaseKeystoreFile=health_sdk_example.jks -PreleaseKeystorePassword=pass -PreleaseKeyAlias=health_sdk_example -PreleaseKeyPassword=secret
 
       - name: archive android lint report
         uses: actions/upload-artifact@v3

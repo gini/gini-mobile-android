@@ -208,7 +208,7 @@ jobs:
           cache: 'gradle'
 
       - name: run android lint
-        run: ./gradlew health-api-library:library:lint
+        run: ./gradlew health-api-library:library:lint -PtestClientId=gini-mobile-test -PtestClientSecret=secret -PtestApiUri=https://health-api.gini.net -PtestUserCenterUri=https://user.gini.net -PtestBankApiUri=https://pay-api.gini.net
 
       - name: archive android lint report
         uses: actions/upload-artifact@v3
