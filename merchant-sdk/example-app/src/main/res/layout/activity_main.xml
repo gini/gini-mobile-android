@@ -52,67 +52,9 @@
                 android:gravity="center"
                 android:text="@string/example_of_merchant_sdk"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toTopOf="@id/pager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_welcomeToGini" />
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/pager"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@id/indicator"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_min="100dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_exampleOfPhotoPayment" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="@android:color/transparent"
-                app:layout_constraintBottom_toTopOf="@id/import_file"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:tabBackground="@drawable/tab_pager_selector"
-                app:tabGravity="center"
-                app:tabIndicatorHeight="0dp" />
-
-            <Button
-                android:id="@+id/import_file"
-                style="@style/Widget.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/import_file"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/take_photo"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <Button
-                android:id="@+id/take_photo"
-                style="@style/Widget.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/take_photo"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/upload"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <Button
-                android:id="@+id/upload"
-                style="@style/Widget.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:text="@string/upload"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/invoices_screen"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
 
             <Button
                 android:id="@+id/invoices_screen"
