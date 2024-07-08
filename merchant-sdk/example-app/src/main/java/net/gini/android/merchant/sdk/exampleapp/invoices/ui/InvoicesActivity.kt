@@ -91,6 +91,13 @@ class InvoicesActivity : AppCompatActivity() {
                                     else -> { setActivityTitle(R.string.invoice_details) }
                                 }
                             }
+                            is GiniMerchant.MerchantSDKEvents.OnErrorOccurred -> {
+                                AlertDialog.Builder(this@InvoicesActivity)
+                                    .setTitle(R.string.error_message)
+                                    .setMessage(event.throwable.message)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .show()
+                            }
                             else -> {}
                         }
                     }
@@ -102,6 +109,7 @@ class InvoicesActivity : AppCompatActivity() {
 
         viewModel.loadInvoicesWithExtractions()
         viewModel.loadPaymentProviderApps()
+        viewModel.startObservingPaymentFlow()
 
         IntentCompat.getParcelableExtra(intent, MainActivity.FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java)?.let {
             viewModel.setIntegratedFlowConfiguration(it)

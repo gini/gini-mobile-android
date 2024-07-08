@@ -235,7 +235,6 @@ class GiniMerchant(
         paymentFlowConfiguration = flowConfiguration ?: PaymentFlowConfiguration()
     )
 
-    //TODO set payment provider app name after making payment provider app internal
     internal fun emitSDKEvent(state: PaymentState) {
         when (state) {
             is PaymentState.Success -> _eventsFlow.tryEmit(
@@ -247,7 +246,7 @@ class GiniMerchant(
 
             is PaymentState.Error -> _eventsFlow.tryEmit(MerchantSDKEvents.OnErrorOccurred(state.throwable))
             PaymentState.Loading -> _eventsFlow.tryEmit(MerchantSDKEvents.OnLoading)
-            else -> {}
+            PaymentState.NoAction -> _eventsFlow.tryEmit(MerchantSDKEvents.NoAction)
         }
     }
 
@@ -322,6 +321,10 @@ class GiniMerchant(
         _eventsFlow.tryEmit(MerchantSDKEvents.OnScreenDisplayed(displayedScreen))
     }
 
+    internal fun setFlowCancelled() {
+        _eventsFlow.tryEmit(MerchantSDKEvents.OnFinishedWithCancellation())
+    }
+
     // TODO add documentation & load payment providers internally if clients didn't to it when attempting to start flow
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
@@ -357,6 +360,7 @@ class GiniMerchant(
     }
 
     sealed class MerchantSDKEvents {
+        object NoAction: MerchantSDKEvents()
         object OnLoading: MerchantSDKEvents()
         class OnScreenDisplayed(val displayedScreen: DisplayedScreen): MerchantSDKEvents()
         class OnFinishedWithPaymentRequestCreated(val paymentRequestId: String, val paymentProviderName: String): MerchantSDKEvents()
@@ -373,5 +377,6 @@ class GiniMerchant(
         private const val CAPTURED_ARGUMENTS_TYPE = "CAPTURED_ARGUMENTS_TYPE"
         private const val PROVIDER = "net.gini.android.merchant.sdk.GiniMerchant"
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
+        internal const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
     }
 }

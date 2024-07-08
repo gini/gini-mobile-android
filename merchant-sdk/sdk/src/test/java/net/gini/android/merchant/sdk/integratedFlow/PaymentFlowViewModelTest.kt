@@ -100,10 +100,10 @@ class PaymentFlowViewModelTest {
     fun `adds to backstack`() = runTest {
         // Given
         val viewModel = PaymentFlowViewModel(
-            paymentComponent = paymentComponent,
+            paymentComponent = paymentComponent!!,
             documentId = "1234",
             paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant,
+            giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
@@ -118,10 +118,10 @@ class PaymentFlowViewModelTest {
     fun `pops backstack`() = runTest {
         // Given
         val viewModel = PaymentFlowViewModel(
-            paymentComponent = paymentComponent,
+            paymentComponent = paymentComponent!!,
             documentId = "1234",
             paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant,
+            giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
@@ -140,10 +140,10 @@ class PaymentFlowViewModelTest {
     fun `peek backstack returns last value in backstack`() = runTest {
         // Given
         val viewModel = PaymentFlowViewModel(
-            paymentComponent = paymentComponent,
+            paymentComponent = paymentComponent!!,
             documentId = "1234",
             paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant,
+            giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
@@ -159,10 +159,10 @@ class PaymentFlowViewModelTest {
     fun `returns true if payment provider app has been changed`() = runTest {
         // Given
         val viewModel = PaymentFlowViewModel(
-            paymentComponent = paymentComponent,
+            paymentComponent = paymentComponent!!,
             documentId = "1234",
             paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant,
+            giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
         )
 
@@ -175,10 +175,10 @@ class PaymentFlowViewModelTest {
         // Given
         coEvery { giniPayment!!.onPayment(any(), any()) } coAnswers {  }
         val viewModel = PaymentFlowViewModel(
-            paymentComponent = paymentComponent,
+            paymentComponent = paymentComponent!!,
             documentId = "1234",
             paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant,
+            giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
         )
 
@@ -190,12 +190,11 @@ class PaymentFlowViewModelTest {
     @Test
     fun `forwards load document to giniMerchant`() = runTest {
         // Given
-//        coEvery { giniPayment!!.onPayment(any(), any()) } coAnswers {  }
         val viewModel = PaymentFlowViewModel(
-            paymentComponent = paymentComponent,
+            paymentComponent = paymentComponent!!,
             documentId = "1234",
             paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant,
+            giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
         )
 

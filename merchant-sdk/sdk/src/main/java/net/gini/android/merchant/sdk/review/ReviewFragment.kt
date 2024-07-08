@@ -1,7 +1,10 @@
 package net.gini.android.merchant.sdk.review
 
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
@@ -26,6 +28,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.transition.ChangeBounds
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
@@ -47,17 +50,18 @@ import net.gini.android.merchant.sdk.databinding.GmsFragmentReviewBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.preferences.UserPreferences
-import net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet
-import net.gini.android.merchant.sdk.review.installApp.InstallAppForwardListener
-import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
-import net.gini.android.merchant.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.merchant.sdk.util.GiniPaymentManager
+import net.gini.android.merchant.sdk.util.PaymentNextStep
 import net.gini.android.merchant.sdk.util.amountWatcher
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.clearErrorMessage
+import net.gini.android.merchant.sdk.util.extensions.createShareWithPendingIntent
 import net.gini.android.merchant.sdk.util.extensions.getFontScale
+import net.gini.android.merchant.sdk.util.extensions.showInstallAppBottomSheet
+import net.gini.android.merchant.sdk.util.extensions.showOpenWithBottomSheet
+import net.gini.android.merchant.sdk.util.extensions.startSharePdfIntent
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.hideErrorMessage
 import net.gini.android.merchant.sdk.util.hideKeyboard
@@ -66,7 +70,6 @@ import net.gini.android.merchant.sdk.util.setErrorMessage
 import net.gini.android.merchant.sdk.util.setTextIfDifferent
 import net.gini.android.merchant.sdk.util.showErrorMessage
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
-import java.io.File
 
 /**
  * Configuration for the [ReviewFragment].
@@ -135,6 +138,12 @@ class ReviewFragment private constructor(
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
 
+    private var shareWithEventBroadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.emitShareWithStartedEvent()
+        }
+    }
+
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return this.getLayoutInflaterWithGiniMerchantTheme(inflater)
@@ -157,7 +166,9 @@ class ReviewFragment private constructor(
 
         viewModel.userPreferences = UserPreferences(requireContext())
         viewModel.openWithPreferences = OpenWithPreferences(requireContext())
-        viewModel.startObservingOpenWithCount()
+        viewModel.paymentProviderApp.value?.paymentProvider?.id?.let { paymentProviderAppId ->
+            viewModel.startObservingOpenWithCount(viewModel.viewModelScope, paymentProviderAppId)
+        }
         viewModel.loadPaymentDetails()
 
         with(binding) {
@@ -182,6 +193,9 @@ class ReviewFragment private constructor(
         }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    requireActivity().registerReceiver(shareWithEventBroadcastReceiver, IntentFilter().also { it.addAction(GiniMerchant.SHARE_WITH_INTENT_FILTER) }, Context.RECEIVER_NOT_EXPORTED)
+                }
                 launch {
                     viewModel.giniMerchant.documentFlow.collect { handleDocumentResult(it) }
                 }
@@ -213,7 +227,7 @@ class ReviewFragment private constructor(
                     viewModel.paymentProviderApp.collect { paymentProviderApp ->
                         if (paymentProviderApp != null) {
                             showSelectedPaymentProviderApp(paymentProviderApp)
-                            setActionListeners(paymentProviderApp)
+                            setActionListeners()
                         }
                     }
                 }
@@ -387,7 +401,7 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GmsFragmentReviewBinding.setActionListeners(paymentProviderApp: PaymentProviderApp) {
+    private fun GmsFragmentReviewBinding.setActionListeners() {
         paymentDetails.setOnClickListener { it.hideKeyboard() }
         payment.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
@@ -549,13 +563,12 @@ class ReviewFragment private constructor(
 
 
     private fun showInstallAppDialog(paymentProviderApp: PaymentProviderApp) {
-        val dialog = InstallAppBottomSheet.newInstance(viewModel.paymentComponent, object :
-            InstallAppForwardListener {
-            override fun onForwardToBankSelected() {
-                redirectToBankApp(paymentProviderApp)
-            }
-        }, binding.paymentDetailsScrollview.height)
-        dialog.show(requireActivity().supportFragmentManager, InstallAppBottomSheet::class.simpleName)
+        requireActivity().supportFragmentManager.showInstallAppBottomSheet(
+            paymentComponent = viewModel.paymentComponent,
+            minHeight = binding.paymentDetailsScrollview.height
+        ) {
+            redirectToBankApp(paymentProviderApp)
+        }
     }
 
     private fun redirectToBankApp(paymentProviderApp: PaymentProviderApp) {
@@ -564,45 +577,29 @@ class ReviewFragment private constructor(
     }
 
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
-        OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
-            override fun onForwardSelected() {
-                viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
-            }
-        }).also {
-            it.show(requireActivity().supportFragmentManager, it::class.java.name)
+        requireActivity().supportFragmentManager.showOpenWithBottomSheet(
+            paymentProviderApp = paymentProviderApp
+        ) {
+            viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
         }
-        viewModel.incrementOpenWithCounter()
+        viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
     }
 
-    private fun startSharePdfIntent(paymentRequestFile: File) {
-        val uriForFile = FileProvider.getUriForFile(
-            requireContext(),
-            requireContext().packageName+".merchant.sdk.fileprovider",
-            paymentRequestFile
-        )
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "application/pdf"
-            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            putExtra(Intent.EXTRA_STREAM, uriForFile)
-        }
-        startActivity(Intent.createChooser(shareIntent, uriForFile.lastPathSegment))
-    }
-
-    private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
+    private fun handlePaymentNextStep(paymentNextStep: PaymentNextStep) {
         when (paymentNextStep) {
-            is ReviewViewModel.PaymentNextStep.SetLoadingVisibility -> {
+            is PaymentNextStep.SetLoadingVisibility -> {
                 binding.loading.isVisible = paymentNextStep.isVisible
             }
-            ReviewViewModel.PaymentNextStep.RedirectToBank -> {
+            PaymentNextStep.RedirectToBank -> {
                 viewModel.paymentProviderApp.value?.let {
                     redirectToBankApp(it)
                 }
             }
-            ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
-            ReviewViewModel.PaymentNextStep.ShowInstallApp -> viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
-            is ReviewViewModel.PaymentNextStep.OpenSharePdf -> {
+            PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
+            PaymentNextStep.ShowInstallApp -> viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
+            is PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
-                startSharePdfIntent(paymentNextStep.file)
+                startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
             }
         }
     }
@@ -610,6 +607,11 @@ class ReviewFragment private constructor(
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onStop() {
+        requireActivity().unregisterReceiver(shareWithEventBroadcastReceiver)
+        super.onStop()
     }
 
     internal companion object {

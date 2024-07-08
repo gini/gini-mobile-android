@@ -26,4 +26,5 @@
     <string name="show_review_screen">Show the Review Screen</string>
     <string name="amount_editable">Amount field is editable</string>
     <string name="gini_merchant_version">Gini Merchant SDK v: </string>
+    <string name="error_message">Oops, something went wrong.</string>
 </resources>

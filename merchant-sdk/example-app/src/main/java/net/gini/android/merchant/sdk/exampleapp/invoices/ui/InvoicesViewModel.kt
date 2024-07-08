@@ -37,6 +37,21 @@ class InvoicesViewModel(
 
     private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
 
+    private var _finishPaymentFlow = MutableStateFlow<Boolean?>(null)
+    val finishPaymentFlow: StateFlow<Boolean?> = _finishPaymentFlow
+
+    fun startObservingPaymentFlow() = viewModelScope.launch {
+        giniMerchant.eventsFlow.collect { event ->
+            when (event) {
+                is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated,
+                is GiniMerchant.MerchantSDKEvents.OnFinishedWithCancellation -> {
+                    _finishPaymentFlow.tryEmit(true)
+                }
+                else -> {}
+            }
+        }
+    }
+
     fun loadInvoicesWithExtractions() {
         viewModelScope.launch {
             async { invoicesRepository.loadInvoicesWithExtractions() }.await()
@@ -66,6 +81,10 @@ class InvoicesViewModel(
 
     fun setIntegratedFlowConfiguration(flowConfiguration: PaymentFlowConfiguration) {
         this.paymentFlowConfiguration = flowConfiguration
+    }
+
+    fun resetFinishPaymentFlow() {
+        _finishPaymentFlow.tryEmit(null)
     }
 
     companion object {

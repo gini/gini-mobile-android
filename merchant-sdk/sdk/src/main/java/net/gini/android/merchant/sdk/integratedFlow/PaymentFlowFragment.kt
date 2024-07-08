@@ -1,18 +1,24 @@
 package net.gini.android.merchant.sdk.integratedFlow
 
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -24,12 +30,18 @@ import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
+import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
-import net.gini.android.merchant.sdk.util.BackListener
+import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.util.DisplayedScreen
+import net.gini.android.merchant.sdk.util.PaymentNextStep
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.add
+import net.gini.android.merchant.sdk.util.extensions.createShareWithPendingIntent
+import net.gini.android.merchant.sdk.util.extensions.showInstallAppBottomSheet
+import net.gini.android.merchant.sdk.util.extensions.showOpenWithBottomSheet
+import net.gini.android.merchant.sdk.util.extensions.startSharePdfIntent
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
 import org.jetbrains.annotations.VisibleForTesting
@@ -71,16 +83,18 @@ data class PaymentFlowConfiguration(
  * It handles the display logic for all screens. A new instance can be created using the [PaymentComponent.getContainerFragment] method.
  */
 class PaymentFlowFragment private constructor(
-    giniMerchant: GiniMerchant?,
-    documentId: String,
-    paymentFlowConfiguration: PaymentFlowConfiguration?,
-    private val viewModelFactory: ViewModelProvider.Factory? = null) : Fragment(),
-    BackListener {
+    private val viewModelFactory: ViewModelProvider.Factory? = null) : Fragment() {
 
-    constructor(): this(null,"", null, null)
+    constructor(): this(null)
     private var binding: GmsFragmentMerchantBinding by autoCleared()
     private val viewModel by viewModels<PaymentFlowViewModel> {
-        viewModelFactory ?: PaymentFlowViewModel.Factory(giniMerchant?.paymentComponent, documentId, paymentFlowConfiguration, giniMerchant)
+        viewModelFactory ?: object : ViewModelProvider.Factory {}
+    }
+    private var snackbar: Snackbar? = null
+    private var shareWithEventBroadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.emitShareWithStartedEvent()
+        }
     }
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
@@ -88,15 +102,15 @@ class PaymentFlowFragment private constructor(
             viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
             childFragmentManager.add(
                 containerId = binding.gmsFragmentContainerView.id,
-                fragment = MoreInformationFragment.newInstance(viewModel.paymentComponent, this@PaymentFlowFragment),
+                fragment = MoreInformationFragment.newInstance(viewModel.paymentComponent, viewModel),
                 addToBackStack = true
             )
         }
 
         override fun onBankPickerClicked() {
-            viewModel.paymentComponent?.let {
+            viewModel.paymentComponent.let {
                 viewModel.addToBackStack(DisplayedScreen.BankSelectionBottomSheet)
-                BankSelectionBottomSheet.newInstance(it, backListener = this@PaymentFlowFragment).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+                BankSelectionBottomSheet.newInstance(it, backListener = viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
             }
         }
 
@@ -122,15 +136,39 @@ class PaymentFlowFragment private constructor(
         if (viewModel.paymentFlowConfiguration?.shouldShowReviewFragment == false) {
             binding.setStateListeners()
         }
-        viewModel.paymentComponent?.listener = paymentComponentListener
+
+        viewModel.paymentComponent.listener = paymentComponentListener
+        viewModel.openWithPreferences = OpenWithPreferences(requireContext())
         viewModel.loadPaymentDetails()
+        viewModel.loadPaymentProviderApps()
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.paymentComponent?.selectedPaymentProviderAppFlow?.collect {
-                    if (it is SelectedPaymentProviderAppState.AppSelected) {
-                        if (viewModel.paymentProviderAppChanged(it.paymentProviderApp) && viewModel.getLastBackstackEntry() is DisplayedScreen.BankSelectionBottomSheet) {
-                            handleBackFlow()
+                launch {
+                    requireActivity().registerReceiver(shareWithEventBroadcastReceiver, IntentFilter().also { it.addAction(GiniMerchant.SHARE_WITH_INTENT_FILTER) },
+                        Context.RECEIVER_NOT_EXPORTED)
+                }
+                launch {
+                    viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
+                }
+                launch {
+                    viewModel.paymentComponent.selectedPaymentProviderAppFlow.collect {
+                        if (it is SelectedPaymentProviderAppState.AppSelected) {
+                            if (viewModel.paymentProviderAppChanged(it.paymentProviderApp) && viewModel.getLastBackstackEntry() is DisplayedScreen.BankSelectionBottomSheet) {
+                                handleBackFlow()
+                            } else {
+                                viewModel.checkBankAppInstallState(it.paymentProviderApp)
+                            }
                         }
+                    }
+                }
+                launch {
+                    if (viewModel.getLastBackstackEntry() == DisplayedScreen.ShareSheet) {
+                        viewModel.popBackStack()
+                    }
+                }
+                launch {
+                    viewModel.backButtonEvent.collect {
+                        handleBackFlow()
                     }
                 }
             }
@@ -150,12 +188,23 @@ class PaymentFlowFragment private constructor(
         })
     }
 
+    override fun onDetach() {
+        snackbar?.dismiss()
+        super.onDetach()
+    }
+
     private fun GmsFragmentMerchantBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
-                    viewModel.giniMerchant?.eventsFlow?.collect {
+                    viewModel.giniMerchant.eventsFlow.collect {
                         handleSDKEvent(it)
+                    }
+                }
+
+                launch {
+                    viewModel.paymentNextStep.collect {
+                        handlePaymentNextStep(it)
                     }
                 }
             }
@@ -170,7 +219,7 @@ class PaymentFlowFragment private constructor(
 
     private fun GmsFragmentMerchantBinding.showSnackbar(text: String, onRetry: () -> Unit) {
         val context = requireContext().wrappedWithGiniMerchantTheme()
-        Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
+        snackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             setTextMaxLines(2)
             setAction(getString(R.string.gms_snackbar_retry)) { onRetry() }
             show()
@@ -184,11 +233,12 @@ class PaymentFlowFragment private constructor(
         if (childFragmentManager.backStackEntryCount == 0) {
             when (viewModel.getLastBackstackEntry()) {
                 DisplayedScreen.BankSelectionBottomSheet -> {
-                    viewModel.paymentComponent?.let {
-                        BankSelectionBottomSheet.newInstance(it, this).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
+                    viewModel.paymentComponent.let {
+                        BankSelectionBottomSheet.newInstance(it, viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
                     }
                 }
-                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId,this).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId, viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false, viewModel).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                DisplayedScreen.Nothing -> viewModel.giniMerchant.setFlowCancelled()
                 else -> {
 
                 }
@@ -203,18 +253,18 @@ class PaymentFlowFragment private constructor(
             return
         }
 
-        viewModel.onPayment()
+        viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
     }
 
     @VisibleForTesting
     internal fun showReviewFragment(documentId: String) {
         viewModel.addToBackStack(DisplayedScreen.ReviewFragment)
-        val reviewFragment = viewModel.giniMerchant?.getPaymentReviewFragment(documentId, ReviewConfiguration(
+        val reviewFragment = viewModel.giniMerchant.getPaymentReviewFragment(documentId, ReviewConfiguration(
             handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
             showCloseButton = true,
             isAmountFieldEditable = viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true
         ))
-        reviewFragment?.let {
+        reviewFragment.let {
             childFragmentManager.add(
                 containerId = binding.gmsFragmentContainerView.id,
                 fragment = it,
@@ -228,7 +278,8 @@ class PaymentFlowFragment private constructor(
         val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
             viewModel.paymentComponent,
             documentId = viewModel.documentId,
-            backListener = this@PaymentFlowFragment
+            reviewFragmentShown = viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
+            backListener = viewModel
         )
         paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
         viewModel.addToBackStack(DisplayedScreen.PaymentComponentBottomSheet)
@@ -237,33 +288,75 @@ class PaymentFlowFragment private constructor(
     private fun GmsFragmentMerchantBinding.handleSDKEvent(sdkEvent: GiniMerchant.MerchantSDKEvents) {
         when (sdkEvent) {
             is GiniMerchant.MerchantSDKEvents.OnFinishedWithPaymentRequestCreated -> {
+                if (viewModel.getLastBackstackEntry() is DisplayedScreen.ShareSheet) return
                 try {
                     val intent = viewModel.getPaymentProviderApp()?.getIntent(sdkEvent.paymentRequestId)
                     if (intent != null) {
                         startActivity(intent)
                         viewModel.onBankOpened()
                     } else {
-                        handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+                        handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
                     }
                 } catch (exception: ActivityNotFoundException) {
-                    handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+                    handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
                 }
             }
             is GiniMerchant.MerchantSDKEvents.OnErrorOccurred -> {
-                handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPayment() }
+                binding.loading.isVisible = false
+                handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
             }
-            else -> { // Loading is already handled
+            else -> {
             }
         }
     }
 
-    override fun backCalled() {
-        handleBackFlow()
+    private fun handlePaymentNextStep(paymentNextStep: PaymentNextStep) {
+        when (paymentNextStep) {
+            is PaymentNextStep.SetLoadingVisibility -> {
+                binding.loading.isVisible = paymentNextStep.isVisible
+            }
+            PaymentNextStep.RedirectToBank -> {
+                viewModel.onPayment()
+            }
+            PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let { showOpenWithDialog(it) }
+            PaymentNextStep.ShowInstallApp -> showInstallAppDialog()
+            is PaymentNextStep.OpenSharePdf -> {
+                binding.loading.isVisible = false
+                startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
+                viewModel.addToBackStack(DisplayedScreen.ShareSheet)
+            }
+        }
+    }
+
+    private fun showInstallAppDialog() {
+        childFragmentManager.showInstallAppBottomSheet(
+            paymentComponent = viewModel.paymentComponent,
+            backListener = viewModel
+        ) {
+            viewModel.onPayment()
+        }
+        viewModel.addToBackStack(DisplayedScreen.InstallAppBottomSheet)
+    }
+
+    private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
+        childFragmentManager.showOpenWithBottomSheet(
+            paymentProviderApp = paymentProviderApp,
+            backListener = viewModel
+        ) {
+            viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
+        }
+        viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
+        viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
+    }
+
+    override fun onStop() {
+        requireActivity().unregisterReceiver(shareWithEventBroadcastReceiver)
+        super.onStop()
     }
 
     companion object {
         fun newInstance(giniMerchant: GiniMerchant, documentId: String, paymentFlowConfiguration: PaymentFlowConfiguration,
-                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(giniMerchant.paymentComponent, documentId, paymentFlowConfiguration, giniMerchant)) = PaymentFlowFragment(giniMerchant, documentId, paymentFlowConfiguration, viewModelFactory)
+                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(giniMerchant.paymentComponent, documentId, paymentFlowConfiguration, giniMerchant)) = PaymentFlowFragment(viewModelFactory)
     }
 }
 
