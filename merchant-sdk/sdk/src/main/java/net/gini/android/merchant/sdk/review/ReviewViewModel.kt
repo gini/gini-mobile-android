@@ -149,6 +149,7 @@ internal class ReviewViewModel(val giniMerchant: GiniMerchant, val configuration
     }
 
     fun setAmount(amount: String) {
+        if (amount == "0") return
         _paymentDetails.value = paymentDetails.value.copy(amount = amount)
     }
 

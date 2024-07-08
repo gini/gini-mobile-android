@@ -305,16 +305,14 @@ class ReviewFragment private constructor(
         amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> viewModel.setAmount(text.toString()) })
         amount.addTextChangedListener(amountWatcher)
         purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> viewModel.setPurpose(text.toString()) })
-        recipient.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, recipientLayout) }
-        iban.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, ibanLayout) }
         amount.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, amountLayout) }
-        purpose.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, purposeLayout) }
     }
 
     private fun handleInputFocusChange(hasFocus: Boolean, textInputLayout: TextInputLayout) {
         if (hasFocus) textInputLayout.hideErrorMessage() else textInputLayout.showErrorMessage()
     }
 
+    //TODO EC-14, EC-25 - Since the ReviewFragment will be part of the common SDK, a bigger refactor should be made at that stage - based on the edit ability of the fields
     private fun GmsFragmentReviewBinding.handleValidationResult(messages: List<ValidationMessage>) {
         val (fieldsWithError, fieldsWithoutError) = PaymentField.values()
             .map { field -> field to messages.firstOrNull { it.field == field } }
@@ -323,21 +321,10 @@ class ReviewFragment private constructor(
             validationMessage?.let { message ->
                 getTextInputLayout(field).apply {
                     if (error.isNullOrEmpty() || getTag(R.id.text_input_layout_tag_is_error_enabled) == null) {
-                        setErrorMessage(
-                            when (message) {
-                                is ValidationMessage.Empty -> when (field) {
-                                    PaymentField.Recipient -> R.string.gms_error_input_recipient_empty
-                                    PaymentField.Iban -> R.string.gms_error_input_iban_empty
-                                    PaymentField.Amount -> R.string.gms_error_input_amount_empty
-                                    PaymentField.Purpose -> R.string.gms_error_input_purpose_empty
-                                }
-
-                                ValidationMessage.InvalidIban -> R.string.gms_error_input_invalid_iban
-                                ValidationMessage.AmountFormat -> R.string.gms_error_input_amount_format
-                            }
-                        )
-                        if (editText?.isFocused == true) {
-                            hideErrorMessage()
+                        when (message) {
+                            is ValidationMessage.Empty -> if (field == PaymentField.Amount) setErrorMessage(R.string.gms_error_input_amount_empty)
+                            ValidationMessage.AmountFormat -> setErrorMessage(R.string.gms_error_input_amount_format)
+                            else -> {}
                         }
                     }
                 }
