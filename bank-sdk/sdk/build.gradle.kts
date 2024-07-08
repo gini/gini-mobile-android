@@ -148,8 +148,9 @@ tasks.register<CreatePropertiesTask>("injectTestProperties") {
 
     doFirst {
         propertiesMap.clear()
-        propertiesMap.putAll(readLocalPropertiesToMap(project,
-            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri")))
+        propertiesMap.putAll(readLocalPropertiesToMapSilent(project,
+            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri"))
+        )
     }
 
     destinations.put(
