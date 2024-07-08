@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.exampleapp.invoices.ui
+package net.gini.android.merchant.sdk.exampleapp.orders.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,8 +24,8 @@ import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.MainActivity
 import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityInvoicesBinding
-import net.gini.android.merchant.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState
-import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.merchant.sdk.exampleapp.orders.data.UploadHardcodedInvoicesState
+import net.gini.android.merchant.sdk.exampleapp.orders.ui.model.OrderItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
 import net.gini.android.merchant.sdk.util.DisplayedScreen
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory
 
 class InvoicesActivity : AppCompatActivity() {
 
-    private val viewModel: InvoicesViewModel by viewModel()
+    private val viewModel: OrdersViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,7 +131,7 @@ class InvoicesActivity : AppCompatActivity() {
     private fun setActivityTitle(@StringRes screenTitle: Int? = null) {
         if (supportFragmentManager.backStackEntryCount == 0) {
             title = getString(R.string.title_activity_invoices)
-        } else if (supportFragmentManager.fragments.last() is InvoiceDetailsFragment) {
+        } else if (supportFragmentManager.fragments.last() is OrderDetailsFragment) {
             title = "Invoice details"
         } else if (screenTitle != null){
             title = getString(screenTitle)
@@ -148,7 +148,7 @@ class InvoicesActivity : AppCompatActivity() {
     }
 
     private fun showInvoiceDetailsFragment() {
-        InvoiceDetailsFragment.newInstance().apply {
+        OrderDetailsFragment.newInstance().apply {
             add()
         }
     }
@@ -194,8 +194,8 @@ class InvoicesActivity : AppCompatActivity() {
 }
 
 class InvoicesAdapter(
-    var dataSet: List<InvoiceItem>,
-    private val openInvoiceDetails: (InvoiceItem) -> Unit,
+    var dataSet: List<OrderItem>,
+    private val openInvoiceDetails: (OrderItem) -> Unit,
 ) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
 

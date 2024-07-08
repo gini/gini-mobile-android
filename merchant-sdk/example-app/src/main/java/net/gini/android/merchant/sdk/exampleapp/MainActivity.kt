@@ -9,7 +9,7 @@ import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import net.gini.android.merchant.sdk.exampleapp.configuration.ConfigurationFragment
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityMainBinding
-import net.gini.android.merchant.sdk.exampleapp.invoices.ui.InvoicesActivity
+import net.gini.android.merchant.sdk.exampleapp.orders.ui.InvoicesActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 

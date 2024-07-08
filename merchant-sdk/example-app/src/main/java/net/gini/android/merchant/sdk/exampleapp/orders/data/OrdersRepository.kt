@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.exampleapp.invoices.data
+package net.gini.android.merchant.sdk.exampleapp.orders.data
 
 import android.net.Uri
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,14 +9,14 @@ import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
+import net.gini.android.merchant.sdk.exampleapp.orders.data.model.DocumentWithExtractions
 import java.util.Date
 
 class InvoicesRepository(
     private val giniHealthAPI: GiniHealthAPI,
     val giniMerchant: GiniMerchant,
-    private val hardcodedInvoicesLocalDataSource: HardcodedInvoicesLocalDataSource,
-    private val invoicesLocalDataSource: InvoicesLocalDataSource
+    private val hardcodedInvoicesLocalDataSource: HardcodedOrdersLocalDataSource,
+    private val invoicesLocalDataSource: OrdersLocalDataSource
 ) {
 
     private val _uploadHardcodedInvoicesStateFlow: MutableStateFlow<UploadHardcodedInvoicesState> = MutableStateFlow(

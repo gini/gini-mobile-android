@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".invoices.ui.InvoicesActivity">
+    tools:context=".orders.ui.InvoicesActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/invoices_list"

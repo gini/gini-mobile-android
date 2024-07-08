@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.exampleapp.invoices.ui
+package net.gini.android.merchant.sdk.exampleapp.orders.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,10 +14,10 @@ import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.exampleapp.databinding.FragmentInvoiceDetailsBinding
 import net.gini.android.merchant.sdk.util.setIntervalClickListener
 
-class InvoiceDetailsFragment: Fragment() {
+class OrderDetailsFragment: Fragment() {
 
     private lateinit var binding: FragmentInvoiceDetailsBinding
-    private val viewModel: InvoicesViewModel by activityViewModels<InvoicesViewModel>()
+    private val viewModel: OrdersViewModel by activityViewModels<OrdersViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +56,6 @@ class InvoiceDetailsFragment: Fragment() {
     }
 
     companion object {
-        fun newInstance() = InvoiceDetailsFragment()
+        fun newInstance() = OrderDetailsFragment()
     }
 }

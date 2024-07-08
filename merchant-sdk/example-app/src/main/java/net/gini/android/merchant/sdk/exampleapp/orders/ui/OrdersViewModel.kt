@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.exampleapp.invoices.ui
+package net.gini.android.merchant.sdk.exampleapp.orders.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.exampleapp.invoices.data.InvoicesRepository
-import net.gini.android.merchant.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.merchant.sdk.exampleapp.orders.data.InvoicesRepository
+import net.gini.android.merchant.sdk.exampleapp.orders.ui.model.OrderItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
 import org.slf4j.LoggerFactory
 
-class InvoicesViewModel(
+class OrdersViewModel(
     private val invoicesRepository: InvoicesRepository,
     val giniMerchant: GiniMerchant
 ) : ViewModel() {
@@ -23,12 +23,12 @@ class InvoicesViewModel(
     val uploadHardcodedInvoicesStateFlow = invoicesRepository.uploadHardcodedInvoicesStateFlow
     val invoicesFlow = invoicesRepository.invoicesFlow.map { invoices ->
         invoices.map { invoice ->
-            InvoiceItem.fromInvoice(invoice)
+            OrderItem.fromInvoice(invoice)
         }
     }
 
-    private val _selectedInvoiceItem: MutableStateFlow<InvoiceItem?> = MutableStateFlow(null)
-    val selectedInvoiceItem: StateFlow<InvoiceItem?> = _selectedInvoiceItem
+    private val _selectedInvoiceItem: MutableStateFlow<OrderItem?> = MutableStateFlow(null)
+    val selectedInvoiceItem: StateFlow<OrderItem?> = _selectedInvoiceItem
 
     private val _startIntegratedPaymentFlow = MutableSharedFlow<PaymentFlowFragment>(
         extraBufferCapacity = 1
@@ -71,7 +71,7 @@ class InvoicesViewModel(
         }
     }
 
-    fun setSelectedInvoiceItem(invoiceItem: InvoiceItem) = viewModelScope.launch {
+    fun setSelectedInvoiceItem(invoiceItem: OrderItem) = viewModelScope.launch {
         _selectedInvoiceItem.emit(invoiceItem)
     }
 
@@ -88,7 +88,7 @@ class InvoicesViewModel(
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(InvoicesViewModel::class.java)
+        private val LOG = LoggerFactory.getLogger(OrdersViewModel::class.java)
 
     }
 }

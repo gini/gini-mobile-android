@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.exampleapp.invoices.data.model
+package net.gini.android.merchant.sdk.exampleapp.orders.data.model
 
 import com.squareup.moshi.JsonClass
 import net.gini.android.core.api.models.Document

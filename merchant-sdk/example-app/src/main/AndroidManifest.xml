@@ -40,7 +40,7 @@
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
-            android:name=".invoices.ui.InvoicesActivity"
+            android:name=".orders.ui.InvoicesActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_invoices"
             android:exported="false" />

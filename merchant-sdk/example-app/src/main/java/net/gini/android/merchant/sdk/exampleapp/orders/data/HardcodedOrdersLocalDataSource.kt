@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.exampleapp.invoices.data
+package net.gini.android.merchant.sdk.exampleapp.orders.data
 
 import android.content.Context
 
@@ -10,7 +10,7 @@ private val HARDCODED_INVOICES = listOf(
     "health-invoice-5.jpg",
 )
 
-class HardcodedInvoicesLocalDataSource(
+class HardcodedOrdersLocalDataSource(
     private val context: Context,
     private val hardcodedInvoiceFileNames: List<String> = HARDCODED_INVOICES
 ) {

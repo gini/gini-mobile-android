@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.exampleapp.invoices.data
+package net.gini.android.merchant.sdk.exampleapp.orders.data
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import net.gini.android.merchant.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
+import net.gini.android.merchant.sdk.exampleapp.orders.data.model.DocumentWithExtractions
 
 private val Context.dataStore by preferencesDataStore(name = "invoices")
 private val KEY_INVOICES = stringPreferencesKey("invoices")
 
-class InvoicesLocalDataSource(private val context: Context) {
+class OrdersLocalDataSource(private val context: Context) {
 
     private val _invoicesFlow: MutableStateFlow<List<DocumentWithExtractions>> = MutableStateFlow(listOf())
     val invoicesFlow = _invoicesFlow.asStateFlow()

@@ -1,6 +1,6 @@
-package net.gini.android.merchant.sdk.exampleapp.invoices.ui.model
+package net.gini.android.merchant.sdk.exampleapp.orders.ui.model
 
-import net.gini.android.merchant.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
+import net.gini.android.merchant.sdk.exampleapp.orders.data.model.DocumentWithExtractions
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -11,7 +11,7 @@ import java.util.Locale
 
 private val PRICE_STRING_REGEX = "^-?[0-9]+([.,])[0-9]+\$".toRegex()
 
-data class InvoiceItem(
+data class OrderItem(
     val documentId: String,
     val recipient: String?,
     val amount: String?,
@@ -20,8 +20,8 @@ data class InvoiceItem(
 ) {
 
     companion object {
-        fun fromInvoice(documentWithExtractions: DocumentWithExtractions): InvoiceItem {
-            return InvoiceItem(
+        fun fromInvoice(documentWithExtractions: DocumentWithExtractions): OrderItem {
+            return OrderItem(
                 documentWithExtractions.documentId,
                 documentWithExtractions.recipient,
                 parseAmount(documentWithExtractions.amount),
