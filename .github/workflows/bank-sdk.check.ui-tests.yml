@@ -1,0 +1,88 @@
+name: Check Bank SDK - UI Tests
+
+on:
+  push:
+    paths:
+      - 'bank-sdk/**'
+      - 'capture-sdk/**'
+      - 'bank-api-library/**'
+      - 'core-api-library/**'
+      - 'gradle/**'
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  pull_request:
+    types: [opened, edited, reopened]
+    paths:
+      - 'bank-sdk/**'
+      - 'capture-sdk/**'
+      - 'bank-api-library/**'
+      - 'core-api-library/**'
+      - 'gradle/**'
+  workflow_call:
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET:
+        required: true
+
+jobs:
+  ui-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: enable KVM group perms for emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: avd cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-x86_64-33-${{ github.ref_name }}
+
+      - name: create avd and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -camera-back emulated
+          disable-animations: true
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: run example app instrumented tests
+        timeout-minutes: 20
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: >
+            adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
+            ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest
+            -PclientId="gini-mobile-test"
+            -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+
+      - name: archive instrumented test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: bank-sdk-example-app-instrumented-test-results
+          path: bank-sdk/example-app/build/outputs/androidTest-results/connected
