@@ -1,5 +1,7 @@
 name: Check Bank SDK - UI Tests
 
+# TODO: Update triggers to execute only on workflow_call (from the release workflow) and via manual triggering
+#       (UI tests are slow and we should not run them on every push)
 on:
   push:
     paths:
