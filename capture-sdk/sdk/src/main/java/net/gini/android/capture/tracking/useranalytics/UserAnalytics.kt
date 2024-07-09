@@ -1,6 +1,7 @@
 package net.gini.android.capture.tracking.useranalytics
 
 import android.content.Context
+import net.gini.android.capture.internal.network.NetworkRequestsManager
 
 object UserAnalytics {
 
@@ -14,8 +15,8 @@ object UserAnalytics {
         eventTracker = BufferedUserAnalyticsEventTracker(applicationContext)
     }
 
-    fun setPlatformTokens(vararg tokens: AnalyticsApiKey) {
-        (eventTracker as? BufferedUserAnalyticsEventTracker)?.setPlatformTokens(*tokens)
+    fun setPlatformTokens(vararg tokens: AnalyticsApiKey, networkRequestsManager: NetworkRequestsManager) {
+        (eventTracker as? BufferedUserAnalyticsEventTracker)?.setPlatformTokens(*tokens, networkRequestsManager = networkRequestsManager)
     }
 
     fun getAnalyticsEventTracker(

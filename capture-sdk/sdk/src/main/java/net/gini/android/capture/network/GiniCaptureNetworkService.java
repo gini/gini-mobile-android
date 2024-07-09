@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.internal.network.AmplitudeRoot;
 import net.gini.android.capture.internal.network.Configuration;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
@@ -111,6 +112,10 @@ public interface GiniCaptureNetworkService extends ErrorLoggerListener {
     void cleanup();
 
     default CancellationToken getConfiguration(@NonNull final GiniCaptureNetworkCallback<Configuration, Error> callback) {
+        return null;
+    }
+
+    default CancellationToken sendEvents(@NonNull final AmplitudeRoot amplitudeRoot, @NonNull final GiniCaptureNetworkCallback<Void, Error> callback) {
         return null;
     }
 

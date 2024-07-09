@@ -9,11 +9,12 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.GiniBankAPIBuilder
+import net.gini.android.bank.api.models.*
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
+import net.gini.android.capture.internal.network.AmplitudeRoot
 import net.gini.android.capture.internal.network.Configuration
-import net.gini.android.bank.api.models.Configuration as BankConfiguration
 import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService.Companion.builder
 import net.gini.android.capture.network.logging.formattedErrorMessage
@@ -31,6 +32,7 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.TrustManager
 import kotlin.coroutines.CoroutineContext
+import net.gini.android.bank.api.models.Configuration as BankConfiguration
 
 /**
  * Created by Alpár Szotyori on 30.09.22.
@@ -80,6 +82,71 @@ class GiniCaptureDefaultNetworkService(
     var analyzedGiniApiDocument: net.gini.android.core.api.models.Document? = null
         private set
 
+
+    override fun sendEvents(
+        amplitudeRoot: AmplitudeRoot,
+        callback: GiniCaptureNetworkCallback<Void, Error>
+    ): CancellationToken? =
+        launchCancellable {
+            when (val configurationResource =
+                giniBankApi.documentManager.sendEvents(
+                    mapAmplitudeRootModelToAmplitudeRoot(
+                        amplitudeRoot
+                    )
+                )) {
+                is Resource.Success -> {
+                    LOG.debug(
+                        "Send events success"
+                    )
+                    callback.success(null)
+                }
+
+                is Resource.Error -> {
+                    LOG.debug(
+                        "Send events failed"
+                    )
+                    val error = Error(configurationResource.formattedErrorMessage)
+                    LOG.error(
+                        "Send events failed for {}",
+                        error.message
+                    )
+                    callback.failure(error)
+                }
+
+                is Resource.Cancelled -> {
+                    LOG.debug("Send events cancelled")
+                    callback.cancelled()
+                }
+            }
+        }
+
+    private fun mapAmplitudeRootModelToAmplitudeRoot(amplitudeRoot: AmplitudeRoot) =
+        AmplitudeRoot(
+            apiKey = amplitudeRoot.apiKey,
+            events = amplitudeRoot.events.map { event ->
+                AmplitudeEvent(
+                    userId = event.userId,
+                    deviceId = event.deviceId,
+                    eventType = event.eventType,
+                    time = event.time,
+                    platform = event.platform,
+                    osVersion = event.osVersion,
+                    deviceManufacturer = event.deviceManufacturer,
+                    deviceBrand = event.deviceBrand,
+                    deviceModel = event.deviceModel,
+                    versionName = event.versionName,
+                    osName = event.osName,
+                    carrier = event.carrier,
+                    language = event.language,
+                    appSetId = event.appSetId,
+                    eventProperties = event.eventProperties,
+                    userProperties = event.userProperties,
+                    appVersion = event.appVersion
+                )
+            }
+        )
+
+
     override fun getConfiguration(callback: GiniCaptureNetworkCallback<Configuration, Error>): CancellationToken? =
         launchCancellable {
             when (val configurationResource = giniBankApi.documentManager.getConfigurations()) {
@@ -110,7 +177,7 @@ class GiniCaptureDefaultNetworkService(
         }
 
     private fun mapBankConfigurationToConfiguration(configuration: BankConfiguration) =
-       Configuration(
+        Configuration(
             UUID.randomUUID(),
             configuration.clientID,
             configuration.isUserJourneyAnalyticsEnabled,

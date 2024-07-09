@@ -1,0 +1,26 @@
+package net.gini.android.capture.internal.network
+
+data class AmplitudeRoot(
+    val apiKey: String,
+    val events: List<AmplitudeEventModel>,
+)
+
+data class AmplitudeEventModel(
+    val userId: String,
+    val deviceId: String,
+    val eventType: String,
+    val time: Long,
+    val platform: String,
+    val osVersion: String,
+    val deviceManufacturer: String,
+    val deviceBrand: String,
+    val deviceModel: String,
+    val versionName: String,
+    val osName: String,
+    val carrier: String,
+    val language: String,
+    val appSetId: String,
+    val eventProperties: Map<String, Any>? = null,
+    val userProperties: Map<String, Any>? = null,
+    val appVersion: String,
+)

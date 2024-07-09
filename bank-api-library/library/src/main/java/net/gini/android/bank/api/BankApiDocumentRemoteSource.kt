@@ -6,7 +6,7 @@ import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.api.models.toResolvedPayment
 import net.gini.android.bank.api.requests.ErrorEvent
-import net.gini.android.bank.api.requests.toResolvePaymentBody
+import net.gini.android.bank.api.requests.toAmplitudeRequestBody
 import net.gini.android.bank.api.response.toConfiguration
 import net.gini.android.core.api.DocumentRemoteSource
 import net.gini.android.core.api.requests.ApiException
@@ -25,7 +25,7 @@ class BankApiDocumentRemoteSource internal constructor(
 
     suspend fun resolvePaymentRequests(accessToken: String, id: String, input: ResolvePaymentInput): ResolvedPayment = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.resolvePaymentRequests(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), id, input.toResolvePaymentBody())
+            documentService.resolvePaymentRequests(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), id, input.toAmplitudeRequestBody())
         }
         response.body()?.toResolvedPayment() ?: throw ApiException.forResponse("Empty response body", response)
     }

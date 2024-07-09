@@ -1,6 +1,7 @@
 package net.gini.android.capture.tracking.useranalytics
 
 import android.content.Context
+import net.gini.android.capture.internal.network.NetworkRequestsManager
 import net.gini.android.capture.internal.provider.InstallationIdProvider
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
@@ -26,7 +27,7 @@ internal class BufferedUserAnalyticsEventTracker(
     private val events: Queue<Pair<UserAnalyticsEvent, Set<UserAnalyticsEventProperty>>> =
         LinkedList()
 
-    fun setPlatformTokens(vararg tokens: UserAnalytics.AnalyticsApiKey) {
+    fun setPlatformTokens(vararg tokens: UserAnalytics.AnalyticsApiKey, networkRequestsManager: NetworkRequestsManager,) {
         tokens.forEach { token ->
             when (token) {
 
@@ -37,6 +38,7 @@ internal class BufferedUserAnalyticsEventTracker(
                         AmplitudeUserAnalyticsEventTracker(
                             context = context,
                             apiKey = token,
+                            networkRequestsManager = networkRequestsManager,
                             installationIdProvider = installationIdProvider
                         )
                     )
