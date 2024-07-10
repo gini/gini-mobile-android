@@ -17,6 +17,12 @@
     <string name="example_of_health_sdk">Example of Gini Pay Connect integration in the insurance app</string>
     <string name="could_not_start_payment_review">Could not start payment review</string>
     <string name="title_payment_review">Your Invoice</string>
+    <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default values.</string>
+    <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
+    <string name="hide_powered_by_gini">Hide powered by Gini on payment component</string>
+    <string name="gini_health_version">Gini Health SDK v: </string>
 
     <string name="ghs_privacy_policy_link_url">https://www.google.com</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
