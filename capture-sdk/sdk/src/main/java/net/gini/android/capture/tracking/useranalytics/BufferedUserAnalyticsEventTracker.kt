@@ -26,22 +26,26 @@ internal class BufferedUserAnalyticsEventTracker(
     private val userProperties: Queue<Set<UserAnalyticsUserProperty>> = LinkedList()
     private val events: Queue<Pair<UserAnalyticsEvent, Set<UserAnalyticsEventProperty>>> =
         LinkedList()
+    private lateinit var amplitude: AmplitudeUserAnalyticsEventTracker
 
-    fun setPlatformTokens(vararg tokens: UserAnalytics.AnalyticsApiKey, networkRequestsManager: NetworkRequestsManager,) {
+    fun setPlatformTokens(
+        vararg tokens: UserAnalytics.AnalyticsApiKey,
+        networkRequestsManager: NetworkRequestsManager,
+    ) {
         tokens.forEach { token ->
             when (token) {
 
                 is AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey -> {
                     eventTrackers.removeIf { tracker -> tracker is AmplitudeUserAnalyticsEventTracker }
 
-                    eventTrackers.add(
-                        AmplitudeUserAnalyticsEventTracker(
-                            context = context,
-                            apiKey = token,
-                            networkRequestsManager = networkRequestsManager,
-                            installationIdProvider = installationIdProvider
-                        )
+                    amplitude = AmplitudeUserAnalyticsEventTracker(
+                        context = context,
+                        apiKey = token,
+                        networkRequestsManager = networkRequestsManager,
+                        installationIdProvider = installationIdProvider
                     )
+                    amplitude.startRepeatingJob()
+                    eventTrackers.add(amplitude)
 
                     LOG.debug("Amplitude Initialized")
                 }
@@ -81,6 +85,10 @@ internal class BufferedUserAnalyticsEventTracker(
 
     override fun trackEvent(eventName: UserAnalyticsEvent) {
         trackEvent(eventName, emptySet())
+    }
+
+    override fun flushEvents() {
+        amplitude.flushEvents()
     }
 
     private fun trySendEvents() {

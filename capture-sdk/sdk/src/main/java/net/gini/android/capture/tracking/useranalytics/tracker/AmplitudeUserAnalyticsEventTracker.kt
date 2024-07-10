@@ -2,10 +2,16 @@ package net.gini.android.capture.tracking.useranalytics.tracker
 
 import android.content.Context
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.gini.android.capture.internal.network.AmplitudeEventModel
 import net.gini.android.capture.internal.network.AmplitudeRoot
 import net.gini.android.capture.internal.network.NetworkRequestsManager
 import net.gini.android.capture.internal.provider.InstallationIdProvider
+import net.gini.android.capture.internal.provider.UserIdProvider
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
@@ -13,13 +19,16 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import org.slf4j.LoggerFactory
+import java.util.Calendar
+import java.util.TimeZone
 import java.util.UUID
 
 internal class AmplitudeUserAnalyticsEventTracker(
     val context: Context,
     val apiKey: AmplitudeAnalyticsApiKey,
     val networkRequestsManager: NetworkRequestsManager,
-    val installationIdProvider: InstallationIdProvider = InstallationIdProvider(context)
+    val installationIdProvider: InstallationIdProvider = InstallationIdProvider(context),
+    val userIdProvider: UserIdProvider = UserIdProvider(context)
 ) : UserAnalyticsEventTracker {
 
     private val LOG = LoggerFactory.getLogger(AmplitudeUserAnalyticsEventTracker::class.java)
@@ -52,6 +61,8 @@ internal class AmplitudeUserAnalyticsEventTracker(
         trackEvent(eventName, emptySet())
     }
 
+    private val events: MutableList<AmplitudeEventModel> = mutableListOf()
+
     override fun trackEvent(
         eventName: UserAnalyticsEvent,
         properties: Set<UserAnalyticsEventProperty>
@@ -59,13 +70,14 @@ internal class AmplitudeUserAnalyticsEventTracker(
         val superPropertiesMap = superProperties.associate { it.getPair() }
         val propertiesMap = properties.associate { it.getPair() }
         val finalProperties = superPropertiesMap.plus(propertiesMap)
+        val c: Calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Berlin"))
 
-        val events = listOf(
+        events.add(
             AmplitudeEventModel(
-                userId = "",
+                userId = userIdProvider.getUserId(),
                 deviceId = installationIdProvider.getInstallationId(),
                 eventType = eventName.eventName,
-                time = System.currentTimeMillis(),
+                time = c.timeInMillis,
                 platform = contextProvider.osName,
                 osVersion = contextProvider.osVersion,
                 deviceManufacturer = contextProvider.manufacturer,
@@ -82,15 +94,36 @@ internal class AmplitudeUserAnalyticsEventTracker(
             )
         )
 
-        val reqBody = AmplitudeRoot(apiKey = apiKey.key, events)
-        networkRequestsManager.sendEvents(reqBody, UUID.randomUUID())
-
         Log.e("User journey", "Event: ${eventName.eventName}\n" +
                 properties.joinToString("\n") { "  ${it.getPair().first}=${it.getPair().second}" })
 
         LOG.debug("\nEvent: ${eventName.eventName}\n" +
                 properties.joinToString("\n") { "  ${it.getPair().first}=${it.getPair().second}" })
     }
+
+    fun startRepeatingJob(): Job {
+        return CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                if (events.isNotEmpty()) {
+                    val reqBody = AmplitudeRoot(apiKey = apiKey.key, events.toList())
+                    networkRequestsManager.sendEvents(reqBody, UUID.randomUUID())
+                    events.clear()
+                }
+                delay(5000)
+            }
+        }
+    }
+
+    override fun flushEvents() {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (events.isNotEmpty()) {
+                val reqBody = AmplitudeRoot(apiKey = apiKey.key, events.toList())
+                networkRequestsManager.sendEvents(reqBody, UUID.randomUUID())
+                events.clear()
+            }
+        }
+    }
+
 
     data class AmplitudeAnalyticsApiKey(private val apiKey: String) :
         UserAnalytics.AnalyticsApiKey(apiKey)

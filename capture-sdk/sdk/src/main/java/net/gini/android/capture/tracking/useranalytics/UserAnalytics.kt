@@ -19,6 +19,10 @@ object UserAnalytics {
         (eventTracker as? BufferedUserAnalyticsEventTracker)?.setPlatformTokens(*tokens, networkRequestsManager = networkRequestsManager)
     }
 
+    fun flushEvents() {
+        (eventTracker as? BufferedUserAnalyticsEventTracker)?.flushEvents()
+    }
+
     fun getAnalyticsEventTracker(
     ) = eventTracker ?: throw IllegalStateException(
         "You need to initialize analytics by calling `UserAnalytics.initialize(...)`"

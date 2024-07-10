@@ -133,6 +133,9 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         if (!didFinishWithResult && !willBeRestored) {
             giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
         }
+        if (willBeRestored)  {
+            UserAnalytics.flushEvents()
+        }
     }
 
     override fun onResume() {
