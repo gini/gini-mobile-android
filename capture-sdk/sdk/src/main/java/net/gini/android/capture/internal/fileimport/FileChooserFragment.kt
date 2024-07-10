@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -15,7 +16,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -30,6 +33,7 @@ import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcFragmentFileChooserBinding
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersAdapter
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersAppItem
+import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersAppWrapperItem
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersItem
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersSectionItem
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersSeparatorItem
@@ -57,6 +61,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     private var docImportEnabledFileTypes: DocumentImportEnabledFileTypes? = null
     private var binding: GcFragmentFileChooserBinding by autoCleared()
     private var chooseFileLauncher: ActivityResultLauncher<Intent>? = null
+    private var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>? = null
     private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Camera
 
@@ -152,6 +157,32 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                     })
                 }
         }
+
+        val photoPickType =
+            if (FeatureConfiguration.isMultiPageEnabled())
+                ActivityResultContracts.PickMultipleVisualMedia()
+            else
+                ActivityResultContracts.PickVisualMedia()
+
+
+        pickMedia = registerForActivityResult(photoPickType) { uri ->
+            findNavController().popBackStack()
+            if (uri != null) {
+                val lst = when(uri){
+                    is Uri -> listOf(uri)
+                    is List<*> -> uri.filterIsInstance<Uri>().takeIf { it.size == uri.size }
+                        ?: throw IllegalArgumentException("List contains non-Uri elements")
+                    else -> throw IllegalArgumentException("uri is neither Uri nor List<Uri>")
+                }
+                setFragmentResult(REQUEST_KEY, Bundle().apply {
+                    putParcelable(RESULT_KEY, FileChooserResult.FilesSelectedUri(lst))
+                })
+            } else {
+                setFragmentResult(REQUEST_KEY, Bundle().apply {
+                    putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
+                })
+            }
+        }
     }
 
     private fun getGridSpanCount(): Int =
@@ -164,15 +195,18 @@ class FileChooserFragment : BottomSheetDialogFragment() {
 
     private fun populateFileProviders() {
         val providerItems: MutableList<ProvidersItem> = ArrayList()
-        var imageProviderItems: List<ProvidersItem> = ArrayList()
+        var imageProviderItems: List<ProvidersItem> = arrayListOf()
         var pdfProviderItems: List<ProvidersItem> = ArrayList()
         if (shouldShowImageProviders()) {
             val imagePickerResolveInfos = queryImagePickers(requireContext())
             val imageProviderResolveInfos = queryImageProviders(requireContext())
-            imageProviderItems = getImageProviderItems(
-                imagePickerResolveInfos,
-                imageProviderResolveInfos
-            )
+
+            imageProviderItems =
+                if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())) {
+                    getPhotoPickerProvider()
+                } else {
+                    getImageProviderItems(imagePickerResolveInfos, imageProviderResolveInfos)
+                }
         }
         if (shouldShowPdfProviders()) {
             val pdfProviderResolveInfos = queryPdfProviders(requireContext())
@@ -204,12 +238,26 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             }
     }
 
-    private fun launchApp(item: ProvidersAppItem) {
-        item.intent.setClassName(
-            item.resolveInfo.activityInfo.packageName,
-            item.resolveInfo.activityInfo.name
-        )
-        chooseFileLauncher?.launch(item.intent)
+    private fun launchApp(item: ProvidersItem) {
+        when (item) {
+            is ProvidersAppItem -> {
+                item.intent.setClassName(
+                    item.resolveInfo.activityInfo.packageName,
+                    item.resolveInfo.activityInfo.name
+                )
+                chooseFileLauncher?.launch(item.intent)
+            }
+
+            is ProvidersAppWrapperItem -> {
+                pickMedia?.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.SingleMimeType(
+                            MimeType.IMAGE_WILDCARD.asString()
+                        )
+                    )
+                )
+            }
+        }
     }
 
     private fun getImageProviderItems(
@@ -231,6 +279,23 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                 add(ProvidersAppItem(getImageDocumentIntent, imageProviderResolveInfo))
             }
         }
+    }
+
+    private fun getPhotoPickerProvider(): List<ProvidersItem> {
+        val providerList =
+            ContextCompat.getDrawable(requireContext(), (R.drawable.gc_photo_tip_align))
+                ?.let { image ->
+                    listOf(
+                        ProvidersSectionItem(getString(R.string.gc_file_chooser_fotos_section_header)),
+                        ProvidersAppWrapperItem(
+                            image,
+                            getString(R.string.gc_file_chooser_fotos_section_header)
+                        )
+                    )
+                } ?: run {
+                emptyList()
+            }
+        return providerList
     }
 
     private fun getPdfProviderItems(pdfProviderResolveInfos: List<ResolveInfo>): List<ProvidersItem> =
@@ -340,6 +405,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
 @Parcelize
 sealed class FileChooserResult : Parcelable {
     data class FilesSelected(val dataIntent: Intent) : FileChooserResult()
+    data class FilesSelectedUri(val list: List<Uri>) : FileChooserResult()
     data class Error(val error: GiniCaptureError) : FileChooserResult()
     object Cancelled : FileChooserResult()
 }
