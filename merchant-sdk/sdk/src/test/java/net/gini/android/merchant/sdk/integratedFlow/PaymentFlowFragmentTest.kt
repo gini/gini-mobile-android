@@ -86,6 +86,9 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
         every { paymentFlowViewModel!!.giniMerchant!!.getContainerFragment(any(), any()) } returns mockk(relaxed = true)
+        every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
+        every { paymentFlowViewModel!!.giniMerchant.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentFlowViewModel!!.giniMerchant.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { paymentFlowViewModel!!.paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             mockk(relaxed = true)
         )
@@ -105,7 +108,7 @@ class PaymentFlowFragmentTest {
         fragment.handlePayFlow(documentId)
 
         // Then
-        verify { fragment.showReviewFragment(documentId) }
+        verify { fragment.showReviewBottomDialog() }
     }
 
     @Test

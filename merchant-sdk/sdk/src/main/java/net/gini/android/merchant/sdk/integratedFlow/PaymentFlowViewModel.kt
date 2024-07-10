@@ -25,12 +25,12 @@ import net.gini.android.merchant.sdk.util.PaymentNextStep
 import java.io.File
 import java.util.Stack
 
-internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val documentId: String, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant) : ViewModel(), FlowBottomSheetsManager, BackListener {
+internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val documentId: String?, val paymentDetails: PaymentDetails? = null, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant) : ViewModel(), FlowBottomSheetsManager, BackListener {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
 
-    private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
+    private val _paymentDetails = MutableStateFlow(PaymentDetails(paymentDetails?.recipient ?: "", paymentDetails?.iban ?: "", paymentDetails?.amount ?: "", paymentDetails?.purpose ?: ""))
 
     override var openWithPreferences: OpenWithPreferences? = null
     override var openWithCounter: Int = 0
@@ -47,17 +47,18 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
     override val shareWithFlowStarted: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     init {
-        viewModelScope.launch {
-            giniMerchant.paymentFlow.collect { paymentResult ->
-                if (paymentResult is ResultWrapper.Success) {
-                    _paymentDetails.tryEmit(paymentResult.value)
+        documentId?.let {
+            viewModelScope.launch {
+                giniMerchant.paymentFlow.collect { paymentResult ->
+                    if (paymentResult is ResultWrapper.Success) {
+                        _paymentDetails.tryEmit(paymentResult.value)
+                    }
                 }
             }
-        }
-
-        viewModelScope.launch {
-            _paymentDetails.collect {paymentDetails ->
-                giniMerchant.setDocumentForReview(documentId, paymentDetails)
+            viewModelScope.launch {
+                _paymentDetails.collect {paymentDetails ->
+                    giniMerchant.setDocumentForReview(documentId, paymentDetails)
+                }
             }
         }
 
@@ -116,7 +117,9 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
     }
 
     fun loadPaymentDetails() = viewModelScope.launch {
-        giniMerchant.setDocumentForReview(documentId)
+        documentId?.let {
+            giniMerchant.setDocumentForReview(documentId)
+        }
     }
 
     fun onBankOpened() {
@@ -160,10 +163,10 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 
-    class Factory(val paymentComponent: PaymentComponent, val documentId: String, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
+    class Factory(val paymentComponent: PaymentComponent, val documentId: String?, val paymentDetails: PaymentDetails?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentFlowViewModel(paymentComponent = paymentComponent, documentId = documentId, paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
+            return PaymentFlowViewModel(paymentComponent = paymentComponent, documentId = documentId, paymentDetails = paymentDetails,paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
         }
     }
 

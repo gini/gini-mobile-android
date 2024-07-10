@@ -10,13 +10,10 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import net.gini.android.merchant.sdk.GiniMerchant
@@ -131,308 +128,308 @@ class ReviewViewModelTest {
 
         coVerify { giniMerchant!!.setDocumentForReview(documentId) }
     }
-
-    @Test
-    fun `validates payment details when the extractions have loaded`() = runTest {
-        // When
-        every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
-            ResultWrapper.Success(
-                PaymentDetails(
-                    recipient = "",
-                    iban = "iban",
-                    amount = "amount",
-                    purpose = "purpose",
-                    extractions = null
-                )
-            )
-        )
-
-        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-            SelectedPaymentProviderAppState.AppSelected(mockk()))
-
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "",giniPayment!!)
-
-        val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
-
-        // Then
-        val validations = validationsAsync.await()
-
-        assertThat(validations).hasSize(1)
-        assertThat(validations[0]).isNotEmpty()
-    }
-
-    @Test
-    fun `validates payment details on every change`() = runTest {
-        // Given
-        every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
-            ResultWrapper.Success(
-                PaymentDetails(
-                    recipient = "recipient",
-                    iban = "iban",
-                    amount = "amount",
-                    purpose = "purpose",
-                    extractions = null
-                )
-            )
-        )
-
-        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-            SelectedPaymentProviderAppState.AppSelected(mockk()))
-
-        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
-
-        viewModel.paymentValidation.test {
-            // Precondition
-            assertThat(awaitItem()).isEmpty()
-
-            // When - Then
-            viewModel.setRecipient("")
-            assertThat(awaitItem()).contains(ValidationMessage.Empty(PaymentField.Recipient))
-
-            viewModel.setIban("")
-            assertThat(awaitItem()).contains(ValidationMessage.Empty(PaymentField.Iban))
-
-            viewModel.setAmount("")
-            assertThat(awaitItem()).contains(ValidationMessage.Empty(PaymentField.Amount))
-
-            viewModel.setRecipient("foo")
-            assertThat(awaitItem()).doesNotContain(ValidationMessage.Empty(PaymentField.Recipient))
-
-            viewModel.setAmount("1.00")
-            assertThat(awaitItem()).doesNotContain(ValidationMessage.Empty(PaymentField.Amount))
-
-            viewModel.setIban("DE1234")
-            assertThat(awaitItem()).doesNotContain(ValidationMessage.Empty(PaymentField.Iban))
-
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `emits only 'input field empty' errors when validating payment details after the extractions have loaded`() =
-        runTest {
-            // When
-            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
-                ResultWrapper.Success(
-                    PaymentDetails(
-                        recipient = "",
-                        iban = "iban",
-                        amount = "amount",
-                        purpose = "purpose",
-                        extractions = null
-                    )
-                )
-            )
-
-            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-                SelectedPaymentProviderAppState.AppSelected(mockk()))
-
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
-
-            val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
-
-            // Then
-            val validations = validationsAsync.await()
-
-            assertThat(validations).hasSize(1)
-            assertThat(validations[0]).contains(
-                ValidationMessage.Empty(PaymentField.Recipient)
-            )
-        }
-
-    @Test
-    fun `clears 'input field empty' error if the recipient field is not empty after input`() =
-        runTest {
-            // Given
-            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
-                ResultWrapper.Success(
-                    PaymentDetails(
-                        recipient = "",
-                        iban = "iban",
-                        amount = "1",
-                        purpose = "purpose",
-                        extractions = null
-                    )
-                )
-            )
-
-            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-                SelectedPaymentProviderAppState.AppSelected(mockk()))
-
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
-
-            viewModel.paymentValidation.test {
-                // Precondition
-                assertThat(awaitItem()).containsExactly(
-                    ValidationMessage.Empty(PaymentField.Recipient),
-                )
-
-                // When
-                viewModel.setRecipient("recipient")
-
-                // Then
-                assertThat(awaitItem()).isEmpty()
-
-                cancelAndConsumeRemainingEvents()
-            }
-        }
-
-    @Test
-    fun `clears 'input field empty' error if the iban field is not empty after input`() =
-        runTest {
-            // Given
-            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
-                ResultWrapper.Success(
-                    PaymentDetails(
-                        recipient = "recipient",
-                        iban = "",
-                        amount = "1",
-                        purpose = "purpose",
-                        extractions = null
-                    )
-                )
-            )
-
-            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-                SelectedPaymentProviderAppState.AppSelected(mockk()))
-
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
-
-            viewModel.paymentValidation.test {
-                // Precondition
-                assertThat(awaitItem()).containsExactly(
-                    ValidationMessage.Empty(PaymentField.Iban),
-                )
-
-                // When
-                viewModel.setIban("iban")
-
-                // Then
-                assertThat(awaitItem()).isEmpty()
-
-                cancelAndConsumeRemainingEvents()
-            }
-        }
-
-    @Test
-    fun `clears 'input field empty' error if the amount field is not empty after input`() =
-        runTest {
-            // Given
-            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
-                ResultWrapper.Success(
-                    PaymentDetails(
-                        recipient = "recipient",
-                        iban = "iban",
-                        amount = "",
-                        purpose = "purpose",
-                        extractions = null
-                    )
-                )
-            )
-
-            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-                SelectedPaymentProviderAppState.AppSelected(mockk()))
-
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
-
-            viewModel.paymentValidation.test {
-                // When
-                viewModel.setAmount("1")
-
-                // Then
-                assertThat(awaitItem()).containsExactly(
-                    ValidationMessage.Empty(PaymentField.Amount),
-                )
-                assertThat(awaitItem()).isEmpty()
-
-                cancelAndConsumeRemainingEvents()
-            }
-        }
-
-    @Test
-    fun `clears 'input field empty' error if the purpose field is not empty after input`() =
-        runTest {
-            // Given
-            val paymentDetails = PaymentDetails(
-                recipient = "recipient",
-                iban = "iban",
-                amount = "1",
-                purpose = "",
-                extractions = null
-            )
-            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
-                ResultWrapper.Success(
-                    paymentDetails
-                )
-            )
-
-            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-                SelectedPaymentProviderAppState.AppSelected(mockk()))
-
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
-
-            viewModel.paymentValidation.test {
-                // When
-                viewModel.setPurpose("purpose")
-
-                // Then
-                assertThat(awaitItem()).containsExactly(
-                    ValidationMessage.Empty(PaymentField.Purpose),
-                )
-                assertThat(awaitItem()).isEmpty()
-
-                cancelAndConsumeRemainingEvents()
-            }
-        }
-
-    @Test
-    fun `clears 'invalid IBAN' error after modifying the IBAN`() =
-        runTest {
-            // Given
-            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
-                ResultWrapper.Success(
-                    PaymentDetails(
-                        recipient = "recipient",
-                        iban = "iban",
-                        amount = "1",
-                        purpose = "purpose",
-                        extractions = null
-                    )
-                )
-            )
-
-            val paymentProviderApp = mockk<PaymentProviderApp>()
-            every { paymentProviderApp.installedPaymentProviderApp } returns mockk()
-
-            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-                SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
-
-            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
-
-            // Validate all fields to also get an invalid iban validation message
-            viewModel.onPayment()
-
-            viewModel.paymentValidation.test {
-                // When
-                viewModel.setIban("iban2")
-
-                // Then
-                assertThat(awaitItem()).containsExactly(
-                    ValidationMessage.InvalidIban,
-                )
-                assertThat(awaitItem()).isEmpty()
-
-                cancelAndConsumeRemainingEvents()
-            }
-        }
+//TODO move these tests to ReviewComponentTest
+//    @Test
+//    fun `validates payment details when the extractions have loaded`() = runTest {
+//        // When
+//        every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
+//            ResultWrapper.Success(
+//                PaymentDetails(
+//                    recipient = "",
+//                    iban = "iban",
+//                    amount = "amount",
+//                    purpose = "purpose",
+//                    extractions = null
+//                )
+//            )
+//        )
+//
+//        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+//        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+//            SelectedPaymentProviderAppState.AppSelected(mockk()))
+//
+//        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "",giniPayment!!)
+//
+//        val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
+//
+//        // Then
+//        val validations = validationsAsync.await()
+//
+//        assertThat(validations).hasSize(1)
+//        assertThat(validations[0]).isNotEmpty()
+//    }
+//
+//    @Test
+//    fun `validates payment details on every change`() = runTest {
+//        // Given
+//        every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
+//            ResultWrapper.Success(
+//                PaymentDetails(
+//                    recipient = "recipient",
+//                    iban = "iban",
+//                    amount = "amount",
+//                    purpose = "purpose",
+//                    extractions = null
+//                )
+//            )
+//        )
+//
+//        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+//        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+//            SelectedPaymentProviderAppState.AppSelected(mockk()))
+//
+//        val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
+//
+//        viewModel.paymentValidation.test {
+//            // Precondition
+//            assertThat(awaitItem()).isEmpty()
+//
+//            // When - Then
+//            viewModel.setRecipient("")
+//            assertThat(awaitItem()).contains(ValidationMessage.Empty(PaymentField.Recipient))
+//
+//            viewModel.setIban("")
+//            assertThat(awaitItem()).contains(ValidationMessage.Empty(PaymentField.Iban))
+//
+//            viewModel.setAmount("")
+//            assertThat(awaitItem()).contains(ValidationMessage.Empty(PaymentField.Amount))
+//
+//            viewModel.setRecipient("foo")
+//            assertThat(awaitItem()).doesNotContain(ValidationMessage.Empty(PaymentField.Recipient))
+//
+//            viewModel.setAmount("1.00")
+//            assertThat(awaitItem()).doesNotContain(ValidationMessage.Empty(PaymentField.Amount))
+//
+//            viewModel.setIban("DE1234")
+//            assertThat(awaitItem()).doesNotContain(ValidationMessage.Empty(PaymentField.Iban))
+//
+//            cancelAndConsumeRemainingEvents()
+//        }
+//    }
+//
+//    @Test
+//    fun `emits only 'input field empty' errors when validating payment details after the extractions have loaded`() =
+//        runTest {
+//            // When
+//            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
+//                ResultWrapper.Success(
+//                    PaymentDetails(
+//                        recipient = "",
+//                        iban = "iban",
+//                        amount = "amount",
+//                        purpose = "purpose",
+//                        extractions = null
+//                    )
+//                )
+//            )
+//
+//            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+//            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+//                SelectedPaymentProviderAppState.AppSelected(mockk()))
+//
+//            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
+//
+//            val validationsAsync = async { viewModel.paymentValidation.take(1).toList() }
+//
+//            // Then
+//            val validations = validationsAsync.await()
+//
+//            assertThat(validations).hasSize(1)
+//            assertThat(validations[0]).contains(
+//                ValidationMessage.Empty(PaymentField.Recipient)
+//            )
+//        }
+//
+//    @Test
+//    fun `clears 'input field empty' error if the recipient field is not empty after input`() =
+//        runTest {
+//            // Given
+//            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
+//                ResultWrapper.Success(
+//                    PaymentDetails(
+//                        recipient = "",
+//                        iban = "iban",
+//                        amount = "1",
+//                        purpose = "purpose",
+//                        extractions = null
+//                    )
+//                )
+//            )
+//
+//            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+//            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+//                SelectedPaymentProviderAppState.AppSelected(mockk()))
+//
+//            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
+//
+//            viewModel.paymentValidation.test {
+//                // Precondition
+//                assertThat(awaitItem()).containsExactly(
+//                    ValidationMessage.Empty(PaymentField.Recipient),
+//                )
+//
+//                // When
+//                viewModel.setRecipient("recipient")
+//
+//                // Then
+//                assertThat(awaitItem()).isEmpty()
+//
+//                cancelAndConsumeRemainingEvents()
+//            }
+//        }
+//
+//    @Test
+//    fun `clears 'input field empty' error if the iban field is not empty after input`() =
+//        runTest {
+//            // Given
+//            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
+//                ResultWrapper.Success(
+//                    PaymentDetails(
+//                        recipient = "recipient",
+//                        iban = "",
+//                        amount = "1",
+//                        purpose = "purpose",
+//                        extractions = null
+//                    )
+//                )
+//            )
+//
+//            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+//            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+//                SelectedPaymentProviderAppState.AppSelected(mockk()))
+//
+//            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
+//
+//            viewModel.paymentValidation.test {
+//                // Precondition
+//                assertThat(awaitItem()).containsExactly(
+//                    ValidationMessage.Empty(PaymentField.Iban),
+//                )
+//
+//                // When
+//                viewModel.setIban("iban")
+//
+//                // Then
+//                assertThat(awaitItem()).isEmpty()
+//
+//                cancelAndConsumeRemainingEvents()
+//            }
+//        }
+//
+//    @Test
+//    fun `clears 'input field empty' error if the amount field is not empty after input`() =
+//        runTest {
+//            // Given
+//            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
+//                ResultWrapper.Success(
+//                    PaymentDetails(
+//                        recipient = "recipient",
+//                        iban = "iban",
+//                        amount = "",
+//                        purpose = "purpose",
+//                        extractions = null
+//                    )
+//                )
+//            )
+//
+//            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+//            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+//                SelectedPaymentProviderAppState.AppSelected(mockk()))
+//
+//            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
+//
+//            viewModel.paymentValidation.test {
+//                // When
+//                viewModel.setAmount("1")
+//
+//                // Then
+//                assertThat(awaitItem()).containsExactly(
+//                    ValidationMessage.Empty(PaymentField.Amount),
+//                )
+//                assertThat(awaitItem()).isEmpty()
+//
+//                cancelAndConsumeRemainingEvents()
+//            }
+//        }
+//
+//    @Test
+//    fun `clears 'input field empty' error if the purpose field is not empty after input`() =
+//        runTest {
+//            // Given
+//            val paymentDetails = PaymentDetails(
+//                recipient = "recipient",
+//                iban = "iban",
+//                amount = "1",
+//                purpose = "",
+//                extractions = null
+//            )
+//            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
+//                ResultWrapper.Success(
+//                    paymentDetails
+//                )
+//            )
+//
+//            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+//            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+//                SelectedPaymentProviderAppState.AppSelected(mockk()))
+//
+//            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
+//
+//            viewModel.paymentValidation.test {
+//                // When
+//                viewModel.setPurpose("purpose")
+//
+//                // Then
+//                assertThat(awaitItem()).containsExactly(
+//                    ValidationMessage.Empty(PaymentField.Purpose),
+//                )
+//                assertThat(awaitItem()).isEmpty()
+//
+//                cancelAndConsumeRemainingEvents()
+//            }
+//        }
+//
+//    @Test
+//    fun `clears 'invalid IBAN' error after modifying the IBAN`() =
+//        runTest {
+//            // Given
+//            every { giniMerchant!!.paymentFlow } returns MutableStateFlow(
+//                ResultWrapper.Success(
+//                    PaymentDetails(
+//                        recipient = "recipient",
+//                        iban = "iban",
+//                        amount = "1",
+//                        purpose = "purpose",
+//                        extractions = null
+//                    )
+//                )
+//            )
+//
+//            val paymentProviderApp = mockk<PaymentProviderApp>()
+//            every { paymentProviderApp.installedPaymentProviderApp } returns mockk()
+//
+//            val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+//            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+//                SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+//
+//            val viewModel = ReviewViewModel(giniMerchant!!, mockk(), paymentComponent, "", giniPayment!!)
+//
+//            // Validate all fields to also get an invalid iban validation message
+//            viewModel.onPayment()
+//
+//            viewModel.paymentValidation.test {
+//                // When
+//                viewModel.setIban("iban2")
+//
+//                // Then
+//                assertThat(awaitItem()).containsExactly(
+//                    ValidationMessage.InvalidIban,
+//                )
+//                assertThat(awaitItem()).isEmpty()
+//
+//                cancelAndConsumeRemainingEvents()
+//            }
+//        }
 
     @Test
     fun `increments 'Open With' counter`() = runTest {

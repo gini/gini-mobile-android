@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.databinding.GmsFragmentMerchantBinding
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
@@ -34,6 +36,8 @@ import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
+import net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet
+import net.gini.android.merchant.sdk.review.reviewComponent.ReviewViewListener
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.PaymentNextStep
 import net.gini.android.merchant.sdk.util.autoCleared
@@ -133,13 +137,13 @@ class PaymentFlowFragment private constructor(
         binding = GmsFragmentMerchantBinding.inflate(inflater, container, false)
 
         // If ReviewFragment will be shown, it will hande the opening of the bank app. Otherwise, listen for the openBankState event and handle it here
-        if (viewModel.paymentFlowConfiguration?.shouldShowReviewFragment == false) {
-            binding.setStateListeners()
-        }
+        binding.setStateListeners()
 
         viewModel.paymentComponent.listener = paymentComponentListener
         viewModel.openWithPreferences = OpenWithPreferences(requireContext())
-        viewModel.loadPaymentDetails()
+        viewModel.documentId?.let {
+            viewModel.loadPaymentDetails()
+        }
         viewModel.loadPaymentProviderApps()
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -237,7 +241,7 @@ class PaymentFlowFragment private constructor(
                         BankSelectionBottomSheet.newInstance(it, viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
                     }
                 }
-                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId, viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false, viewModel).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, documentId = viewModel.documentId ?: "", viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false, viewModel).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
                 DisplayedScreen.Nothing -> viewModel.giniMerchant.setFlowCancelled()
                 else -> {
 
@@ -249,11 +253,35 @@ class PaymentFlowFragment private constructor(
     @VisibleForTesting
     internal fun handlePayFlow(documentId: String) {
         if (viewModel.paymentFlowConfiguration?.shouldShowReviewFragment == true) {
-            showReviewFragment(documentId)
+//            if (documentId)
+//            showReviewFragment(documentId)
+            showReviewBottomDialog()
             return
         }
 
         viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
+    }
+
+    internal fun showReviewBottomDialog() {
+        viewModel.addToBackStack(DisplayedScreen.ReviewBottomSheet)
+        val reviewBottomSheet = ReviewBottomSheet.newInstance(
+            giniMerchant = viewModel.giniMerchant,
+            giniPaymentManager = viewModel.giniPaymentManager,
+            backListener = viewModel,
+            configuration = ReviewConfiguration(
+                handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
+                showCloseButton = true,
+                isAmountFieldEditable = viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true
+            ),
+            listener = object: ReviewViewListener {
+                override fun onPaymentButtonTapped() {
+                    Log.e("", "--- on payment button tapped")
+                    viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
+                }
+            },
+            paymentComponent = viewModel.paymentComponent
+        )
+        reviewBottomSheet.show(childFragmentManager, ReviewBottomSheet::class.java.name)
     }
 
     @VisibleForTesting
@@ -277,7 +305,7 @@ class PaymentFlowFragment private constructor(
     internal fun showPaymentComponentBottomSheet() {
         val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
             viewModel.paymentComponent,
-            documentId = viewModel.documentId,
+            documentId = viewModel.documentId ?: "",
             reviewFragmentShown = viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
             backListener = viewModel
         )
@@ -356,7 +384,11 @@ class PaymentFlowFragment private constructor(
 
     companion object {
         fun newInstance(giniMerchant: GiniMerchant, documentId: String, paymentFlowConfiguration: PaymentFlowConfiguration,
-                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(giniMerchant.paymentComponent, documentId, paymentFlowConfiguration, giniMerchant)) = PaymentFlowFragment(viewModelFactory)
+                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(giniMerchant.paymentComponent, documentId, null, paymentFlowConfiguration, giniMerchant)) = PaymentFlowFragment(viewModelFactory)
+
+        fun newInstance(giniMerchant: GiniMerchant, paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration,
+                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(giniMerchant.paymentComponent, null, paymentDetails, paymentFlowConfiguration, giniMerchant)) = PaymentFlowFragment(viewModelFactory)
+
     }
 }
 
