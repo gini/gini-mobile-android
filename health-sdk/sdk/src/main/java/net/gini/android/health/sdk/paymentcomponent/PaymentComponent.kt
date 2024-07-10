@@ -23,7 +23,7 @@ import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
  *
  * It requires a [GiniHealth] instance and a [Context] (application or activity) to be created.
  */
-class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth, private val configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
+class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -59,7 +59,9 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
      */
     var listener: Listener? = null
 
-    val paymentComponentConfiguration: PaymentComponentConfiguration get() = configuration
+    var paymentComponentConfiguration: PaymentComponentConfiguration
+        get() = configuration
+        set(value) { configuration = value}
 
     /**
      * Loads the payment provider apps and selects the first installed payment provider app or nothing if no payment provider
