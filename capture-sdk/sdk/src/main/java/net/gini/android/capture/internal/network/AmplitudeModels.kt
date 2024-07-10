@@ -19,7 +19,6 @@ data class AmplitudeEventModel(
     val osName: String,
     val carrier: String,
     val language: String,
-    val appSetId: String,
     val eventProperties: Map<String, Any>? = null,
     val userProperties: Map<String, Any>? = null,
     val appVersion: String,

@@ -5,15 +5,12 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
-import android.provider.Settings.Secure
 import android.telephony.TelephonyManager
 import org.slf4j.LoggerFactory
-import java.lang.reflect.InvocationTargetException
 import java.util.Locale
-import java.util.UUID
 
-class DeviceInfo(private val context: Context, shouldTrackAdid: Boolean) {
-    var shouldTrackAdid = true
+class DeviceInfo(private val context: Context) {
+
     private var cachedInfo: CachedInfo? = null
         get() {
             if (field == null) {
@@ -28,7 +25,6 @@ class DeviceInfo(private val context: Context, shouldTrackAdid: Boolean) {
      * Internal class serves as a cache
      */
     inner class CachedInfo {
-        var advertisingId: String?
         val versionName: String?
         val osName: String
         val osVersion: String
@@ -37,10 +33,8 @@ class DeviceInfo(private val context: Context, shouldTrackAdid: Boolean) {
         val model: String
         val carrier: String?
         val language: String
-        var appSetId: String?
 
         init {
-            advertisingId = fetchAdvertisingId()
             versionName = fetchVersionName()
             osName = OS_NAME
             osVersion = fetchOsVersion()
@@ -49,7 +43,6 @@ class DeviceInfo(private val context: Context, shouldTrackAdid: Boolean) {
             model = fetchModel()
             carrier = fetchCarrier()
             language = fetchLanguage()
-            appSetId = fetchAppSetId()
         }
 
         /**
@@ -113,70 +106,6 @@ class DeviceInfo(private val context: Context, shouldTrackAdid: Boolean) {
             return locale.language
         }
 
-        private fun fetchAdvertisingId(): String? {
-            if (!shouldTrackAdid) {
-                return null
-            }
-
-            // This should not be called on the main thread.
-            return if ("Amazon" == fetchManufacturer()) {
-                fetchAndCacheAmazonAdvertisingId
-            } else {
-                fetchAndCacheGoogleAdvertisingId
-            }
-        }
-
-        private fun fetchAppSetId(): String? {
-            try {
-                val AppSet = Class
-                    .forName("com.google.android.gms.appset.AppSet")
-                val getClient = AppSet.getMethod("getClient", Context::class.java)
-                val appSetIdClient = getClient.invoke(null, context)
-                val getAppSetIdInfo = appSetIdClient.javaClass.getMethod("getAppSetIdInfo")
-                val taskWithAppSetInfo = getAppSetIdInfo.invoke(appSetIdClient)
-                val Tasks = Class.forName("com.google.android.gms.tasks.Tasks")
-                val await =
-                    Tasks.getMethod("await", Class.forName("com.google.android.gms.tasks.Task"))
-                val appSetInfo = await.invoke(null, taskWithAppSetInfo)
-                val getId = appSetInfo.javaClass.getMethod("getId")
-                appSetId = getId.invoke(appSetInfo) as String
-            } catch (e: ClassNotFoundException) {
-                LOG.warn("Google Play Services SDK not found for app set id!")
-            } catch (e: InvocationTargetException) {
-                LOG.warn("Google Play Services not available for app set id")
-            } catch (e: Exception) {
-                LOG.error("Encountered an error connecting to Google Play Services for app set id")
-            }
-            return appSetId
-        }
-
-        private val fetchAndCacheAmazonAdvertisingId: String?
-            get() {
-                val cr = context.contentResolver
-                advertisingId = Secure.getString(cr, SETTING_ADVERTISING_ID)
-                return advertisingId
-            }
-        private val fetchAndCacheGoogleAdvertisingId: String?
-            get() {
-                try {
-                    val AdvertisingIdClient = Class
-                        .forName("com.google.android.gms.ads.identifier.AdvertisingIdClient")
-                    val getAdvertisingInfo = AdvertisingIdClient.getMethod(
-                        "getAdvertisingIdInfo",
-                        Context::class.java
-                    )
-                    val advertisingInfo = getAdvertisingInfo.invoke(null, context)
-                    val getId = advertisingInfo.javaClass.getMethod("getId")
-                    advertisingId = getId.invoke(advertisingInfo) as String
-                } catch (e: ClassNotFoundException) {
-                    LOG.warn("Google Play Services SDK not found for advertising id!")
-                } catch (e: InvocationTargetException) {
-                    LOG.warn("Google Play Services not available for advertising id")
-                } catch (e: Exception) {
-                    LOG.error("Encountered an error connecting to Google Play Services for advertising id")
-                }
-                return advertisingId
-            }
     }
 
     fun prefetch() {
@@ -200,18 +129,8 @@ class DeviceInfo(private val context: Context, shouldTrackAdid: Boolean) {
         get() = cachedInfo!!.carrier
     val language: String
         get() = cachedInfo!!.language
-    val appSetId: String?
-        get() = cachedInfo!!.appSetId // other causes// failed to get providers list
 
     companion object {
         const val OS_NAME = "android"
-        const val SETTING_ADVERTISING_ID = "advertising_id"
-        fun generateUUID(): String {
-            return UUID.randomUUID().toString()
-        }
-    }
-
-    init {
-        this.shouldTrackAdid = shouldTrackAdid
     }
 }

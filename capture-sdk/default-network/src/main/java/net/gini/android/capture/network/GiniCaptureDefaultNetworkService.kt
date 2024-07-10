@@ -138,7 +138,6 @@ class GiniCaptureDefaultNetworkService(
                     osName = event.osName,
                     carrier = event.carrier,
                     language = event.language,
-                    appSetId = event.appSetId,
                     eventProperties = event.eventProperties,
                     userProperties = event.userProperties,
                     appVersion = event.appVersion

@@ -37,8 +37,7 @@ internal class AmplitudeUserAnalyticsEventTracker(
     private lateinit var userProperties: Map<String, Any>
 
     private val contextProvider: DeviceInfo = DeviceInfo(
-        context,
-        shouldTrackAdid = false
+        context
     )
 
     override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>) {
@@ -87,7 +86,6 @@ internal class AmplitudeUserAnalyticsEventTracker(
                 osName = contextProvider.osName,
                 carrier = contextProvider.carrier ?: "unknown",
                 language = contextProvider.language,
-                appSetId = contextProvider.appSetId ?: "unknown",
                 eventProperties = finalProperties,
                 userProperties = userProperties,
                 appVersion = "1.0"

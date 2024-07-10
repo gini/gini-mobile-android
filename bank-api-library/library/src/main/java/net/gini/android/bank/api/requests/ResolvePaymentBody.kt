@@ -13,6 +13,6 @@ internal data class ResolvePaymentBody(
     @Json(name = "purpose") val purpose: String,
 )
 
-internal fun ResolvePaymentInput.toAmplitudeRequestBody() = ResolvePaymentBody(
+internal fun ResolvePaymentInput.toResolvePaymentBody() = ResolvePaymentBody(
     recipient, iban, bic, amount, purpose
 )
