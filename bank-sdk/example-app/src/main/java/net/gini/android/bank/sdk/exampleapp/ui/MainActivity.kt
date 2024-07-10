@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
@@ -43,12 +45,14 @@ class MainActivity : AppCompatActivity() {
     private var cancellationToken: CancellationToken? =
         null // should be kept across configuration changes
     private val permissionHandler = PermissionHandler(this)
+    private var configurationActivityLauncher: ActivityResultLauncher<Intent>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         addInputHandlers()
+        setupActivityResultLauncher()
         showVersions()
         if (savedInstanceState == null) {
             if (isIntentActionViewOrSend(intent)) {
@@ -89,6 +93,29 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun setupActivityResultLauncher() {
+        configurationActivityLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                when (result.resultCode) {
+                    RESULT_CANCELED -> {}
+                    RESULT_OK -> {
+                        val configurationResult: Configuration? = result.data?.getParcelableExtra(
+                            CONFIGURATION_BUNDLE
+                        )
+                        if (configurationResult != null) {
+                            configurationViewModel.setConfiguration(configurationResult)
+                        }
+
+                        configurationViewModel.disableCameraPermission(
+                            result.data?.getBooleanExtra(
+                                CAMERA_PERMISSION_BUNDLE, false
+                            ) ?: false
+                        )
+                    }
+                }
+            }
+    }
+
     private fun addInputHandlers() {
         binding.buttonStartScanner.setOnClickListener {
             checkIfAppShouldAskForCameraPermission(EntryPoint.BUTTON)
@@ -105,10 +132,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.textGiniBankVersion.setOnClickListener {
-            startActivityForResult(
-                Intent(
-                    this, ConfigurationActivity::class.java
-                )
+            configurationActivityLauncher?.launch(
+                Intent(this, ConfigurationActivity::class.java)
                     .putExtra(
                         CONFIGURATION_BUNDLE,
                         configurationViewModel.configurationFlow.value
@@ -116,11 +141,9 @@ class MainActivity : AppCompatActivity() {
                     .putExtra(
                         CAMERA_PERMISSION_BUNDLE,
                         configurationViewModel.disableCameraPermissionFlow.value
-                    ),
-                REQUEST_CONFIGURATION
+                    )
             )
         }
-
     }
 
     private fun checkIfAppShouldAskForCameraPermission(entryPoint: EntryPoint) {
@@ -224,31 +247,6 @@ class MainActivity : AppCompatActivity() {
             resultLauncher = captureImportLauncher,
             document = document
         )
-    }
-
-    override fun onActivityResult(
-        requestCode: Int, resultCode: Int, data: Intent?
-    ) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CONFIGURATION) {
-            when (resultCode) {
-                RESULT_CANCELED -> {}
-                RESULT_OK -> {
-                    var configurationResult: Configuration? = data?.getParcelableExtra(
-                        CONFIGURATION_BUNDLE
-                    )
-                    if (configurationResult != null) {
-                        configurationViewModel.setConfiguration(configurationResult)
-                    }
-
-                    configurationViewModel.disableCameraPermission(
-                        data?.getBooleanExtra(
-                            CAMERA_PERMISSION_BUNDLE, false
-                        ) ?: false
-                    )
-                }
-            }
-        }
     }
 
 
