@@ -1,5 +1,6 @@
 package net.gini.android.bank.sdk.capture.skonto
 
+import java.math.BigDecimal
 import java.time.LocalDate
 
 object SkontoFragmentContract {
@@ -10,13 +11,12 @@ object SkontoFragmentContract {
         data class Ready(
             val isSkontoSectionActive: Boolean,
             val paymentInDays: Int,
-            val discountValue: Float,
-            val skontoAmount: Float,
+            val discountValue: BigDecimal,
+            val skontoAmount: BigDecimal,
             val discountDueDate: LocalDate,
-            val fullAmount: String,
-            val totalAmount: Float,
+            val fullAmount: BigDecimal,
+            val totalAmount: BigDecimal,
             val currency: String,
-            val totalDiscount: Float,
         ) : State()
     }
 
