@@ -26,14 +26,15 @@ val document =
     Document("1234", Document.ProcessingState.COMPLETED, "", 1, Date(124), Date(100), Document.SourceClassification.COMPOSITE, Uri.EMPTY, emptyList(), emptyList())
 
 val extractions = ExtractionsContainer(
-    emptyMap(),
+    mapOf(
+        "payment_state" to SpecificExtraction("payment_state", "Payable", "", null, listOf())
+    ),
     mapOf(
         "payment" to CompoundExtraction("payment", listOf(mutableMapOf(
             "payment_recipient" to SpecificExtraction("payment_recipient", "recipient", "", null, listOf()),
             "iban" to SpecificExtraction("iban", "iban", "", null, listOf()),
             "amount_to_pay" to SpecificExtraction("amount_tp_pay", "123.56", "", null, listOf()),
-            "payment_purpose" to SpecificExtraction("payment_purpose", "purpose", "", null, listOf()),
-            "payment_state" to SpecificExtraction("payment_state", "Payable", "", null, listOf())
+            "payment_purpose" to SpecificExtraction("payment_purpose", "purpose", "", null, listOf())
         )))
     )
 )
