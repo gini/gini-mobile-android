@@ -23,8 +23,7 @@ import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.MainActivity
 import net.gini.android.merchant.sdk.exampleapp.R
-import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityInvoicesBinding
-import net.gini.android.merchant.sdk.exampleapp.orders.data.UploadHardcodedInvoicesState
+import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityOrdersBinding
 import net.gini.android.merchant.sdk.exampleapp.orders.ui.model.OrderItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
@@ -32,48 +31,26 @@ import net.gini.android.merchant.sdk.util.DisplayedScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
-class InvoicesActivity : AppCompatActivity() {
+class OrdersActivity : AppCompatActivity() {
 
     private val viewModel: OrdersViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityInvoicesBinding.inflate(layoutInflater)
+        val binding = ActivityOrdersBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setActivityTitle()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.invoicesFlow.collect { invoicesWithExtractions ->
-                        (binding.invoicesList.adapter as InvoicesAdapter).apply {
-                            dataSet = invoicesWithExtractions
+                    viewModel.ordersFlow.collect { orders ->
+                        (binding.ordersList.adapter as OrdersAdapter).apply {
+                            dataSet = orders
                             notifyDataSetChanged()
                         }
-                        binding.noInvoicesLabel.visibility =
-                            if (invoicesWithExtractions.isEmpty()) View.VISIBLE else View.GONE
-                    }
-                }
-                launch {
-                    viewModel.uploadHardcodedInvoicesStateFlow
-                        .collect { uploadState ->
-                            if (uploadState == UploadHardcodedInvoicesState.Loading) {
-                                showLoadingIndicator(binding)
-                            } else {
-                                hideLoadingIndicator(binding)
-                            }
-                        }
-                }
-                launch {
-                    viewModel.uploadHardcodedInvoicesStateFlow.collect { uploadState ->
-                        if (uploadState is UploadHardcodedInvoicesState.Failure) {
-                            AlertDialog.Builder(this@InvoicesActivity)
-                                .setTitle(R.string.upload_failed)
-                                .setMessage(uploadState.errors.toSet().joinToString(", "))
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
-                        }
-
+                        binding.noOrdersLabel.visibility =
+                            if (orders.isEmpty()) View.VISIBLE else View.GONE
                     }
                 }
                 launch {
@@ -87,12 +64,12 @@ class InvoicesActivity : AppCompatActivity() {
                             is GiniMerchant.MerchantSDKEvents.OnScreenDisplayed -> {
                                 when (event.displayedScreen) {
                                     DisplayedScreen.MoreInformationFragment -> setActivityTitle(net.gini.android.merchant.sdk.R.string.gms_more_information_fragment_title)
-                                    DisplayedScreen.ReviewFragment -> setActivityTitle(R.string.title_payment_review)
-                                    else -> { setActivityTitle(R.string.invoice_details) }
+                                    DisplayedScreen.ReviewFragment -> setActivityTitle(R.string.title_fragment_order_details)
+                                    else -> { setActivityTitle(R.string.title_activity_orders) }
                                 }
                             }
                             is GiniMerchant.MerchantSDKEvents.OnErrorOccurred -> {
-                                AlertDialog.Builder(this@InvoicesActivity)
+                                AlertDialog.Builder(this@OrdersActivity)
                                     .setTitle(R.string.error_message)
                                     .setMessage(event.throwable.message)
                                     .setPositiveButton(android.R.string.ok, null)
@@ -107,7 +84,6 @@ class InvoicesActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel.loadInvoicesWithExtractions()
         viewModel.loadPaymentProviderApps()
         viewModel.startObservingPaymentFlow()
 
@@ -115,12 +91,12 @@ class InvoicesActivity : AppCompatActivity() {
             viewModel.setIntegratedFlowConfiguration(it)
         }
 
-        binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList()) { invoiceItem ->
-            viewModel.setSelectedInvoiceItem(invoiceItem)
-            showInvoiceDetailsFragment()
+        binding.ordersList.layoutManager = LinearLayoutManager(this)
+        binding.ordersList.adapter = OrdersAdapter(emptyList()) { orderItem ->
+            viewModel.setSelectedOrderItem(orderItem)
+            showOrderDetailsFragment()
         }
-        binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
+        binding.ordersList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
 
         supportFragmentManager.addOnBackStackChangedListener {
             setActivityTitle()
@@ -130,24 +106,15 @@ class InvoicesActivity : AppCompatActivity() {
 
     private fun setActivityTitle(@StringRes screenTitle: Int? = null) {
         if (supportFragmentManager.backStackEntryCount == 0) {
-            title = getString(R.string.title_activity_invoices)
+            title = getString(R.string.title_activity_orders)
         } else if (supportFragmentManager.fragments.last() is OrderDetailsFragment) {
-            title = "Invoice details"
+            title = getString(R.string.title_fragment_order_details)
         } else if (screenTitle != null){
             title = getString(screenTitle)
         }
     }
-    private fun hideLoadingIndicator(binding: ActivityInvoicesBinding) {
-        binding.loadingIndicatorContainer.visibility = View.INVISIBLE
-        binding.loadingIndicator.visibility = View.INVISIBLE
-    }
 
-    private fun showLoadingIndicator(binding: ActivityInvoicesBinding) {
-        binding.loadingIndicatorContainer.visibility = View.VISIBLE
-        binding.loadingIndicator.visibility = View.VISIBLE
-    }
-
-    private fun showInvoiceDetailsFragment() {
+    private fun showOrderDetailsFragment() {
         OrderDetailsFragment.newInstance().apply {
             add()
         }
@@ -168,15 +135,16 @@ class InvoicesActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (supportFragmentManager.backStackEntryCount == 0) {
-            menuInflater.inflate(R.menu.invoices_menu, menu)
+            menuInflater.inflate(R.menu.orders_menu, menu)
         }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.upload_test_invoices -> {
-                viewModel.uploadHardcodedInvoices()
+            R.id.custom_order -> {
+                viewModel.setSelectedOrderItem(null)
+                showOrderDetailsFragment()
                 true
             }
             android.R.id.home -> {
@@ -189,49 +157,47 @@ class InvoicesActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(InvoicesActivity::class.java)
+        private val LOG = LoggerFactory.getLogger(OrdersActivity::class.java)
     }
 }
 
-class InvoicesAdapter(
+class OrdersAdapter(
     var dataSet: List<OrderItem>,
-    private val openInvoiceDetails: (OrderItem) -> Unit,
+    private val showOrderDetails: (OrderItem) -> Unit,
 ) :
-    RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
+    RecyclerView.Adapter<OrdersAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) :
         RecyclerView.ViewHolder(view) {
         val recipient: TextView
-        val dueDate: TextView
+        val purpose: TextView
         val amount: TextView
 
         init {
             recipient = view.findViewById(R.id.recipient)
-            dueDate = view.findViewById(R.id.due_date)
+            purpose = view.findViewById(R.id.purpose)
             amount = view.findViewById(R.id.amount)
         }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_invoice, viewGroup, false)
+            .inflate(R.layout.item_order, viewGroup, false)
         return ViewHolder(view).also {  vh ->
             vh.itemView.setOnClickListener {
-                openInvoiceDetails(dataSet[vh.adapterPosition])
+                showOrderDetails(dataSet[vh.adapterPosition])
             }
         }
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val invoiceItem = dataSet[position]
+        val orderItem = dataSet[position]
 
-        viewHolder.recipient.text = invoiceItem.recipient ?: ""
-        viewHolder.dueDate.text = invoiceItem.dueDate ?: ""
-        viewHolder.amount.text = invoiceItem.amount ?: ""
+        viewHolder.recipient.text = orderItem.recipient ?: ""
+        viewHolder.purpose.text = orderItem.purpose ?: ""
+        viewHolder.amount.text = orderItem.amount ?: ""
 
     }
 
     override fun getItemCount() = dataSet.size
 }
-
-private const val REVIEW_FRAGMENT_TAG = "payment_review_fragment"
