@@ -159,28 +159,34 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         }
 
         val photoPickType =
-            if (FeatureConfiguration.isMultiPageEnabled())
-                ActivityResultContracts.PickMultipleVisualMedia()
-            else
+            if (FeatureConfiguration.isMultiPageEnabled()) {
+                ActivityResultContracts.PickMultipleVisualMedia(maxItems = 10)
+            } else {
                 ActivityResultContracts.PickVisualMedia()
-
+            }
 
         pickMedia = registerForActivityResult(photoPickType) { uri ->
             findNavController().popBackStack()
             if (uri != null) {
-                val listOfUri = when(uri){
-                    is Uri -> listOf(uri)
-                    is List<*> -> uri.filterIsInstance<Uri>().takeIf { it.size == uri.size }
-                        ?: throw IllegalArgumentException("List contains non-Uri elements")
-                    else -> throw IllegalArgumentException("uri is neither Uri nor List<Uri>")
-                }
-                if (listOfUri.isNotEmpty()) {
+                try {
+                    val uriList = when(uri){
+                        is Uri -> listOf(uri)
+                        is List<*> -> uri.filterIsInstance<Uri>().takeIf { it.size == uri.size }
+                            ?: throw IllegalArgumentException("List contains non-Uri elements")
+                        else -> throw IllegalArgumentException("uri is neither Uri nor List<Uri>")
+                    }
+                    if (uriList.isNotEmpty()) {
+                        setFragmentResult(REQUEST_KEY, Bundle().apply {
+                            putParcelable(RESULT_KEY, FileChooserResult.FilesSelectedUri(uriList))
+                        })
+                    } else {
+                        setFragmentResult(REQUEST_KEY, Bundle().apply {
+                            putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
+                        })
+                    }
+                } catch (e: IllegalArgumentException) {
                     setFragmentResult(REQUEST_KEY, Bundle().apply {
-                        putParcelable(RESULT_KEY, FileChooserResult.FilesSelectedUri(listOfUri))
-                    })
-                } else {
-                    setFragmentResult(REQUEST_KEY, Bundle().apply {
-                        putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
+                        putParcelable(RESULT_KEY, FileChooserResult.Error(GiniCaptureError(GiniCaptureError.ErrorCode.DOCUMENT_IMPORT, e.message)))
                     })
                 }
             } else {

@@ -109,9 +109,9 @@ public class ProvidersAdapter extends RecyclerView.Adapter<ProvidersItemViewHold
         holder.icon.setImageDrawable(item.getResolveInfo().loadIcon(mContext.getPackageManager()));
         holder.label.setText(item.getResolveInfo().loadLabel(mContext.getPackageManager()));
         holder.itemView.setOnClickListener(view -> {
-            final ProvidersAppItem item1 =
+            final ProvidersAppItem selectedItem =
                     (ProvidersAppItem) mItems.get(holder.getAdapterPosition());
-            mItemSelectedListener.onItemSelected(item1);
+            mItemSelectedListener.onItemSelected(selectedItem);
         });
     }
 
@@ -121,9 +121,9 @@ public class ProvidersAdapter extends RecyclerView.Adapter<ProvidersItemViewHold
         holder.icon.setImageDrawable(item.getDrawableIcon());
         holder.label.setText(item.getText());
         holder.itemView.setOnClickListener(view -> {
-            final ProvidersAppWrapperItem item1 =
+            final ProvidersAppWrapperItem selectedItem =
                     (ProvidersAppWrapperItem) mItems.get(holder.getAdapterPosition());
-            mItemSelectedListener.onItemSelected(item1);
+            mItemSelectedListener.onItemSelected(selectedItem);
         });
     }
 
