@@ -27,6 +27,7 @@ import net.gini.android.capture.noresults.NoResultsFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
 import java.util.UUID
 
@@ -67,6 +68,10 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
             requireActivity().window.disallowScreenshots()
         }
 
+        setupUserAnalytics()
+    }
+
+    private fun setupUserAnalytics() {
         if (GiniCapture.hasInstance()) {
             UserAnalytics.initialize(requireActivity())
             val networkRequestsManager =
@@ -80,9 +85,22 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
                     ),
                     networkRequestsManager = networkRequestsManager
                 )
+                // set if return assistant is enabled for the client
+                res.configuration.isReturnAssistantEnabled.let {
+                    setReturnAssistantEventProperty(it)
+                }
             }
-
         }
+    }
+
+    private fun setReturnAssistantEventProperty(isReturnAssistantEnabled: Boolean) {
+        userAnalyticsEventTracker.setUserProperty(
+            setOf(
+                UserAnalyticsUserProperty.ReturnAssistantEnabled(
+                    isReturnAssistantEnabled
+                )
+            )
+        )
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -133,7 +151,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         if (!didFinishWithResult && !willBeRestored) {
             giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
         }
-        if (willBeRestored)  {
+        if (willBeRestored) {
             UserAnalytics.flushEvents()
         }
     }

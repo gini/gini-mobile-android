@@ -50,12 +50,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
-    private fun setReturnAssistantProperty() {
+    private fun setReturnReasonsEventProperty() {
         userAnalyticsEventTracker.setUserProperty(
             setOf(
-                UserAnalyticsUserProperty.ReturnAssistantEnabled(
-                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled ?: false
-                ),
                 UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
             )
         )
@@ -83,7 +80,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setReturnAssistantProperty()
+        setReturnReasonsEventProperty()
         userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
     }
