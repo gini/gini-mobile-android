@@ -59,7 +59,6 @@ class PaymentDetailsTest {
             iban = "DE987654321",
             amount = "9.99:EUR",
             purpose = "Still testing",
-            paymentState = "Payable"
         )
 
         // When
@@ -101,7 +100,6 @@ class PaymentDetailsTest {
             iban = "DE987654321",
             amount = "9.99:EUR",
             purpose = "Still testing",
-            paymentState = "Payable"
         )
 
         // When
@@ -133,7 +131,6 @@ class PaymentDetailsTest {
             iban = "DE987654321",
             amount = "9.99",
             purpose = "Still testing",
-            paymentState = "Payable"
         )
 
         // When
