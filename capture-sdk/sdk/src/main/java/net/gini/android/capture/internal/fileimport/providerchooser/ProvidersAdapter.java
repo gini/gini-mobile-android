@@ -89,6 +89,7 @@ public class ProvidersAdapter extends RecyclerView.Adapter<ProvidersItemViewHold
                 break;
             case APP_WRAPPER_PHOTO_PICKER:
                 bindAppWrapperItemViewHolder((ProvidersAppItemViewHolder) holder, position);
+                break;
             case SEPARATOR:
                 break;
             default:
