@@ -41,9 +41,29 @@ val extractions = ExtractionsContainer(
 )
 
 fun copyExtractions(extractions: ExtractionsContainer) = ExtractionsContainer(
-    extractions.specificExtractions.toMap(),
+    extractions.specificExtractions.toMap().mapValues { specificExtraction ->
+        SpecificExtraction(
+            specificExtraction.value.name,
+            specificExtraction.value.value,
+            specificExtraction.value.entity,
+            specificExtraction.value.box,
+            specificExtraction.value.candidate
+        )
+    },
     extractions.compoundExtractions.map { (name, compoundExtraction) ->
-        name to CompoundExtraction(name, compoundExtraction.specificExtractionMaps.map { it.toMap() })
+        name to CompoundExtraction(
+            name,
+            compoundExtraction.specificExtractionMaps.map { specificExtractionMap ->
+                specificExtractionMap.toMap().mapValues { specificExtraction ->
+                    SpecificExtraction(
+                        specificExtraction.value.name,
+                        specificExtraction.value.value,
+                        specificExtraction.value.entity,
+                        specificExtraction.value.box,
+                        specificExtraction.value.candidate
+                    )
+                }
+            })
     }.toMap()
 )
 
