@@ -2,7 +2,7 @@ package net.gini.android.capture.tracking.useranalytics
 
 import android.content.Context
 import net.gini.android.capture.internal.network.NetworkRequestsManager
-import net.gini.android.capture.internal.provider.InstallationIdProvider
+import net.gini.android.capture.internal.provider.UniqueIdProvider
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
@@ -14,7 +14,7 @@ import java.util.Queue
 
 internal class BufferedUserAnalyticsEventTracker(
     val context: Context,
-    private val installationIdProvider: InstallationIdProvider = InstallationIdProvider(context),
+    private val uniqueIdProvider: UniqueIdProvider = UniqueIdProvider(context),
 ) : UserAnalyticsEventTracker {
 
     private val LOG = LoggerFactory.getLogger(BufferedUserAnalyticsEventTracker::class.java)
@@ -42,7 +42,7 @@ internal class BufferedUserAnalyticsEventTracker(
                         context = context,
                         apiKey = token,
                         networkRequestsManager = networkRequestsManager,
-                        installationIdProvider = installationIdProvider
+                        uniqueIdProvider = uniqueIdProvider
                     )
                     amplitude.startRepeatingJob()
                     eventTrackers.add(amplitude)
