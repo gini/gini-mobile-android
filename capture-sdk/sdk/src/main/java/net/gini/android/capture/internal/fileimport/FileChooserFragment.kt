@@ -168,15 +168,21 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         pickMedia = registerForActivityResult(photoPickType) { uri ->
             findNavController().popBackStack()
             if (uri != null) {
-                val lst = when(uri){
+                val listOfUri = when(uri){
                     is Uri -> listOf(uri)
                     is List<*> -> uri.filterIsInstance<Uri>().takeIf { it.size == uri.size }
                         ?: throw IllegalArgumentException("List contains non-Uri elements")
                     else -> throw IllegalArgumentException("uri is neither Uri nor List<Uri>")
                 }
-                setFragmentResult(REQUEST_KEY, Bundle().apply {
-                    putParcelable(RESULT_KEY, FileChooserResult.FilesSelectedUri(lst))
-                })
+                if (listOfUri.isNotEmpty()) {
+                    setFragmentResult(REQUEST_KEY, Bundle().apply {
+                        putParcelable(RESULT_KEY, FileChooserResult.FilesSelectedUri(listOfUri))
+                    })
+                } else {
+                    setFragmentResult(REQUEST_KEY, Bundle().apply {
+                        putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
+                    })
+                }
             } else {
                 setFragmentResult(REQUEST_KEY, Bundle().apply {
                     putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
