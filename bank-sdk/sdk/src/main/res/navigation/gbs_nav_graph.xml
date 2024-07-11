@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/capture_flow_nav_graph"
-    app:startDestination="@id/gbs_destination_skonto_fragment">
-    <!--app:startDestination="@id/gbs_destination_capture_fragment">-->
+    app:startDestination="@id/gbs_destination_capture_fragment">>
 
 
     <fragment
