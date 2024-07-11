@@ -21,7 +21,6 @@ jacoco = "0.8.10"
 hilt = "2.46.1"
 navigation_component = "2.7.6"
 
-
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

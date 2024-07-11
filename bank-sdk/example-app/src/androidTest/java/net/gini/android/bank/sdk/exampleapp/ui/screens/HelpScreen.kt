@@ -18,8 +18,19 @@ class HelpScreen {
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
-            .check(matches(withText("Tips for best results from photos")))
             .perform(click());
+        return this
+    }
+
+    fun assertTipsForBestResultsExists(): HelpScreen {
+        onView(
+            allOf(
+                withId(net.gini.android.capture.R.id.gc_help_item_title),
+                withText("Tips for best results from photos"),
+                isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
+            )
+        )
+            .check(matches(withText("Tips for best results from photos")))
         return this
     }
 
@@ -31,8 +42,19 @@ class HelpScreen {
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
-            .check(matches(withText("Supported formats")))
             .perform(click());
+        return this
+    }
+
+    fun assertSupportedFormatsExists(): HelpScreen {
+        onView(
+            allOf(
+                withId(net.gini.android.capture.R.id.gc_help_item_title),
+                withText("Supported formats"),
+                isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
+            )
+        )
+            .check(matches(withText("Supported formats")))
         return this
     }
 
@@ -44,13 +66,26 @@ class HelpScreen {
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
-            .check(matches(withText("Import documents from other apps")))
             .perform(click());
         return this
     }
 
+    fun assertImportDocsExists(): HelpScreen {
+        onView(
+            allOf(
+                withId(net.gini.android.capture.R.id.gc_help_item_title),
+                withText("Import documents from other apps"),
+                isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
+            )
+        )
+            .check(matches(withText("Import documents from other apps")))
+        return this
+    }
+
     fun clickBackButton(): HelpScreen {
-        onView(withContentDescription(net.gini.android.capture.R.string.gc_back_button_description)).perform(click())
+        onView(withContentDescription(net.gini.android.capture.R.string.gc_back_button_description)).perform(
+            click()
+        )
         return this
     }
 }

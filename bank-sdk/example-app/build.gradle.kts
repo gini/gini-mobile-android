@@ -72,6 +72,7 @@ android {
 
         // Use the test runner with JUnit4 support
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
 
         multiDexEnabled = true
     }
