@@ -58,7 +58,7 @@ class PaymentDetailsTest {
             recipient = "Jack Vance",
             iban = "DE987654321",
             amount = "9.99:EUR",
-            purpose = "Still testing",
+            purpose = "Still testing"
         )
 
         // When
@@ -99,7 +99,7 @@ class PaymentDetailsTest {
             recipient = "Jack Vance",
             iban = "DE987654321",
             amount = "9.99:EUR",
-            purpose = "Still testing",
+            purpose = "Still testing"
         )
 
         // When
@@ -130,7 +130,7 @@ class PaymentDetailsTest {
             recipient = "Jack Vance",
             iban = "DE987654321",
             amount = "9.99",
-            purpose = "Still testing",
+            purpose = "Still testing"
         )
 
         // When
