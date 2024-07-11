@@ -165,34 +165,33 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                 ActivityResultContracts.PickVisualMedia()
             }
 
-        pickMedia = registerForActivityResult(photoPickType) { uri ->
+        pickMedia = registerForActivityResult(photoPickType) { activityResultUriList ->
             findNavController().popBackStack()
-            if (uri != null) {
-                try {
-                    val uriList = when(uri){
-                        is Uri -> listOf(uri)
-                        is List<*> -> uri.filterIsInstance<Uri>().takeIf { it.size == uri.size }
-                            ?: throw IllegalArgumentException("List contains non-Uri elements")
-                        else -> throw IllegalArgumentException("uri is neither Uri nor List<Uri>")
-                    }
-                    if (uriList.isNotEmpty()) {
-                        setFragmentResult(REQUEST_KEY, Bundle().apply {
-                            putParcelable(RESULT_KEY, FileChooserResult.FilesSelectedUri(uriList))
-                        })
-                    } else {
-                        setFragmentResult(REQUEST_KEY, Bundle().apply {
-                            putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
-                        })
-                    }
-                } catch (e: IllegalArgumentException) {
-                    setFragmentResult(REQUEST_KEY, Bundle().apply {
-                        putParcelable(RESULT_KEY, FileChooserResult.Error(GiniCaptureError(GiniCaptureError.ErrorCode.DOCUMENT_IMPORT, e.message)))
-                    })
+            val resultList = handleUriList(activityResultUriList)
+            setFragmentResult(REQUEST_KEY, Bundle().apply {
+                putParcelable(RESULT_KEY, resultList)
+            })
+        }
+    }
+
+    private fun handleUriList(activityResultUriList: Any?): FileChooserResult {
+        return if (activityResultUriList == null) {
+            FileChooserResult.Cancelled
+        } else {
+            try {
+                val uriList = when(activityResultUriList){
+                    is Uri -> listOf(activityResultUriList)
+                    is List<*> -> activityResultUriList.filterIsInstance<Uri>().takeIf { it.size == activityResultUriList.size }
+                        ?: throw IllegalArgumentException("List contains non-Uri elements")
+                    else -> throw IllegalArgumentException("uri is neither Uri nor List<Uri>")
                 }
-            } else {
-                setFragmentResult(REQUEST_KEY, Bundle().apply {
-                    putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
-                })
+                if (uriList.isNotEmpty()) {
+                    FileChooserResult.FilesSelectedUri(uriList)
+                } else {
+                    FileChooserResult.Cancelled
+                }
+            } catch (e: IllegalArgumentException) {
+                FileChooserResult.Error(GiniCaptureError(GiniCaptureError.ErrorCode.DOCUMENT_IMPORT, e.message))
             }
         }
     }
