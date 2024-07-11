@@ -33,6 +33,7 @@ val extractions = ExtractionsContainer(
             "iban" to SpecificExtraction("iban", "iban", "", null, listOf()),
             "amount_to_pay" to SpecificExtraction("amount_tp_pay", "123.56", "", null, listOf()),
             "payment_purpose" to SpecificExtraction("payment_purpose", "purpose", "", null, listOf()),
+            "payment_state" to SpecificExtraction("payment_state", "Payable", "", null, listOf())
         )))
     )
 )
@@ -60,7 +61,7 @@ class GiniHealthTest {
     @Test
     fun `When setting document for review then document and payment flow emit success`() = runTest {
         coEvery { documentManager.getAllExtractionsWithPolling(document) } returns Resource.Success(extractions)
-        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
+        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", paymentState = "Payable", extractions)
 
         assert(giniHealth.documentFlow.value is ResultWrapper.Loading<Document>) { "Expected Loading but was ${giniHealth.documentFlow.value}" }
         assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading but was ${giniHealth.paymentFlow.value}" }
@@ -88,7 +89,7 @@ class GiniHealthTest {
     @Test
     fun `When setting document id for review with payment details then document flow emits document`() = runTest {
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
-        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose")
+        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", paymentState = "Payable")
 
         assert(giniHealth.documentFlow.value is ResultWrapper.Loading<Document>) { "Expected Loading" }
         giniHealth.setDocumentForReview("1234", paymentDetails)
@@ -98,7 +99,7 @@ class GiniHealthTest {
 
     @Test
     fun `When setting document id for review with payment details then payment flow emits those details`() = runTest {
-        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose")
+        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", paymentState = "Payable")
 
         assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading" }
         giniHealth.setDocumentForReview("", paymentDetails)
@@ -110,7 +111,7 @@ class GiniHealthTest {
     fun `When setting document id for review without payment details then payment flow emits details`() = runTest {
         coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractions)
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
-        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
+        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", paymentState = "Payable", extractions)
 
         assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading" }
         giniHealth.setDocumentForReview("")
@@ -133,7 +134,7 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Document is payable if it has an IBAN extraction`() = runTest {
+    fun `Document is payable if it has payment state extraction and that equals Payable`() = runTest {
         coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractions)
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
 
@@ -141,9 +142,9 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Document is not payable if it has no IBAN extraction`() = runTest {
+    fun `Document is not payable if it has payment state extraction and that equals Other`() = runTest {
         val extractionsWithoutIBAN = copyExtractions(extractions).apply {
-            compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.remove("iban")
+            compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.get("payment_state")?.value = "Other"
         }
         coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractionsWithoutIBAN)
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
@@ -152,10 +153,10 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Document is not payable if it has an empty IBAN extraction`() = runTest {
+    fun `Document is not payable if it has an empty payment state extraction`() = runTest {
         val extractionsWithoutIBAN = copyExtractions(extractions).apply {
             compoundExtractions["payment"]?.specificExtractionMaps?.get(0)
-                ?.set("iban", SpecificExtraction("iban", "", "", null, listOf()))
+                ?.set("payment_state", SpecificExtraction("payment_state", "", "", null, listOf()))
         }
         coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractionsWithoutIBAN)
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)

@@ -17,6 +17,7 @@ data class PaymentDetails(
     val iban: String,
     val amount: String,
     val purpose: String,
+    val paymentState: String,
     internal val extractions: ExtractionsContainer? = null
 ): Parcelable
 
@@ -31,6 +32,7 @@ internal fun ExtractionsContainer.toPaymentDetails(): PaymentDetails {
         amount = compoundExtractions.getPaymentExtraction("amount_to_pay")?.value?.toAmount()
             ?: "",
         purpose = compoundExtractions.getPaymentExtraction("payment_purpose")?.value ?: "",
+        paymentState = compoundExtractions.getPaymentExtraction("payment_state")?.value ?: "",
         extractions = this
     )
 }
@@ -43,11 +45,6 @@ internal fun String.toAmount(): String {
         this
     }
 }
-
-/**
- * Checks if the document is payable which looks for iban extraction.
- */
-val PaymentDetails.isPayable get() = iban.isNotEmpty()  // It appears this is not used anymore - we could remove it at a later stage (would remove it from the documentation as well)
 
 internal fun MutableMap<String, CompoundExtraction>.withFeedback(paymentDetails: PaymentDetails): Map<String, CompoundExtraction> {
     this["payment"] = this["payment"].let { payment ->
@@ -89,6 +86,15 @@ internal fun MutableMap<String, CompoundExtraction>.withFeedback(paymentDetails:
                         SpecificExtraction(
                             extraction?.name ?: "payment_purpose",
                             paymentDetails.purpose,
+                            extraction?.entity ?: "",
+                            extraction?.box,
+                            extraction?.candidate ?: emptyList()
+                        )
+                    }
+                    extractions["payment_state"] = extractions["payment_state"].let { extraction ->
+                        SpecificExtraction(
+                            extraction?.name ?: "payment_state",
+                            paymentDetails.paymentState,
                             extraction?.entity ?: "",
                             extraction?.box,
                             extraction?.candidate ?: emptyList()

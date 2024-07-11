@@ -133,6 +133,7 @@ class ReviewViewModelTest {
                     iban = "iban",
                     amount = "amount",
                     purpose = "purpose",
+                    paymentState = "state",
                     extractions = null
                 )
             )
@@ -162,6 +163,7 @@ class ReviewViewModelTest {
                     iban = "iban",
                     amount = "amount",
                     purpose = "purpose",
+                    paymentState = "state",
                     extractions = null
                 )
             )
@@ -210,6 +212,7 @@ class ReviewViewModelTest {
                         iban = "iban",
                         amount = "amount",
                         purpose = "purpose",
+                        paymentState = "state",
                         extractions = null
                     )
                 )
@@ -242,6 +245,7 @@ class ReviewViewModelTest {
                         iban = "iban",
                         amount = "1",
                         purpose = "purpose",
+                        paymentState = "state",
                         extractions = null
                     )
                 )
@@ -279,6 +283,7 @@ class ReviewViewModelTest {
                         iban = "",
                         amount = "1",
                         purpose = "purpose",
+                        paymentState = "state",
                         extractions = null
                     )
                 )
@@ -316,6 +321,7 @@ class ReviewViewModelTest {
                         iban = "iban",
                         amount = "",
                         purpose = "purpose",
+                        paymentState = "state",
                         extractions = null
                     )
                 )
@@ -351,6 +357,7 @@ class ReviewViewModelTest {
                         iban = "iban",
                         amount = "1",
                         purpose = "",
+                        paymentState = "state",
                         extractions = null
                     )
                 )
@@ -386,6 +393,7 @@ class ReviewViewModelTest {
                         iban = "iban",
                         amount = "1",
                         purpose = "purpose",
+                        paymentState = "state",
                         extractions = null
                     )
                 )
@@ -537,6 +545,7 @@ class ReviewViewModelTest {
                     iban = "iban",
                     amount = "1.3",
                     purpose = "purpose",
+                    paymentState = "state",
                     extractions = null
                 )
             )

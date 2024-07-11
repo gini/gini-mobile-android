@@ -45,6 +45,11 @@ class PaymentDetailsTest {
                     "payment_purpose",
                     "Testing",
                     "", null, emptyList()
+                ),
+                "payment_state" to SpecificExtraction(
+                    "payment_state",
+                    "Payable",
+                    "", null, emptyList()
                 )
             ))
         ))
@@ -53,7 +58,8 @@ class PaymentDetailsTest {
             recipient = "Jack Vance",
             iban = "DE987654321",
             amount = "9.99:EUR",
-            purpose = "Still testing"
+            purpose = "Still testing",
+            paymentState = "Payable"
         )
 
         // When
@@ -94,7 +100,8 @@ class PaymentDetailsTest {
             recipient = "Jack Vance",
             iban = "DE987654321",
             amount = "9.99:EUR",
-            purpose = "Still testing"
+            purpose = "Still testing",
+            paymentState = "Payable"
         )
 
         // When
@@ -125,7 +132,8 @@ class PaymentDetailsTest {
             recipient = "Jack Vance",
             iban = "DE987654321",
             amount = "9.99",
-            purpose = "Still testing"
+            purpose = "Still testing",
+            paymentState = "Payable"
         )
 
         // When

@@ -51,7 +51,7 @@ internal class ReviewViewModel(
     internal var openWithPreferences: OpenWithPreferences? = null
     internal var context: Context? = null
 
-    private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
+    private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", "", paymentState = ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
 
     private val _paymentValidation = MutableStateFlow<List<ValidationMessage>>(emptyList())
