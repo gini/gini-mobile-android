@@ -80,7 +80,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.appcompatThemeInvoicesScreen.setOnClickListener {
-            startActivity(Intent(this, AppCompatThemeInvoicesActivity::class.java))
+            startActivity(Intent(this, AppCompatThemeInvoicesActivity::class.java).apply {
+                viewModel.getPaymentComponentConfiguration()?.let {
+                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+            })
         }
 
         with(binding.giniHealthVersion) {
