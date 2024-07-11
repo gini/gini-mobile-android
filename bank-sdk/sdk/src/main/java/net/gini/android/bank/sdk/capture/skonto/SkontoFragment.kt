@@ -519,7 +519,7 @@ private fun FooterSection(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val animatedTotalAmount by animateFloatAsState(
-                    targetValue = totalAmount.toFloat(), label = "discountAmount"
+                    targetValue = totalAmount.toFloat(), label = "totalAmount"
                 )
                 Text(
                     text = "${currencyFormatterWithoutSymbol().format(animatedTotalAmount)} $currency",
