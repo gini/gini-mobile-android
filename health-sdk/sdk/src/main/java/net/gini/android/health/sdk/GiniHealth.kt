@@ -141,8 +141,7 @@ class GiniHealth(
         return when (extractionsResource) {
             is Resource.Cancelled -> false
             is Resource.Error -> throw Exception(extractionsResource.exception)
-            is Resource.Success -> (extractionsResource.data.compoundExtractions
-                .getPaymentExtraction("payment_state")?.value ?: "") == PAYABLE
+            is Resource.Success -> (extractionsResource.data.specificExtractions["payment_state"]?.value ?: "") == PAYABLE
         }
     }
 
