@@ -128,6 +128,8 @@ class GiniCaptureDefaultNetworkService(
                     userId = event.userId,
                     deviceId = event.deviceId,
                     eventType = event.eventType,
+                    sessionId = event.sessionId,
+                    eventId = event.eventId,
                     time = event.time,
                     platform = event.platform,
                     osVersion = event.osVersion,
@@ -140,7 +142,6 @@ class GiniCaptureDefaultNetworkService(
                     language = event.language,
                     eventProperties = event.eventProperties,
                     userProperties = event.userProperties,
-                    appVersion = event.appVersion
                 )
             }
         )

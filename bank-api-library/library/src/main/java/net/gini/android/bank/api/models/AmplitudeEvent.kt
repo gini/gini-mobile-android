@@ -9,6 +9,8 @@ data class AmplitudeEvent(
     val userId: String,
     val deviceId: String,
     val eventType: String,
+    val sessionId: String,
+    val eventId: String,
     val time: Long,
     val platform: String,
     val osVersion: String,
@@ -21,7 +23,6 @@ data class AmplitudeEvent(
     val language: String,
     val eventProperties: Map<String, Any>? = null,
     val userProperties: Map<String, Any>? = null,
-    val appVersion: String,
 )
 
 

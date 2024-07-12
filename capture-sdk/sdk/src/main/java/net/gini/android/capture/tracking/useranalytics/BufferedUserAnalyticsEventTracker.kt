@@ -14,6 +14,7 @@ import java.util.Queue
 
 internal class BufferedUserAnalyticsEventTracker(
     val context: Context,
+    val sessionId: String,
     private val uniqueIdProvider: UniqueIdProvider = UniqueIdProvider(context),
 ) : UserAnalyticsEventTracker {
 
@@ -41,6 +42,7 @@ internal class BufferedUserAnalyticsEventTracker(
                     amplitude = AmplitudeUserAnalyticsEventTracker(
                         context = context,
                         apiKey = token,
+                        sessionId = sessionId,
                         networkRequestsManager = networkRequestsManager,
                         uniqueIdProvider = uniqueIdProvider
                     )

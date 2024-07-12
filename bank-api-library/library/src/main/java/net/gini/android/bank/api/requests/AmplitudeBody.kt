@@ -16,6 +16,8 @@ data class AmplitudeEventBody(
     @Json(name = "user_id") val userId: String,
     @Json(name = "device_id") val deviceId: String,
     @Json(name = "event_type") val eventType: String,
+    @Json(name = "session_id") val sessionId: String,
+    @Json(name = "event_id") val eventId: String,
     @Json(name = "time") val time: Long = 0,
     @Json(name = "platform") val platform: String,
     @Json(name = "os_version") val osVersion: String,
@@ -29,7 +31,6 @@ data class AmplitudeEventBody(
     @Json(name = "ip") val ip: String = "\$remote",
     @Json(name = "event_properties") val eventProperties: Map<String, Any>? = null,
     @Json(name = "user_properties") val userProperties: Map<String, Any>? = null,
-    @Json(name = "app_version") val appVersion: String,
 )
 
 
@@ -42,6 +43,8 @@ internal fun AmplitudeEvent.toAmplitudeEventBody() = AmplitudeEventBody(
     userId = userId,
     deviceId = deviceId,
     eventType = eventType,
+    sessionId = sessionId,
+    eventId = eventId,
     time = time,
     platform = platform,
     osVersion = osVersion,
@@ -54,5 +57,4 @@ internal fun AmplitudeEvent.toAmplitudeEventBody() = AmplitudeEventBody(
     language = language,
     eventProperties = eventProperties,
     userProperties = userProperties,
-    appVersion = appVersion,
 )

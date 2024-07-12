@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import net.gini.android.capture.BuildConfig
 import net.gini.android.capture.internal.network.AmplitudeEventModel
 import net.gini.android.capture.internal.network.AmplitudeRoot
 import net.gini.android.capture.internal.network.NetworkRequestsManager
@@ -26,6 +27,7 @@ import java.util.UUID
 internal class AmplitudeUserAnalyticsEventTracker(
     val context: Context,
     val apiKey: AmplitudeAnalyticsApiKey,
+    val sessionId: String,
     val networkRequestsManager: NetworkRequestsManager,
     val uniqueIdProvider: UniqueIdProvider = UniqueIdProvider(context)
 ) : UserAnalyticsEventTracker {
@@ -33,12 +35,12 @@ internal class AmplitudeUserAnalyticsEventTracker(
     private val LOG = LoggerFactory.getLogger(AmplitudeUserAnalyticsEventTracker::class.java)
 
     companion object {
-        private const val KEY_USER_ID = "user_id"
-        private const val KEY_INSTALLATION_ID = "installation_id"
+        private const val KEY_DEVICE_ID = "device_id"
     }
 
     private val superProperties = mutableSetOf<UserAnalyticsEventSuperProperty>()
     private lateinit var userProperties: Map<String, Any>
+    private var eventId = 0
 
     private val contextProvider: DeviceInfo = DeviceInfo(
         context
@@ -70,16 +72,20 @@ internal class AmplitudeUserAnalyticsEventTracker(
         eventName: UserAnalyticsEvent,
         properties: Set<UserAnalyticsEventProperty>
     ) {
+
         val superPropertiesMap = superProperties.associate { it.getPair() }
         val propertiesMap = properties.associate { it.getPair() }
         val finalProperties = superPropertiesMap.plus(propertiesMap)
         val c: Calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Berlin"))
 
+        val version = BuildConfig.VERSION_NAME
         events.add(
             AmplitudeEventModel(
-                userId = uniqueIdProvider.getUniqueId(KEY_USER_ID),
-                deviceId = uniqueIdProvider.getUniqueId(KEY_INSTALLATION_ID),
+                userId = uniqueIdProvider.getUniqueId(KEY_DEVICE_ID),
+                deviceId = uniqueIdProvider.getUniqueId(KEY_DEVICE_ID),
                 eventType = eventName.eventName,
+                sessionId = sessionId,
+                eventId = eventId++.toString(),
                 time = c.timeInMillis,
                 platform = contextProvider.osName,
                 osVersion = contextProvider.osVersion,
@@ -91,8 +97,7 @@ internal class AmplitudeUserAnalyticsEventTracker(
                 carrier = contextProvider.carrier ?: "unknown",
                 language = contextProvider.language,
                 eventProperties = finalProperties,
-                userProperties = userProperties,
-                appVersion = "1.0"
+                userProperties = userProperties
             )
         )
 

@@ -15,6 +15,7 @@ import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.error.ErrorFragment
+import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
@@ -86,18 +87,24 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
                     networkRequestsManager = networkRequestsManager
                 )
                 // set if return assistant is enabled for the client
-                res.configuration.isReturnAssistantEnabled.let {
-                    setReturnAssistantEventProperty(it)
+                res.configuration.let {
+                    setUserEventProperties(it)
                 }
             }
         }
     }
 
-    private fun setReturnAssistantEventProperty(isReturnAssistantEnabled: Boolean) {
+    private fun setUserEventProperties(configuration: Configuration) {
         userAnalyticsEventTracker.setUserProperty(
             setOf(
                 UserAnalyticsUserProperty.ReturnAssistantEnabled(
-                    isReturnAssistantEnabled
+                    configuration.isReturnAssistantEnabled
+                ),
+                UserAnalyticsUserProperty.GiniClientId(
+                    configuration.clientID
+                ),
+                UserAnalyticsUserProperty.CaptureSdkVersionName(
+                    BuildConfig.VERSION_NAME
                 )
             )
         )

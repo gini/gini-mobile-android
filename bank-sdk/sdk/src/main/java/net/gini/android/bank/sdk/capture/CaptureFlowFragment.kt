@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import net.gini.android.bank.sdk.BuildConfig
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
@@ -16,6 +17,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
 import net.gini.android.bank.sdk.util.disallowScreenshots
+
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
@@ -54,6 +56,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         userAnalyticsEventTracker.setUserProperty(
             setOf(
                 UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
+                UserAnalyticsUserProperty.BankSdkVersionName(BuildConfig.VERSION_NAME),
             )
         )
     }
