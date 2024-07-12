@@ -213,7 +213,9 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             val imageProviderResolveInfos = queryImageProviders(requireContext())
 
             imageProviderItems =
-                if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                    ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())
+                ) {
                     getPhotoPickerProvider()
                 } else {
                     getImageProviderItems(imagePickerResolveInfos, imageProviderResolveInfos)
