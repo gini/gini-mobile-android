@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
+import net.gini.android.health.sdk.exampleapp.MainActivity
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
@@ -27,6 +29,7 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoi
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
 import net.gini.android.health.sdk.review.ReviewFragment
@@ -114,6 +117,10 @@ open class InvoicesActivity : AppCompatActivity() {
         }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)?.let {
+            viewModel.setPaymentComponentConfig(it)
+        }
 
         viewModel.loadInvoicesWithExtractions()
         viewModel.loadPaymentProviderApps()

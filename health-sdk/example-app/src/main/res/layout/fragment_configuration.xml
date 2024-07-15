@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="@dimen/ghs_medium"
+    android:layout_marginTop="@dimen/ghs_medium_10"
+    android:background="?android:windowBackground"
+    >
+    <TextView
+        android:id="@+id/tv_relaunchForDefaultConfiguration"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/relaunch_to_use_default_configuration"
+        />
+
+    <TextView
+        android:id="@+id/tv_closeForConfigurationsToTakePlace"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/close_screen_for_configurations_to_take_place"
+        android:layout_marginTop="@dimen/ghs_medium_12"
+        />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ghs_medium" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/ghs_hide_powered_by"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/hide_powered_by_gini"/>
+</LinearLayout>
