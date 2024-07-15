@@ -8,6 +8,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -22,6 +23,7 @@ fun GiniTextInput(
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
+    visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     GiniTextInput(
         modifier = modifier,
@@ -37,6 +39,7 @@ fun GiniTextInput(
         onValueChange = onValueChange,
         trailingContent = trailingContent,
         colors = colors,
+        visualTransformation = visualTransformation,
     )
 }
 
@@ -50,6 +53,7 @@ fun GiniTextInput(
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
+    visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     TextField(
         modifier = modifier,
@@ -58,6 +62,7 @@ fun GiniTextInput(
         keyboardOptions = keyboardOptions,
         textStyle = GiniTheme.typography.subtitle1,
         label = label,
+        visualTransformation = visualTransformation,
         colors = with(colors) {
             TextFieldDefaults.colors(
                 focusedContainerColor = containerFocused,
