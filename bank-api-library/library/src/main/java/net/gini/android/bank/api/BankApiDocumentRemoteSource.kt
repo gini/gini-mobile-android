@@ -6,6 +6,7 @@ import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.api.models.toResolvedPayment
 import net.gini.android.bank.api.requests.ErrorEvent
+import net.gini.android.bank.api.requests.toAmplitudeRequestBody
 import net.gini.android.bank.api.requests.toResolvePaymentBody
 import net.gini.android.bank.api.response.toConfiguration
 import net.gini.android.core.api.DocumentRemoteSource

@@ -57,6 +57,7 @@ public class NetworkRequestsManager {
     private final Map<String, CompletableFuture<
             AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>>> mDocumentAnalyzeFutures;
     private final Map<UUID, CompletableFuture<ConfigurationNetworkResult>> mConfigurationFutures;
+    private final Map<UUID, CompletableFuture<String>> mUserJourneyEventsFutures;
 
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
     private final DocumentDataMemoryCache mDocumentDataMemoryCache;
@@ -70,6 +71,64 @@ public class NetworkRequestsManager {
         mDocumentDeleteFutures = new HashMap<>();
         mDocumentAnalyzeFutures = new HashMap<>();
         mConfigurationFutures = new HashMap<>();
+        mUserJourneyEventsFutures = new HashMap<>();
+    }
+
+
+    public CompletableFuture<String> sendEvents(AmplitudeRoot amplitudeRoot, UUID id) {
+
+        final CompletableFuture<String> userJourneyEventsFutures =
+                mUserJourneyEventsFutures.get(id);
+        if (userJourneyEventsFutures != null) {
+            return userJourneyEventsFutures;
+        }
+
+        final CompletableFuture<String> future =
+                new CompletableFuture<>();
+        mUserJourneyEventsFutures.put(id, future);
+
+        final CancellationToken cancellationToken =
+                mGiniCaptureNetworkService.sendEvents(amplitudeRoot,
+                        new GiniCaptureNetworkCallback<Void, Error>() {
+                            @Override
+                            public void failure(final Error error) {
+                                LOG.error("Send events failed for {}",
+                                        error.getMessage());
+                                ErrorType errorType = ErrorType.typeFromError(error);
+                                future.completeExceptionally(new FailureException(errorType));
+                            }
+
+                            @Override
+                            public void success(final Void result) {
+                                LOG.debug("Send events success for {}:",
+                                        result);
+                                future.complete(null);
+                            }
+
+                            @Override
+                            public void cancelled() {
+                                LOG.debug("Send events cancelled for");
+                                future.cancel(false);
+
+                            }
+                        });
+
+        future.handle(
+                (requestResult, throwable) -> {
+                    if (throwable != null) {
+                        if (isCancellation(throwable)) {
+                            cancellationToken.cancel();
+                        } else {
+                            ErrorLogger.log(new ErrorLog("Send events failed", throwable));
+                        }
+                    } else if (requestResult != null) {
+                        mUserJourneyEventsFutures.remove(id);
+                    }
+                    mUserJourneyEventsFutures.remove(id);
+                    return requestResult;
+                });
+
+        return future;
     }
 
     public CompletableFuture<ConfigurationNetworkResult> getConfigurations(UUID id) {

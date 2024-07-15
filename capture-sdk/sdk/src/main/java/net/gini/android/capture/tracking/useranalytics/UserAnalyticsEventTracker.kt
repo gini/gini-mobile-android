@@ -18,6 +18,8 @@ interface UserAnalyticsEventTracker {
     fun trackEvent(eventName: UserAnalyticsEvent)
 
     fun trackEvent(eventName: UserAnalyticsEvent, properties: Set<UserAnalyticsEventProperty>)
+
+    fun flushEvents()
 }
 
 

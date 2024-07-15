@@ -1,12 +1,12 @@
 package net.gini.android.capture.tracking.useranalytics
 
 import android.content.Context
-import net.gini.android.capture.internal.provider.InstallationIdProvider
+import net.gini.android.capture.internal.network.NetworkRequestsManager
+import net.gini.android.capture.internal.provider.UniqueIdProvider
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.tracker.MixPanelUserAnalyticsEventTracker
 import org.slf4j.LoggerFactory
 import java.util.Collections
 import java.util.LinkedList
@@ -14,7 +14,8 @@ import java.util.Queue
 
 internal class BufferedUserAnalyticsEventTracker(
     val context: Context,
-    private val installationIdProvider: InstallationIdProvider = InstallationIdProvider(context),
+    val sessionId: String,
+    private val uniqueIdProvider: UniqueIdProvider = UniqueIdProvider(context),
 ) : UserAnalyticsEventTracker {
 
     private val LOG = LoggerFactory.getLogger(BufferedUserAnalyticsEventTracker::class.java)
@@ -26,33 +27,27 @@ internal class BufferedUserAnalyticsEventTracker(
     private val userProperties: Queue<Set<UserAnalyticsUserProperty>> = LinkedList()
     private val events: Queue<Pair<UserAnalyticsEvent, Set<UserAnalyticsEventProperty>>> =
         LinkedList()
+    private lateinit var amplitude: AmplitudeUserAnalyticsEventTracker
 
-    fun setPlatformTokens(vararg tokens: UserAnalytics.AnalyticsApiKey) {
+    fun setPlatformTokens(
+        vararg tokens: UserAnalytics.AnalyticsApiKey,
+        networkRequestsManager: NetworkRequestsManager,
+    ) {
         tokens.forEach { token ->
             when (token) {
-                is MixPanelUserAnalyticsEventTracker.MixpanelAnalyticsApiKey -> {
-                    eventTrackers.removeIf { tracker -> tracker is MixPanelUserAnalyticsEventTracker }
-                    eventTrackers.add(
-                        MixPanelUserAnalyticsEventTracker(
-                            context = context,
-                            apiKey = token,
-                            installationIdProvider = installationIdProvider
-                        )
-                    )
-
-                    LOG.debug("Mixpanel Initialized")
-                }
 
                 is AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey -> {
                     eventTrackers.removeIf { tracker -> tracker is AmplitudeUserAnalyticsEventTracker }
 
-                    eventTrackers.add(
-                        AmplitudeUserAnalyticsEventTracker(
-                            context = context,
-                            apiKey = token,
-                            installationIdProvider = installationIdProvider
-                        )
+                    amplitude = AmplitudeUserAnalyticsEventTracker(
+                        context = context,
+                        apiKey = token,
+                        sessionId = sessionId,
+                        networkRequestsManager = networkRequestsManager,
+                        uniqueIdProvider = uniqueIdProvider
                     )
+                    amplitude.startRepeatingJob()
+                    eventTrackers.add(amplitude)
 
                     LOG.debug("Amplitude Initialized")
                 }
@@ -92,6 +87,10 @@ internal class BufferedUserAnalyticsEventTracker(
 
     override fun trackEvent(eventName: UserAnalyticsEvent) {
         trackEvent(eventName, emptySet())
+    }
+
+    override fun flushEvents() {
+        amplitude.flushEvents()
     }
 
     private fun trySendEvents() {

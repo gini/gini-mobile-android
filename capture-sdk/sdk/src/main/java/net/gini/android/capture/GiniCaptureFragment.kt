@@ -15,6 +15,7 @@ import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.error.ErrorFragment
+import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
@@ -27,8 +28,8 @@ import net.gini.android.capture.noresults.NoResultsFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.tracker.MixPanelUserAnalyticsEventTracker
 import java.util.UUID
 
 
@@ -68,6 +69,10 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
             requireActivity().window.disallowScreenshots()
         }
 
+        setupUserAnalytics()
+    }
+
+    private fun setupUserAnalytics() {
         if (GiniCapture.hasInstance()) {
             UserAnalytics.initialize(requireActivity())
             val networkRequestsManager =
@@ -76,16 +81,33 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
                 ?.getConfigurations(UUID.randomUUID())
             response?.thenAcceptAsync { res ->
                 UserAnalytics.setPlatformTokens(
-                    MixPanelUserAnalyticsEventTracker.MixpanelAnalyticsApiKey(
-                        res.configuration.mixpanelToken
-                    ),
                     AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(
                         res.configuration.amplitudeApiKey
-                    )
+                    ),
+                    networkRequestsManager = networkRequestsManager
                 )
+                // set if return assistant is enabled for the client
+                res.configuration.let {
+                    setUserEventProperties(it)
+                }
             }
-
         }
+    }
+
+    private fun setUserEventProperties(configuration: Configuration) {
+        userAnalyticsEventTracker.setUserProperty(
+            setOf(
+                UserAnalyticsUserProperty.ReturnAssistantEnabled(
+                    configuration.isReturnAssistantEnabled
+                ),
+                UserAnalyticsUserProperty.GiniClientId(
+                    configuration.clientID
+                ),
+                UserAnalyticsUserProperty.CaptureSdkVersionName(
+                    BuildConfig.VERSION_NAME
+                )
+            )
+        )
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -135,6 +157,9 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         super.onDestroy()
         if (!didFinishWithResult && !willBeRestored) {
             giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
+        }
+        if (willBeRestored) {
+            UserAnalytics.flushEvents()
         }
     }
 
