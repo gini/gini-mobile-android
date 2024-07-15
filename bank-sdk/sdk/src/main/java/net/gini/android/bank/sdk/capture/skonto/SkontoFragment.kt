@@ -589,13 +589,18 @@ private fun FooterSection(
     modifier: Modifier = Modifier,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
 ) {
-    val totalPriceText = "${"%.2f".format(totalAmount)} $currency"
+    val animatedTotalAmount by animateFloatAsState(
+        targetValue = totalAmount.toFloat(), label = "totalAmount"
+    )
+    val animatedDiscountAmount by animateFloatAsState(
+        targetValue = discountValue.toFloat(), label = "discountAmount"
+    )
+    val totalPriceText = "${currencyFormatterWithoutSymbol().format(animatedTotalAmount)} $currency"
     val discountLabelText = stringResource(
         id = R.string.gbs_skonto_section_footer_label_discount,
-        "$discountValue%"
+        animatedDiscountAmount.formatAsDiscountPercentage()
     )
-    var proceedEnabled by remember { mutableStateOf(true) }
-
+    val proceedEnabled by remember { mutableStateOf(true) }
 
     if (customBottomNavBarAdapter != null) {
         val ctx = LocalContext.current
@@ -618,45 +623,44 @@ private fun FooterSection(
             shape = RectangleShape,
             colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
         ) {
-            Column(
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.gbs_skonto_section_footer_title),
-                    style = GiniTheme.typography.body1,
-                    color = colors.titleTextColor,
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
+            Column {
+                Column(
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp)
                 ) {
-                    val animatedTotalAmount by animateFloatAsState(
-                        targetValue = totalAmount.toFloat(), label = "totalAmount"
-                    )
                     Text(
-                        text = "${currencyFormatterWithoutSymbol().format(animatedTotalAmount)} $currency",
-                        style = GiniTheme.typography.headline5,
-                        color = colors.amountTextColor,
+                        text = stringResource(id = R.string.gbs_skonto_section_footer_title),
+                        style = GiniTheme.typography.body1,
+                        color = colors.titleTextColor,
                     )
-                    AnimatedVisibility(visible = isSkontoSectionActive) {
-                        Box(
-                            modifier = Modifier
-                                .height(IntrinsicSize.Min)
-                                .padding(horizontal = 12.dp)
-                                .background(
-                                    colors.discountLabelColorScheme.backgroundColor,
-                                    RoundedCornerShape(4.dp)
-                                ),
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
-                                text = discountLabelText,
-                                style = GiniTheme.typography.caption1,
-                                color = colors.discountLabelColorScheme.textColor,
-                            )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = totalPriceText,
+                            style = GiniTheme.typography.headline5,
+                            color = colors.amountTextColor,
+                        )
+                        AnimatedVisibility(visible = isSkontoSectionActive) {
+                            Box(
+                                modifier = Modifier
+                                    .height(IntrinsicSize.Min)
+                                    .padding(horizontal = 12.dp)
+                                    .background(
+                                        colors.discountLabelColorScheme.backgroundColor,
+                                        RoundedCornerShape(4.dp)
+                                    ),
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+                                    text = discountLabelText,
+                                    style = GiniTheme.typography.caption1,
+                                    color = colors.discountLabelColorScheme.textColor,
+                                )
+                            }
                         }
                     }
                 }
@@ -674,14 +678,14 @@ private fun FooterSection(
                     }
                     GiniButton(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .weight(0.1f)
                             .padding(horizontal = buttonPaddingHorizontal),
                         text = stringResource(id = R.string.gbs_skonto_section_footer_continue_button_text),
                         onClick = onProceedClicked,
                         giniButtonColors = colors.continueButtonColors
                     )
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
-                    NavigationActionHelp(
+                        NavigationActionHelp(
                             modifier = Modifier.padding(horizontal = 4.dp),
                             onClick = onHelpClicked
                         )

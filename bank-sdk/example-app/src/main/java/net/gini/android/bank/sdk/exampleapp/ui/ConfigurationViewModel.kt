@@ -141,11 +141,6 @@ class ConfigurationViewModel @Inject constructor(
             captureConfiguration =
                 captureConfiguration.copy(reviewNavigationBarBottomAdapter = CustomReviewNavigationBarBottomAdapter())
 
-        if (configuration.isSkontoCustomNavBarEnabled) {
-            captureConfiguration =
-                captureConfiguration.copy(skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter())
-        }
-
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // 15 enable custom onboarding pages
@@ -283,6 +278,8 @@ class ConfigurationViewModel @Inject constructor(
 
         if (configuration.isSkontoCustomNavBarEnabled) {
             GiniBank.skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter()
+        } else {
+            GiniBank.skontoNavigationBarBottomAdapter = null
         }
 
         // 35 Digital invoice onboarding bottom navigation bar
