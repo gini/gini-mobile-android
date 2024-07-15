@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gms_medium"
-            android:hint="Recipient"
+            android:hint="@string/recipient"
             app:boxBackgroundColor="#ffffff">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gms_medium"
-            android:hint="IBAN"
+            android:hint="@string/iban"
             app:boxBackgroundColor="#ffffff">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gms_medium"
-            android:hint="Amount"
+            android:hint="@string/amount"
             app:boxBackgroundColor="#ffffff">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -69,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gms_medium"
-            android:hint="Purpose"
+            android:hint="@string/purpose"
             app:boxBackgroundColor="#ffffff">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -86,6 +86,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/gms_large"
-        android:text="Pay Now"
+        android:text="@string/pay_now"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,29 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Gini Merchant</string>
-    <string name="take_photo">Take Photo</string>
-    <string name="import_file">Import</string>
-    <string name="payment">Pay</string>
-    <string name="upload_failed">Upload failed</string>
-    <string name="upload_succeeded">Upload succeeded</string>
-    <string name="missing_document_id">Missing document id</string>
-    <string name="document_not_payable_title">Invoice is not payable</string>
-    <string name="document_not_payable_message">Please try again with a different invoice.</string>
-    <string name="failed_to_load_bank_apps">Failed to load bank apps</string>
-    <string name="upload">Upload</string>
-    <string name="invoice">Invoice</string>
-    <string name="title_activity_orders">Orders</string>
-    <string name="title_fragment_order_details">Order Details</string>
-    <string name="no_orders">No orders</string>
-    <string name="custom_order">Custom Order</string>
-    <string name="welcome_to_gini">Welcome to Gini</string>
-    <string name="example_of_merchant_sdk">Example of Gini Pay Connect integration in the merchant app</string>
-    <string name="could_not_start_payment_review">Could not start payment review</string>
+    <string name="title_activity_orders">Bestellungen</string>
+    <string name="title_fragment_order_details">Bestelldetails</string>
+    <string name="no_orders">Keine Bestellungen</string>
+    <string name="custom_order">Sonderbestellung</string>
+    <string name="welcome_to_gini">Willkommen bei Gini</string>
+    <string name="example_of_merchant_sdk">Beispiel für die Integration von Gini Pay Connect in der Händler-App</string>
 
     <string name="gms_privacy_policy_link_url">https://www.google.com</string>
-    <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default MerchantFlowConfiguration values.</string>
-    <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
-    <string name="show_review_screen">Show the Review Screen</string>
-    <string name="amount_editable">Amount field is editable</string>
+    <string name="relaunch_to_use_default_configuration">Bitte starte die App neu, um die MerchantFlowConfiguration auf Standardwerte zurückzusetzen.</string>
+    <string name="close_screen_for_configurations_to_take_place">Die Konfigurationsänderungen werden nach dem Schließen dieses Bildschirms wirksam.</string>
+    <string name="show_review_screen">Review Screen anzeigen</string>
+    <string name="amount_editable">Betrag kann bearbeitet werden</string>
     <string name="gini_merchant_version">Gini Merchant SDK v: </string>
-    <string name="error_message">Oops, something went wrong.</string>
+    <string name="error_message">Oh da ist was schief gelaufen.</string>
+    <string name="recipient">Empfänger</string>
+    <string name="iban">IBAN</string>
+    <string name="amount">Betrag</string>
+    <string name="purpose">Verwendungszweck</string>
+    <string name="pay_now">Bezahlen</string>
+    <string name="orders_screen">Bestellungen</string>
 </resources>

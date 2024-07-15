@@ -61,7 +61,7 @@
                 style="@style/Widget.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Orders Screen"
+                android:text="@string/orders_screen"
                 android:layout_marginBottom="@dimen/gms_large"
                 app:layout_constraintBottom_toTopOf="@id/gini_merchant_version"
                 app:layout_constraintBottom_toBottomOf="parent"
