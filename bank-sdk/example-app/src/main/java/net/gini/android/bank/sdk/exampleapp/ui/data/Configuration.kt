@@ -154,7 +154,11 @@ data class Configuration(
     // 37 Debug mode
     val isDebugModeEnabled: Boolean = true,
 
+    // 38 Is Allow Screenshots
     val isAllowScreenshotsEnabled: Boolean = true,
+
+    // 39 Skonto Custom bottom navigation
+    val isSkontoCustomNavBarEnabled: Boolean = false,
 
     ) : Parcelable {
 

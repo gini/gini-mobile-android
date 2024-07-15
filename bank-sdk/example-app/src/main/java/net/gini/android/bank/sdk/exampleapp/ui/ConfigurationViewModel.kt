@@ -26,6 +26,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingInd
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustrationAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
@@ -139,6 +140,11 @@ class ConfigurationViewModel @Inject constructor(
         if (configuration.isReviewScreenCustomBottomNavBarEnabled)
             captureConfiguration =
                 captureConfiguration.copy(reviewNavigationBarBottomAdapter = CustomReviewNavigationBarBottomAdapter())
+
+        if (configuration.isSkontoCustomNavBarEnabled) {
+            captureConfiguration =
+                captureConfiguration.copy(skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter())
+        }
 
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
@@ -273,6 +279,10 @@ class ConfigurationViewModel @Inject constructor(
         if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled) {
             GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter =
                 CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
+        }
+
+        if (configuration.isSkontoCustomNavBarEnabled) {
+            GiniBank.skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter()
         }
 
         // 35 Digital invoice onboarding bottom navigation bar

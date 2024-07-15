@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gbs_bottom_wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorError"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <TextView
+        android:id="@+id/total_label"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large_24"
+        android:text="@string/gbs_skonto_section_footer_title"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/price_total"
+        style="@style/GiniCaptureTheme.Typography.Headline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/gc_large_24"
+        android:layout_marginTop="@dimen/gc_small"
+        app:layout_constraintStart_toStartOf="@id/total_label"
+        app:layout_constraintTop_toBottomOf="@id/total_label"
+        tools:text="€242.99" />
+
+    <TextView
+        android:id="@+id/discount_info"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_medium"
+        android:layout_marginTop="@dimen/gc_small"
+        app:layout_constraintBottom_toBottomOf="@+id/price_total"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/price_total"
+        app:layout_constraintTop_toBottomOf="@id/total_label"
+        tools:text="3% discount" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/gbs_pay"
+        style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_large_24"
+        android:layout_marginEnd="@dimen/gc_large"
+        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginBottom="@dimen/gc_large_24"
+        android:text="@string/gbs_skonto_section_footer_continue_button_text"
+        app:cornerRadius="@dimen/gc_small"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/gbs_help_btn"
+        app:layout_constraintStart_toEndOf="@+id/gbs_placeholder"
+        app:layout_constraintTop_toBottomOf="@+id/price_total" />
+
+    <ImageButton
+        android:id="@+id/gbs_help_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/gc_medium"
+        android:padding="@dimen/gc_medium"
+        app:tint="?attr/colorOnBackground"
+        android:contentDescription="@string/gbs_digital_invoice_help_info"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gbs_pay"
+        app:srcCompat="@drawable/gbs_menu_question_circle_info" />
+
+    <ImageButton
+        android:id="@+id/gbs_back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/gbs_digital_invoice_help_info"
+        android:padding="@dimen/gc_medium"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
+        app:layout_constraintEnd_toStartOf="@+id/gbs_pay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gbs_pay"
+        app:srcCompat="@drawable/gc_action_bar_back"
+        app:tint="?attr/colorOnBackground" />
+
+    <Space
+        android:id="@+id/gbs_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large_48"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gbs_pay" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
