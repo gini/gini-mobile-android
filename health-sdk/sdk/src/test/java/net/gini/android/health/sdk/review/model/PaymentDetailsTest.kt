@@ -45,6 +45,11 @@ class PaymentDetailsTest {
                     "payment_purpose",
                     "Testing",
                     "", null, emptyList()
+                ),
+                "payment_state" to SpecificExtraction(
+                    "payment_state",
+                    "Payable",
+                    "", null, emptyList()
                 )
             ))
         ))
