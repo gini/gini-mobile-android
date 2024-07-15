@@ -59,8 +59,6 @@ class InvoicesRepository(
             }
         }
 
-        invoicesLocalDataSource.appendInvoicesWithExtractions(documentsWithExtractions)
-
         val errors = createdResources.awaitAll().mapNotNull { resource ->
             if (resource is Resource.Error) {
                 resource.message
@@ -70,6 +68,8 @@ class InvoicesRepository(
         }
 
         if (errors.isEmpty()) {
+            invoicesLocalDataSource.appendInvoicesWithExtractions(documentsWithExtractions)
+
             _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Success
         } else {
             _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Failure(errors)
