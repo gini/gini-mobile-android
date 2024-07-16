@@ -83,3 +83,11 @@ def has_release_tag?(project_id, project_version, ui)
     get_project_version_from_tag(project_id, release_tag, ui) == project_version
   }
 end
+
+##
+# Checks if the project version is stable,  meaning that the release version has no suffix (e.g., `1.10.23` is stable and 
+# `1.11.0-beta01` is not).
+#
+def is_project_version_stable?(project_version, ui)
+  /^\d+\.\d+\.\d+$/.match(project_version)
+end

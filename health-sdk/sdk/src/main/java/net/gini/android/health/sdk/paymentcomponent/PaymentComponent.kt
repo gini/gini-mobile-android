@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk.paymentcomponent
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +23,7 @@ import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
  *
  * It requires a [GiniHealth] instance and a [Context] (application or activity) to be created.
  */
-class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth) {
+class PaymentComponent(private val context: Context, private val giniHealth: GiniHealth, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -59,6 +58,10 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
      * See [Listener] for the methods you need to implement.
      */
     var listener: Listener? = null
+
+    var paymentComponentConfiguration: PaymentComponentConfiguration
+        get() = configuration
+        set(value) { configuration = value}
 
     /**
      * Loads the payment provider apps and selects the first installed payment provider app or nothing if no payment provider
@@ -198,10 +201,8 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
      * @param configuration The configuration for the [ReviewFragment]
      * @throws IllegalStateException If no payment provider app has been selected
      */
-    suspend fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
+    fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
-
-        giniHealth.setDocumentForReview(documentId)
 
         when (val selectedPaymentProviderAppState = _selectedPaymentProviderAppFlow.value) {
             is SelectedPaymentProviderAppState.AppSelected -> {
@@ -210,7 +211,8 @@ class PaymentComponent(private val context: Context, private val giniHealth: Gin
                 return ReviewFragment.newInstance(
                     giniHealth,
                     configuration = configuration,
-                    paymentComponent = this@PaymentComponent
+                    paymentComponent = this@PaymentComponent,
+                    documentId = documentId
                 )
             }
 

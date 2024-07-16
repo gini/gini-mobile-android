@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.viewModels
 import net.gini.android.health.sdk.R
@@ -60,6 +61,12 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
             binding.ghsOpenWithDetails.text = String.format(getString(R.string.ghs_open_with_details), paymentProviderApp.name)
             binding.ghsOpenWithInfo.text = createSpannableString(String.format(getString(R.string.ghs_open_with_info), paymentProviderApp.name, paymentProviderApp.name), paymentProviderApp.paymentProvider.playStoreUrl)
             binding.ghsOpenWithInfo.movementMethod = LinkMovementMethod.getInstance()
+        }
+        binding.ghsMoreLayout.ghsAppName.text = getString(R.string.ghs_open_with_more)
+        with(binding.ghsMoreLayout.ghsAppIcon) {
+            setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ghs_more_icon))
+            elevation = 0f
+            background = null
         }
         return binding.root
     }

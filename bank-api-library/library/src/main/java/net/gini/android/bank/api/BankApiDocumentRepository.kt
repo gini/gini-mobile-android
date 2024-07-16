@@ -7,12 +7,7 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Resource.Companion.wrapInResource
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.models.CompoundExtraction
-import net.gini.android.core.api.models.Document
-import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.models.SpecificExtraction
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -40,13 +35,6 @@ class BankApiDocumentRepository(
         withAccessToken { accessToken ->
             wrapInResource {
                 documentRemoteSource.resolvePaymentRequests(accessToken, requestId, resolvePaymentInput)
-            }
-        }
-
-    suspend fun getPayment(id: String): Resource<Payment> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPayment(accessToken, id)
             }
         }
 

@@ -23,24 +23,47 @@ import org.junit.Before
 import org.junit.Test
 
 val document =
-    Document("1234", Document.ProcessingState.COMPLETED, "", 1, Date(124), Document.SourceClassification.COMPOSITE, Uri.EMPTY, emptyList(), emptyList())
+    Document("1234", Document.ProcessingState.COMPLETED, "", 1, Date(124), Date(100), Document.SourceClassification.COMPOSITE, Uri.EMPTY, emptyList(), emptyList())
 
 val extractions = ExtractionsContainer(
-    emptyMap(),
+    mapOf(
+        "payment_state" to SpecificExtraction("payment_state", "Payable", "", null, listOf())
+    ),
     mapOf(
         "payment" to CompoundExtraction("payment", listOf(mutableMapOf(
             "payment_recipient" to SpecificExtraction("payment_recipient", "recipient", "", null, listOf()),
             "iban" to SpecificExtraction("iban", "iban", "", null, listOf()),
-            "amount_to_pay" to SpecificExtraction("amount_tp_pay", "123.56", "", null, listOf()),
+            "amount_to_pay" to SpecificExtraction("amount_to_pay", "123.56", "", null, listOf()),
             "payment_purpose" to SpecificExtraction("payment_purpose", "purpose", "", null, listOf()),
+            "payment_state" to SpecificExtraction("payment_state", "Payable", "", null, listOf())
         )))
     )
 )
 
 fun copyExtractions(extractions: ExtractionsContainer) = ExtractionsContainer(
-    extractions.specificExtractions.toMap(),
+    extractions.specificExtractions.toMap().mapValues { specificExtraction ->
+        SpecificExtraction(
+            specificExtraction.value.name,
+            specificExtraction.value.value,
+            specificExtraction.value.entity,
+            specificExtraction.value.box,
+            specificExtraction.value.candidate
+        )
+    },
     extractions.compoundExtractions.map { (name, compoundExtraction) ->
-        name to CompoundExtraction(name, compoundExtraction.specificExtractionMaps.map { it.toMap() })
+        name to CompoundExtraction(
+            name,
+            compoundExtraction.specificExtractionMaps.map { specificExtractionMap ->
+                specificExtractionMap.toMap().mapValues { specificExtraction ->
+                    SpecificExtraction(
+                        specificExtraction.value.name,
+                        specificExtraction.value.value,
+                        specificExtraction.value.entity,
+                        specificExtraction.value.box,
+                        specificExtraction.value.candidate
+                    )
+                }
+            })
     }.toMap()
 )
 
@@ -133,7 +156,7 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Document is payable if it has an IBAN extraction`() = runTest {
+    fun `Document is payable if it has payment state extraction and that equals Payable`() = runTest {
         coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractions)
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
 
@@ -141,23 +164,22 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Document is not payable if it has no IBAN extraction`() = runTest {
-        val extractionsWithoutIBAN = copyExtractions(extractions).apply {
-            compoundExtractions["payment"]?.specificExtractionMaps?.get(0)?.remove("iban")
+    fun `Document is not payable if it has payment state extraction and that equals Other`() = runTest {
+        val extractionsWithPaymentStateOther = copyExtractions(extractions).apply {
+            specificExtractions["payment_state"]?.value = "Other"
         }
-        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractionsWithoutIBAN)
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractionsWithPaymentStateOther)
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
 
         assertFalse(giniHealth.checkIfDocumentIsPayable(document.id))
     }
 
     @Test
-    fun `Document is not payable if it has an empty IBAN extraction`() = runTest {
-        val extractionsWithoutIBAN = copyExtractions(extractions).apply {
-            compoundExtractions["payment"]?.specificExtractionMaps?.get(0)
-                ?.set("iban", SpecificExtraction("iban", "", "", null, listOf()))
+    fun `Document is not payable if it has an empty payment state extraction`() = runTest {
+        val extractionsWithPaymentStateEmpty = copyExtractions(extractions).apply {
+            specificExtractions["payment_state"]?.value = ""
         }
-        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractionsWithoutIBAN)
+        coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(extractionsWithPaymentStateEmpty)
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
 
         assertFalse(giniHealth.checkIfDocumentIsPayable(document.id))

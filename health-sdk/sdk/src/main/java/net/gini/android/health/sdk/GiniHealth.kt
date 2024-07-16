@@ -7,9 +7,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
@@ -125,7 +128,7 @@ class GiniHealth(
 
     /**
      * Checks whether the document is payable by fetching the document and its extractions from the
-     * Gini Pay API and verifying that the extractions contain an IBAN.
+     * Gini Pay API and verifying that the extraction's payment state is "Payable".
      *
      * @return `true` if the document is payable and `false` otherwise
      * @throws Exception if there was an error while retrieving the document or the extractions
@@ -138,14 +141,18 @@ class GiniHealth(
         return when (extractionsResource) {
             is Resource.Cancelled -> false
             is Resource.Error -> throw Exception(extractionsResource.exception)
-            is Resource.Success -> extractionsResource.data.compoundExtractions
-                .getPaymentExtraction("iban")?.value?.isNotEmpty() ?: false
+            is Resource.Success -> (extractionsResource.data.specificExtractions["payment_state"]?.value ?: "") == PAYABLE
         }
     }
 
-    internal fun setOpenBankState(state: PaymentState) {
+    internal fun setOpenBankState(state: PaymentState, scope: CoroutineScope) {
         _openBankState.value = state
-        _openBankState.value = PaymentState.NoAction
+        scope.launch {
+            withContext(NonCancellable) {
+                delay(50)
+                _openBankState.value = PaymentState.NoAction
+            }
+        }
     }
 
     internal suspend fun retryDocumentReview() {
@@ -234,5 +241,6 @@ class GiniHealth(
         private const val CAPTURED_ARGUMENTS_TYPE = "CAPTURED_ARGUMENTS_TYPE"
         private const val PROVIDER = "net.gini.android.health.sdk.GiniHealth"
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
+        private const val PAYABLE = "Payable"
     }
 }

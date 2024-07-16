@@ -20,6 +20,34 @@ on:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
+  workflow_dispatch:
+    inputs:
+      clientId:
+        description: 'Client ID'
+        required: true
+        type: string
+        default: ''
+      clientSecret:
+        description: 'Client Secret'
+        required: true
+        type: string
+        default: ''
+      healthApiBaseUrl:
+        description: 'Health API Base URL'
+        required: true
+        type: string
+        default: ''
+      userCenterBaseUrl:
+        description: 'User Center Base URL'
+        required: true
+        type: string
+        default: ''
+      payApiBaseUrl:
+        description: 'Pay API Base URL'
+        required: true
+        type: string
+        default: ''
+      
 
 jobs:
   test:
@@ -112,16 +140,17 @@ jobs:
           script: >
             adb uninstall net.gini.android.health.api.test ;
             ./gradlew health-api-library:library:connectedCheck
-            -PtestClientId="gini-mobile-test"
-            -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-            -PtestApiUri="https://health-api.gini.net"
-            -PtestUserCenterUri="https://user.gini.net"
+            -PtestClientId="${{ inputs.clientId != '' && inputs.clientId || 'gini-mobile-test'}}"
+            -PtestClientSecret="${{ inputs.clientSecret != '' && inputs.clientSecret || secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+            -PtestApiUri="${{ inputs.healthApiBaseUrl != '' && inputs.healthApiBaseUrl || 'https://health-api.gini.net' }}"
+            -PtestUserCenterUri="${{ inputs.userCenterBaseUrl != '' && inputs.userCenterBaseUrl || 'https://user.gini.net' }}"
+            -PtestBankApiUri="${{ inputs.payApiBaseUrl != '' && inputs.payApiBaseUrl || 'https://pay-api.gini.net' }}"
 
       - name: archive instrumented test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: health-api-library-instrumented-test-results
+          name: health-api-library-instrumented-test-results-api-level-${{ matrix.api-level }}
           path: health-api-library/library/build/outputs/androidTest-results/connected
 
   checkstyle:

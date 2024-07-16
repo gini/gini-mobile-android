@@ -11,9 +11,9 @@ import kotlinx.coroutines.test.runTest
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.bank.api.requests.ResolvePaymentBody
-import net.gini.android.bank.api.response.PaymentResponse
 import net.gini.android.bank.api.response.ResolvePaymentResponse
 import net.gini.android.core.api.response.PaymentRequestResponse
+import net.gini.android.core.api.response.PaymentResponse
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import org.junit.Test
