@@ -3,7 +3,8 @@ package net.gini.android.capture.review.multipage.previews
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.GiniCapture
@@ -13,6 +14,10 @@ import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.camera.photo.Photo
 import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.review.RotatableImageViewContainer
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 
 class PreviewPagesAdapter(
     private val multiPageDocument: ImageMultiPageDocument,
@@ -22,12 +27,18 @@ class PreviewPagesAdapter(
 
     inner class PagesViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
-        val mImageViewContainer: RotatableImageViewContainer? = view.findViewById(R.id.gc_image_container)
+        val mImageViewContainer: RotatableImageViewContainer? =
+            view.findViewById(R.id.gc_image_container)
         private val mDeletePage: ImageButton? = view.findViewById(R.id.gc_button_delete)
+        private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Review
 
         init {
 
             mDeletePage?.setIntervalClickListener {
+                getAnalyticsEventTracker().trackEvent(
+                    UserAnalyticsEvent.DELETE_PAGES_TAPPED,
+                    setOf(UserAnalyticsEventProperty.Screen(screenName))
+                )
                 previewFragmentListener.onDeleteDocument(multiPageDocument.documents[absoluteAdapterPosition])
             }
 
@@ -59,7 +70,10 @@ class PreviewPagesAdapter(
 
                     override fun onSuccess(result: Photo?) {
                         holder.mImageViewContainer?.imageView?.setImageBitmap(result?.bitmapPreview)
-                        holder.mImageViewContainer?.rotateImageView(result?.rotationForDisplay ?: 0, false);
+                        holder.mImageViewContainer?.rotateImageView(
+                            result?.rotationForDisplay ?: 0,
+                            false
+                        )
                     }
 
                     override fun onError(exception: Exception?) {

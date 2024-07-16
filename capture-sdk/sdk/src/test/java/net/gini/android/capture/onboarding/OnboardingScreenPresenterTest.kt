@@ -4,12 +4,14 @@ import android.app.Activity
 import com.google.common.collect.Lists
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.spy
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.mockkStatic
+import io.mockk.spyk
+import io.mockk.verify
 import junitparams.JUnitParamsRunner
 import junitparams.Parameters
 import net.gini.android.capture.GiniCapture
@@ -19,13 +21,12 @@ import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAda
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.OnboardingScreenEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
 
 /**
  * Created by Alpar Szotyori on 20.05.2019.
@@ -35,20 +36,33 @@ import org.mockito.MockitoAnnotations
 @RunWith(JUnitParamsRunner::class)
 class OnboardingScreenPresenterTest {
 
-    @Mock
+
     private lateinit var mActivity: Activity
 
-    @Mock
+
     private lateinit var mView: OnboardingScreenContract.View
 
-    private val onboardingPageComparator = Correspondence.from<OnboardingPage, OnboardingPage>({ actual, expected ->
-        actual?.titleResId == expected?.titleResId && actual?.messageResId == expected?.messageResId
-    }, "is equivalent to")
+
+    private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
+
+    private val onboardingPageComparator =
+        Correspondence.from<OnboardingPage, OnboardingPage>({ actual, expected ->
+            actual?.titleResId == expected?.titleResId && actual?.messageResId == expected?.messageResId
+        }, "is equivalent to")
 
     @Before
-    @Throws(Exception::class)
     fun setUp() {
-        MockitoAnnotations.openMocks(this)
+        mUserAnalyticsEventTracker = mockk<UserAnalyticsEventTracker>().apply {
+            every { trackEvent(any()) } just Runs
+            every { trackEvent(any(), any()) } just Runs
+        }
+        mActivity = mockk()
+
+        mockkObject(UserAnalytics)
+
+        mView = mockk<OnboardingScreenContract.View>(relaxed = true)
+
+        every { UserAnalytics.getAnalyticsEventTracker() } returns mUserAnalyticsEventTracker
     }
 
     @After
@@ -68,14 +82,22 @@ class OnboardingScreenPresenterTest {
 
         // When
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
-            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
+            OnboardingPage(
+                R.string.gc_onboarding_align_corners_title,
+                R.string.gc_onboarding_align_corners_message,
+                null
+            ),
+            OnboardingPage(
+                R.string.gc_onboarding_lighting_title,
+                R.string.gc_onboarding_lighting_message,
+                null
+            )
         )
         presenter.setCustomPages(customPages)
         presenter.showNextPage()
 
         // Then
-        Mockito.verify(mView).scrollToPage(1)
+        verify { mView.scrollToPage(1) }
     }
 
     @Test
@@ -86,15 +108,23 @@ class OnboardingScreenPresenterTest {
 
         // When
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
-            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
+            OnboardingPage(
+                R.string.gc_onboarding_align_corners_title,
+                R.string.gc_onboarding_align_corners_message,
+                null
+            ),
+            OnboardingPage(
+                R.string.gc_onboarding_lighting_title,
+                R.string.gc_onboarding_lighting_message,
+                null
+            )
         )
         presenter.setCustomPages(customPages)
         presenter.onScrolledToPage(1)
         presenter.showNextPage()
 
         // Then
-        Mockito.verify(mView).close()
+        verify { mView.close() }
     }
 
     @Test
@@ -105,14 +135,22 @@ class OnboardingScreenPresenterTest {
 
         // When
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
-            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
+            OnboardingPage(
+                R.string.gc_onboarding_align_corners_title,
+                R.string.gc_onboarding_align_corners_message,
+                null
+            ),
+            OnboardingPage(
+                R.string.gc_onboarding_lighting_title,
+                R.string.gc_onboarding_lighting_message,
+                null
+            )
         )
         presenter.setCustomPages(customPages)
         presenter.onScrolledToPage(1)
 
         // Then
-        Mockito.verify(mView).activatePageIndicatorForPage(1)
+        verify { mView.activatePageIndicatorForPage(1) }
     }
 
     @Test
@@ -125,7 +163,7 @@ class OnboardingScreenPresenterTest {
         presenter.start()
 
         // Then
-        Mockito.verify(mView).showPages(presenter.pages)
+        verify { mView.showPages(presenter.pages) }
     }
 
     @Test
@@ -138,7 +176,7 @@ class OnboardingScreenPresenterTest {
         presenter.start()
 
         // Then
-        Mockito.verify(mView).scrollToPage(0)
+        verify { mView.scrollToPage(0) }
     }
 
     @Test
@@ -146,12 +184,20 @@ class OnboardingScreenPresenterTest {
     fun `trigger finish event when clicking next on the last page`() {
         // Given
         val presenter = createPresenter()
-        val eventTracker = spy<EventTracker>()
+        val eventTracker = spyk<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
-            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
+            OnboardingPage(
+                R.string.gc_onboarding_align_corners_title,
+                R.string.gc_onboarding_align_corners_message,
+                null
+            ),
+            OnboardingPage(
+                R.string.gc_onboarding_lighting_title,
+                R.string.gc_onboarding_lighting_message,
+                null
+            )
         )
         presenter.setCustomPages(customPages)
         presenter.onScrolledToPage(1)
@@ -160,7 +206,7 @@ class OnboardingScreenPresenterTest {
         presenter.showNextPage()
 
         // Then
-        Mockito.verify(eventTracker).onOnboardingScreenEvent(Event(OnboardingScreenEvent.FINISH))
+        verify { eventTracker.onOnboardingScreenEvent(Event(OnboardingScreenEvent.FINISH)) }
     }
 
     @Test
@@ -168,14 +214,14 @@ class OnboardingScreenPresenterTest {
     fun `trigger finish event when clicking the skip button`() {
         // Given
         val presenter = createPresenter()
-        val eventTracker = spy<EventTracker>()
+        val eventTracker = spyk<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
         // When
         presenter.skip()
 
         // Then
-        Mockito.verify(eventTracker).onOnboardingScreenEvent(Event(OnboardingScreenEvent.FINISH))
+        verify { eventTracker.onOnboardingScreenEvent(Event(OnboardingScreenEvent.FINISH)) }
     }
 
     @Test
@@ -183,14 +229,14 @@ class OnboardingScreenPresenterTest {
     fun `trigger start event`() {
         // Given
         val presenter = createPresenter()
-        val eventTracker = spy<EventTracker>()
+        val eventTracker = spyk<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
         // When
         presenter.start()
 
         // Then
-        Mockito.verify(eventTracker).onOnboardingScreenEvent(Event(OnboardingScreenEvent.START))
+        verify() { eventTracker.onOnboardingScreenEvent(Event(OnboardingScreenEvent.START)) }
     }
 
     @Test
@@ -243,7 +289,7 @@ class OnboardingScreenPresenterTest {
         presenter.skip()
 
         // Then
-        verify(mView).close()
+        verify { mView.close() }
     }
 
     @Test
@@ -258,13 +304,21 @@ class OnboardingScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView).setNavigationBarBottomAdapterInstance(eq(GiniCapture.getInstance().internal().onboardingNavigationBarBottomAdapterInstance))
+        verify {
+            mView.setNavigationBarBottomAdapterInstance(
+                eq(
+                    GiniCapture.getInstance()
+                        .internal().onboardingNavigationBarBottomAdapterInstance
+                )
+            )
+        }
     }
 
     @Test
     fun `use custom onboarding bottom navigation bar if enabled`() {
         // Given
-        val customOnboardingNavigationBarBottomAdapter = mock<OnboardingNavigationBarBottomAdapter>()
+        val customOnboardingNavigationBarBottomAdapter =
+            mockk<OnboardingNavigationBarBottomAdapter>()
         GiniCapture.Builder()
             .setBottomNavigationBarEnabled(true)
             .setOnboardingNavigationBarBottomAdapter(customOnboardingNavigationBarBottomAdapter)
@@ -275,12 +329,21 @@ class OnboardingScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView).setNavigationBarBottomAdapterInstance(eq(GiniCapture.getInstance().internal().onboardingNavigationBarBottomAdapterInstance))
+        verify {
+            mView.setNavigationBarBottomAdapterInstance(
+                eq(
+                    GiniCapture.getInstance()
+                        .internal().onboardingNavigationBarBottomAdapterInstance
+                )
+            )
+        }
     }
 
     @Test
     @Parameters("false", "true")
-    fun `show skip and next buttons when not on last page - (isBottomNavigationBarEnabled) `(isBottomNavigationBarEnabled: Boolean) {
+    fun `show skip and next buttons when not on last page - (isBottomNavigationBarEnabled) `(
+        isBottomNavigationBarEnabled: Boolean
+    ) {
         // Given
         GiniCapture.Builder()
             .setBottomNavigationBarEnabled(isBottomNavigationBarEnabled)
@@ -292,17 +355,19 @@ class OnboardingScreenPresenterTest {
 
         // Then
         if (isBottomNavigationBarEnabled) {
-            verify(mView, never()).showSkipAndNextButtons()
-            verify(mView).showSkipAndNextButtonsInNavigationBarBottom()
+            verify(exactly = 0) { mView.showSkipAndNextButtons() }
+            verify { mView.showSkipAndNextButtonsInNavigationBarBottom() }
         } else {
-            verify(mView).showSkipAndNextButtons()
-            verify(mView, never()).showSkipAndNextButtonsInNavigationBarBottom()
+            verify { mView.showSkipAndNextButtons() }
+            verify(exactly = 0) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
         }
     }
 
     @Test
     @Parameters("false", "true")
-    fun `show skip and next buttons after going back from the last page - (isBottomNavigationBarEnabled) `(isBottomNavigationBarEnabled: Boolean) {
+    fun `show skip and next buttons after going back from the last page - (isBottomNavigationBarEnabled) `(
+        isBottomNavigationBarEnabled: Boolean
+    ) {
         // Given
         GiniCapture.Builder()
             .setBottomNavigationBarEnabled(isBottomNavigationBarEnabled)
@@ -310,8 +375,16 @@ class OnboardingScreenPresenterTest {
         val presenter = createPresenter()
 
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
-            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
+            OnboardingPage(
+                R.string.gc_onboarding_align_corners_title,
+                R.string.gc_onboarding_align_corners_message,
+                null
+            ),
+            OnboardingPage(
+                R.string.gc_onboarding_lighting_title,
+                R.string.gc_onboarding_lighting_message,
+                null
+            )
         )
         presenter.setCustomPages(customPages)
 
@@ -322,17 +395,19 @@ class OnboardingScreenPresenterTest {
 
         // Then
         if (isBottomNavigationBarEnabled) {
-            verify(mView, never()).showSkipAndNextButtons()
-            verify(mView, times(2)).showSkipAndNextButtonsInNavigationBarBottom()
+            verify(exactly = 0) { mView.showSkipAndNextButtons() }
+            verify(exactly = 2) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
         } else {
-            verify(mView, times(2)).showSkipAndNextButtons()
-            verify(mView, never()).showSkipAndNextButtonsInNavigationBarBottom()
+            verify(exactly = 2) { mView.showSkipAndNextButtons() }
+            verify(exactly = 0) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
         }
     }
 
     @Test
     @Parameters("false", "true")
-    fun `show 'get started' button when on last page - (isBottomNavigationBarEnabled) `(isBottomNavigationBarEnabled: Boolean) {
+    fun `show 'get started' button when on last page - (isBottomNavigationBarEnabled) `(
+        isBottomNavigationBarEnabled: Boolean
+    ) {
         // Given
         GiniCapture.Builder()
             .setBottomNavigationBarEnabled(isBottomNavigationBarEnabled)
@@ -340,8 +415,16 @@ class OnboardingScreenPresenterTest {
         val presenter = createPresenter()
 
         val customPages: List<OnboardingPage> = Lists.newArrayList(
-            OnboardingPage(R.string.gc_onboarding_align_corners_title, R.string.gc_onboarding_align_corners_message, null),
-            OnboardingPage(R.string.gc_onboarding_lighting_title, R.string.gc_onboarding_lighting_message, null)
+            OnboardingPage(
+                R.string.gc_onboarding_align_corners_title,
+                R.string.gc_onboarding_align_corners_message,
+                null
+            ),
+            OnboardingPage(
+                R.string.gc_onboarding_lighting_title,
+                R.string.gc_onboarding_lighting_message,
+                null
+            )
         )
         presenter.setCustomPages(customPages)
 
@@ -351,11 +434,11 @@ class OnboardingScreenPresenterTest {
 
         // Then
         if (isBottomNavigationBarEnabled) {
-            verify(mView, never()).showGetStartedButton()
-            verify(mView).showGetStartedButtonInNavigationBarBottom()
+            verify(exactly = 0) { mView.showGetStartedButton() }
+            verify { mView.showGetStartedButtonInNavigationBarBottom() }
         } else {
-            verify(mView).showGetStartedButton()
-            verify(mView, never()).showGetStartedButtonInNavigationBarBottom()
+            verify { mView.showGetStartedButton() }
+            verify(exactly = 0) { mView.showGetStartedButtonInNavigationBarBottom() }
         }
     }
 
@@ -371,7 +454,7 @@ class OnboardingScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView).hideButtons()
+        verify { mView.hideButtons() }
     }
 
 }

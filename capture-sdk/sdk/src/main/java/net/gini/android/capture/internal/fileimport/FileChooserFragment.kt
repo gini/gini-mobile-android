@@ -40,6 +40,11 @@ import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.internal.util.autoCleared
 import net.gini.android.capture.internal.util.disallowScreenshots
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
 private const val GRID_SPAN_COUNT_PHONE = 3
@@ -52,12 +57,19 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     private var docImportEnabledFileTypes: DocumentImportEnabledFileTypes? = null
     private var binding: GcFragmentFileChooserBinding by autoCleared()
     private var chooseFileLauncher: ActivityResultLauncher<Intent>? = null
+    private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
+    private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Camera
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mUserAnalyticsEventTracker =
+            UserAnalytics.getAnalyticsEventTracker()
         arguments?.let {
             docImportEnabledFileTypes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES, DocumentImportEnabledFileTypes::class.java)
+                it.getSerializable(
+                    ARG_DOCUMENT_IMPORT_FILE_TYPES,
+                    DocumentImportEnabledFileTypes::class.java
+                )
             } else {
                 it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES) as? DocumentImportEnabledFileTypes
             }
@@ -97,7 +109,8 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupFileProvidersView() {
-        binding.gcFileProviders.layoutManager = GridLayoutManager(requireContext(), getGridSpanCount())
+        binding.gcFileProviders.layoutManager =
+            GridLayoutManager(requireContext(), getGridSpanCount())
     }
 
     private fun setupFileChooserListener() {
@@ -172,7 +185,23 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         providerItems.addAll(pdfProviderItems)
         (binding.gcFileProviders.layoutManager as GridLayoutManager).spanSizeLookup =
             ProvidersSpanSizeLookup(providerItems, getGridSpanCount())
-        binding.gcFileProviders.adapter = ProvidersAdapter(requireContext(), providerItems) { item -> launchApp(item) }
+        binding.gcFileProviders.adapter =
+            ProvidersAdapter(requireContext(), providerItems) { item ->
+                if (item in imageProviderItems) {
+                    mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.UPLOAD_PHOTOS_TAPPED,
+                        setOf(UserAnalyticsEventProperty.Screen(screenName))
+                    )
+
+                } else {
+                    mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.UPLOAD_DOCUMENTS_TAPPED,
+                        setOf(UserAnalyticsEventProperty.Screen(screenName))
+                    )
+
+                }
+                launchApp(item)
+            }
     }
 
     private fun launchApp(item: ProvidersAppItem) {

@@ -18,7 +18,8 @@ import org.json.JSONObject
 class BankApiDocumentRepository(
     private val documentRemoteSource: BankApiDocumentRemoteSource,
     sessionManager: SessionManager,
-    giniApiType: GiniBankApiType
+    giniApiType: GiniBankApiType,
+    private val trackingAnalysisRemoteSource: TrackingAnalysisRemoteSource
 ) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, sessionManager, giniApiType) {
 
     override fun createExtractionsContainer(
@@ -26,15 +27,23 @@ class BankApiDocumentRepository(
         compoundExtractions: Map<String, CompoundExtraction>,
         responseJSON: JSONObject
     ): ExtractionsContainer {
-        val returnReasons: List<ReturnReason> = parseReturnReason(responseJSON.optJSONArray("returnReasons"))
+        val returnReasons: List<ReturnReason> =
+            parseReturnReason(responseJSON.optJSONArray("returnReasons"))
 
         return ExtractionsContainer(specificExtractions, compoundExtractions, returnReasons)
     }
 
-    suspend fun resolvePaymentRequest(requestId: String, resolvePaymentInput: ResolvePaymentInput): Resource<ResolvedPayment> =
+    suspend fun resolvePaymentRequest(
+        requestId: String,
+        resolvePaymentInput: ResolvePaymentInput
+    ): Resource<ResolvedPayment> =
         withAccessToken { accessToken ->
             wrapInResource {
-                documentRemoteSource.resolvePaymentRequests(accessToken, requestId, resolvePaymentInput)
+                documentRemoteSource.resolvePaymentRequests(
+                    accessToken,
+                    requestId,
+                    resolvePaymentInput
+                )
             }
         }
 
@@ -44,6 +53,19 @@ class BankApiDocumentRepository(
                 documentRemoteSource.logErrorEvent(accessToken, errorEvent)
             }
         }
+
+    suspend fun getConfigurations(): Resource<Configuration> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.getConfigurations(accessToken)
+            }
+        }
+
+    suspend fun sendEvents(amplitudeRoot: AmplitudeRoot): Resource<Unit> =
+        wrapInResource {
+            trackingAnalysisRemoteSource.sendEvents(amplitudeRoot)
+        }
+
 
     @Throws(JSONException::class)
     private fun parseReturnReason(returnReasonsJson: JSONArray?): List<ReturnReason> {
