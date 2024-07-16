@@ -1,5 +1,6 @@
 package net.gini.android.bank.sdk.capture
 
+import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
@@ -182,6 +183,11 @@ data class CaptureConfiguration(
     val reviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter? = null,
 
     /**
+     * Set an adapter implementation to show a custom bottom navigation bar on the Skonto screen.
+     */
+    val skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter? = null,
+
+    /**
      * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
      */
     val helpNavigationBarBottomAdapter: HelpNavigationBarBottomAdapter? = null,
@@ -200,7 +206,7 @@ data class CaptureConfiguration(
      *
      * IMPORTANT: If you disallow screenshots and use the [CaptureFlowFragment] for launching the SDK in your activity, please clear the [android.view.WindowManager.LayoutParams.FLAG_SECURE]
      * on your activity's window after the SDK has finished to allow users to take screenshots of your app again.
-    */
+     */
     val allowScreenshots: Boolean = true
 )
 
@@ -231,15 +237,47 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
                 })
             }
             configuration.navigationBarTopAdapter?.let { setNavigationBarTopAdapter(it) }
-            configuration.onboardingAlignCornersIllustrationAdapter?.let { setOnboardingAlignCornersIllustrationAdapter(it) }
-            configuration.onboardingLightingIllustrationAdapter?.let { setOnboardingLightingIllustrationAdapter(it) }
-            configuration.onboardingMultiPageIllustrationAdapter?.let { setOnboardingMultiPageIllustrationAdapter(it) }
-            configuration.onboardingQRCodeIllustrationAdapter?.let { setOnboardingQRCodeIllustrationAdapter(it) }
+            configuration.onboardingAlignCornersIllustrationAdapter?.let {
+                setOnboardingAlignCornersIllustrationAdapter(
+                    it
+                )
+            }
+            configuration.onboardingLightingIllustrationAdapter?.let {
+                setOnboardingLightingIllustrationAdapter(
+                    it
+                )
+            }
+            configuration.onboardingMultiPageIllustrationAdapter?.let {
+                setOnboardingMultiPageIllustrationAdapter(
+                    it
+                )
+            }
+            configuration.onboardingQRCodeIllustrationAdapter?.let {
+                setOnboardingQRCodeIllustrationAdapter(
+                    it
+                )
+            }
             configuration.customLoadingIndicatorAdapter?.let { setLoadingIndicatorAdapter(it) }
-            configuration.onButtonLoadingIndicatorAdapter?.let { setOnButtonLoadingIndicatorAdapter(it) }
-            configuration.onboardingNavigationBarBottomAdapter?.let { setOnboardingNavigationBarBottomAdapter(it) }
-            configuration.cameraNavigationBarBottomAdapter?.let { setCameraNavigationBarBottomAdapter(it) }
-            configuration.reviewNavigationBarBottomAdapter?.let { setReviewBottomBarNavigationAdapter(it) }
+            configuration.onButtonLoadingIndicatorAdapter?.let {
+                setOnButtonLoadingIndicatorAdapter(
+                    it
+                )
+            }
+            configuration.onboardingNavigationBarBottomAdapter?.let {
+                setOnboardingNavigationBarBottomAdapter(
+                    it
+                )
+            }
+            configuration.cameraNavigationBarBottomAdapter?.let {
+                setCameraNavigationBarBottomAdapter(
+                    it
+                )
+            }
+            configuration.reviewNavigationBarBottomAdapter?.let {
+                setReviewBottomBarNavigationAdapter(
+                    it
+                )
+            }
             configuration.helpNavigationBarBottomAdapter?.let { setHelpNavigationBarBottomAdapter(it) }
         }
 }

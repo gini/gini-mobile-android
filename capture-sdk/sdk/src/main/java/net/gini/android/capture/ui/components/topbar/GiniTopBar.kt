@@ -31,7 +31,6 @@ fun GiniTopBar(
     GiniTopBar(
         modifier = modifier, colors = colors, title = {
             Text(
-                modifier = Modifier.padding(16.dp),
                 text = title,
                 style = GiniTheme.typography.headline6,
             )
