@@ -14,7 +14,7 @@ class HelpScreen {
         onView(
             allOf(
                 withId(net.gini.android.capture.R.id.gc_help_item_title),
-                withText("Tips for best results from photos"),
+                withText(net.gini.android.capture.R.string.gc_help_item_photo_tips_title),
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
@@ -26,11 +26,11 @@ class HelpScreen {
         onView(
             allOf(
                 withId(net.gini.android.capture.R.id.gc_help_item_title),
-                withText("Tips for best results from photos"),
+                withText(net.gini.android.capture.R.string.gc_help_item_photo_tips_title),
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
-            .check(matches(withText("Tips for best results from photos")))
+            .check(matches(withText(net.gini.android.capture.R.string.gc_help_item_photo_tips_title)))
         return this
     }
 
@@ -38,7 +38,7 @@ class HelpScreen {
         onView(
             allOf(
                 withId(net.gini.android.capture.R.id.gc_help_item_title),
-                withText("Supported formats"),
+                withText(net.gini.android.capture.R.string.gc_help_item_supported_formats_title),
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
@@ -50,11 +50,11 @@ class HelpScreen {
         onView(
             allOf(
                 withId(net.gini.android.capture.R.id.gc_help_item_title),
-                withText("Supported formats"),
+                withText(net.gini.android.capture.R.string.gc_help_item_supported_formats_title),
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
-            .check(matches(withText("Supported formats")))
+            .check(matches(withText(net.gini.android.capture.R.string.gc_help_item_supported_formats_title)))
         return this
     }
 
@@ -62,7 +62,7 @@ class HelpScreen {
         onView(
             allOf(
                 withId(net.gini.android.capture.R.id.gc_help_item_title),
-                withText("Import documents from other apps"),
+                withText(net.gini.android.capture.R.string.gc_help_item_file_import_guide_title),
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
@@ -74,11 +74,11 @@ class HelpScreen {
         onView(
             allOf(
                 withId(net.gini.android.capture.R.id.gc_help_item_title),
-                withText("Import documents from other apps"),
+                withText(net.gini.android.capture.R.string.gc_help_item_file_import_guide_title),
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
-            .check(matches(withText("Import documents from other apps")))
+            .check(matches(withText(net.gini.android.capture.R.string.gc_help_item_file_import_guide_title)))
         return this
     }
 
