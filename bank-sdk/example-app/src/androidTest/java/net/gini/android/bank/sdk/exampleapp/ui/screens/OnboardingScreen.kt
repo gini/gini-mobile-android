@@ -10,7 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import org.hamcrest.CoreMatchers.allOf
 
 class OnboardingScreen {
-    fun checkOnboardingScreenTitle(onboardingTitle: String): OnboardingScreen {
+    fun checkOnboardingScreenTitle(onboardingTitle: Int): OnboardingScreen {
         onView(
             allOf(
                 withId(net.gini.android.capture.R.id.gc_title), withText(onboardingTitle)

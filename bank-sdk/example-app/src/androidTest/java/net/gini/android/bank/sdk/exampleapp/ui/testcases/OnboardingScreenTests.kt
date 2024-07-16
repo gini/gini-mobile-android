@@ -46,14 +46,14 @@ class OnboardingScreenTests {
     @Test
     fun test1_assertFlatPaperTitle() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.checkOnboardingScreenTitle("Flat paper within the frame")
+        onboardingScreen.checkOnboardingScreenTitle(net.gini.android.capture.R.string.gc_onboarding_align_corners_title)
     }
 
     @Test
     fun test2_clickNextButtonAndAssertGoodLightningTitle() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickNextButton()
-        onboardingScreen.checkOnboardingScreenTitle("Good lighting")
+        onboardingScreen.checkOnboardingScreenTitle(net.gini.android.capture.R.string.gc_onboarding_lighting_title)
     }
 
     @Test
@@ -62,7 +62,7 @@ class OnboardingScreenTests {
         onboardingScreen.clickNextButton()
         idlingResource.waitForIdle()
         onboardingScreen.clickNextButton()
-        onboardingScreen.checkOnboardingScreenTitle("Add multiple pages")
+        onboardingScreen.checkOnboardingScreenTitle(net.gini.android.capture.R.string.gc_onboarding_multipage_title)
     }
 
     @Test
@@ -75,7 +75,7 @@ class OnboardingScreenTests {
         idlingResource.waitForIdle()
         onboardingScreen.clickNextButton()
         idlingResource.waitForIdle()
-        onboardingScreen.checkOnboardingScreenTitle("QR codes supported")
+        onboardingScreen.checkOnboardingScreenTitle(net.gini.android.capture.R.string.gc_onboarding_qr_code_title)
     }
 
     @Test
@@ -102,7 +102,7 @@ class OnboardingScreenTests {
     @Test
     fun test8a_assertOnboardingOnFirstLaunch() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.checkOnboardingScreenTitle("Flat paper within the frame")
+        onboardingScreen.checkOnboardingScreenTitle(net.gini.android.capture.R.string.gc_onboarding_align_corners_title)
         onboardingScreen.checkSkipButtonText()
     }
 
