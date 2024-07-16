@@ -23,6 +23,7 @@ import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.health.sdk.util.setIntervalClickListener
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
@@ -135,7 +136,7 @@ internal class PaymentProviderAppsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = GhsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniHealthTheme(), parent, false)
+        val view = GhsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniHealthThemeAndLocale(paymentComponent), parent, false)
         val viewHolder = ViewHolder(view, object : ViewHolder.OnClickListener {
             override fun onClick(adapterPosition: Int) {
                 onItemClickListener.onItemClick(dataSet[adapterPosition].paymentProviderApp)

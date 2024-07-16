@@ -24,6 +24,7 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.getPaymentExtraction
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
+import net.gini.android.health.sdk.util.GiniLocalization
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
@@ -75,6 +76,11 @@ class GiniHealth(
      * A flow that exposes the state of opening the bank. You can collect this flow to get information about the errors of this action.
      */
     val openBankState: StateFlow<PaymentState> = _openBankState
+
+    /**
+     * An optional enum value which represents a language locale that sets the app language to the desired one. If not set then defaults to the system's language locale.
+     */
+    var language: GiniLocalization? = null
 
     /**
      * Sets a [Document] for review. Results can be collected from [documentFlow] and [paymentFlow].

@@ -24,6 +24,7 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
+import java.util.Locale
 
 internal fun TextInputEditText.setTextIfDifferent(text: String) {
     if (this.text.toString() != text) {
@@ -177,13 +178,24 @@ internal suspend fun <T> Flow<T>.withPrev() = flow {
     }
 }
 
-internal fun View.getLayoutInflaterWithGiniHealthTheme(): LayoutInflater =
-    LayoutInflater.from(context.wrappedWithGiniHealthTheme())
+internal fun View.getLayoutInflaterWithGiniHealthThemeAndLocale(locale: Locale?): LayoutInflater =
+    if (locale == null) {
+        LayoutInflater.from(context.wrappedWithGiniHealthTheme())
+    } else {
+        LayoutInflater.from(context.wrappedWithGiniHealthTheme().wrappedWithCustomLocale(locale))
+    }
 
+internal fun Context.wrappedWithCustomLocale(locale: Locale): Context = CustomLocaleContextThemeWrapper.wrap(this, locale, R.style.GiniHealthTheme)
 internal fun Context.wrappedWithGiniHealthTheme(): Context = ContextThemeWrapper(this, R.style.GiniHealthTheme)
 
-internal fun Fragment.getLayoutInflaterWithGiniHealthTheme(inflater: LayoutInflater): LayoutInflater {
-    return inflater.cloneInContext(requireContext().wrappedWithGiniHealthTheme())
+internal fun Fragment.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater: LayoutInflater, locale: Locale?): LayoutInflater {
+    val inflater =
+        if (locale == null) {
+            inflater.cloneInContext(requireContext().wrappedWithGiniHealthTheme())
+        } else {
+            inflater.cloneInContext(requireContext().wrappedWithGiniHealthTheme().wrappedWithCustomLocale(locale))
+        }
+    return inflater
 }
 
 internal fun View.setIntervalClickListener(click: View.OnClickListener?) {
