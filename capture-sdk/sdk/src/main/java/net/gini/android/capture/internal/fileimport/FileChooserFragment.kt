@@ -14,6 +14,8 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -47,7 +49,6 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 private const val ARG_DOCUMENT_IMPORT_FILE_TYPES = "GC_EXTRA_IN_DOCUMENT_IMPORT_FILE_TYPES"
 private const val GRID_SPAN_COUNT_PHONE = 3
 private const val GRID_SPAN_COUNT_TABLET = 6
-private const val REQ_CODE_CHOOSE_FILE = 1
 
 /**
  * Internal use only.
@@ -55,6 +56,7 @@ private const val REQ_CODE_CHOOSE_FILE = 1
 class FileChooserFragment : BottomSheetDialogFragment() {
     private var docImportEnabledFileTypes: DocumentImportEnabledFileTypes? = null
     private var binding: GcFragmentFileChooserBinding by autoCleared()
+    private var chooseFileLauncher: ActivityResultLauncher<Intent>? = null
     private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Camera
 
@@ -72,6 +74,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                 it.getSerializable(ARG_DOCUMENT_IMPORT_FILE_TYPES) as? DocumentImportEnabledFileTypes
             }
         }
+        setupFileChooserListener()
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -108,6 +111,47 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     private fun setupFileProvidersView() {
         binding.gcFileProviders.layoutManager =
             GridLayoutManager(requireContext(), getGridSpanCount())
+    }
+
+    private fun setupFileChooserListener() {
+        chooseFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            findNavController().popBackStack()
+                when (result.resultCode) {
+                    RESULT_OK -> {
+                        result.data?.let { data ->
+                            setFragmentResult(REQUEST_KEY, Bundle().apply {
+                                putParcelable(RESULT_KEY, FileChooserResult.FilesSelected(data))
+                            })
+                        } ?: run {
+                            setFragmentResult(REQUEST_KEY, Bundle().apply {
+                                putParcelable(
+                                    RESULT_KEY, FileChooserResult.Error(
+                                        GiniCaptureError(
+                                            GiniCaptureError.ErrorCode.DOCUMENT_IMPORT,
+                                            "Activity result data was null."
+                                        )
+                                    )
+                                )
+                            })
+                        }
+                    }
+
+                    RESULT_CANCELED -> setFragmentResult(REQUEST_KEY, Bundle().apply {
+                        putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
+                    })
+
+                    else -> setFragmentResult(REQUEST_KEY, Bundle().apply {
+                        putParcelable(
+                            RESULT_KEY, FileChooserResult.Error(
+                                GiniCaptureError(
+                                    GiniCaptureError.ErrorCode.DOCUMENT_IMPORT,
+                                    "Unexpected result code for activity result."
+                                )
+                            )
+                        )
+                    })
+                }
+        }
     }
 
     private fun getGridSpanCount(): Int =
@@ -165,62 +209,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             item.resolveInfo.activityInfo.packageName,
             item.resolveInfo.activityInfo.name
         )
-        startActivityForResult(item.intent, REQ_CODE_CHOOSE_FILE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        findNavController().popBackStack()
-
-        if (requestCode == REQ_CODE_CHOOSE_FILE) {
-            when (resultCode) {
-                RESULT_OK -> {
-                    if (data != null) {
-                        setFragmentResult(REQUEST_KEY, Bundle().apply {
-                            putParcelable(RESULT_KEY, FileChooserResult.FilesSelected(data))
-                        })
-                    } else {
-                        setFragmentResult(REQUEST_KEY, Bundle().apply {
-                            putParcelable(
-                                RESULT_KEY, FileChooserResult.Error(
-                                    GiniCaptureError(
-                                        GiniCaptureError.ErrorCode.DOCUMENT_IMPORT,
-                                        "Activity result data was null."
-                                    )
-                                )
-                            )
-                        })
-                    }
-                }
-
-                RESULT_CANCELED -> setFragmentResult(REQUEST_KEY, Bundle().apply {
-                    putParcelable(RESULT_KEY, FileChooserResult.Cancelled)
-                })
-
-                else -> setFragmentResult(REQUEST_KEY, Bundle().apply {
-                    putParcelable(
-                        RESULT_KEY, FileChooserResult.Error(
-                            GiniCaptureError(
-                                GiniCaptureError.ErrorCode.DOCUMENT_IMPORT,
-                                "Unexpected result code for activity result."
-                            )
-                        )
-                    )
-                })
-            }
-        } else {
-            setFragmentResult(REQUEST_KEY, Bundle().apply {
-                putParcelable(
-                    RESULT_KEY, FileChooserResult.Error(
-                        GiniCaptureError(
-                            GiniCaptureError.ErrorCode.DOCUMENT_IMPORT,
-                            "Unexpected request code for activity result."
-                        )
-                    )
-                )
-            })
-        }
+        chooseFileLauncher?.launch(item.intent)
     }
 
     private fun getImageProviderItems(

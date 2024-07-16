@@ -62,10 +62,10 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
     private suspend fun getDocumentInternal(accessToken: String, documentId: String): Document =
         Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(accessToken, documentId)))
 
-    suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
-                                      filename: String? = null,
-                                      documentType: DocumentManager.DocumentType? = null,
-                                      documentMetadata: DocumentMetadata? = null): Resource<Document> =
+    open suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
+                                           filename: String? = null,
+                                           documentType: DocumentManager.DocumentType? = null,
+                                           documentMetadata: DocumentMetadata? = null): Resource<Document> =
         withAccessToken { accessToken ->
             wrapInResource {
                 val uri = documentRemoteSource.uploadDocument(
