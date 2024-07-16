@@ -12,9 +12,14 @@ jobs:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
       BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
+
+  check-ui-tests:
+    uses: ./.github/workflows/bank-sdk.check.ui-tests.yml
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
         
   release:
-    needs: check
+    needs: [check, check-ui-tests]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
