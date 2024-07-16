@@ -201,7 +201,12 @@ data class CaptureConfiguration(
      * IMPORTANT: If you disallow screenshots and use the [CaptureFlowFragment] for launching the SDK in your activity, please clear the [android.view.WindowManager.LayoutParams.FLAG_SECURE]
      * on your activity's window after the SDK has finished to allow users to take screenshots of your app again.
     */
-    val allowScreenshots: Boolean = true
+    val allowScreenshots: Boolean = true,
+
+    /**
+     * Enable/disable the skonto feature.
+     */
+    val skontoEnabled: Boolean = true,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {

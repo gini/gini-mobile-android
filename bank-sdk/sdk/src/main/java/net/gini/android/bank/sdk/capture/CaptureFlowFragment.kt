@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
+import net.gini.android.bank.sdk.capture.skonto.SkontoValidator
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
@@ -115,24 +116,16 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onFinishedWithResult(result: CaptureSDKResult) {
-        when(result) {
+        when (result) {
             is CaptureSDKResult.Success -> {
                 if (GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true) {
                     try {
-                        LineItemsValidator.validate(result.compoundExtractions)
-                        navController.navigate(GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
-                            DigitalInvoiceFragment.getExtractionsBundle(result.specificExtractions),
-                            DigitalInvoiceFragment.getCompoundExtractionsBundle(result.compoundExtractions),
-                            result.returnReasons.toTypedArray(),
-                            DigitalInvoiceFragment.getAmountsAreConsistentExtraction(result.specificExtractions)
-                        ))
-                    } catch (notUsed: DigitalInvoiceException) {
-                        didFinishWithResult = true
-                        captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
+                        tryShowingReturnAssistant(result)
+                    } catch (digitalInvoiceException: DigitalInvoiceException) {
+                        tryShowingSkontoScreen(result)
                     }
                 } else {
-                    didFinishWithResult = true
-                    captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
+                    finishWithResult(result)
                 }
             }
             else -> {
@@ -140,6 +133,33 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                 captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
             }
         }
+    }
+
+    private fun tryShowingSkontoScreen(result: CaptureSDKResult.Success) {
+        if (GiniBank.getCaptureConfiguration()?.skontoEnabled == true) {
+            try {
+                SkontoValidator.validate(result.compoundExtractions)
+                navController.navigate(GiniCaptureFragmentDirections.toSkontoFragment())
+            } catch (e: Exception) {
+                finishWithResult(result)
+            }
+        }
+    }
+    private fun tryShowingReturnAssistant(result: CaptureSDKResult.Success) {
+        LineItemsValidator.validate(result.compoundExtractions)
+        navController.navigate(
+            GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
+                DigitalInvoiceFragment.getExtractionsBundle(result.specificExtractions),
+                DigitalInvoiceFragment.getCompoundExtractionsBundle(result.compoundExtractions),
+                result.returnReasons.toTypedArray(),
+                DigitalInvoiceFragment.getAmountsAreConsistentExtraction(result.specificExtractions)
+            )
+        )
+    }
+
+    private fun finishWithResult(result: CaptureSDKResult.Success) {
+        didFinishWithResult = true
+        captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
     }
 
     private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
