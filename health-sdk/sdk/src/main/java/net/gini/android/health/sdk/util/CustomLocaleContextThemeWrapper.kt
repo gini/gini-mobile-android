@@ -13,7 +13,6 @@ class CustomLocaleContextThemeWrapper(base: Context, @StyleRes themeResId: Int) 
         fun wrap(context: Context, locale: Locale, @StyleRes themeResId: Int): ContextThemeWrapper {
             var context = context
             val config = context.resources.configuration
-            Locale.setDefault(locale)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 setSystemLocale(config, locale)

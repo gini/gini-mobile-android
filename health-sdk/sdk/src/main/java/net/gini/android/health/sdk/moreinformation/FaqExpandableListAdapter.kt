@@ -2,14 +2,12 @@ package net.gini.android.health.sdk.moreinformation
 
 import android.text.SpannedString
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
-import android.widget.TextView
 import net.gini.android.health.sdk.databinding.GhsItemFaqAnswerBinding
 import net.gini.android.health.sdk.databinding.GhsItemFaqLabelBinding
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 
 /**
  * Created by dani on 26/02/2024.
@@ -29,13 +27,13 @@ internal class FaqExpandableListAdapter(val dataSet: List<Pair<String, CharSeque
     override fun hasStableIds(): Boolean = true
 
     override fun getGroupView(position: Int, isExpanded: Boolean, p2: View?, parent: ViewGroup): View {
-        val groupView = GhsItemFaqLabelBinding.inflate(parent.getLayoutInflaterWithGiniHealthTheme(), parent, false)
+        val groupView = GhsItemFaqLabelBinding.inflate(parent.getLayoutInflaterWithGiniHealthThemeAndLocale(), parent, false)
         groupView.ghsFaqLabel.text = dataSet[position].first
         return groupView.root
     }
 
     override fun getChildView(p0: Int, p1: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup): View {
-        val groupView = GhsItemFaqAnswerBinding.inflate(parent.getLayoutInflaterWithGiniHealthTheme(), parent, false)
+        val groupView = GhsItemFaqAnswerBinding.inflate(parent.getLayoutInflaterWithGiniHealthThemeAndLocale(), parent, false)
         val text = getChild(p0, p1)
         if (text is SpannedString) {
             groupView.ghsFaqAnswerLabel.movementMethod = LinkMovementMethod.getInstance()

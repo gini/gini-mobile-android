@@ -30,7 +30,7 @@ import net.gini.android.health.sdk.databinding.GhsPaymentProviderIconHolderBindi
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 
 /**
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
@@ -61,7 +61,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, paymentComponent?.giniHealth?.language?.languageLocale())
     }
 
     override fun onCreateView(
@@ -83,7 +83,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
             append(".")
         }
         binding.ghsMoreInformationDetails.movementMethod = LinkMovementMethod.getInstance()
-        binding.ghsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf())
+        binding.ghsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf(), paymentComponent)
         binding.ghsFaqList.apply {
             setAdapter(FaqExpandableListAdapter(faqList))
             setOnGroupClickListener { expandableListView, _, group, _ ->
@@ -186,12 +186,12 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         listView.requestLayout()
     }
 
-    internal class PaymentProvidersIconsAdapter(var dataSet: List<PaymentProviderApp?>) :
+    internal class PaymentProvidersIconsAdapter(var dataSet: List<PaymentProviderApp?>, var paymentComponent: PaymentComponent?) :
         RecyclerView.Adapter<PaymentProvidersIconsAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = GhsPaymentProviderIconHolderBinding.inflate(
-                parent.getLayoutInflaterWithGiniHealthTheme(),
+                parent.getLayoutInflaterWithGiniHealthThemeAndLocale(paymentComponent?.giniHealth?.language?.languageLocale()),
                 parent,
                 false
             )

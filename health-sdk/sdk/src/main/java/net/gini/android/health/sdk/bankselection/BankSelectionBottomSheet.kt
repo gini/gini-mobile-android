@@ -22,10 +22,9 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.health.sdk.util.setIntervalClickListener
-import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
+import net.gini.android.health.sdk.util.wrappedWithGiniHealthThemeAndLocale
 import org.slf4j.LoggerFactory
 
 /**
@@ -40,12 +39,17 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
     private var binding: GhsBottomSheetBankSelectionBinding by autoCleared()
     private val viewModel: BankSelectionViewModel by viewModels { BankSelectionViewModel.Factory(paymentComponent) }
 
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, paymentComponent?.giniHealth?.language?.languageLocale())
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = GhsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
 
         binding.ghsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
         binding.ghsPaymentProviderAppsList.adapter =
-            PaymentProviderAppsAdapter(emptyList(), object : PaymentProviderAppsAdapter.OnItemClickListener {
+            PaymentProviderAppsAdapter(emptyList(), paymentComponent, object : PaymentProviderAppsAdapter.OnItemClickListener {
                 override fun onItemClick(paymentProviderApp: PaymentProviderApp) {
                     LOG.debug("Selected payment provider app: {}", paymentProviderApp.name)
 
@@ -117,6 +121,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
 internal class PaymentProviderAppsAdapter(
     var dataSet: List<PaymentProviderAppListItem>,
+    val paymentComponent: PaymentComponent?,
     val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PaymentProviderAppsAdapter.ViewHolder>() {
 
@@ -136,7 +141,7 @@ internal class PaymentProviderAppsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = GhsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniHealthThemeAndLocale(paymentComponent), parent, false)
+        val view = GhsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniHealthThemeAndLocale(paymentComponent?.giniHealth?.language?.languageLocale()), parent, false)
         val viewHolder = ViewHolder(view, object : ViewHolder.OnClickListener {
             override fun onClick(adapterPosition: Int) {
                 onItemClickListener.onItemClick(dataSet[adapterPosition].paymentProviderApp)
@@ -147,7 +152,7 @@ internal class PaymentProviderAppsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val paymentProviderAppListItem = dataSet[position]
-        holder.itemView.context.wrappedWithGiniHealthTheme().let { context ->
+        holder.itemView.context.wrappedWithGiniHealthThemeAndLocale(paymentComponent?.giniHealth?.language?.languageLocale()).let { context ->
             holder.button.text = paymentProviderAppListItem.paymentProviderApp.name
             holder.iconView.setImageDrawable(paymentProviderAppListItem.paymentProviderApp.icon)
             holder.itemView.isSelected = paymentProviderAppListItem.isSelected

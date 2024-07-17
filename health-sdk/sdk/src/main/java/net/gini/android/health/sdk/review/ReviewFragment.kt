@@ -62,14 +62,14 @@ import net.gini.android.health.sdk.util.amountWatcher
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.clearErrorMessage
 import net.gini.android.health.sdk.util.extensions.getFontScale
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
-import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
+import net.gini.android.health.sdk.util.wrappedWithGiniHealthThemeAndLocale
 import java.io.File
 
 /**
@@ -138,10 +138,9 @@ class ReviewFragment private constructor(
         }
     }
 
-
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, paymentComponent?.giniHealth?.language?.languageLocale())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -393,7 +392,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        val context = requireContext().wrappedWithGiniHealthTheme()
+        val context = requireContext().wrappedWithGiniHealthThemeAndLocale(paymentComponent?.giniHealth?.language?.languageLocale())
         errorSnackbar?.dismiss()
         errorSnackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             if (context.getFontScale() < 1.5) {

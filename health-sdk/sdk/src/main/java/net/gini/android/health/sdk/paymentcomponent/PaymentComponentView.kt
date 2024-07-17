@@ -15,10 +15,10 @@ import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsViewPaymentComponentBinding
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setIntervalClickListener
-import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
+import net.gini.android.health.sdk.util.wrappedWithGiniHealthThemeAndLocale
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 
@@ -87,7 +87,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             launchJobs()
         }
 
-    private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthTheme(), this)
+    private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthThemeAndLocale(paymentComponent?.giniHealth?.language?.languageLocale()), this)
 
     init {
         addButtonInputHandlers()
@@ -168,7 +168,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
-        context?.wrappedWithGiniHealthTheme()?.let { context ->
+        context?.wrappedWithGiniHealthThemeAndLocale(paymentComponent?.giniHealth?.language?.languageLocale())?.let { context ->
             binding.ghsPayInvoiceButton.visibility = View.GONE
             binding.ghsPaymentProviderAppIconHolder.root.visibility = View.GONE
             binding.ghsSelectBankButton.text = context.getString(R.string.ghs_select_bank)
@@ -183,7 +183,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
         LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
-        context?.wrappedWithGiniHealthTheme()?.let { context ->
+        context?.wrappedWithGiniHealthThemeAndLocale(paymentComponent?.giniHealth?.language?.languageLocale())?.let { context ->
             binding.ghsSelectBankButton.text = ""
             binding.ghsSelectBankButton.setCompoundDrawablesWithIntrinsicBounds(
                 null,
@@ -228,7 +228,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun restorePayInvoiceButtonDefaultState() {
         LOG.debug("Restoring pay invoice button default state")
-        context?.wrappedWithGiniHealthTheme()?.let { context ->
+        context?.wrappedWithGiniHealthThemeAndLocale(paymentComponent?.giniHealth?.language?.languageLocale())?.let { context ->
             binding.ghsPayInvoiceButton.setBackgroundTint(
                 ContextCompat.getColor(
                     context,
