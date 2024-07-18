@@ -14,8 +14,8 @@ data class GiniButtonColors(
     companion object {
         @Composable
         fun colors(
-            containerColor: Color = GiniTheme.colorScheme.button.surfacePrEnabled,
-            contentContent: Color = GiniTheme.colorScheme.button.textEnabled,
+            containerColor: Color = GiniTheme.colorScheme.button.container,
+            contentContent: Color = GiniTheme.colorScheme.button.content,
         ) = GiniButtonColors(
             containerColor = containerColor,
             contentContent = contentContent,

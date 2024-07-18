@@ -16,10 +16,10 @@ data class GiniSwitchColors(
 
         @Composable
         fun colors(
-            checkedTrackColor: Color = GiniTheme.colorScheme.toggles.surfaceFocused,
-            checkedThumbColor: Color = Color.White,
-            uncheckedTrackColor: Color = GiniTheme.colorScheme.toggles.surfaceUnfocused,
-            uncheckedThumbColor: Color = GiniTheme.colorScheme.toggles.thumbUnfocused
+            checkedTrackColor: Color = GiniTheme.colorScheme.toggles.track.selected,
+            checkedThumbColor: Color = GiniTheme.colorScheme.toggles.thumb.selected,
+            uncheckedTrackColor: Color = GiniTheme.colorScheme.toggles.track.unselected,
+            uncheckedThumbColor: Color = GiniTheme.colorScheme.toggles.thumb.unselected
         ) = GiniSwitchColors(
             checkedTrackColor = checkedTrackColor,
             checkedThumbColor = checkedThumbColor,

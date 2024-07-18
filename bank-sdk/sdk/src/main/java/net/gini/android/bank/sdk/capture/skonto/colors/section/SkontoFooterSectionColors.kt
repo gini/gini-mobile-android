@@ -19,7 +19,7 @@ data class SkontoFooterSectionColors(
 
         @Composable
         fun colors(
-            cardBackgroundColor: Color = GiniTheme.colorScheme.background.surface,
+            cardBackgroundColor: Color = GiniTheme.colorScheme.card.container,
             titleTextColor: Color = GiniTheme.colorScheme.text.primary,
             amountTextColor: Color = GiniTheme.colorScheme.text.primary,
             discountLabelColorScheme: DiscountLabelColorScheme = DiscountLabelColorScheme.colors(),
@@ -42,8 +42,8 @@ data class SkontoFooterSectionColors(
 
             @Composable
             fun colors(
-                backgroundColor: Color = GiniTheme.colorScheme.chips.suggestionEnabled,
-                textColor: Color = GiniTheme.colorScheme.chips.textSuggestionEnabled,
+                backgroundColor: Color = GiniTheme.colorScheme.card.containerSuccess,
+                textColor: Color = GiniTheme.colorScheme.card.contentSuccess,
             ) = DiscountLabelColorScheme(
                 backgroundColor = backgroundColor,
                 textColor = textColor,

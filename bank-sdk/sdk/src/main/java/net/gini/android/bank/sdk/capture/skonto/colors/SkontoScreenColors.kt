@@ -25,7 +25,7 @@ data class SkontoScreenColors(
     companion object {
         @Composable
         fun colors(
-            backgroundColor: Color = GiniTheme.colorScheme.background.background,
+            backgroundColor: Color = GiniTheme.colorScheme.background.primary,
             topAppBarColors: GiniTopBarColors = GiniTopBarColors.colors(),
             skontoInvoiceScanSectionColors: SkontoInvoiceScanSectionColors = SkontoInvoiceScanSectionColors.colors(),
             discountSectionColors: SkontoSectionColors = SkontoSectionColors.colors(),

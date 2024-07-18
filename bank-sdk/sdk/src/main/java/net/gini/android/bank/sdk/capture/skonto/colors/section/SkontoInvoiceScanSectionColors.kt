@@ -18,12 +18,12 @@ data class SkontoInvoiceScanSectionColors(
 
         @Composable
         fun colors(
-            cardBackgroundColor: Color = GiniTheme.colorScheme.background.surface,
+            cardBackgroundColor: Color = GiniTheme.colorScheme.card.container,
             titleTextColor: Color = GiniTheme.colorScheme.text.primary,
             subtitleTextColor: Color = GiniTheme.colorScheme.text.secondary,
-            iconBackgroundColor: Color = GiniTheme.colorScheme.icons.surfaceFilled,
-            iconTint: Color = GiniTheme.colorScheme.icons.trailing,
-            arrowTint: Color = GiniTheme.colorScheme.icons.trailing,
+            iconBackgroundColor: Color = GiniTheme.colorScheme.placeholder.background,
+            iconTint: Color = GiniTheme.colorScheme.placeholder.tint,
+            arrowTint: Color = GiniTheme.colorScheme.icons.secondary,
         ) = SkontoInvoiceScanSectionColors(
             cardBackgroundColor = cardBackgroundColor,
             titleTextColor = titleTextColor,

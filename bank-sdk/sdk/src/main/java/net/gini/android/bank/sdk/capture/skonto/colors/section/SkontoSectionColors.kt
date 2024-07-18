@@ -24,8 +24,8 @@ data class SkontoSectionColors(
         fun colors(
             titleTextColor: Color = GiniTheme.colorScheme.text.primary,
             switchColors: GiniSwitchColors = GiniSwitchColors.colors(),
-            cardBackgroundColor: Color = GiniTheme.colorScheme.background.surface,
-            enabledHintTextColor: Color = GiniTheme.colorScheme.text.status,
+            cardBackgroundColor: Color = GiniTheme.colorScheme.card.container,
+            enabledHintTextColor: Color = GiniTheme.colorScheme.text.success,
             infoBannerColors: InfoBannerColors = InfoBannerColors.colors(),
             amountFieldColors: GiniTextInputColors = GiniTextInputColors.colors(),
             dueDateTextFieldColor: GiniTextInputColors = GiniTextInputColors.colors(),
@@ -49,9 +49,9 @@ data class SkontoSectionColors(
         companion object {
             @Composable
             fun colors(
-                backgroundColor: Color = GiniTheme.colorScheme.chips.assistEnabled,
-                textColor: Color = GiniTheme.colorScheme.chips.suggestionEnabled,
-                iconTint: Color = GiniTheme.colorScheme.chips.suggestionEnabled,
+                backgroundColor: Color = GiniTheme.colorScheme.card.containerSuccess,
+                textColor: Color = GiniTheme.colorScheme.card.contentSuccess,
+                iconTint: Color = GiniTheme.colorScheme.card.contentSuccess,
             ) = InfoBannerColors(
                 backgroundColor = backgroundColor,
                 textColor = textColor,
