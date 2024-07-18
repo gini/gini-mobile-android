@@ -12,10 +12,27 @@ internal object SkontoFragmentContract {
             val paymentInDays: Int,
             val discountAmount: BigDecimal,
             val skontoAmount: SkontoData.Amount,
+            val skontoAmountValidation: SkontoAmountValidation,
             val discountDueDate: LocalDate,
             val fullAmount: SkontoData.Amount,
             val totalAmount: SkontoData.Amount,
-        ) : State()
+            val paymentMethod: SkontoData.SkontoPaymentMethod,
+            val skontoEdgeCase: SkontoEdgeCase?,
+            val edgeCaseInfoDialogVisible: Boolean,
+        ) : State() {
+            sealed class SkontoAmountValidation {
+                object Valid : SkontoAmountValidation()
+
+                sealed class Invalid : SkontoAmountValidation() {
+                    object SkontoAmountGreaterOfFullAmount : Invalid()
+                }
+            }
+        }
     }
 
+    sealed class SkontoEdgeCase {
+        object SkontoLastDay : SkontoEdgeCase()
+        object PayByCashOnly : SkontoEdgeCase()
+        object SkontoExpired : SkontoEdgeCase()
+    }
 }

@@ -35,6 +35,7 @@ fun GiniAmountTextInput(
     onValueChange: (BigDecimal) -> Unit,
     trailingContent: @Composable () -> Unit = {},
     enabled: Boolean = true,
+    isError: Boolean = false,
     decimalFormatter: DecimalFormatter = DecimalFormatter(),
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
 ) {
@@ -50,6 +51,7 @@ fun GiniAmountTextInput(
         modifier = modifier,
         text = text,
         enabled = enabled,
+        isError = isError,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Done,

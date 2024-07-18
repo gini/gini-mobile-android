@@ -42,8 +42,8 @@ data class SkontoFooterSectionColors(
 
             @Composable
             fun colors(
-                backgroundColor: Color = GiniTheme.colorScheme.card.containerSuccess,
-                textColor: Color = GiniTheme.colorScheme.card.contentSuccess,
+                backgroundColor: Color = GiniTheme.colorScheme.badge.container,
+                textColor: Color = GiniTheme.colorScheme.badge.content,
             ) = DiscountLabelColorScheme(
                 backgroundColor = backgroundColor,
                 textColor = textColor,

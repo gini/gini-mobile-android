@@ -10,6 +10,10 @@ data class GiniTextInputColors(
     val containerFocused: Color,
     val containerUnfocused: Color,
     val containerDisabled: Color,
+    val labelError: Color,
+    val labelUnfocused: Color,
+    val labelFocused: Color,
+    val labelDisabled: Color,
     val textFocused: Color,
     val textUnfocused: Color,
     val textDisabled: Color,
@@ -33,7 +37,7 @@ data class GiniTextInputColors(
             textFocused: Color = GiniTheme.colorScheme.textField.text.focused,
             textUnfocused: Color = GiniTheme.colorScheme.textField.text.unfocused,
             textDisabled: Color = GiniTheme.colorScheme.textField.text.disabled,
-            textError: Color = GiniTheme.colorScheme.textField.text.error,
+            textError: Color = GiniTheme.colorScheme.textField.text.focused,
             indicatorFocused: Color = GiniTheme.colorScheme.textField.indicator.focused,
             indicatorUnfocused: Color = GiniTheme.colorScheme.textField.indicator.unfocused,
             indicatorDisabled: Color = GiniTheme.colorScheme.textField.indicator.disabled,
@@ -42,6 +46,10 @@ data class GiniTextInputColors(
             trailingContentUnfocused: Color = GiniTheme.colorScheme.textField.content.trailing,
             trailingContentDisabled: Color = GiniTheme.colorScheme.textField.content.trailing,
             trailingContentError: Color = GiniTheme.colorScheme.textField.content.trailing,
+            labelError: Color = GiniTheme.colorScheme.textField.label.error,
+            labelUnfocused: Color = GiniTheme.colorScheme.textField.label.unfocused,
+            labelFocused: Color = GiniTheme.colorScheme.textField.label.focused,
+            labelDisabled: Color = GiniTheme.colorScheme.textField.label.disabled,
         ) = GiniTextInputColors(
             containerFocused = containerFocused,
             containerUnfocused = containerUnfocused,
@@ -58,6 +66,10 @@ data class GiniTextInputColors(
             trailingContentUnfocused = trailingContentUnfocused,
             trailingContentDisabled = trailingContentDisabled,
             trailingContentError = trailingContentError,
+            labelError = labelError,
+            labelUnfocused = labelUnfocused,
+            labelFocused = labelFocused,
+            labelDisabled = labelDisabled,
         )
     }
 }

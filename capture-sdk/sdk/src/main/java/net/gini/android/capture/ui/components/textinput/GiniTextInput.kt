@@ -21,6 +21,7 @@ fun GiniTextInput(
     onValueChange: (String) -> Unit,
     trailingContent: @Composable () -> Unit = {},
     enabled: Boolean = true,
+    isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -29,6 +30,7 @@ fun GiniTextInput(
         modifier = modifier,
         text = text,
         enabled = enabled,
+        isError = isError,
         keyboardOptions = keyboardOptions,
         label = {
             Text(
@@ -51,6 +53,7 @@ fun GiniTextInput(
     modifier: Modifier = Modifier,
     trailingContent: @Composable () -> Unit = {},
     enabled: Boolean = true,
+    isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -62,6 +65,7 @@ fun GiniTextInput(
         keyboardOptions = keyboardOptions,
         textStyle = GiniTheme.typography.subtitle1,
         label = label,
+        isError = isError,
         visualTransformation = visualTransformation,
         colors = with(colors) {
             TextFieldDefaults.colors(
@@ -72,6 +76,10 @@ fun GiniTextInput(
                 unfocusedTextColor = textUnfocused,
                 disabledTextColor = textDisabled,
                 errorTextColor = textError,
+                unfocusedLabelColor = labelUnfocused,
+                errorLabelColor = labelError,
+                focusedLabelColor = labelFocused,
+                disabledLabelColor = labelDisabled,
                 focusedIndicatorColor = indicatorFocused,
                 unfocusedIndicatorColor = indicatorUnfocused,
                 disabledIndicatorColor = indicatorDisabled,
