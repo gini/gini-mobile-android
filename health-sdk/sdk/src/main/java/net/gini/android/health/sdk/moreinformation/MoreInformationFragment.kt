@@ -85,7 +85,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         binding.ghsMoreInformationDetails.movementMethod = LinkMovementMethod.getInstance()
         binding.ghsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf(), paymentComponent)
         binding.ghsFaqList.apply {
-            setAdapter(FaqExpandableListAdapter(faqList))
+            setAdapter(FaqExpandableListAdapter(faqList, paymentComponent))
             setOnGroupClickListener { expandableListView, _, group, _ ->
                 setListViewHeight(listView = expandableListView, group = group, isReload = false)
                 return@setOnGroupClickListener false
