@@ -58,8 +58,14 @@ class OrdersViewModel(
         _selectedOrderItem.emit(orderItem)
     }
 
-    fun startIntegratedPaymentFlow(documentId: String) {
-        _startIntegratedPaymentFlow.tryEmit(giniMerchant.getContainerFragment(documentId, paymentFlowConfiguration))
+    fun startPaymentFlow() {
+        _startIntegratedPaymentFlow.tryEmit(giniMerchant.getFragment(
+            recipient = _selectedOrderItem.value?.recipient ?: "",
+            iban = _selectedOrderItem.value?.order?.iban ?: "",
+            purpose = _selectedOrderItem.value?.purpose ?: "",
+            amount = _selectedOrderItem.value?.amount ?: ""
+            ,
+            flowConfiguration = paymentFlowConfiguration))
     }
 
     fun setIntegratedFlowConfiguration(flowConfiguration: PaymentFlowConfiguration) {

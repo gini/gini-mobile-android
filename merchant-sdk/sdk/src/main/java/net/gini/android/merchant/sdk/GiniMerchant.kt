@@ -229,9 +229,14 @@ class GiniMerchant(
         }
     }
 
-    fun getContainerFragment(documentId: String, flowConfiguration: PaymentFlowConfiguration? = null) = PaymentFlowFragment.newInstance(
+    fun getFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null) = PaymentFlowFragment.newInstance(
         giniMerchant = this,
-        documentId = documentId,
+        paymentDetails = PaymentDetails(
+            recipient = recipient,
+            iban = iban,
+            purpose = purpose,
+            amount = amount
+        ),
         paymentFlowConfiguration = flowConfiguration ?: PaymentFlowConfiguration()
     )
 

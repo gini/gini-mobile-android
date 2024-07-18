@@ -72,8 +72,7 @@ class OrderDetailsFragment : Fragment() {
             amount.setTextIfDifferent(order.amount)
             purpose.setTextIfDifferent(order.purpose)
             payNowBtn.setIntervalClickListener {
-                TODO("Launch Merchant SDK with ther order's bank transfer details: $order")
-                //                            viewModel.startIntegratedPaymentFlow(invoice?.documentId ?: "")
+                ordersViewModel.startPaymentFlow()
             }
         }
     }
