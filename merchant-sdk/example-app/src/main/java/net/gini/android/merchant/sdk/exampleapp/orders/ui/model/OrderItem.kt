@@ -1,6 +1,6 @@
 package net.gini.android.merchant.sdk.exampleapp.orders.ui.model
 
-import net.gini.android.merchant.sdk.exampleapp.orders.data.model.DocumentWithExtractions
+import net.gini.android.merchant.sdk.exampleapp.orders.data.model.Order
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -12,40 +12,36 @@ import java.util.Locale
 private val PRICE_STRING_REGEX = "^-?[0-9]+([.,])[0-9]+\$".toRegex()
 
 data class OrderItem(
-    val documentId: String,
-    val recipient: String?,
-    val amount: String?,
-    val dueDate: String?,
-    val isPayable: Boolean = false
+    val order: Order,
+    val recipient: String,
+    val amount: String,
+    val purpose: String
 ) {
 
     companion object {
-        fun fromInvoice(documentWithExtractions: DocumentWithExtractions): OrderItem {
+        fun fromOrder(order: Order): OrderItem {
             return OrderItem(
-                documentWithExtractions.documentId,
-                documentWithExtractions.recipient,
-                parseAmount(documentWithExtractions.amount),
-                documentWithExtractions.dueDate,
-                documentWithExtractions.isPayable
+                order = order,
+                recipient = order.recipient,
+                amount = parseAmount(order.amount),
+                purpose = order.purpose
             )
         }
 
-        private fun parseAmount(amount: String?): String? {
-            return amount?.split(":")?.let { substrings ->
-                if (substrings.size != 2) {
-                    throw java.lang.NumberFormatException(
-                        "Invalid price format. Expected <Price>:<Currency Code>, but got: $amount"
-                    )
-                }
-                val price = parsePrice(substrings[0])
-                val currency = Currency.getInstance(substrings[1])
-
-                val numberFormat = NumberFormat.getCurrencyInstance()
-                numberFormat.maximumFractionDigits = 2
-                numberFormat.currency = currency
-
-                return numberFormat.format(price)
+        private fun parseAmount(amount: String): String = amount.split(":").let { substrings ->
+            if (substrings.size != 2) {
+                throw java.lang.NumberFormatException(
+                    "Invalid price format. Expected <Price>:<Currency Code>, but got: $amount"
+                )
             }
+            val price = parsePrice(substrings[0])
+            val currency = Currency.getInstance(substrings[1])
+
+            val numberFormat = NumberFormat.getCurrencyInstance()
+            numberFormat.maximumFractionDigits = 2
+            numberFormat.currency = currency
+
+            return numberFormat.format(price)
         }
 
         private fun parsePrice(price: String): BigDecimal =

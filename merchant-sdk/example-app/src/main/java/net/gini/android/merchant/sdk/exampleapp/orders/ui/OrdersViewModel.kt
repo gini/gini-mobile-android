@@ -2,33 +2,29 @@ package net.gini.android.merchant.sdk.exampleapp.orders.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.exampleapp.orders.data.InvoicesRepository
+import net.gini.android.merchant.sdk.exampleapp.orders.data.OrdersRepository
 import net.gini.android.merchant.sdk.exampleapp.orders.ui.model.OrderItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
 import org.slf4j.LoggerFactory
 
 class OrdersViewModel(
-    private val invoicesRepository: InvoicesRepository,
+    private val ordersRepository: OrdersRepository,
     val giniMerchant: GiniMerchant
 ) : ViewModel() {
 
-    val uploadHardcodedInvoicesStateFlow = invoicesRepository.uploadHardcodedInvoicesStateFlow
-    val invoicesFlow = invoicesRepository.invoicesFlow.map { invoices ->
-        invoices.map { invoice ->
-            OrderItem.fromInvoice(invoice)
-        }
+    val ordersFlow = ordersRepository.ordersFlow.map { orders ->
+        orders.map { order -> OrderItem.fromOrder(order) }
     }
 
-    private val _selectedInvoiceItem: MutableStateFlow<OrderItem?> = MutableStateFlow(null)
-    val selectedInvoiceItem: StateFlow<OrderItem?> = _selectedInvoiceItem
+    private val _selectedOrderItem: MutableStateFlow<OrderItem?> = MutableStateFlow(null)
+    val selectedOrderItem: StateFlow<OrderItem?> = _selectedOrderItem
 
     private val _startIntegratedPaymentFlow = MutableSharedFlow<PaymentFlowFragment>(
         extraBufferCapacity = 1
@@ -52,27 +48,14 @@ class OrdersViewModel(
         }
     }
 
-    fun loadInvoicesWithExtractions() {
-        viewModelScope.launch {
-            async { invoicesRepository.loadInvoicesWithExtractions() }.await()
-            invoicesRepository.refreshInvoices()
-        }
-    }
-
-    fun uploadHardcodedInvoices() {
-        viewModelScope.launch {
-            invoicesRepository.uploadHardcodedInvoices()
-        }
-    }
-
     fun loadPaymentProviderApps() {
         viewModelScope.launch {
             giniMerchant.loadPaymentProviderApps()
         }
     }
 
-    fun setSelectedInvoiceItem(invoiceItem: OrderItem) = viewModelScope.launch {
-        _selectedInvoiceItem.emit(invoiceItem)
+    fun setSelectedOrderItem(orderItem: OrderItem?) = viewModelScope.launch {
+        _selectedOrderItem.emit(orderItem)
     }
 
     fun startIntegratedPaymentFlow(documentId: String) {
