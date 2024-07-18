@@ -4,73 +4,67 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 
-class SkontoFragmentViewModel : ViewModel() {
+internal class SkontoFragmentViewModel(
+    private val data: SkontoData,
+) : ViewModel() {
 
     val stateFlow: MutableStateFlow<SkontoFragmentContract.State> =
-        MutableStateFlow(
-            createInitalState(
-                skontoAmount = BigDecimal("97"),
-                fullAmount = BigDecimal("100"),
-                paymentInDays = 14,
-                isSkontoSectionActive = true,
-                currency = "EUR",
-                discountDueDate = LocalDate.now()
-            )
-        )
+        MutableStateFlow(createInitalState(data))
 
     private fun createInitalState(
-        skontoAmount: BigDecimal,
-        fullAmount: BigDecimal,
-        paymentInDays: Int,
-        isSkontoSectionActive: Boolean = true,
-        currency: String = "EUR",
-        discountDueDate: LocalDate,
+        data: SkontoData,
     ): SkontoFragmentContract.State.Ready {
 
-        val totalAmount = if (isSkontoSectionActive) skontoAmount else fullAmount
-        val discount = calculateDiscount(skontoAmount, fullAmount)
+        val isSkontoSectionActive = true
+
+        val totalAmount =
+            if (isSkontoSectionActive) data.skontoAmountToPay else data.fullAmountToPay
+        val discount = data.skontoPercentageDiscounted
 
         return SkontoFragmentContract.State.Ready(
             isSkontoSectionActive = true,
-            paymentInDays = paymentInDays,
-            discountValue = discount,
-            skontoAmount = skontoAmount,
-            discountDueDate = discountDueDate,
-            fullAmount = fullAmount,
+            paymentInDays = data.skontoRemainingDays,
+            discountAmount = discount,
+            skontoAmount = data.skontoAmountToPay,
+            discountDueDate = data.skontoDueDate,
+            fullAmount = data.fullAmountToPay,
             totalAmount = totalAmount,
-            currency = currency,
         )
     }
 
     fun onSkontoActiveChanged(newValue: Boolean) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
         val totalAmount = if (newValue) currentState.skontoAmount else currentState.fullAmount
-        val discount = calculateDiscount(currentState.skontoAmount, currentState.fullAmount)
+        val discount =
+            calculateDiscount(currentState.skontoAmount.amount, currentState.fullAmount.amount)
 
         stateFlow.emit(
             currentState.copy(
                 isSkontoSectionActive = newValue,
                 totalAmount = totalAmount,
-                discountValue = discount
+                discountAmount = discount
             )
         )
     }
 
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
-        val discount = calculateDiscount(newValue, currentState.fullAmount)
-        val totalAmount =
-            if (currentState.isSkontoSectionActive) newValue else currentState.fullAmount
+        val discount = calculateDiscount(newValue, currentState.fullAmount.amount)
+        val totalAmount = if (currentState.isSkontoSectionActive)
+            newValue
+        else
+            currentState.fullAmount.amount
 
         stateFlow.emit(
             currentState.copy(
-                skontoAmount = newValue,
-                discountValue = discount,
-                totalAmount = totalAmount,
+                skontoAmount = currentState.skontoAmount.copy(amount = newValue),
+                discountAmount = discount,
+                totalAmount = currentState.totalAmount.copy(amount = totalAmount),
             )
         )
     }
@@ -83,8 +77,10 @@ class SkontoFragmentViewModel : ViewModel() {
     fun onFullAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
         val totalAmount =
-            if (currentState.isSkontoSectionActive) currentState.skontoAmount else newValue
-        val discount = currentState.discountValue
+            if (currentState.isSkontoSectionActive) currentState.skontoAmount.amount else newValue
+
+        val discount = currentState.discountAmount
+
         val skontoAmount = newValue.minus(
             newValue.multiply( // full_amount - (full_amount * (discount / 100))
                 discount.divide(BigDecimal("100"), 2, RoundingMode.HALF_UP)
@@ -93,9 +89,9 @@ class SkontoFragmentViewModel : ViewModel() {
 
         stateFlow.emit(
             currentState.copy(
-                skontoAmount = skontoAmount,
-                fullAmount = newValue,
-                totalAmount = totalAmount
+                skontoAmount = currentState.skontoAmount.copy(amount = skontoAmount),
+                fullAmount = currentState.fullAmount.copy(amount = newValue),
+                totalAmount = currentState.totalAmount.copy(amount = totalAmount)
             )
         )
     }

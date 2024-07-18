@@ -98,6 +98,11 @@
     <fragment
         android:id="@+id/gbs_destination_skonto_fragment"
         android:name="net.gini.android.bank.sdk.capture.skonto.SkontoFragment"
-        android:label="SkontoFragment" />
+        android:label="SkontoFragment">
+
+        <argument
+            android:name="data"
+            app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoData" />
+    </fragment>
 
 </navigation>
