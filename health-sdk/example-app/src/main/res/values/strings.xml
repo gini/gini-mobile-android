@@ -21,6 +21,7 @@
     <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
     <string name="hide_powered_by_gini">Hide powered by Gini on payment component</string>
     <string name="gini_health_version">Gini Health SDK v: </string>
+    <string name="sdk_language">SDK language: </string>
 
     <string name="ghs_privacy_policy_link_url">https://www.google.com</string>
     <!-- TODO: Remove or change this placeholder text -->
