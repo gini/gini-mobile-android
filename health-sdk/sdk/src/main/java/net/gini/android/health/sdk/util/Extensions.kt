@@ -179,11 +179,7 @@ internal suspend fun <T> Flow<T>.withPrev() = flow {
 }
 
 internal fun View.getLayoutInflaterWithGiniHealthThemeAndLocale(locale: Locale? = null): LayoutInflater =
-    if (locale == null) {
-        LayoutInflater.from(context.wrappedWithGiniHealthTheme())
-    } else {
-        LayoutInflater.from(context.wrappedWithGiniHealthTheme().wrappedWithCustomLocale(locale))
-    }
+        LayoutInflater.from(context.wrappedWithGiniHealthThemeAndLocale(locale))
 
 private fun Context.wrappedWithCustomLocale(locale: Locale): Context = CustomLocaleContextThemeWrapper.wrap(this, locale, R.style.GiniHealthTheme)
 private fun Context.wrappedWithGiniHealthTheme(): Context = ContextThemeWrapper(this, R.style.GiniHealthTheme)
@@ -196,13 +192,7 @@ internal fun Context.wrappedWithGiniHealthThemeAndLocale(locale: Locale? = null)
     }
 
 internal fun Fragment.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater: LayoutInflater, locale: Locale? = null): LayoutInflater {
-    val inflater =
-        if (locale == null) {
-            inflater.cloneInContext(requireContext().wrappedWithGiniHealthTheme())
-        } else {
-            inflater.cloneInContext(requireContext().wrappedWithGiniHealthTheme().wrappedWithCustomLocale(locale))
-        }
-    return inflater
+    return inflater.cloneInContext(requireContext().wrappedWithGiniHealthThemeAndLocale(locale))
 }
 
 internal fun View.setIntervalClickListener(click: View.OnClickListener?) {
