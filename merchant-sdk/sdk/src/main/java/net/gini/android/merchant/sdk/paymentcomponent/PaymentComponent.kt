@@ -184,7 +184,7 @@ internal class PaymentComponent(@get:VisibleForTesting internal val context: Con
         }
     }
 
-    internal suspend fun onPayInvoiceClicked(documentId: String) {
+    internal suspend fun onPayInvoiceClicked(documentId: String = "") {
         paymentComponentPreferences.saveReturningUser()
         listener?.onPayInvoiceClicked(documentId)
         delay(500)

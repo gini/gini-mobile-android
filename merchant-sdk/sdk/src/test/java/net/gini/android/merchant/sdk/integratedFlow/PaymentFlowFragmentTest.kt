@@ -62,7 +62,7 @@ class PaymentFlowFragmentTest {
         // Given
         every { paymentFlowViewModel!!.getLastBackstackEntry() } returns DisplayedScreen.Nothing
         every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
-        val fragment = PaymentFlowFragment.newInstance(
+        val fragment = PaymentFragment.newInstance(
             giniMerchant = giniMerchant!!,
             documentId = "1234",
             paymentFlowConfiguration = mockk(relaxed = true),
@@ -93,7 +93,7 @@ class PaymentFlowFragmentTest {
             mockk(relaxed = true)
         )
         val documentId = "1234"
-        val fragment = PaymentFlowFragment.newInstance(
+        val fragment = PaymentFragment.newInstance(
             giniMerchant = giniMerchant!!,
             documentId = documentId,
             paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewFragment = true),
@@ -121,7 +121,7 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
         val documentId = "1234"
-        val fragment = PaymentFlowFragment.newInstance(
+        val fragment = PaymentFragment.newInstance(
             giniMerchant = giniMerchant!!,
             documentId = documentId,
             paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewFragment = false),

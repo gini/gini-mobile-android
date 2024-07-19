@@ -11,7 +11,7 @@ import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.orders.data.OrdersRepository
 import net.gini.android.merchant.sdk.exampleapp.orders.ui.model.OrderItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
-import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
+import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
 import org.slf4j.LoggerFactory
 
 class OrdersViewModel(
@@ -26,7 +26,7 @@ class OrdersViewModel(
     private val _selectedOrderItem: MutableStateFlow<OrderItem?> = MutableStateFlow(null)
     val selectedOrderItem: StateFlow<OrderItem?> = _selectedOrderItem
 
-    private val _startIntegratedPaymentFlow = MutableSharedFlow<PaymentFlowFragment>(
+    private val _startIntegratedPaymentFlow = MutableSharedFlow<PaymentFragment>(
         extraBufferCapacity = 1
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow

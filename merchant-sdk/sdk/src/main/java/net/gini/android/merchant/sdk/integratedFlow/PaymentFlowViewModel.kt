@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
@@ -25,7 +24,7 @@ import net.gini.android.merchant.sdk.util.PaymentNextStep
 import java.io.File
 import java.util.Stack
 
-internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val documentId: String?, val paymentDetails: PaymentDetails? = null, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant) : ViewModel(), FlowBottomSheetsManager, BackListener {
+internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val paymentDetails: PaymentDetails? = null, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant) : ViewModel(), FlowBottomSheetsManager, BackListener {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
@@ -47,21 +46,6 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
     override val shareWithFlowStarted: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     init {
-        documentId?.let {
-            viewModelScope.launch {
-                giniMerchant.paymentFlow.collect { paymentResult ->
-                    if (paymentResult is ResultWrapper.Success) {
-                        _paymentDetails.tryEmit(paymentResult.value)
-                    }
-                }
-            }
-            viewModelScope.launch {
-                _paymentDetails.collect {paymentDetails ->
-                    giniMerchant.setDocumentForReview(documentId, paymentDetails)
-                }
-            }
-        }
-
         viewModelScope.launch {
             paymentComponent.paymentProviderAppsFlow.collect {
                 if (it is PaymentProviderAppsState.Error) {
@@ -116,12 +100,6 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         giniPaymentManager.onPayment(initialSelectedPaymentProvider, _paymentDetails.value)
     }
 
-    fun loadPaymentDetails() = viewModelScope.launch {
-        documentId?.let {
-            giniMerchant.setDocumentForReview(documentId)
-        }
-    }
-
     fun onBankOpened() {
         // Schedule on the main dispatcher to allow all collectors to receive the current state before
         // the state is overridden
@@ -163,10 +141,10 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
 
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 
-    class Factory(val paymentComponent: PaymentComponent, val documentId: String?, val paymentDetails: PaymentDetails?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
+    class Factory(val paymentComponent: PaymentComponent, val paymentDetails: PaymentDetails?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentFlowViewModel(paymentComponent = paymentComponent, documentId = documentId, paymentDetails = paymentDetails,paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
+            return PaymentFlowViewModel(paymentComponent = paymentComponent, paymentDetails = paymentDetails,paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
         }
     }
 

@@ -15,7 +15,6 @@ import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.ReviewConfiguration
-import net.gini.android.merchant.sdk.review.ReviewViewModel
 import net.gini.android.merchant.sdk.review.ValidationMessage
 import net.gini.android.merchant.sdk.review.validate
 import net.gini.android.merchant.sdk.review.validateIban
@@ -128,6 +127,7 @@ internal class ReviewComponent(
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(ReviewViewModel::class.java)
+        const val SHOW_OPEN_WITH_TIMES = 3
+        private val LOG = LoggerFactory.getLogger(ReviewComponent::class.java)
     }
 }

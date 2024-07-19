@@ -26,7 +26,7 @@ import net.gini.android.merchant.sdk.exampleapp.R
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityOrdersBinding
 import net.gini.android.merchant.sdk.exampleapp.orders.ui.model.OrderItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
-import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
+import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
@@ -120,7 +120,7 @@ class OrdersActivity : AppCompatActivity() {
         }
     }
 
-    private fun startIntegratedPaymentFlow(containerFragment: PaymentFlowFragment) {
+    private fun startIntegratedPaymentFlow(containerFragment: PaymentFragment) {
         containerFragment.apply {
             add()
         }

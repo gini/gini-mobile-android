@@ -11,7 +11,7 @@ import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
 
-internal class PaymentComponentBottomSheetViewModel private constructor(val paymentComponent: PaymentComponent?, val backListener: BackListener?, val documentId: String, val reviewFragmentShown: Boolean) : ViewModel() {
+internal class PaymentComponentBottomSheetViewModel private constructor(val paymentComponent: PaymentComponent?, val backListener: BackListener?, val reviewFragmentShown: Boolean) : ViewModel() {
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
 
@@ -25,10 +25,10 @@ internal class PaymentComponentBottomSheetViewModel private constructor(val paym
         }
     }
 
-    class Factory(private val paymentComponent: PaymentComponent?, private val backListener: BackListener?, private val documentId: String, private val reviewFragmentShown: Boolean) : ViewModelProvider.Factory {
+    class Factory(private val paymentComponent: PaymentComponent?, private val backListener: BackListener?, private val reviewFragmentShown: Boolean) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentComponentBottomSheetViewModel(paymentComponent, backListener, documentId, reviewFragmentShown) as T
+            return PaymentComponentBottomSheetViewModel(paymentComponent, backListener, reviewFragmentShown) as T
         }
     }
 }

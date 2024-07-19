@@ -12,8 +12,8 @@ import net.gini.android.core.api.Resource
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.review.ReviewViewModel
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
+import net.gini.android.merchant.sdk.review.reviewComponent.ReviewComponent.Companion.SHOW_OPEN_WITH_TIMES
 import net.gini.android.merchant.sdk.util.extensions.createTempPdfFile
 import java.io.File
 
@@ -82,7 +82,7 @@ internal interface FlowBottomSheetsManager {
             else emitPaymentNextStep(PaymentNextStep.ShowInstallApp)
             return
         }
-        if (openWithCounter < ReviewViewModel.SHOW_OPEN_WITH_TIMES) {
+        if (openWithCounter < SHOW_OPEN_WITH_TIMES) {
             emitPaymentNextStep(PaymentNextStep.ShowOpenWithSheet)
         } else {
             emitPaymentNextStep(PaymentNextStep.SetLoadingVisibility(true))

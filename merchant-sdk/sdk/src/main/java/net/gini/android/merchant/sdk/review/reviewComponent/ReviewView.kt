@@ -18,7 +18,6 @@ import net.gini.android.merchant.sdk.databinding.GmsReviewBinding
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.PaymentField
-import net.gini.android.merchant.sdk.review.ReviewViewModel
 import net.gini.android.merchant.sdk.review.ValidationMessage
 import net.gini.android.merchant.sdk.util.amountWatcher
 import net.gini.android.merchant.sdk.util.clearErrorMessage
@@ -212,7 +211,7 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(ReviewViewModel::class.java)
+        private val LOG = LoggerFactory.getLogger(ReviewView::class.java)
     }
 
 }

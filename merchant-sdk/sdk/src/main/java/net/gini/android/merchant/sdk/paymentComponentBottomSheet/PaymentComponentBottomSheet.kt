@@ -23,14 +23,13 @@ import net.gini.android.merchant.sdk.util.extensions.setBackListener
 
 class PaymentComponentBottomSheet private constructor(
     paymentComponent: PaymentComponent?,
-    documentId: String,
     reviewFragmentShown: Boolean,
     backListener: BackListener? = null
 ): GmsBottomSheetDialogFragment() {
-    constructor(): this(null, "", false)
+    constructor(): this(null, false)
 
     private var binding: GmsBottomSheetPaymentComponentBinding by autoCleared()
-    private val viewModel by viewModels<PaymentComponentBottomSheetViewModel> { PaymentComponentBottomSheetViewModel.Factory(paymentComponent, backListener, documentId, reviewFragmentShown) }
+    private val viewModel by viewModels<PaymentComponentBottomSheetViewModel> { PaymentComponentBottomSheetViewModel.Factory(paymentComponent, backListener, reviewFragmentShown) }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -57,7 +56,7 @@ class PaymentComponentBottomSheet private constructor(
         }
         binding.gmsPaymentComponent.findViewById<Button>(R.id.gms_pay_invoice_button).setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.paymentComponent?.onPayInvoiceClicked(viewModel.documentId)
+                viewModel.paymentComponent?.onPayInvoiceClicked()
                 // if payment provider does not support GPC and review fragment will not be shown, we're in the case where we show `Open With Bottom Sheet` from the payment component directly
                 if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false && !viewModel.reviewFragmentShown) return@launch
                 dismiss()
@@ -72,7 +71,7 @@ class PaymentComponentBottomSheet private constructor(
     }
 
     companion object {
-        internal fun newInstance(paymentComponent: PaymentComponent?, documentId: String, reviewFragmentShown: Boolean, backListener: BackListener) = PaymentComponentBottomSheet(paymentComponent, documentId, reviewFragmentShown, backListener)
+        internal fun newInstance(paymentComponent: PaymentComponent?, reviewFragmentShown: Boolean, backListener: BackListener) = PaymentComponentBottomSheet(paymentComponent, reviewFragmentShown, backListener)
     }
 
 }

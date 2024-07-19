@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
@@ -22,22 +21,15 @@ import net.gini.android.health.api.GiniHealthAPIBuilder
 import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.api.authorization.HealthApiSessionManagerAdapter
 import net.gini.android.merchant.sdk.api.authorization.SessionManager
-import net.gini.android.merchant.sdk.api.payment.model.Payment
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.api.payment.model.getPaymentExtraction
-import net.gini.android.merchant.sdk.api.payment.model.toPayment
 import net.gini.android.merchant.sdk.api.payment.model.toPaymentDetails
-import net.gini.android.merchant.sdk.api.payment.model.toPaymentRequest
 import net.gini.android.merchant.sdk.api.wrapToResult
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
-import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowFragment
+import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent.Listener
-import net.gini.android.merchant.sdk.review.ReviewConfiguration
-import net.gini.android.merchant.sdk.review.ReviewFragment
 import net.gini.android.merchant.sdk.util.DisplayedScreen
-import net.gini.android.merchant.sdk.util.extensions.toException
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
@@ -207,29 +199,7 @@ class GiniMerchant(
         }
     }
 
-    // TODO EC-62: Use this method in the example app
-    suspend fun getPaymentRequest(paymentRequestId: String): Result<PaymentRequest> {
-        return when (val paymentRequestResource = giniHealthAPI.documentManager.getPaymentRequest(paymentRequestId)) {
-            is Resource.Cancelled -> Result.failure(Exception("Cancelled"))
-            is Resource.Error -> Result.failure(paymentRequestResource.toException())
-            is Resource.Success -> {
-                Result.success(paymentRequestResource.data.toPaymentRequest(paymentRequestId))
-            }
-        }
-    }
-
-    // TODO EC-62: Use this method in the example app
-    suspend fun getPayment(paymentRequestId: String): Result<Payment> {
-        return when (val paymentRequestResource = giniHealthAPI.documentManager.getPayment(paymentRequestId)) {
-            is Resource.Cancelled -> Result.failure(Exception("Cancelled"))
-            is Resource.Error -> Result.failure(paymentRequestResource.toException())
-            is Resource.Success -> {
-                Result.success(paymentRequestResource.data.toPayment())
-            }
-        }
-    }
-
-    fun getFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null) = PaymentFlowFragment.newInstance(
+    fun getFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null) = PaymentFragment.newInstance(
         giniMerchant = this,
         paymentDetails = PaymentDetails(
             recipient = recipient,
@@ -252,15 +222,6 @@ class GiniMerchant(
             is PaymentState.Error -> _eventsFlow.tryEmit(MerchantSDKEvents.OnErrorOccurred(state.throwable))
             PaymentState.Loading -> _eventsFlow.tryEmit(MerchantSDKEvents.OnLoading)
             PaymentState.NoAction -> _eventsFlow.tryEmit(MerchantSDKEvents.NoAction)
-        }
-    }
-
-    internal suspend fun retryDocumentReview() {
-        when (val arguments = capturedArguments) {
-            is CapturedArguments.DocumentId -> setDocumentForReview(arguments.id, arguments.paymentDetails)
-            is CapturedArguments.DocumentInstance -> setDocumentForReview(arguments.value)
-            null -> { // Nothing
-            }
         }
     }
 
@@ -291,35 +252,11 @@ class GiniMerchant(
                         )
                         else -> null
                     }
-                    retryScope.launch {
-                        retryDocumentReview()
-                    }
                 }
             }
         }.also { observer ->
             registryOwner.lifecycle.addObserver(observer)
         }
-    }
-
-    /**
-     * Loads the extractions for the given document id and creates an instance of the [ReviewFragment] with the given
-     * configuration.
-     *
-     * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
-     *
-     * @param documentId The document id for which the extractions should be loaded
-     * @param configuration The configuration for the [ReviewFragment]
-     * @throws IllegalStateException If no payment provider app has been selected
-     */
-    internal fun getPaymentReviewFragment(documentId: String, configuration: ReviewConfiguration): ReviewFragment {
-        LOG.debug("Getting payment review fragment for id: {}", documentId)
-
-        return ReviewFragment.newInstance(
-            giniMerchant = this,
-            configuration = configuration,
-            paymentComponent = paymentComponent,
-            documentId = documentId
-        )
     }
 
     internal fun setDisplayedScreen(displayedScreen: DisplayedScreen) {
@@ -330,7 +267,9 @@ class GiniMerchant(
         _eventsFlow.tryEmit(MerchantSDKEvents.OnFinishedWithCancellation())
     }
 
-    // TODO add documentation & load payment providers internally if clients didn't to it when attempting to start flow
+    /**
+     * Loads payment provider apps - can be used before starting the payment flow for faster loading
+     */
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
