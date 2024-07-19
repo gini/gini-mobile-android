@@ -22,14 +22,17 @@ internal class SkontoFragmentViewModel(
         data: SkontoData,
     ): SkontoFragmentContract.State.Ready {
 
-        val isSkontoSectionActive = true
 
-        val totalAmount =
-            if (isSkontoSectionActive) data.skontoAmountToPay else data.fullAmountToPay
         val discount = data.skontoPercentageDiscounted
 
         val paymentMethod = data.skontoPaymentMethod ?: SkontoData.SkontoPaymentMethod.Unspecified
         val edgeCase = extractSkontoEdgeCase(data.skontoDueDate, paymentMethod)
+
+        val isSkontoSectionActive = edgeCase != SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly
+                && edgeCase != SkontoFragmentContract.SkontoEdgeCase.SkontoExpired
+
+        val totalAmount =
+            if (isSkontoSectionActive) data.skontoAmountToPay else data.fullAmountToPay
 
         return SkontoFragmentContract.State.Ready(
             isSkontoSectionActive = true,

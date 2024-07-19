@@ -1,6 +1,10 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package net.gini.android.bank.sdk.capture.skonto
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.icu.util.Calendar
+import android.icu.util.TimeUnit
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +14,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +28,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -30,11 +36,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -54,8 +63,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -87,7 +94,13 @@ import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 
 class SkontoFragment : Fragment() {
@@ -437,7 +450,7 @@ private fun SkontoSection(
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
-    val amountFieldFocusRequester = remember { FocusRequester() }
+    val dueDateFieldFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
     Card(
@@ -538,28 +551,29 @@ private fun SkontoSection(
                 },
             )
 
+            val dueDateOnClickSource = remember { MutableInteractionSource() }
+            val pressed by dueDateOnClickSource.collectIsPressedAsState()
+
+            LaunchedEffect(key1 = pressed) {
+                if (pressed) {
+                    isDatePickerVisible = true
+                }
+            }
+
             GiniTextInput(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
-                    .onFocusChanged {
-                        if (it.isFocused) {
-                            isDatePickerVisible = true
-                            focusManager.clearFocus()
-                        }
-                    }
-                    .focusRequester(amountFieldFocusRequester),
+                    .focusable(false),
                 enabled = isActive,
+                interactionSource = dueDateOnClickSource,
+                readOnly = true,
                 colors = colors.dueDateTextFieldColor,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
                 onValueChange = { /* Ignored */ },
                 text = dueDate.format(dateFormatter),
                 label = stringResource(id = R.string.gbs_skonto_section_discount_field_due_date_hint),
                 trailingContent = {
-                    AnimatedVisibility(visible = isActive) {
+                    androidx.compose.animation.AnimatedVisibility(visible = isActive) {
                         Icon(
                             painter = painterResource(id = R.drawable.gbs_icon_calendar),
                             contentDescription = null,
@@ -577,8 +591,32 @@ private fun SkontoSection(
                 isDatePickerVisible = false
                 onDueDateChanged(it)
             },
-            date = dueDate
+            date = dueDate,
+            selectableDates = getSkontoSelectableDates()
         )
+    }
+}
+
+private fun getSkontoSelectableDates() = object : SelectableDates {
+
+    val minDateCalendar = Calendar.getInstance().apply {
+        set(Calendar.MILLISECONDS_IN_DAY, 0)
+    }
+
+    val maxDateCalendar = Calendar.getInstance().apply {
+        add(Calendar.MONTH, 6)
+    }
+
+    val minTime = minDateCalendar.timeInMillis
+    val maxTime = maxDateCalendar.timeInMillis
+
+    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+        return (minTime..maxTime).contains(utcTimeMillis)
+    }
+
+    override fun isSelectableYear(year: Int): Boolean {
+        return (minDateCalendar.get(Calendar.YEAR)..maxDateCalendar.get(Calendar.YEAR))
+            .contains(year)
     }
 }
 
@@ -636,7 +674,7 @@ private fun InfoDialog(
             )
             Button(
                 modifier = Modifier
-                    .padding(vertical = 16.dp)
+                    .padding(16.dp)
                     .align(Alignment.End),
                 onClick = onDismissRequest,
                 shape = RoundedCornerShape(4.dp),
