@@ -101,7 +101,6 @@ class PaymentFlowViewModelTest {
         // Given
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
-            documentId = "1234",
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
@@ -119,7 +118,6 @@ class PaymentFlowViewModelTest {
         // Given
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
-            documentId = "1234",
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
@@ -141,7 +139,6 @@ class PaymentFlowViewModelTest {
         // Given
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
-            documentId = "1234",
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
@@ -160,7 +157,6 @@ class PaymentFlowViewModelTest {
         // Given
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
-            documentId = "1234",
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
@@ -176,7 +172,6 @@ class PaymentFlowViewModelTest {
         coEvery { giniPayment!!.onPayment(any(), any()) } coAnswers {  }
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
-            documentId = "1234",
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -185,21 +180,5 @@ class PaymentFlowViewModelTest {
         // Then
         viewModel.onPayment()
         coVerify(exactly = 1) { giniPayment!!.onPayment(any(), any()) }
-    }
-
-    @Test
-    fun `forwards load document to giniMerchant`() = runTest {
-        // Given
-        val viewModel = PaymentFlowViewModel(
-            paymentComponent = paymentComponent!!,
-            documentId = "1234",
-            paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant!!,
-            giniPaymentManager = giniPayment!!
-        )
-
-        // Then
-        viewModel.loadPaymentDetails()
-        coVerify { giniMerchant!!.setDocumentForReview("1234") }
     }
 }

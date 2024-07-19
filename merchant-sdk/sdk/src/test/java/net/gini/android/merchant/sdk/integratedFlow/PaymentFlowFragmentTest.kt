@@ -39,7 +39,7 @@ class PaymentFlowFragmentTest {
         giniMerchant = mockk<GiniMerchant>(relaxed = true)
         every { giniMerchant!!.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { giniMerchant!!.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
-        every { giniMerchant!!.getPaymentReviewFragment("1234", any()) } returns mockk(relaxed = true)
+//        every { giniMerchant!!.getPaymentReviewFragment("1234", any()) } returns mockk(relaxed = true)
 
         paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
@@ -64,7 +64,7 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
         val fragment = PaymentFragment.newInstance(
             giniMerchant = giniMerchant!!,
-            documentId = "1234",
+            paymentDetails = mockk(relaxed = true),
             paymentFlowConfiguration = mockk(relaxed = true),
             viewModelFactory = viewModelFactory
         )
@@ -85,17 +85,16 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
-        every { paymentFlowViewModel!!.giniMerchant!!.getFragment(any(), any()) } returns mockk(relaxed = true)
+        every { paymentFlowViewModel!!.giniMerchant!!.getFragment("", "", "", "") } returns mockk(relaxed = true)
         every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
         every { paymentFlowViewModel!!.giniMerchant.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { paymentFlowViewModel!!.giniMerchant.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { paymentFlowViewModel!!.paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             mockk(relaxed = true)
         )
-        val documentId = "1234"
         val fragment = PaymentFragment.newInstance(
             giniMerchant = giniMerchant!!,
-            documentId = documentId,
+            paymentDetails = mockk(relaxed = true),
             paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewFragment = true),
             viewModelFactory = viewModelFactory
         )
@@ -105,7 +104,7 @@ class PaymentFlowFragmentTest {
         }
 
         // When
-        fragment.handlePayFlow(documentId)
+        fragment.handlePayFlow()
 
         // Then
         verify { fragment.showReviewBottomDialog() }
@@ -120,10 +119,9 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
-        val documentId = "1234"
         val fragment = PaymentFragment.newInstance(
             giniMerchant = giniMerchant!!,
-            documentId = documentId,
+            paymentDetails = mockk(relaxed = true),
             paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewFragment = false),
             viewModelFactory = viewModelFactory
         )
@@ -133,7 +131,7 @@ class PaymentFlowFragmentTest {
         }
 
         // When
-        fragment.handlePayFlow(documentId)
+        fragment.handlePayFlow()
 
         // Then
         verify { paymentFlowViewModel!!.onPaymentButtonTapped(any()) }
