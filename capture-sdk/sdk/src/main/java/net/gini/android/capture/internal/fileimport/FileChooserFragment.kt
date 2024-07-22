@@ -296,7 +296,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
 
     private fun getPhotoPickerProvider(): List<ProvidersItem> {
         val providerList =
-            ContextCompat.getDrawable(requireContext(), (R.drawable.gc_photo_tip_align))
+            ContextCompat.getDrawable(requireContext(), (R.drawable.gc_photo_picker_app_icon))
                 ?.let { image ->
                     listOf(
                         ProvidersSectionItem(getString(R.string.gc_file_chooser_fotos_section_header)),
