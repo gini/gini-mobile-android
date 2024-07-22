@@ -11,6 +11,7 @@ data class SkontoFooterSectionColors(
     val cardBackgroundColor: Color,
     val titleTextColor: Color,
     val amountTextColor: Color,
+    val savedAmountTextColor: Color,
     val discountLabelColorScheme: DiscountLabelColorScheme,
     val continueButtonColors: GiniButtonColors,
 ) {
@@ -22,6 +23,7 @@ data class SkontoFooterSectionColors(
             cardBackgroundColor: Color = GiniTheme.colorScheme.card.container,
             titleTextColor: Color = GiniTheme.colorScheme.text.primary,
             amountTextColor: Color = GiniTheme.colorScheme.text.primary,
+            savedAmountTextColor: Color = GiniTheme.colorScheme.text.success,
             discountLabelColorScheme: DiscountLabelColorScheme = DiscountLabelColorScheme.colors(),
             continueButtonColors: GiniButtonColors = GiniButtonColors.colors(),
         ) = SkontoFooterSectionColors(
@@ -30,6 +32,7 @@ data class SkontoFooterSectionColors(
             amountTextColor = amountTextColor,
             discountLabelColorScheme = discountLabelColorScheme,
             continueButtonColors = continueButtonColors,
+            savedAmountTextColor = savedAmountTextColor,
         )
     }
 

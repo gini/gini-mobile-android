@@ -16,6 +16,7 @@ internal object SkontoFragmentContract {
             val discountDueDate: LocalDate,
             val fullAmount: SkontoData.Amount,
             val totalAmount: SkontoData.Amount,
+            val savedAmount: SkontoData.Amount,
             val paymentMethod: SkontoData.SkontoPaymentMethod,
             val skontoEdgeCase: SkontoEdgeCase?,
             val edgeCaseInfoDialogVisible: Boolean,

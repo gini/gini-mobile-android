@@ -34,6 +34,9 @@ internal class SkontoFragmentViewModel(
         val totalAmount =
             if (isSkontoSectionActive) data.skontoAmountToPay else data.fullAmountToPay
 
+        val savedAmountValue = calculateSavedAmount(data.skontoAmountToPay.amount, data.fullAmountToPay.amount)
+        val savedAmount = SkontoData.Amount(savedAmountValue, data.fullAmountToPay.currencyCode)
+
         return SkontoFragmentContract.State.Ready(
             isSkontoSectionActive = true,
             paymentInDays = data.skontoRemainingDays,
@@ -48,7 +51,8 @@ internal class SkontoFragmentViewModel(
             skontoAmountValidation = validateSkontoAmount(
                 skontoAmount = data.skontoAmountToPay,
                 fullAmount = data.fullAmountToPay
-            )
+            ),
+            savedAmount = savedAmount
         )
     }
 
@@ -80,12 +84,16 @@ internal class SkontoFragmentViewModel(
         val newSkontoAmount = currentState.skontoAmount.copy(amount = newValue)
         val newTotalAmount = currentState.totalAmount.copy(amount = totalAmount)
 
+        val savedAmountValue = calculateSavedAmount(newSkontoAmount.amount, currentState.fullAmount.amount)
+        val savedAmount = SkontoData.Amount(savedAmountValue, currentState.fullAmount.currencyCode)
+
         stateFlow.emit(
             currentState.copy(
                 skontoAmount = newSkontoAmount,
                 discountAmount = discount,
                 totalAmount = newTotalAmount,
-                skontoAmountValidation = validateSkontoAmount(newSkontoAmount, currentState.fullAmount)
+                skontoAmountValidation = validateSkontoAmount(newSkontoAmount, currentState.fullAmount),
+                savedAmount = savedAmount,
             )
         )
     }
@@ -118,11 +126,15 @@ internal class SkontoFragmentViewModel(
             )
         )
 
+        val savedAmountValue = calculateSavedAmount(skontoAmount, newValue)
+        val savedAmount = SkontoData.Amount(savedAmountValue, currentState.fullAmount.currencyCode)
+
         stateFlow.emit(
             currentState.copy(
                 skontoAmount = currentState.skontoAmount.copy(amount = skontoAmount),
                 fullAmount = currentState.fullAmount.copy(amount = newValue),
-                totalAmount = currentState.totalAmount.copy(amount = totalAmount)
+                totalAmount = currentState.totalAmount.copy(amount = totalAmount),
+                savedAmount = savedAmount,
             )
         )
     }
@@ -151,6 +163,9 @@ internal class SkontoFragmentViewModel(
             .minus(skontoAmount.divide(fullAmount, 4, RoundingMode.HALF_UP))
             .multiply(BigDecimal("100"))
     }
+
+    private fun calculateSavedAmount(skontoAmount: BigDecimal, fullAmount: BigDecimal) =
+        fullAmount.minus(skontoAmount).abs()
 
     private fun validateSkontoAmount(
         skontoAmount: SkontoData.Amount,
