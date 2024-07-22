@@ -11,6 +11,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -32,11 +33,12 @@ fun GiniDatePickerDialog(
     onSaved: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
     date: LocalDate = LocalDate.now(),
+    selectableDates: SelectableDates = DatePickerDefaults.AllDates,
     colors: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors()
 ) {
 
     val dateState = rememberDatePickerState(
-        selectableDates = DatePickerDefaults.AllDates,
+        selectableDates = selectableDates,
         initialSelectedDateMillis = date.atStartOfDay(ZoneId.systemDefault()).toInstant()
             .toEpochMilli(),
     )

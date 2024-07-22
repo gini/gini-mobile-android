@@ -16,10 +16,10 @@ data class GiniTopBarColors(
     companion object {
         @Composable
         fun colors(
-            containerColor: Color = GiniTheme.colorScheme.background.bar,
+            containerColor: Color = GiniTheme.colorScheme.topAppBar.container,
             contentColor: Color = GiniTheme.colorScheme.text.primary,
-            navigationContentColor: Color = GiniTheme.colorScheme.text.primary,
-            actionContentColor: Color = GiniTheme.colorScheme.text.primary,
+            navigationContentColor: Color = GiniTheme.colorScheme.topAppBar.icon.navigation,
+            actionContentColor: Color = GiniTheme.colorScheme.topAppBar.icon.action,
         ) = GiniTopBarColors(
             containerColor = containerColor,
             contentColor = contentColor,

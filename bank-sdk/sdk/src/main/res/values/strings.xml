@@ -49,7 +49,10 @@
     <!--   region Section Discount -->
     <string name="gbs_skonto_section_discount_title">Mit Skonto</string>
     <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Aktiviert</string>
-    <string name="gbs_skonto_section_discount_info_banner_message">Zahlung in %1$s Tagen: %2$s Skonto.</string>
+    <string name="gbs_skonto_section_discount_info_banner_normal_message">Zahlung in %1$s Tagen: %2$s Skonto.</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Zahlung heute: %1$s Skonto</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">%1$s Skonto sind bei Barzahlung innerhalb von %2$s Tagen verfügbar.</string>
+    <string name="gbs_skonto_section_discount_info_banner_date_expired_message">Die %1$s Skonto sind abgelaufen.</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Betrag nach Abzug</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Fälligkeitsdatum</string>
     <!--   endregion -->
@@ -62,6 +65,12 @@
     <string name="gbs_skonto_section_footer_title">Gesamtpreis</string>
     <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto</string>
     <string name="gbs_skonto_section_footer_continue_button_text">Zahlung fortsetzen</string>
+    <!--   endregion -->
+    <!--   region InfoDialog -->
+    <string name="gbs_skonto_section_info_dialog_pay_today_message">In dieser Rechnung ist ein Skonto enthalten – die Frist läuft heute ab.</string>
+    <string name="gbs_skonto_section_info_dialog_pay_cash_message">In dieser Rechnung ist ein Skonto angegeben, das jedoch nur bei Bareinzahlung über einen Bankterminal gültig ist.</string>
+    <string name="gbs_skonto_section_info_dialog_date_expired_message">Diese Rechnung hätten Sie mit %1$s Skonto bezahlen können, die Skontofrist ist jedoch bereits abgelaufen.</string>
+    <string name="gbs_skonto_section_info_dialog_ok_button_text">Verstanden</string>
     <!--   endregion -->
     <!-- endregion -->
 </resources>

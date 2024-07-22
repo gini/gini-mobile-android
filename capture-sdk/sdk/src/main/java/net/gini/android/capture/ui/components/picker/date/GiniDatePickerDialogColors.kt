@@ -16,29 +16,23 @@ data class GiniDatePickerDialogColors(
     val textDateSelected: Color = Color.Unspecified,
     val textDateEnabled: Color = Color.Unspecified,
     val textDateDisabled: Color = Color.Unspecified,
-    val textMenu: Color = Color.Unspecified,
     val divider: Color = Color.Unspecified,
-    val iconMenu: Color = Color.Unspecified,
-    val iconButton: Color = Color.Unspecified,
 ) {
 
     companion object {
 
         @Composable
         fun colors(
-            dateSelected: Color = GiniTheme.colorScheme.datePicker.dateSelected,
-            borderDate: Color = GiniTheme.colorScheme.datePicker.borderDate,
-            textHeadline: Color = GiniTheme.colorScheme.datePicker.textHeadline,
-            textSupporting: Color = GiniTheme.colorScheme.datePicker.textSupporting,
-            textButtons: Color = GiniTheme.colorScheme.datePicker.textButtons,
-            textDateToday: Color = GiniTheme.colorScheme.datePicker.textDateToday,
-            textDateSelected: Color = GiniTheme.colorScheme.datePicker.textDateSelected,
-            textDateEnabled: Color = GiniTheme.colorScheme.datePicker.textDateEnabled,
-            textDateDisabled: Color = GiniTheme.colorScheme.datePicker.textDateDisabled,
-            textMenu: Color = GiniTheme.colorScheme.datePicker.textMenu,
+            dateSelected: Color = GiniTheme.colorScheme.datePicker.date.containerFocused,
+            borderDate: Color = GiniTheme.colorScheme.datePicker.date.containerOutlined,
+            textHeadline: Color = GiniTheme.colorScheme.datePicker.text.primary,
+            textSupporting: Color = GiniTheme.colorScheme.datePicker.text.secondary,
+            textButtons: Color = GiniTheme.colorScheme.datePicker.text.accent,
+            textDateToday: Color = GiniTheme.colorScheme.datePicker.text.primary,
+            textDateSelected: Color = GiniTheme.colorScheme.datePicker.date.contentFocused,
+            textDateEnabled: Color = GiniTheme.colorScheme.datePicker.text.primary,
+            textDateDisabled: Color = GiniTheme.colorScheme.datePicker.text.secondary,
             divider: Color = GiniTheme.colorScheme.datePicker.divider,
-            iconMenu: Color = GiniTheme.colorScheme.datePicker.iconMenu,
-            iconButton: Color = GiniTheme.colorScheme.datePicker.iconButton,
         ) = GiniDatePickerDialogColors(
             dateSelected = dateSelected,
             borderDate = borderDate,
@@ -49,10 +43,7 @@ data class GiniDatePickerDialogColors(
             textDateSelected = textDateSelected,
             textDateEnabled = textDateEnabled,
             textDateDisabled = textDateDisabled,
-            textMenu = textMenu,
             divider = divider,
-            iconMenu = iconMenu,
-            iconButton = iconButton,
         )
     }
 }

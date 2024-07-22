@@ -18,9 +18,9 @@ data class WithoutSkontoSectionColors(
         @Composable
         fun colors(
             titleTextColor: Color = GiniTheme.colorScheme.text.primary,
-            cardBackgroundColor: Color = GiniTheme.colorScheme.background.surface,
+            cardBackgroundColor: Color = GiniTheme.colorScheme.card.container,
             amountFieldColors: GiniTextInputColors = GiniTextInputColors.colors(),
-            enabledHintTextColor: Color = GiniTheme.colorScheme.text.status,
+            enabledHintTextColor: Color = GiniTheme.colorScheme.text.success,
         ) = WithoutSkontoSectionColors(
             titleTextColor = titleTextColor,
             cardBackgroundColor = cardBackgroundColor,
