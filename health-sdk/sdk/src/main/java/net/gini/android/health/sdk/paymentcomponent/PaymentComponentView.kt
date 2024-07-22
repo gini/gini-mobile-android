@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -56,6 +57,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     @VisibleForTesting
     internal var coroutineScope: CoroutineScope? = null
+    private var collectJob: Job? = null
 
     /**
      * Sets the payable state of the [PaymentComponentView]. If `true`, the view will be shown, otherwise it will be hidden.
@@ -80,6 +82,10 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
      * The document id of the invoice item. This will be returned in the [PaymentComponent.Listener.onPayInvoiceClicked] method.
      */
     var documentId: String? = null
+        set(value) {
+            field = value
+            launchJobs()
+        }
 
     private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthTheme(), this)
 
@@ -90,12 +96,20 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         LOG.debug("onAttachedToWindow")
+        launchJobs()
+    }
+
+    private fun launchJobs() {
         if (coroutineScope == null) {
             LOG.debug("Creating coroutine scope")
             coroutineScope = CoroutineScope(coroutineContext)
         }
+        collectJob?.let {
+            it.cancel()
+            collectJob = null
+        }
         checkPaymentComponentHeight()
-        coroutineScope?.launch {
+        collectJob = coroutineScope?.launch {
             if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
                 return@launch
@@ -233,6 +247,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         LOG.debug("onDetachedFromWindow")
+        collectJob?.cancel()
+        collectJob = null
         coroutineScope?.cancel()
         coroutineScope = null
     }
@@ -254,6 +270,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         binding.ghsSelectBankPicker.visibility = VISIBLE
         binding.ghsPoweredByGini.visibility = if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else INVISIBLE
         changeLabelsVisibilityIfNeeded()
+        launchJobs()
     }
 
     private fun hide() {

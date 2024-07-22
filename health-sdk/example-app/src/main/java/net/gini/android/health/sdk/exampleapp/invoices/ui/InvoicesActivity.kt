@@ -107,6 +107,7 @@ open class InvoicesActivity : AppCompatActivity() {
                         when (paymentState) {
                             is GiniHealth.PaymentState.Success -> {
                                 viewModel.updateDocument()
+                                supportFragmentManager.popBackStack()
                             }
                             else -> {}
                         }
