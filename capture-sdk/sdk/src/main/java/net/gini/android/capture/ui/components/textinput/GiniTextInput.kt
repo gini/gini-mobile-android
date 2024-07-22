@@ -1,12 +1,15 @@
 package net.gini.android.capture.ui.components.textinput
 
 import android.content.res.Configuration
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,14 +24,20 @@ fun GiniTextInput(
     onValueChange: (String) -> Unit,
     trailingContent: @Composable () -> Unit = {},
     enabled: Boolean = true,
+    isError: Boolean = false,
+    readOnly: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     GiniTextInput(
         modifier = modifier,
         text = text,
         enabled = enabled,
+        readOnly = readOnly,
+        isError = isError,
+        interactionSource = interactionSource,
         keyboardOptions = keyboardOptions,
         label = {
             Text(
@@ -51,9 +60,12 @@ fun GiniTextInput(
     modifier: Modifier = Modifier,
     trailingContent: @Composable () -> Unit = {},
     enabled: Boolean = true,
+    isError: Boolean = false,
+    readOnly: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     TextField(
         modifier = modifier,
@@ -62,6 +74,9 @@ fun GiniTextInput(
         keyboardOptions = keyboardOptions,
         textStyle = GiniTheme.typography.subtitle1,
         label = label,
+        isError = isError,
+        readOnly = readOnly,
+        interactionSource = interactionSource,
         visualTransformation = visualTransformation,
         colors = with(colors) {
             TextFieldDefaults.colors(
@@ -72,6 +87,10 @@ fun GiniTextInput(
                 unfocusedTextColor = textUnfocused,
                 disabledTextColor = textDisabled,
                 errorTextColor = textError,
+                unfocusedLabelColor = labelUnfocused,
+                errorLabelColor = labelError,
+                focusedLabelColor = labelFocused,
+                disabledLabelColor = labelDisabled,
                 focusedIndicatorColor = indicatorFocused,
                 unfocusedIndicatorColor = indicatorUnfocused,
                 disabledIndicatorColor = indicatorDisabled,

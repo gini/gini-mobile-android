@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package net.gini.android.bank.sdk.capture.skonto
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.icu.util.Calendar
+import android.icu.util.TimeUnit
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +13,10 @@ import android.widget.FrameLayout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,18 +28,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,8 +53,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
@@ -51,20 +63,24 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
+import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInfoDialogColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoiceScanSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ui.components.button.filled.GiniButton
@@ -78,11 +94,18 @@ import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.text.DecimalFormat
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.chrono.ChronoLocalDate
 import java.time.format.DateTimeFormatter
 
 class SkontoFragment : Fragment() {
+
+    val args: SkontoFragmentArgs by navArgs<SkontoFragmentArgs>()
 
     private val isBottomNavigationBarEnabled =
         GiniCapture.getInstance().isBottomNavigationBarEnabled
@@ -98,7 +121,10 @@ class SkontoFragment : Fragment() {
         customBottomNavigationBarView =
             container?.let { customBottomNavBarAdapter?.viewAdapter?.onCreateView(it) }
 
-        val viewModel = ViewModelProvider(requireActivity())[SkontoFragmentViewModel::class.java]
+        val viewModel = ViewModelProvider(
+            factory = ViewModelFactory(args.data),
+            owner = requireActivity()
+        )[SkontoFragmentViewModel::class.java]
 
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -111,6 +137,16 @@ class SkontoFragment : Fragment() {
                     )
                 }
             }
+        }
+    }
+
+    internal class ViewModelFactory(
+        private val args: SkontoData,
+    ) : ViewModelProvider.Factory {
+
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            @Suppress("UNCHECKED_CAST")
+            return SkontoFragmentViewModel(args) as T
         }
     }
 }
@@ -136,7 +172,9 @@ private fun ScreenContent(
         onBackClicked = {},
         onHelpClicked = {},
         customBottomNavBarAdapter = customBottomNavBarAdapter,
-        onProceedClicked = {}
+        onProceedClicked = {},
+        onInfoBannerClicked = viewModel::onInfoBannerClicked,
+        onInfoDialogDismissed = viewModel::onInfoDialogDismissed
     )
 }
 
@@ -152,11 +190,12 @@ private fun ScreenStateContent(
     onProceedClicked: () -> Unit,
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
+    onInfoBannerClicked: () -> Unit,
+    onInfoDialogDismissed: () -> Unit,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors()
 ) {
     when (state) {
-        SkontoFragmentContract.State.Idle -> TODO()
         is SkontoFragmentContract.State.Ready -> ScreenReadyState(
             modifier = modifier,
             state = state,
@@ -170,6 +209,8 @@ private fun ScreenStateContent(
             isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
             customBottomNavBarAdapter = customBottomNavBarAdapter,
             onProceedClicked = onProceedClicked,
+            onInfoBannerClicked = onInfoBannerClicked,
+            onInfoDialogDismissed = onInfoDialogDismissed,
         )
     }
 
@@ -189,6 +230,8 @@ private fun ScreenReadyState(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
+    onInfoBannerClicked: () -> Unit,
+    onInfoDialogDismissed: () -> Unit,
 ) {
 
     val scrollState = rememberScrollState()
@@ -205,9 +248,8 @@ private fun ScreenReadyState(
         bottomBar = {
             FooterSection(
                 colors = screenColorScheme.footerSectionColors,
-                discountValue = state.discountValue,
+                discountValue = state.discountAmount,
                 totalAmount = state.totalAmount,
-                currency = state.currency,
                 isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                 onBackClicked = onBackClicked,
                 onHelpClicked = onHelpClicked,
@@ -229,21 +271,47 @@ private fun ScreenReadyState(
                 modifier = Modifier.padding(vertical = 16.dp),
                 colors = screenColorScheme.skontoSectionColors,
                 amount = state.skontoAmount,
+                amountValidation = state.skontoAmountValidation,
                 dueDate = state.discountDueDate,
                 infoPaymentInDays = state.paymentInDays,
-                infoDiscountValue = state.discountValue,
+                infoDiscountValue = state.discountAmount,
                 onActiveChange = onDiscountSectionActiveChange,
                 isActive = state.isSkontoSectionActive,
-                currencyCode = "EUR",
                 onSkontoAmountChange = onDiscountAmountChange,
                 onDueDateChanged = onDueDateChanged,
+                edgeCase = state.skontoEdgeCase,
+                onInfoBannerClicked = onInfoBannerClicked,
             )
             WithoutSkontoSection(
                 colors = screenColorScheme.withoutSkontoSectionColors,
                 isActive = !state.isSkontoSectionActive,
                 amount = state.fullAmount,
-                currencyCode = "EUR",
                 onFullAmountChange = onFullAmountChange,
+            )
+        }
+
+        if (state.edgeCaseInfoDialogVisible) {
+            val text = when (state.skontoEdgeCase) {
+                SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly ->
+                    stringResource(id = R.string.gbs_skonto_section_info_dialog_pay_cash_message)
+
+                SkontoFragmentContract.SkontoEdgeCase.SkontoExpired ->
+                    stringResource(
+                        id = R.string.gbs_skonto_section_info_dialog_date_expired_message,
+                        state.discountAmount.toFloat().formatAsDiscountPercentage()
+                    )
+
+                SkontoFragmentContract.SkontoEdgeCase.SkontoLastDay ->
+                    stringResource(
+                        id = R.string.gbs_skonto_section_info_dialog_pay_today_message,
+                    )
+
+                null -> ""
+            }
+            InfoDialog(
+                text = text,
+                colors = screenColorScheme.infoDialogColors,
+                onDismissRequest = onInfoDialogDismissed
             )
         }
     }
@@ -366,21 +434,23 @@ private fun YourInvoiceScanSection(
 @Composable
 private fun SkontoSection(
     colors: SkontoSectionColors,
-    amount: BigDecimal,
-    currencyCode: String,
+    amount: SkontoData.Amount,
+    amountValidation: SkontoFragmentContract.State.Ready.SkontoAmountValidation,
     dueDate: LocalDate,
     infoPaymentInDays: Int,
     infoDiscountValue: BigDecimal,
     onActiveChange: (Boolean) -> Unit,
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
+    onInfoBannerClicked: () -> Unit,
+    edgeCase: SkontoFragmentContract.SkontoEdgeCase?,
     modifier: Modifier = Modifier,
     isActive: Boolean,
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
-    val amountFieldFocusRequester = remember { FocusRequester() }
+    val dueDateFieldFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
     Card(
@@ -415,53 +485,95 @@ private fun SkontoSection(
                     onCheckedChange = onActiveChange,
                 )
             }
+
+            val animatedDiscountAmount by animateFloatAsState(
+                targetValue = infoDiscountValue.toFloat(),
+                label = "discountAmount"
+            )
+
+            val infoBannerText = when (edgeCase) {
+                SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly ->
+                    stringResource(
+                        id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_message,
+                        animatedDiscountAmount.formatAsDiscountPercentage(),
+                        infoPaymentInDays.toString()
+                    )
+
+                SkontoFragmentContract.SkontoEdgeCase.SkontoExpired ->
+                    stringResource(
+                        id = R.string.gbs_skonto_section_discount_info_banner_date_expired_message,
+                        animatedDiscountAmount.formatAsDiscountPercentage()
+                    )
+
+                SkontoFragmentContract.SkontoEdgeCase.SkontoLastDay ->
+                    stringResource(
+                        id = R.string.gbs_skonto_section_discount_info_banner_pay_today_message,
+                        animatedDiscountAmount.formatAsDiscountPercentage()
+                    )
+
+                else -> stringResource(
+                    id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
+                    infoPaymentInDays.toString(),
+                    animatedDiscountAmount.formatAsDiscountPercentage()
+                )
+            }
+
             InfoBanner(
-                paymentIn = infoPaymentInDays.toString(),
-                discountValue = infoDiscountValue,
+                text = infoBannerText,
                 modifier = Modifier.fillMaxWidth(),
-                colors = colors.infoBannerColors,
+                colors = when (edgeCase) {
+                    SkontoFragmentContract.SkontoEdgeCase.SkontoLastDay,
+                    SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly -> colors.warningInfoBannerColors
+
+                    SkontoFragmentContract.SkontoEdgeCase.SkontoExpired -> colors.errorInfoBannerColors
+                    else -> colors.successInfoBannerColors
+                },
+                onClicked = onInfoBannerClicked,
+                clickable = edgeCase != null,
             )
             GiniAmountTextInput(
-                amount = amount,
+                amount = amount.amount,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
                 enabled = isActive,
+                isError = amountValidation != SkontoFragmentContract.State.Ready.SkontoAmountValidation.Valid,
                 colors = colors.amountFieldColors,
                 onValueChange = { onSkontoAmountChange(it) },
                 label = stringResource(id = R.string.gbs_skonto_section_discount_field_amount_hint),
                 trailingContent = {
                     AnimatedVisibility(visible = isActive) {
                         Text(
-                            text = currencyCode,
+                            text = amount.currencyCode,
                             style = GiniTheme.typography.subtitle1,
                         )
                     }
                 },
             )
 
+            val dueDateOnClickSource = remember { MutableInteractionSource() }
+            val pressed by dueDateOnClickSource.collectIsPressedAsState()
+
+            LaunchedEffect(key1 = pressed) {
+                if (pressed) {
+                    isDatePickerVisible = true
+                }
+            }
+
             GiniTextInput(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
-                    .onFocusChanged {
-                        if (it.isFocused) {
-                            isDatePickerVisible = true
-                            focusManager.clearFocus()
-                        }
-                    }
-                    .focusRequester(amountFieldFocusRequester),
+                    .focusable(false),
                 enabled = isActive,
+                interactionSource = dueDateOnClickSource,
+                readOnly = true,
                 colors = colors.dueDateTextFieldColor,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
                 onValueChange = { /* Ignored */ },
                 text = dueDate.format(dateFormatter),
                 label = stringResource(id = R.string.gbs_skonto_section_discount_field_due_date_hint),
                 trailingContent = {
-                    AnimatedVisibility(visible = isActive) {
+                    androidx.compose.animation.AnimatedVisibility(visible = isActive) {
                         Icon(
                             painter = painterResource(id = R.drawable.gbs_icon_calendar),
                             contentDescription = null,
@@ -478,39 +590,63 @@ private fun SkontoSection(
             onSaved = {
                 isDatePickerVisible = false
                 onDueDateChanged(it)
-            })
+            },
+            date = dueDate,
+            selectableDates = getSkontoSelectableDates()
+        )
+    }
+}
+
+private fun getSkontoSelectableDates() = object : SelectableDates {
+
+    val minDateCalendar = Calendar.getInstance().apply {
+        set(Calendar.MILLISECONDS_IN_DAY, 0)
+    }
+
+    val maxDateCalendar = Calendar.getInstance().apply {
+        add(Calendar.MONTH, 6)
+    }
+
+    val minTime = minDateCalendar.timeInMillis
+    val maxTime = maxDateCalendar.timeInMillis
+
+    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+        return (minTime..maxTime).contains(utcTimeMillis)
+    }
+
+    override fun isSelectableYear(year: Int): Boolean {
+        return (minDateCalendar.get(Calendar.YEAR)..maxDateCalendar.get(Calendar.YEAR))
+            .contains(year)
     }
 }
 
 @Composable
 private fun InfoBanner(
     colors: SkontoSectionColors.InfoBannerColors,
-    paymentIn: String,
-    discountValue: BigDecimal,
+    text: String,
+    clickable: Boolean,
+    onClicked: () -> Unit,
     modifier: Modifier = Modifier,
+    icon: Painter = painterResource(id = R.drawable.gbs_icon_important_info),
 ) {
     Row(
-        modifier = modifier.background(
-            color = colors.backgroundColor, RoundedCornerShape(8.dp)
-        ),
+        modifier = modifier
+            .background(
+                color = colors.backgroundColor, RoundedCornerShape(8.dp)
+            )
+            .clickable(onClick = onClicked, enabled = clickable),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier.padding(8.dp),
-            painter = painterResource(id = R.drawable.gbs_icon_important_info),
+            painter = icon,
             contentDescription = null,
             tint = colors.iconTint,
         )
-        val animatedDiscountAmount by animateFloatAsState(
-            targetValue = discountValue.toFloat(), label = "discountAmount"
-        )
 
         Text(
-            text = stringResource(
-                id = R.string.gbs_skonto_section_discount_info_banner_message,
-                paymentIn,
-                animatedDiscountAmount.formatAsDiscountPercentage()
-            ),
+            modifier = Modifier.padding(vertical = 8.dp),
+            text = text,
             style = GiniTheme.typography.subtitle2,
             color = colors.textColor,
         )
@@ -518,10 +654,48 @@ private fun InfoBanner(
 }
 
 @Composable
+private fun InfoDialog(
+    text: String,
+    colors: SkontoInfoDialogColors,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Dialog(
+        properties = DialogProperties(),
+        onDismissRequest = onDismissRequest
+    ) {
+        Card(
+            modifier = modifier.fillMaxWidth(),
+        ) {
+            Text(
+                modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
+                text = text,
+                style = GiniTheme.typography.caption1
+            )
+            Button(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.End),
+                onClick = onDismissRequest,
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = colors.buttonTextColor,
+                ),
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = stringResource(id = R.string.gbs_skonto_section_info_dialog_ok_button_text),
+                    style = GiniTheme.typography.button
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun WithoutSkontoSection(
     colors: WithoutSkontoSectionColors,
-    amount: BigDecimal,
-    currencyCode: String,
+    amount: SkontoData.Amount,
     modifier: Modifier = Modifier,
     onFullAmountChange: (BigDecimal) -> Unit,
     isActive: Boolean,
@@ -559,13 +733,13 @@ private fun WithoutSkontoSection(
                     .padding(top = 16.dp),
                 enabled = isActive,
                 colors = colors.amountFieldColors,
-                amount = amount,
+                amount = amount.amount,
                 onValueChange = onFullAmountChange,
                 label = stringResource(id = R.string.gbs_skonto_section_without_discount_field_amount_hint),
                 trailingContent = {
                     AnimatedVisibility(visible = isActive) {
                         Text(
-                            text = currencyCode,
+                            text = amount.currencyCode,
                             style = GiniTheme.typography.subtitle1,
                         )
                     }
@@ -577,9 +751,8 @@ private fun WithoutSkontoSection(
 
 @Composable
 private fun FooterSection(
-    totalAmount: BigDecimal,
+    totalAmount: SkontoData.Amount,
     discountValue: BigDecimal,
-    currency: String,
     colors: SkontoFooterSectionColors,
     isBottomNavigationBarEnabled: Boolean,
     isSkontoSectionActive: Boolean,
@@ -590,12 +763,13 @@ private fun FooterSection(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
 ) {
     val animatedTotalAmount by animateFloatAsState(
-        targetValue = totalAmount.toFloat(), label = "totalAmount"
+        targetValue = totalAmount.amount.toFloat(), label = "totalAmount"
     )
     val animatedDiscountAmount by animateFloatAsState(
         targetValue = discountValue.toFloat(), label = "discountAmount"
     )
-    val totalPriceText = "${currencyFormatterWithoutSymbol().format(animatedTotalAmount)} $currency"
+    val totalPriceText =
+        "${currencyFormatterWithoutSymbol().format(animatedTotalAmount)} ${totalAmount.currencyCode}"
     val discountLabelText = stringResource(
         id = R.string.gbs_skonto_section_footer_label_discount,
         animatedDiscountAmount.formatAsDiscountPercentage()
@@ -725,7 +899,9 @@ private fun ScreenReadyStatePreview() {
             onBackClicked = {},
             isBottomNavigationBarEnabled = false,
             onProceedClicked = {},
-            customBottomNavBarAdapter = null
+            customBottomNavBarAdapter = null,
+            onInfoDialogDismissed = {},
+            onInfoBannerClicked = {},
         )
     }
 }
@@ -738,10 +914,13 @@ private fun Float.formatAsDiscountPercentage(): String {
 private val previewState = SkontoFragmentContract.State.Ready(
     isSkontoSectionActive = true,
     paymentInDays = 14,
-    discountValue = BigDecimal("3"),
-    skontoAmount = BigDecimal("97"),
+    discountAmount = BigDecimal("3"),
+    skontoAmount = SkontoData.Amount(BigDecimal("97"), "EUR"),
     discountDueDate = LocalDate.now(),
-    fullAmount = BigDecimal("100"),
-    totalAmount = BigDecimal("97"),
-    currency = "EUR"
+    fullAmount = SkontoData.Amount(BigDecimal("100"), "EUR"),
+    totalAmount = SkontoData.Amount(BigDecimal("97"), "EUR"),
+    paymentMethod = SkontoData.SkontoPaymentMethod.PayPal,
+    skontoEdgeCase = SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly,
+    edgeCaseInfoDialogVisible = false,
+    skontoAmountValidation = SkontoFragmentContract.State.Ready.SkontoAmountValidation.Invalid.SkontoAmountGreaterOfFullAmount,
 )

@@ -13,7 +13,9 @@ data class SkontoSectionColors(
     val switchColors: GiniSwitchColors,
     val cardBackgroundColor: Color,
     val enabledHintTextColor: Color,
-    val infoBannerColors: InfoBannerColors,
+    val successInfoBannerColors: InfoBannerColors,
+    val warningInfoBannerColors: InfoBannerColors,
+    val errorInfoBannerColors: InfoBannerColors,
     val amountFieldColors: GiniTextInputColors,
     val dueDateTextFieldColor: GiniTextInputColors,
 ) {
@@ -24,9 +26,11 @@ data class SkontoSectionColors(
         fun colors(
             titleTextColor: Color = GiniTheme.colorScheme.text.primary,
             switchColors: GiniSwitchColors = GiniSwitchColors.colors(),
-            cardBackgroundColor: Color = GiniTheme.colorScheme.background.surface,
-            enabledHintTextColor: Color = GiniTheme.colorScheme.text.status,
-            infoBannerColors: InfoBannerColors = InfoBannerColors.colors(),
+            cardBackgroundColor: Color = GiniTheme.colorScheme.card.container,
+            enabledHintTextColor: Color = GiniTheme.colorScheme.text.success,
+            successInfoBannerColors: InfoBannerColors = InfoBannerColors.success(),
+            warningInfoBannerColors: InfoBannerColors = InfoBannerColors.warning(),
+            errorInfoBannerColors: InfoBannerColors = InfoBannerColors.error(),
             amountFieldColors: GiniTextInputColors = GiniTextInputColors.colors(),
             dueDateTextFieldColor: GiniTextInputColors = GiniTextInputColors.colors(),
         ) = SkontoSectionColors(
@@ -34,7 +38,9 @@ data class SkontoSectionColors(
             switchColors = switchColors,
             cardBackgroundColor = cardBackgroundColor,
             enabledHintTextColor = enabledHintTextColor,
-            infoBannerColors = infoBannerColors,
+            successInfoBannerColors = successInfoBannerColors,
+            warningInfoBannerColors = warningInfoBannerColors,
+            errorInfoBannerColors = errorInfoBannerColors,
             amountFieldColors = amountFieldColors,
             dueDateTextFieldColor = dueDateTextFieldColor
         )
@@ -47,11 +53,34 @@ data class SkontoSectionColors(
         val iconTint: Color,
     ) {
         companion object {
+
             @Composable
-            fun colors(
-                backgroundColor: Color = GiniTheme.colorScheme.chips.assistEnabled,
-                textColor: Color = GiniTheme.colorScheme.chips.suggestionEnabled,
-                iconTint: Color = GiniTheme.colorScheme.chips.suggestionEnabled,
+            fun success(
+                backgroundColor: Color = GiniTheme.colorScheme.card.containerSuccess,
+                textColor: Color = GiniTheme.colorScheme.card.contentSuccess,
+                iconTint: Color = GiniTheme.colorScheme.card.contentSuccess,
+            ) = InfoBannerColors(
+                backgroundColor = backgroundColor,
+                textColor = textColor,
+                iconTint = iconTint,
+            )
+
+            @Composable
+            fun warning(
+                backgroundColor: Color = GiniTheme.colorScheme.card.containerWarning,
+                textColor: Color = GiniTheme.colorScheme.card.contentWarning,
+                iconTint: Color = GiniTheme.colorScheme.card.contentWarning,
+            ) = InfoBannerColors(
+                backgroundColor = backgroundColor,
+                textColor = textColor,
+                iconTint = iconTint,
+            )
+
+            @Composable
+            fun error(
+                backgroundColor: Color = GiniTheme.colorScheme.card.containerError,
+                textColor: Color = GiniTheme.colorScheme.card.contentError,
+                iconTint: Color = GiniTheme.colorScheme.card.contentError,
             ) = InfoBannerColors(
                 backgroundColor = backgroundColor,
                 textColor = textColor,

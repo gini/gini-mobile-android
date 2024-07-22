@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
+import net.gini.android.bank.sdk.capture.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
@@ -26,13 +27,14 @@ import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.internal.util.CancelListener
+import java.math.BigDecimal
+import java.time.LocalDate
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     GiniCaptureFragmentListener,
     DigitalInvoiceFragmentListener,
-    CancelListener
-{
+    CancelListener {
 
     private lateinit var navController: NavController
     private lateinit var captureFlowFragmentListener: CaptureFlowFragmentListener
@@ -49,7 +51,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        val contextThemeWrapper = ContextThemeWrapper(requireContext(), net.gini.android.capture.R.style.GiniCaptureTheme)
+        val contextThemeWrapper =
+            ContextThemeWrapper(requireContext(), net.gini.android.capture.R.style.GiniCaptureTheme)
         return inflater.cloneInContext(contextThemeWrapper)
     }
 
@@ -70,7 +73,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        childFragmentManager.fragmentFactory = CaptureFlowFragmentFactory(this, openWithDocument, this, this)
+        childFragmentManager.fragmentFactory =
+            CaptureFlowFragmentFactory(this, openWithDocument, this, this)
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
@@ -115,31 +119,58 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     }
 
     override fun onFinishedWithResult(result: CaptureSDKResult) {
-        when(result) {
+        when (result) {
             is CaptureSDKResult.Success -> {
                 if (GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true) {
                     try {
-                        LineItemsValidator.validate(result.compoundExtractions)
-                        navController.navigate(GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
-                            DigitalInvoiceFragment.getExtractionsBundle(result.specificExtractions),
-                            DigitalInvoiceFragment.getCompoundExtractionsBundle(result.compoundExtractions),
-                            result.returnReasons.toTypedArray(),
-                            DigitalInvoiceFragment.getAmountsAreConsistentExtraction(result.specificExtractions)
-                        ))
-                    } catch (notUsed: DigitalInvoiceException) {
-                        didFinishWithResult = true
-                        captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
+                        tryShowingReturnAssistant(result)
+                    } catch (digitalInvoiceException: DigitalInvoiceException) {
+                        tryShowingSkontoScreen(result)
                     }
                 } else {
-                    didFinishWithResult = true
-                    captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
+                    finishWithResult(result)
                 }
             }
+
             else -> {
                 didFinishWithResult = true
                 captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
             }
         }
+    }
+
+    private fun tryShowingSkontoScreen(result: CaptureSDKResult.Success) {
+        if (GiniBank.getCaptureConfiguration()?.skontoEnabled == true) {
+            try {
+                val skontoData = SkontoDataExtractor.extractSkontoData(
+                    result.specificExtractions,
+                    result.compoundExtractions
+                )
+
+                navController.navigate(
+                    GiniCaptureFragmentDirections.toSkontoFragment(data = skontoData)
+                )
+            } catch (e: Exception) {
+                finishWithResult(result)
+            }
+        }
+    }
+
+    private fun tryShowingReturnAssistant(result: CaptureSDKResult.Success) {
+        LineItemsValidator.validate(result.compoundExtractions)
+        navController.navigate(
+            GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
+                DigitalInvoiceFragment.getExtractionsBundle(result.specificExtractions),
+                DigitalInvoiceFragment.getCompoundExtractionsBundle(result.compoundExtractions),
+                result.returnReasons.toTypedArray(),
+                DigitalInvoiceFragment.getAmountsAreConsistentExtraction(result.specificExtractions)
+            )
+        )
+    }
+
+    private fun finishWithResult(result: CaptureSDKResult.Success) {
+        didFinishWithResult = true
+        captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
     }
 
     private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
@@ -172,11 +203,13 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
         didFinishWithResult = true
-        captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Success(
-            specificExtractions,
-            compoundExtractions,
-            emptyList()
-        ))
+        captureFlowFragmentListener.onFinishedWithResult(
+            CaptureResult.Success(
+                specificExtractions,
+                compoundExtractions,
+                emptyList()
+            )
+        )
     }
 
     override fun onCancelFlow() {
@@ -219,10 +252,12 @@ class CaptureFlowFragmentFactory(
                         giniCaptureFragmentListener
                     )
                 }
+
             DigitalInvoiceFragment::class.java.name -> DigitalInvoiceFragment().apply {
                 listener = digitalInvoiceListener
                 cancelListener = cancelCallback
             }
+
             else -> super.instantiate(classLoader, className)
         }
     }

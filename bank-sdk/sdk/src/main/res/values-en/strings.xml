@@ -49,7 +49,10 @@
     <!--   region Section Discount -->
     <string name="gbs_skonto_section_discount_title">With Skonto discount</string>
     <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Active</string>
-    <string name="gbs_skonto_section_discount_info_banner_message">Pay in %1$s days: %2$s off.</string>
+    <string name="gbs_skonto_section_discount_info_banner_normal_message">Pay in %1$s days: %2$s off.</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Pay today: %1$s discount.</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">A %1$s discount is available for cash payment within %2$s days</string>
+    <string name="gbs_skonto_section_discount_info_banner_date_expired_message">The %1$s discount has expired.</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Final Amount</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Due date</string>
     <!--   endregion -->
@@ -62,6 +65,12 @@
     <string name="gbs_skonto_section_footer_title">Total</string>
     <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto discount</string>
     <string name="gbs_skonto_section_footer_continue_button_text">Continue to pay</string>
+    <!--   endregion -->
+    <!--   region InfoDialog -->
+    <string name="gbs_skonto_section_info_dialog_pay_today_message">A discount is indicated on this invoice, it will expire after today.</string>
+    <string name="gbs_skonto_section_info_dialog_pay_cash_message">A discount is indicated on this invoice, but it can only be used for cash deposit through a bank terminal.</string>
+    <string name="gbs_skonto_section_info_dialog_date_expired_message">You could have paid this invoice with a %1$s discount, but the discount period has already expired.</string>
+    <string name="gbs_skonto_section_info_dialog_ok_button_text">Got it</string>
     <!--   endregion -->
     <!-- endregion -->
 </resources>
