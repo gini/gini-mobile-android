@@ -11,28 +11,18 @@ import java.util.Locale
 class CustomLocaleContextThemeWrapper(base: Context, @StyleRes themeResId: Int) : ContextThemeWrapper(base, themeResId) {
     companion object {
         fun wrap(context: Context, locale: Locale, @StyleRes themeResId: Int): ContextThemeWrapper {
-            var context = context
+            var contextToCopy = context
             val config = context.resources.configuration
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                setSystemLocale(config, locale)
+                config.setLocale(locale)
             } else {
-                setSystemLocaleLegacy(config, locale)
+                config.locale = locale
             }
             config.setLayoutDirection(locale)
-            context = context.createConfigurationContext(config)
+            contextToCopy = context.createConfigurationContext(config)
 
-            return CustomLocaleContextThemeWrapper(context, themeResId)
-        }
-
-        @SuppressWarnings("deprecation")
-        fun setSystemLocaleLegacy(config: Configuration, locale: Locale) {
-            config.locale = locale
-        }
-
-        @TargetApi(Build.VERSION_CODES.N)
-        fun setSystemLocale(config: Configuration, locale: Locale) {
-            config.setLocale(locale)
+            return CustomLocaleContextThemeWrapper(contextToCopy, themeResId)
         }
     }
 }

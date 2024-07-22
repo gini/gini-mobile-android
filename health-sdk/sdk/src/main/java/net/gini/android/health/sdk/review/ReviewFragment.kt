@@ -140,7 +140,7 @@ class ReviewFragment private constructor(
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, paymentComponent?.giniHealth?.language?.languageLocale())
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, viewModel.paymentComponent.giniHealth.language?.languageLocale())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -392,7 +392,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        val context = requireContext().wrappedWithGiniHealthThemeAndLocale(paymentComponent?.giniHealth?.language?.languageLocale())
+        val context = requireContext().wrappedWithGiniHealthThemeAndLocale(viewModel.paymentComponent.giniHealth.language?.languageLocale())
         errorSnackbar?.dismiss()
         errorSnackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             if (context.getFontScale() < 1.5) {

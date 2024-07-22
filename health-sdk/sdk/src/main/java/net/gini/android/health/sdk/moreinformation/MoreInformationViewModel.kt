@@ -13,6 +13,7 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import org.slf4j.LoggerFactory
+import java.util.Locale
 
 
 internal class MoreInformationViewModel(private val paymentComponent: PaymentComponent?) : ViewModel() {
@@ -52,6 +53,8 @@ internal class MoreInformationViewModel(private val paymentComponent: PaymentCom
             }
         }
     }
+
+    fun getLocale(): Locale? = paymentComponent?.giniHealth?.language?.languageLocale()
 
     private fun processError(throwable: Throwable) {
         LOG.error("Error loading payment provider apps", throwable)
