@@ -73,9 +73,7 @@ internal class SkontoFragmentViewModel(
 
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
-        val discount = calculateDiscount(newValue, currentState.fullAmount.amount).coerceAtLeast(
-            BigDecimal.ZERO
-        )
+        val discount = calculateDiscount(newValue, currentState.fullAmount.amount)
         val totalAmount = if (currentState.isSkontoSectionActive)
             newValue
         else
@@ -162,6 +160,7 @@ internal class SkontoFragmentViewModel(
         return BigDecimal.ONE
             .minus(skontoAmount.divide(fullAmount, 4, RoundingMode.HALF_UP))
             .multiply(BigDecimal("100"))
+            .coerceAtLeast(BigDecimal.ZERO)
     }
 
     private fun calculateSavedAmount(skontoAmount: BigDecimal, fullAmount: BigDecimal) =
