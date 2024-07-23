@@ -490,6 +490,7 @@ private fun SkontoSection(
             )
             GiniAmountTextInput(
                 amount = amount.amount,
+                currencyCode = amount.currencyCode,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
@@ -691,6 +692,7 @@ private fun WithoutSkontoSection(
                 enabled = isActive,
                 colors = colors.amountFieldColors,
                 amount = amount.amount,
+                currencyCode = amount.currencyCode,
                 onValueChange = onFullAmountChange,
                 label = stringResource(id = R.string.gbs_skonto_section_without_discount_field_amount_hint),
                 trailingContent = {

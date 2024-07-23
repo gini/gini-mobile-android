@@ -7,12 +7,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import java.text.DecimalFormatSymbols
 
 class DecimalInputVisualTransformation(
+    private val currencyCode: String,
+    private val isCurrencyCodeDisplay: Boolean,
     private val decimalFormatter: DecimalFormatter,
 ) : VisualTransformation {
 
     override fun filter(text: AnnotatedString): TransformedText {
         val source = text.text
-        val formatted = decimalFormatter.formatDigits(source)
+        var formatted = decimalFormatter.formatDigits(source).trim()
+        if (isCurrencyCodeDisplay) {
+            formatted += " $currencyCode"
+        }
 
         val offsetMapping = CustomOffsetMapping(
             source = source,
