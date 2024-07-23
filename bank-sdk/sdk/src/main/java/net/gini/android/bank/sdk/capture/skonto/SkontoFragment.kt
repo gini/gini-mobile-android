@@ -729,10 +729,10 @@ private fun FooterSection(
         targetValue = discountValue.toFloat(), label = "discountAmount"
     )
     val totalPriceText =
-        "${currencyFormatterWithoutSymbol().format(animatedTotalAmount)} ${totalAmount.currencyCode}"
+        "${currencyFormatterWithoutSymbol().format(animatedTotalAmount).trim()} ${totalAmount.currencyCode}"
 
     val savedAmountText =
-        "${currencyFormatterWithoutSymbol().format(animatedSavedAmount)} ${savedAmount.currencyCode}"
+        "${currencyFormatterWithoutSymbol().format(animatedSavedAmount).trim()} ${savedAmount.currencyCode}"
 
     val discountLabelText = stringResource(
         id = R.string.gbs_skonto_section_footer_label_discount,
