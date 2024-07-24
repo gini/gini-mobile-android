@@ -11,6 +11,7 @@ import net.gini.android.bank.sdk.R
 import net.gini.android.capture.Document
 import net.gini.android.capture.internal.util.FileImportValidator
 
+
 /**
  * Entry point for Screen API. It exists for the purpose of communication between Capture SDK's Screen API and Return Assistant.
  */
@@ -36,14 +37,18 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
                     )
                 )
             )
+
             is CaptureImportInput.Forward -> initFragment(input.openWithDocument)
             CaptureImportInput.Default -> initFragment()
         }
     }
 
     private fun getCaptureImportInput(intent: Intent): CaptureImportInput =
-        IntentCompat.getParcelableExtra(intent, EXTRA_IN_CAPTURE_IMPORT_INPUT, CaptureImportInput::class.java)
-            ?: CaptureImportInput.Default
+        IntentCompat.getParcelableExtra(
+            intent,
+            EXTRA_IN_CAPTURE_IMPORT_INPUT,
+            CaptureImportInput::class.java
+        ) ?: CaptureImportInput.Default
 
     private fun initFragment(document: Document? = null) {
         if (!isFragmentShown()) {
@@ -101,8 +106,10 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
  * Input used when a document was shared from another app. It will be created internally.
  */
 @Parcelize
-sealed class CaptureImportInput: Parcelable {
+sealed class CaptureImportInput : Parcelable {
     data class Forward(val openWithDocument: Document) : CaptureImportInput()
-    data class Error(val error: FileImportValidator.Error? = null, val message: String? = null) : CaptureImportInput()
+    data class Error(val error: FileImportValidator.Error? = null, val message: String? = null) :
+        CaptureImportInput()
+
     object Default : CaptureImportInput()
 }

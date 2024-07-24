@@ -15,6 +15,7 @@ import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.error.ErrorFragment
+import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
@@ -25,14 +26,19 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
+import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
+import java.util.UUID
+
 
 class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     CameraFragmentListener,
     AnalysisFragmentListener,
     EnterManuallyButtonListener,
-    CancelListener
-{
+    CancelListener {
 
     private lateinit var navController: NavController
     private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
@@ -44,6 +50,9 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     private var willBeRestored = false
     private var didFinishWithResult = false
 
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+
+
     fun setListener(listener: GiniCaptureFragmentListener) {
         this.giniCaptureFragmentListener = listener
     }
@@ -53,11 +62,52 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
             cameraListener = this,
             analysisFragmentListener = this,
             enterManuallyButtonListener = this,
-            cancelListener = this)
+            cancelListener = this
+        )
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
+
+        setupUserAnalytics()
+    }
+
+    private fun setupUserAnalytics() {
+        if (GiniCapture.hasInstance()) {
+            UserAnalytics.initialize(requireActivity())
+            val networkRequestsManager =
+                GiniCapture.getInstance().internal().networkRequestsManager
+            val response = networkRequestsManager
+                ?.getConfigurations(UUID.randomUUID())
+            response?.thenAcceptAsync { res ->
+                UserAnalytics.setPlatformTokens(
+                    AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(
+                        res.configuration.amplitudeApiKey
+                    ),
+                    networkRequestsManager = networkRequestsManager
+                )
+                // set if return assistant is enabled for the client
+                res.configuration.let {
+                    setUserEventProperties(it)
+                }
+            }
+        }
+    }
+
+    private fun setUserEventProperties(configuration: Configuration) {
+        userAnalyticsEventTracker.setUserProperty(
+            setOf(
+                UserAnalyticsUserProperty.ReturnAssistantEnabled(
+                    configuration.isReturnAssistantEnabled
+                ),
+                UserAnalyticsUserProperty.GiniClientId(
+                    configuration.clientID
+                ),
+                UserAnalyticsUserProperty.CaptureSdkVersionName(
+                    BuildConfig.VERSION_NAME
+                )
+            )
+        )
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -79,6 +129,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         super.onViewCreated(view, savedInstanceState)
         navController = (childFragmentManager.fragments[0]).findNavController()
         oncePerInstallEventStore = OncePerInstallEventStore(requireContext())
+        setAnalyticsEntryPointProperty(openWithDocument != null)
         if (openWithDocument != null) {
             navController.navigate(
                 CameraFragmentDirections.toAnalysisFragment(
@@ -87,7 +138,10 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
                 )
             )
         } else {
-            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(OncePerInstallEvent.SHOW_ONBOARDING))) {
+            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(
+                    OncePerInstallEvent.SHOW_ONBOARDING
+                ))
+            ) {
                 oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
                 navController.navigate(CameraFragmentDirections.toOnboardingFragment())
             }
@@ -103,6 +157,9 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         super.onDestroy()
         if (!didFinishWithResult && !willBeRestored) {
             giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
+        }
+        if (willBeRestored) {
+            UserAnalytics.flushEvents()
         }
     }
 
@@ -193,6 +250,20 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
     }
 
+    private fun setAnalyticsEntryPointProperty(isOpenWithDocumentExists: Boolean) {
+        val entryPointProperty = if (isOpenWithDocumentExists) {
+            UserAnalyticsEventSuperProperty.EntryPoint(UserAnalyticsEventSuperProperty.EntryPoint.EntryPointType.OPEN_WITH)
+        } else {
+            UserAnalyticsEventSuperProperty.EntryPoint(
+                when (GiniCapture.getInstance().entryPoint) {
+                    EntryPoint.BUTTON -> UserAnalyticsEventSuperProperty.EntryPoint.EntryPointType.BUTTON
+                    EntryPoint.FIELD -> UserAnalyticsEventSuperProperty.EntryPoint.EntryPointType.FIELD
+                }
+            )
+        }
+        userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
+    }
+
     companion object {
         @JvmStatic
         fun createInstance(document: Document? = null): GiniCaptureFragment {
@@ -222,7 +293,7 @@ class CaptureFragmentFactory(
                         analysisFragmentListener
                     )
                     setCancelListener(cancelListener)
-            }
+                }
 
             ErrorFragment::class.java.name -> return ErrorFragment().apply {
                 setListener(
