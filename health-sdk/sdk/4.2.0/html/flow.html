@@ -1,0 +1,457 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Flow &mdash; Gini Health SDK for Android  documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Health SDK for Android  documentation" href="index.html"/>
+        <link rel="next" title="Event Tracking" href="event-tracking.html"/>
+        <link rel="prev" title="Authentication" href="authentication.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-deep-link-for-your-app">Gini Pay Deep Link For Your App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-health-api-client-credentials">Gini Health API Client Credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-ginihealth-instance">Create the GiniHealth instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#upload-documents">Upload documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-which-documents-invoices-are-payable">Check which documents/invoices are payable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-paymentcomponent-instance">Create the PaymentComponent instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#add-a-listener-to-the-paymentcomponent">Add a listener to the PaymentComponent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#load-payment-providers">Load payment providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#show-the-paymentcomponentviews">Show the PaymentComponentViews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#show-the-moreinformationfragment">Show the MoreInformationFragment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#show-the-bankselectionbottomsheet">Show the BankSelectionBottomSheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#show-the-reviewfragment">Show the ReviewFragment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="event-tracking.html">Event Tracking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#ginihealth">GiniHealth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#paymentcomponent">PaymentComponent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#reviewfragment">ReviewFragment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#example-banking-app">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#development-gini-health-api-client-credentials">Development Gini Health API client credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#end-to-end-testing">End to end testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#id1">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-component">Payment component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#bank-picker">Bank picker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#more-information-and-faq">More information and FAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-review">Payment review</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#execute-payment">Execute payment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#return-to-your-app">Return to your app</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#testing-in-production">Testing in production</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">UI Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#overview-of-ui-customization-options">Overview of UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#ui-customization-options">UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-component">Payment Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#bank-selection-bottom-sheet">Bank Selection Bottom Sheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-feature-info-screen">Payment Feature Info Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-review-screen">Payment Review Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#photoview">PhotoView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#insetter">Insetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Health SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Flow</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="flow">
+<h1>Flow<a class="headerlink" href="#flow" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> and <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> are the main classes for interacting with the Gini Health SDK. <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code>
+manages interaction with the Gini Health API and <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> manages the data and state used by every
+<code class="docutils literal notranslate"><span class="pre">PaymentComponentView</span></code> and related screens.</p>
+<div class="contents local topic" id="the-recommended-flow-is">
+<p class="topic-title">The recommended flow is:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#create-the-ginihealth-instance" id="id1">Create the GiniHealth instance</a></li>
+<li><a class="reference internal" href="#upload-documents" id="id2">Upload documents</a></li>
+<li><a class="reference internal" href="#check-which-documents-invoices-are-payable" id="id3">Check which documents/invoices are payable</a></li>
+<li><a class="reference internal" href="#create-the-paymentcomponent-instance" id="id4">Create the PaymentComponent instance</a></li>
+<li><a class="reference internal" href="#add-a-listener-to-the-paymentcomponent" id="id5">Add a listener to the PaymentComponent</a></li>
+<li><a class="reference internal" href="#load-payment-providers" id="id6">Load payment providers</a></li>
+<li><a class="reference internal" href="#show-the-paymentcomponentviews" id="id7">Show the PaymentComponentViews</a></li>
+<li><a class="reference internal" href="#show-the-moreinformationfragment" id="id8">Show the MoreInformationFragment</a></li>
+<li><a class="reference internal" href="#show-the-bankselectionbottomsheet" id="id9">Show the BankSelectionBottomSheet</a></li>
+<li><a class="reference internal" href="#show-the-reviewfragment" id="id10">Show the ReviewFragment</a></li>
+</ul>
+</div>
+<div class="section" id="create-the-ginihealth-instance">
+<h2><a class="toc-backref" href="#id1">Create the GiniHealth instance</a><a class="headerlink" href="#create-the-ginihealth-instance" title="Permalink to this headline">¶</a></h2>
+<p>Before creating an instance of <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> you need to create an instance of the <code class="docutils literal notranslate"><span class="pre">GiniHealthAPI</span></code>. The Gini Health
+SDK provides the following two helper methods for creating the  <code class="docutils literal notranslate"><span class="pre">GiniHealthAPI</span></code> instance:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">getGiniApi(context:</span> <span class="pre">Context,</span> <span class="pre">clientId:</span> <span class="pre">String,</span> <span class="pre">clientSecret:</span> <span class="pre">String,</span> <span class="pre">emailDomain:</span> <span class="pre">String)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">getGiniApi(context:</span> <span class="pre">Context,</span> <span class="pre">sessionManager:</span> <span class="pre">SessionManager)</span></code></li>
+</ul>
+<p>After that you can create an instance of <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code>:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">val</span> <span class="py">giniHealth</span> <span class="p">=</span> <span class="n">GiniHealth</span><span class="p">(</span><span class="n">giniHealthApi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="upload-documents">
+<h2><a class="toc-backref" href="#id2">Upload documents</a><a class="headerlink" href="#upload-documents" title="Permalink to this headline">¶</a></h2>
+<p>Uploading documents is achieved via the <code class="docutils literal notranslate"><span class="pre">GiniHealthAPI</span></code> instance’s <code class="docutils literal notranslate"><span class="pre">documentManager</span></code>. You can access it by using the
+<code class="docutils literal notranslate"><span class="pre">giniHealth.giniHealthAPI.documentManager</span></code> property.</p>
+<p>For each document page a <em>partial document</em> needs to be created. The following example shows how to create a new partial
+document from a byte array containing a JPEG image:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming `imageBytes` is an instance of a byte array containing a JPEG image,</span>
+<span class="c1">// e.g. from a picture taken by the camera</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+    <span class="c1">// Create a partial document by uploading the document data</span>
+    <span class="k">val</span> <span class="py">partialDocumentResource</span> <span class="p">=</span>
+        <span class="n">giniHealth</span><span class="p">.</span><span class="n">giniHealthApi</span><span class="p">.</span><span class="n">documentManager</span><span class="p">.</span><span class="n">createPartialDocument</span><span class="p">(</span><span class="n">imageBytes</span><span class="p">,</span> <span class="s">&quot;image/jpeg&quot;</span><span class="p">,</span> <span class="s">&quot;document_page_1.jpg&quot;</span><span class="p">)</span>
+
+    <span class="k">when</span> <span class="p">(</span><span class="n">partialDocumentResource</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Success</span> <span class="p">-&gt;</span> <span class="p">{</span>
+            <span class="c1">// Use the partial document</span>
+            <span class="k">val</span> <span class="py">partialDocument</span> <span class="p">=</span> <span class="n">partialDocumentResource</span><span class="p">.</span><span class="k">data</span>
+        <span class="p">}</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Error</span> <span class="p">-&gt;</span> <span class="c1">// Handle error</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Cancelled</span> <span class="p">-&gt;</span> <span class="c1">// Handle cancellation</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>After all partial documents have been created you can create a <em>composite document</em> from the partials to bundle them
+into one final document:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming `partialDocuments` is a list of `Documents` which were</span>
+<span class="c1">// returned by `createPartialDocument(...)` calls</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+    <span class="c1">// Create a composite document by uploading the document data</span>
+    <span class="k">val</span> <span class="py">compositeDocumentResource</span> <span class="p">=</span>
+        <span class="n">giniHealth</span><span class="p">.</span><span class="n">giniHealthApi</span><span class="p">.</span><span class="n">documentManager</span><span class="p">.</span><span class="n">createCompositeDocument</span><span class="p">(</span><span class="n">partialDocuments</span><span class="p">)</span>
+
+    <span class="k">when</span> <span class="p">(</span><span class="n">compositeDocumentResource</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Success</span> <span class="p">-&gt;</span> <span class="p">{</span>
+            <span class="c1">// Use the composite document</span>
+            <span class="k">val</span> <span class="py">compositeDocument</span> <span class="p">=</span> <span class="n">compositeDocumentResource</span><span class="p">.</span><span class="k">data</span>
+        <span class="p">}</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Error</span> <span class="p">-&gt;</span> <span class="c1">// Handle error</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Cancelled</span> <span class="p">-&gt;</span> <span class="c1">// Handle cancellation</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-which-documents-invoices-are-payable">
+<h2><a class="toc-backref" href="#id3">Check which documents/invoices are payable</a><a class="headerlink" href="#check-which-documents-invoices-are-payable" title="Permalink to this headline">¶</a></h2>
+<p>Call <code class="docutils literal notranslate"><span class="pre">giniHealth.checkIfDocumentIsPayable()</span></code> with the composite document id for each invoice to check whether it is
+payable. We recommend performing this check only once right after the invoice has been uploaded and processed by Gini’s
+Health API. You can then store the <code class="docutils literal notranslate"><span class="pre">isPayable</span></code> state in your own data model.</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming `compositeDocument` is `Document` returned by `createCompositeDocument(...)`</span>
+
+<span class="n">coroutineScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="c1">// Check whether the composite document is payable</span>
+        <span class="k">val</span> <span class="py">isPayable</span> <span class="p">=</span> <span class="n">giniHealth</span><span class="p">.</span><span class="n">checkIfDocumentIsPayable</span><span class="p">(</span><span class="n">compositeDocument</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Handle error</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-the-paymentcomponent-instance">
+<h2><a class="toc-backref" href="#id4">Create the PaymentComponent instance</a><a class="headerlink" href="#create-the-paymentcomponent-instance" title="Permalink to this headline">¶</a></h2>
+<p>For creating an instance of the <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> you need to pass in the Android context (either the application or
+an activity context) and the <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> instance:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">val</span> <span class="py">paymentComponent</span> <span class="p">=</span> <span class="n">PaymentComponent</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">giniHealth</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-a-listener-to-the-paymentcomponent">
+<h2><a class="toc-backref" href="#id5">Add a listener to the PaymentComponent</a><a class="headerlink" href="#add-a-listener-to-the-paymentcomponent" title="Permalink to this headline">¶</a></h2>
+<p>Set a listener on the <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> to get informed of events from every <code class="docutils literal notranslate"><span class="pre">PaymentComponentView</span></code>:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">paymentComponent</span><span class="p">.</span><span class="n">listener</span> <span class="p">=</span> <span class="k">object</span><span class="p">:</span> <span class="n">PaymentComponent</span><span class="p">.</span><span class="n">Listener</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">onMoreInformationClicked</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// Show the MoreInformationFragment.</span>
+        <span class="p">}</span>
+
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">onBankPickerClicked</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// Show the BankSelectionBottomSheet.</span>
+        <span class="p">}</span>
+
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">onPayInvoiceClicked</span><span class="p">(</span><span class="n">documentId</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Show the ReviewFragment.</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="load-payment-providers">
+<h2><a class="toc-backref" href="#id6">Load payment providers</a><a class="headerlink" href="#load-payment-providers" title="Permalink to this headline">¶</a></h2>
+<p>Call <code class="docutils literal notranslate"><span class="pre">paymentComponent.loadPaymentProviderApps()</span></code> to load the available payment providers from the Gini Health API and
+to check which ones are installed on the user’s device.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It should be sufficient to call <code class="docutils literal notranslate"><span class="pre">paymentComponent.loadPaymentProviderApps()</span></code> only once when your app starts.</p>
+</div>
+</div>
+<div class="section" id="show-the-paymentcomponentviews">
+<h2><a class="toc-backref" href="#id7">Show the PaymentComponentViews</a><a class="headerlink" href="#show-the-paymentcomponentviews" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">PaymentComponentView</span></code> is a custom view widget and the main entry point for users. It allows them to pick a bank
+and initiate the payment process. In addition, it also allows users to view more information about the payment feature.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">PaymentComponentView</span></code> is hidden by default and should be added to the layout of each invoice item:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>&lt;net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
+    android:id=&quot;@+id/payment_component&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    ... /&gt;
+</pre></div>
+</div>
+<p>When creating the view holder for the invoice item, pass the <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> instance to the view holder:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">val</span> <span class="py">paymentComponentView</span> <span class="p">=</span> <span class="n">view</span><span class="p">.</span><span class="n">findViewById</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">id</span><span class="p">.</span><span class="n">payment_component</span><span class="p">)</span>
+<span class="n">paymentComponentView</span><span class="p">.</span><span class="n">paymentComponent</span> <span class="p">=</span> <span class="n">paymentComponent</span>
+</pre></div>
+</div>
+<p>When binding the view holder of the invoice item, prepare it for reuse, set the payable state and the document id:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">viewHolder</span><span class="p">.</span><span class="n">paymentComponentView</span><span class="p">.</span><span class="n">prepareForReuse</span><span class="p">()</span>
+<span class="n">viewHolder</span><span class="p">.</span><span class="n">paymentComponentView</span><span class="p">.</span><span class="n">isPayable</span> <span class="p">=</span> <span class="n">invoiceItem</span><span class="p">.</span><span class="n">isPayable</span>
+<span class="n">viewHolder</span><span class="p">.</span><span class="n">paymentComponentView</span><span class="p">.</span><span class="n">documentId</span> <span class="p">=</span> <span class="n">invoiceItem</span><span class="p">.</span><span class="n">documentId</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">PaymentComponentView</span></code> will only be visible if its <code class="docutils literal notranslate"><span class="pre">isPayable</span></code> property is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+</div>
+</div>
+<div class="section" id="show-the-moreinformationfragment">
+<h2><a class="toc-backref" href="#id8">Show the MoreInformationFragment</a><a class="headerlink" href="#show-the-moreinformationfragment" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">MoreInformationFragment</span></code> shows the Payment Feature Info Screen. It displays information and an FAQ section about the payment feature. It requires a
+<code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> instance to show the icons of the available banks.</p>
+<p>To instantiate it use <code class="docutils literal notranslate"><span class="pre">MoreInformationFragment.newInstance()</span></code> and pass in your <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> instance:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">MoreInformationFragment</span><span class="p">.</span><span class="n">newInstance</span><span class="p">(</span><span class="n">paymentComponent</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">MoreInformationFragment</span></code> doesn’t handle navigation related events and doesn’t show a navigation bar. You are
+free to design navigation to and from the fragment as you see fit.</p>
+<p class="last">For the navigation bar title you should use the <code class="docutils literal notranslate"><span class="pre">ghs_more_information_fragment_title</span></code> string resource.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You need to override the <code class="docutils literal notranslate"><span class="pre">ghs_privacy_policy_link_url</span></code> string resource to provide a link to your company’s privacy
+policy page. This link will be shown to users in the answer to the “Who or what is Gini?” question.</p>
+</div>
+</div>
+<div class="section" id="show-the-bankselectionbottomsheet">
+<h2><a class="toc-backref" href="#id9">Show the BankSelectionBottomSheet</a><a class="headerlink" href="#show-the-bankselectionbottomsheet" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">BankSelectionBottomSheet</span></code> displays a list of available banks for the user to choose from. If a banking app is not
+installed it will also display its Play Store link.</p>
+<p>To instantiate it use <code class="docutils literal notranslate"><span class="pre">BankSelectionBottomSheet.newInstance()</span></code> and pass in your <code class="docutils literal notranslate"><span class="pre">PaymentComponent</span></code> instance:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">BankSelectionBottomSheet</span><span class="p">.</span><span class="n">newInstance</span><span class="p">(</span><span class="n">paymentComponent</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-the-reviewfragment">
+<h2><a class="toc-backref" href="#id10">Show the ReviewFragment</a><a class="headerlink" href="#show-the-reviewfragment" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> displays an invoice’s pages and extractions. It also lets users pay the invoice with the bank
+they selected in the <code class="docutils literal notranslate"><span class="pre">BankSelectionBottomSheet</span></code>.</p>
+<p>To instantiate it use <code class="docutils literal notranslate"><span class="pre">paymentComponent.getPaymentReviewFragment()</span></code> and pass in the Gini Health API’s document id of
+the invoice and the configuration for the screen. Also set a listener to get informed of events from the fragment:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">val</span> <span class="py">reviewConfiguration</span> <span class="p">=</span> <span class="n">ReviewConfiguration</span><span class="p">(...)</span>
+
+<span class="k">val</span> <span class="py">paymentReviewFragment</span> <span class="p">=</span> <span class="n">paymentComponent</span><span class="p">.</span><span class="n">getPaymentReviewFragment</span><span class="p">(</span>
+    <span class="n">documentId</span><span class="p">,</span> <span class="n">reviewConfiguration</span>
+<span class="p">)</span>
+
+<span class="n">paymentReviewFragment</span><span class="p">.</span><span class="n">listener</span> <span class="p">=</span> <span class="k">object</span> <span class="p">:</span> <span class="nc">ReviewFragmentListener</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCloseReview</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// Called only when the ``ReviewConfiguration.showCloseButton`` was set to ``true``.</span>
+        <span class="c1">// Dismiss the ReviewFragment.</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onToTheBankButtonClicked</span><span class="p">(</span><span class="n">paymentProviderName</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Log or track the used payment provider name.</span>
+        <span class="c1">// No action required, the payment process is handled by the Gini Health SDK.</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">paymentComponent.getPaymentReviewFragment()</span></code> will load the document extractions asynchronously. It’s a suspend
+function and must be called from a coroutine.</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> doesn’t handle navigation related events and doesn’t show a navigation bar. You are
+free to design navigation to and from the fragment as you see fit.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">ReviewConfiguration</span></code> class contains the following options:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">handleErrorsInternally</span></code>: If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> will handle errors internally and show
+snackbars for errors. If set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, errors will be ignored by the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code>. In this case the flows
+exposed by <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> should be observed for errors. Default value is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">showCloseButton</span></code>: If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, a floating close button will be shown in the top right corner of the screen. Default value is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="event-tracking.html" class="btn btn-neutral float-right" title="Event Tracking">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="authentication.html" class="btn btn-neutral" title="Authentication"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
