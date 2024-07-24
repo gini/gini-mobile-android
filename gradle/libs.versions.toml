@@ -22,6 +22,7 @@ hilt = "2.46.1"
 navigation_component = "2.7.6"
 compose-bom = "2024.06.00"
 accompanist-themeAdapter = "1.1.1"
+compose-activity = "1.9.0"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
@@ -115,6 +116,7 @@ tomlj = "org.tomlj:tomlj:1.1.1"
 json-testing = "org.json:json:20231013"
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
 compose-tools-uiTooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-tools-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview" }
 accompanist-themeAdapter = { module = "com.google.android.material:compose-theme-adapter-3", version.ref = "accompanist-themeAdapter" }

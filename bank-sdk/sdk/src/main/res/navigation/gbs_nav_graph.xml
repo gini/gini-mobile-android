@@ -42,7 +42,7 @@
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
             app:popExitAnim="@anim/gc_nav_pop_exit_anim"
             app:popUpTo="@id/gbs_destination_capture_fragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -106,8 +106,12 @@
         <action
             android:id="@+id/to_capture_fragment"
             app:destination="@id/gbs_destination_capture_fragment"
-            app:popUpTo="@id/capture_flow_nav_graph"
-            app:popUpToInclusive="false" />
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gbs_destination_capture_fragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
 </navigation>

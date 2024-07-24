@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -67,10 +68,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
+import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInfoDialogColors
@@ -80,6 +84,7 @@ import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSect
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
 import net.gini.android.capture.ui.components.switcher.GiniSwitch
@@ -115,7 +120,7 @@ class SkontoFragment : Fragment() {
 
         val viewModel = ViewModelProvider(
             factory = ViewModelFactory(args.data),
-            owner = requireActivity()
+            owner = this
         )[SkontoFragmentViewModel::class.java]
 
         return ComposeView(requireContext()).apply {
@@ -126,7 +131,10 @@ class SkontoFragment : Fragment() {
                         viewModel = viewModel,
                         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                         customBottomNavBarAdapter = customBottomNavBarAdapter,
-                        navController = findNavController(),
+                        navigateBack = {
+                            findNavController()
+                                .navigate(SkontoFragmentDirections.toCaptureFragment())
+                        }
                     )
                 }
             }
@@ -146,13 +154,16 @@ class SkontoFragment : Fragment() {
 
 @Composable
 private fun ScreenContent(
-    navController: NavController,
+    navigateBack: () -> Unit,
     viewModel: SkontoFragmentViewModel,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
 ) {
+
+    BackHandler { navigateBack() }
+
     val state by viewModel.stateFlow.collectAsState()
     ScreenStateContent(
         modifier = modifier,
@@ -163,7 +174,7 @@ private fun ScreenContent(
         onDueDateChanged = viewModel::onSkontoDueDateChanged,
         onFullAmountChange = viewModel::onFullAmountFieldChanged,
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-        onBackClicked = { navController.navigate(SkontoFragmentDirections.toCaptureFragment()) },
+        onBackClicked = navigateBack,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onProceedClicked = {},
         onInfoBannerClicked = viewModel::onInfoBannerClicked,

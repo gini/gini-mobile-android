@@ -313,6 +313,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                             .onProceedToNoExtractionsScreen(mMultiPageDocument);
                                     return null;
                                 }
+
                                 getAnalysisFragmentListenerOrNoOp()
                                         .onExtractionsAvailable(getMapOrEmpty(resultHolder.getExtractions()),
                                                 getMapOrEmpty(resultHolder.getCompoundExtractions()),

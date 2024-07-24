@@ -122,6 +122,7 @@ dependencies {
 
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
+    implementation(libs.compose.activity)
     implementation(libs.compose.tools.uiToolingPreview)
     implementation(libs.accompanist.themeAdapter)
     debugImplementation(libs.compose.tools.uiTooling)
