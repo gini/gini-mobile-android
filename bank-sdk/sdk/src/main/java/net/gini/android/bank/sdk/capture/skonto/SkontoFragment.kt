@@ -67,14 +67,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
-import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInfoDialogColors
@@ -84,7 +80,6 @@ import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSect
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
 import net.gini.android.capture.ui.components.switcher.GiniSwitch
@@ -93,6 +88,7 @@ import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInp
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.ui.theme.typography.bold
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import java.math.BigDecimal
@@ -261,30 +257,38 @@ private fun ScreenReadyState(
         Column(
             modifier = Modifier
                 .padding(it)
-                .verticalScroll(scrollState)
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
-            SkontoSection(
-                modifier = Modifier.padding(vertical = 16.dp),
-                colors = screenColorScheme.skontoSectionColors,
-                amount = state.skontoAmount,
-                amountValidation = state.skontoAmountValidation,
-                dueDate = state.discountDueDate,
-                infoPaymentInDays = state.paymentInDays,
-                infoDiscountValue = state.discountAmount,
-                onActiveChange = onDiscountSectionActiveChange,
-                isActive = state.isSkontoSectionActive,
-                onSkontoAmountChange = onDiscountAmountChange,
-                onDueDateChanged = onDueDateChanged,
-                edgeCase = state.skontoEdgeCase,
-                onInfoBannerClicked = onInfoBannerClicked,
-            )
-            WithoutSkontoSection(
-                colors = screenColorScheme.withoutSkontoSectionColors,
-                isActive = !state.isSkontoSectionActive,
-                amount = state.fullAmount,
-                onFullAmountChange = onFullAmountChange,
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                SkontoSection(
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .tabletMaxWidth(),
+                    colors = screenColorScheme.skontoSectionColors,
+                    amount = state.skontoAmount,
+                    amountValidation = state.skontoAmountValidation,
+                    dueDate = state.discountDueDate,
+                    infoPaymentInDays = state.paymentInDays,
+                    infoDiscountValue = state.discountAmount,
+                    onActiveChange = onDiscountSectionActiveChange,
+                    isActive = state.isSkontoSectionActive,
+                    onSkontoAmountChange = onDiscountAmountChange,
+                    onDueDateChanged = onDueDateChanged,
+                    edgeCase = state.skontoEdgeCase,
+                    onInfoBannerClicked = onInfoBannerClicked,
+                )
+                WithoutSkontoSection(
+                    modifier = Modifier.tabletMaxWidth(),
+                    colors = screenColorScheme.withoutSkontoSectionColors,
+                    isActive = !state.isSkontoSectionActive,
+                    amount = state.fullAmount,
+                    onFullAmountChange = onFullAmountChange,
+                )
+            }
         }
 
         if (state.edgeCaseInfoDialogVisible) {
@@ -424,9 +428,8 @@ private fun SkontoSection(
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
-
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         shape = RectangleShape,
         colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
     ) {
@@ -674,7 +677,7 @@ private fun WithoutSkontoSection(
     isActive: Boolean,
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         shape = RectangleShape,
         colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
     ) {
@@ -768,7 +771,7 @@ private fun FooterSection(
         }, update = {
             with(customBottomNavBarAdapter.viewAdapter) {
                 setTotalPriceText(totalPriceText)
-                setProceedButtonEnabled(proceedEnabled) // TODO Integrate validation
+                setProceedButtonEnabled(proceedEnabled)
                 setOnBackClickListener(onBackClicked)
                 setDiscountLabelText(discountLabelText)
                 setDiscountLabelVisible(isSkontoSectionActive)
@@ -779,11 +782,17 @@ private fun FooterSection(
         Card(
             modifier = modifier.fillMaxWidth(),
             shape = RectangleShape,
-            colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
+            colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor),
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .tabletMaxWidth()
+                    .align(Alignment.CenterHorizontally),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Column(
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                    modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                 ) {
                     Row {
                         Text(
@@ -842,7 +851,6 @@ private fun FooterSection(
                 val buttonPaddingStart = if (isBottomNavigationBarEnabled) 0.dp else 20.dp
                 val buttonPaddingEnd = if (isBottomNavigationBarEnabled) 48.dp else 24.dp
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
