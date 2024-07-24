@@ -66,6 +66,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
@@ -124,6 +126,7 @@ class SkontoFragment : Fragment() {
                         viewModel = viewModel,
                         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                         customBottomNavBarAdapter = customBottomNavBarAdapter,
+                        navController = findNavController(),
                     )
                 }
             }
@@ -143,6 +146,7 @@ class SkontoFragment : Fragment() {
 
 @Composable
 private fun ScreenContent(
+    navController: NavController,
     viewModel: SkontoFragmentViewModel,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
@@ -159,7 +163,7 @@ private fun ScreenContent(
         onDueDateChanged = viewModel::onSkontoDueDateChanged,
         onFullAmountChange = viewModel::onFullAmountFieldChanged,
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-        onBackClicked = {},
+        onBackClicked = { navController.navigate(SkontoFragmentDirections.toCaptureFragment()) },
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onProceedClicked = {},
         onInfoBannerClicked = viewModel::onInfoBannerClicked,
@@ -731,10 +735,14 @@ private fun FooterSection(
         targetValue = discountValue.toFloat(), label = "discountAmount"
     )
     val totalPriceText =
-        "${currencyFormatterWithoutSymbol().format(animatedTotalAmount).trim()} ${totalAmount.currencyCode}"
+        "${
+            currencyFormatterWithoutSymbol().format(animatedTotalAmount).trim()
+        } ${totalAmount.currencyCode}"
 
     val savedAmountText =
-        "${currencyFormatterWithoutSymbol().format(animatedSavedAmount).trim()} ${savedAmount.currencyCode}"
+        "${
+            currencyFormatterWithoutSymbol().format(animatedSavedAmount).trim()
+        } ${savedAmount.currencyCode}"
 
     val discountLabelText = stringResource(
         id = R.string.gbs_skonto_section_footer_label_discount,

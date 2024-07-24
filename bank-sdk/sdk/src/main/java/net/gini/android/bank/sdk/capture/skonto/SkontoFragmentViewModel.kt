@@ -38,7 +38,7 @@ internal class SkontoFragmentViewModel(
         val savedAmount = SkontoData.Amount(savedAmountValue, data.fullAmountToPay.currencyCode)
 
         return SkontoFragmentContract.State.Ready(
-            isSkontoSectionActive = true,
+            isSkontoSectionActive = isSkontoSectionActive,
             paymentInDays = data.skontoRemainingDays,
             discountAmount = discount,
             skontoAmount = data.skontoAmountToPay,
@@ -164,7 +164,7 @@ internal class SkontoFragmentViewModel(
     }
 
     private fun calculateSavedAmount(skontoAmount: BigDecimal, fullAmount: BigDecimal) =
-        fullAmount.minus(skontoAmount).abs()
+        fullAmount.minus(skontoAmount).coerceAtLeast(BigDecimal.ZERO)
 
     private fun validateSkontoAmount(
         skontoAmount: SkontoData.Amount,
