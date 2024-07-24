@@ -192,13 +192,6 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
         PaymentField.Purpose -> binding.purposeLayout
     }
 
-    fun clearEditTextFocus() {
-        binding.recipient.clearFocus()
-        binding.iban.clearFocus()
-        binding.amount.clearFocus()
-        binding.purpose.clearFocus()
-    }
-
     private fun setEditableFields() {
         binding.iban.focusable = View.NOT_FOCUSABLE
         binding.recipient.focusable = View.NOT_FOCUSABLE
