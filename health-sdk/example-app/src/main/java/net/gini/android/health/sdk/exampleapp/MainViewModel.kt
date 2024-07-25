@@ -53,9 +53,9 @@ class MainViewModel(
 
     fun getPaymentComponentConfiguration() = paymentComponentConfiguration
 
-    fun setGiniHealthLanguage(localization: GiniLocalization) {
-        giniHealth.language = localization
+    fun setGiniHealthLanguage(localization: GiniLocalization, context: Context) {
+        giniHealth.setSDKLanguage(localization, context)
     }
 
-    fun getGiniHealthLanguage() = giniHealth.language
+    fun getGiniHealthLanguage(context: Context) = GiniHealth.getSDKLanguage(context)
 }

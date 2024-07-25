@@ -12,7 +12,7 @@ import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.review.ReviewViewModel
 import org.slf4j.LoggerFactory
 
-internal class InstallAppViewModel(private val paymentComponent: PaymentComponent?) : ViewModel() {
+internal class InstallAppViewModel(internal val paymentComponent: PaymentComponent?) : ViewModel() {
 
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp

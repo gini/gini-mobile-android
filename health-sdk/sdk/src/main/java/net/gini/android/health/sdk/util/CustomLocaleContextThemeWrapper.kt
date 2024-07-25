@@ -1,17 +1,13 @@
 package net.gini.android.health.sdk.util
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.content.res.Configuration
+import android.content.ContextWrapper
 import android.os.Build
-import android.view.ContextThemeWrapper
-import androidx.annotation.StyleRes
 import java.util.Locale
 
-class CustomLocaleContextThemeWrapper(base: Context, @StyleRes themeResId: Int) : ContextThemeWrapper(base, themeResId) {
+class CustomLocaleContextWrapper(base: Context) : ContextWrapper(base) {
     companion object {
-        fun wrap(context: Context, locale: Locale, @StyleRes themeResId: Int): ContextThemeWrapper {
-            var contextToCopy = context
+        fun wrap(context: Context, locale: Locale): ContextWrapper {
             val config = context.resources.configuration
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -20,9 +16,8 @@ class CustomLocaleContextThemeWrapper(base: Context, @StyleRes themeResId: Int) 
                 config.locale = locale
             }
             config.setLayoutDirection(locale)
-            contextToCopy = context.createConfigurationContext(config)
 
-            return CustomLocaleContextThemeWrapper(contextToCopy, themeResId)
+            return CustomLocaleContextWrapper(context.createConfigurationContext(config))
         }
     }
 }

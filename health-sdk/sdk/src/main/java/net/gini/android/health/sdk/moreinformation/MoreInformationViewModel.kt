@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
 import java.util.Locale
 
 
-internal class MoreInformationViewModel(private val paymentComponent: PaymentComponent?) : ViewModel() {
+internal class MoreInformationViewModel(val paymentComponent: PaymentComponent?) : ViewModel() {
 
     private val _paymentProviderAppsListFlow =
         MutableStateFlow<PaymentProviderAppsListState>(PaymentProviderAppsListState.Loading)
@@ -54,7 +54,7 @@ internal class MoreInformationViewModel(private val paymentComponent: PaymentCom
         }
     }
 
-    fun getLocale(): Locale? = paymentComponent?.giniHealth?.language?.languageLocale()
+    fun getLocale(): Locale? = paymentComponent?.giniHealthLanguage
 
     private fun processError(throwable: Throwable) {
         LOG.error("Error loading payment provider apps", throwable)

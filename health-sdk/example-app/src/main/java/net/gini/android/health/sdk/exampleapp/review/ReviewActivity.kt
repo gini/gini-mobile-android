@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -85,7 +86,7 @@ class ReviewActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
-        val binding = ActivityReviewBinding.inflate(layoutInflater)
+        val binding = ActivityReviewBinding.inflate(LayoutInflater.from(baseContext))
         setContentView(binding.root)
 
         binding.toolbar.isGone = showCloseButton

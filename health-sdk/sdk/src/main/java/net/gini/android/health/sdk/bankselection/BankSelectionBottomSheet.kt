@@ -42,7 +42,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, viewModel.paymentComponent?.giniHealth?.language?.languageLocale())
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, viewModel.paymentComponent?.giniHealthLanguage)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -50,7 +50,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
         binding.ghsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
         binding.ghsPaymentProviderAppsList.adapter =
-            PaymentProviderAppsAdapter(emptyList(), viewModel.paymentComponent?.giniHealth?.language?.languageLocale(), object : PaymentProviderAppsAdapter.OnItemClickListener {
+            PaymentProviderAppsAdapter(emptyList(), viewModel.paymentComponent?.giniHealthLanguage, object : PaymentProviderAppsAdapter.OnItemClickListener {
                 override fun onItemClick(paymentProviderApp: PaymentProviderApp) {
                     LOG.debug("Selected payment provider app: {}", paymentProviderApp.name)
 

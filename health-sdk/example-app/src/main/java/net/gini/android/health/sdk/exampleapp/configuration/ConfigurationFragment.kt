@@ -38,14 +38,14 @@ class ConfigurationFragment: Fragment() {
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                         languageAdapter.getItem(p2)?.let {
-                            viewModel.setGiniHealthLanguage(it)
+                            viewModel.setGiniHealthLanguage(it, context)
                         }
                     }
 
                     override fun onNothingSelected(p0: AdapterView<*>?) {
                     }
                 }
-                setSelection(languageAdapter.getPosition(viewModel.getGiniHealthLanguage()))
+                setSelection(languageAdapter.getPosition(viewModel.getGiniHealthLanguage(context)))
             }
         }
 
