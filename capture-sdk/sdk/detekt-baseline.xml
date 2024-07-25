@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexMethod:DefaultPages.kt$DefaultPages.Companion$ @JvmStatic fun asArrayList(isMultiPageEnabled: Boolean, isQRCodeScanningEnabled: Boolean): ArrayList&lt;OnboardingPage></ID>
+    <ID>ComplexMethod:ErrorType.kt$ErrorType.Companion$@JvmStatic fun typeFromError(error: Error): ErrorType</ID>
+    <ID>EmptyCatchBlock:DeviceInfo.kt$DeviceInfo.CachedInfo${ }</ID>
+    <ID>EmptyDefaultConstructor:CameraXController.kt$CameraLifecycle$()</ID>
+    <ID>EmptyFunctionBlock:CameraXController.kt$CameraXController.&lt;no name provided>${}</ID>
+    <ID>EmptyFunctionBlock:CustomLoadingIndicatorAdapter.kt$DefaultLoadingIndicatorAdapter${}</ID>
+    <ID>EmptyFunctionBlock:OnButtonLoadingIndicatorAdapter.kt$DefaultOnButtonLoadingIndicatorAdapter${}</ID>
+    <ID>EmptyFunctionBlock:OnboardingIllustrationAdapter.kt$ImageOnboardingIllustrationAdapter${}</ID>
+    <ID>EmptyFunctionBlock:PreviewPagesAdapter.kt$PreviewPagesAdapter.&lt;no name provided>${ }</ID>
+    <ID>LongMethod:CameraXController.kt$CameraXController$override fun open(): CompletableFuture&lt;Void></ID>
+    <ID>LongParameterList:IBANRecognizer.kt$IBANRecognizer$( byteArray: ByteArray, width: Int, height: Int, rotationDegrees: Int, doneCallback: (List&lt;String>) -> Unit, cancelledCallback: () -> Unit )</ID>
+    <ID>LongParameterList:IBANRecognizer.kt$IBANRecognizer$( image: Image, width: Int, height: Int, rotationDegrees: Int, doneCallback: (List&lt;String>) -> Unit, cancelledCallback: () -> Unit )</ID>
+    <ID>LongParameterList:QRCodePopup.kt$QRCodePopup$( private val fragmentImplCallback: FragmentImplCallback, private val popupView: View, private val supportedBackgroundView: View? = null, private val loadingIndicatorContainer: InjectedViewContainer&lt;CustomLoadingIndicatorAdapter>?, private val hideDelayMs: Long, private val supported: Boolean, private var onClicked: ((T?) -> Unit)? = {}, private val onHide: (() -> Unit)? = null )</ID>
+    <ID>LongParameterList:TextRecognizer.kt$TextRecognizer$( byteArray: ByteArray, width: Int, height: Int, rotationDegrees: Int, doneCallback: (RecognizedText?) -> Unit, cancelledCallback: () -> Unit)</ID>
+    <ID>LongParameterList:TextRecognizer.kt$TextRecognizer$(image: Image, width: Int, height: Int, rotationDegrees: Int, doneCallback: (RecognizedText?) -> Unit, cancelledCallback: () -> Unit)</ID>
+    <ID>MagicNumber:AmplitudeUserAnalyticsEventTracker.kt$AmplitudeUserAnalyticsEventTracker$5000</ID>
+    <ID>MagicNumber:CameraXController.kt$CameraXController$2372</ID>
+    <ID>MagicNumber:CameraXController.kt$CameraXController$4216</ID>
+    <ID>MagicNumber:CropToCameraFrameTextRecognizer.kt$CropToCameraFrameTextRecognizer$270</ID>
+    <ID>MagicNumber:CropToCameraFrameTextRecognizer.kt$CropToCameraFrameTextRecognizer$360</ID>
+    <ID>MagicNumber:CropToCameraFrameTextRecognizer.kt$CropToCameraFrameTextRecognizer$90</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$400</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$401</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$402</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$498</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$500</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$503</ID>
+    <ID>MagicNumber:Extensions.kt$100</ID>
+    <ID>MagicNumber:FileImportHelpFragment.kt$FileImportHelpFragment$5</ID>
+    <ID>MagicNumber:FileImportHelpFragment.kt$FileImportHelpFragment$500</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$15</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$16</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$18</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$19</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$20</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$21</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$22</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$23</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$24</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$25</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$26</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$27</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$28</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$29</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$30</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$31</ID>
+    <ID>MagicNumber:IBANRecognizerFilter.kt$IBANRecognizerFilter$4</ID>
+    <ID>MagicNumber:IBANValidator.kt$IBANValidator$10</ID>
+    <ID>MagicNumber:IBANValidator.kt$IBANValidator$35</ID>
+    <ID>MagicNumber:IBANValidator.kt$IBANValidator$4</ID>
+    <ID>MagicNumber:IBANValidator.kt$IBANValidator$55</ID>
+    <ID>MagicNumber:IntervalClickListenerHelper.kt$IntervalClickListenerHelper$500L</ID>
+    <ID>MagicNumber:QRCodePopup.kt$QRCodePopup$1000</ID>
+    <ID>MaxLineLength:BundleHelper.kt$classLoader: ClassLoader? = null</ID>
+    <ID>MaxLineLength:BundleHelper.kt$fun</ID>
+    <ID>MaxLineLength:CropToCameraFrameTextRecognizer.kt$CropToCameraFrameTextRecognizer$actualTextRecognizer</ID>
+    <ID>MaxLineLength:DefaultPages.kt$DefaultPages.Companion$if</ID>
+    <ID>MaxLineLength:DefaultPages.kt$DefaultPages.Companion$onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingAlignCornersIllustrationAdapter</ID>
+    <ID>MaxLineLength:DefaultPages.kt$DefaultPages.Companion$onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingLightingIllustrationAdapter</ID>
+    <ID>MaxLineLength:DefaultPages.kt$DefaultPages.Companion$onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingMultiPageIllustrationAdapter</ID>
+    <ID>MaxLineLength:ErrorFragmentImpl.kt$ErrorFragmentImpl$view.findViewById&lt;InjectedViewContainer&lt;NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)</ID>
+    <ID>MaxLineLength:FailureException.kt$FailureException.Companion$*</ID>
+    <ID>MaxLineLength:FailureException.kt$FailureException.Companion$throwable is CompletionException &amp;&amp; throwable.cause is FailureException -> throwable.cause as FailureException</ID>
+    <ID>MaxLineLength:FileImportHelpFragment.kt$FileImportHelpFragment$params.setMargins(resources.getDimension(R.dimen.gc_large).toInt(), 0, resources.getDimension(R.dimen.gc_large).toInt(), bottomPadding)</ID>
+    <ID>MaxLineLength:FileImportHelpFragment.kt$FileImportHelpFragment$snackbar</ID>
+    <ID>MaxLineLength:GiniCaptureFragment.kt$GiniCaptureFragment$// To be the first to handle back button pressed events we need to set this fragment as the primary navigation fragment</ID>
+    <ID>MaxLineLength:GiniCaptureFragment.kt$GiniCaptureFragment$UserAnalyticsEventSuperProperty.EntryPoint(UserAnalyticsEventSuperProperty.EntryPoint.EntryPointType.OPEN_WITH)</ID>
+    <ID>MaxLineLength:HelpFragment.kt$HelpFragment$HelpItem.SupportedFormats -> findNavController().navigate(HelpFragmentDirections.toSupportedFormatsHelpFragment())</ID>
+    <ID>MaxLineLength:HelpNavigationBarBottomAdapter.kt$DefaultHelpNavigationBarBottomAdapter$val viewBinding = GcHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
+    <ID>MaxLineLength:IBANKnowledge.kt$IBANKnowledge$*</ID>
+    <ID>MaxLineLength:IBANRecognizerImpl.kt$IBANRecognizerImpl$*</ID>
+    <ID>MaxLineLength:IBANValidator.kt$IBANValidator.IBANError$EMPTY</ID>
+    <ID>MaxLineLength:InjectedViewAdapter.kt$InjectedViewAdapterInstance$*</ID>
+    <ID>MaxLineLength:InjectedViewContainer.kt$InjectedViewAdapterConfigurator$*</ID>
+    <ID>MaxLineLength:InjectedViewContainer.kt$InjectedViewContainer.&lt;no name provided>$"{}: Injected view adapter for instance {} is in another container and was not destroyed"</ID>
+    <ID>MaxLineLength:IntervalToolbarMenuItemIntervalClickListener.kt$IntervalToolbarMenuItemIntervalClickListener$class</ID>
+    <ID>MaxLineLength:UserAnalytics.kt$UserAnalytics$(eventTracker as? BufferedUserAnalyticsEventTracker)?.setPlatformTokens(*tokens, networkRequestsManager = networkRequestsManager)</ID>
+    <ID>NewLineAtEndOfFile:Amount.kt$net.gini.android.capture.Amount.kt</ID>
+    <ID>NewLineAtEndOfFile:AmountCurrency.kt$net.gini.android.capture.AmountCurrency.kt</ID>
+    <ID>NewLineAtEndOfFile:AmplitudeUserAnalyticsEventTracker.kt$net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker.kt</ID>
+    <ID>NewLineAtEndOfFile:AnalyticsKeyPairProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.AnalyticsKeyPairProperty.kt</ID>
+    <ID>NewLineAtEndOfFile:AutoClearedValue.kt$net.gini.android.capture.internal.util.AutoClearedValue.kt</ID>
+    <ID>NewLineAtEndOfFile:BufferedUserAnalyticsEventTracker.kt$net.gini.android.capture.tracking.useranalytics.BufferedUserAnalyticsEventTracker.kt</ID>
+    <ID>NewLineAtEndOfFile:BundleHelper.kt$net.gini.android.capture.internal.util.BundleHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraHolder.kt$net.gini.android.capture.requirements.CameraHolder.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraParametersHelper.kt$net.gini.android.capture.internal.camera.api.CameraParametersHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraPreviewContainer.kt$net.gini.android.capture.internal.camera.view.CameraPreviewContainer.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraXController.kt$net.gini.android.capture.internal.camera.api.camerax.CameraXController.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraXHolder.kt$net.gini.android.capture.requirements.CameraXHolder.kt</ID>
+    <ID>NewLineAtEndOfFile:CancelListener.kt$net.gini.android.capture.internal.util.CancelListener.kt</ID>
+    <ID>NewLineAtEndOfFile:CaptureSDKResult.kt$net.gini.android.capture.CaptureSDKResult.kt</ID>
+    <ID>NewLineAtEndOfFile:ClickListenerExt.kt$net.gini.android.capture.internal.ui.ClickListenerExt.kt</ID>
+    <ID>NewLineAtEndOfFile:ConfigurationNetworkResult.kt$net.gini.android.capture.internal.network.ConfigurationNetworkResult.kt</ID>
+    <ID>NewLineAtEndOfFile:CropToCameraFrameTextRecognizer.kt$net.gini.android.capture.internal.textrecognition.CropToCameraFrameTextRecognizer.kt</ID>
+    <ID>NewLineAtEndOfFile:DeviceInfo.kt$net.gini.android.capture.tracking.useranalytics.tracker.DeviceInfo.kt</ID>
+    <ID>NewLineAtEndOfFile:EntryPoint.kt$net.gini.android.capture.EntryPoint.kt</ID>
+    <ID>NewLineAtEndOfFile:ErrorLogger.kt$net.gini.android.capture.logging.ErrorLogger.kt</ID>
+    <ID>NewLineAtEndOfFile:ErrorLoggerListener.kt$net.gini.android.capture.logging.ErrorLoggerListener.kt</ID>
+    <ID>NewLineAtEndOfFile:ErrorType.kt$net.gini.android.capture.error.ErrorType.kt</ID>
+    <ID>NewLineAtEndOfFile:FailureException.kt$net.gini.android.capture.internal.network.FailureException.kt</ID>
+    <ID>NewLineAtEndOfFile:FileImportHelpFragment.kt$net.gini.android.capture.help.FileImportHelpFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:FragmentExtensions.kt$net.gini.android.capture.internal.util.FragmentExtensions.kt</ID>
+    <ID>NewLineAtEndOfFile:HelpFragment.kt$net.gini.android.capture.help.HelpFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:HelpItem.kt$net.gini.android.capture.help.HelpItem.kt</ID>
+    <ID>NewLineAtEndOfFile:HelpItemsAdapter.kt$net.gini.android.capture.help.HelpItemsAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:HintPopup.kt$net.gini.android.capture.internal.camera.view.HintPopup.kt</ID>
+    <ID>NewLineAtEndOfFile:IBANKnowledge.kt$net.gini.android.capture.internal.iban.IBANKnowledge.kt</ID>
+    <ID>NewLineAtEndOfFile:IBANRecognizer.kt$net.gini.android.capture.internal.iban.IBANRecognizer.kt</ID>
+    <ID>NewLineAtEndOfFile:IBANRecognizerFilter.kt$net.gini.android.capture.internal.iban.IBANRecognizerFilter.kt</ID>
+    <ID>NewLineAtEndOfFile:IBANValidator.kt$net.gini.android.capture.internal.iban.IBANValidator.kt</ID>
+    <ID>NewLineAtEndOfFile:InjectedViewAdapter.kt$net.gini.android.capture.view.InjectedViewAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListener.kt$net.gini.android.capture.internal.ui.IntervalClickListener.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListenerHelper.kt$net.gini.android.capture.internal.ui.IntervalClickListenerHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalToolbarMenuItemIntervalClickListener.kt$net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener.kt</ID>
+    <ID>NewLineAtEndOfFile:MiddlePageManager.kt$net.gini.android.capture.review.multipage.previews.MiddlePageManager.kt</ID>
+    <ID>NewLineAtEndOfFile:NavigationBarTopAdapter.kt$net.gini.android.capture.view.NavigationBarTopAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:OnButtonLoadingIndicatorAdapter.kt$net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:OnboardingIllustrationAdapter.kt$net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:OnboardingNavigationBarBottomAdapter.kt$net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:PhotoTipsHelpFragment.kt$net.gini.android.capture.help.PhotoTipsHelpFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:PreviewPagesAdapter.kt$net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:QRCodePopup.kt$net.gini.android.capture.internal.camera.view.QRCodePopup.kt</ID>
+    <ID>NewLineAtEndOfFile:RecognizedText.kt$net.gini.android.capture.internal.textrecognition.RecognizedText.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewNavigationBarBottomAdapter.kt$net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:SnappedItemChangeRecyclerViewListener.kt$net.gini.android.capture.util.recyclerview.SnappedItemChangeRecyclerViewListener.kt</ID>
+    <ID>NewLineAtEndOfFile:SupportedFormatsHelpFragment.kt$net.gini.android.capture.help.SupportedFormatsHelpFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:TextRecognizer.kt$net.gini.android.capture.internal.textrecognition.TextRecognizer.kt</ID>
+    <ID>NewLineAtEndOfFile:UniqueIdProvider.kt$net.gini.android.capture.internal.provider.UniqueIdProvider.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalytics.kt$net.gini.android.capture.tracking.useranalytics.UserAnalytics.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsEvent.kt$net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsEventProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsEventSuperProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsMappers.kt$net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappers.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsUserProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty.kt</ID>
+    <ID>ReturnCount:CameraXController.kt$CameraXController$override fun open(): CompletableFuture&lt;Void></ID>
+    <ID>ReturnCount:CameraXController.kt$CameraXController$override fun takePicture(): CompletableFuture&lt;Photo></ID>
+    <ID>ReturnCount:ErrorFragmentImpl.kt$ErrorFragmentImpl$private fun shouldAllowRetakeImages(): Boolean</ID>
+    <ID>ReturnCount:ErrorType.kt$ErrorType.Companion$@JvmStatic fun typeFromError(error: Error): ErrorType</ID>
+    <ID>ReturnCount:ErrorType.kt$ErrorType.Companion$private fun isInvalidUserError(error: Error): Boolean</ID>
+    <ID>ReturnCount:GiniCaptureFragment.kt$CaptureFragmentFactory$override fun instantiate(classLoader: ClassLoader, className: String): Fragment</ID>
+    <ID>ReturnCount:SnappedItemChangeRecyclerViewListener.kt$SnappedItemChangeRecyclerViewListener$override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int)</ID>
+    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$catch (e: Exception) { // Failed to get network operator name from network }</ID>
+    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$catch (e: Exception) { }</ID>
+    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$catch (e: PackageManager.NameNotFoundException) { }</ID>
+    <ID>SwallowedException:ErrorType.kt$ErrorType.Companion$catch (e: Exception) { false }</ID>
+    <ID>SwallowedException:IBANRecognizerImpl.kt$IBANRecognizerImpl$catch (e: IBANValidator.IllegalIBANException) { false }</ID>
+    <ID>ThrowsCount:Extensions.kt$@Throws(CameraException::class) private fun cropByteArray(data: ByteArray, cropRect: Rect?): ByteArray</ID>
+    <ID>ThrowsCount:IBANValidator.kt$IBANValidator$@Throws(IllegalIBANException::class) private fun validateLength(iban: String)</ID>
+    <ID>TooGenericExceptionCaught:CameraXController.kt$CameraXController$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:CameraXHolder.kt$CameraXHolder$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DeviceInfo.kt$DeviceInfo.CachedInfo$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ErrorType.kt$ErrorType.Companion$e: Exception</ID>
+    <ID>TooManyFunctions:CameraXController.kt$CameraXController : CameraInterface</ID>
+    <ID>TooManyFunctions:FileChooserFragment.kt$FileChooserFragment : BottomSheetDialogFragment</ID>
+    <ID>TooManyFunctions:GiniCaptureFragment.kt$GiniCaptureFragment : FragmentCameraFragmentListenerAnalysisFragmentListenerEnterManuallyButtonListenerCancelListener</ID>
+    <ID>TooManyFunctions:HelpFragment.kt$HelpFragment : Fragment</ID>
+    <ID>UnnecessaryAbstractClass:AnalyticsKeyPairProperty.kt$AnalyticsKeyPairProperty</ID>
+    <ID>UnusedPrivateMember:AmplitudeUserAnalyticsEventTracker.kt$AmplitudeUserAnalyticsEventTracker$val version = BuildConfig.VERSION_NAME</ID>
+    <ID>UnusedPrivateMember:DeviceInfo.kt$DeviceInfo$private val LOG = LoggerFactory.getLogger(DeviceInfo::class.java)</ID>
+    <ID>UnusedPrivateMember:ErrorFragmentImpl.kt$ErrorFragmentImpl$savedInstanceState: Bundle?</ID>
+    <ID>VariableNaming:AmplitudeUserAnalyticsEventTracker.kt$AmplitudeUserAnalyticsEventTracker$private val LOG = LoggerFactory.getLogger(AmplitudeUserAnalyticsEventTracker::class.java)</ID>
+    <ID>VariableNaming:BufferedUserAnalyticsEventTracker.kt$BufferedUserAnalyticsEventTracker$private val LOG = LoggerFactory.getLogger(BufferedUserAnalyticsEventTracker::class.java)</ID>
+    <ID>VariableNaming:DeviceInfo.kt$DeviceInfo$private val LOG = LoggerFactory.getLogger(DeviceInfo::class.java)</ID>
+    <ID>WildcardImport:CameraXController.kt$import android.graphics.*</ID>
+    <ID>WildcardImport:CameraXController.kt$import androidx.camera.core.*</ID>
+    <ID>WildcardImport:NavigationBarTopAdapter.kt$import android.view.*</ID>
+    <ID>WildcardImport:NavigationBarTopAdapter.kt$import net.gini.android.capture.view.NavButtonType.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

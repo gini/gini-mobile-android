@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexMethod:Configuration.kt$internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder</ID>
+    <ID>EmptyFunctionBlock:DigitalInvoiceBottomSheet.kt$DigitalInvoiceBottomSheet${ }</ID>
+    <ID>EmptyFunctionBlock:DigitalInvoiceScreenPresenter.kt$DigitalInvoiceScreenPresenter${ }</ID>
+    <ID>EmptyFunctionBlock:DigitalOnboardingScreenPresenter.kt$DigitalOnboardingScreenPresenter${ }</ID>
+    <ID>EmptyFunctionBlock:EditTextExtensions.kt$&lt;no name provided>${ }</ID>
+    <ID>EmptyFunctionBlock:GiniBank.kt$GiniBank.&lt;no name provided>${ }</ID>
+    <ID>EmptyFunctionBlock:LineItemDetailsScreenPresenter.kt$LineItemDetailsScreenPresenter${ }</ID>
+    <ID>EmptyFunctionBlock:LineItemsAdapter.kt$ViewHolder.AddonViewHolder${ }</ID>
+    <ID>EmptyFunctionBlock:TextExtensions.kt$&lt;no name provided>${ }</ID>
+    <ID>ForbiddenComment:DigitalInvoiceOnboardingFragment.kt$DigitalInvoiceOnboardingFragment$* You should show the `DigitalInvoiceOnboardingFragment` when the * [DigitalInvoiceFragmentListener.showOnboarding()] is called. * * Include the `DigitalInvoiceOnboardingFragment` into your layout by using the [DigitalInvoiceOnboardingFragment.createInstance()] factory method to create * an instance and display it using the [androidx.fragment.app.FragmentManager]. * * A [DigitalInvoiceOnboardingFragmentListener] instance must be available before the `DigitalInvoiceOnboardingFragment` is attached to an activity. Failing * to do so will throw an exception. The listener instance can be provided either implicitly by making the hosting Activity implement the * [DigitalInvoiceOnboardingFragmentListener] interface or explicitly by setting the listener using [DigitalInvoiceOnboardingFragment.listener]. * * Your Activity is automatically set as the listener in [DigitalInvoiceOnboardingFragment.onCreate()]. * * ### Customizing the Digital Invoice Onboarding Screen * * TODO: PPL-14: Customization guide for return assistant - Android</ID>
+    <ID>LongParameterList:DigitalInvoiceScreenPresenter.kt$DigitalInvoiceScreenPresenter$( activity: Activity, view: DigitalInvoiceScreenContract.View, val extractions: Map&lt;String, GiniCaptureSpecificExtraction> = emptyMap(), val compoundExtractions: Map&lt;String, GiniCaptureCompoundExtraction> = emptyMap(), val returnReasons: List&lt;GiniCaptureReturnReason> = emptyList(), private val isInaccurateExtraction: Boolean = false, savedInstanceBundle: Bundle?, private val oncePerInstallEventStore: OncePerInstallEventStore = OncePerInstallEventStore( activity ), private val simpleBusEventStore: SimpleBusEventStore = SimpleBusEventStore(activity) )</ID>
+    <ID>LongParameterList:GiniBank.kt$GiniBank$( context: Context, paymentRecipient: String, paymentReference: String, paymentPurpose: String, iban: String, bic: String, amount: Amount )</ID>
+    <ID>LongParameterList:GiniBank.kt$GiniBank$( paymentRecipient: String, paymentReference: String, paymentPurpose: String, iban: String, bic: String, amount: Amount )</ID>
+    <ID>LongParameterList:LineItem.kt$LineItem$( id: String = this.id, description: String = this.description, quantity: Int = this.quantity, rawGrossPrice: String = this.rawGrossPrice, origQuantity: Int = this.origQuantity, origRawGrossPrice: String = this.origRawGrossPrice )</ID>
+    <ID>MagicNumber:DigitalInvoiceFragment.kt$DigitalInvoiceFragment$200</ID>
+    <ID>MagicNumber:DigitalInvoiceFragment.kt$DigitalInvoiceFragment$3</ID>
+    <ID>MagicNumber:DigitalInvoiceFragment.kt$DigitalInvoiceFragment$350</ID>
+    <ID>MagicNumber:DigitalInvoiceFragment.kt$DigitalInvoiceFragment.SmoothScroller$2400f</ID>
+    <ID>MagicNumber:LineItemsAdapter.kt$ViewHolder.LineItemViewHolder$0.5f</ID>
+    <ID>MagicNumber:TextExtensions.kt$&lt;no name provided>$100</ID>
+    <ID>MagicNumber:TextExtensions.kt$&lt;no name provided>$7</ID>
+    <ID>MatchingDeclarationName:Configuration.kt$CaptureConfiguration</ID>
+    <ID>MaxLineLength:BigDecimalExtensions.kt$internal</ID>
+    <ID>MaxLineLength:CaptureFlowActivity.kt$CaptureFlowActivity$* Entry point for Screen API. It exists for the purpose of communication between Capture SDK's Screen API and Return Assistant.</ID>
+    <ID>MaxLineLength:CaptureFlowFragment.kt$CaptureFlowFragment$// To be the first to handle back button pressed events we need to set this fragment as the primary navigation fragment</ID>
+    <ID>MaxLineLength:CaptureFlowFragment.kt$CaptureFlowFragment$val contextThemeWrapper = ContextThemeWrapper(requireContext(), net.gini.android.capture.R.style.GiniCaptureTheme)</ID>
+    <ID>MaxLineLength:Configuration.kt$CaptureConfiguration$*</ID>
+    <ID>MaxLineLength:Configuration.kt$CaptureConfiguration$* Enable and configure the document import feature or disable it by passing in [DocumentImportEnabledFileTypes.NONE].</ID>
+    <ID>MaxLineLength:Configuration.kt$configuration.onboardingAlignCornersIllustrationAdapter?.let { setOnboardingAlignCornersIllustrationAdapter(it) }</ID>
+    <ID>MaxLineLength:DigitalInvoice.kt$DigitalInvoice$private</ID>
+    <ID>MaxLineLength:DigitalInvoice.kt$DigitalInvoice$selectableLineItems.map { sli -> if (sli.lineItem.id == selectableLineItem.lineItem.id) selectableLineItem else sli }</ID>
+    <ID>MaxLineLength:DigitalInvoiceBottomSheet.kt$DigitalInvoiceBottomSheet$binding = GbsEditItemBottomSheetBinding.inflate(getLayoutInflaterWithGiniCaptureTheme(it.layoutInflater), null, false)</ID>
+    <ID>MaxLineLength:DigitalInvoiceBottomSheet.kt$DigitalInvoiceBottomSheet$selectableLineItem = BundleCompat.getParcelable(it, ARGS_SELECTABLE_LINE_ITEM, SelectableLineItem::class.java)</ID>
+    <ID>MaxLineLength:DigitalInvoiceBottomSheet.kt$DigitalInvoiceBottomSheet$typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsBottomSheetItemTitle, net.gini.android.capture.R.color.gc_light_01)</ID>
+    <ID>MaxLineLength:DigitalInvoiceBottomSheet.kt$DigitalInvoiceBottomSheet$val bottomSheetInternal = (it as? BottomSheetDialog)?.findViewById&lt;View>(com.google.android.material.R.id.design_bottom_sheet)</ID>
+    <ID>MaxLineLength:DigitalInvoiceBottomSheet.kt$DigitalInvoiceBottomSheet.CurrencyAdapter$convertView.setBackgroundColor(typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsCurrencyPickerItemBackgroundColor, net.gini.android.capture.R.color.gc_light_01))</ID>
+    <ID>MaxLineLength:DigitalInvoiceBottomSheet.kt$DigitalInvoiceBottomSheet.CurrencyAdapter$convertView.setBackgroundColor(typedArray.getColor(R.styleable.GBSCurrencyStyle_gbsCurrencyPickerItemSelectedColor, net.gini.android.capture.R.color.gc_light_01))</ID>
+    <ID>MaxLineLength:DigitalInvoiceBottomSheet.kt$DigitalInvoiceBottomSheet.CurrencyAdapter$private var selectedCurrency: String</ID>
+    <ID>MaxLineLength:DigitalInvoiceException.kt$DigitalInvoiceException.DescriptionMissingException$class</ID>
+    <ID>MaxLineLength:DigitalInvoiceException.kt$DigitalInvoiceException.GrossPriceMissingException$class</ID>
+    <ID>MaxLineLength:DigitalInvoiceException.kt$DigitalInvoiceException.GrossPriceParsingException$class</ID>
+    <ID>MaxLineLength:DigitalInvoiceException.kt$DigitalInvoiceException.LineItemsMissingException$class</ID>
+    <ID>MaxLineLength:DigitalInvoiceException.kt$DigitalInvoiceException.MixedCurrenciesException$class</ID>
+    <ID>MaxLineLength:DigitalInvoiceException.kt$DigitalInvoiceException.QuantityMissingException$class</ID>
+    <ID>MaxLineLength:DigitalInvoiceException.kt$DigitalInvoiceException.QuantityParsingException$class</ID>
+    <ID>MaxLineLength:DigitalInvoiceFragment.kt$DigitalInvoiceFragment$InjectedViewAdapterHolder</ID>
+    <ID>MaxLineLength:DigitalInvoiceFragment.kt$DigitalInvoiceFragment.Companion$internal</ID>
+    <ID>MaxLineLength:DigitalInvoiceHelpFragment.kt$DigitalInvoiceHelpFragment$InjectedViewAdapterHolder</ID>
+    <ID>MaxLineLength:DigitalInvoiceHelpNavigationBarBottomAdapter.kt$DefaultDigitalInvoiceHelpNavigationBarBottomAdapter$val binding = GbsHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
+    <ID>MaxLineLength:DigitalInvoiceNavigationBarBottomAdapter.kt$DefaultDigitalInvoiceNavigationBarBottomAdapter$binding = GbsDigitalInvoiceNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
+    <ID>MaxLineLength:DigitalInvoiceOnboardingFragment.kt$DigitalInvoiceOnboardingFragment$*</ID>
+    <ID>MaxLineLength:DigitalInvoiceOnboardingFragment.kt$DigitalInvoiceOnboardingFragment$InjectedViewAdapterHolder(GiniBank.digitalInvoiceOnboardingIllustrationAdapterInstance) { it.onVisible() }</ID>
+    <ID>MaxLineLength:DigitalInvoiceOnboardingNavigationBarBottomAdapter.kt$DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter$val binding = GbsDigitalInvoiceOnboardingNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
+    <ID>MaxLineLength:DigitalInvoiceScreenPresenter.kt$DigitalInvoiceScreenPresenter$totalGrossPriceIntegralAndFractionalParts = digitalInvoice.totalPriceIntegralAndFractionalParts()</ID>
+    <ID>MaxLineLength:GiniBank.kt$GiniBank$"Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources."</ID>
+    <ID>MaxLineLength:GiniBank.kt$GiniBank$"Please use setCaptureConfiguration(context, captureConfiguration) which allows instance recreation without having to call releaseCapture()"</ID>
+    <ID>MaxLineLength:GiniBank.kt$GiniBank$*</ID>
+    <ID>MaxLineLength:GiniBank.kt$GiniBank$check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }</ID>
+    <ID>MaxLineLength:GiniBank.kt$GiniBank$check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }</ID>
+    <ID>MaxLineLength:GiniBank.kt$GiniBank$check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }</ID>
+    <ID>MaxLineLength:GiniBank.kt$GiniBank$check(giniCapture == null) { "Gini Capture already configured. Call releaseCapture() before setting a new configuration." }</ID>
+    <ID>MaxLineLength:GiniBank.kt$GiniBank$internal</ID>
+    <ID>MaxLineLength:GiniBank.kt$GiniBank$return</ID>
+    <ID>MaxLineLength:HelpItem.kt$HelpItem$enum</ID>
+    <ID>MaxLineLength:LineItem.kt$LineItem$override fun toString()</ID>
+    <ID>MaxLineLength:LineItemsAdapter.kt$LineItemsAdapter$// Adding padding for the last addon item, so the item looks full height without modifying the layout file</ID>
+    <ID>MaxLineLength:LineItemsAdapter.kt$LineItemsAdapter$viewHolder.itemView.setPadding(context.resources.getDimension(net.gini.android.capture.R.dimen.gc_large).toInt(), 0, 0, bottomPadding)</ID>
+    <ID>MaxLineLength:LineItemsValidator.kt$if</ID>
+    <ID>MaxLineLength:OncePerInstallEventStore.kt$OncePerInstallEventStore$private val mSharedPreferences: SharedPreferences = context.getSharedPreferences(ONCE_PER_INSTALL_EVENTS, Context.MODE_PRIVATE)</ID>
+    <ID>MaxLineLength:SelectableLineItem.kt$SelectableLineItem$*</ID>
+    <ID>MaxLineLength:SelectableLineItem.kt$SelectableLineItem$override fun toString()</ID>
+    <ID>NestedBlockDepth:CaptureFlowFragment.kt$CaptureFlowFragment$override fun onFinishedWithResult(result: CaptureSDKResult)</ID>
+    <ID>NewLineAtEndOfFile:AmountParsingException.kt$net.gini.android.bank.sdk.error.AmountParsingException.kt</ID>
+    <ID>NewLineAtEndOfFile:AutoClearedValue.kt$net.gini.android.bank.sdk.capture.util.AutoClearedValue.kt</ID>
+    <ID>NewLineAtEndOfFile:AutoClearedValue.kt$net.gini.android.bank.sdk.util.AutoClearedValue.kt</ID>
+    <ID>NewLineAtEndOfFile:BigDecimalExtensions.kt$net.gini.android.bank.sdk.capture.digitalinvoice.BigDecimalExtensions.kt</ID>
+    <ID>NewLineAtEndOfFile:CaptureFlowActivity.kt$net.gini.android.bank.sdk.capture.CaptureFlowActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:ContextExtensions.kt$net.gini.android.bank.sdk.util.ContextExtensions.kt</ID>
+    <ID>NewLineAtEndOfFile:CoroutineContinuationHelper.kt$net.gini.android.bank.sdk.util.CoroutineContinuationHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoice.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoice.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceAddon.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceAddon.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceAnalyticsExt.kt$net.gini.android.bank.sdk.analytics.DigitalInvoiceAnalyticsExt.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceException.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceFragmentListener.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceHelpFragment.kt$net.gini.android.bank.sdk.capture.digitalinvoice.help.DigitalInvoiceHelpFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceOnboardingFragmentListener.kt$net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragmentListener.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceOnboardingNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceScreenContract.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceScreenContract.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalInvoiceScreenPresenter.kt$net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceScreenPresenter.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalOnboardingScreenContract.kt$net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalOnboardingScreenContract.kt</ID>
+    <ID>NewLineAtEndOfFile:DigitalOnboardingScreenPresenter.kt$net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalOnboardingScreenPresenter.kt</ID>
+    <ID>NewLineAtEndOfFile:EditTextExtensions.kt$net.gini.android.bank.sdk.capture.digitalinvoice.details.EditTextExtensions.kt</ID>
+    <ID>NewLineAtEndOfFile:FragmentExtension.kt$net.gini.android.bank.sdk.capture.util.FragmentExtension.kt</ID>
+    <ID>NewLineAtEndOfFile:FragmentExtensions.kt$net.gini.android.bank.sdk.util.FragmentExtensions.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniBankAPI.kt$net.gini.android.bank.sdk.util.GiniBankAPI.kt</ID>
+    <ID>NewLineAtEndOfFile:LineItem.kt$net.gini.android.bank.sdk.capture.digitalinvoice.LineItem.kt</ID>
+    <ID>NewLineAtEndOfFile:LineItemDetailsScreenPresenter.kt$net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenPresenter.kt</ID>
+    <ID>NewLineAtEndOfFile:LineItemsValidator.kt$net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentRequestIntent.kt$net.gini.android.bank.sdk.pay.PaymentRequestIntent.kt</ID>
+    <ID>NewLineAtEndOfFile:PreferencesExtension.kt$net.gini.android.bank.sdk.capture.util.PreferencesExtension.kt</ID>
+    <ID>NewLineAtEndOfFile:ResolvePaymentInputExtensions.kt$net.gini.android.bank.sdk.util.ResolvePaymentInputExtensions.kt</ID>
+    <ID>NewLineAtEndOfFile:ReturnReasonsDialog.kt$net.gini.android.bank.sdk.capture.digitalinvoice.ReturnReasonsDialog.kt</ID>
+    <ID>NewLineAtEndOfFile:SelectableLineItem.kt$net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem.kt</ID>
+    <ID>SwallowedException:CaptureFlowFragment.kt$CaptureFlowFragment$catch (notUsed: DigitalInvoiceException) { didFinishWithResult = true val result = interceptSuccessResult(result).toCaptureResult() captureFlowFragmentListener.onFinishedWithResult(result) if (result is CaptureResult.Success) { trackSdkClosedEvent(UserAnalyticsScreen.Analysis) } }</ID>
+    <ID>SwallowedException:DigitalInvoiceAddon.kt$DigitalInvoiceAddon.Companion$catch (e: Exception) { Pair(null, null) }</ID>
+    <ID>SwallowedException:LineItem.kt$LineItem$catch (e: Exception) { Triple(BigDecimal.ZERO, "", null) }</ID>
+    <ID>TooGenericExceptionCaught:DigitalInvoiceAddon.kt$DigitalInvoiceAddon.Companion$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LineItem.kt$LineItem$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LineItemsValidator.kt$e: Exception</ID>
+    <ID>TooGenericExceptionThrown:GiniBank.kt$GiniBank$throw Exception( paymentRequestResource.message, paymentRequestResource.exception )</ID>
+    <ID>TooGenericExceptionThrown:GiniBank.kt$GiniBank$throw Exception( resolvedPaymentResource.message, resolvedPaymentResource.exception )</ID>
+    <ID>TooGenericExceptionThrown:GiniBank.kt$GiniBank$throw Exception("Cancelled")</ID>
+    <ID>TooManyFunctions:CaptureFlowFragment.kt$CaptureFlowFragment : FragmentGiniCaptureFragmentListenerDigitalInvoiceFragmentListenerCancelListener</ID>
+    <ID>TooManyFunctions:DigitalInvoice.kt$DigitalInvoice</ID>
+    <ID>TooManyFunctions:DigitalInvoiceBottomSheet.kt$DigitalInvoiceBottomSheet : BottomSheetDialogFragmentView</ID>
+    <ID>TooManyFunctions:DigitalInvoiceFragment.kt$DigitalInvoiceFragment : FragmentViewLineItemsAdapterListener</ID>
+    <ID>TooManyFunctions:DigitalInvoiceOnboardingFragment.kt$DigitalInvoiceOnboardingFragment : FragmentView</ID>
+    <ID>TooManyFunctions:DigitalInvoiceScreenPresenter.kt$DigitalInvoiceScreenPresenter : Presenter</ID>
+    <ID>TooManyFunctions:GiniBank.kt$GiniBank$GiniBank</ID>
+    <ID>TooManyFunctions:LineItemDetailsScreenContract.kt$LineItemDetailsScreenContract$View : GiniCaptureBaseView</ID>
+    <ID>TooManyFunctions:LineItemDetailsScreenPresenter.kt$LineItemDetailsScreenPresenter : Presenter</ID>
+    <ID>TooManyFunctions:ReturnReasonsDialog.kt$ReturnReasonDialog : BottomSheetDialogFragment</ID>
+    <ID>TopLevelPropertyNaming:PaymentRequestIntent.kt$internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest</ID>
+    <ID>TopLevelPropertyNaming:PaymentRequestIntent.kt$private const val PaymentPath = "payment"</ID>
+    <ID>UnusedPrivateMember:DigitalInvoiceFragment.kt$private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"</ID>
+    <ID>UtilityClassWithPublicConstructor:LineItemsValidator.kt$LineItemsValidator</ID>
+    <ID>WildcardImport:CoroutineContinuationHelper.kt$import kotlinx.coroutines.*</ID>
+    <ID>WildcardImport:GiniBank.kt$import net.gini.android.capture.*</ID>
+    <ID>WildcardImport:LineItemsAdapter.kt$import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.*</ID>
+    <ID>WildcardImport:LineItemsValidator.kt$import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException.*</ID>
+    <ID>WildcardImport:SimpleBusEventStore.kt$import kotlinx.coroutines.flow.*</ID>
+  </CurrentIssues>
+</SmellBaseline>
