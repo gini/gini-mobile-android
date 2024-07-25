@@ -270,7 +270,6 @@ private fun ScreenReadyState(
                         .tabletMaxWidth(),
                     colors = screenColorScheme.skontoSectionColors,
                     amount = state.skontoAmount,
-                    amountValidation = state.skontoAmountValidation,
                     dueDate = state.discountDueDate,
                     infoPaymentInDays = state.paymentInDays,
                     infoDiscountValue = state.discountAmount,
@@ -413,7 +412,6 @@ private fun YourInvoiceScanSection(
 private fun SkontoSection(
     colors: SkontoSectionColors,
     amount: SkontoData.Amount,
-    amountValidation: SkontoFragmentContract.State.Ready.SkontoAmountValidation,
     dueDate: LocalDate,
     infoPaymentInDays: Int,
     infoDiscountValue: BigDecimal,
@@ -513,7 +511,6 @@ private fun SkontoSection(
                     .fillMaxWidth()
                     .padding(top = 16.dp),
                 enabled = isActive,
-                isError = amountValidation != SkontoFragmentContract.State.Ready.SkontoAmountValidation.Valid,
                 colors = colors.amountFieldColors,
                 onValueChange = { onSkontoAmountChange(it) },
                 label = stringResource(id = R.string.gbs_skonto_section_discount_field_amount_hint),
@@ -925,6 +922,5 @@ private val previewState = SkontoFragmentContract.State.Ready(
     paymentMethod = SkontoData.SkontoPaymentMethod.PayPal,
     skontoEdgeCase = SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly,
     edgeCaseInfoDialogVisible = false,
-    skontoAmountValidation = SkontoFragmentContract.State.Ready.SkontoAmountValidation.Invalid.SkontoAmountGreaterOfFullAmount,
     savedAmount = SkontoData.Amount(BigDecimal("3"), "EUR")
 )
