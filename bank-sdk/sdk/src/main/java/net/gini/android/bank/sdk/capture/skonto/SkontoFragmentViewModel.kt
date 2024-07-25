@@ -18,6 +18,21 @@ internal class SkontoFragmentViewModel(
     val stateFlow: MutableStateFlow<SkontoFragmentContract.State> =
         MutableStateFlow(createInitalState(data))
 
+    private var listener: SkontoFragmentListener? = null
+
+    fun setListener(listener: SkontoFragmentListener?) {
+        this.listener = listener
+    }
+
+    fun onProceedClicked() {
+        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return
+        SkontoDataExtractor.updateGiniExtractions(currentState)
+        listener?.onPayInvoiceWithSkonto(
+            SkontoDataExtractor.extractions,
+            SkontoDataExtractor.compoundExtractions
+        )
+    }
+
     private fun createInitalState(
         data: SkontoData,
     ): SkontoFragmentContract.State.Ready {
@@ -34,10 +49,14 @@ internal class SkontoFragmentViewModel(
         val totalAmount =
             if (isSkontoSectionActive) data.skontoAmountToPay else data.fullAmountToPay
 
+        val savedAmountValue =
+            calculateSavedAmount(data.skontoAmountToPay.amount, data.fullAmountToPay.amount)
+        val savedAmount = SkontoData.Amount(savedAmountValue, data.fullAmountToPay.currencyCode)
+
         return SkontoFragmentContract.State.Ready(
-            isSkontoSectionActive = true,
+            isSkontoSectionActive = isSkontoSectionActive,
             paymentInDays = data.skontoRemainingDays,
-            discountAmount = discount,
+            skontoPercentage = discount,
             skontoAmount = data.skontoAmountToPay,
             discountDueDate = data.skontoDueDate,
             fullAmount = data.fullAmountToPay,
@@ -45,10 +64,7 @@ internal class SkontoFragmentViewModel(
             paymentMethod = paymentMethod,
             skontoEdgeCase = edgeCase,
             edgeCaseInfoDialogVisible = edgeCase != null,
-            skontoAmountValidation = validateSkontoAmount(
-                skontoAmount = data.skontoAmountToPay,
-                fullAmount = data.fullAmountToPay
-            )
+            savedAmount = savedAmount
         )
     }
 
@@ -62,16 +78,22 @@ internal class SkontoFragmentViewModel(
             currentState.copy(
                 isSkontoSectionActive = newValue,
                 totalAmount = totalAmount,
-                discountAmount = discount
+                skontoPercentage = discount
             )
         )
     }
 
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
-        val discount = calculateDiscount(newValue, currentState.fullAmount.amount).coerceAtLeast(
-            BigDecimal.ZERO
-        )
+
+        if (newValue > currentState.fullAmount.amount) {
+            stateFlow.emit(
+                currentState.copy(skontoAmount = currentState.skontoAmount)
+            )
+            return@launch
+        }
+
+        val discount = calculateDiscount(newValue, currentState.fullAmount.amount)
         val totalAmount = if (currentState.isSkontoSectionActive)
             newValue
         else
@@ -80,12 +102,16 @@ internal class SkontoFragmentViewModel(
         val newSkontoAmount = currentState.skontoAmount.copy(amount = newValue)
         val newTotalAmount = currentState.totalAmount.copy(amount = totalAmount)
 
+        val savedAmountValue =
+            calculateSavedAmount(newSkontoAmount.amount, currentState.fullAmount.amount)
+        val savedAmount = SkontoData.Amount(savedAmountValue, currentState.fullAmount.currencyCode)
+
         stateFlow.emit(
             currentState.copy(
                 skontoAmount = newSkontoAmount,
-                discountAmount = discount,
+                skontoPercentage = discount,
                 totalAmount = newTotalAmount,
-                skontoAmountValidation = validateSkontoAmount(newSkontoAmount, currentState.fullAmount)
+                savedAmount = savedAmount,
             )
         )
     }
@@ -110,7 +136,7 @@ internal class SkontoFragmentViewModel(
         val totalAmount =
             if (currentState.isSkontoSectionActive) currentState.skontoAmount.amount else newValue
 
-        val discount = currentState.discountAmount
+        val discount = currentState.skontoPercentage
 
         val skontoAmount = newValue.minus(
             newValue.multiply( // full_amount - (full_amount * (discount / 100))
@@ -118,11 +144,15 @@ internal class SkontoFragmentViewModel(
             )
         )
 
+        val savedAmountValue = calculateSavedAmount(skontoAmount, newValue)
+        val savedAmount = SkontoData.Amount(savedAmountValue, currentState.fullAmount.currencyCode)
+
         stateFlow.emit(
             currentState.copy(
                 skontoAmount = currentState.skontoAmount.copy(amount = skontoAmount),
                 fullAmount = currentState.fullAmount.copy(amount = newValue),
-                totalAmount = currentState.totalAmount.copy(amount = totalAmount)
+                totalAmount = currentState.totalAmount.copy(amount = totalAmount),
+                savedAmount = savedAmount,
             )
         )
     }
@@ -150,20 +180,11 @@ internal class SkontoFragmentViewModel(
         return BigDecimal.ONE
             .minus(skontoAmount.divide(fullAmount, 4, RoundingMode.HALF_UP))
             .multiply(BigDecimal("100"))
+            .coerceAtLeast(BigDecimal.ZERO)
     }
 
-    private fun validateSkontoAmount(
-        skontoAmount: SkontoData.Amount,
-        fullAmount: SkontoData.Amount
-    ): SkontoFragmentContract.State.Ready.SkontoAmountValidation {
-        return when {
-            skontoAmount.amount <= fullAmount.amount ->
-                SkontoFragmentContract.State.Ready.SkontoAmountValidation.Valid
-
-            else ->
-                SkontoFragmentContract.State.Ready.SkontoAmountValidation.Invalid.SkontoAmountGreaterOfFullAmount
-        }
-    }
+    private fun calculateSavedAmount(skontoAmount: BigDecimal, fullAmount: BigDecimal) =
+        fullAmount.minus(skontoAmount).coerceAtLeast(BigDecimal.ZERO)
 
     private fun extractSkontoEdgeCase(
         dueDate: LocalDate,

@@ -69,14 +69,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/gc_medium"
-        android:padding="@dimen/gc_medium"
-        app:tint="?attr/colorOnBackground"
-        android:contentDescription="@string/gbs_digital_invoice_help_info"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/gbs_digital_invoice_help_info"
+        android:padding="@dimen/gc_medium"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gbs_pay"
-        app:srcCompat="@drawable/gbs_menu_question_circle_info" />
+        app:srcCompat="@drawable/gbs_menu_question_circle_info"
+        app:tint="?attr/colorOnBackground" />
 
     <ImageButton
         android:id="@+id/gbs_back_btn"

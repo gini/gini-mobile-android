@@ -18,10 +18,12 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import net.gini.android.capture.R
 import net.gini.android.capture.ui.theme.GiniTheme
 import java.time.Instant
 import java.time.LocalDate
@@ -79,7 +81,7 @@ fun GiniDatePickerDialog(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     onClick = { onDismissRequest() }) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(id = R.string.gc_date_picker_cancel),
                         style = GiniTheme.typography.body1
                     )
                 }
@@ -94,7 +96,7 @@ fun GiniDatePickerDialog(
                         }
                     }) {
                     Text(
-                        text = "Select",
+                        text = stringResource(id = R.string.gc_date_picker_select),
                         style = GiniTheme.typography.body1
                     )
                 }

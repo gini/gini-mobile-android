@@ -173,4 +173,8 @@
     <string name="gc_menu_item_close_button_content_description">Schließen, Schaltfläche</string>
     <string name="gc_iban_detected_please_take_picture">\n\nMachen Sie ein Foto</string>
     <string name="gc_iban_detected">IBAN erkannt</string>
+    <!--   region Date Picker -->
+    <string name="gc_date_picker_select">Auswählen</string>
+    <string name="gc_date_picker_cancel">Abbrechen</string>
+    <!--   endregion -->
 </resources>

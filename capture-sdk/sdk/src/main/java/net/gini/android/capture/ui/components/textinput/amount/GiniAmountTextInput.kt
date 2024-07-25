@@ -30,6 +30,7 @@ import java.text.NumberFormat
 @Composable
 fun GiniAmountTextInput(
     amount: BigDecimal,
+    currencyCode: String,
     label: String,
     modifier: Modifier = Modifier,
     onValueChange: (BigDecimal) -> Unit,
@@ -42,10 +43,8 @@ fun GiniAmountTextInput(
     val parsedAmount = decimalFormatter.parseAmount(amount)
 
     var text by remember { mutableStateOf(parsedAmount) }
-
-    LaunchedEffect(key1 = parsedAmount) { // we need to reset text if amount was changed only
-        text = parsedAmount
-    }
+    
+    text = parsedAmount
 
     GiniTextInput(
         modifier = modifier,
@@ -63,7 +62,11 @@ fun GiniAmountTextInput(
         },
         trailingContent = trailingContent,
         colors = colors,
-        visualTransformation = DecimalInputVisualTransformation(decimalFormatter = decimalFormatter),
+        visualTransformation = DecimalInputVisualTransformation(
+            decimalFormatter = decimalFormatter,
+            currencyCode = currencyCode,
+            isCurrencyCodeDisplay = !enabled,
+        ),
     )
 }
 
@@ -91,6 +94,7 @@ private fun GiniTextInputPreview() {
             amount = BigDecimal("1234"),
             label = "Label Text",
             trailingContent = { },
+            currencyCode = "EUR",
             onValueChange = {}
         )
     }

@@ -64,6 +64,7 @@
     <!--   region Footer -->
     <string name="gbs_skonto_section_footer_title">Gesamtpreis</string>
     <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto</string>
+    <string name="gbs_skonto_section_footer_label_save">%1$s sparen</string>
     <string name="gbs_skonto_section_footer_continue_button_text">Zahlung fortsetzen</string>
     <!--   endregion -->
     <!--   region InfoDialog -->

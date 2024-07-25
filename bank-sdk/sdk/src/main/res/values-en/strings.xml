@@ -64,6 +64,7 @@
     <!--   region Footer -->
     <string name="gbs_skonto_section_footer_title">Total</string>
     <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto discount</string>
+    <string name="gbs_skonto_section_footer_label_save">Save %1$s</string>
     <string name="gbs_skonto_section_footer_continue_button_text">Continue to pay</string>
     <!--   endregion -->
     <!--   region InfoDialog -->
