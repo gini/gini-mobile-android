@@ -67,14 +67,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
-import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInfoDialogColors
@@ -104,6 +100,13 @@ class SkontoFragment : Fragment() {
 
     private val args: SkontoFragmentArgs by navArgs<SkontoFragmentArgs>()
 
+    lateinit var cancelListener: CancelListener
+
+    var skontoFragmentListener: SkontoFragmentListener? = null
+        set(value) {
+            field = value
+        }
+
     private val isBottomNavigationBarEnabled =
         GiniCapture.getInstance().isBottomNavigationBarEnabled
 
@@ -122,6 +125,8 @@ class SkontoFragment : Fragment() {
             factory = ViewModelFactory(args.data),
             owner = this
         )[SkontoFragmentViewModel::class.java]
+
+        viewModel.setListener(skontoFragmentListener)
 
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -176,7 +181,7 @@ private fun ScreenContent(
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
         onBackClicked = navigateBack,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
-        onProceedClicked = {},
+        onProceedClicked = { viewModel.onProceedClicked() },
         onInfoBannerClicked = viewModel::onInfoBannerClicked,
         onInfoDialogDismissed = viewModel::onInfoDialogDismissed
     )
@@ -248,7 +253,7 @@ private fun ScreenReadyState(
         bottomBar = {
             FooterSection(
                 colors = screenColorScheme.footerSectionColors,
-                discountValue = state.discountAmount,
+                discountValue = state.skontoPercentage,
                 totalAmount = state.totalAmount,
                 isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                 onBackClicked = onBackClicked,
@@ -271,7 +276,7 @@ private fun ScreenReadyState(
                 amountValidation = state.skontoAmountValidation,
                 dueDate = state.discountDueDate,
                 infoPaymentInDays = state.paymentInDays,
-                infoDiscountValue = state.discountAmount,
+                infoDiscountValue = state.skontoPercentage,
                 onActiveChange = onDiscountSectionActiveChange,
                 isActive = state.isSkontoSectionActive,
                 onSkontoAmountChange = onDiscountAmountChange,
@@ -295,7 +300,7 @@ private fun ScreenReadyState(
                 SkontoFragmentContract.SkontoEdgeCase.SkontoExpired ->
                     stringResource(
                         id = R.string.gbs_skonto_section_info_dialog_date_expired_message,
-                        state.discountAmount.toFloat().formatAsDiscountPercentage()
+                        state.skontoPercentage.toFloat().formatAsDiscountPercentage()
                     )
 
                 SkontoFragmentContract.SkontoEdgeCase.SkontoLastDay ->
@@ -909,7 +914,7 @@ private fun Float.formatAsDiscountPercentage(): String {
 private val previewState = SkontoFragmentContract.State.Ready(
     isSkontoSectionActive = true,
     paymentInDays = 14,
-    discountAmount = BigDecimal("3"),
+    skontoPercentage = BigDecimal("3"),
     skontoAmount = SkontoData.Amount(BigDecimal("97"), "EUR"),
     discountDueDate = LocalDate.now(),
     fullAmount = SkontoData.Amount(BigDecimal("100"), "EUR"),

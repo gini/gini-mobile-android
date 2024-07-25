@@ -10,7 +10,7 @@ internal object SkontoFragmentContract {
         data class Ready(
             val isSkontoSectionActive: Boolean,
             val paymentInDays: Int,
-            val discountAmount: BigDecimal,
+            val skontoPercentage: BigDecimal,
             val skontoAmount: SkontoData.Amount,
             val skontoAmountValidation: SkontoAmountValidation,
             val discountDueDate: LocalDate,

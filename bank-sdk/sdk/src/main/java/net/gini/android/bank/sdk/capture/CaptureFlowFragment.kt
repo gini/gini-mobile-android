@@ -16,6 +16,8 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
 import net.gini.android.bank.sdk.capture.skonto.SkontoDataExtractor
+import net.gini.android.bank.sdk.capture.skonto.SkontoFragment
+import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
@@ -24,16 +26,15 @@ import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureFragmentDirections
 import net.gini.android.capture.GiniCaptureFragmentListener
 import net.gini.android.capture.camera.CameraFragmentListener
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.internal.util.CancelListener
-import java.math.BigDecimal
-import java.time.LocalDate
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     GiniCaptureFragmentListener,
     DigitalInvoiceFragmentListener,
+    SkontoFragmentListener,
     CancelListener {
 
     private lateinit var navController: NavController
@@ -74,7 +75,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         childFragmentManager.fragmentFactory =
-            CaptureFlowFragmentFactory(this, openWithDocument, this, this)
+            CaptureFlowFragmentFactory(this, openWithDocument, this, this, this)
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
@@ -212,6 +213,22 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         )
     }
 
+
+    override fun onPayInvoiceWithSkonto(
+        specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
+        compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
+    ) {
+        didFinishWithResult = true
+        captureFlowFragmentListener.onFinishedWithResult(
+            CaptureResult.Success(
+                specificExtractions,
+                compoundExtractions,
+                emptyList()
+            )
+        )
+    }
+
+
     override fun onCancelFlow() {
         val popBackStack = navController.popBackStack()
         if (!popBackStack) {
@@ -242,6 +259,7 @@ class CaptureFlowFragmentFactory(
     private val giniCaptureFragmentListener: GiniCaptureFragmentListener,
     private val openWithDocument: Document? = null,
     private val digitalInvoiceListener: DigitalInvoiceFragmentListener,
+    private val skontoListener: SkontoFragmentListener,
     private val cancelCallback: CancelListener
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
@@ -255,6 +273,11 @@ class CaptureFlowFragmentFactory(
 
             DigitalInvoiceFragment::class.java.name -> DigitalInvoiceFragment().apply {
                 listener = digitalInvoiceListener
+                cancelListener = cancelCallback
+            }
+
+            SkontoFragment::class.java.name -> SkontoFragment().apply {
+                skontoFragmentListener = skontoListener
                 cancelListener = cancelCallback
             }
 
