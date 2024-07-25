@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -29,6 +31,10 @@ import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrient
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
@@ -51,10 +57,12 @@ private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"
 /**
  * Internal use only.
  */
-open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View, LineItemsAdapterListener {
+open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
+    LineItemsAdapterListener {
 
     private var binding by autoCleared<GbsFragmentDigitalInvoiceBinding>()
     private var lineItemsAdapter by autoCleared<LineItemsAdapter>()
+    private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.ReturnAssistant
 
     var listener: DigitalInvoiceFragmentListener? = null
         set(value) {
@@ -74,6 +82,8 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private var returnReasons: List<GiniCaptureReturnReason> = emptyList()
     private var isInaccurateExtraction: Boolean = false
     private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+    private var onBackPressedCallback: OnBackPressedCallback? = null
 
     companion object {
         internal fun getExtractionsBundle(extractions: Map<String, GiniCaptureSpecificExtraction>): Bundle =
@@ -131,7 +141,11 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                         .toMap()
             }
             returnReasons =
-                (BundleCompat.getParcelableArray(this, ARGS_RETURN_REASONS, GiniCaptureReturnReason::class.java)
+                (BundleCompat.getParcelableArray(
+                    this,
+                    ARGS_RETURN_REASONS,
+                    GiniCaptureReturnReason::class.java
+                )
                     ?.toList() as? List<GiniCaptureReturnReason>) ?: emptyList()
 
             isInaccurateExtraction = getBoolean(ARGS_INACCURATE_EXTRACTION, false)
@@ -189,6 +203,22 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         presenter?.onViewCreated()
     }
 
+    override fun onResume() {
+        super.onResume()
+        onBackPressedCallback?.isEnabled = false
+        onBackPressedCallback = activity?.onBackPressedDispatcher?.addCallback {
+            if (this@DigitalInvoiceFragment.isVisible) {
+                trackCloseTappedEvent()
+            }
+            isEnabled = false
+            cancelListener.onCancelFlow()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        onBackPressedCallback?.isEnabled = false
+    }
 
     private fun initTopNavigationBar() {
         if (GiniCapture.hasInstance()) {
@@ -201,15 +231,17 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
                 if (!GiniCapture.getInstance().isBottomNavigationBarEnabled) {
                     injectedViewAdapter.setMenuResource(R.menu.gbs_menu_digital_invoice)
-                    injectedViewAdapter.setOnMenuItemClickListener(IntervalToolbarMenuItemIntervalClickListener {
-                        if (it.itemId == R.id.help) {
-                            showHelp()
-                        }
-                        true
-                    })
+                    injectedViewAdapter.setOnMenuItemClickListener(
+                        IntervalToolbarMenuItemIntervalClickListener {
+                            if (it.itemId == R.id.help) {
+                                showHelp()
+                            }
+                            true
+                        })
                 }
 
                 injectedViewAdapter.setOnNavButtonClickListener {
+                    trackCloseTappedEvent()
                     cancelListener.onCancelFlow()
                 }
             }
@@ -217,6 +249,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     private fun showHelp() {
+        trackHelpTappedEvent()
         findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceHelpFragment())
     }
 
@@ -234,6 +267,8 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
                     injectedViewAdapter.setOnProceedClickListener {
                         presenter?.pay()
+                        trackProceedTapped()
+                        trackSdkClosedEvent()
                     }
 
                     footerDetails?.let {
@@ -274,6 +309,8 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
     override fun payButtonClicked() {
         presenter?.pay()
+        trackProceedTapped()
+        trackSdkClosedEvent()
     }
 
     /**
@@ -315,7 +352,11 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     override fun onEditLineItem(selectableLineItem: SelectableLineItem) {
-        findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceEditItemBottomSheetDialog(selectableLineItem))
+        findNavController().navigate(
+            DigitalInvoiceFragmentDirections.toDigitalInvoiceEditItemBottomSheetDialog(
+                selectableLineItem
+            )
+        )
     }
 
     override fun showOnboarding() {
@@ -428,7 +469,11 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 DigitalInvoiceBottomSheet.REQUEST_KEY,
                 viewLifecycleOwner
             ) { _: String?, result: Bundle ->
-                BundleCompat.getParcelable(result, DigitalInvoiceBottomSheet.RESULT_KEY, SelectableLineItem::class.java)
+                BundleCompat.getParcelable(
+                    result,
+                    DigitalInvoiceBottomSheet.RESULT_KEY,
+                    SelectableLineItem::class.java
+                )
                     ?.let { selectableLineItem ->
                         presenter?.updateLineItem(selectableLineItem)
                     }
@@ -453,6 +498,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
      */
     override fun onLineItemClicked(lineItem: SelectableLineItem) {
         presenter?.editLineItem(lineItem)
+        trackItemEditTappedTappedEvent()
     }
 
     /**
@@ -462,6 +508,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
      */
     override fun onLineItemSelected(lineItem: SelectableLineItem) {
         presenter?.selectLineItem(lineItem)
+        trackItemSwitchTappedTappedEvent(lineItem.selected)
     }
 
     /**
@@ -471,5 +518,57 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
      */
     override fun onLineItemDeselected(lineItem: SelectableLineItem) {
         presenter?.deselectLineItem(lineItem)
+        trackItemSwitchTappedTappedEvent(lineItem.selected)
+    }
+
+    // region Analytics
+
+    private fun trackCloseTappedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.CLOSE_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(screenName)),
+        )
+    }
+
+    private fun trackHelpTappedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.HELP_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(screenName)),
+        )
+    }
+
+    private fun trackItemSwitchTappedTappedEvent(selected: Boolean) = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.ITEM_SWITCH_TAPPED,
+            setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.SwitchActive(selected)
+            )
+        )
+    }
+
+    private fun trackItemEditTappedTappedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.EDIT_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(screenName)),
+        )
+    }
+
+    private fun trackProceedTapped() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.PROCEED_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
+        )
+    }
+
+    private fun trackSdkClosedEvent() = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SDK_CLOSED, setOf(
+                UserAnalyticsEventProperty.Screen(screenName),
+                UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful)
+            )
+        )
     }
 }
+// endregion
+

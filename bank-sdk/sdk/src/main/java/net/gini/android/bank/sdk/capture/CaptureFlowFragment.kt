@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import net.gini.android.bank.sdk.BuildConfig
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
@@ -19,6 +20,7 @@ import net.gini.android.bank.sdk.capture.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragment
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
 import net.gini.android.bank.sdk.util.disallowScreenshots
+
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
@@ -29,6 +31,11 @@ import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -45,6 +52,17 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private var willBeRestored = false
     private var didFinishWithResult = false
+
+    private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+
+    private fun setReturnReasonsEventProperty() {
+        userAnalyticsEventTracker.setUserProperty(
+            setOf(
+                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
+                UserAnalyticsUserProperty.BankSdkVersionName(BuildConfig.VERSION_NAME),
+            )
+        )
+    }
 
     fun setListener(listener: CaptureFlowFragmentListener) {
         this.captureFlowFragmentListener = listener
@@ -69,6 +87,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setReturnReasonsEventProperty()
+        userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
     }
 
@@ -125,11 +145,12 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                 if (GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true) {
                     try {
                         tryShowingReturnAssistant(result)
-                    } catch (digitalInvoiceException: DigitalInvoiceException) {
+                    } catch (notUsed: DigitalInvoiceException) {
                         tryShowingSkontoScreen(result)
                     }
                 } else {
                     finishWithResult(result)
+                    trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
                 }
             }
 
@@ -138,6 +159,18 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                 captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
             }
         }
+    }
+
+    private fun tryShowingReturnAssistant(result: CaptureSDKResult.Success) {
+        LineItemsValidator.validate(result.compoundExtractions)
+        navController.navigate(
+            GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
+                DigitalInvoiceFragment.getExtractionsBundle(result.specificExtractions),
+                DigitalInvoiceFragment.getCompoundExtractionsBundle(result.compoundExtractions),
+                result.returnReasons.toTypedArray(),
+                DigitalInvoiceFragment.getAmountsAreConsistentExtraction(result.specificExtractions)
+            )
+        )
     }
 
     private fun tryShowingSkontoScreen(result: CaptureSDKResult.Success) {
@@ -157,21 +190,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
     }
 
-    private fun tryShowingReturnAssistant(result: CaptureSDKResult.Success) {
-        LineItemsValidator.validate(result.compoundExtractions)
-        navController.navigate(
-            GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
-                DigitalInvoiceFragment.getExtractionsBundle(result.specificExtractions),
-                DigitalInvoiceFragment.getCompoundExtractionsBundle(result.compoundExtractions),
-                result.returnReasons.toTypedArray(),
-                DigitalInvoiceFragment.getAmountsAreConsistentExtraction(result.specificExtractions)
-            )
-        )
-    }
-
     private fun finishWithResult(result: CaptureSDKResult.Success) {
         didFinishWithResult = true
         captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
+        trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
     }
 
     private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
@@ -241,6 +263,16 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         fun createInstance(openWithDocument: Document? = null): CaptureFlowFragment {
             return CaptureFlowFragment(openWithDocument)
         }
+    }
+
+    private fun trackSdkClosedEvent(screen: UserAnalyticsScreen) = runCatching {
+        userAnalyticsEventTracker.trackEvent(
+            UserAnalyticsEvent.SDK_CLOSED,
+            setOf(
+                UserAnalyticsEventProperty.Screen(screen),
+                UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful),
+            )
+        )
     }
 }
 

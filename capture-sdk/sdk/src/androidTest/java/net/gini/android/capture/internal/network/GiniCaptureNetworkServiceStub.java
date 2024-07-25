@@ -14,6 +14,7 @@ import net.gini.android.capture.util.CancellationToken;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 
@@ -45,6 +46,16 @@ public class GiniCaptureNetworkServiceStub implements GiniCaptureNetworkService 
             @NonNull final GiniCaptureNetworkCallback<AnalysisResult, Error> callback) {
         callback.success(createAnalysisResult());
         return new CallbackCancellationToken(callback);
+    }
+
+    @Override
+    public void sendFeedback(@NonNull Map<String, GiniCaptureSpecificExtraction> extractions, @NonNull Map<String, GiniCaptureCompoundExtraction> compoundExtractions, @NonNull GiniCaptureNetworkCallback<Void, Error> callback) {
+        callback.success(null);
+    }
+
+    @Override
+    public void deleteGiniUserCredentials() {
+
     }
 
     @Override

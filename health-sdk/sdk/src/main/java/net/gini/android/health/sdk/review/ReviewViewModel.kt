@@ -72,6 +72,8 @@ internal class ReviewViewModel(
 
     private var openWithCounter: Int = 0
 
+    private val _paymentRequestFlow = MutableStateFlow<PaymentRequest?>(null)
+
     val isPaymentButtonEnabled: Flow<Boolean> =
         combine(giniHealth.openBankState, paymentDetails) { paymentState, paymentDetails ->
             val noEmptyFields = paymentDetails.recipient.isNotEmpty() && paymentDetails.iban.isNotEmpty() &&
@@ -305,6 +307,7 @@ internal class ReviewViewModel(
                     giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(throwable), viewModelScope)
                     return@withContext
                 }
+                _paymentRequestFlow.value = paymentRequest
                 val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
                 when (byteArrayResource) {
                     is Resource.Cancelled -> {
@@ -314,7 +317,6 @@ internal class ReviewViewModel(
                         giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")), viewModelScope)
                     }
                     is Resource.Success -> {
-                        giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(paymentRequest), viewModelScope)
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
                             _paymentNextStep.tryEmit(PaymentNextStep.OpenSharePdf(it))
@@ -322,6 +324,12 @@ internal class ReviewViewModel(
                     }
                 }
             }
+        }
+    }
+
+    internal fun setOpenBankStateAfterShareWith() {
+        _paymentRequestFlow.value?.let {
+            giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(it), viewModelScope)
         }
     }
 

@@ -14,7 +14,9 @@ import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
+import net.gini.android.health.sdk.exampleapp.configuration.ConfigurationFragment
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
+import net.gini.android.health.sdk.exampleapp.invoices.ui.AppCompatThemeInvoicesActivity
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
@@ -70,7 +72,26 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.invoicesScreen.setOnClickListener {
-            startActivity(Intent(this, InvoicesActivity::class.java))
+            startActivity(Intent(this, InvoicesActivity::class.java).apply {
+                viewModel.getPaymentComponentConfiguration()?.let {
+                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+            })
+        }
+
+        binding.appcompatThemeInvoicesScreen.setOnClickListener {
+            startActivity(Intent(this, AppCompatThemeInvoicesActivity::class.java).apply {
+                viewModel.getPaymentComponentConfiguration()?.let {
+                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+            })
+        }
+
+        with(binding.giniHealthVersion) {
+            text = "${getString(R.string.gini_health_version)} ${net.gini.android.health.sdk.BuildConfig.VERSION_NAME}"
+            setOnClickListener {
+                openConfigurationScreen()
+            }
         }
 
         configureLogging()
@@ -114,7 +135,15 @@ class MainActivity : AppCompatActivity() {
         root.addAppender(logcatAppender)
     }
 
+    private fun openConfigurationScreen() {
+        supportFragmentManager.beginTransaction()
+            .add(binding.configurationContainer.id, ConfigurationFragment.newInstance(), ConfigurationFragment::class.java.name)
+            .addToBackStack(ConfigurationFragment::class.java.name)
+            .commit()
+    }
+
     companion object {
         private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
+        val PAYMENT_COMPONENT_CONFIG = "payment_component_config"
     }
 }
