@@ -11,10 +11,6 @@ class CustomSkontoNavigationBarBottomAdapter : SkontoNavigationBarBottomAdapter 
 
     private var binding: CustomSkontoNavigationBarBinding? = null
 
-    override fun setOnHelpClickListener(onClick: () -> Unit) {
-        binding?.gbsHelpBtn?.setOnClickListener { onClick() }
-    }
-
     override fun setOnBackClickListener(onClick: () -> Unit) {
         binding?.gbsBackBtn?.setOnClickListener { onClick() }
     }

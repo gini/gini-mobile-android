@@ -5,13 +5,6 @@ import net.gini.android.capture.view.InjectedViewAdapter
 interface SkontoNavigationBarBottomAdapter : InjectedViewAdapter {
 
     /**
-     * Set the click listener for the help button.
-     *
-     * @param onClick the click function for the help button
-     */
-    fun setOnHelpClickListener(onClick: () -> Unit)
-
-    /**
      * Set the click listener for the back button.
      *
      * @param onClick the click function for the back button

@@ -43,10 +43,8 @@ fun GiniAmountTextInput(
     val parsedAmount = decimalFormatter.parseAmount(amount)
 
     var text by remember { mutableStateOf(parsedAmount) }
-
-    LaunchedEffect(key1 = parsedAmount) { // we need to reset text if amount was changed only
-        text = parsedAmount
-    }
+    
+    text = parsedAmount
 
     GiniTextInput(
         modifier = modifier,

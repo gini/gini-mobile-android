@@ -89,6 +89,7 @@ import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInp
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.ui.theme.typography.bold
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import java.math.BigDecimal
@@ -266,30 +267,37 @@ private fun ScreenReadyState(
         Column(
             modifier = Modifier
                 .padding(it)
-                .verticalScroll(scrollState)
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
-            SkontoSection(
-                modifier = Modifier.padding(vertical = 16.dp),
-                colors = screenColorScheme.skontoSectionColors,
-                amount = state.skontoAmount,
-                amountValidation = state.skontoAmountValidation,
-                dueDate = state.discountDueDate,
-                infoPaymentInDays = state.paymentInDays,
-                infoDiscountValue = state.skontoPercentage,
-                onActiveChange = onDiscountSectionActiveChange,
-                isActive = state.isSkontoSectionActive,
-                onSkontoAmountChange = onDiscountAmountChange,
-                onDueDateChanged = onDueDateChanged,
-                edgeCase = state.skontoEdgeCase,
-                onInfoBannerClicked = onInfoBannerClicked,
-            )
-            WithoutSkontoSection(
-                colors = screenColorScheme.withoutSkontoSectionColors,
-                isActive = !state.isSkontoSectionActive,
-                amount = state.fullAmount,
-                onFullAmountChange = onFullAmountChange,
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                SkontoSection(
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .tabletMaxWidth(),
+                    colors = screenColorScheme.skontoSectionColors,
+                    amount = state.skontoAmount,
+                    dueDate = state.discountDueDate,
+                    infoPaymentInDays = state.paymentInDays,
+                    infoDiscountValue = state.skontoPercentage,
+                    onActiveChange = onDiscountSectionActiveChange,
+                    isActive = state.isSkontoSectionActive,
+                    onSkontoAmountChange = onDiscountAmountChange,
+                    onDueDateChanged = onDueDateChanged,
+                    edgeCase = state.skontoEdgeCase,
+                    onInfoBannerClicked = onInfoBannerClicked,
+                )
+                WithoutSkontoSection(
+                    modifier = Modifier.tabletMaxWidth(),
+                    colors = screenColorScheme.withoutSkontoSectionColors,
+                    isActive = !state.isSkontoSectionActive,
+                    amount = state.fullAmount,
+                    onFullAmountChange = onFullAmountChange,
+                )
+            }
         }
 
         if (state.edgeCaseInfoDialogVisible) {
@@ -414,7 +422,6 @@ private fun YourInvoiceScanSection(
 private fun SkontoSection(
     colors: SkontoSectionColors,
     amount: SkontoData.Amount,
-    amountValidation: SkontoFragmentContract.State.Ready.SkontoAmountValidation,
     dueDate: LocalDate,
     infoPaymentInDays: Int,
     infoDiscountValue: BigDecimal,
@@ -429,9 +436,8 @@ private fun SkontoSection(
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
-
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         shape = RectangleShape,
         colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
     ) {
@@ -515,7 +521,6 @@ private fun SkontoSection(
                     .fillMaxWidth()
                     .padding(top = 16.dp),
                 enabled = isActive,
-                isError = amountValidation != SkontoFragmentContract.State.Ready.SkontoAmountValidation.Valid,
                 colors = colors.amountFieldColors,
                 onValueChange = { onSkontoAmountChange(it) },
                 label = stringResource(id = R.string.gbs_skonto_section_discount_field_amount_hint),
@@ -679,7 +684,7 @@ private fun WithoutSkontoSection(
     isActive: Boolean,
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         shape = RectangleShape,
         colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
     ) {
@@ -773,7 +778,7 @@ private fun FooterSection(
         }, update = {
             with(customBottomNavBarAdapter.viewAdapter) {
                 setTotalPriceText(totalPriceText)
-                setProceedButtonEnabled(proceedEnabled) // TODO Integrate validation
+                setProceedButtonEnabled(proceedEnabled)
                 setOnBackClickListener(onBackClicked)
                 setDiscountLabelText(discountLabelText)
                 setDiscountLabelVisible(isSkontoSectionActive)
@@ -784,11 +789,17 @@ private fun FooterSection(
         Card(
             modifier = modifier.fillMaxWidth(),
             shape = RectangleShape,
-            colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor)
+            colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor),
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .tabletMaxWidth()
+                    .align(Alignment.CenterHorizontally),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Column(
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                    modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                 ) {
                     Row {
                         Text(
@@ -847,7 +858,6 @@ private fun FooterSection(
                 val buttonPaddingStart = if (isBottomNavigationBarEnabled) 0.dp else 20.dp
                 val buttonPaddingEnd = if (isBottomNavigationBarEnabled) 48.dp else 24.dp
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
@@ -922,6 +932,5 @@ private val previewState = SkontoFragmentContract.State.Ready(
     paymentMethod = SkontoData.SkontoPaymentMethod.PayPal,
     skontoEdgeCase = SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly,
     edgeCaseInfoDialogVisible = false,
-    skontoAmountValidation = SkontoFragmentContract.State.Ready.SkontoAmountValidation.Invalid.SkontoAmountGreaterOfFullAmount,
     savedAmount = SkontoData.Amount(BigDecimal("3"), "EUR")
 )

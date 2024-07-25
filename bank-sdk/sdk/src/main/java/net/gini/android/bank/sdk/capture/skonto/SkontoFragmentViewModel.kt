@@ -64,10 +64,6 @@ internal class SkontoFragmentViewModel(
             paymentMethod = paymentMethod,
             skontoEdgeCase = edgeCase,
             edgeCaseInfoDialogVisible = edgeCase != null,
-            skontoAmountValidation = validateSkontoAmount(
-                skontoAmount = data.skontoAmountToPay,
-                fullAmount = data.fullAmountToPay
-            ),
             savedAmount = savedAmount
         )
     }
@@ -89,6 +85,14 @@ internal class SkontoFragmentViewModel(
 
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+
+        if (newValue > currentState.fullAmount.amount) {
+            stateFlow.emit(
+                currentState.copy(skontoAmount = currentState.skontoAmount)
+            )
+            return@launch
+        }
+
         val discount = calculateDiscount(newValue, currentState.fullAmount.amount)
         val totalAmount = if (currentState.isSkontoSectionActive)
             newValue
@@ -107,10 +111,6 @@ internal class SkontoFragmentViewModel(
                 skontoAmount = newSkontoAmount,
                 skontoPercentage = discount,
                 totalAmount = newTotalAmount,
-                skontoAmountValidation = validateSkontoAmount(
-                    newSkontoAmount,
-                    currentState.fullAmount
-                ),
                 savedAmount = savedAmount,
             )
         )
@@ -185,19 +185,6 @@ internal class SkontoFragmentViewModel(
 
     private fun calculateSavedAmount(skontoAmount: BigDecimal, fullAmount: BigDecimal) =
         fullAmount.minus(skontoAmount).coerceAtLeast(BigDecimal.ZERO)
-
-    private fun validateSkontoAmount(
-        skontoAmount: SkontoData.Amount,
-        fullAmount: SkontoData.Amount
-    ): SkontoFragmentContract.State.Ready.SkontoAmountValidation {
-        return when {
-            skontoAmount.amount <= fullAmount.amount ->
-                SkontoFragmentContract.State.Ready.SkontoAmountValidation.Valid
-
-            else ->
-                SkontoFragmentContract.State.Ready.SkontoAmountValidation.Invalid.SkontoAmountGreaterOfFullAmount
-        }
-    }
 
     private fun extractSkontoEdgeCase(
         dueDate: LocalDate,
