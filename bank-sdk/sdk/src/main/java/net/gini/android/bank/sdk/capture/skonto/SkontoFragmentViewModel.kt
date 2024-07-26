@@ -141,7 +141,7 @@ internal class SkontoFragmentViewModel(
         val skontoAmount = newValue.minus(
             newValue.multiply( // full_amount - (full_amount * (discount / 100))
                 discount.divide(BigDecimal("100"), 2, RoundingMode.HALF_UP)
-            )
+            ).setScale(2, RoundingMode.HALF_UP)
         )
 
         val savedAmountValue = calculateSavedAmount(skontoAmount, newValue)
