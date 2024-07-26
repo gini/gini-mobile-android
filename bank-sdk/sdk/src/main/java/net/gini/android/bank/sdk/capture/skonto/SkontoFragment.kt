@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -79,6 +80,7 @@ import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColo
 import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
+import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.internal.util.CancelListener
@@ -119,7 +121,14 @@ class SkontoFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+            requireActivity().window.disallowScreenshots()
+        }
         forcePortraitOrientationOnPhones(activity)
+
+        if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+            requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        }
     }
 
     override fun onCreateView(
