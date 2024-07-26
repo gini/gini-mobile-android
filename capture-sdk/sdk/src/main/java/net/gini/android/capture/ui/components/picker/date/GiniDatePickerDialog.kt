@@ -28,6 +28,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 
 @Composable
 fun GiniDatePickerDialog(
@@ -41,7 +42,10 @@ fun GiniDatePickerDialog(
 
     val dateState = rememberDatePickerState(
         selectableDates = selectableDates,
-        initialSelectedDateMillis = date.atStartOfDay(ZoneId.systemDefault()).toInstant()
+        initialSelectedDateMillis =
+        date
+            .atTime(12, 0, 0)
+            .toInstant(ZoneOffset.UTC)
             .toEpochMilli(),
     )
 
