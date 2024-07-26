@@ -139,7 +139,7 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.isChecked =
             configuration.isReviewScreenCustomBottomNavBarEnabled
 
-        binding.switchSkontoCustomBottomNavbar.isChecked  =
+        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.isChecked  =
                 configuration.isSkontoCustomNavBarEnabled
 
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
@@ -372,7 +372,7 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
-        binding.switchSkontoCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
+        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isSkontoCustomNavBarEnabled = isChecked

@@ -54,21 +54,6 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="16dp" />
 
-        <TextView
-            style="@style/TextAppearance.MaterialComponents.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/custom_bottom_navbar_switch_description" />
-
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_skontoCustomBottomNavbar"
-            style="@style/SwitchConfigurationStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/gc_medium_12"
-            android:text="@string/skonto_screen_custom_bottom_navbar_switch_label" />
-
         <include
             android:id="@+id/layout_onboardingToggles"
             layout="@layout/layout_onboarding_toggles"
