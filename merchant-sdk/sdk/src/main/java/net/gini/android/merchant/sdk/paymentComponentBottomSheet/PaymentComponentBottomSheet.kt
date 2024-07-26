@@ -6,13 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
-import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetPaymentComponentBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.util.BackListener
@@ -46,15 +43,15 @@ class PaymentComponentBottomSheet private constructor(
     ): View {
         binding = GmsBottomSheetPaymentComponentBinding.inflate(inflater, container, false)
         binding.gmsPaymentComponent.paymentComponent = viewModel.paymentComponent
-        binding.gmsPaymentComponent.findViewById<TextView>(R.id.gms_more_information).setOnClickListener {
+        binding.gmsPaymentComponent.getMoreInformationLabel().setOnClickListener {
             viewModel.paymentComponent?.listener?.onMoreInformationClicked()
             dismiss()
         }
-        binding.gmsPaymentComponent.findViewById<TextView>(R.id.gms_select_bank_button).setOnClickListener {
+        binding.gmsPaymentComponent.getBankPickerButton().setOnClickListener {
             viewModel.paymentComponent?.listener?.onBankPickerClicked()
             dismiss()
         }
-        binding.gmsPaymentComponent.findViewById<Button>(R.id.gms_pay_invoice_button).setOnClickListener {
+        binding.gmsPaymentComponent.getPayInvoiceButton().setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.paymentComponent?.onPayInvoiceClicked()
                 // if payment provider does not support GPC and review fragment will not be shown, we're in the case where we show `Open With Bottom Sheet` from the payment component directly
