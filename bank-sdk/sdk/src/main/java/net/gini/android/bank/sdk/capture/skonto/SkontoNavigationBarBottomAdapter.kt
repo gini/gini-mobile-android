@@ -5,13 +5,6 @@ import net.gini.android.capture.view.InjectedViewAdapter
 interface SkontoNavigationBarBottomAdapter : InjectedViewAdapter {
 
     /**
-     * Set the click listener for the back button.
-     *
-     * @param onClick the click function for the back button
-     */
-    fun setOnBackClickListener(onClick: () -> Unit)
-
-    /**
      * Set the click listener for the proceed button.
      *
      * @param listener the click listener for the button
@@ -19,20 +12,55 @@ interface SkontoNavigationBarBottomAdapter : InjectedViewAdapter {
     fun setOnProceedClickListener(onClick: () -> Unit)
 
     /**
-     * Enable or disable the proceed button.
+     * Set the click listener for the back button.
      *
-     * @param enabled for enabling or disabling the button
+     * @param onClick the click function for the back button
      */
-    fun setProceedButtonEnabled(enabled: Boolean)
+    fun setOnBackClickListener(onClick: () -> Unit)
 
     /**
-     * Set the total price.
+     * Set the click listener for the help button.
      *
-     * @param text price string with currency symbol
+     * @param onClick the click function for the help button
      */
-    fun setTotalPriceText(text: String)
+    fun setOnHelpClickListener(onClick: () -> Unit)
 
-    fun setDiscountLabelVisible(visible: Boolean)
+    /**
+     * Called when the total amount with currency code updated
+     *
+     * @param amount price string with currency symbol.
+     * Example value: `"100.00 EUR"`
+     */
+    fun onTotalAmountUpdated(amount: String)
 
-    fun setDiscountLabelText(text: String)
+    /**
+     * Called when Skonto percentage badge text updated.
+     *
+     * @param text formatted text.
+     * Example value: "3% Skonto discount"
+     */
+    fun onSkontoPercentageBadgeUpdated(text: String)
+
+    /**
+     * Called when visibility of Skonto badge should be changed.
+     *
+     * @param isVisible visibility flag
+     */
+    fun onSkontoPercentageBadgeVisibilityUpdate(isVisible: Boolean)
+
+    /**
+     * Called when Skonto savings amount text updated.
+     *
+     * @param text formatted text.
+     * Example value: `"Save 100.00 EUR"`
+     */
+    fun onSkontoSavingsAmountUpdated(text: String)
+
+    /**
+     * Called when Skonto savings amount visibility updated.
+     *
+     * @param isVisible visibility flag
+     */
+    fun onSkontoSavingsAmountVisibilityUpdated(isVisible: Boolean)
+
 }

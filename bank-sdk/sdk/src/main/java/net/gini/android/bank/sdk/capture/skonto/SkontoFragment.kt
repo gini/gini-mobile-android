@@ -761,15 +761,17 @@ private fun FooterSection(
         } ${totalAmount.currencyCode}"
 
     val savedAmountText =
-        "${
-            currencyFormatterWithoutSymbol().format(animatedSavedAmount).trim()
-        } ${savedAmount.currencyCode}"
+        stringResource(
+            id = R.string.gbs_skonto_section_footer_label_save,
+            "${
+                currencyFormatterWithoutSymbol().format(animatedSavedAmount).trim()
+            } ${savedAmount.currencyCode}"
+        )
 
     val discountLabelText = stringResource(
         id = R.string.gbs_skonto_section_footer_label_discount,
         animatedDiscountAmount.formatAsDiscountPercentage()
     )
-    val proceedEnabled by remember { mutableStateOf(true) }
 
     if (customBottomNavBarAdapter != null) {
         val ctx = LocalContext.current
@@ -777,12 +779,13 @@ private fun FooterSection(
             customBottomNavBarAdapter.viewAdapter.onCreateView(FrameLayout(ctx))
         }, update = {
             with(customBottomNavBarAdapter.viewAdapter) {
-                setTotalPriceText(totalPriceText)
-                setProceedButtonEnabled(proceedEnabled)
-                setOnBackClickListener(onBackClicked)
-                setDiscountLabelText(discountLabelText)
-                setDiscountLabelVisible(isSkontoSectionActive)
                 setOnProceedClickListener(onProceedClicked)
+                setOnBackClickListener(onBackClicked)
+                onTotalAmountUpdated(totalPriceText)
+                onSkontoPercentageBadgeUpdated(discountLabelText)
+                onSkontoPercentageBadgeVisibilityUpdate(isSkontoSectionActive)
+                onSkontoSavingsAmountUpdated(savedAmountText)
+                onSkontoSavingsAmountVisibilityUpdated(isSkontoSectionActive)
             }
         })
     } else {
@@ -846,10 +849,7 @@ private fun FooterSection(
                         visible = isSkontoSectionActive
                     ) {
                         Text(
-                            text = stringResource(
-                                id = R.string.gbs_skonto_section_footer_label_save,
-                                savedAmountText
-                            ),
+                            text = savedAmountText,
                             style = GiniTheme.typography.caption1,
                             color = colors.savedAmountTextColor,
                         )

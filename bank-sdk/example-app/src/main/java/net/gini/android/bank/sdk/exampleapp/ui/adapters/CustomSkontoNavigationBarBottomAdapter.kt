@@ -19,16 +19,29 @@ class CustomSkontoNavigationBarBottomAdapter : SkontoNavigationBarBottomAdapter 
         binding?.gbsPay?.setOnClickListener { onClick() }
     }
 
-    override fun setProceedButtonEnabled(enabled: Boolean) {
-        binding?.gbsPay?.isEnabled = enabled
+
+    override fun onTotalAmountUpdated(amount: String) {
+        binding?.priceTotal?.text = amount
     }
 
-    override fun setTotalPriceText(text: String) {
-        binding?.priceTotal?.text = text
+    override fun setOnHelpClickListener(onClick: () -> Unit) {
+        // Unused now
     }
 
-    override fun setDiscountLabelText(text: String) {
+    override fun onSkontoPercentageBadgeUpdated(text: String) {
         binding?.discountInfo?.text = text
+    }
+
+    override fun onSkontoPercentageBadgeVisibilityUpdate(isVisible: Boolean) {
+        binding?.discountInfo?.isVisible = isVisible
+    }
+
+    override fun onSkontoSavingsAmountUpdated(text: String) {
+        binding?.skontoSavingsAmount?.text = text
+    }
+
+    override fun onSkontoSavingsAmountVisibilityUpdated(isVisible: Boolean) {
+        binding?.skontoSavingsAmount?.isVisible = isVisible
     }
 
     override fun onCreateView(container: ViewGroup): View {
@@ -38,10 +51,6 @@ class CustomSkontoNavigationBarBottomAdapter : SkontoNavigationBarBottomAdapter 
             false
         )
         return binding!!.root
-    }
-
-    override fun setDiscountLabelVisible(visible: Boolean) {
-        binding?.discountInfo?.isVisible = visible
     }
 
     override fun onDestroy() {
