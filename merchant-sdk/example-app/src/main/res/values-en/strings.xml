@@ -21,4 +21,7 @@
     <string name="purpose">Purpose</string>
     <string name="pay_now">Pay</string>
     <string name="orders_screen">Orders Screen</string>
+
+    <string name="payment_component_two_rows">Display payment component on two rows</string>
+    <string name="check_returning_user">Check for returning user</string>
 </resources>

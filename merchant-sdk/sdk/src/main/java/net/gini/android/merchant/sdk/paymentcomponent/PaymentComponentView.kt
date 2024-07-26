@@ -19,7 +19,6 @@ import net.gini.android.merchant.sdk.databinding.GmsViewPaymentComponentBinding
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.setBackgroundTint
-import net.gini.android.merchant.sdk.util.setIntervalClickListener
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
@@ -81,8 +80,11 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
             coroutineScope = CoroutineScope(coroutineContext)
         }
         if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) {
-            setupTwoRowsLayout()
+            binding.gmsTwoRowsBankSelection.isVisible = true
             binding.gmsSingleRowBankSelection.root.visibility = View.GONE
+        } else {
+            binding.gmsSingleRowBankSelection.root.visibility = View.VISIBLE
+            binding.gmsTwoRowsBankSelection.visibility = View.GONE
         }
         checkPaymentComponentHeight()
         coroutineScope?.launch {
@@ -239,13 +241,6 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
 
     private fun setupTwoRowsLayout() {
         binding.gmsTwoRowsBankSelection.isVisible = true
-        binding.gmsSelectBankPicker.gmsSelectBankButton
-            .setIntervalClickListener {
-            if (paymentComponent == null) {
-                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
-            }
-            paymentComponent?.listener?.onBankPickerClicked()
-        }
     }
 
     private fun initViews() {
