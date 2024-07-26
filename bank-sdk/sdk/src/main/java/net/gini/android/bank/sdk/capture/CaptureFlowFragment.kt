@@ -289,14 +289,16 @@ interface CaptureFlowFragmentListener {
 
 class CaptureFlowFragmentFactory(
     private val giniCaptureFragmentListener: GiniCaptureFragmentListener,
-    private val openWithDocument: Document? = null,
+    private var openWithDocument: Document? = null,
     private val digitalInvoiceListener: DigitalInvoiceFragmentListener,
     private val skontoListener: SkontoFragmentListener,
     private val cancelCallback: CancelListener
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when (className) {
-            GiniCaptureFragment::class.java.name -> GiniCaptureFragment(openWithDocument)
+            GiniCaptureFragment::class.java.name -> GiniCaptureFragment.createInstance(
+                openWithDocument
+            ) { openWithDocument = null }
                 .apply {
                     setListener(
                         giniCaptureFragmentListener
