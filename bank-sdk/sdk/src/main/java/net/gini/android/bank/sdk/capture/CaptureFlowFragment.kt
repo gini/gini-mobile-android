@@ -142,15 +142,25 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     override fun onFinishedWithResult(result: CaptureSDKResult) {
         when (result) {
             is CaptureSDKResult.Success -> {
-                if (GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true) {
-                    try {
-                        tryShowingReturnAssistant(result)
-                    } catch (notUsed: DigitalInvoiceException) {
-                        tryShowingSkontoScreen(result)
+                when {
+                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true -> {
+                        try {
+                            tryShowingReturnAssistant(result)
+                            return
+                        } catch (notUsed: DigitalInvoiceException) {
+                            tryShowingSkontoScreen(result)
+                            return
+                        }
                     }
-                } else {
-                    finishWithResult(result)
-                    trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
+
+                    GiniBank.getCaptureConfiguration()?.skontoEnabled == true -> {
+                        tryShowingSkontoScreen(result)
+                        return
+                    }
+
+                    else -> {
+                        finishWithResult(result)
+                    }
                 }
             }
 
