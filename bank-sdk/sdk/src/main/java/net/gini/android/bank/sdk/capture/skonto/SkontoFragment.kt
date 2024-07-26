@@ -80,6 +80,7 @@ import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSect
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
@@ -115,6 +116,11 @@ class SkontoFragment : Fragment() {
         GiniBank.skontoNavigationBarBottomAdapterInstance
     private var customBottomNavigationBarView: View? = null
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        forcePortraitOrientationOnPhones(activity)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
