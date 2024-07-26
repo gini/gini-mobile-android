@@ -684,6 +684,9 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 break;
             }
         }
+        if (!uploadFailed) {
+            hideIndicator();
+        }
         setNextButtonEnabled(!uploadFailed);
     }
 
@@ -815,7 +818,6 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                         }
 
                     } else if (requestResult != null) {
-                        hideIndicator();
                         mDocumentUploadResults.put(document.getId(), true);
                     }
                     updateNextButtonVisibility();
