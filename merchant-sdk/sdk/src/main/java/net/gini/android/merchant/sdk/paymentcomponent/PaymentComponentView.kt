@@ -150,9 +150,7 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
         context?.wrappedWithGiniMerchantTheme()?.let { context ->
-            if (paymentComponent?.bankPickerRows == BankPickerRows.SINGLE) {
-                binding.gmsSingleRowBankSelection.gmsPayInvoiceButton
-            }
+            payInvoiceButton.visibility = View.GONE
             paymentProviderAppIconHolder.root.visibility = View.GONE
             selectBankButton.text = context.getString(R.string.gms_select_bank)
             selectBankButton.setCompoundDrawablesWithIntrinsicBounds(
