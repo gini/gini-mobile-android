@@ -43,8 +43,8 @@
     <!-- region Skonto -->
     <string name="gbs_skonto_screen_title">Skonto</string>
     <!--   region Section Invoice Scan -->
-    <string name="gbs_skonto_section_invoice_scan_title">Rechnung</string>
-    <string name="gbs_skonto_section_invoice_scan_subtitle">Tippen Sie hier zur Ansicht</string>
+    <string name="gbs_skonto_section_invoice_preview_title">Rechnung</string>
+    <string name="gbs_skonto_invoice_section_preview_subtitle">Tippen Sie hier zur Ansicht</string>
     <!--   endregion  -->
     <!--   region Section Discount -->
     <string name="gbs_skonto_section_discount_title">Mit Skonto</string>

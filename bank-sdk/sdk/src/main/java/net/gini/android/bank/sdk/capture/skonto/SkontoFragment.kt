@@ -412,12 +412,12 @@ private fun YourInvoiceScanSection(
                     .weight(0.1f)
             ) {
                 Text(
-                    text = stringResource(id = R.string.gbs_skonto_section_invoice_scan_title),
+                    text = stringResource(id = R.string.gbs_skonto_section_invoice_preview_title),
                     style = GiniTheme.typography.subtitle1,
                     color = colorScheme.titleTextColor
                 )
                 Text(
-                    text = stringResource(id = R.string.gbs_skonto_section_invoice_scan_subtitle),
+                    text = stringResource(id = R.string.gbs_skonto_invoice_section_preview_subtitle),
                     style = GiniTheme.typography.body2,
                     color = colorScheme.subtitleTextColor
                 )

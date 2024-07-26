@@ -43,15 +43,15 @@
     <!-- region Skonto -->
     <string name="gbs_skonto_screen_title">Discount</string>
     <!--   region Section Invoice Scan -->
-    <string name="gbs_skonto_section_invoice_scan_title">Invoice</string>
-    <string name="gbs_skonto_section_invoice_scan_subtitle">Tap to view</string>
+    <string name="gbs_skonto_section_invoice_preview_title">Invoice</string>
+    <string name="gbs_skonto_invoice_section_preview_subtitle">Tap to view</string>
     <!--   endregion  -->
     <!--   region Section Discount -->
     <string name="gbs_skonto_section_discount_title">With discount</string>
     <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Active</string>
     <string name="gbs_skonto_section_discount_info_banner_normal_message">Pay in %1$s days: %2$s discount</string>
     <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Pay today: %1$s discount</string>
-    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">A %1$s discount is available for cash payment within %2$s days</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">A %1$s discount is possible for cash payment within %2$s days</string>
     <string name="gbs_skonto_section_discount_info_banner_date_expired_message">The %1$s discount has expired</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Final amount</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Expiry date</string>
