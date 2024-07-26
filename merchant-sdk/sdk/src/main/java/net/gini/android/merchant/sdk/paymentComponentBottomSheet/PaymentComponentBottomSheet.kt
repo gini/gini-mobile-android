@@ -12,10 +12,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetPaymentComponentBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
+import org.jetbrains.annotations.VisibleForTesting
 
 
 class PaymentComponentBottomSheet private constructor(
@@ -28,6 +30,8 @@ class PaymentComponentBottomSheet private constructor(
     private var binding: GmsBottomSheetPaymentComponentBinding by autoCleared()
     private val viewModel by viewModels<PaymentComponentBottomSheetViewModel> { PaymentComponentBottomSheetViewModel.Factory(paymentComponent, backListener, reviewFragmentShown) }
 
+    @VisibleForTesting
+    internal lateinit var paymentComponentView: PaymentComponentView
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         viewModel.backListener?.let {
@@ -59,6 +63,7 @@ class PaymentComponentBottomSheet private constructor(
                 dismiss()
             }
         }
+        paymentComponentView = binding.gmsPaymentComponent
         return binding.root
     }
 

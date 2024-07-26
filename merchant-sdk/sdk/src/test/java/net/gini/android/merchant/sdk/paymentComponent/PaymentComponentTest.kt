@@ -486,6 +486,7 @@ class PaymentComponentTest {
     fun `rechecks returning user`() = runTest {
         // Given
         val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        paymentComponent.shouldCheckReturningUser = true
 
         paymentComponent.checkReturningUser()
 
@@ -505,6 +506,7 @@ class PaymentComponentTest {
     fun `calls to save returning user`() = runTest {
         // Given
         val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        paymentComponent.shouldCheckReturningUser = true
 
         paymentComponent.checkReturningUser()
 
