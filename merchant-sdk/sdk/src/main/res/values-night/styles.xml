@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- region Theme -->
+
+    <style name="GiniMerchantTheme" parent="Root.GiniMerchantTheme">
+        <item name="colorPrimary">@color/gms_accent_01</item>
+        <item name="colorPrimaryDark">@color/gms_dark_01</item>
+        <item name="colorOnPrimary">@color/gms_light_01</item>
+        <item name="colorSurface">@color/gms_light_07</item>
+        <item name="backgroundColor">@color/gms_dark_01</item>
+        <item name="colorOnBackground">@color/gms_light_01</item>
+        <item name="dividerColor">@color/gms_dark_02</item>
+        <item name="colorSurfaceInverse">@color/gms_light_04</item>
+        <item name="colorOnSurfaceInverse">@color/gms_dark_02</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- endregion -->
+
+    <!-- region Widgets -->
+
+    <style name="GiniMerchantTheme.Widget.Button.OutlinedButton" parent="Root.GiniMerchantTheme.Widget.Button.OutlinedButton">
+        <item name="strokeColor">@color/gms_light_05</item>
+    </style>
+
+    <style name="GiniMerchantTheme.Widget.Button.IconButton" parent="Root.GiniMerchantTheme.Widget.Button.IconButton">
+        <item name="iconTint">@color/gms_light_02</item>
+    </style>
+
+    <style name="GiniMerchantTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniMerchantTheme.ThemeOverlay.BottomSheetDialog">
+        <item name="colorPrimary">@color/gms_light_07</item>
+        <item name="bottomSheetStyle">@style/GiniMerchantTheme.Widget.BottomSheet</item>
+    </style>
+
+    <style name="GiniMerchantTheme.Widget.BottomSheet" parent="Root.GiniMerchantTheme.Widget.BottomSheet">
+        <item name="backgroundTint">@color/gms_light_07</item>
+    </style>
+
+    <style name="GiniMerchantTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniMerchantTheme.Widget.BottomSheet.DragHandle">
+        <item name="tint">@color/gms_light_05</item>
+    </style>
+    <!-- endregion -->
+    
+</resources>

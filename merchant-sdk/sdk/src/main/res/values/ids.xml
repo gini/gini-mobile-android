@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item
+        type="id"
+        name="text_input_layout_tag_is_error_enabled" />
+    <item
+        type="id"
+        name="text_input_layout_tag_error_string_id" />
+</resources>

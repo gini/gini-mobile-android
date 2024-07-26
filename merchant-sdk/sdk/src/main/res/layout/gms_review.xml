@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gms_payment_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/recipient_layout"
+        style="@style/GiniMerchantTheme.PaymentInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gms_medium_12"
+        android:paddingTop="@dimen/gms_medium"
+        android:nextFocusForward="@id/iban_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/iban_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/recipient"
+            style="@style/GiniMerchantTheme.PaymentInputEditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/gms_recipient_hint"
+            android:paddingTop="@dimen/gms_large_28"
+            android:paddingBottom="@dimen/gms_medium"
+            android:paddingStart="@dimen/gms_medium_12"
+            android:paddingEnd="@dimen/gms_zero"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/iban_layout"
+        style="@style/GiniMerchantTheme.PaymentInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/gms_medium"
+        android:paddingTop="@dimen/gms_medium"
+        android:hint="@string/gms_iban_hint"
+        app:layout_constraintEnd_toStartOf="@id/amount_layout"
+        app:layout_constraintHorizontal_weight="@dimen/gms_float_0.7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/amount_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/iban"
+            style="@style/GiniMerchantTheme.PaymentInputEditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/gms_large_28"
+            android:paddingBottom="@dimen/gms_medium"
+            android:paddingStart="@dimen/gms_medium_12"
+            android:paddingEnd="@dimen/gms_zero"
+            android:nextFocusDown="@id/amount" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/amount_layout"
+        style="@style/GiniMerchantTheme.PaymentInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/gms_medium"
+        app:errorContentDescription="@string/gms_invalid_amount_content_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="@dimen/gms_float_0.3"
+        app:layout_constraintStart_toEndOf="@id/iban_layout"
+        app:layout_constraintTop_toTopOf="@id/iban_layout"
+        app:suffixText="€">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/amount"
+            style="@style/GiniMerchantTheme.PaymentInputEditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/gms_large_28"
+            android:paddingBottom="@dimen/gms_medium"
+            android:paddingEnd="@dimen/gms_medium"
+            android:digits="0123456789.,"
+            android:hint="@string/gms_amount_hint"
+            android:inputType="numberDecimal" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/iban_amount_barrier_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="iban_layout,amount_layout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/purpose_layout"
+        style="@style/GiniMerchantTheme.PaymentInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/gms_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iban_amount_barrier_bottom"
+        app:layout_constraintBottom_toTopOf="@id/payment">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/purpose"
+            style="@style/GiniMerchantTheme.PaymentInputEditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/gms_large_28"
+            android:paddingBottom="@dimen/gms_medium"
+            android:paddingStart="@dimen/gms_medium_12"
+            android:paddingEnd="@dimen/gms_zero"
+            android:hint="@string/gms_purpose_hint" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/payment"
+        style="@style/GiniMerchantTheme.Widget.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gms_medium"
+        android:enabled="false"
+        android:text="@string/gms_pay_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/purpose_layout" />
+
+    <ProgressBar
+        android:id="@+id/payment_progress"
+        style="@style/GiniMerchant.PaymentButtonProgressStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:padding="@dimen/gms_medium"
+        app:layout_constraintBottom_toBottomOf="@id/payment"
+        app:layout_constraintEnd_toEndOf="@id/payment"
+        app:layout_constraintStart_toStartOf="@id/payment"
+        app:layout_constraintTop_toTopOf="@id/payment" />
+
+    <include layout="@layout/gms_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/gms_large"
+        android:layout_marginBottom="@dimen/gms_medium"
+        android:layout_marginTop="@dimen/gms_small"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/payment"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</merge>

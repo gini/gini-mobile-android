@@ -1,0 +1,55 @@
+name: Build docs for Merchant SDK
+
+on:
+  push:
+    paths:
+      - 'merchant-sdk/**'
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  pull_request:
+    types: [opened, edited, reopened]
+    paths:
+      - 'merchant-sdk/**'
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 'pypy2.7'
+
+      - name: setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2.0'
+          bundler-cache: true
+
+      - name: build documentation
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: 'build_documentation'
+          options: >
+            { 
+              "project_id": "merchant-sdk", 
+              "module_id": "sdk"
+            }
+
+      - name: archive documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: merchant-sdk-documentation
+          path: merchant-sdk/sdk/build/docs

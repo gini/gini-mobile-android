@@ -34,8 +34,8 @@ is used for creating release builds which can be shared with clients while the `
 for QA purposes. The difference between `prod` and `qa` is that `qa` allows using custom SSL root certificates for
 SSL proxies (e.g. Charles Proxy).
 
-Payment Providers for testing Gini Pay Connect and the Health SDK
-==============================================================
+Payment Providers for testing Gini Pay Connect with the Health SDK or Merchant SDK
+==================================================================================
 
 Run `bundle exec fastlane install_test_payment_provider_apps` in the repository root to install test payment provider apps 
 on all running emulators and connected devices. You can run `bundle exec fastlane uninstall_test_payment_provider_apps`

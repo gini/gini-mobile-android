@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/gms_large"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        style="@style/GiniMerchantTheme.Widget.BottomSheet.DragHandle"
+        android:id="@+id/drag_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/gms_install_app_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/gms_install_app_title"
+        style="@style/GiniMerchantTheme.Typography.Subtitle1"
+        android:layout_marginHorizontal="@dimen/gms_large"
+        android:textColor="@color/gms_install_app_title_color"
+        app:layout_constraintTop_toBottomOf="@id/drag_handle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <include layout="@layout/gms_payment_provider_icon_holder"
+        android:id="@+id/gms_payment_provider_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gms_medium_12"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gms_install_app_title"
+        app:layout_constraintBottom_toTopOf="@id/gms_install_app_details"/>
+
+    <TextView
+        android:id="@+id/gms_install_app_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/gms_install_app_detail"
+        android:drawableLeft="@drawable/gms_info_circle_icon"
+        android:drawablePadding="@dimen/gms_large"
+        android:drawableTint="@color/gms_install_app_details_color"
+        android:textColor="@color/gms_install_app_details_color"
+        style="@style/GiniMerchantTheme.Typography.Caption1"
+        android:layout_marginHorizontal="@dimen/gms_large"
+        android:layout_marginTop="@dimen/gms_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gms_payment_provider_icon"
+        />
+
+    <Button
+        android:id="@+id/gms_forward_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/GiniMerchantTheme.Widget.Button.OutlinedButton"
+        android:text="@string/gms_forward"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/gms_small"
+        android:layout_marginHorizontal="@dimen/gms_large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/gms_powered_by_gini_layout"
+        app:layout_constraintTop_toBottomOf="@id/gms_install_app_details"/>
+
+    <ImageButton
+        android:id="@+id/gms_play_store_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:src="@drawable/gms_play_store_logo"
+        android:background="@null"
+        android:visibility="visible"
+        android:contentDescription="@string/gms_play_store_content_description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/gms_powered_by_gini_layout"
+        app:layout_constraintTop_toBottomOf="@id/gms_install_app_details"
+        />
+
+    <include layout="@layout/gms_powered_by_gini"
+        android:id="@+id/gms_powered_by_gini_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/gms_large"
+        android:layout_marginEnd="@dimen/gms_large"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
