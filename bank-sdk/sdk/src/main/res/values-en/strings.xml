@@ -41,36 +41,36 @@
     <string name="gbs_help_online_shops_text">We are currently focused on the most popular online merchants in the market. More retailers will be added in the future.</string>
     <string name="gbs_articles">Articles</string>
     <!-- region Skonto -->
-    <string name="gbs_skonto_screen_title">Skonto</string>
+    <string name="gbs_skonto_screen_title">Discount</string>
     <!--   region Section Invoice Scan -->
-    <string name="gbs_skonto_section_invoice_scan_title">Your invoice</string>
-    <string name="gbs_skonto_section_invoice_scan_subtitle">Tap here to view</string>
+    <string name="gbs_skonto_section_invoice_scan_title">Invoice</string>
+    <string name="gbs_skonto_section_invoice_scan_subtitle">Tap to view</string>
     <!--   endregion  -->
     <!--   region Section Discount -->
-    <string name="gbs_skonto_section_discount_title">With Skonto discount</string>
+    <string name="gbs_skonto_section_discount_title">With discount</string>
     <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Active</string>
-    <string name="gbs_skonto_section_discount_info_banner_normal_message">Pay in %1$s days: %2$s off.</string>
-    <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Pay today: %1$s discount.</string>
+    <string name="gbs_skonto_section_discount_info_banner_normal_message">Pay in %1$s days: %2$s discount</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Pay today: %1$s discount</string>
     <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">A %1$s discount is available for cash payment within %2$s days</string>
-    <string name="gbs_skonto_section_discount_info_banner_date_expired_message">The %1$s discount has expired.</string>
-    <string name="gbs_skonto_section_discount_field_amount_hint">Final Amount</string>
-    <string name="gbs_skonto_section_discount_field_due_date_hint">Due date</string>
+    <string name="gbs_skonto_section_discount_info_banner_date_expired_message">The %1$s discount has expired</string>
+    <string name="gbs_skonto_section_discount_field_amount_hint">Final amount</string>
+    <string name="gbs_skonto_section_discount_field_due_date_hint">Expiry date</string>
     <!--   endregion -->
     <!--   region Section Without Discount -->
-    <string name="gbs_skonto_section_without_discount_title">Without Skonto discount</string>
+    <string name="gbs_skonto_section_without_discount_title">Without discount</string>
     <string name="gbs_skonto_section_without_discount_hint_label_enabled">  •  Active</string>
     <string name="gbs_skonto_section_without_discount_field_amount_hint">Full amount</string>
     <!--   endregion -->
     <!--   region Footer -->
     <string name="gbs_skonto_section_footer_title">Total</string>
-    <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto discount</string>
+    <string name="gbs_skonto_section_footer_label_discount">%1$s discount</string>
     <string name="gbs_skonto_section_footer_label_save">Save %1$s</string>
-    <string name="gbs_skonto_section_footer_continue_button_text">Continue to pay</string>
+    <string name="gbs_skonto_section_footer_continue_button_text">Proceed</string>
     <!--   endregion -->
     <!--   region InfoDialog -->
     <string name="gbs_skonto_section_info_dialog_pay_today_message">A discount is indicated on this invoice, it will expire after today.</string>
     <string name="gbs_skonto_section_info_dialog_pay_cash_message">A discount is indicated on this invoice, but it can only be used for cash deposit through a bank terminal.</string>
-    <string name="gbs_skonto_section_info_dialog_date_expired_message">You could have paid this invoice with a %1$s discount, but the discount period has already expired.</string>
+    <string name="gbs_skonto_section_info_dialog_date_expired_message">You could have paid this invoice with a %1$s cash discount, but the discount period has already expired.</string>
     <string name="gbs_skonto_section_info_dialog_ok_button_text">Got it</string>
     <!--   endregion -->
     <!-- endregion -->
