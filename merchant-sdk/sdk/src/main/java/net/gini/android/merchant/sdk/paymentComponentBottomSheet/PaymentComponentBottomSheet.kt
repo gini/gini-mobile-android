@@ -46,6 +46,7 @@ class PaymentComponentBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GmsBottomSheetPaymentComponentBinding.inflate(inflater, container, false)
+        binding.gmsPaymentComponent.reviewFragmentWillBeShown = viewModel.reviewFragmentShown
         binding.gmsPaymentComponent.paymentComponent = viewModel.paymentComponent
         binding.gmsPaymentComponent.getMoreInformationLabel().setOnClickListener {
             viewModel.paymentComponent?.listener?.onMoreInformationClicked()

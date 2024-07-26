@@ -67,6 +67,8 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
      */
     var documentId: String? = null
 
+    var reviewFragmentWillBeShown: Boolean = false
+
     private val binding = GmsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniMerchantTheme(), this)
     private lateinit var selectBankButton: Button
     private lateinit var payInvoiceButton: Button
@@ -239,14 +241,12 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
         coroutineScope = null
     }
 
-    private fun setupTwoRowsLayout() {
-        binding.gmsTwoRowsBankSelection.isVisible = true
-    }
-
     private fun initViews() {
         selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gmsSelectBankButton else binding.gmsSingleRowBankSelection.gmsSelectBankButton
         payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsPayInvoiceButtonTwoRows else binding.gmsSingleRowBankSelection.gmsPayInvoiceButton
         paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gmsPaymentProviderAppIconHolder else binding.gmsSingleRowBankSelection.gmsPaymentProviderAppIconHolder
+
+        payInvoiceButton.text = if (reviewFragmentWillBeShown) resources.getString(R.string.gms_continue_to_overview) else resources.getString(R.string.gms_pay_button)
     }
 
     fun getMoreInformationLabel() = binding.gmsMoreInformation
