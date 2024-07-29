@@ -49,9 +49,9 @@
     <!--   region Section Discount -->
     <string name="gbs_skonto_section_discount_title">Mit Skonto</string>
     <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Aktiviert</string>
-    <string name="gbs_skonto_section_discount_info_banner_normal_message">Zahlung in %1$s Tagen: %2$s Skonto.</string>
+    <string name="gbs_skonto_section_discount_info_banner_normal_message">Zahlung in %1$s: %2$s Skonto</string>
     <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Zahlung heute: %1$s Skonto</string>
-    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">%1$s Skonto sind bei Barzahlung innerhalb von %2$s Tagen möglich.</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">%1$s Skonto sind bei Barzahlung innerhalb von %2$s möglich</string>
     <string name="gbs_skonto_section_discount_info_banner_date_expired_message">Die %1$s Skonto sind abgelaufen</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Betrag nach Abzug</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Ablaufdatum Skonto</string>

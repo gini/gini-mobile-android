@@ -49,9 +49,9 @@
     <!--   region Section Discount -->
     <string name="gbs_skonto_section_discount_title">With discount</string>
     <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Active</string>
-    <string name="gbs_skonto_section_discount_info_banner_normal_message">Pay in %1$s days: %2$s discount</string>
+    <string name="gbs_skonto_section_discount_info_banner_normal_message">Pay in %1$s: %2$s discount</string>
     <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Pay today: %1$s discount</string>
-    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">A %1$s discount is possible for cash payment within %2$s days</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">A %1$s discount is possible for cash payment within %2$s</string>
     <string name="gbs_skonto_section_discount_info_banner_date_expired_message">The %1$s discount has expired</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Final amount</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Expiry date</string>
