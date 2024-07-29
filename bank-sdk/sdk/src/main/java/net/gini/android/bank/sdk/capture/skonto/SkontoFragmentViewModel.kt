@@ -195,11 +195,12 @@ internal class SkontoFragmentViewModel(
             dueDate.isBefore(today) ->
                 SkontoFragmentContract.SkontoEdgeCase.SkontoExpired
 
-            dueDate == today ->
-                SkontoFragmentContract.SkontoEdgeCase.SkontoLastDay
 
             paymentMethod == SkontoData.SkontoPaymentMethod.Cash ->
                 SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly
+
+            dueDate == today ->
+                SkontoFragmentContract.SkontoEdgeCase.SkontoLastDay
 
             else -> null
         }

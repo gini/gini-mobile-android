@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="days_zero">heute</string>
     <plurals name="days">
-        <item quantity="zero">heute</item>
+        <item quantity="zero">@string/days_zero</item>
         <item quantity="one">%1$s Tag</item>
         <item quantity="other">%1$s Tagen</item>
     </plurals>
