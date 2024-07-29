@@ -24,6 +24,7 @@ class OpenWithBottomSheetTest {
         launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
             OpenWithBottomSheet.newInstance(
                 mockk(relaxed = true),
+                mockk(),
                 listener
             )
         }
