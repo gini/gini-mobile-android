@@ -937,7 +937,7 @@ private fun ScreenReadyStatePreview() {
 
 private fun Float.formatAsDiscountPercentage(): String {
     val value = BigDecimal(this.toString()).setScale(2, RoundingMode.HALF_UP)
-    return "${value.toString().trimEnd('0').trimEnd('.')}%"
+    return "${value.toString().trimEnd('0').trimEnd('.')} %"
 }
 
 private val previewState = SkontoFragmentContract.State.Ready(
