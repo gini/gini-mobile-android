@@ -59,6 +59,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -489,12 +490,15 @@ private fun SkontoSection(
                 label = "discountAmount"
             )
 
+            val remainingDaysText =
+                pluralStringResource(id = R.plurals.days, count = infoPaymentInDays)
+
             val infoBannerText = when (edgeCase) {
                 SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly ->
                     stringResource(
                         id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_message,
                         animatedDiscountAmount.formatAsDiscountPercentage(),
-                        infoPaymentInDays.toString()
+                        remainingDaysText
                     )
 
                 SkontoFragmentContract.SkontoEdgeCase.SkontoExpired ->
@@ -511,7 +515,7 @@ private fun SkontoSection(
 
                 else -> stringResource(
                     id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
-                    infoPaymentInDays.toString(),
+                    remainingDaysText,
                     animatedDiscountAmount.formatAsDiscountPercentage()
                 )
             }
