@@ -491,7 +491,7 @@ private fun SkontoSection(
             )
 
             val remainingDaysText =
-                pluralStringResource(id = R.plurals.days, count = infoPaymentInDays)
+                pluralStringResource(id = R.plurals.days, count = infoPaymentInDays, infoPaymentInDays.toString())
 
             val infoBannerText = when (edgeCase) {
                 SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly ->
