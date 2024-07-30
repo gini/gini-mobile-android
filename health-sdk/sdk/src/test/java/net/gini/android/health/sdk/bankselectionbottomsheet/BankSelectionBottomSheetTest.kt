@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk.bankselectionbottomsheet
 
 import android.content.Context
-import android.widget.TextView
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
@@ -10,7 +9,6 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.android.material.button.MaterialButton
 import com.google.common.truth.Truth
 import io.mockk.every
 import io.mockk.mockk
@@ -24,14 +22,12 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderAppColors
 import net.gini.android.health.sdk.util.GiniLocalization
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,7 +37,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class BankSelectionBottomSheetTest {
     private var context: Context? = null
-    private lateinit var paymentComponentWithLocale: PaymentComponent
+    private var paymentComponentWithLocale: PaymentComponent? = null
     private lateinit var giniHealth: GiniHealth
     private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
     private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
@@ -105,6 +101,8 @@ class BankSelectionBottomSheetTest {
     @After
     fun tearDown() {
         paymentComponent = null
+        paymentComponentWithLocale = null
+        context = null
     }
 
     @Test
@@ -154,7 +152,7 @@ class BankSelectionBottomSheetTest {
 
         // When
         launchFragmentInContainer {
-            BankSelectionBottomSheet.newInstance(paymentComponentWithLocale)
+            BankSelectionBottomSheet.newInstance(paymentComponentWithLocale!!)
         }
 
         // Then

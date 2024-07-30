@@ -189,7 +189,7 @@ private fun Context.wrappedWithCustomLocale(locale: Locale): Context = CustomLoc
 private fun Context.wrappedWithGiniHealthTheme(): Context = ContextThemeWrapper(this, R.style.GiniHealthTheme)
 
 internal fun Context.wrappedWithGiniHealthThemeAndLocale(locale: Locale? = null): Context =
-    if (locale == null) {
+    if (locale == null || locale.language.isEmpty()) {
         this.wrappedWithGiniHealthTheme()
     } else {
         this.wrappedWithCustomLocale(locale).wrappedWithGiniHealthTheme()
