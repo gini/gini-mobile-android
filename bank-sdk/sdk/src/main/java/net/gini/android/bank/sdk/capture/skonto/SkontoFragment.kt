@@ -676,6 +676,10 @@ private fun InfoDialog(
     ) {
         Card(
             modifier = modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(28.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = colors.cardBackgroundColor
+            )
         ) {
             Text(
                 modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
