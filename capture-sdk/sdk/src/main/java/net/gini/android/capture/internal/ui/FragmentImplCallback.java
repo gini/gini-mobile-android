@@ -1,6 +1,5 @@
 package net.gini.android.capture.internal.ui;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
@@ -13,6 +12,10 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Internal use only.
@@ -54,4 +57,13 @@ public interface FragmentImplCallback {
     @NonNull
     NavController findNavController();
 
+    @NonNull
+    default void safeNavigate(@NonNull final NavDirections navDirections) {
+        try {
+            findNavController().navigate(navDirections);
+        } catch (Exception exception) {
+            Logger logger = LoggerFactory.getLogger(FragmentImplCallback.class);
+            logger.error("Navigation exception " + exception.getMessage());
+        }
+    }
 }
