@@ -24,7 +24,7 @@
         android:alpha="0.15"
         android:background="@color/gc_error_01"/>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/gc_error_header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,15 +32,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_alignParentTop="true"
+        android:orientation="horizontal"
         android:layout_marginTop="@dimen/gc_large"
-        android:minHeight="@dimen/gc_large_64"
-        android:paddingStart="@dimen/gc_large_24"
-        android:paddingEnd="@dimen/gc_large_24">
+        android:minHeight="@dimen/gc_large_42"
+        android:paddingStart="@dimen/gc_large_48"
+        android:paddingEnd="@dimen/gc_large_48">
 
         <ImageView
             android:id="@+id/gc_error_header_icon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_toStartOf="@id/gc_error_header"
             android:layout_marginEnd="@dimen/gc_large_24"
@@ -51,22 +52,21 @@
             android:id="@+id/gc_error_header"
             style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/gc_error_upload_title" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/gc_error_textview"
         style="@style/GiniCaptureTheme.Typography.Body2"
-        android:layout_width="@dimen/gc_tablet_width"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/gc_large_24"
         android:textColor="@color/gc_dark_06"
         android:text="@string/gc_error_upload_text"
-        android:layout_marginStart="@dimen/gc_large_24"
-        android:layout_marginEnd="@dimen/gc_large_24"
+        android:layout_marginStart="@dimen/gc_large_48"
+        android:layout_marginEnd="@dimen/gc_large_48"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/gc_error_button_container"
