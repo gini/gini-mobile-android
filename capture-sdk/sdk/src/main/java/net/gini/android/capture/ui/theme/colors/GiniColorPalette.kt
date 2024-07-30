@@ -254,7 +254,7 @@ internal fun giniLightColorScheme(
             text = GiniColorScheme.TextField.Text(
                 focused = dark02,
                 unfocused = dark02,
-                disabled = dark06,
+                disabled = dark02,
                 error = error02
             ), label = GiniColorScheme.TextField.Label(
                 focused = accent01,
@@ -365,7 +365,7 @@ internal fun giniDarkColorScheme(
             text = GiniColorScheme.TextField.Text(
                 focused = light01,
                 unfocused = light01,
-                disabled = dark06,
+                disabled = light01,
                 error = error02
             ),
             label = GiniColorScheme.TextField.Label(
