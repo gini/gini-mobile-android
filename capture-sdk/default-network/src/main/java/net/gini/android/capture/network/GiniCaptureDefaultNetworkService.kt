@@ -9,9 +9,12 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.GiniBankAPIBuilder
+import net.gini.android.bank.api.models.*
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
+import net.gini.android.capture.internal.network.AmplitudeRoot
+import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService.Companion.builder
 import net.gini.android.capture.network.logging.formattedErrorMessage
@@ -25,9 +28,11 @@ import net.gini.android.core.api.authorization.SessionManager
 import okhttp3.Cache
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.TrustManager
 import kotlin.coroutines.CoroutineContext
+import net.gini.android.bank.api.models.Configuration as BankConfiguration
 
 /**
  * Created by Alpár Szotyori on 30.09.22.
@@ -59,7 +64,8 @@ class GiniCaptureDefaultNetworkService(
 ) : GiniCaptureNetworkService {
 
     private val coroutineScope = CoroutineScope(coroutineContext)
-    private val giniApiDocuments: MutableMap<String, net.gini.android.core.api.models.Document> = mutableMapOf()
+    private val giniApiDocuments: MutableMap<String, net.gini.android.core.api.models.Document> =
+        mutableMapOf()
 
     /**
      * Contains the document which was created when the user uploaded an image or a pdf for
@@ -75,6 +81,111 @@ class GiniCaptureDefaultNetworkService(
      */
     var analyzedGiniApiDocument: net.gini.android.core.api.models.Document? = null
         private set
+
+
+    override fun sendEvents(
+        amplitudeRoot: AmplitudeRoot,
+        callback: GiniCaptureNetworkCallback<Void, Error>
+    ): CancellationToken? =
+        launchCancellable {
+            when (val configurationResource =
+                giniBankApi.documentManager.sendEvents(
+                    mapAmplitudeRootModelToAmplitudeRoot(
+                        amplitudeRoot
+                    )
+                )) {
+                is Resource.Success -> {
+                    LOG.debug(
+                        "Send events success"
+                    )
+                    callback.success(null)
+                }
+
+                is Resource.Error -> {
+                    LOG.debug(
+                        "Send events failed"
+                    )
+                    val error = Error(configurationResource.formattedErrorMessage)
+                    LOG.error(
+                        "Send events failed for {}",
+                        error.message
+                    )
+                    callback.failure(error)
+                }
+
+                is Resource.Cancelled -> {
+                    LOG.debug("Send events cancelled")
+                    callback.cancelled()
+                }
+            }
+        }
+
+    private fun mapAmplitudeRootModelToAmplitudeRoot(amplitudeRoot: AmplitudeRoot) =
+        AmplitudeRoot(
+            apiKey = amplitudeRoot.apiKey,
+            events = amplitudeRoot.events.map { event ->
+                AmplitudeEvent(
+                    userId = event.userId,
+                    deviceId = event.deviceId,
+                    eventType = event.eventType,
+                    sessionId = event.sessionId,
+                    eventId = event.eventId,
+                    time = event.time,
+                    platform = event.platform,
+                    osVersion = event.osVersion,
+                    deviceManufacturer = event.deviceManufacturer,
+                    deviceBrand = event.deviceBrand,
+                    deviceModel = event.deviceModel,
+                    versionName = event.versionName,
+                    osName = event.osName,
+                    carrier = event.carrier,
+                    language = event.language,
+                    eventProperties = event.eventProperties,
+                    userProperties = event.userProperties,
+                )
+            }
+        )
+
+
+    override fun getConfiguration(callback: GiniCaptureNetworkCallback<Configuration, Error>): CancellationToken? =
+        launchCancellable {
+            when (val configurationResource = giniBankApi.documentManager.getConfigurations()) {
+                is Resource.Success -> {
+                    LOG.debug(
+                        "Get configuration success"
+                    )
+                    callback.success(mapBankConfigurationToConfiguration(configurationResource.data))
+                }
+
+                is Resource.Error -> {
+                    LOG.debug(
+                        "Get configuration error for {}: {}"
+                    )
+                    val error = Error(configurationResource.formattedErrorMessage)
+                    LOG.error(
+                        "Document deletion failed for api id {}",
+                        error.message
+                    )
+                    callback.failure(error)
+                }
+
+                is Resource.Cancelled -> {
+                    LOG.debug("Get configuration cancelled for")
+                    callback.cancelled()
+                }
+            }
+        }
+
+    private fun mapBankConfigurationToConfiguration(configuration: BankConfiguration) =
+        Configuration(
+            UUID.randomUUID(),
+            configuration.clientID,
+            configuration.isUserJourneyAnalyticsEnabled,
+            configuration.isSkontoEnabled,
+            configuration.isReturnAssistantEnabled,
+            configuration.mixpanelToken ?: "",
+            configuration.amplitudeApiKey ?: "",
+        )
 
     override fun upload(
         document: Document,
@@ -119,16 +230,20 @@ class GiniCaptureDefaultNetworkService(
                 giniApiDocuments[apiDocument.id] = apiDocument
                 callback.success(Result(apiDocument.id))
             }
+
             is Resource.Error -> {
 
-                val error = Error(partialDocumentResource.responseStatusCode,
-                    partialDocumentResource.responseHeaders, partialDocumentResource.exception)
+                val error = Error(
+                    partialDocumentResource.responseStatusCode,
+                    partialDocumentResource.responseHeaders, partialDocumentResource.exception
+                )
                 LOG.error(
                     "Document upload failed for {}: {}", document.id,
                     error.message
                 )
                 callback.failure(error)
             }
+
             is Resource.Cancelled -> {
                 LOG.debug(
                     "Document upload cancelled for {}",
@@ -151,12 +266,14 @@ class GiniCaptureDefaultNetworkService(
         callback: GiniCaptureNetworkCallback<Result, Error>
     ): CancellationToken = launchCancellable {
         LOG.debug("Delete document with api id {}", giniApiDocumentId)
-        val deleteResource = giniBankApi.documentManager.deletePartialDocumentAndParents(giniApiDocumentId)
+        val deleteResource =
+            giniBankApi.documentManager.deletePartialDocumentAndParents(giniApiDocumentId)
         when (deleteResource) {
             is Resource.Success -> {
                 LOG.debug("Document deletion success for api id {}", giniApiDocumentId)
                 callback.success(Result(giniApiDocumentId))
             }
+
             is Resource.Error -> {
                 val error = Error(deleteResource.formattedErrorMessage)
                 LOG.error(
@@ -165,6 +282,7 @@ class GiniCaptureDefaultNetworkService(
                 )
                 callback.failure(error)
             }
+
             is Resource.Cancelled -> {
                 LOG.debug("Document deletion cancelled for api id {}", giniApiDocumentId)
                 callback.cancelled()
@@ -199,9 +317,10 @@ class GiniCaptureDefaultNetworkService(
                 .mapSuccess { compositeDocumentResource ->
                     val compositeDocument = compositeDocumentResource.data
                     giniApiDocuments[compositeDocument.id] = compositeDocument
-                    giniBankApi.documentManager.getAllExtractionsWithPolling(compositeDocument).mapSuccess {
-                        Resource.Success(compositeDocument to it.data)
-                    }
+                    giniBankApi.documentManager.getAllExtractionsWithPolling(compositeDocument)
+                        .mapSuccess {
+                            Resource.Success(compositeDocument to it.data)
+                        }
                 }
         when (compositeDocumentAndExtractionsResource) {
             is Resource.Cancelled -> {
@@ -210,6 +329,7 @@ class GiniCaptureDefaultNetworkService(
                     giniApiDocumentIdRotationMap
                 )
             }
+
             is Resource.Error -> {
                 val error = Error(compositeDocumentAndExtractionsResource.formattedErrorMessage)
                 LOG.error(
@@ -218,22 +338,33 @@ class GiniCaptureDefaultNetworkService(
                 )
                 callback.failure(error)
             }
+
             is Resource.Success -> {
                 val compositeDocument = compositeDocumentAndExtractionsResource.data.first
                 val allExtractions = compositeDocumentAndExtractionsResource.data.second
 
                 analyzedGiniApiDocument = compositeDocument
 
-                val extractions = SpecificExtractionMapper.mapToGiniCapture(allExtractions.specificExtractions)
-                val compoundExtractions = CompoundExtractionsMapper.mapToGiniCapture(allExtractions.compoundExtractions)
-                val returnReasons = ReturnReasonsMapper.mapToGiniCapture(allExtractions.returnReasons)
+                val extractions =
+                    SpecificExtractionMapper.mapToGiniCapture(allExtractions.specificExtractions)
+                val compoundExtractions =
+                    CompoundExtractionsMapper.mapToGiniCapture(allExtractions.compoundExtractions)
+                val returnReasons =
+                    ReturnReasonsMapper.mapToGiniCapture(allExtractions.returnReasons)
 
                 LOG.debug(
                     "Document analysis success for documents {}: extractions = {}; compoundExtractions = {}; returnReasons = {}",
                     giniApiDocumentIdRotationMap, extractions, compoundExtractions, returnReasons
                 )
 
-                callback.success(AnalysisResult(compositeDocument.id, extractions, compoundExtractions, returnReasons))
+                callback.success(
+                    AnalysisResult(
+                        compositeDocument.id,
+                        extractions,
+                        compoundExtractions,
+                        returnReasons
+                    )
+                )
             }
         }
     }
@@ -249,7 +380,10 @@ class GiniCaptureDefaultNetworkService(
             // We require the Gini Bank API lib's net.gini.android.core.api.models.Document for sending the feedback
             if (document != null) {
                 val feedbackResource = if (compoundExtractions.isEmpty()) {
-                    documentManager.sendFeedbackForExtractions(document, SpecificExtractionMapper.mapToApiSdk(extractions))
+                    documentManager.sendFeedbackForExtractions(
+                        document,
+                        SpecificExtractionMapper.mapToApiSdk(extractions)
+                    )
                 } else {
                     documentManager.sendFeedbackForExtractions(
                         document,
@@ -265,9 +399,14 @@ class GiniCaptureDefaultNetworkService(
                         )
                         callback.success(null)
                     }
+
                     is Resource.Error -> {
                         val error = Error(feedbackResource.formattedErrorMessage)
-                        LOG.error("Send feedback failed for api document {}: {}", document.id, error.message)
+                        LOG.error(
+                            "Send feedback failed for api document {}: {}",
+                            document.id,
+                            error.message
+                        )
                         handleErrorLog(
                             ErrorLog(
                                 description = "Failed to send feedback for document ${document.id}",
@@ -276,8 +415,9 @@ class GiniCaptureDefaultNetworkService(
                         )
                         callback.failure(error)
                     }
+
                     is Resource.Cancelled -> {
-                       LOG.debug(
+                        LOG.debug(
                             "Send feedback cancelled for api document {}",
                             document.id
                         )
@@ -547,7 +687,8 @@ class GiniCaptureDefaultNetworkService(
     }
 
     companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(GiniCaptureDefaultNetworkService::class.java)
+        private val LOG: Logger =
+            LoggerFactory.getLogger(GiniCaptureDefaultNetworkService::class.java)
 
         /**
          * Creates a new [GiniCaptureDefaultNetworkService.Builder] to configure and create a new

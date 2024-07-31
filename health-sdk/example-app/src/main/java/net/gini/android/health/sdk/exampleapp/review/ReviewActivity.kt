@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.commit
@@ -22,9 +23,12 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
+import net.gini.android.health.sdk.exampleapp.MainActivity
+import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_COMPONENT_CONFIG
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
@@ -87,6 +91,10 @@ class ReviewActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         val binding = ActivityReviewBinding.inflate(LayoutInflater.from(baseContext))
+        IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)?.let {
+            viewModel.setPaymentComponentConfig(it)
+        }
+
         setContentView(binding.root)
 
         binding.toolbar.isGone = showCloseButton
@@ -209,11 +217,12 @@ class ReviewActivity : AppCompatActivity() {
 
         private const val EXTRA_URIS = "EXTRA_URIS"
 
-        fun getStartIntent(context: Context, pages: List<Uri> = emptyList()): Intent =
+        fun getStartIntent(context: Context, pages: List<Uri> = emptyList(), paymentComponentConfiguration: PaymentComponentConfiguration?): Intent =
             Intent(context, ReviewActivity::class.java).apply {
                 putParcelableArrayListExtra(
                     EXTRA_URIS,
                     if (pages is ArrayList<Uri>) pages else ArrayList<Uri>().apply { addAll(pages) })
+                putExtra(PAYMENT_COMPONENT_CONFIG, paymentComponentConfiguration)
             }
 
         private val Intent.pageUris: List<Uri>

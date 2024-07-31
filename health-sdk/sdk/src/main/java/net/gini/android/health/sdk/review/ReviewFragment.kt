@@ -614,8 +614,15 @@ class ReviewFragment private constructor(
                     viewModel.onPayment()
                 }
             }
-            ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
-            ReviewViewModel.PaymentNextStep.ShowInstallApp -> viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
+            ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> {
+                if (viewModel.validatePaymentDetails()) {
+                    viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
+                }
+            }
+            ReviewViewModel.PaymentNextStep.ShowInstallApp ->
+                if (viewModel.validatePaymentDetails()) {
+                    viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
+                }
             is ReviewViewModel.PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file)

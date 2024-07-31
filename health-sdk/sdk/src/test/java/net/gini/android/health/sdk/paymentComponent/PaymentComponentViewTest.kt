@@ -54,7 +54,6 @@ class PaymentComponentViewTest {
         paymentComponent = PaymentComponent(context!!, mockk())
         paymentComponentBrandedOff = PaymentComponent(context!!, mockk(), PaymentComponentConfiguration(isPaymentComponentBranded = false))
         paymentComponentWithLocale = PaymentComponent(context!!, giniHealth)
-
         paymentComponentListener = mockk(relaxed = true)
         paymentComponent.listener = paymentComponentListener
 

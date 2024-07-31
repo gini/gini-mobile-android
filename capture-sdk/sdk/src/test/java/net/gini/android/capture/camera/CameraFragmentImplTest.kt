@@ -1,11 +1,18 @@
 package net.gini.android.capture.camera
 
 import android.app.Activity
+import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.spyk
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.camera.api.CameraInterface
@@ -14,6 +21,7 @@ import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -32,7 +40,7 @@ class CameraFragmentImplTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        val fragmentImpl = object: CameraFragmentImpl(mock(), mock<CancelListener>(), false) {
+        val fragmentImpl = object : CameraFragmentImpl(mock(), mock<CancelListener>(), false) {
             override fun createCameraController(activity: Activity?): CameraInterface {
                 return mock<CameraInterface>().apply {
                     whenever(isPreviewRunning).thenReturn(true)
@@ -87,6 +95,17 @@ class CameraFragmentImplTest {
         whenever(fragmentCallbackStub.findNavController()).thenReturn(mock())
 
         val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub, mock(),false)
+
+        val noPermissionLayoutMock = mock<ConstraintLayout> {
+            on { visibility } doReturn View.INVISIBLE
+        }
+        val analyticsTrackerMock = mock<UserAnalyticsEventTracker> {
+            on { trackEvent(any()) }.then {}
+            on { trackEvent(any(), any()) }.then {}
+        }
+
+        fragmentImpl.mLayoutNoPermission = noPermissionLayoutMock
+        fragmentImpl.mUserAnalyticsEventTracker = analyticsTrackerMock
 
         // When
         fragmentImpl.startHelpActivity()

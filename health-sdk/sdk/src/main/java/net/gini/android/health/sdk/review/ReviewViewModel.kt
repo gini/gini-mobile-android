@@ -176,6 +176,8 @@ internal class ReviewViewModel(
         _paymentDetails.value = paymentDetails.value.copy(purpose = purpose)
     }
 
+    fun validatePaymentDetails(): Boolean = validatePaymentDetails(paymentDetails.value)
+
     private fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
         val items = paymentDetails.validate()
         _paymentValidation.tryEmit(items)
