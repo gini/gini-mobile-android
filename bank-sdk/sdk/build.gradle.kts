@@ -127,6 +127,10 @@ dependencies {
     implementation(libs.accompanist.themeAdapter)
     debugImplementation(libs.compose.tools.uiTooling)
 
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
