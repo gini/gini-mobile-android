@@ -139,6 +139,9 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.isChecked =
             configuration.isReviewScreenCustomBottomNavBarEnabled
 
+        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.isChecked  =
+                configuration.isSkontoCustomNavBarEnabled
+
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // 13 enable onboarding screens at first launch
@@ -369,6 +372,14 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
+        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isSkontoCustomNavBarEnabled = isChecked
+                )
+            )
+        }
+
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // 13 enable onboarding screens at first launch
@@ -421,6 +432,7 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+
         // 19 enable multi page in custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingMultiPage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(

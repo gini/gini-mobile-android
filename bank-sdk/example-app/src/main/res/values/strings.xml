@@ -76,6 +76,7 @@
     <string name="custom_bottom_navbar_switch_description">The custom bottom navigation bar is shown if \'Bottom navigation bar\' is also enabled.</string>
     <string name="camera_screen_custom_bottom_navbar_switch_label">Camera screen custom bottom navigation bar</string>
     <string name="review_screen_custom_bottom_navbar_switch_label">Review screen custom bottom navigation bar</string>
+    <string name="skonto_screen_custom_bottom_navbar_switch_label">Skonto screen custom bottom navigation bar</string>
     <string name="onboarding_screens_at_every_launch_switch_label">Onboarding screens at every launch</string>
     <string name="onboarding_screens_at_first_launch_switch_label">Onboarding screens at first launch</string>
     <string name="onboarding_screens_at_every_launch_switch_description">Overwrites \'Onboarding screens at first launch\'.</string>

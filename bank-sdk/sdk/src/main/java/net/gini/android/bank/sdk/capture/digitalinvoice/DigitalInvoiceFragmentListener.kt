@@ -2,7 +2,6 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.DigitalInvoiceOnboardingFragment
 
 /**
  * Created by Alpar Szotyori on 05.12.2019.
@@ -25,6 +24,8 @@ interface DigitalInvoiceFragmentListener {
      * @param specificExtractions - extractions like the "amountToPay", "iban", etc.
      * @param compoundExtractions - extractions like the "lineItems"
      */
-    fun onPayInvoice(specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
-                     compoundExtractions: Map<String, GiniCaptureCompoundExtraction>)
+    fun onPayInvoice(
+        specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
+        compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
+    )
 }
