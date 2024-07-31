@@ -49,6 +49,8 @@ class MoreInformationTest {
         giniHealth = GiniHealth(giniHealthAPI)
         paymentComponent = mockk(relaxed = true)
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
+        every { paymentComponent!!.giniHealth.localizedContext } returns context
+        every { paymentComponent!!.giniHealthLanguage } returns null
     }
 
     @Test

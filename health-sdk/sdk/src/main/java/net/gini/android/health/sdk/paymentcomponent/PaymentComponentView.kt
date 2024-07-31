@@ -89,7 +89,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             launchJobs()
         }
 
-    private var binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthThemeAndLocale(GiniHealth.getSDKLanguage(context)?.languageLocale()), this)
+    private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthThemeAndLocale(GiniHealth.getSDKLanguage(context)?.languageLocale()), this)
 
     init {
         addButtonInputHandlers()

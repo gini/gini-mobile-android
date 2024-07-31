@@ -161,6 +161,8 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
+        every { paymentComponent.giniHealth.localizedContext } returns ApplicationProvider.getApplicationContext()
+        every { paymentComponent.giniHealthLanguage } returns null
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)
@@ -205,6 +207,8 @@ class ReviewFragmentTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
         )
+        every { paymentComponent.giniHealth.localizedContext } returns ApplicationProvider.getApplicationContext()
+        every { paymentComponent.giniHealthLanguage } returns null
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)
@@ -249,6 +253,8 @@ class ReviewFragmentTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
         )
+        every { paymentComponent.giniHealth.localizedContext } returns ApplicationProvider.getApplicationContext()
+        every { paymentComponent.giniHealthLanguage } returns null
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)
@@ -290,6 +296,8 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
+        every { paymentComponent.giniHealth.localizedContext } returns ApplicationProvider.getApplicationContext()
+        every { paymentComponent.giniHealthLanguage } returns null
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)

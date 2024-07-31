@@ -257,7 +257,7 @@ class GiniHealth(
 
         fun getSDKLanguage(): GiniLocalization? {
             val enumValue = sharedPreferences.getString(SDK_LANGUAGE_PREFS_KEY, null)
-            return if (enumValue == null) null else GiniLocalization.valueOf(enumValue)
+            return if (enumValue.isNullOrEmpty()) null else GiniLocalization.valueOf(enumValue)
         }
     }
 
