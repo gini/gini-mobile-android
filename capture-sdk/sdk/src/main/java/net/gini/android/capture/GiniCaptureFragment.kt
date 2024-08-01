@@ -144,15 +144,15 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
             )
             LOG.error("IFBRANCH")
         } else {
-//            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(
-//                    OncePerInstallEvent.SHOW_ONBOARDING
-//                ))
-//            ) {
+            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(
+                    OncePerInstallEvent.SHOW_ONBOARDING
+                ))
+            ) {
             LOG.error("OnViewCreated trying navigate")
 
             oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
                 navController.navigate(CameraFragmentDirections.toOnboardingFragment())
-//            }
+            }
         }
     }
 
