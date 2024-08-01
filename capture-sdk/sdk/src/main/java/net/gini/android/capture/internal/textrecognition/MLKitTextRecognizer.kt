@@ -66,6 +66,7 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
         doneCallback: (RecognizedText?) -> Unit,
         cancelledCallback: () -> Unit
     ) {
+        LOG.error("ProcessByteArray width $width height $height")
         if (processingTask != null) {
             LOG.warn("Text recognizer is already processing an image")
             cancelledCallback()
@@ -91,7 +92,7 @@ internal class MLKitTextRecognizer(private val recognizer: com.google.mlkit.visi
     private fun handleProcessingTask(doneCallback: (RecognizedText?) -> Unit) {
         processingTask
             ?.addOnSuccessListener { result ->
-                LOG.debug("Text recognizer success: {}", result.text)
+                LOG.error("Text recognizer success: {}", result.text)
                 doneCallback(mlKitTextToRecognizedText(result))
             }
             ?.addOnFailureListener { e ->

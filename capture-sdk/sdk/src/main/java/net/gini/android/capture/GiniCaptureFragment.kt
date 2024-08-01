@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.navigation.NavController
@@ -30,6 +31,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
+import org.slf4j.LoggerFactory
 import java.util.UUID
 
 
@@ -130,6 +132,9 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
         navController = (childFragmentManager.fragments[0]).findNavController()
         oncePerInstallEventStore = OncePerInstallEventStore(requireContext())
         setAnalyticsEntryPointProperty(openWithDocument != null)
+        Toast.makeText(requireContext(), "!!!!!!!!", Toast.LENGTH_LONG)
+        LOG.error("OnViewCreated shouldShowOnboarding: ${shouldShowOnboarding()} onoboardingOnFirstRun ${shouldShowOnboardingAtFirstRun()}" +
+                "  eventStore ${oncePerInstallEventStore.containsEvent(OncePerInstallEvent.SHOW_ONBOARDING)} getEventStore ${oncePerInstallEventStore.getEV(OncePerInstallEvent.SHOW_ONBOARDING)}")
         if (openWithDocument != null) {
             navController.navigate(
                 CameraFragmentDirections.toAnalysisFragment(
@@ -137,14 +142,17 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
                     ""
                 )
             )
+            LOG.error("IFBRANCH")
         } else {
-            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(
-                    OncePerInstallEvent.SHOW_ONBOARDING
-                ))
-            ) {
-                oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
+//            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(
+//                    OncePerInstallEvent.SHOW_ONBOARDING
+//                ))
+//            ) {
+            LOG.error("OnViewCreated trying navigate")
+
+            oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
                 navController.navigate(CameraFragmentDirections.toOnboardingFragment())
-            }
+//            }
         }
     }
 
@@ -265,6 +273,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     companion object {
+        private val LOG = LoggerFactory.getLogger(GiniCaptureFragment::class.java)
         @JvmStatic
         fun createInstance(document: Document? = null): GiniCaptureFragment {
             return GiniCaptureFragment(document)

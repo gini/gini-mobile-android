@@ -117,6 +117,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         bindViews(view);
         addInputHandlers();
         mPresenter.start();
+        LOG.error("CreateView");
         return view;
     }
 

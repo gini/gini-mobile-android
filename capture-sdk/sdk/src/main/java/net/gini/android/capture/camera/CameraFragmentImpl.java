@@ -451,6 +451,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (isQRCodeScanningEnabled()) {
             initQRCodeReader();
         }
+        LOG.error("Checking if we init ibanRecognizeFilter hasInstance " + GiniCapture.hasInstance()
+                + " getEntryPoint " + GiniCapture.getInstance().getEntryPoint()
+                + " isOnlyQrCodeScanningEnabled " + isOnlyQRCodeScanningEnabled());
         if (GiniCapture.hasInstance()
                 && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD
                 && !isOnlyQRCodeScanningEnabled()) {
@@ -589,6 +592,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void initIBANRecognizerFilter() {
+        LOG.error("init ibanRecognizerFilter " + ibanRecognizerFilter);
         if (ibanRecognizerFilter != null) {
             return;
         }
@@ -873,6 +877,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return false;
         }
 
+        LOG.error("qrcodeScanningEnabling function    isOnlyQRCodeScanning " + GiniCapture.getInstance().isOnlyQRCodeScanning()
+                + " isQRCodeScanningEnabled " + GiniCapture.getInstance().isQRCodeScanningEnabled());
         return GiniCapture.getInstance().isOnlyQRCodeScanning() && GiniCapture.getInstance().isQRCodeScanningEnabled();
     }
 
@@ -1877,12 +1883,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
             @Override
             public void onPreviewFrame(@NonNull byte[] image, @NonNull Size imageSize, int rotation) {
+                LOG.error("OnPreviewFrame " + ibanRecognizerFilter.toString());
                 if (mPaymentQRCodeReader != null) {
                     mPaymentQRCodeReader.readFromByteArray(image, imageSize, rotation);
                 }
                 if (ibanRecognizerFilter != null) {
+                    LOG.error("RecognizeFilter if");
                     try {
-                        ibanRecognizerFilter.processByteArray(image, imageSize.width, imageSize.height, rotation, () -> {
+                        ibanRecognizerFilter.processByteArray(image, 600, 600, rotation, () -> {
                         });
                     } catch (Exception e) {
                         LOG.error("Failed to process image for IBAN recognition", e);

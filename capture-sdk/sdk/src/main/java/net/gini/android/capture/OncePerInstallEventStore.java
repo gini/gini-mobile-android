@@ -30,6 +30,10 @@ public class OncePerInstallEventStore {
         return mSharedPreferences.contains(event.name());
     }
 
+    public boolean getEV(final  OncePerInstallEvent event) {
+        return mSharedPreferences.getBoolean(event.name(), false);
+    }
+
     public void saveEvent(final OncePerInstallEvent event) {
         mSharedPreferences.edit()
                 .putBoolean(event.name(), true)
