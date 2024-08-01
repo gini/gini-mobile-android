@@ -1883,7 +1883,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
             @Override
             public void onPreviewFrame(@NonNull byte[] image, @NonNull Size imageSize, int rotation) {
-                LOG.error("OnPreviewFrame " + ibanRecognizerFilter.toString());
+                LOG.error("OnPreviewFrame " + ibanRecognizerFilter);
                 if (mPaymentQRCodeReader != null) {
                     mPaymentQRCodeReader.readFromByteArray(image, imageSize, rotation);
                 }
