@@ -198,17 +198,22 @@ class GiniMerchant(
                 .getPaymentExtraction("iban")?.value?.isNotEmpty() ?: false
         }
     }
-
-    fun getFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null) = PaymentFragment.newInstance(
-        giniMerchant = this,
-        paymentDetails = PaymentDetails(
+    fun getFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
+        val paymentDetails = PaymentDetails(
             recipient = recipient,
             iban = iban,
             purpose = purpose,
             amount = amount
-        ),
-        paymentFlowConfiguration = flowConfiguration ?: PaymentFlowConfiguration()
-    )
+        )
+
+        val paymentFragment = PaymentFragment.newInstance(
+            giniMerchant = this,
+            paymentDetails = paymentDetails,
+            paymentFlowConfiguration = flowConfiguration ?: PaymentFlowConfiguration()
+        )
+        _paymentFlow.tryEmit(ResultWrapper.Success(paymentDetails))
+        return paymentFragment
+    }
 
     internal fun emitSDKEvent(state: PaymentState) {
         when (state) {

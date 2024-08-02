@@ -63,7 +63,7 @@ class OrdersViewModel(
             recipient = _selectedOrderItem.value?.recipient ?: "",
             iban = _selectedOrderItem.value?.order?.iban ?: "",
             purpose = _selectedOrderItem.value?.purpose ?: "",
-            amount = _selectedOrderItem.value?.amount ?: ""
+            amount = _selectedOrderItem.value?.amount?.replace("€", "") ?: ""
             ,
             flowConfiguration = paymentFlowConfiguration))
     }

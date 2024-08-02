@@ -20,7 +20,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/recipient_input_layout"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox"
+            style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gms_medium"
@@ -30,12 +30,14 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/recipient"
                 android:layout_width="match_parent"
+                style="@style/Example.Widget.TextInputEditText"
+                android:textColor="@color/black"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/iban_input_layout"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox"
+            style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gms_medium"
@@ -44,13 +46,14 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/iban"
+                style="@style/Example.Widget.TextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/amount_input_layout"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox"
+            style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gms_medium"
@@ -59,13 +62,14 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/amount"
+                style="@style/Example.Widget.TextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/purpose_input_layout"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox"
+            style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gms_medium"
@@ -74,6 +78,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/purpose"
+                style="@style/Example.Widget.TextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
