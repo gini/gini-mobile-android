@@ -1277,7 +1277,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mFragment.getParentFragmentManager().setFragmentResult(REQUEST_KEY, resultBundle);
             mFragment.findNavController().popBackStack();
         } else {
-            mFragment.findNavController().navigate(CameraFragmentDirections.toReviewFragment(shouldScrollToLastPage));
+            mFragment.safeNavigate(CameraFragmentDirections.toReviewFragment(shouldScrollToLastPage));
         }
     }
 
