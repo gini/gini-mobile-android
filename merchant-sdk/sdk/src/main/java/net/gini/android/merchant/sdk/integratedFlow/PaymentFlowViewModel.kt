@@ -12,6 +12,7 @@ import net.gini.android.core.api.Resource
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
+import net.gini.android.merchant.sdk.paymentcomponent.BankPickerRows
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
@@ -54,6 +55,10 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
                     giniMerchant.setFlowCancelled()
                 }
             }
+        }
+        paymentFlowConfiguration?.let {
+            paymentComponent.shouldCheckReturningUser = it.checkForReturningUser
+            paymentComponent.bankPickerRows = if (it.paymentComponentOnTwoRows) BankPickerRows.TWO else BankPickerRows.SINGLE
         }
     }
 

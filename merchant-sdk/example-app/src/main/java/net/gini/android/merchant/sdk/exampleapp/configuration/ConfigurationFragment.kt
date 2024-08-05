@@ -39,6 +39,12 @@ class ConfigurationFragment: Fragment() {
         gmsAmountEditable.setOnCheckedChangeListener { _, _ ->
             saveConfiguration()
         }
+        gmsCheckReturningUser.setOnCheckedChangeListener { _, _ ->
+            saveConfiguration()
+        }
+        gmsPaymentComponentTwoRows.setOnCheckedChangeListener { _, _ ->
+            saveConfiguration()
+        }
     }
 
     private fun saveConfiguration() {
@@ -46,7 +52,9 @@ class ConfigurationFragment: Fragment() {
             PaymentFlowConfiguration(
                 shouldShowReviewFragment = binding.gmsShowReviewFragment.isChecked,
                 isAmountFieldEditable = binding.gmsAmountEditable.isChecked,
-                shouldHandleErrorsInternally = true
+                shouldHandleErrorsInternally = true,
+                checkForReturningUser = binding.gmsCheckReturningUser.isChecked,
+                paymentComponentOnTwoRows = binding.gmsPaymentComponentTwoRows.isChecked
             )
         )
     }

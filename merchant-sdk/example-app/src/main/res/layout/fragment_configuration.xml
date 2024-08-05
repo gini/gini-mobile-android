@@ -43,4 +43,18 @@
         android:layout_height="wrap_content"
         android:checked="false"
         android:text="@string/amount_editable"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/gms_payment_component_two_rows"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/payment_component_two_rows"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/gms_check_returning_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/check_returning_user"/>
 </LinearLayout>

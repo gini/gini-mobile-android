@@ -5,6 +5,7 @@
     <string name="gms_recipient_hint">Empfänger</string>
     <string name="gms_iban_hint">IBAN</string>
     <string name="gms_pay_button">Zur Banking App</string>
+    <string name="gms_continue_to_overview">Weiter zur Übersicht</string>
     <string name="gms_bank_placeholder">Wird geladen...</string>
     <string name="gms_error_failed_to_load_image">Bild konnte nicht geladen werden</string>
     <string name="gms_error_input_invalid_iban">IBAN ist ungültig.</string>

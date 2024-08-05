@@ -57,6 +57,16 @@ internal class PaymentComponent(@get:VisibleForTesting internal val context: Con
     var listener: Listener? = null
 
     /**
+     * Holds information about which layout to use for the bank picker: single line or two lines.
+     */
+    var bankPickerRows: BankPickerRows = BankPickerRows.TWO
+
+    /**
+     * Whether we need to check for returning user and hide `Select your bank to pay` label.
+     */
+    var shouldCheckReturningUser: Boolean = false
+
+    /**
      * Loads the payment provider apps and selects the first installed payment provider app or nothing if no payment provider
      * app is installed. The selection (or lack of selection) will be visible once a [PaymentComponentView] is shown.
      *
@@ -192,6 +202,7 @@ internal class PaymentComponent(@get:VisibleForTesting internal val context: Con
     }
 
     internal suspend fun checkReturningUser() {
+        if (!shouldCheckReturningUser) return
         _returningUserFlow.value = paymentComponentPreferences.getReturningUser()
     }
 
@@ -262,4 +273,9 @@ internal sealed class SelectedPaymentProviderAppState {
      * A payment provider app is selected.
      */
     class AppSelected(val paymentProviderApp: PaymentProviderApp) : SelectedPaymentProviderAppState()
+}
+
+internal enum class BankPickerRows {
+    SINGLE,
+    TWO
 }

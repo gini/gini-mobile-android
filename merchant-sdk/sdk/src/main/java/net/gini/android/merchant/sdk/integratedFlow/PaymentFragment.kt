@@ -75,7 +75,24 @@ data class PaymentFlowConfiguration(
      *
      * Default value is `false`
      */
-    val isAmountFieldEditable: Boolean = true
+    val isAmountFieldEditable: Boolean = true,
+
+    /**
+     * If set to `true` and the user is a returning one, the `Select your bank to pay` and `More Information` labels will be hidden
+     * If set to `false`, the labels will always be displayed
+     *
+     * Default value is `false`
+     */
+    val checkForReturningUser: Boolean = false,
+
+    /**
+     * If set to `true`, the [PaymentComponent] will be displayed on 2 rows
+     * If set to `false`, the [PaymentComponent] will be displayed in a single row
+     *
+     * Default value is `true`
+     */
+    val paymentComponentOnTwoRows: Boolean = true
+
 ): Parcelable
 
 /**
