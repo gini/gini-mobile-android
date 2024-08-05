@@ -22,7 +22,7 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
  *
  * Copyright (c) 2021 Gini GmbH.
  */
-class CodeAnalysisPlugin: Plugin<Project> {
+class CodeAnalysisPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         configureCheckstyle(target)
@@ -87,8 +87,21 @@ class CodeAnalysisPlugin: Plugin<Project> {
     private fun configureDetekt(target: Project) {
         target.plugins.apply("io.gitlab.arturbosch.detekt")
 
+        val disabledModules = listOf(
+            ":core-api-library:library",
+            ":core-api-library:shared-tests",
+            ":health-api-library:library",
+            ":bank-api-library:library",
+            ":health-sdk:sdk",
+            ":health-sdk:example-app",
+            //":capture-sdk:sdk",                   <-- Detekt enabled here
+            ":capture-sdk:default-network",
+            //":bank-sdk:sdk",                      <-- Detekt enabled here
+            //":bank-sdk:example-app",              <-- Detekt enabled here
+        )
+
         target.extensions.getByType<DetektExtension>().apply {
-            isIgnoreFailures = true
+            isIgnoreFailures = disabledModules.contains(target.path)
             source = target.files("src/main/java")
         }
     }
