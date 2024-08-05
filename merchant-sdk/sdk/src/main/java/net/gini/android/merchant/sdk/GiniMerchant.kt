@@ -198,6 +198,7 @@ class GiniMerchant(
                 .getPaymentExtraction("iban")?.value?.isNotEmpty() ?: false
         }
     }
+    
     fun getFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
         val paymentDetails = PaymentDetails(
             recipient = recipient,
