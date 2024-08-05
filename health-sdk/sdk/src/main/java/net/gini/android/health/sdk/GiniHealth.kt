@@ -82,7 +82,7 @@ class GiniHealth(
     /**
      * Sets the app language to the desired one from the languages the SDK is supporting. If not set then defaults to the system's language locale.
      *
-     * @param language enum value for the desired language.
+     * @param language enum value for the desired language or null for default system language
      * @param context Context object to save the configuration.
      */
     fun setSDKLanguage(language: GiniLocalization?, context: Context) {
