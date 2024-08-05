@@ -2,12 +2,13 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:DefaultPages.kt$DefaultPages.Companion$ @JvmStatic fun asArrayList(isMultiPageEnabled: Boolean, isQRCodeScanningEnabled: Boolean): ArrayList&lt;OnboardingPage></ID>
-    <ID>ComplexMethod:ErrorType.kt$ErrorType.Companion$@JvmStatic fun typeFromError(error: Error): ErrorType</ID>
-    <ID>ComplexMethod:TypographyToTextStyleBridge.kt$ internal fun TypedArray.getFontFamilyOrNull(index: Int): FontFamilyWithWeight?</ID>
-    <ID>ComplexMethod:TypographyToTextStyleBridge.kt$@Composable fun textStyleFromTextAppearance( @StyleRes id: Int, density: Density = Density(LocalContext.current), setTextColors: Boolean = true ): TextStyle</ID>
+    <ID>CyclomaticComplexMethod:DefaultPages.kt$DefaultPages.Companion$@JvmStatic fun asArrayList(isMultiPageEnabled: Boolean, isQRCodeScanningEnabled: Boolean): ArrayList&lt;OnboardingPage></ID>
+    <ID>CyclomaticComplexMethod:ErrorType.kt$ErrorType.Companion$@JvmStatic fun typeFromError(error: Error): ErrorType</ID>
+    <ID>CyclomaticComplexMethod:TypographyToTextStyleBridge.kt$@Composable fun textStyleFromTextAppearance( @StyleRes id: Int, density: Density = Density(LocalContext.current), setTextColors: Boolean = true ): TextStyle</ID>
+    <ID>CyclomaticComplexMethod:TypographyToTextStyleBridge.kt$internal fun TypedArray.getFontFamilyOrNull(index: Int): FontFamilyWithWeight?</ID>
     <ID>EmptyCatchBlock:DeviceInfo.kt$DeviceInfo.CachedInfo${ }</ID>
     <ID>EmptyDefaultConstructor:CameraXController.kt$CameraLifecycle$()</ID>
+    <ID>EmptyElseBlock:IntervalClickListener.kt$IntervalClickListener$if (view == null) return</ID>
     <ID>EmptyFunctionBlock:CameraXController.kt$CameraXController.&lt;no name provided>${}</ID>
     <ID>EmptyFunctionBlock:CustomLoadingIndicatorAdapter.kt$DefaultLoadingIndicatorAdapter${}</ID>
     <ID>EmptyFunctionBlock:OnButtonLoadingIndicatorAdapter.kt$DefaultOnButtonLoadingIndicatorAdapter${}</ID>
@@ -15,9 +16,34 @@
     <ID>EmptyFunctionBlock:PreviewPagesAdapter.kt$PreviewPagesAdapter.&lt;no name provided>${ }</ID>
     <ID>ForbiddenComment:TypographyToTextStyleBridge.kt$// FIXME: Normally we'd use TextUnit.Unspecified,</ID>
     <ID>ForbiddenComment:TypographyToTextStyleBridge.kt$// TODO: Compose does not expose a FontFamily for all strings yet</ID>
+    <ID>FunctionNaming:GiniAmountTextInput.kt$@Composable fun GiniAmountTextInput( amount: BigDecimal, currencyCode: String, label: String, modifier: Modifier = Modifier, onValueChange: (BigDecimal) -> Unit, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, decimalFormatter: DecimalFormatter = DecimalFormatter(), colors: GiniTextInputColors = GiniTextInputColors.colors(), )</ID>
+    <ID>FunctionNaming:GiniAmountTextInput.kt$@Composable private fun GiniTextInputPreview()</ID>
+    <ID>FunctionNaming:GiniAmountTextInput.kt$@Preview( showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES ) @Composable private fun GiniTextInputPreviewDark()</ID>
+    <ID>FunctionNaming:GiniAmountTextInput.kt$@Preview(showBackground = true) @Composable private fun GiniTextInputPreviewLight()</ID>
+    <ID>FunctionNaming:GiniButton.kt$@Composable fun GiniButton( onClick: () -> Unit, modifier: Modifier = Modifier, giniButtonColors: GiniButtonColors = GiniButtonColors.colors(), content: @Composable () -> Unit, )</ID>
+    <ID>FunctionNaming:GiniButton.kt$@Composable fun GiniButton( text: String, onClick: () -> Unit, modifier: Modifier = Modifier, giniButtonColors: GiniButtonColors = GiniButtonColors(), )</ID>
+    <ID>FunctionNaming:GiniButton.kt$@Preview @Composable private fun GiniContentButtonPreview()</ID>
+    <ID>FunctionNaming:GiniButton.kt$@Preview @Composable private fun GiniTextButtonPreview()</ID>
+    <ID>FunctionNaming:GiniDatePickerDialog.kt$@Composable fun GiniDatePickerDialog( onDismissRequest: () -> Unit, onSaved: (LocalDate) -> Unit, modifier: Modifier = Modifier, date: LocalDate = LocalDate.now(), selectableDates: SelectableDates = DatePickerDefaults.AllDates, colors: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors() )</ID>
+    <ID>FunctionNaming:GiniDatePickerDialog.kt$@Composable private fun DatePickerDialogPreview()</ID>
+    <ID>FunctionNaming:GiniDatePickerDialog.kt$@Preview @Composable private fun DatePickerDialogPreviewLight()</ID>
+    <ID>FunctionNaming:GiniDatePickerDialog.kt$@Preview(uiMode = UI_MODE_NIGHT_YES) @Composable private fun DatePickerDialogPreviewDark()</ID>
+    <ID>FunctionNaming:GiniSwitch.kt$@Composable fun GiniSwitch( modifier: Modifier = Modifier, checked: Boolean, onCheckedChange: (Boolean) -> Unit, giniSwitchColors: GiniSwitchColors = GiniSwitchColors.colors(), )</ID>
+    <ID>FunctionNaming:GiniSwitch.kt$@Preview(showBackground = true) @Composable private fun GiniSwitchPreview()</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Composable fun GiniTextInput( text: String, label: @Composable () -> Unit, onValueChange: (String) -> Unit, modifier: Modifier = Modifier, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, readOnly: Boolean = false, keyboardOptions: KeyboardOptions = KeyboardOptions.Default, colors: GiniTextInputColors = GiniTextInputColors.colors(), visualTransformation: VisualTransformation = VisualTransformation.None, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, )</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Composable fun GiniTextInput( text: String, label: String, modifier: Modifier = Modifier, onValueChange: (String) -> Unit, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, readOnly: Boolean = false, keyboardOptions: KeyboardOptions = KeyboardOptions.Default, colors: GiniTextInputColors = GiniTextInputColors.colors(), visualTransformation: VisualTransformation = VisualTransformation.None, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, )</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Composable private fun GiniTextInputPreview()</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Preview( showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES ) @Composable private fun GiniTextInputPreviewDark()</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Preview(showBackground = true) @Composable private fun GiniTextInputPreviewLight()</ID>
+    <ID>FunctionNaming:GiniTheme.kt$@Composable fun GiniTheme( content: @Composable () -> Unit )</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Composable fun GiniTopBar( title: @Composable () -> Unit, navigationIcon: @Composable () -> Unit, actions: @Composable RowScope.() -> Unit, modifier: Modifier = Modifier, colors: GiniTopBarColors = GiniTopBarColors.colors(), )</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Composable fun GiniTopBar( title: String, modifier: Modifier = Modifier, navigationIcon: @Composable () -> Unit = {}, actions: @Composable RowScope.() -> Unit = {}, colors: GiniTopBarColors = GiniTopBarColors.colors(), )</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Composable private fun GiniTopBarPreview()</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Preview @Composable private fun GiniTopBarPreviewLight()</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES) @Composable private fun GiniTopBarPreviewDark()</ID>
     <ID>LongMethod:CameraXController.kt$CameraXController$override fun open(): CompletableFuture&lt;Void></ID>
-    <ID>LongMethod:GiniColorPalette.kt$ internal fun giniDarkColorScheme( giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives() )</ID>
-    <ID>LongMethod:GiniColorPalette.kt$ internal fun giniLightColorScheme( giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives() )</ID>
+    <ID>LongMethod:GiniColorPalette.kt$internal fun giniDarkColorScheme( giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives() )</ID>
+    <ID>LongMethod:GiniColorPalette.kt$internal fun giniLightColorScheme( giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives() )</ID>
     <ID>LongMethod:GiniDatePickerDialog.kt$@Composable fun GiniDatePickerDialog( onDismissRequest: () -> Unit, onSaved: (LocalDate) -> Unit, modifier: Modifier = Modifier, date: LocalDate = LocalDate.now(), selectableDates: SelectableDates = DatePickerDefaults.AllDates, colors: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors() )</ID>
     <ID>LongMethod:TypographyToTextStyleBridge.kt$@Composable fun textStyleFromTextAppearance( @StyleRes id: Int, density: Density = Density(LocalContext.current), setTextColors: Boolean = true ): TextStyle</ID>
     <ID>LongParameterList:GiniAmountTextInput.kt$( amount: BigDecimal, currencyCode: String, label: String, modifier: Modifier = Modifier, onValueChange: (BigDecimal) -> Unit, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, decimalFormatter: DecimalFormatter = DecimalFormatter(), colors: GiniTextInputColors = GiniTextInputColors.colors(), )</ID>
@@ -119,7 +145,6 @@
     <ID>MagicNumber:TypographyToTextStyleBridge.kt$23</ID>
     <ID>MagicNumber:TypographyToTextStyleBridge.kt$249</ID>
     <ID>MagicNumber:TypographyToTextStyleBridge.kt$250</ID>
-    <ID>MagicNumber:TypographyToTextStyleBridge.kt$3</ID>
     <ID>MagicNumber:TypographyToTextStyleBridge.kt$349</ID>
     <ID>MagicNumber:TypographyToTextStyleBridge.kt$350</ID>
     <ID>MagicNumber:TypographyToTextStyleBridge.kt$449</ID>
@@ -162,7 +187,7 @@
     <ID>MaxLineLength:IntervalToolbarMenuItemIntervalClickListener.kt$IntervalToolbarMenuItemIntervalClickListener$class</ID>
     <ID>MaxLineLength:TypographyToTextStyleBridge.kt$fontFeatureSettings = a.getString(R.styleable.ComposeThemeAdapterTextAppearance_android_fontFeatureSettings)</ID>
     <ID>MaxLineLength:UserAnalytics.kt$UserAnalytics$(eventTracker as? BufferedUserAnalyticsEventTracker)?.setPlatformTokens(*tokens, networkRequestsManager = networkRequestsManager)</ID>
-    <ID>NestedBlockDepth:TypographyToTextStyleBridge.kt$ internal fun TypedArray.getFontFamilyOrNull(index: Int): FontFamilyWithWeight?</ID>
+    <ID>NestedBlockDepth:TypographyToTextStyleBridge.kt$internal fun TypedArray.getFontFamilyOrNull(index: Int): FontFamilyWithWeight?</ID>
     <ID>NewLineAtEndOfFile:Amount.kt$net.gini.android.capture.Amount.kt</ID>
     <ID>NewLineAtEndOfFile:AmountCurrency.kt$net.gini.android.capture.AmountCurrency.kt</ID>
     <ID>NewLineAtEndOfFile:AmplitudeUserAnalyticsEventTracker.kt$net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker.kt</ID>
@@ -241,11 +266,10 @@
     <ID>ReturnCount:ErrorType.kt$ErrorType.Companion$private fun isInvalidUserError(error: Error): Boolean</ID>
     <ID>ReturnCount:GiniCaptureFragment.kt$CaptureFragmentFactory$override fun instantiate(classLoader: ClassLoader, className: String): Fragment</ID>
     <ID>ReturnCount:SnappedItemChangeRecyclerViewListener.kt$SnappedItemChangeRecyclerViewListener$override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int)</ID>
-    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$catch (e: Exception) { // Failed to get network operator name from network }</ID>
-    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$catch (e: Exception) { }</ID>
-    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$catch (e: PackageManager.NameNotFoundException) { }</ID>
-    <ID>SwallowedException:ErrorType.kt$ErrorType.Companion$catch (e: Exception) { false }</ID>
-    <ID>SwallowedException:IBANRecognizerImpl.kt$IBANRecognizerImpl$catch (e: IBANValidator.IllegalIBANException) { false }</ID>
+    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$e: Exception</ID>
+    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$e: PackageManager.NameNotFoundException</ID>
+    <ID>SwallowedException:ErrorType.kt$ErrorType.Companion$e: Exception</ID>
+    <ID>SwallowedException:IBANRecognizerImpl.kt$IBANRecognizerImpl$e: IBANValidator.IllegalIBANException</ID>
     <ID>ThrowsCount:Extensions.kt$@Throws(CameraException::class) private fun cropByteArray(data: ByteArray, cropRect: Rect?): ByteArray</ID>
     <ID>ThrowsCount:IBANValidator.kt$IBANValidator$@Throws(IllegalIBANException::class) private fun validateLength(iban: String)</ID>
     <ID>TooGenericExceptionCaught:CameraXController.kt$CameraXController$e: Exception</ID>
@@ -256,11 +280,8 @@
     <ID>TooManyFunctions:FileChooserFragment.kt$FileChooserFragment : BottomSheetDialogFragment</ID>
     <ID>TooManyFunctions:GiniCaptureFragment.kt$GiniCaptureFragment : FragmentCameraFragmentListenerAnalysisFragmentListenerEnterManuallyButtonListenerCancelListener</ID>
     <ID>TooManyFunctions:HelpFragment.kt$HelpFragment : Fragment</ID>
-    <ID>UnnecessaryAbstractClass:AnalyticsKeyPairProperty.kt$AnalyticsKeyPairProperty</ID>
-    <ID>UnusedPrivateMember:AmplitudeUserAnalyticsEventTracker.kt$AmplitudeUserAnalyticsEventTracker$val version = BuildConfig.VERSION_NAME</ID>
-    <ID>UnusedPrivateMember:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$val thousandSeparatorCount = formatted.count { it == formattingSymbols.groupingSeparator }</ID>
-    <ID>UnusedPrivateMember:DeviceInfo.kt$DeviceInfo$private val LOG = LoggerFactory.getLogger(DeviceInfo::class.java)</ID>
-    <ID>UnusedPrivateMember:ErrorFragmentImpl.kt$ErrorFragmentImpl$savedInstanceState: Bundle?</ID>
+    <ID>UnusedParameter:ErrorFragmentImpl.kt$ErrorFragmentImpl$savedInstanceState: Bundle?</ID>
+    <ID>UnusedParameter:TypographyToTextStyleBridge.kt$setTextColors: Boolean = true</ID>
     <ID>UnusedPrivateMember:GiniAmountTextInput.kt$@Preview( showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES ) @Composable private fun GiniTextInputPreviewDark()</ID>
     <ID>UnusedPrivateMember:GiniAmountTextInput.kt$@Preview(showBackground = true) @Composable private fun GiniTextInputPreviewLight()</ID>
     <ID>UnusedPrivateMember:GiniButton.kt$@Preview @Composable private fun GiniContentButtonPreview()</ID>
@@ -272,7 +293,13 @@
     <ID>UnusedPrivateMember:GiniTextInput.kt$@Preview(showBackground = true) @Composable private fun GiniTextInputPreviewLight()</ID>
     <ID>UnusedPrivateMember:GiniTopBar.kt$@Preview @Composable private fun GiniTopBarPreviewLight()</ID>
     <ID>UnusedPrivateMember:GiniTopBar.kt$@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES) @Composable private fun GiniTopBarPreviewDark()</ID>
-    <ID>UnusedPrivateMember:TypographyToTextStyleBridge.kt$setTextColors: Boolean = true</ID>
+    <ID>UnusedPrivateProperty:AmplitudeUserAnalyticsEventTracker.kt$AmplitudeUserAnalyticsEventTracker$val version = BuildConfig.VERSION_NAME</ID>
+    <ID>UnusedPrivateProperty:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$val thousandSeparatorCount = formatted.count { it == formattingSymbols.groupingSeparator }</ID>
+    <ID>UnusedPrivateProperty:DeviceInfo.kt$DeviceInfo$private val LOG = LoggerFactory.getLogger(DeviceInfo::class.java)</ID>
+    <ID>UseCheckOrError:AutoClearedValue.kt$AutoClearedValue$throw IllegalStateException( "should never call auto-cleared-value get when it might not be available" )</ID>
+    <ID>UseCheckOrError:UserAnalytics.kt$UserAnalytics$throw IllegalStateException( "You need to initialize analytics by calling `UserAnalytics.initialize(...)`" )</ID>
+    <ID>UseRequire:IBANRecognizerImpl.kt$IBANRecognizerImpl$throw IllegalArgumentException("Image height is 0")</ID>
+    <ID>UseRequire:IBANRecognizerImpl.kt$IBANRecognizerImpl$throw IllegalArgumentException("Image width is 0")</ID>
     <ID>VariableNaming:AmplitudeUserAnalyticsEventTracker.kt$AmplitudeUserAnalyticsEventTracker$private val LOG = LoggerFactory.getLogger(AmplitudeUserAnalyticsEventTracker::class.java)</ID>
     <ID>VariableNaming:BufferedUserAnalyticsEventTracker.kt$BufferedUserAnalyticsEventTracker$private val LOG = LoggerFactory.getLogger(BufferedUserAnalyticsEventTracker::class.java)</ID>
     <ID>VariableNaming:DeviceInfo.kt$DeviceInfo$private val LOG = LoggerFactory.getLogger(DeviceInfo::class.java)</ID>
