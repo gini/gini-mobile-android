@@ -12,6 +12,7 @@
         <item name="colorOnPrimary">@color/ghs_color_01</item>
         <item name="backgroundColor">@color/ghs_color_02</item>
         <item name="colorOnBackground">@color/ghs_color_contrast_02</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="dividerColor">@color/ghs_color_03</item>
         <item name="colorSurface">@color/ghs_color_03</item>
         <item name="colorOnSurface">?attr/colorOnBackground</item>

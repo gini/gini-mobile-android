@@ -14,6 +14,7 @@
         <item name="colorSurfaceVariant">@color/gc_light_01</item>
         <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="colorAccent">?attr/colorPrimary</item>
         <item name="gcPageItemBackground">@color/gc_light_01</item>
         <item name="gcErrorScreenSubtitle">@color/gc_dark_05</item>
