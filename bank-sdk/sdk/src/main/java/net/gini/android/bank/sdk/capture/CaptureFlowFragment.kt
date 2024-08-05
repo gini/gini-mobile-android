@@ -197,6 +197,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
             } catch (e: Exception) {
                 finishWithResult(result)
             }
+        } else {
+            finishWithResult(result)
         }
     }
 

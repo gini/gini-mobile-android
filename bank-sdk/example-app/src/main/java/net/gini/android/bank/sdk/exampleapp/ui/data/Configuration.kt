@@ -160,6 +160,9 @@ data class Configuration(
     // 39 Skonto Custom bottom navigation
     val isSkontoCustomNavBarEnabled: Boolean = false,
 
+    // 40 enable Skonto
+    val isSkontoEnabled: Boolean = true,
+
     ) : Parcelable {
 
     companion object {
@@ -178,7 +181,8 @@ data class Configuration(
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
                 isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
                 isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
-                isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots
+                isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
+                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled
             )
 
 
