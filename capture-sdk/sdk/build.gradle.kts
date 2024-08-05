@@ -21,6 +21,7 @@ android {
     // after upgrading to AGP 8, we need this to have the defaultConfig block
     buildFeatures {
         buildConfig = true
+        compose = true
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -50,6 +51,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.6"
+    }
+
 
     buildTypes {
         val credentials = readLocalPropertiesToMapSilent(project, listOf("mixpanelApiKey", "amplitudeApiKey"))
@@ -138,6 +144,12 @@ dependencies {
 
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
+
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.material3)
+    implementation(libs.compose.tools.uiToolingPreview)
+    implementation(libs.accompanist.themeAdapter)
+    debugImplementation(libs.compose.tools.uiTooling)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)

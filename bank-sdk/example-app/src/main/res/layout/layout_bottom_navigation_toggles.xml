@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/bg_round_corners"
+    android:orientation="vertical"
     android:padding="8dp">
 
     <TextView
@@ -65,7 +65,6 @@
         android:text="@string/custom_bottom_navbar_switch_description" />
 
 
-
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_reviewScreenCustomBottomNavbar"
         style="@style/SwitchConfigurationStyle"
@@ -125,5 +124,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/return_assistant_bottom_navigation_bar_switch_description" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_skontoCustomBottomNavbar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/skonto_screen_custom_bottom_navbar_switch_label" />
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/custom_bottom_navbar_switch_description" />
 
 </LinearLayout>

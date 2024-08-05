@@ -1277,7 +1277,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mFragment.getParentFragmentManager().setFragmentResult(REQUEST_KEY, resultBundle);
             mFragment.findNavController().popBackStack();
         } else {
-            mFragment.findNavController().navigate(CameraFragmentDirections.toReviewFragment(shouldScrollToLastPage));
+            mFragment.safeNavigate(CameraFragmentDirections.toReviewFragment(shouldScrollToLastPage));
         }
     }
 
@@ -1313,6 +1313,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 new AsyncCallback<ImageMultiPageDocument, ImportedFileValidationException>() {
                     @Override
                     public void onSuccess(final ImageMultiPageDocument multiPageDocument) {
+                        hideActivityIndicatorAndEnableInteraction();
                         if (mMultiPageDocument == null) {
                             mInMultiPageState = true;
                             mMultiPageDocument = multiPageDocument;
@@ -1328,7 +1329,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         }
                         LOG.info("Document imported: {}", mMultiPageDocument);
                         updatePhotoThumbnail();
-                        hideActivityIndicatorAndEnableInteraction();
                         requestClientDocumentCheck(mMultiPageDocument);
                     }
 
