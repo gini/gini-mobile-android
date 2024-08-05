@@ -67,8 +67,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
@@ -81,6 +79,7 @@ import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColo
 import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
+import net.gini.android.bank.sdk.di.getGiniKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
@@ -96,6 +95,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.ui.theme.typography.bold
 import net.gini.android.capture.view.InjectedViewAdapterInstance
+import org.koin.core.parameter.parametersOf
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
@@ -104,6 +104,10 @@ import java.time.format.DateTimeFormatter
 class SkontoFragment : Fragment() {
 
     private val args: SkontoFragmentArgs by navArgs<SkontoFragmentArgs>()
+
+    private val viewModel: SkontoFragmentViewModel by getGiniKoin().inject {
+        parametersOf(args.data)
+    }
 
     lateinit var cancelListener: CancelListener
 
@@ -138,11 +142,6 @@ class SkontoFragment : Fragment() {
         customBottomNavigationBarView =
             container?.let { customBottomNavBarAdapter?.viewAdapter?.onCreateView(it) }
 
-        val viewModel = ViewModelProvider(
-            factory = ViewModelFactory(args.data),
-            owner = this
-        )[SkontoFragmentViewModel::class.java]
-
         viewModel.setListener(skontoFragmentListener)
 
         return ComposeView(requireContext()).apply {
@@ -160,16 +159,6 @@ class SkontoFragment : Fragment() {
                     )
                 }
             }
-        }
-    }
-
-    internal class ViewModelFactory(
-        private val args: SkontoData,
-    ) : ViewModelProvider.Factory {
-
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            @Suppress("UNCHECKED_CAST")
-            return SkontoFragmentViewModel(args) as T
         }
     }
 }

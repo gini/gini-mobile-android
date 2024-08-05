@@ -23,6 +23,7 @@ navigation_component = "2.7.6"
 compose-bom = "2024.06.00"
 accompanist-themeAdapter = "1.1.1"
 compose-activity = "1.9.0"
+koin-bom = "3.5.6"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
@@ -120,3 +121,7 @@ compose-activity = { module = "androidx.activity:activity-compose", version.ref 
 compose-tools-uiTooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-tools-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview" }
 accompanist-themeAdapter = { module = "com.google.android.material:compose-theme-adapter-3", version.ref = "accompanist-themeAdapter" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-android = { module = "io.insert-koin:koin-android" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
