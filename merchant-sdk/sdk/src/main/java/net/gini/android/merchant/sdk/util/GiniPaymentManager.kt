@@ -53,7 +53,7 @@ internal class GiniPaymentManager(
 
         val valid = validatePaymentDetails(paymentDetails)
         if (valid) {
-            sendFeedbackAndStartLoading(paymentDetails)
+            giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.Loading)
             giniMerchant.emitSDKEvent(
                 try {
                     GiniMerchant.PaymentState.Success(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)
@@ -94,35 +94,6 @@ internal class GiniPaymentManager(
             is Resource.Success -> paymentRequestId?.let {
                 createPaymentRequestResource.data.toPaymentRequest(it)
             } ?: throw Exception("Payment request ID is null")
-        }
-    }
-
-    suspend fun sendFeedbackAndStartLoading(paymentDetails: PaymentDetails) {
-        giniMerchant?.emitSDKEvent(GiniMerchant.PaymentState.Loading)
-        // TODO: first get the payment request and handle error before proceeding
-        sendFeedback(paymentDetails)
-    }
-
-    private suspend fun sendFeedback(paymentDetails: PaymentDetails) {
-        if (giniMerchant == null) {
-            LOG.error("No GiniMerchant instance set")
-            return
-        }
-        try {
-            when (val documentResult = giniMerchant.documentFlow.value) {
-                is ResultWrapper.Success -> paymentDetails.extractions?.let { extractionsContainer ->
-                    giniMerchant.giniHealthAPI.documentManager.sendFeedbackForExtractions(
-                        documentResult.value,
-                        extractionsContainer.specificExtractions,
-                        extractionsContainer.compoundExtractions.withFeedback(paymentDetails)
-                    )
-                }
-
-                is ResultWrapper.Error -> {}
-                is ResultWrapper.Loading -> {}
-            }
-        } catch (ignored: Throwable) {
-            // Ignored since we don't want to interrupt the flow because of feedback failure
         }
     }
 

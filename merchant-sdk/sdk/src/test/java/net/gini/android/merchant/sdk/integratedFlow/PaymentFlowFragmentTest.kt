@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -15,7 +16,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.PaymentNextStep
 import org.junit.Before
@@ -111,6 +114,51 @@ class PaymentFlowFragmentTest {
     }
 
     @Test
+    fun `updates payment details when payment button is tapped on the review fragment`() = runTest {
+        // Given
+        every { paymentFlowViewModel!!.addToBackStack(DisplayedScreen.ReviewFragment) } returns Unit
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
+        every { paymentFlowViewModel!!.giniMerchant!!.getFragment("", "", "", "") } returns mockk(relaxed = true)
+        every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
+        every { paymentFlowViewModel!!.giniMerchant.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentFlowViewModel!!.giniMerchant.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentFlowViewModel!!.giniPaymentManager.paymentValidation } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentFlowViewModel!!.giniPaymentManager.lastFullyValidatedPaymentDetails } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentFlowViewModel!!.paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            mockk(relaxed = true)
+        )
+
+        val scenario = launchFragmentInContainer(themeResId = R.style.GiniMerchantTheme) {
+            PaymentFragment.newInstance(
+                giniMerchant = giniMerchant!!,
+                paymentDetails = mockk(relaxed = true),
+                paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewFragment = true),
+                viewModelFactory = viewModelFactory
+            )
+        }
+
+        val updatedPaymentDetails = PaymentDetails("recipient", "iban", "amount", "purpose")
+
+        scenario.onFragment { paymentFragment ->
+            // When
+            paymentFragment.handlePayFlow()
+
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+
+            val reviewFragment = paymentFragment.childFragmentManager.fragments.first {
+                it is ReviewBottomSheet
+            } as ReviewBottomSheet
+
+            reviewFragment.paymentButtonListener?.onPaymentButtonTapped(updatedPaymentDetails)
+        }
+
+        // Then
+        verify { paymentFlowViewModel!!.updatePaymentDetails(eq(updatedPaymentDetails)) }
+    }
+
+    @Test
     fun `forwards payment request to viewModel when config doesn't allow showing ReviewFragment`() = runTest {
         // Given
         val paymentFlow = MutableSharedFlow<PaymentNextStep>(extraBufferCapacity = 1)
@@ -136,4 +184,5 @@ class PaymentFlowFragmentTest {
         // Then
         verify { paymentFlowViewModel!!.onPaymentButtonTapped(any()) }
     }
+
 }
