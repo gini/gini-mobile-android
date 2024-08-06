@@ -2,7 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:ConfigurationViewModel.kt$ConfigurationViewModel$fun configureGiniBank(context: Context)</ID>
+    <ID>CyclomaticComplexMethod:ConfigurationViewModel.kt$ConfigurationViewModel$fun configureGiniBank(context: Context)</ID>
     <ID>EmptyFunctionBlock:CustomOnButtonLoadingIndicatorAdapter.kt$CustomOnButtonLoadingIndicatorAdapter${}</ID>
     <ID>LongMethod:ConfigurationActivity.kt$ConfigurationActivity$private fun setConfigurationFeatures()</ID>
     <ID>LongMethod:ConfigurationActivity.kt$ConfigurationActivity$private fun updateUIWithConfigurationObject(configuration: Configuration)</ID>
@@ -81,15 +81,16 @@
     <ID>NewLineAtEndOfFile:PermissionHandler.kt$net.gini.android.bank.sdk.exampleapp.core.PermissionHandler.kt</ID>
     <ID>NewLineAtEndOfFile:ResultWrapper.kt$net.gini.android.bank.sdk.exampleapp.core.ResultWrapper.kt</ID>
     <ID>NewLineAtEndOfFile:SplashActivity.kt$net.gini.android.bank.sdk.exampleapp.ui.SplashActivity.kt</ID>
-    <ID>SwallowedException:ExampleApp.kt$ExampleApp$catch (e: IllegalStateException) { // ignore }</ID>
+    <ID>SwallowedException:ExampleApp.kt$ExampleApp$e: IllegalStateException</ID>
     <ID>TooGenericExceptionCaught:PayActivity.kt$PayActivity$t: Throwable</ID>
     <ID>TooGenericExceptionCaught:ResultWrapper.kt$throwable: Throwable</ID>
     <ID>TooManyFunctions:ExtractionsActivity.kt$ExtractionsActivity : AppCompatActivityExtractionsAdapterInterface</ID>
     <ID>TooManyFunctions:MainActivity.kt$MainActivity : AppCompatActivity</ID>
+    <ID>UnusedParameter:ExtractionsActivity.kt$ExtractionsActivity$binding: ActivityExtractionsBinding</ID>
     <ID>UnusedPrivateMember:ClientBankSDKFragment.kt$ClientBankSDKFragment$private fun overrideBankSDKConfiguration()</ID>
-    <ID>UnusedPrivateMember:ExtractionsActivity.kt$ExtractionsActivity$binding: ActivityExtractionsBinding</ID>
     <ID>UnusedPrivateMember:ExtractionsActivity.kt$ExtractionsActivity$private fun hideProgressIndicator(binding: ActivityExtractionsBinding)</ID>
     <ID>UnusedPrivateMember:ExtractionsActivity.kt$ExtractionsActivity$private fun showProgressIndicator(binding: ActivityExtractionsBinding)</ID>
-    <ID>UnusedPrivateMember:MainActivity.kt$MainActivity.Companion$private const val REQUEST_CONFIGURATION = 3</ID>
+    <ID>UnusedPrivateProperty:ClientCaptureSDKFragment.kt$ClientCaptureSDKFragment$val capture = GiniCapture.Builder() .setGiniCaptureNetworkService(networkService) .setFileImportEnabled(true) .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES) .setQRCodeScanningEnabled(true) .setFlashButtonEnabled(true) .setMultiPageEnabled(true) .build()</ID>
+    <ID>UnusedPrivateProperty:MainActivity.kt$MainActivity.Companion$private const val REQUEST_CONFIGURATION = 3</ID>
   </CurrentIssues>
 </SmellBaseline>
