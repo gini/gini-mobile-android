@@ -61,7 +61,8 @@ class GiniMerchant(
                             context,
                             clientId,
                             clientSecret,
-                            emailDomain
+                            emailDomain,
+                            apiVersion = API_VERSION
                         )
                     } else {
                         GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager))
@@ -319,8 +320,9 @@ class GiniMerchant(
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(GiniMerchant::class.java)
+        const val API_VERSION = 1
 
+        private val LOG = LoggerFactory.getLogger(GiniMerchant::class.java)
         private const val CAPTURED_ARGUMENTS_NULL = "CAPTURED_ARGUMENTS_NULL"
         private const val CAPTURED_ARGUMENTS_ID = "CAPTURED_ARGUMENTS_ID"
         private const val CAPTURED_ARGUMENTS_DOCUMENT = "CAPTURED_ARGUMENTS_DOCUMENT"
