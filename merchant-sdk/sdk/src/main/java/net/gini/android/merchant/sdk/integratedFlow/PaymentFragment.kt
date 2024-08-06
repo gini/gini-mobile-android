@@ -265,7 +265,16 @@ class PaymentFragment private constructor(
                         BankSelectionBottomSheet.newInstance(it, viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
                     }
                 }
-                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false, viewModel).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                DisplayedScreen.PaymentComponentBottomSheet -> {
+                    if (childFragmentManager.fragments.any { it is PaymentComponentBottomSheet }) {
+                        return
+                    }
+                    PaymentComponentBottomSheet.newInstance(
+                        viewModel.paymentComponent,
+                        viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
+                        viewModel
+                    ).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                }
                 DisplayedScreen.Nothing -> viewModel.giniMerchant.setFlowCancelled()
                 else -> {
 
