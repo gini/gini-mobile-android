@@ -12,6 +12,7 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.configuration.ConfigurationFragment
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.health.sdk.exampleapp.invoices.ui.AppCompatThemeInvoicesActivity

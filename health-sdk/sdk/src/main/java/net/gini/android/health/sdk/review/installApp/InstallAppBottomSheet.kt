@@ -1,37 +1,26 @@
 package net.gini.android.health.sdk.review.installApp
 
-import android.app.Dialog
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
+import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsBottomSheetInstallAppBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.health.sdk.review.ReviewViewModel
 import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
+import net.gini.android.health.sdk.util.getLocaleStringResource
 import net.gini.android.health.sdk.util.setBackgroundTint
-import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
 import org.slf4j.LoggerFactory
 
 /**
@@ -54,6 +43,11 @@ internal class InstallAppBottomSheet private constructor(
         InstallAppViewModel.Factory(
             paymentComponent
         )
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, GiniHealth.getSDKLanguage(requireContext())?.languageLocale())
     }
 
     override fun onCreateView(
@@ -79,13 +73,13 @@ internal class InstallAppBottomSheet private constructor(
                             paymentProviderApp.icon
                         )
                         binding.ghsPaymentProviderIcon.ghsPaymentProviderIcon.contentDescription =
-                            "${paymentProviderApp.name} ${getString(R.string.ghs_payment_provider_logo_content_description)}"
+                            "${paymentProviderApp.name} ${getLocaleStringResource(R.string.ghs_payment_provider_logo_content_description)}"
                         binding.ghsInstallAppTitle.text = String.format(
-                            getString(net.gini.android.health.sdk.R.string.ghs_install_app_title),
+                            getLocaleStringResource(net.gini.android.health.sdk.R.string.ghs_install_app_title),
                             paymentProviderApp.paymentProvider.name
                         )
                         binding.ghsInstallAppDetails.text = String.format(
-                            getString(net.gini.android.health.sdk.R.string.ghs_install_app_detail),
+                            getLocaleStringResource(net.gini.android.health.sdk.R.string.ghs_install_app_detail),
                             paymentProviderApp.paymentProvider.name
                         )
                         binding.ghsPlayStoreLogo.setOnClickListener {
@@ -106,7 +100,7 @@ internal class InstallAppBottomSheet private constructor(
 
     private fun updateUI(paymentProviderApp: PaymentProviderApp) {
         binding.ghsInstallAppDetails.text = String.format(
-            getString(R.string.ghs_install_app_tap_to_continue),
+            getLocaleStringResource(R.string.ghs_install_app_tap_to_continue),
             paymentProviderApp.paymentProvider.name
         )
         binding.ghsPlayStoreLogo.visibility = View.GONE
@@ -133,6 +127,10 @@ internal class InstallAppBottomSheet private constructor(
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUrl))
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+    }
+
+    private fun getLocaleStringResource(resourceId: Int): String {
+        return getLocaleStringResource(resourceId, viewModel.paymentComponent?.giniHealth)
     }
 
     companion object {
