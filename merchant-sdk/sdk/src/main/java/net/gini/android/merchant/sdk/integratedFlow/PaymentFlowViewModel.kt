@@ -136,12 +136,6 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         giniMerchant.emitSDKEvent(sdkEvent)
     }
 
-    override fun sendFeedback() {
-        viewModelScope.launch {
-            giniPaymentManager.sendFeedbackAndStartLoading(_paymentDetails.value)
-        }
-    }
-
     override suspend fun getPaymentRequest(): PaymentRequest = giniPaymentManager.getPaymentRequest(initialSelectedPaymentProvider, _paymentDetails.value)
 
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)

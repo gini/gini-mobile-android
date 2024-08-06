@@ -233,19 +233,6 @@ class PaymentFlowViewModelTest {
     }
 
     @Test
-    fun `forwards feedback request to giniPaymentManager`() = runTest {
-        val viewModel = PaymentFlowViewModel(
-            paymentComponent = paymentComponent!!,
-            paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant!!,
-            giniPaymentManager = giniPayment!!
-        )
-
-        viewModel.sendFeedback()
-        coVerify(exactly = 1) { giniPayment!!.sendFeedbackAndStartLoading(any()) }
-    }
-
-    @Test
     fun `forwards sdk event to giniMerchant`() = runTest {
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
