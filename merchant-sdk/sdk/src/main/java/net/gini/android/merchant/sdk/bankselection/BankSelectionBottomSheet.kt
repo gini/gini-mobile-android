@@ -18,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetBankSelectionBinding
 import net.gini.android.merchant.sdk.databinding.GmsItemPaymentProviderAppBinding
+import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
@@ -55,6 +57,7 @@ internal class BankSelectionBottomSheet private constructor(private val paymentC
 
                     viewModel.setSelectedPaymentProviderApp(paymentProviderApp)
                     this@BankSelectionBottomSheet.dismiss()
+                    (this@BankSelectionBottomSheet.parentFragment as PaymentFragment).handleBackFlow()
                 }
             })
 

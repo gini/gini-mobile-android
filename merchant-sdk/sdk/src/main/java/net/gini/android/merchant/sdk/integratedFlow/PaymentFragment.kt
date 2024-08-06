@@ -184,11 +184,8 @@ class PaymentFragment private constructor(
                 launch {
                     viewModel.paymentComponent.selectedPaymentProviderAppFlow.collect {
                         if (it is SelectedPaymentProviderAppState.AppSelected) {
-                            if (viewModel.paymentProviderAppChanged(it.paymentProviderApp) && viewModel.getLastBackstackEntry() is DisplayedScreen.BankSelectionBottomSheet) {
-                                handleBackFlow()
-                            } else {
-                                viewModel.checkBankAppInstallState(it.paymentProviderApp)
-                            }
+                            viewModel.paymentProviderAppChanged(it.paymentProviderApp)
+                            viewModel.checkBankAppInstallState(it.paymentProviderApp)
                         }
                     }
                 }
@@ -257,7 +254,7 @@ class PaymentFragment private constructor(
         }
     }
 
-    private fun handleBackFlow() {
+    internal fun handleBackFlow() {
         childFragmentManager.popBackStackImmediate()
         viewModel.popBackStack()
 
