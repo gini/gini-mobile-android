@@ -90,7 +90,10 @@ class FileImportHelpFragment : Fragment() {
     }
 
     private fun waitForHalfSecondAndShowSnackBar() {
-        Handler(Looper.getMainLooper()).postDelayed({ this.showCustomSnackBar() }, 500)
+        Handler(Looper.getMainLooper()).postDelayed(
+            { if (isVisible) this.showCustomSnackBar() },
+            500
+        )
     }
 
     private fun showCustomSnackBar() {

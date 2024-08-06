@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.paymentComponent
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -25,6 +26,7 @@ import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.GiniHealth.GiniHealthPreferences
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentPreferences
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
@@ -36,12 +38,15 @@ import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
+import net.gini.android.health.sdk.util.GiniLocalization
 import net.gini.android.health.sdk.util.extensions.generateBitmapDrawableIcon
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Locale
+
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
@@ -236,10 +241,16 @@ class PaymentComponentTest {
         )
         val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
         mockkStatic(PackageManager::getInstalledPaymentProviderApps)
+
         every { mockedContext.packageManager.getInstalledPaymentProviderApps() } returns emptyList()
+
+        val preferences: SharedPreferences = mockk()
+        every { mockedContext.getSharedPreferences("GiniHealthPreferences", Context.MODE_PRIVATE) } returns preferences
+        every { preferences.getString("SDK_LANGUAGE_PREFS_KEY", null) } returns null
 
         //When
         val paymentComponent = PaymentComponent(mockedContext, giniHealth!!)
+
         paymentComponent.loadPaymentProviderApps()
 
         // Then
@@ -285,6 +296,9 @@ class PaymentComponentTest {
             buildPaymentProviderApp(paymentProvider2, false),
         )
         val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
+        val preferences: SharedPreferences = mockk()
+        every { mockedContext.getSharedPreferences("GiniHealthPreferences", Context.MODE_PRIVATE) } returns preferences
+        every { preferences.getString("SDK_LANGUAGE_PREFS_KEY", null) } returns null
 
         //When
         val paymentComponent = PaymentComponent(mockedContext, giniHealth!!)
@@ -492,6 +506,9 @@ class PaymentComponentTest {
             buildPaymentProviderApp(paymentProvider2, false),
         )
         val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
+        val preferences: SharedPreferences = mockk()
+        every { mockedContext.getSharedPreferences("GiniHealthPreferences", Context.MODE_PRIVATE) } returns preferences
+        every { preferences.getString("SDK_LANGUAGE_PREFS_KEY", null) } returns null
 
         val paymentComponent = PaymentComponent(mockedContext, giniHealth!!)
         paymentComponent.loadPaymentProviderApps()

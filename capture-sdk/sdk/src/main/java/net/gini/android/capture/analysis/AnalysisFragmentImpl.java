@@ -118,20 +118,23 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     void showScanAnimation() {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
         isScanAnimationActive = true;
-        injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
-            adapter.onVisible();
-            return Unit.INSTANCE;
-        });
+        if (injectedLoadingIndicatorContainer != null)
+            injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
+                adapter.onVisible();
+                return Unit.INSTANCE;
+            });
     }
 
     @Override
     void hideScanAnimation() {
         isScanAnimationActive = false;
-        injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
-            adapter.onHidden();
-            return Unit.INSTANCE;
-        });
-        mAnalysisMessageTextView.setVisibility(View.GONE);
+        if (injectedLoadingIndicatorContainer != null)
+            injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
+                adapter.onHidden();
+                return Unit.INSTANCE;
+            });
+        if (mAnalysisMessageTextView != null)
+            mAnalysisMessageTextView.setVisibility(View.GONE);
     }
 
     @Override

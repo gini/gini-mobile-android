@@ -24,6 +24,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoi
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
@@ -100,6 +101,18 @@ object GiniBank {
             digitalInvoiceNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
         }
         get() = digitalInvoiceNavigationBarBottomAdapterInstance.viewAdapter
+
+
+    internal var skontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
+        null
+
+    var skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter?
+        set(value) {
+            skontoNavigationBarBottomAdapterInstance =
+                value?.let { InjectedViewAdapterInstance(it) }
+        }
+        get() = skontoNavigationBarBottomAdapterInstance?.viewAdapter
+
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -316,18 +329,26 @@ object GiniBank {
     ): CancellationToken {
         giniCapture.let { capture ->
             check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
-            return capture.createDocumentForImportedFiles(intent, context, object : AsyncCallback<Document, ImportedFileValidationException> {
-                override fun onSuccess(result: Document) {
-                    resultLauncher.launch(CaptureImportInput.Forward(result))
-                }
+            return capture.createDocumentForImportedFiles(
+                intent,
+                context,
+                object : AsyncCallback<Document, ImportedFileValidationException> {
+                    override fun onSuccess(result: Document) {
+                        resultLauncher.launch(CaptureImportInput.Forward(result))
+                    }
 
-                override fun onError(exception: ImportedFileValidationException?) {
-                    resultLauncher.launch(CaptureImportInput.Error(exception?.validationError, exception?.message))
-                }
+                    override fun onError(exception: ImportedFileValidationException?) {
+                        resultLauncher.launch(
+                            CaptureImportInput.Error(
+                                exception?.validationError,
+                                exception?.message
+                            )
+                        )
+                    }
 
-                override fun onCancelled() {
-                }
-            })
+                    override fun onCancelled() {
+                    }
+                })
         }
     }
 
@@ -413,17 +434,18 @@ object GiniBank {
         /**
          * The document was processed successfully.
          */
-        data class Success(val document: Document?): CreateDocumentFromImportedFileResult()
+        data class Success(val document: Document?) : CreateDocumentFromImportedFileResult()
 
         /**
          * Document processing returned an error.
          */
-        data class Error(val error: ImportedFileValidationException?): CreateDocumentFromImportedFileResult()
+        data class Error(val error: ImportedFileValidationException?) :
+            CreateDocumentFromImportedFileResult()
 
         /**
          * Document processing was cancelled.
          */
-        object Cancelled: CreateDocumentFromImportedFileResult()
+        object Cancelled : CreateDocumentFromImportedFileResult()
     }
 
     /**
@@ -442,7 +464,7 @@ object GiniBank {
         return giniCapture?.createDocumentForImportedFiles(
             intent,
             context,
-            object: AsyncCallback<Document, ImportedFileValidationException> {
+            object : AsyncCallback<Document, ImportedFileValidationException> {
                 override fun onSuccess(result: Document?) {
                     callback(CreateDocumentFromImportedFileResult.Success(result))
                 }

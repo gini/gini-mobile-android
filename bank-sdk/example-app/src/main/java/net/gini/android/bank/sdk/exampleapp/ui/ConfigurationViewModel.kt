@@ -26,6 +26,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingInd
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustrationAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
@@ -273,6 +274,12 @@ class ConfigurationViewModel @Inject constructor(
         if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled) {
             GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter =
                 CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
+        }
+
+        if (configuration.isSkontoCustomNavBarEnabled) {
+            GiniBank.skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter()
+        } else {
+            GiniBank.skontoNavigationBarBottomAdapter = null
         }
 
         // 35 Digital invoice onboarding bottom navigation bar

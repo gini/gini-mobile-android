@@ -14,11 +14,11 @@ import net.gini.android.health.sdk.R
 open class GhsBottomSheetDialogFragment : BottomSheetDialogFragment() {
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val wrappedContext = requireContext().wrappedWithGiniHealthTheme()
+        val wrappedContext = requireContext().wrappedWithGiniHealthThemeAndLocale()
         val dialog = BottomSheetDialog(wrappedContext, theme)
 
         val colorDrawable = ColorDrawable(ContextCompat.getColor(wrappedContext, R.color.ghs_bottom_sheet_scrim))

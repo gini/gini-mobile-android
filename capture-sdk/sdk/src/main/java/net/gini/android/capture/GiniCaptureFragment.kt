@@ -33,7 +33,10 @@ import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnal
 import java.util.UUID
 
 
-class GiniCaptureFragment(private val openWithDocument: Document? = null) :
+class GiniCaptureFragment(
+    private val openWithDocument: Document? = null,
+    private val resetOpenWithDocument: () -> Unit
+) :
     Fragment(),
     CameraFragmentListener,
     AnalysisFragmentListener,
@@ -137,6 +140,7 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
                     ""
                 )
             )
+            resetOpenWithDocument()
         } else {
             if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(
                     OncePerInstallEvent.SHOW_ONBOARDING
@@ -265,9 +269,18 @@ class GiniCaptureFragment(private val openWithDocument: Document? = null) :
     }
 
     companion object {
+
         @JvmStatic
         fun createInstance(document: Document? = null): GiniCaptureFragment {
-            return GiniCaptureFragment(document)
+            return GiniCaptureFragment(document) { }
+        }
+
+        @JvmStatic
+        fun createInstance(
+            document: Document? = null,
+            resetOpenWithDocument: () -> Unit
+        ): GiniCaptureFragment {
+            return GiniCaptureFragment(document, resetOpenWithDocument)
         }
     }
 }

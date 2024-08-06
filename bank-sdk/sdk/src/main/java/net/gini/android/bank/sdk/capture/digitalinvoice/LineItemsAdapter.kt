@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.*
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.LineItem
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceAddonBinding
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceLineItemBinding
+import net.gini.android.capture.internal.ui.IntervalClickListener
 
 /**
  * Created by Alpar Szotyori on 11.12.2019.
@@ -188,11 +189,11 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     )
                 }
             }
-            itemView.setOnClickListener {
+            itemView.setOnClickListener(IntervalClickListener {
                 allData?.getOrNull(dataIndex ?: -1)?.let {
                     listener?.onLineItemClicked(it)
                 }
-            }
+            })
 
             binding.gbsEnableSwitch.setOnCheckedChangeListener { _, isChecked ->
                 allData?.getOrNull(dataIndex ?: -1)?.let {

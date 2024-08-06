@@ -23,5 +23,5 @@
         app:layout_constraintBottom_toBottomOf="@id/ghs_powered_by_gini_label"
         app:layout_constraintStart_toEndOf="@id/ghs_powered_by_gini_label"
         app:layout_constraintTop_toTopOf="@id/ghs_powered_by_gini_label"
-        app:srcCompat="@drawable/ghs_gini_logo" />
+        android:src="@drawable/ghs_gini_logo" />
 </androidx.constraintlayout.widget.ConstraintLayout>
