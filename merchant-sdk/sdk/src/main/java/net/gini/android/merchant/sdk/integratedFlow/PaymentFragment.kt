@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -141,6 +142,19 @@ class PaymentFragment private constructor(
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return this.getLayoutInflaterWithGiniMerchantTheme(inflater)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (viewModelFactory == null) {
+            // When the viewModelFactory is not available we are in an unrecoverable state
+            // (most likely after an activity restart) and we should remove this fragment which is the container (root)
+            // for all our other fragments. This returns the user to the client app's previous screen.
+            parentFragmentManager.commit {
+                remove(this@PaymentFragment)
+            }
+        }
     }
 
     override fun onCreateView(
