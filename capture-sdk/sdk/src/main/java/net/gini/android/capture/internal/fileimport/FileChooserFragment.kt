@@ -181,8 +181,11 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             try {
                 val uriList = when(activityResultUriList){
                     is Uri -> listOf(activityResultUriList)
-                    is List<*> -> activityResultUriList.filterIsInstance<Uri>().takeIf { it.size == activityResultUriList.size }
-                        ?: throw IllegalArgumentException("List contains non-Uri elements")
+                    is List<*> -> {
+                        activityResultUriList.filterIsInstance<Uri>().takeIf {
+                            it.size == activityResultUriList.size
+                        } ?: throw IllegalArgumentException("List contains non-Uri elements")
+                    }
                     else -> throw IllegalArgumentException("uri is neither Uri nor List<Uri>")
                 }
                 if (uriList.isNotEmpty()) {
