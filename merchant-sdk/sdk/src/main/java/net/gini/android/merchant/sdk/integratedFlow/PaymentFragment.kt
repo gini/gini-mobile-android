@@ -299,7 +299,8 @@ class PaymentFragment private constructor(
                 isAmountFieldEditable = viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true
             ),
             listener = object: ReviewViewListener {
-                override fun onPaymentButtonTapped() {
+                override fun onPaymentButtonTapped(paymentDetails: PaymentDetails) {
+                    viewModel.updatePaymentDetails(paymentDetails)
                     viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
                 }
             },

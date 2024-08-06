@@ -21,6 +21,7 @@ import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
+import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
@@ -109,6 +110,7 @@ class PaymentFlowViewModelTest {
         // Given
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
@@ -126,6 +128,7 @@ class PaymentFlowViewModelTest {
         // Given
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
@@ -147,6 +150,7 @@ class PaymentFlowViewModelTest {
         // Given
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
@@ -165,6 +169,7 @@ class PaymentFlowViewModelTest {
         // Given
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = GiniPaymentManager(giniMerchant)
@@ -180,6 +185,7 @@ class PaymentFlowViewModelTest {
         coEvery { giniPayment!!.onPayment(any(), any()) } coAnswers {  }
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -194,6 +200,7 @@ class PaymentFlowViewModelTest {
     fun `checks bank app installed state`() = runTest {
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -207,6 +214,7 @@ class PaymentFlowViewModelTest {
     fun `forwards on bank opened event to giniMerchant`() = runTest {
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -220,6 +228,7 @@ class PaymentFlowViewModelTest {
     fun `emits share with started event`() = runTest {
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -236,6 +245,7 @@ class PaymentFlowViewModelTest {
     fun `forwards sdk event to giniMerchant`() = runTest {
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -249,6 +259,7 @@ class PaymentFlowViewModelTest {
     fun `returns payment request from giniPaymentManager`() = runTest {
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -264,6 +275,7 @@ class PaymentFlowViewModelTest {
     fun `returns document as byteArray from giniMerchant`() = runTest {
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -288,6 +300,7 @@ class PaymentFlowViewModelTest {
 
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -311,6 +324,7 @@ class PaymentFlowViewModelTest {
 
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -338,6 +352,7 @@ class PaymentFlowViewModelTest {
 
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -369,6 +384,7 @@ class PaymentFlowViewModelTest {
 
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
             giniPaymentManager = giniPayment!!
@@ -386,5 +402,25 @@ class PaymentFlowViewModelTest {
             assertThat(nextStep).isEqualTo(PaymentNextStep.SetLoadingVisibility(true))
             cancelAndConsumeRemainingEvents()
         }
+    }
+
+    @Test
+    fun `updates payment details`() {
+        // Given
+        val viewModel = PaymentFlowViewModel(
+            paymentComponent = paymentComponent!!,
+            paymentDetails = PaymentDetails("", "", "", ""),
+            paymentFlowConfiguration = null,
+            giniMerchant = giniMerchant!!,
+            giniPaymentManager = giniPayment!!
+        )
+
+        val updatedPaymentDetails = PaymentDetails("recipient", "iban", "amount", "purpose")
+
+        // When
+        viewModel.updatePaymentDetails(updatedPaymentDetails)
+
+        // Then
+        assertThat(viewModel.paymentDetails).isEqualTo(updatedPaymentDetails)
     }
 }

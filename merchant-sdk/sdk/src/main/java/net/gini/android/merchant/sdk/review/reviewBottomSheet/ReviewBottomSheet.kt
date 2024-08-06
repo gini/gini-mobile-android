@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -18,7 +19,11 @@ import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
-internal class ReviewBottomSheet private constructor(private val paymentButtonListener: ReviewViewListener?, private val viewModelFactory: ViewModelProvider.Factory?): GmsBottomSheetDialogFragment() {
+
+internal class ReviewBottomSheet private constructor(
+    internal val paymentButtonListener: ReviewViewListener?,
+    private val viewModelFactory: ViewModelProvider.Factory?
+) : GmsBottomSheetDialogFragment() {
 
     constructor(): this(null, null)
 
@@ -40,7 +45,7 @@ internal class ReviewBottomSheet private constructor(private val paymentButtonLi
     ): View? {
         binding = GmsBottomSheetReviewBinding.inflate(inflater, container, false)
         binding.gmsReviewLayout.reviewComponent = viewModel.reviewComponent
-        binding.gmsReviewLayout.onPayButtonTapped = paymentButtonListener
+        binding.gmsReviewLayout.listener = paymentButtonListener
         return binding.root
     }
 

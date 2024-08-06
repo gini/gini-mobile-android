@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
 import net.gini.android.merchant.sdk.GiniMerchant
+import net.gini.android.merchant.sdk.api.payment.model.Payment
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.paymentcomponent.BankPickerRows
@@ -25,12 +26,16 @@ import net.gini.android.merchant.sdk.util.PaymentNextStep
 import java.io.File
 import java.util.Stack
 
-internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val paymentDetails: PaymentDetails? = null, val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniPaymentManager: GiniPaymentManager, val giniMerchant: GiniMerchant) : ViewModel(), FlowBottomSheetsManager, BackListener {
+internal class PaymentFlowViewModel(
+    val paymentComponent: PaymentComponent,
+    internal var paymentDetails: PaymentDetails,
+    val paymentFlowConfiguration: PaymentFlowConfiguration?,
+    val giniPaymentManager: GiniPaymentManager,
+    val giniMerchant: GiniMerchant
+) : ViewModel(), FlowBottomSheetsManager, BackListener {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
-
-    private val _paymentDetails = MutableStateFlow(PaymentDetails(paymentDetails?.recipient ?: "", paymentDetails?.iban ?: "", paymentDetails?.amount ?: "", paymentDetails?.purpose ?: ""))
 
     override var openWithPreferences: OpenWithPreferences? = null
     override var openWithCounter: Int = 0
@@ -101,8 +106,12 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         }
     }
 
+    fun updatePaymentDetails(paymentDetails: PaymentDetails) {
+        this.paymentDetails = paymentDetails
+    }
+
     fun onPayment() = viewModelScope.launch {
-        giniPaymentManager.onPayment(initialSelectedPaymentProvider, _paymentDetails.value)
+        giniPaymentManager.onPayment(initialSelectedPaymentProvider, paymentDetails)
     }
 
     fun onBankOpened() {
@@ -136,11 +145,11 @@ internal class PaymentFlowViewModel(val paymentComponent: PaymentComponent, val 
         giniMerchant.emitSDKEvent(sdkEvent)
     }
 
-    override suspend fun getPaymentRequest(): PaymentRequest = giniPaymentManager.getPaymentRequest(initialSelectedPaymentProvider, _paymentDetails.value)
+    override suspend fun getPaymentRequest(): PaymentRequest = giniPaymentManager.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails)
 
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 
-    class Factory(val paymentComponent: PaymentComponent, val paymentDetails: PaymentDetails?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
+    class Factory(val paymentComponent: PaymentComponent, val paymentDetails: PaymentDetails, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return PaymentFlowViewModel(paymentComponent = paymentComponent, paymentDetails = paymentDetails,paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T

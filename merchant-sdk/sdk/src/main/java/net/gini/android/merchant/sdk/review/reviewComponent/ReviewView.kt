@@ -31,7 +31,7 @@ import net.gini.android.merchant.sdk.util.showErrorMessage
 import org.slf4j.LoggerFactory
 
 internal interface ReviewViewListener {
-    fun onPaymentButtonTapped()
+    fun onPaymentButtonTapped(paymentDetails: PaymentDetails)
 }
 internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
@@ -40,7 +40,7 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
     private val coroutineContext = Dispatchers.Main
     private var coroutineScope: CoroutineScope? = null
 
-    var onPayButtonTapped: ReviewViewListener? = null
+    var listener: ReviewViewListener? = null
     var reviewComponent: ReviewComponent? = null
         set(value) {
             field = value
@@ -106,7 +106,9 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
         binding.gmsPaymentDetails.setOnClickListener { it.hideKeyboard() }
         binding.payment.setOnClickListener {
             it.hideKeyboard()
-            onPayButtonTapped?.onPaymentButtonTapped()
+            reviewComponent?.paymentDetails?.value?.let { paymentDetails ->
+                listener?.onPaymentButtonTapped(paymentDetails)
+            }
         }
     }
 
