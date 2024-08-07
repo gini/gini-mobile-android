@@ -100,7 +100,7 @@ data class PaymentFlowConfiguration(
  * The [PaymentFragment] provides a container for all screens that should be displayed for the user
  * during the payment process (eg. [PaymentComponentBottomSheet], [BankSelectionBottomSheet], [ReviewBottomSheet]).
  *
- * It handles the display logic for all screens. A new instance can be created using the [GiniMerchant.getFragment] method.
+ * It handles the display logic for all screens. A new instance can be created using the [GiniMerchant.createFragment] method.
  */
 class PaymentFragment private constructor(
     private val viewModelFactory: ViewModelProvider.Factory? = null) : Fragment() {

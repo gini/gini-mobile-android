@@ -88,7 +88,7 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
-        every { paymentFlowViewModel!!.giniMerchant!!.getFragment("", "", "", "") } returns mockk(relaxed = true)
+        every { paymentFlowViewModel!!.giniMerchant!!.createFragment("", "", "", "") } returns mockk(relaxed = true)
         every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
         every { paymentFlowViewModel!!.giniMerchant.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { paymentFlowViewModel!!.giniMerchant.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
@@ -120,7 +120,7 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
-        every { paymentFlowViewModel!!.giniMerchant!!.getFragment("", "", "", "") } returns mockk(relaxed = true)
+        every { paymentFlowViewModel!!.giniMerchant!!.createFragment("", "", "", "") } returns mockk(relaxed = true)
         every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
         every { paymentFlowViewModel!!.giniMerchant.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { paymentFlowViewModel!!.giniMerchant.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))

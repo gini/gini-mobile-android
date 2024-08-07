@@ -119,7 +119,7 @@ class GiniMerchant(
         }
     }
     
-    fun getFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
+    fun createFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
         val paymentDetails = PaymentDetails(
             recipient = recipient,
             iban = iban,
