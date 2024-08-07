@@ -6,7 +6,7 @@ import org.koin.dsl.module
 
 val giniModule = module {
     single {
-        GiniHealthAPIBuilder(get(), getProperty("clientId"), getProperty("clientSecret"), "example.com", apiVersion = GiniMerchant.API_VERSION)
+        GiniHealthAPIBuilder(get(), getProperty("clientId"), getProperty("clientSecret"), "example.com")
             .build()
     }
     single { GiniMerchant(get(), getProperty("clientId"), getProperty("clientSecret"), "example.com") }
