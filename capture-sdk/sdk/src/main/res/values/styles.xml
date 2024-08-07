@@ -44,6 +44,7 @@
         <item name="textAppearanceBodySmall">?attr/textAppearanceCaption</item>
         <item name="textAppearanceLabelLarge">?attr/textAppearanceButton</item>
         <item name="textAppearanceLabelMedium">?attr/textAppearanceOverline</item>
+        <item name="android:colorControlHighlight">@color/gc_accent_06</item>
     </style>
 
     <style name="Root.GiniCaptureTheme" parent="Root.GiniCaptureTheme.Internal"/>
