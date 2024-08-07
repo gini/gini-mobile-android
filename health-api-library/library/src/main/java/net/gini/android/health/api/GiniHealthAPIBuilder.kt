@@ -28,10 +28,11 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     clientId: String = "",
     clientSecret: String = "",
     emailDomain: String = "",
-    sessionManager: SessionManager? = null
+    sessionManager: SessionManager? = null,
+    apiVersion: Int = API_VERSION
 ) : GiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
 
-    private val healthApiType = GiniHealthApiType(4)
+    private val healthApiType = GiniHealthApiType(apiVersion)
 
     override fun getGiniApiType(): GiniApiType {
         return healthApiType
@@ -56,5 +57,9 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
 
     override fun createDocumentRepository(): HealthApiDocumentRepository {
         return HealthApiDocumentRepository(createDocumentRemoteSource(), getSessionManager(), healthApiType)
+    }
+
+    companion object {
+        const val API_VERSION = 4
     }
 }

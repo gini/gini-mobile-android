@@ -45,7 +45,7 @@ class GiniMerchant(
     private val clientSecret: String = "",
     private val emailDomain: String = "",
     private val sessionManager: SessionManager? = null,
-    private val merchantApiBaseUrl: String? = null,
+    private val merchantApiBaseUrl: String = MERCHANT_BASE_URL,
     private val userCenterApiBaseUrl: String? = null,
     private val debuggingEnabled: Boolean = false,
 ) {
@@ -61,14 +61,13 @@ class GiniMerchant(
                             context,
                             clientId,
                             clientSecret,
-                            emailDomain
+                            emailDomain,
+                            apiVersion = API_VERSION
                         )
                     } else {
-                        GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager))
+                        GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager), apiVersion = API_VERSION)
                     }.apply {
-                        if (merchantApiBaseUrl != null) {
-                            setApiBaseUrl(merchantApiBaseUrl)
-                        }
+                        setApiBaseUrl(merchantApiBaseUrl)
                         if (userCenterApiBaseUrl != null) {
                             setUserCenterApiBaseUrl(userCenterApiBaseUrl)
                         }
@@ -319,8 +318,9 @@ class GiniMerchant(
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(GiniMerchant::class.java)
+        const val API_VERSION = 1
 
+        private val LOG = LoggerFactory.getLogger(GiniMerchant::class.java)
         private const val CAPTURED_ARGUMENTS_NULL = "CAPTURED_ARGUMENTS_NULL"
         private const val CAPTURED_ARGUMENTS_ID = "CAPTURED_ARGUMENTS_ID"
         private const val CAPTURED_ARGUMENTS_DOCUMENT = "CAPTURED_ARGUMENTS_DOCUMENT"
@@ -328,5 +328,6 @@ class GiniMerchant(
         private const val PROVIDER = "net.gini.android.merchant.sdk.GiniMerchant"
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
         internal const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
+        internal const val MERCHANT_BASE_URL = "https://merchant-api.gini.net/"
     }
 }
