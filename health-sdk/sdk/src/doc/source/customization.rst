@@ -162,6 +162,17 @@ You can also view the UI customisation guide in Figma `here
 
     To copy text from Figma you need to have a Figma account. If you don't have one, you can create one for free.
 
+.. note::
+
+    To change the paddings you can override the ``GiniHealthTheme.Widget.Button.PaymentProviderSelector`` style.
+
+.. code-block:: xml
+
+    <style name="GiniHealthTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniHealthTheme.Widget.Button.PaymentProviderSelector">
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+    </style>
+
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
