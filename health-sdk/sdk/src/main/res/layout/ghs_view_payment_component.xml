@@ -102,6 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/ghs_small"
             android:layout_marginEnd="@dimen/ghs_large"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
             <include layout="@layout/ghs_powered_by_gini"/>
