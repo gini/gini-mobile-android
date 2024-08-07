@@ -53,7 +53,8 @@ public class ProvidersItem implements Parcelable {
     enum FileProviderItemType {
         SECTION,
         SEPARATOR,
-        APP;
+        APP,
+        APP_WRAPPER_PHOTO_PICKER;
 
         static FileProviderItemType fromOrdinal(final int ordinal) {
             if (ordinal >= values().length) {

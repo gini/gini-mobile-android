@@ -135,7 +135,7 @@ internal class CameraXController(val activity: Activity) : CameraInterface {
 
                 val imageAnalysis = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .setTargetResolution(targetResolution)
+                    .setResolutionSelector(resolutionSelector)
                     .setTargetRotation(targetRotation)
                     .build()
                 imageAnalysisUseCase = imageAnalysis

@@ -481,6 +481,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     public void handleFileChooserResult(@NonNull FileChooserResult result) {
         if (result instanceof FileChooserResult.FilesSelected) {
             importDocumentFromIntent(((FileChooserResult.FilesSelected) result).getDataIntent());
+        } else if(result instanceof FileChooserResult.FilesSelectedUri) {
+            importDocumentFromUriList(((FileChooserResult.FilesSelectedUri) result).getList());
         } else if (result instanceof FileChooserResult.Error) {
             final GiniCaptureError error = ((FileChooserResult.Error) result).getError();
             final String message = "Document import failed: " + error.getMessage();
@@ -1201,6 +1203,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 }
             }
         }
+    }
+
+    private void importDocumentFromUriList(List<Uri> uriList) {
+        if (mFragment.getActivity() == null)
+            return;
+
+        handleMultiPageDocumentAndCallListener(mFragment.getActivity(), new Intent(Intent.ACTION_PICK), uriList);
     }
 
     private boolean isImage(@NonNull final Intent data, @NonNull final Activity activity) {
