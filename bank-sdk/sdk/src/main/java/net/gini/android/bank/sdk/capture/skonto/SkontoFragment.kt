@@ -155,6 +155,9 @@ class SkontoFragment : Fragment() {
                         navigateBack = {
                             findNavController()
                                 .navigate(SkontoFragmentDirections.toCaptureFragment())
+                        },
+                        navigateToHelp = {
+                            findNavController().navigate(SkontoFragmentDirections.toSkontoHelpFragment())
                         }
                     )
                 }
@@ -166,6 +169,7 @@ class SkontoFragment : Fragment() {
 @Composable
 private fun ScreenContent(
     navigateBack: () -> Unit,
+    navigateToHelp: () -> Unit,
     viewModel: SkontoFragmentViewModel,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
@@ -186,6 +190,7 @@ private fun ScreenContent(
         onFullAmountChange = viewModel::onFullAmountFieldChanged,
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
         onBackClicked = navigateBack,
+        onHelpClicked = navigateToHelp,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onProceedClicked = { viewModel.onProceedClicked() },
         onInfoBannerClicked = viewModel::onInfoBannerClicked,
@@ -201,6 +206,7 @@ private fun ScreenStateContent(
     onFullAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
@@ -219,6 +225,7 @@ private fun ScreenStateContent(
             onDueDateChanged = onDueDateChanged,
             onFullAmountChange = onFullAmountChange,
             onBackClicked = onBackClicked,
+            onHelpClicked = onHelpClicked,
             isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
             customBottomNavBarAdapter = customBottomNavBarAdapter,
             onProceedClicked = onProceedClicked,
@@ -232,6 +239,7 @@ private fun ScreenStateContent(
 @Composable
 private fun ScreenReadyState(
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
     state: SkontoFragmentContract.State.Ready,
     onDiscountSectionActiveChange: (Boolean) -> Unit,
@@ -254,6 +262,7 @@ private fun ScreenReadyState(
                 isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                 colors = screenColorScheme.topAppBarColors,
                 onBackClicked = onBackClicked,
+                onHelpClicked = onHelpClicked
             )
         },
         bottomBar = {
@@ -263,6 +272,7 @@ private fun ScreenReadyState(
                 totalAmount = state.totalAmount,
                 isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                 onBackClicked = onBackClicked,
+                onHelpClicked = onHelpClicked,
                 customBottomNavBarAdapter = customBottomNavBarAdapter,
                 onProceedClicked = onProceedClicked,
                 isSkontoSectionActive = state.isSkontoSectionActive,
@@ -335,6 +345,7 @@ private fun ScreenReadyState(
 @Composable
 private fun TopAppBar(
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     modifier: Modifier = Modifier,
     isBottomNavigationBarEnabled: Boolean,
     colors: GiniTopBarColors,
@@ -347,7 +358,27 @@ private fun TopAppBar(
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
                 NavigationActionBack(onClick = onBackClicked)
             }
+        },
+        actions = {
+            NavigationActionHelp(onClick = onHelpClicked)
+
         })
+}
+
+@Composable
+private fun NavigationActionHelp(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.gbs_help_question_icon),
+            contentDescription = null,
+        )
+    }
 }
 
 @Composable
@@ -762,6 +793,7 @@ private fun FooterSection(
     isBottomNavigationBarEnabled: Boolean,
     isSkontoSectionActive: Boolean,
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
     modifier: Modifier = Modifier,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
@@ -927,6 +959,7 @@ private fun ScreenReadyStatePreview() {
             onDueDateChanged = {},
             onFullAmountChange = {},
             onBackClicked = {},
+            onHelpClicked = {},
             isBottomNavigationBarEnabled = true,
             onProceedClicked = {},
             customBottomNavBarAdapter = null,

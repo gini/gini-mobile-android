@@ -73,5 +73,15 @@
     <string name="gbs_skonto_section_info_dialog_date_expired_message">Diese Rechnung hätten Sie mit %1$s Skonto bezahlen können, die Skontofrist ist jedoch bereits abgelaufen.</string>
     <string name="gbs_skonto_section_info_dialog_ok_button_text">Verstanden</string>
     <!--   endregion -->
+    <!--   region Skonto help -->
+    <string name="gbs_skonto_help_title">Hilfe</string>
+    <string name="gbs_skonto_help_save_money_title">Skonto: Geld sparen durch schnelles Bezahlen</string>
+    <string name="gbs_skonto_help_save_money_text">Skonto ist ein Rabatt, der für die frühzeitige Bezahlung von Rechnungen gewährt wird. Mit unserer neuen Funktion können Sie jetzt:</string>
+    <string name="gbs_skonto_help_item_capture_invoice">Skonto-Rechnungen mit Ihrer Kamera erfassen</string>
+    <string name="gbs_skonto_help_item_identify_discount">Rabattierte Beträge und das Ablaufdatum des Skontos sofort erkennen</string>
+    <string name="gbs_skonto_help_item_adjust_payment_details">Zahlungsdetails genehmigen oder anpassen</string>
+    <string name="gbs_skonto_help_item_pay_promptly">Geld sparen durch schnelles Bezahlen</string>
+    <string name="gbs_skonto_help_footer_text">Machen Sie einfach ein Foto der Rechnung und die App erkennt automatisch die Rabatte. Überprüfen Sie die Details, bestätigen Sie und sparen Sie mit den Rabatten!</string>
+    <!--   endregion -->
     <!-- endregion -->
 </resources>
