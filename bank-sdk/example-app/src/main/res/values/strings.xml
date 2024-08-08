@@ -105,6 +105,7 @@
     <string name="custom_navigation_controller_switch_label">Custom navigation controller</string>
     <string name="return_assistant_feature_switch_label">Return assistant feature</string>
     <string name="return_assistant_feature_switch_description">Present a digital representation of the invoice</string>
+    <string name="skonto_feature_switch_label">Skonto feature</string>
     <string name="return_assistant_onboarding_custom_illustration_switch_label">Return assistant onboarding custom illustration</string>
     <string name="return_assistant_help_bottom_navigation_bar_switch_label">Return assistant help bottom navigation bar</string>
     <string name="return_assistant_bottom_navigation_bar_switch_description">The custom bottom navigation bar is shown if both \`Bottom navigation bar\` and \`Return assistant feature\` are enabled.</string>
