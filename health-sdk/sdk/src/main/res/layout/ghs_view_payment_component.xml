@@ -57,7 +57,6 @@
             android:layout_marginHorizontal="@dimen/ghs_large"
             android:clickable="false"
             android:gravity="start|center_vertical"
-            android:paddingHorizontal="@dimen/ghs_large"
             android:contentDescription="@string/ghs_select_bank_content_description"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintHorizontal_weight="1"

@@ -230,7 +230,10 @@
     <style name="Root.GiniHealthTheme.Widget.Button.PaymentProviderSelector" parent="GiniHealthTheme.Widget.Button.TransparentBackground">
         <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Input</item>
     </style>
-    <style name="GiniHealthTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniHealthTheme.Widget.Button.PaymentProviderSelector"/>
+    <style name="GiniHealthTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniHealthTheme.Widget.Button.PaymentProviderSelector">
+        <item name="android:paddingStart">@dimen/ghs_large</item>
+        <item name="android:paddingEnd">@dimen/ghs_large</item>
+    </style>
     
     <style name="Root.GiniHealthTheme.Widget.Button.PaymentProviderPicker" parent="GiniHealthTheme.Widget.Button.TransparentBackground">
         <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Body1</item>
