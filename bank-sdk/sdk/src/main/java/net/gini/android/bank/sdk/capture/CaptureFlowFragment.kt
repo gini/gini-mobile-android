@@ -1,5 +1,6 @@
 package net.gini.android.bank.sdk.capture
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +30,7 @@ import net.gini.android.capture.GiniCaptureFragmentDirections
 import net.gini.android.capture.GiniCaptureFragmentListener
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
@@ -110,7 +112,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     override fun onDestroy() {
         super.onDestroy()
         if (!didFinishWithResult && !willBeRestored) {
-            captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Cancel)
+            finishWithResult(CaptureResult.Cancel)
         }
     }
 
@@ -159,14 +161,13 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                     }
 
                     else -> {
-                        finishWithResult(result)
+                        finishWithResult(result.toCaptureResult())
                     }
                 }
             }
 
             else -> {
-                didFinishWithResult = true
-                captureFlowFragmentListener.onFinishedWithResult(result.toCaptureResult())
+                finishWithResult(result.toCaptureResult())
             }
         }
     }
@@ -195,14 +196,17 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                     GiniCaptureFragmentDirections.toSkontoFragment(data = skontoData)
                 )
             } catch (e: Exception) {
-                finishWithResult(result)
+                finishWithResult(result.toCaptureResult())
             }
         }
     }
 
-    private fun finishWithResult(result: CaptureSDKResult.Success) {
+    private fun finishWithResult(result: CaptureResult) {
+        if (!ContextHelper.isTablet(requireContext())) {
+            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
         didFinishWithResult = true
-        captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
+        captureFlowFragmentListener.onFinishedWithResult(result)
         trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
     }
 
@@ -235,14 +239,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
-        didFinishWithResult = true
-        captureFlowFragmentListener.onFinishedWithResult(
-            CaptureResult.Success(
-                specificExtractions,
-                compoundExtractions,
-                emptyList()
-            )
-        )
+        finishWithResult(CaptureResult.Success(
+            specificExtractions,
+            compoundExtractions,
+            emptyList()
+        ))
     }
 
 
@@ -250,22 +251,18 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
-        didFinishWithResult = true
-        captureFlowFragmentListener.onFinishedWithResult(
-            CaptureResult.Success(
-                specificExtractions,
-                compoundExtractions,
-                emptyList()
-            )
-        )
+        finishWithResult(CaptureResult.Success(
+            specificExtractions,
+            compoundExtractions,
+            emptyList()
+        ))
     }
 
 
     override fun onCancelFlow() {
         val popBackStack = navController.popBackStack()
         if (!popBackStack) {
-            didFinishWithResult = true
-            captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Cancel)
+            finishWithResult(CaptureResult.Cancel)
         }
     }
 
