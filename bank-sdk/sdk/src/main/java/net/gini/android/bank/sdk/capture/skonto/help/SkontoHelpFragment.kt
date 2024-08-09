@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,16 +30,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.skonto.help.colors.SkontoHelpScreenColors
 import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpDescriptionSectionColors
 import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpFooterSectionColors
@@ -57,8 +60,8 @@ class SkontoHelpFragment : Fragment() {
     private val isBottomNavigationBarEnabled =
         GiniCapture.getInstance().isBottomNavigationBarEnabled
 
-    private val customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
-        GiniBank.skontoNavigationBarBottomAdapterInstance
+    private val customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? =
+        GiniBank.skontoHelpNavigationBarBottomAdapterInstance
     private var customBottomNavigationBarView: View? = null
 
 
@@ -131,7 +134,7 @@ private fun ScreenContent(
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoHelpScreenColors = SkontoHelpScreenColors.colors(),
     isBottomNavigationBarEnabled: Boolean,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>?,
 ) {
 
     BackHandler { navigateBack() }
@@ -149,7 +152,7 @@ private fun ScreenContent(
 private fun ScreenStateContent(
     onBackClicked: () -> Unit,
     isBottomNavigationBarEnabled: Boolean,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoHelpScreenColors = SkontoHelpScreenColors.colors()
 ) {
@@ -164,6 +167,8 @@ private fun ScreenStateContent(
                 colors = screenColorScheme.topAppBarColors,
                 onBackClicked = onBackClicked,
             )
+        }, bottomBar = {
+            HelpCustomNavBarSection(customBottomNavBarAdapter, onBackClicked)
         }) {
         Column(
             modifier = Modifier
@@ -197,6 +202,22 @@ private fun ScreenStateContent(
 
 }
 
+@Composable
+private fun HelpCustomNavBarSection(
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>?,
+    onBackClicked: () -> Unit,
+) {
+    if (customBottomNavBarAdapter != null) {
+        val ctx = LocalContext.current
+        AndroidView(factory = {
+            customBottomNavBarAdapter.viewAdapter.onCreateView(FrameLayout(ctx))
+        }, update = {
+            with(customBottomNavBarAdapter.viewAdapter) {
+                setOnBackClickListener(onBackClicked)
+            }
+        })
+    }
+}
 
 @Composable
 private fun HelpFooterSection(
