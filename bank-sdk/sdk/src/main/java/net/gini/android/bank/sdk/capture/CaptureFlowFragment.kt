@@ -111,9 +111,6 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!didFinishWithResult && !willBeRestored) {
-            finishWithResult(CaptureResult.Cancel)
-        }
     }
 
 
@@ -161,13 +158,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                     }
 
                     else -> {
-                        finishWithResult(result.toCaptureResult())
                     }
                 }
             }
 
             else -> {
-                finishWithResult(result.toCaptureResult())
             }
         }
     }
@@ -196,30 +191,20 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                     GiniCaptureFragmentDirections.toSkontoFragment(data = skontoData)
                 )
             } catch (e: Exception) {
-                finishWithResult(result.toCaptureResult())
             }
         }
     }
 
-    private fun finishWithResult(result: CaptureResult) {
-        if (!ContextHelper.isTablet(requireContext())) {
-            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        }
-        didFinishWithResult = true
-        captureFlowFragmentListener.onFinishedWithResult(result)
-        trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
-    }
-
-    private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
-        return if (result.specificExtractions.isEmpty() ||
-            !pay5ExtractionsAvailable(result.specificExtractions) &&
-            !epsPaymentAvailable(result.specificExtractions)
-        ) {
-            CaptureSDKResult.Empty
-        } else {
-            result
-        }
-    }
+//    private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
+//        return if (result.specificExtractions.isEmpty() ||
+//            !pay5ExtractionsAvailable(result.specificExtractions) &&
+//            !epsPaymentAvailable(result.specificExtractions)
+//        ) {
+//            CaptureSDKResult.Empty
+//        } else {
+//            result
+//        }
+//    }
 
     private fun isPay5Extraction(extractionName: String): Boolean {
         return extractionName == "amountToPay" ||
@@ -239,11 +224,6 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
-        finishWithResult(CaptureResult.Success(
-            specificExtractions,
-            compoundExtractions,
-            emptyList()
-        ))
     }
 
 
@@ -251,19 +231,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
-        finishWithResult(CaptureResult.Success(
-            specificExtractions,
-            compoundExtractions,
-            emptyList()
-        ))
     }
 
 
     override fun onCancelFlow() {
         val popBackStack = navController.popBackStack()
-        if (!popBackStack) {
-            finishWithResult(CaptureResult.Cancel)
-        }
     }
 
     internal companion object {
