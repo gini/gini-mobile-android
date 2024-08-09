@@ -159,7 +159,6 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                     }
 
                     else -> {
-                        finishWithResult(result)
                     }
                 }
             }
@@ -195,18 +194,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                     GiniCaptureFragmentDirections.toSkontoFragment(data = skontoData)
                 )
             } catch (e: Exception) {
-                finishWithResult(result)
             }
         } else {
-            finishWithResult(result)
         }
     }
 
-    private fun finishWithResult(result: CaptureSDKResult.Success) {
-        didFinishWithResult = true
-        captureFlowFragmentListener.onFinishedWithResult(interceptSuccessResult(result).toCaptureResult())
-        trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
-    }
 
     private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
         return if (result.specificExtractions.isEmpty() ||
