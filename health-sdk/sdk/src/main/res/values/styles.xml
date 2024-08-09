@@ -18,6 +18,7 @@
         <item name="colorSurfaceVariant">@color/ghs_light_01</item>
         <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="colorAccent">?attr/colorPrimary</item>
         <item name="alertDialogTheme">@style/GiniHealthTheme.ThemeOverlay.Dialog.Alert</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
