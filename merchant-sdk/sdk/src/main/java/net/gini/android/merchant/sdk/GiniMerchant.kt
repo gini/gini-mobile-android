@@ -120,6 +120,8 @@ class GiniMerchant(
     }
     
     fun getFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
+        if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()) throw IllegalStateException("Payment details are incomplete.")
+
         val paymentDetails = PaymentDetails(
             recipient = recipient,
             iban = iban,
