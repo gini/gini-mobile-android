@@ -123,7 +123,10 @@ class ConfigurationViewModel @Inject constructor(
             returnAssistantEnabled = configuration.isReturnAssistantEnabled,
 
             // allow screenshots
-            allowScreenshots = configuration.isAllowScreenshotsEnabled
+            allowScreenshots = configuration.isAllowScreenshotsEnabled,
+
+            // 40 enable skonto
+            skontoEnabled = configuration.isSkontoEnabled,
         )
 
         // 9 enable Help screens custom bottom navigation bar

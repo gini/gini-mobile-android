@@ -219,6 +219,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // 37 Debug mode
         binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode.isChecked =
             configuration.isDebugModeEnabled
+
+        // 40 enable skonto
+        binding.layoutFeatureToggle.switchSkontoFeature.isChecked = configuration.isSkontoEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -600,6 +603,14 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isDebugModeEnabled = isChecked
+                )
+            )
+        }
+
+        binding.layoutFeatureToggle.switchSkontoFeature.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isSkontoEnabled = isChecked
                 )
             )
         }
