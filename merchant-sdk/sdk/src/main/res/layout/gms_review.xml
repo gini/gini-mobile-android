@@ -27,7 +27,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/recipient"
-            style="@style/GiniMerchantTheme.PaymentInputEditTextStyle"
+            style="@style/GiniMerchantTheme.DisabledPaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/gms_recipient_hint"
@@ -53,7 +53,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/iban"
-            style="@style/GiniMerchantTheme.PaymentInputEditTextStyle"
+            style="@style/GiniMerchantTheme.DisabledPaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="@dimen/gms_large_28"
@@ -109,7 +109,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/purpose"
-            style="@style/GiniMerchantTheme.PaymentInputEditTextStyle"
+            style="@style/GiniMerchantTheme.DisabledPaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="@dimen/gms_large_28"

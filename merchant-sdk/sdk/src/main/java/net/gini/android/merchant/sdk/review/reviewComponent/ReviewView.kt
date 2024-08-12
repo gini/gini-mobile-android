@@ -144,10 +144,10 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
             amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setAmount(text.toString()) })
             amount.addTextChangedListener(amountWatcher)
             purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setPurpose(text.toString()) })
-            recipient.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, recipientLayout) }
-            iban.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, ibanLayout) }
-            amount.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, amountLayout) }
-            purpose.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, purposeLayout) }
+            recipient.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, recipientLayout, false) }
+            iban.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, ibanLayout, false) }
+            amount.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, amountLayout, true) }
+            purpose.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, purposeLayout, false) }
         }
     }
 
@@ -173,7 +173,7 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
                             }
                         )
                         if (editText?.isFocused == true) {
-                            hideErrorMessage()
+                            hideErrorMessage(field == PaymentField.Amount)
                         }
                     }
                 }
@@ -182,7 +182,7 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
 
         fieldsWithoutError.forEach { (field, _) ->
             getTextInputLayout(field).apply {
-                clearErrorMessage()
+                clearErrorMessage(field == PaymentField.Amount)
             }
         }
     }
@@ -201,8 +201,8 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
         binding.amount.focusable = if (reviewComponent?.reviewConfig?.isAmountFieldEditable == true) View.FOCUSABLE else View.NOT_FOCUSABLE
     }
 
-    private fun handleInputFocusChange(hasFocus: Boolean, textInputLayout: TextInputLayout) {
-        if (hasFocus) textInputLayout.hideErrorMessage() else textInputLayout.showErrorMessage()
+    private fun handleInputFocusChange(hasFocus: Boolean, textInputLayout: TextInputLayout, isAmount: Boolean) {
+        if (hasFocus) textInputLayout.hideErrorMessage(isAmount) else textInputLayout.showErrorMessage()
     }
 
     companion object {
