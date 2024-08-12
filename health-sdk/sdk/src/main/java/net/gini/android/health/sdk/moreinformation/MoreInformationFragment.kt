@@ -1,6 +1,5 @@
 package net.gini.android.health.sdk.moreinformation
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannedString
@@ -8,7 +7,6 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.TextAppearanceSpan
 import android.text.style.URLSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +28,9 @@ import net.gini.android.health.sdk.databinding.GhsPaymentProviderIconHolderBindi
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
+import net.gini.android.health.sdk.util.getLocaleStringResource
+import java.util.Locale
 
 /**
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
@@ -47,21 +47,25 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         )
     }
 
+    private fun getLocaleStringResource(resourceId: Int): String {
+        return getLocaleStringResource(resourceId, viewModel.paymentComponent?.giniHealth)
+    }
+
     @VisibleForTesting
     internal val faqList: List<Pair<String, CharSequence>> by lazy {
         listOf(
-            getString(R.string.ghs_faq_1) to getString(R.string.ghs_faq_answer_1),
-            getString(R.string.ghs_faq_2) to getString(R.string.ghs_faq_answer_2),
-            getString(R.string.ghs_faq_3) to getString(R.string.ghs_faq_answer_3),
-            getString(R.string.ghs_faq_4) to buildGiniRelatedAnswer(),
-            getString(R.string.ghs_faq_5) to getString(R.string.ghs_faq_answer_5),
-            getString(R.string.ghs_faq_6) to getString(R.string.ghs_faq_answer_6)
+            getLocaleStringResource(R.string.ghs_faq_1) to getLocaleStringResource(R.string.ghs_faq_answer_1),
+            getLocaleStringResource(R.string.ghs_faq_2) to getLocaleStringResource(R.string.ghs_faq_answer_2),
+            getLocaleStringResource(R.string.ghs_faq_3) to getLocaleStringResource(R.string.ghs_faq_answer_3),
+            getLocaleStringResource(R.string.ghs_faq_4) to buildGiniRelatedAnswer(),
+            getLocaleStringResource(R.string.ghs_faq_5) to getLocaleStringResource(R.string.ghs_faq_answer_5),
+            getLocaleStringResource(R.string.ghs_faq_6) to getLocaleStringResource(R.string.ghs_faq_answer_6)
         )
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, viewModel.getLocale())
     }
 
     override fun onCreateView(
@@ -76,21 +80,24 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        resources.configuration.setLocale(viewModel.getLocale())
         binding.ghsMoreInformationDetails.text = buildSpannedString {
-            append(getString(R.string.ghs_more_information_details))
+            append(getLocaleStringResource(R.string.ghs_more_information_details))
             append(" ")
             append(createSpanForLink(R.string.ghs_gini_link, R.string.ghs_gini_link_url))
             append(".")
         }
+
         binding.ghsMoreInformationDetails.movementMethod = LinkMovementMethod.getInstance()
-        binding.ghsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf())
+        binding.ghsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf(), viewModel.getLocale())
         binding.ghsFaqList.apply {
-            setAdapter(FaqExpandableListAdapter(faqList))
+            setAdapter(FaqExpandableListAdapter(faqList, viewModel.getLocale()))
             setOnGroupClickListener { expandableListView, _, group, _ ->
                 setListViewHeight(listView = expandableListView, group = group, isReload = false)
                 return@setOnGroupClickListener false
             }
         }
+
         //Set initial list view height so we can scroll full page
         binding.ghsFaqList.postDelayed({
             setListViewHeight(listView = binding.ghsFaqList, group = getExpandedGroupPosition(), isReload = true)
@@ -127,9 +134,9 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
     }
 
     private fun createSpanForLink(@StringRes placeholder: Int, @StringRes urlResource: Int) =
-        SpannableString(getString(placeholder)).apply {
+        SpannableString(getLocaleStringResource(placeholder)).apply {
             setSpan(
-                URLSpanNoUnderline(getString(urlResource)),
+                URLSpanNoUnderline(getLocaleStringResource(urlResource)),
                 0,
                 this.length,
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -146,7 +153,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         val giniLink = createSpanForLink(R.string.ghs_gini_website, R.string.ghs_gini_link_url)
         val privacyPolicyString = createSpanForLink(R.string.ghs_privacy_policy, R.string.ghs_privacy_policy_link_url)
         val span = buildSpannedString {
-            append(getString(R.string.ghs_faq_answer_4))
+            append(getLocaleStringResource(R.string.ghs_faq_answer_4))
             replace(indexOf("%s"), indexOf("%s") + 2, giniLink)
             replace(indexOf("%p"), indexOf("%p") + 2, privacyPolicyString)
         }
@@ -186,12 +193,12 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         listView.requestLayout()
     }
 
-    internal class PaymentProvidersIconsAdapter(var dataSet: List<PaymentProviderApp?>) :
+    internal class PaymentProvidersIconsAdapter(var dataSet: List<PaymentProviderApp?>, var locale: Locale?) :
         RecyclerView.Adapter<PaymentProvidersIconsAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = GhsPaymentProviderIconHolderBinding.inflate(
-                parent.getLayoutInflaterWithGiniHealthTheme(),
+                parent.getLayoutInflaterWithGiniHealthThemeAndLocale(locale),
                 parent,
                 false
             )

@@ -116,6 +116,7 @@
                 android:clickable="false"
                 android:scaleType="centerInside"
                 android:src="@drawable/gc_camera_flash_on"
+                android:contentDescription="@string/gc_flash_button"
                 app:layout_constraintBottom_toTopOf="@id/gc_camera_flash_button_subtitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -183,6 +184,7 @@
                 android:background="@null"
                 android:clickable="false"
                 android:scaleType="centerInside"
+                android:contentDescription="@string/gc_camera_document_import_subtitle"
                 android:src="@drawable/gc_document_import_icon" />
 
             <TextView

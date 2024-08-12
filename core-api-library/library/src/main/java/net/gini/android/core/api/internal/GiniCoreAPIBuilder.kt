@@ -63,6 +63,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mCache: Cache? = null
     private var mTrustManager: TrustManager? = null
     private var mUserApiRetrofit: Retrofit? = null
+    private var mTrackingAnalysisApiRetrofit: Retrofit? = null
     private var mPayApiRetrofit: Retrofit? = null
     private var mUserService: UserService? = null
     private var mUserRepository: UserRepository? = null
@@ -306,6 +307,18 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             .client(createOkHttpClient())
             .build()
         mUserApiRetrofit = retrofit
+        return retrofit
+    }
+
+
+    @Synchronized
+    protected fun getTrackingAnalyticsApiRetrofit(): Retrofit {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.eu.amplitude.com")
+            .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
+            .client(createOkHttpClient())
+            .build()
+        mTrackingAnalysisApiRetrofit = retrofit
         return retrofit
     }
 

@@ -20,6 +20,10 @@ pmd = "6.0.0"
 jacoco = "0.8.10"
 hilt = "2.46.1"
 navigation_component = "2.7.6"
+compose-bom = "2024.06.00"
+accompanist-themeAdapter = "1.1.1"
+compose-activity = "1.9.0"
+koin-bom = "3.5.6"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
@@ -57,7 +61,7 @@ androidx-test-espresso-intents = { module = "androidx.test.espresso:espresso-int
 androidx-test-espresso-idlingresource = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espresso" }
 androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.2.0"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-android = { module ="org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 koin-androidx-scope = { module = "io.insert-koin:koin-androidx-scope", version.ref = "koin" }
 koin-androidx-viewmodel = { module = "io.insert-koin:koin-androidx-viewmodel", version.ref = "koin" }
@@ -76,7 +80,7 @@ mockk = "io.mockk:mockk:1.12.2"
 mockk-android = "io.mockk:mockk-android:1.12.2"
 turbine = "app.cash.turbine:turbine:0.12.3"
 junit = "junit:junit:4.13.2"
-detekt-gradle = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.18.1"
+detekt-gradle = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.6"
 ktlint-gradle = "org.jlleitschuh.gradle:ktlint-gradle:10.2.0"
 mlkit-barcodescanning = "com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.0"
 mlkit-textrecognition = "com.google.android.gms:play-services-mlkit-text-recognition:19.0.0"
@@ -111,3 +115,13 @@ navigation_safe_args = { module = "androidx.navigation:navigation-safe-args-grad
 datastore-preferences = "androidx.datastore:datastore-preferences:1.0.0"
 tomlj = "org.tomlj:tomlj:1.1.1"
 json-testing = "org.json:json:20231013"
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
+compose-tools-uiTooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-tools-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview" }
+accompanist-themeAdapter = { module = "com.google.android.material:compose-theme-adapter-3", version.ref = "accompanist-themeAdapter" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-android = { module = "io.insert-koin:koin-android" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -74,6 +75,10 @@ class InvoicesViewModel(
             LOG.error("Document with id {} not found", documentId)
             Result.failure(IllegalStateException("Document with id $documentId not found"))
         }
+    }
+
+    fun setPaymentComponentConfig(paymentComponentConfiguration: PaymentComponentConfiguration) {
+        paymentComponent.paymentComponentConfiguration = paymentComponentConfiguration
     }
 
     companion object {

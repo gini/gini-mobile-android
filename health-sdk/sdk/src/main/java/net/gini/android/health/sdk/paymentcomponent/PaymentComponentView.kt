@@ -8,16 +8,18 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsViewPaymentComponentBinding
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setIntervalClickListener
-import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
+import net.gini.android.health.sdk.util.wrappedWithGiniHealthThemeAndLocale
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 
@@ -56,10 +58,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     @VisibleForTesting
     internal var coroutineScope: CoroutineScope? = null
+    private var collectJob: Job? = null
 
     /**
      * Sets the payable state of the [PaymentComponentView]. If `true`, the view will be shown, otherwise it will be hidden.
      */
+
     var isPayable: Boolean = false
         set(isPayable) {
             field = isPayable
@@ -80,8 +84,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
      * The document id of the invoice item. This will be returned in the [PaymentComponent.Listener.onPayInvoiceClicked] method.
      */
     var documentId: String? = null
+        set(value) {
+            field = value
+            launchJobs()
+        }
 
-    private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthTheme(), this)
+    private val binding = GhsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniHealthThemeAndLocale(GiniHealth.getSDKLanguage(context)?.languageLocale()), this)
 
     init {
         addButtonInputHandlers()
@@ -90,12 +98,20 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         LOG.debug("onAttachedToWindow")
+        launchJobs()
+    }
+
+    private fun launchJobs() {
         if (coroutineScope == null) {
             LOG.debug("Creating coroutine scope")
             coroutineScope = CoroutineScope(coroutineContext)
         }
+        collectJob?.let {
+            it.cancel()
+            collectJob = null
+        }
         checkPaymentComponentHeight()
-        coroutineScope?.launch {
+        collectJob = coroutineScope?.launch {
             if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
                 return@launch
@@ -154,7 +170,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
-        context?.wrappedWithGiniHealthTheme()?.let { context ->
+        context?.wrappedWithGiniHealthThemeAndLocale(paymentComponent?.giniHealthLanguage)?.let { context ->
             binding.ghsPayInvoiceButton.visibility = View.GONE
             binding.ghsPaymentProviderAppIconHolder.root.visibility = View.GONE
             binding.ghsSelectBankButton.text = context.getString(R.string.ghs_select_bank)
@@ -169,7 +185,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
         LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
-        context?.wrappedWithGiniHealthTheme()?.let { context ->
+        context?.wrappedWithGiniHealthThemeAndLocale(paymentComponent?.giniHealthLanguage)?.let { context ->
             binding.ghsSelectBankButton.text = ""
             binding.ghsSelectBankButton.setCompoundDrawablesWithIntrinsicBounds(
                 null,
@@ -214,7 +230,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun restorePayInvoiceButtonDefaultState() {
         LOG.debug("Restoring pay invoice button default state")
-        context?.wrappedWithGiniHealthTheme()?.let { context ->
+        context?.wrappedWithGiniHealthThemeAndLocale(paymentComponent?.giniHealthLanguage)?.let { context ->
             binding.ghsPayInvoiceButton.setBackgroundTint(
                 ContextCompat.getColor(
                     context,
@@ -233,6 +249,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         LOG.debug("onDetachedFromWindow")
+        collectJob?.cancel()
+        collectJob = null
         coroutineScope?.cancel()
         coroutineScope = null
     }
@@ -252,8 +270,9 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun show() {
         LOG.debug("Showing payment component")
         binding.ghsSelectBankPicker.visibility = VISIBLE
-        binding.ghsPoweredByGini.visibility = VISIBLE
+        binding.ghsPoweredByGini.visibility = if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else INVISIBLE
         changeLabelsVisibilityIfNeeded()
+        launchJobs()
     }
 
     private fun hide() {

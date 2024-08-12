@@ -154,7 +154,14 @@ data class Configuration(
     // 37 Debug mode
     val isDebugModeEnabled: Boolean = true,
 
+    // 38 Is Allow Screenshots
     val isAllowScreenshotsEnabled: Boolean = true,
+
+    // 39 Skonto Custom bottom navigation
+    val isSkontoCustomNavBarEnabled: Boolean = false,
+
+    // 40 enable Skonto
+    val isSkontoEnabled: Boolean = true,
 
     ) : Parcelable {
 
@@ -174,7 +181,8 @@ data class Configuration(
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
                 isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
                 isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
-                isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots
+                isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
+                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled
             )
 
 

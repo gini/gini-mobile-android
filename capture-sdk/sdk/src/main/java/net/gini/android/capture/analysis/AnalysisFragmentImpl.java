@@ -33,6 +33,11 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
@@ -43,6 +48,8 @@ import net.gini.android.capture.view.NavigationBarTopAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
@@ -65,6 +72,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
+    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
@@ -81,8 +89,24 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     @VisibleForTesting
     void createPresenter(@NonNull final Activity activity, @NonNull final Document document,
                          final String documentAnalysisErrorMessage) {
+
+        addUserAnalyticEvents(document);
         new AnalysisScreenPresenter(activity, this, document,
                 documentAnalysisErrorMessage);
+    }
+
+    private void addUserAnalyticEvents(@NonNull Document document) {
+        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
+                UserAnalyticsEvent.SCREEN_SHOWN,
+                new HashSet<UserAnalyticsEventProperty>() {
+                    {
+                        add(new UserAnalyticsEventProperty.DocumentType(
+                                UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document)
+                        ));
+                        add(new UserAnalyticsEventProperty.Screen(screenName));
+                    }
+                }
+        );
     }
 
     @Override
@@ -94,20 +118,23 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     void showScanAnimation() {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
         isScanAnimationActive = true;
-        injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
-            adapter.onVisible();
-            return Unit.INSTANCE;
-        });
+        if (injectedLoadingIndicatorContainer != null)
+            injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
+                adapter.onVisible();
+                return Unit.INSTANCE;
+            });
     }
 
     @Override
     void hideScanAnimation() {
         isScanAnimationActive = false;
-        injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
-            adapter.onHidden();
-            return Unit.INSTANCE;
-        });
-        mAnalysisMessageTextView.setVisibility(View.GONE);
+        if (injectedLoadingIndicatorContainer != null)
+            injectedLoadingIndicatorContainer.modifyAdapterIfOwned(adapter -> {
+                adapter.onHidden();
+                return Unit.INSTANCE;
+            });
+        if (mAnalysisMessageTextView != null)
+            mAnalysisMessageTextView.setVisibility(View.GONE);
     }
 
     @Override
@@ -292,6 +319,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private void onBack() {
         boolean popBackStack = mFragment.findNavController().popBackStack();
         if (!popBackStack) {
+            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                        }
+                    });
             trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
             mCancelListener.onCancelFlow();
         }

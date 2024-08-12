@@ -48,7 +48,11 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
         return BankApiDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(BankApiDocumentService::class.java), bankApiType, getApiBaseUrl() ?: "")
     }
 
+    private fun createTrackingAnalysisRemoteSource(): TrackingAnalysisRemoteSource {
+        return TrackingAnalysisRemoteSource(Dispatchers.IO,getTrackingAnalyticsApiRetrofit().create(TrackingAnalysisService::class.java))
+    }
+
     override fun createDocumentRepository(): BankApiDocumentRepository {
-        return BankApiDocumentRepository(createDocumentRemoteSource(), getSessionManager(), bankApiType)
+        return BankApiDocumentRepository(createDocumentRemoteSource(), getSessionManager(), bankApiType, createTrackingAnalysisRemoteSource())
     }
 }

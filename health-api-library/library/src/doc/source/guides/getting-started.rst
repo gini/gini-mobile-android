@@ -13,7 +13,7 @@ build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini.android:gini-health-api-lib:4.1.0'
+        implementation 'net.gini.android:gini-health-api-lib:4.2.0'
     }
 
 Integrating the Gini Health API Library

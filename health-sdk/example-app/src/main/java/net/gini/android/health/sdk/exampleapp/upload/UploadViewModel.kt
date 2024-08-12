@@ -15,12 +15,14 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesLocalDataSource
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
 import net.gini.android.health.sdk.exampleapp.util.getBytes
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
 
 class UploadViewModel(
     private val giniHealthAPI: GiniHealthAPI,
     val giniHealth: GiniHealth,
     private val invoicesLocalDataSource: InvoicesLocalDataSource
 ) : ViewModel() {
+    private val paymentComponentConfiguration: PaymentComponentConfiguration? = null
     private val _uploadState: MutableStateFlow<UploadState> = MutableStateFlow(UploadState.Loading)
     val uploadState: StateFlow<UploadState> = _uploadState
 
