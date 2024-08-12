@@ -11,11 +11,12 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -28,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
@@ -131,10 +133,10 @@ private fun ScreenContentPreviewLight() {
 @Composable
 private fun ScreenContent(
     navigateBack: () -> Unit,
+    isBottomNavigationBarEnabled: Boolean,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoHelpScreenColors = SkontoHelpScreenColors.colors(),
-    isBottomNavigationBarEnabled: Boolean,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>?,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? = null,
 ) {
 
     BackHandler { navigateBack() }
@@ -248,14 +250,13 @@ private fun HelpItemsSection(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.backgroundColor),
-        //.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HelpItem(
             modifier = Modifier.padding(16.dp),
             colors = colors,
-            textId = R.string.gbs_skonto_help_item_capture_invoice,
-            iconId = R.drawable.gbs_skonto_help_capture_invoice
+            text = stringResource(id = R.string.gbs_skonto_help_item_capture_invoice),
+            icon = painterResource(id = R.drawable.gbs_skonto_help_capture_invoice)
         )
         HorizontalDivider(
             modifier = Modifier
@@ -267,8 +268,8 @@ private fun HelpItemsSection(
         HelpItem(
             modifier = Modifier.padding(16.dp),
             colors = colors,
-            textId = R.string.gbs_skonto_help_item_identify_discount,
-            iconId = R.drawable.gbs_skonto_help_identify_discount
+            text = stringResource(id = R.string.gbs_skonto_help_item_identify_discount),
+            icon = painterResource(id = R.drawable.gbs_skonto_help_identify_discount)
         )
         HorizontalDivider(
             modifier = Modifier
@@ -280,8 +281,8 @@ private fun HelpItemsSection(
         HelpItem(
             modifier = Modifier.padding(16.dp),
             colors = colors,
-            textId = R.string.gbs_skonto_help_item_adjust_payment_details,
-            iconId = R.drawable.gbs_skonto_help_adjust_payment_details
+            text = stringResource(id = R.string.gbs_skonto_help_item_adjust_payment_details),
+            icon = painterResource(id = R.drawable.gbs_skonto_help_adjust_payment_details)
         )
         HorizontalDivider(
             modifier = Modifier
@@ -293,8 +294,8 @@ private fun HelpItemsSection(
         HelpItem(
             modifier = Modifier.padding(16.dp),
             colors = colors,
-            textId = R.string.gbs_skonto_help_item_pay_promptly,
-            iconId = R.drawable.gbs_skonto_help_pay_promptly
+            text = stringResource(id = R.string.gbs_skonto_help_item_pay_promptly),
+            icon = painterResource(id = R.drawable.gbs_skonto_help_pay_promptly)
         )
 
     }
@@ -304,9 +305,9 @@ private fun HelpItemsSection(
 @Composable
 private fun HelpItem(
     colors: SkontoHelpItemsSectionColors,
-    modifier: Modifier = Modifier,
-    textId: Int,
-    iconId: Int,
+    text: String,
+    icon: Painter,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -314,14 +315,17 @@ private fun HelpItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            painter = painterResource(id = iconId),
+            modifier = Modifier
+                .height(48.dp)
+                .width(48.dp),
+            painter = icon,
             contentDescription = null
         )
 
         Text(
             modifier = Modifier
                 .padding(start = 16.dp),
-            text = stringResource(id = textId),
+            text = text,
             style = GiniTheme.typography.subtitle1,
             color = colors.textColor,
         )
@@ -357,9 +361,9 @@ private fun HelpDescriptionSection(
 @Composable
 private fun TopAppBar(
     onBackClicked: () -> Unit,
-    modifier: Modifier = Modifier,
     isBottomNavigationBarEnabled: Boolean,
     colors: GiniTopBarColors,
+    modifier: Modifier = Modifier,
 ) {
     GiniTopBar(
         modifier = modifier,
