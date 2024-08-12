@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -143,6 +144,19 @@ class PaymentFragment private constructor(
         return this.getLayoutInflaterWithGiniMerchantTheme(inflater)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (viewModelFactory == null) {
+            // When the viewModelFactory is not available we are in an unrecoverable state
+            // (most likely after an activity restart) and we should remove this fragment which is the container (root)
+            // for all our other fragments. This returns the user to the client app's previous screen.
+            parentFragmentManager.commit {
+                remove(this@PaymentFragment)
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -170,11 +184,8 @@ class PaymentFragment private constructor(
                 launch {
                     viewModel.paymentComponent.selectedPaymentProviderAppFlow.collect {
                         if (it is SelectedPaymentProviderAppState.AppSelected) {
-                            if (viewModel.paymentProviderAppChanged(it.paymentProviderApp) && viewModel.getLastBackstackEntry() is DisplayedScreen.BankSelectionBottomSheet) {
-                                handleBackFlow()
-                            } else {
-                                viewModel.checkBankAppInstallState(it.paymentProviderApp)
-                            }
+                            viewModel.paymentProviderAppChanged(it.paymentProviderApp)
+                            viewModel.checkBankAppInstallState(it.paymentProviderApp)
                         }
                     }
                 }
@@ -243,7 +254,7 @@ class PaymentFragment private constructor(
         }
     }
 
-    private fun handleBackFlow() {
+    internal fun handleBackFlow() {
         childFragmentManager.popBackStackImmediate()
         viewModel.popBackStack()
 
@@ -254,7 +265,16 @@ class PaymentFragment private constructor(
                         BankSelectionBottomSheet.newInstance(it, viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
                     }
                 }
-                DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet.newInstance(viewModel.paymentComponent, viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false, viewModel).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                DisplayedScreen.PaymentComponentBottomSheet -> {
+                    if (childFragmentManager.fragments.any { it is PaymentComponentBottomSheet }) {
+                        return
+                    }
+                    PaymentComponentBottomSheet.newInstance(
+                        viewModel.paymentComponent,
+                        viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
+                        viewModel
+                    ).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                }
                 DisplayedScreen.Nothing -> viewModel.giniMerchant.setFlowCancelled()
                 else -> {
 
@@ -285,7 +305,8 @@ class PaymentFragment private constructor(
                 isAmountFieldEditable = viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true
             ),
             listener = object: ReviewViewListener {
-                override fun onPaymentButtonTapped() {
+                override fun onPaymentButtonTapped(paymentDetails: PaymentDetails) {
+                    viewModel.updatePaymentDetails(paymentDetails)
                     viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
                 }
             },

@@ -43,7 +43,6 @@ internal interface FlowBottomSheetsManager {
     private fun getFileAsByteArray(externalCacheDir: File?, coroutineScope: CoroutineScope) {
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
-                sendFeedback()
                 val paymentRequest = try {
                     getPaymentRequest()
                 } catch (throwable: Throwable) {
@@ -101,7 +100,6 @@ internal interface FlowBottomSheetsManager {
     }
 
     fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState)
-    fun sendFeedback()
     suspend fun getPaymentRequest(): PaymentRequest?
     suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray>
 
