@@ -9,5 +9,5 @@ import androidx.annotation.NonNull;
  */
 public interface ProvidersAppItemSelectedListener {
 
-    void onItemSelected(@NonNull final ProvidersAppItem item);
+    void onItemSelected(@NonNull final ProvidersItem item);
 }

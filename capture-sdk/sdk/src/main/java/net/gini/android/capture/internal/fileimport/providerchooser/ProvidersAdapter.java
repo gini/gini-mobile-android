@@ -40,12 +40,14 @@ public class ProvidersAdapter extends RecyclerView.Adapter<ProvidersItemViewHold
 
     @Override
     public ProvidersItemViewHolder onCreateViewHolder(final ViewGroup parent,
-            final int viewType) {
+                                                      final int viewType) {
         switch (ProvidersItem.FileProviderItemType.fromOrdinal(viewType)) {
             case SECTION:
                 return createSectionItemViewHolder(parent);
             case APP:
-                return createAppItemViewHolder(parent);
+                return createAppItemViewHolder(parent, ProvidersItem.FileProviderItemType.APP);
+            case APP_WRAPPER_PHOTO_PICKER:
+                return createAppItemViewHolder(parent, ProvidersItem.FileProviderItemType.APP_WRAPPER_PHOTO_PICKER);
             case SEPARATOR:
                 return createSeparatorItemViewHolder(parent);
             default:
@@ -62,10 +64,12 @@ public class ProvidersAdapter extends RecyclerView.Adapter<ProvidersItemViewHold
     }
 
     @NonNull
-    private ProvidersItemViewHolder createAppItemViewHolder(@NonNull final ViewGroup parent) {
+    private ProvidersItemViewHolder createAppItemViewHolder(
+            @NonNull final ViewGroup parent,
+            @NonNull ProvidersItem.FileProviderItemType providerItemType) {
         final View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.gc_item_file_provider_app, parent, false);
-        return new ProvidersAppItemViewHolder(itemView);
+        return new ProvidersAppItemViewHolder(itemView, providerItemType);
     }
 
     private ProvidersItemViewHolder createSeparatorItemViewHolder(@NonNull final ViewGroup parent) {
@@ -82,6 +86,9 @@ public class ProvidersAdapter extends RecyclerView.Adapter<ProvidersItemViewHold
                 break;
             case APP:
                 bindAppItemViewHolder((ProvidersAppItemViewHolder) holder, position);
+                break;
+            case APP_WRAPPER_PHOTO_PICKER:
+                bindAppWrapperItemViewHolder((ProvidersAppItemViewHolder) holder, position);
                 break;
             case SEPARATOR:
                 break;
@@ -101,13 +108,22 @@ public class ProvidersAdapter extends RecyclerView.Adapter<ProvidersItemViewHold
         final ProvidersAppItem item = (ProvidersAppItem) mItems.get(position);
         holder.icon.setImageDrawable(item.getResolveInfo().loadIcon(mContext.getPackageManager()));
         holder.label.setText(item.getResolveInfo().loadLabel(mContext.getPackageManager()));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                final ProvidersAppItem item =
-                        (ProvidersAppItem) mItems.get(holder.getAdapterPosition());
-                mItemSelectedListener.onItemSelected(item);
-            }
+        holder.itemView.setOnClickListener(view -> {
+            final ProvidersAppItem selectedItem =
+                    (ProvidersAppItem) mItems.get(holder.getAdapterPosition());
+            mItemSelectedListener.onItemSelected(selectedItem);
+        });
+    }
+
+    private void bindAppWrapperItemViewHolder(@NonNull final ProvidersAppItemViewHolder holder,
+                                       final int position) {
+        final ProvidersAppWrapperItem item = (ProvidersAppWrapperItem) mItems.get(position);
+        holder.icon.setImageDrawable(item.getDrawableIcon());
+        holder.label.setText(item.getText());
+        holder.itemView.setOnClickListener(view -> {
+            final ProvidersAppWrapperItem selectedItem =
+                    (ProvidersAppWrapperItem) mItems.get(holder.getAdapterPosition());
+            mItemSelectedListener.onItemSelected(selectedItem);
         });
     }
 
@@ -123,8 +139,8 @@ public class ProvidersAdapter extends RecyclerView.Adapter<ProvidersItemViewHold
         @NonNull
         final TextView label;
 
-        ProvidersAppItemViewHolder(@NonNull final View itemView) {
-            super(itemView, ProvidersItem.FileProviderItemType.APP);
+        ProvidersAppItemViewHolder(@NonNull final View itemView, @NonNull ProvidersItem.FileProviderItemType providerItemType) {
+            super(itemView, providerItemType);
             icon = itemView.findViewById(R.id.gc_app_icon);
             label = itemView.findViewById(R.id.gc_app_label);
         }
