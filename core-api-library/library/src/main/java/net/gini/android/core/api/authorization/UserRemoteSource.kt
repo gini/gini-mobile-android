@@ -40,13 +40,6 @@ internal class UserRemoteSource(
         }
     }
 
-    suspend fun getGiniApiSessionTokenInfo(token: String, authAccessToken: String): SessionTokenInfo = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
-           userService.getGiniApiSessionTokenInfo(bearerHeaderMap(authAccessToken), token)
-        }
-        response.body() ?: throw ApiException.forResponse("Empty response body", response)
-    }
-
     suspend fun getUserInfo(uri: String, accessToken: String): UserResponseModel = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.getUserInfo(bearerHeaderMap(accessToken), uri)
