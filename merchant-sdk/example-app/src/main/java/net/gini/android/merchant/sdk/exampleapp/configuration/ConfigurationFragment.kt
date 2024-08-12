@@ -29,20 +29,7 @@ class ConfigurationFragment: Fragment() {
     }
 
     private fun FragmentConfigurationBinding.setupSwitchListeners() {
-        gmsAmountEditable.isEnabled = false
-        gmsShowReviewFragment.setOnCheckedChangeListener { buttonView, isChecked ->
-            gmsAmountEditable.isFocusable = isChecked
-            gmsAmountEditable.isEnabled = isChecked
-            gmsAmountEditable.isChecked = isChecked
-            saveConfiguration()
-        }
-        gmsAmountEditable.setOnCheckedChangeListener { _, _ ->
-            saveConfiguration()
-        }
-        gmsCheckReturningUser.setOnCheckedChangeListener { _, _ ->
-            saveConfiguration()
-        }
-        gmsPaymentComponentTwoRows.setOnCheckedChangeListener { _, _ ->
+        gmsShowReviewFragment.setOnCheckedChangeListener { _, _ ->
             saveConfiguration()
         }
     }
@@ -51,10 +38,7 @@ class ConfigurationFragment: Fragment() {
         viewModel.saveConfiguration(
             PaymentFlowConfiguration(
                 shouldShowReviewFragment = binding.gmsShowReviewFragment.isChecked,
-                isAmountFieldEditable = binding.gmsAmountEditable.isChecked,
                 shouldHandleErrorsInternally = true,
-                checkForReturningUser = binding.gmsCheckReturningUser.isChecked,
-                paymentComponentOnTwoRows = binding.gmsPaymentComponentTwoRows.isChecked
             )
         )
     }
