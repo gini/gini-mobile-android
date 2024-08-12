@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexCondition:GiniMerchant.kt$GiniMerchant$iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()</ID>
     <ID>ComplexCondition:MoreInformationFragment.kt$MoreInformationFragment$(listView.isGroupExpanded(i) &amp;&amp; (i != group || isReload)) || !listView.isGroupExpanded(i) &amp;&amp; i == group</ID>
     <ID>CyclomaticComplexMethod:PaymentDetails.kt$internal fun MutableMap&lt;String, CompoundExtraction>.withFeedback(paymentDetails: PaymentDetails): Map&lt;String, CompoundExtraction></ID>
     <ID>CyclomaticComplexMethod:ReviewView.kt$ReviewView$private fun handleValidationResult(messages: List&lt;ValidationMessage>)</ID>
@@ -46,12 +47,14 @@
     <ID>MaxLineLength:DocumentPageAdapter.kt$DocumentPageAdapter$HorizontalViewHolder(giniMerchant, GmsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false))</ID>
     <ID>MaxLineLength:DocumentPageAdapter.kt$DocumentPageAdapter.PageViewHolder$imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageResult.value, 0, imageResult.value.size))</ID>
     <ID>MaxLineLength:DocumentPageAdapter.kt$DocumentPageAdapter.PageViewHolder$when</ID>
+    <ID>MaxLineLength:Extensions.kt$if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.gms_amount_input_edit_text_background)</ID>
     <ID>MaxLineLength:Extensions.kt$if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_background)</ID>
     <ID>MaxLineLength:Extensions.kt$internal</ID>
     <ID>MaxLineLength:FlowBottomSheetsManager.kt$FlowBottomSheetsManager$fun</ID>
     <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$*</ID>
     <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager), apiVersion = API_VERSION)</ID>
     <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$fun</ID>
+    <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()) throw IllegalStateException("Payment details are incomplete.")</ID>
     <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant.MerchantSDKEvents$OnFinishedWithPaymentRequestCreated : MerchantSDKEvents</ID>
     <ID>MaxLineLength:GiniPaymentManager.kt$GiniPaymentManager$* Handles the validation of payment details, creation of payment request, sending feedback and emitting open bank event.</ID>
     <ID>MaxLineLength:GiniPaymentManager.kt$GiniPaymentManager$GiniMerchant.PaymentState.Success(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)</ID>
@@ -134,6 +137,7 @@
     <ID>MaxLineLength:ReviewView.kt$ReviewView$binding.amountLayout.isEnabled = !isLoading &amp;&amp; reviewComponent?.reviewConfig?.isAmountFieldEditable ?: false</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setPurpose(text.toString()) })</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setRecipient(text.toString()) })</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$recipient.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, recipientLayout, false) }</ID>
     <ID>MaxLineLength:SessionManager.kt$HealthApiSessionManagerAdapter$internal</ID>
     <ID>MaxLineLength:SupportFragmentManager.kt$internal</ID>
     <ID>MaxLineLength:UserPreferences.kt$UserPreferences$is String, (String is T) -> userPreference.value = sharedPreferences.getString(userPreference.id, "") as T</ID>
@@ -209,6 +213,7 @@
     <ID>TopLevelPropertyNaming:PaymentProviderApp.kt$private const val PaymentPath = "payment"</ID>
     <ID>UnusedPrivateProperty:GiniMerchant.kt$GiniMerchant.Companion$private val LOG = LoggerFactory.getLogger(GiniMerchant::class.java)</ID>
     <ID>UseCheckOrError:AutoClearedValue.kt$AutoClearedValue$throw IllegalStateException( "should never call auto-cleared-value get when it might not be available" )</ID>
+    <ID>UseCheckOrError:GiniMerchant.kt$GiniMerchant$throw IllegalStateException("Payment details are incomplete.")</ID>
     <ID>VariableNaming:ShareWithBroadcastReceiver.kt$ShareWithBroadcastReceiver$val SHARE_WITH_INTENT_FILTER = "share_intent_filter"</ID>
   </CurrentIssues>
 </SmellBaseline>
