@@ -1,11 +1,11 @@
 package net.gini.android.merchant.sdk.review.reviewBottomSheet
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -47,6 +47,11 @@ internal class ReviewBottomSheet private constructor(
         binding.gmsReviewLayout.reviewComponent = viewModel.reviewComponent
         binding.gmsReviewLayout.listener = paymentButtonListener
         return binding.root
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.backListener?.backCalled()
+        super.onCancel(dialog)
     }
 
     internal companion object {
