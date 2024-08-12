@@ -9,7 +9,6 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.authorization.apimodels.SessionToken
-import net.gini.android.core.api.authorization.apimodels.SessionTokenInfo
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import okhttp3.ResponseBody
@@ -32,15 +31,6 @@ class UserRemoteSourceTest {
         val expectedHeaderValue = "Bearer $accessToken"
         verifyHeader(name = "Authorization", value = expectedHeaderValue, testScope = this) {
             createUser(UserRequestModel(), accessToken)
-        }
-    }
-
-    @Test
-    fun `sets bearer authorization header with capital case 'Bearer' in getGiniApiSessionTokenInfo`() = runTest {
-        val accessToken = UUID.randomUUID().toString()
-        val expectedHeaderValue = "Bearer $accessToken"
-        verifyHeader(name = "Authorization", value = expectedHeaderValue, testScope = this) {
-            getGiniApiSessionTokenInfo("", accessToken)
         }
     }
 
@@ -109,15 +99,6 @@ class UserRemoteSourceTest {
         val expectedHeaderValue = "application/json"
         verifyHeader(name = "Accept", value = expectedHeaderValue, testScope = this) {
             createUser(UserRequestModel(), accessToken)
-        }
-    }
-
-    @Test
-    fun `sets json accept header in getGiniApiSessionTokenInfo`() = runTest {
-        val accessToken = UUID.randomUUID().toString()
-        val expectedHeaderValue = "application/json"
-        verifyHeader(name = "Accept", value = expectedHeaderValue, testScope = this) {
-            getGiniApiSessionTokenInfo("", accessToken)
         }
     }
 
@@ -228,14 +209,6 @@ class UserRemoteSourceTest {
         ): Response<ResponseBody> {
             headers = bearerHeaders
             return Response.success(null)
-        }
-
-        override suspend fun getGiniApiSessionTokenInfo(
-            bearerHeaders: Map<String, String>,
-            token: String
-        ): Response<SessionTokenInfo> {
-            headers = bearerHeaders
-            return Response.success(SessionTokenInfo(""))
         }
 
         override suspend fun getUserInfo(bearerHeaders: Map<String, String>, uri: String): Response<UserResponseModel> {

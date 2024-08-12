@@ -9,7 +9,6 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.response.PaymentRequestResponse
-import net.gini.android.core.api.response.PaymentResponse
 import net.gini.android.core.api.test.DocumentRemoteSourceForTests
 import net.gini.android.core.api.test.MockGiniApiType
 import okhttp3.RequestBody
