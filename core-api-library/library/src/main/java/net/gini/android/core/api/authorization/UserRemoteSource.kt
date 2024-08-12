@@ -3,7 +3,6 @@ package net.gini.android.core.api.authorization
 import android.util.Base64
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.authorization.apimodels.SessionToken
-import net.gini.android.core.api.authorization.apimodels.SessionTokenInfo
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import net.gini.android.core.api.requests.ApiException

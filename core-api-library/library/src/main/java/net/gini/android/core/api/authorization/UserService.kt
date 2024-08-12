@@ -1,7 +1,6 @@
 package net.gini.android.core.api.authorization
 
 import net.gini.android.core.api.authorization.apimodels.SessionToken
-import net.gini.android.core.api.authorization.apimodels.SessionTokenInfo
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import okhttp3.ResponseBody
