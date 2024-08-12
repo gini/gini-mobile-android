@@ -1,5 +1,7 @@
 package net.gini.android.health.sdk
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.lifecycle.Lifecycle
@@ -7,10 +9,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
@@ -19,11 +23,12 @@ import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.health.sdk.review.model.getPaymentExtraction
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
+import net.gini.android.health.sdk.util.GiniLocalization
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
+import java.util.Locale
 
 /**
  * [GiniHealth] is one of the main classes for interacting with the Gini Health SDK. It manages interaction with the Gini Health API.
@@ -73,6 +78,17 @@ class GiniHealth(
      * A flow that exposes the state of opening the bank. You can collect this flow to get information about the errors of this action.
      */
     val openBankState: StateFlow<PaymentState> = _openBankState
+
+    /**
+     * Sets the app language to the desired one from the languages the SDK is supporting. If not set then defaults to the system's language locale.
+     *
+     * @param language enum value for the desired language or null for default system language
+     * @param context Context object to save the configuration.
+     */
+    fun setSDKLanguage(language: GiniLocalization?, context: Context) {
+        localizedContext = null
+        GiniHealthPreferences(context).saveSDKLanguage(language)
+    }
 
     /**
      * Sets a [Document] for review. Results can be collected from [documentFlow] and [paymentFlow].
@@ -126,7 +142,7 @@ class GiniHealth(
 
     /**
      * Checks whether the document is payable by fetching the document and its extractions from the
-     * Gini Pay API and verifying that the extractions contain an IBAN.
+     * Gini Pay API and verifying that the extraction's payment state is "Payable".
      *
      * @return `true` if the document is payable and `false` otherwise
      * @throws Exception if there was an error while retrieving the document or the extractions
@@ -139,16 +155,17 @@ class GiniHealth(
         return when (extractionsResource) {
             is Resource.Cancelled -> false
             is Resource.Error -> throw Exception(extractionsResource.exception)
-            is Resource.Success -> extractionsResource.data.compoundExtractions
-                .getPaymentExtraction("iban")?.value?.isNotEmpty() ?: false
+            is Resource.Success -> (extractionsResource.data.specificExtractions["payment_state"]?.value ?: "") == PAYABLE
         }
     }
 
     internal fun setOpenBankState(state: PaymentState, scope: CoroutineScope) {
         _openBankState.value = state
         scope.launch {
-            delay(50)
-            _openBankState.value = PaymentState.NoAction
+            withContext(NonCancellable) {
+                delay(50)
+                _openBankState.value = PaymentState.NoAction
+            }
         }
     }
 
@@ -229,6 +246,23 @@ class GiniHealth(
         class Error(val throwable: Throwable) : PaymentState()
     }
 
+    internal class GiniHealthPreferences(context: Context) {
+        private val sharedPreferences = context.getSharedPreferences("GiniHealthPreferences", Context.MODE_PRIVATE)
+
+        fun saveSDKLanguage(value: GiniLocalization?) {
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putString(SDK_LANGUAGE_PREFS_KEY, value?.readableName?.uppercase())
+            editor.apply()
+        }
+
+        fun getSDKLanguage(): GiniLocalization? {
+            val enumValue = sharedPreferences.getString(SDK_LANGUAGE_PREFS_KEY, null)
+            return if (enumValue.isNullOrEmpty()) null else GiniLocalization.valueOf(enumValue)
+        }
+    }
+
+    internal var localizedContext: Context? = null
+
     companion object {
         private val LOG = LoggerFactory.getLogger(GiniHealth::class.java)
 
@@ -238,5 +272,11 @@ class GiniHealth(
         private const val CAPTURED_ARGUMENTS_TYPE = "CAPTURED_ARGUMENTS_TYPE"
         private const val PROVIDER = "net.gini.android.health.sdk.GiniHealth"
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
+        private const val PAYABLE = "Payable"
+        private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
+
+        fun getSDKLanguage(context: Context): GiniLocalization? {
+            return GiniHealthPreferences(context).getSDKLanguage()
+        }
     }
 }

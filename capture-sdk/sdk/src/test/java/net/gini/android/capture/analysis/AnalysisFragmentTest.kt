@@ -7,6 +7,7 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.Navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
@@ -17,6 +18,7 @@ import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -33,8 +35,10 @@ class AnalysisFragmentTest {
     fun `triggers Cancel event when back was pressed`() {
         // Given
         val eventTracker = spy<EventTracker>()
-        GiniCapture.Builder().setEventTracker(eventTracker).build()
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
+            .setEventTracker(eventTracker).build()
         GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
+        UserAnalytics.initialize(InstrumentationRegistry.getInstrumentation().context)
 
         val bundle = Bundle().apply {
             putParcelable("GC_ARGS_DOCUMENT", mock<ImageDocument>().apply {

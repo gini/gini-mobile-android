@@ -1,7 +1,11 @@
 package net.gini.android.health.sdk.review
 
+import android.app.PendingIntent
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -58,15 +62,17 @@ import net.gini.android.health.sdk.util.amountWatcher
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.clearErrorMessage
 import net.gini.android.health.sdk.util.extensions.getFontScale
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthTheme
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
+import net.gini.android.health.sdk.util.getLocaleStringResource
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
-import net.gini.android.health.sdk.util.wrappedWithGiniHealthTheme
+import net.gini.android.health.sdk.util.wrappedWithGiniHealthThemeAndLocale
 import java.io.File
+import java.util.Locale
 
 /**
  * Configuration for the [ReviewFragment].
@@ -117,7 +123,6 @@ interface ReviewFragmentListener {
  */
 class ReviewFragment private constructor(
     var listener: ReviewFragmentListener? = null,
-    private val paymentComponent: PaymentComponent? = null,
     private val viewModelFactory: ViewModelProvider.Factory? = null,
 ) : Fragment() {
 
@@ -128,10 +133,15 @@ class ReviewFragment private constructor(
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
     private var errorSnackbar: Snackbar? = null
+    private var broadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.setOpenBankStateAfterShareWith()
+        }
+    }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthTheme(inflater)
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, viewModel.paymentComponent.giniHealthLanguage)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -214,6 +224,10 @@ class ReviewFragment private constructor(
                         handlePaymentNextStep(paymentNextStep)
                     }
                 }
+                launch {
+                    requireActivity().registerReceiver(broadcastReceiver, IntentFilter().also { it.addAction(SHARE_INTENT_FILTER) },
+                        Context.RECEIVER_NOT_EXPORTED)
+                }
             }
         }
     }
@@ -245,7 +259,7 @@ class ReviewFragment private constructor(
                 })
             }
 
-            is ResultWrapper.Error -> handleError(getString(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
+            is ResultWrapper.Error -> handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
             else -> { // Loading state handled by payment details
             }
         }
@@ -254,7 +268,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
         binding.loading.isVisible = paymentResult is ResultWrapper.Loading
         if (paymentResult is ResultWrapper.Error) {
-            handleError(getString(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
+            handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
         }
     }
 
@@ -348,14 +362,14 @@ class ReviewFragment private constructor(
                         startActivity(intent)
                         viewModel.onBankOpened()
                     } else {
-                        handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
+                        handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
                     }
                 } catch (exception: ActivityNotFoundException) {
-                    handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
+                    handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
                 }
             }
             is GiniHealth.PaymentState.Error -> {
-                handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
+                handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
             }
             else -> { // Loading is already handled
             }
@@ -368,7 +382,7 @@ class ReviewFragment private constructor(
         ibanLayout.isEnabled = !isLoading
         amountLayout.isEnabled = !isLoading
         purposeLayout.isEnabled = !isLoading
-        payment.text = if (isLoading) "" else getString(R.string.ghs_pay_button)
+        payment.text = if (isLoading) "" else getLocaleStringResource(R.string.ghs_pay_button)
     }
 
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
@@ -379,14 +393,14 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        val context = requireContext().wrappedWithGiniHealthTheme()
+        val context = requireContext().wrappedWithGiniHealthThemeAndLocale(viewModel.paymentComponent.giniHealthLanguage)
         errorSnackbar?.dismiss()
         errorSnackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             if (context.getFontScale() < 1.5) {
                 anchorView = paymentDetailsScrollview
             }
             setTextMaxLines(2)
-            setAction(getString(R.string.ghs_snackbar_retry)) {
+            setAction(getLocaleStringResource(R.string.ghs_snackbar_retry)) {
                 onRetry()
             }
             show()
@@ -563,7 +577,7 @@ class ReviewFragment private constructor(
 
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         errorSnackbar?.dismiss()
-        OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
+        OpenWithBottomSheet.newInstance(paymentProviderApp, viewModel.paymentComponent, object: OpenWithForwardListener {
             override fun onForwardSelected() {
                 viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
             }
@@ -585,7 +599,7 @@ class ReviewFragment private constructor(
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             putExtra(Intent.EXTRA_STREAM, uriForFile)
         }
-        startActivity(Intent.createChooser(shareIntent, uriForFile.lastPathSegment))
+        startActivity(Intent.createChooser(shareIntent, uriForFile.lastPathSegment, createSharePendingIntent().intentSender))
     }
 
     private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
@@ -600,8 +614,15 @@ class ReviewFragment private constructor(
                     viewModel.onPayment()
                 }
             }
-            ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
-            ReviewViewModel.PaymentNextStep.ShowInstallApp -> viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
+            ReviewViewModel.PaymentNextStep.ShowOpenWithSheet -> {
+                if (viewModel.validatePaymentDetails()) {
+                    viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
+                }
+            }
+            ReviewViewModel.PaymentNextStep.ShowInstallApp ->
+                if (viewModel.validatePaymentDetails()) {
+                    viewModel.paymentProviderApp.value?.let { showInstallAppDialog(it) }
+                }
             is ReviewViewModel.PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file)
@@ -609,13 +630,32 @@ class ReviewFragment private constructor(
         }
     }
 
+    private fun createSharePendingIntent() =  PendingIntent.getBroadcast(
+        requireContext(), CHOOSER_REQUEST_ID,
+        Intent(requireContext(), ShareWithBroadcastReceiver::class.java),
+        PendingIntent.FLAG_IMMUTABLE
+    )
+
+    private fun getLocaleStringResource(resourceId: Int): String {
+        return getLocaleStringResource(resourceId, viewModel.paymentComponent.giniHealth)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
         super.onSaveInstanceState(outState)
     }
 
+    override fun onStop() {
+        requireActivity().unregisterReceiver(broadcastReceiver)
+        super.onStop()
+    }
+
     internal companion object {
         private const val PAGER_HEIGHT = "pager_height"
+        internal const val SHARE_INTENT_FILTER = "share_intent_filter"
+
+        // This is only required to send when creating the pending intent for the share sheet - not actually used anywhere else
+        internal const val CHOOSER_REQUEST_ID = 123
         fun newInstance(
             giniHealth: GiniHealth,
             configuration: ReviewConfiguration = ReviewConfiguration(),
@@ -623,6 +663,12 @@ class ReviewFragment private constructor(
             paymentComponent: PaymentComponent,
             documentId: String,
             viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId),
-        ): ReviewFragment = ReviewFragment(listener, paymentComponent, viewModelFactory)
+        ): ReviewFragment = ReviewFragment(listener, viewModelFactory)
+    }
+
+    internal class ShareWithBroadcastReceiver: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            context?.sendBroadcast(Intent().also { it.action = SHARE_INTENT_FILTER })
+        }
     }
 }
