@@ -36,7 +36,7 @@ class GiniMerchant(
     private val clientSecret: String = "",
     private val emailDomain: String = "",
     private val sessionManager: SessionManager? = null,
-    private val merchantApiBaseUrl: String? = null,
+    private val merchantApiBaseUrl: String = MERCHANT_BASE_URL,
     private val userCenterApiBaseUrl: String? = null,
     private val debuggingEnabled: Boolean = false,
 ) {
@@ -52,14 +52,13 @@ class GiniMerchant(
                             context,
                             clientId,
                             clientSecret,
-                            emailDomain
+                            emailDomain,
+                            apiVersion = API_VERSION
                         )
                     } else {
-                        GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager))
+                        GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager), apiVersion = API_VERSION)
                     }.apply {
-                        if (merchantApiBaseUrl != null) {
-                            setApiBaseUrl(merchantApiBaseUrl)
-                        }
+                        setApiBaseUrl(merchantApiBaseUrl)
                         if (userCenterApiBaseUrl != null) {
                             setUserCenterApiBaseUrl(userCenterApiBaseUrl)
                         }
@@ -191,8 +190,11 @@ class GiniMerchant(
     }
 
     companion object {
+        const val API_VERSION = 1
+
         private val LOG = LoggerFactory.getLogger(GiniMerchant::class.java)
 
         internal const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
+        internal const val MERCHANT_BASE_URL = "https://merchant-api.gini.net/"
     }
 }

@@ -8,18 +8,19 @@ import net.gini.android.health.api.GiniHealthAPIBuilder
 /**
  * Minimal configuration for Gini API
  */
-fun getGiniApi(context: Context, clientId: String, clientSecret: String, emailDomain: String): GiniHealthAPI {
+fun getGiniApi(context: Context, clientId: String, clientSecret: String, emailDomain: String, apiVersion: Int = GiniHealthAPIBuilder.API_VERSION): GiniHealthAPI {
     return GiniHealthAPIBuilder(
         context,
         clientId,
         clientSecret,
-        emailDomain
+        emailDomain,
+        apiVersion = apiVersion
     ).build()
 }
 
 /**
  * Minimal configuration for Gini API
  */
-fun getGiniApi(context: Context, sessionManager: SessionManager): GiniHealthAPI {
-    return GiniHealthAPIBuilder(context, sessionManager = sessionManager).build()
+fun getGiniApi(context: Context, sessionManager: SessionManager, apiVersion: Int = GiniHealthAPIBuilder.API_VERSION): GiniHealthAPI {
+    return GiniHealthAPIBuilder(context, sessionManager = sessionManager, apiVersion = apiVersion).build()
 }

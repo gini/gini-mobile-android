@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:MoreInformationFragment.kt$MoreInformationFragment$(listView.isGroupExpanded(i) &amp;&amp; (i != group || isReload)) || !listView.isGroupExpanded(i) &amp;&amp; i == group</ID>
+    <ID>CyclomaticComplexMethod:PaymentDetails.kt$internal fun MutableMap&lt;String, CompoundExtraction>.withFeedback(paymentDetails: PaymentDetails): Map&lt;String, CompoundExtraction></ID>
+    <ID>CyclomaticComplexMethod:ReviewView.kt$ReviewView$private fun handleValidationResult(messages: List&lt;ValidationMessage>)</ID>
+    <ID>EmptyClassBlock:MerchantSDKFileProvider.kt$MerchantSDKFileProvider${ }</ID>
+    <ID>EmptyDefaultConstructor:GiniMerchant.kt$GiniMerchant.MerchantSDKEvents.OnFinishedWithCancellation$()</ID>
+    <ID>EmptyElseBlock:IntervalClickListener.kt$IntervalClickListener$if (view == null) return</ID>
+    <ID>EmptyFunctionBlock:Extensions.kt$&lt;no name provided>${ }</ID>
+    <ID>LongMethod:PaymentComponentView.kt$PaymentComponentView$override fun onAttachedToWindow()</ID>
+    <ID>MagicNumber:Context.kt$123</ID>
+    <ID>MagicNumber:Extensions.kt$&lt;no name provided>$100</ID>
+    <ID>MagicNumber:Extensions.kt$&lt;no name provided>$7</ID>
+    <ID>MagicNumber:GmsBottomSheetDialogFragment.kt$GmsBottomSheetDialogFragment$102</ID>
+    <ID>MagicNumber:IbanValidator.kt$10</ID>
+    <ID>MagicNumber:IbanValidator.kt$4</ID>
+    <ID>MagicNumber:InstallAppBottomSheet.kt$InstallAppBottomSheet$255</ID>
+    <ID>MagicNumber:MoreInformationFragment.kt$MoreInformationFragment$100</ID>
+    <ID>MagicNumber:OpenWithBottomSheet.kt$OpenWithBottomSheet$255</ID>
+    <ID>MagicNumber:PaymentComponent.kt$PaymentComponent$500</ID>
+    <ID>MagicNumber:PaymentComponentView.kt$PaymentComponentView$0.4f</ID>
+    <ID>MagicNumber:PaymentComponentView.kt$PaymentComponentView$255</ID>
+    <ID>MagicNumber:PaymentFlowViewModel.kt$PaymentFlowViewModel$50</ID>
+    <ID>MagicNumber:ReviewView.kt$ReviewView$0.4f</ID>
+    <ID>MagicNumber:ReviewView.kt$ReviewView$255</ID>
+    <ID>MagicNumber:Session.kt$Session.Companion$1000</ID>
+    <ID>MatchingDeclarationName:Errors.kt$NoPaymentDataExtracted : Throwable</ID>
+    <ID>MaxLineLength:BankSelectionBottomSheet.kt$BankSelectionBottomSheet$*</ID>
+    <ID>MaxLineLength:BankSelectionBottomSheet.kt$BankSelectionBottomSheet$internal</ID>
+    <ID>MaxLineLength:BankSelectionBottomSheet.kt$BankSelectionBottomSheet$private val viewModel: BankSelectionViewModel by viewModels { BankSelectionViewModel.Factory(paymentComponent, backListener) }</ID>
+    <ID>MaxLineLength:BankSelectionBottomSheet.kt$BankSelectionBottomSheet.Companion$*</ID>
+    <ID>MaxLineLength:BankSelectionBottomSheet.kt$BankSelectionBottomSheet.Companion$fun</ID>
+    <ID>MaxLineLength:BankSelectionBottomSheet.kt$PaymentProviderAppsAdapter$if (paymentProviderAppListItem.isSelected) ContextCompat.getDrawable(context, R.drawable.gms_checkmark) else null</ID>
+    <ID>MaxLineLength:BankSelectionBottomSheet.kt$PaymentProviderAppsAdapter$val view = GmsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniMerchantTheme(), parent, false)</ID>
+    <ID>MaxLineLength:BankSelectionBottomSheet.kt$PaymentProviderAppsAdapter.ViewHolder$class</ID>
+    <ID>MaxLineLength:BankSelectionViewModel.kt$BankSelectionViewModel$LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the BankSelectionBottomSheet")</ID>
+    <ID>MaxLineLength:BankSelectionViewModel.kt$BankSelectionViewModel$hasSamePaymentProviderId(paymentProviderApp.paymentProviderApp, selectedPaymentProviderAppState.paymentProviderApp)</ID>
+    <ID>MaxLineLength:BankSelectionViewModel.kt$BankSelectionViewModel$internal</ID>
+    <ID>MaxLineLength:BankSelectionViewModel.kt$BankSelectionViewModel$paymentComponent.selectedPaymentProviderAppFlow</ID>
+    <ID>MaxLineLength:BankSelectionViewModel.kt$BankSelectionViewModel.Factory$class</ID>
+    <ID>MaxLineLength:Context.kt$// Bitmap.createScaledBitmap returns original bitmap when width and height is the same as bitmap.width and bitmap.height. In one case (Pixel 7 Pro) iconSizePx was being resolved to exactly the same value as some of the bitmap's widths</ID>
+    <ID>MaxLineLength:Context.kt$// Only recycle if width is different than bitmap.width (can only check for width, as it's the same dimension for both with and height)</ID>
+    <ID>MaxLineLength:Context.kt$// Recycling this bitmap in this case leads to the app crashing when attempting to load the drawable into an ImageView</ID>
+    <ID>MaxLineLength:DocumentPageAdapter.kt$DocumentPageAdapter$HorizontalViewHolder(giniMerchant, GmsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false))</ID>
+    <ID>MaxLineLength:DocumentPageAdapter.kt$DocumentPageAdapter.PageViewHolder$imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageResult.value, 0, imageResult.value.size))</ID>
+    <ID>MaxLineLength:DocumentPageAdapter.kt$DocumentPageAdapter.PageViewHolder$when</ID>
+    <ID>MaxLineLength:Extensions.kt$if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_background)</ID>
+    <ID>MaxLineLength:Extensions.kt$internal</ID>
+    <ID>MaxLineLength:FlowBottomSheetsManager.kt$FlowBottomSheetsManager$fun</ID>
+    <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$*</ID>
+    <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager), apiVersion = API_VERSION)</ID>
+    <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$fun</ID>
+    <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant.MerchantSDKEvents$OnFinishedWithPaymentRequestCreated : MerchantSDKEvents</ID>
+    <ID>MaxLineLength:GiniPaymentManager.kt$GiniPaymentManager$* Handles the validation of payment details, creation of payment request, sending feedback and emitting open bank event.</ID>
+    <ID>MaxLineLength:GiniPaymentManager.kt$GiniPaymentManager$GiniMerchant.PaymentState.Success(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)</ID>
+    <ID>MaxLineLength:GiniPaymentManager.kt$GiniPaymentManager$suspend</ID>
+    <ID>MaxLineLength:InstallAppBottomSheet.kt$InstallAppBottomSheet$"${paymentProviderApp.name} ${getString(R.string.gms_payment_provider_logo_content_description)}"</ID>
+    <ID>MaxLineLength:InstallAppBottomSheet.kt$InstallAppBottomSheet.Companion$*</ID>
+    <ID>MaxLineLength:InstallAppViewModel.kt$InstallAppViewModel$internal</ID>
+    <ID>MaxLineLength:InstallAppViewModel.kt$InstallAppViewModel.Factory$class</ID>
+    <ID>MaxLineLength:MoreInformationFragment.kt$MoreInformationFragment$if</ID>
+    <ID>MaxLineLength:MoreInformationFragment.kt$MoreInformationFragment$internal</ID>
+    <ID>MaxLineLength:MoreInformationFragment.kt$MoreInformationFragment$is MoreInformationViewModel.PaymentProviderAppsListState.Success</ID>
+    <ID>MaxLineLength:MoreInformationFragment.kt$MoreInformationFragment.Companion$fun</ID>
+    <ID>MaxLineLength:MoreInformationViewModel.kt$MoreInformationViewModel$LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the BankSelectionBottomSheet")</ID>
+    <ID>MaxLineLength:OpenWithBottomSheet.kt$OpenWithBottomSheet$binding.gmsOpenWithDetails.text = String.format(getString(R.string.gms_open_with_details), paymentProviderApp.name)</ID>
+    <ID>MaxLineLength:OpenWithBottomSheet.kt$OpenWithBottomSheet$binding.gmsOpenWithInfo.text = createSpannableString(String.format(getString(R.string.gms_open_with_info), paymentProviderApp.name, paymentProviderApp.name), paymentProviderApp.paymentProvider.playStoreUrl)</ID>
+    <ID>MaxLineLength:OpenWithBottomSheet.kt$OpenWithBottomSheet$binding.gmsOpenWithTitle.text = String.format(getString(R.string.gms_open_with_title), paymentProviderApp.name)</ID>
+    <ID>MaxLineLength:OpenWithBottomSheet.kt$OpenWithBottomSheet$internal</ID>
+    <ID>MaxLineLength:OpenWithBottomSheet.kt$OpenWithBottomSheet$private val viewModel by viewModels&lt;OpenWithViewModel> { OpenWithViewModel.Factory(paymentProviderApp, backListener) }</ID>
+    <ID>MaxLineLength:OpenWithBottomSheet.kt$OpenWithBottomSheet$setSpan(ForegroundColorSpan(requireContext().getColor(R.color.gms_open_with_details)),0,length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)</ID>
+    <ID>MaxLineLength:OpenWithBottomSheet.kt$OpenWithBottomSheet.Companion$fun</ID>
+    <ID>MaxLineLength:OpenWithPreferences.kt$OpenWithPreferences$fun getLiveCountForPaymentProviderId(paymentProviderId: String): Flow&lt;Int?></ID>
+    <ID>MaxLineLength:OpenWithViewModel.kt$OpenWithViewModel$internal</ID>
+    <ID>MaxLineLength:OpenWithViewModel.kt$OpenWithViewModel.Factory$class</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$(_selectedPaymentProviderAppFlow.value as SelectedPaymentProviderAppState.AppSelected).paymentProviderApp</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$*</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$* A [StateFlow] which emits the state of the payment provider apps. See [PaymentProviderAppsState] for the possible states.</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$* A [StateFlow] which emits the state of the selected payment provider app. See [SelectedPaymentProviderAppState] for the possible states.</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$// Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$LOG.debug("Using previously selected payment provider app: {}", previouslySelectedPaymentProviderApp.name)</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$internal</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$private</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$private suspend</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent$val</ID>
+    <ID>MaxLineLength:PaymentComponent.kt$PaymentComponent.Listener$*</ID>
+    <ID>MaxLineLength:PaymentComponentBottomSheet.kt$PaymentComponentBottomSheet$// if payment provider does not support GPC and review fragment will not be shown, we're in the case where we show `Open With Bottom Sheet` from the payment component directly</ID>
+    <ID>MaxLineLength:PaymentComponentBottomSheet.kt$PaymentComponentBottomSheet$if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false &amp;&amp; !viewModel.reviewFragmentShown) return@launch</ID>
+    <ID>MaxLineLength:PaymentComponentBottomSheet.kt$PaymentComponentBottomSheet$private val viewModel by viewModels&lt;PaymentComponentBottomSheetViewModel> { PaymentComponentBottomSheetViewModel.Factory(paymentComponent, backListener, reviewFragmentShown) }</ID>
+    <ID>MaxLineLength:PaymentComponentBottomSheet.kt$PaymentComponentBottomSheet.Companion$internal fun newInstance(paymentComponent: PaymentComponent?, reviewFragmentShown: Boolean, backListener: BackListener)</ID>
+    <ID>MaxLineLength:PaymentComponentBottomSheetViewModel.kt$PaymentComponentBottomSheetViewModel$internal</ID>
+    <ID>MaxLineLength:PaymentComponentBottomSheetViewModel.kt$PaymentComponentBottomSheetViewModel.Factory$class</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$*</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$* The document id of the invoice item. This will be returned in the [PaymentComponent.Listener.onPayInvoiceClicked] method.</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$binding.gmsSelectBankPickerLayout.layoutParams.height = resources.getDimension(R.dimen.gms_payment_component_height).toInt()</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$if</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsPayInvoiceButtonTwoRows else binding.gmsSingleRowBankSelection.gmsPayInvoiceButton</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$payInvoiceButton.text = if (reviewFragmentWillBeShown) resources.getString(R.string.gms_continue_to_overview) else resources.getString(R.string.gms_pay_button)</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gmsPaymentProviderAppIconHolder else binding.gmsSingleRowBankSelection.gmsPaymentProviderAppIconHolder</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$pc.selectedPaymentProviderAppFlow</ID>
+    <ID>MaxLineLength:PaymentComponentView.kt$PaymentComponentView$selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gmsSelectBankButton else binding.gmsSingleRowBankSelection.gmsSelectBankButton</ID>
+    <ID>MaxLineLength:PaymentDetails.kt$internal</ID>
+    <ID>MaxLineLength:PaymentDetails.kt$internal fun MutableMap&lt;String, CompoundExtraction>.getPaymentExtraction(name: String)</ID>
+    <ID>MaxLineLength:PaymentDetails.kt$val</ID>
+    <ID>MaxLineLength:PaymentFlowViewModel.kt$PaymentFlowViewModel$if (paymentComponent.paymentProviderAppsFlow.value is PaymentProviderAppsState.Loading || paymentComponent.paymentProviderAppsFlow.value is PaymentProviderAppsState.Success) return@launch</ID>
+    <ID>MaxLineLength:PaymentFlowViewModel.kt$PaymentFlowViewModel$override suspend fun getPaymentRequest(): PaymentRequest</ID>
+    <ID>MaxLineLength:PaymentFlowViewModel.kt$PaymentFlowViewModel$override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource&lt;ByteArray></ID>
+    <ID>MaxLineLength:PaymentFlowViewModel.kt$PaymentFlowViewModel$paymentComponent.bankPickerRows = if (it.paymentComponentOnTwoRows) BankPickerRows.TWO else BankPickerRows.SINGLE</ID>
+    <ID>MaxLineLength:PaymentFlowViewModel.kt$PaymentFlowViewModel.Factory$class</ID>
+    <ID>MaxLineLength:PaymentFlowViewModel.kt$PaymentFlowViewModel.Factory$return PaymentFlowViewModel(paymentComponent = paymentComponent, paymentDetails = paymentDetails,paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T</ID>
+    <ID>MaxLineLength:PaymentFragment.kt$PaymentFlowConfiguration$*</ID>
+    <ID>MaxLineLength:PaymentFragment.kt$PaymentFragment$*</ID>
+    <ID>MaxLineLength:PaymentFragment.kt$PaymentFragment$// If ReviewFragment will be shown, it will hande the opening of the bank app. Otherwise, listen for the openBankState event and handle it here</ID>
+    <ID>MaxLineLength:PaymentFragment.kt$PaymentFragment$BankSelectionBottomSheet.newInstance(it, viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)</ID>
+    <ID>MaxLineLength:PaymentFragment.kt$PaymentFragment$handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }</ID>
+    <ID>MaxLineLength:PaymentFragment.kt$PaymentFragment$requireActivity()</ID>
+    <ID>MaxLineLength:PaymentFragment.kt$PaymentFragment.&lt;no name provided>$BankSelectionBottomSheet.newInstance(it, backListener = viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)</ID>
+    <ID>MaxLineLength:PaymentFragment.kt$PaymentFragment.Companion$fun</ID>
+    <ID>MaxLineLength:PaymentFragment.kt$PaymentFragment.Companion$viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(giniMerchant.paymentComponent, paymentDetails, paymentFlowConfiguration, giniMerchant)</ID>
+    <ID>MaxLineLength:PaymentProviderApp.kt$internal</ID>
+    <ID>MaxLineLength:ReviewBottomSheet.kt$ReviewBottomSheet$private val viewModel: ReviewBottomSheetViewModel by viewModels { viewModelFactory ?: object : ViewModelProvider.Factory {} }</ID>
+    <ID>MaxLineLength:ReviewBottomSheetViewModel.kt$ReviewBottomSheetViewModel$internal</ID>
+    <ID>MaxLineLength:ReviewBottomSheetViewModel.kt$ReviewBottomSheetViewModel.Factory$class</ID>
+    <ID>MaxLineLength:ReviewBottomSheetViewModel.kt$ReviewBottomSheetViewModel.Factory$return ReviewBottomSheetViewModel(paymentComponent, reviewConfiguration, giniMerchant, giniPaymentManager, backListener) as T</ID>
+    <ID>MaxLineLength:ReviewComponent.kt$ReviewComponent$.</ID>
+    <ID>MaxLineLength:ReviewComponent.kt$ReviewComponent$nonEmptyValidationMessages.addAll(validateIban(paymentDetails.iban).filterIsInstance&lt;ValidationMessage.InvalidIban>())</ID>
+    <ID>MaxLineLength:ReviewConfiguration.kt$ReviewConfiguration$*</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setAmount(text.toString()) })</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$binding.amount.focusable = if (reviewComponent?.reviewConfig?.isAmountFieldEditable == true) View.FOCUSABLE else View.NOT_FOCUSABLE</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$binding.amountLayout.isEnabled = !isLoading &amp;&amp; reviewComponent?.reviewConfig?.isAmountFieldEditable ?: false</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setPurpose(text.toString()) })</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setRecipient(text.toString()) })</ID>
+    <ID>MaxLineLength:SessionManager.kt$HealthApiSessionManagerAdapter$internal</ID>
+    <ID>MaxLineLength:SupportFragmentManager.kt$internal</ID>
+    <ID>MaxLineLength:UserPreferences.kt$UserPreferences$is String, (String is T) -> userPreference.value = sharedPreferences.getString(userPreference.id, "") as T</ID>
+    <ID>NestedBlockDepth:ReviewView.kt$ReviewView$private fun handleValidationResult(messages: List&lt;ValidationMessage>)</ID>
+    <ID>NewLineAtEndOfFile:AutoClearedValue.kt$net.gini.android.merchant.sdk.util.AutoClearedValue.kt</ID>
+    <ID>NewLineAtEndOfFile:BackListener.kt$net.gini.android.merchant.sdk.util.BackListener.kt</ID>
+    <ID>NewLineAtEndOfFile:BankSelectionBottomSheet.kt$net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet.kt</ID>
+    <ID>NewLineAtEndOfFile:BottomSheetDialogFragment.kt$net.gini.android.merchant.sdk.util.extensions.BottomSheetDialogFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:DisplayedScreen.kt$net.gini.android.merchant.sdk.util.DisplayedScreen.kt</ID>
+    <ID>NewLineAtEndOfFile:DocumentPageAdapter.kt$net.gini.android.merchant.sdk.review.pager.DocumentPageAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:Errors.kt$net.gini.android.merchant.sdk.review.error.Errors.kt</ID>
+    <ID>NewLineAtEndOfFile:Extensions.kt$net.gini.android.merchant.sdk.util.Extensions.kt</ID>
+    <ID>NewLineAtEndOfFile:FaqExpandableListAdapter.kt$net.gini.android.merchant.sdk.moreinformation.FaqExpandableListAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:File.kt$net.gini.android.merchant.sdk.util.extensions.File.kt</ID>
+    <ID>NewLineAtEndOfFile:FlowBottomSheetsManager.kt$net.gini.android.merchant.sdk.util.FlowBottomSheetsManager.kt</ID>
+    <ID>NewLineAtEndOfFile:Fragment.kt$net.gini.android.merchant.sdk.util.extensions.Fragment.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniPaymentManager.kt$net.gini.android.merchant.sdk.util.GiniPaymentManager.kt</ID>
+    <ID>NewLineAtEndOfFile:GmsBottomSheetDialogFragment.kt$net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:IbanValidator.kt$net.gini.android.merchant.sdk.util.IbanValidator.kt</ID>
+    <ID>NewLineAtEndOfFile:InstallAppBottomSheet.kt$net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet.kt</ID>
+    <ID>NewLineAtEndOfFile:InstallAppViewModel.kt$net.gini.android.merchant.sdk.review.installApp.InstallAppViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListener.kt$net.gini.android.merchant.sdk.util.IntervalClickListener.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListenerHelper.kt$net.gini.android.merchant.sdk.util.IntervalClickListenerHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:MerchantSDKFileProvider.kt$net.gini.android.merchant.sdk.util.MerchantSDKFileProvider.kt</ID>
+    <ID>NewLineAtEndOfFile:MoreInformationFragment.kt$net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:MoreInformationViewModel.kt$net.gini.android.merchant.sdk.moreinformation.MoreInformationViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:OpenWithBottomSheet.kt$net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet.kt</ID>
+    <ID>NewLineAtEndOfFile:OpenWithPreferences.kt$net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences.kt</ID>
+    <ID>NewLineAtEndOfFile:OpenWithViewModel.kt$net.gini.android.merchant.sdk.review.openWith.OpenWithViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:Payment.kt$net.gini.android.merchant.sdk.api.payment.model.Payment.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentComponent.kt$net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentComponentBottomSheet.kt$net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentComponentBottomSheetViewModel.kt$net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheetViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentComponentView.kt$net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentDetails.kt$net.gini.android.merchant.sdk.api.payment.model.PaymentDetails.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentFlowViewModel.kt$net.gini.android.merchant.sdk.integratedFlow.PaymentFlowViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentNextStep.kt$net.gini.android.merchant.sdk.util.PaymentNextStep.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentRequest.kt$net.gini.android.merchant.sdk.api.payment.model.PaymentRequest.kt</ID>
+    <ID>NewLineAtEndOfFile:Resource.kt$net.gini.android.merchant.sdk.util.extensions.Resource.kt</ID>
+    <ID>NewLineAtEndOfFile:ResultWrapper.kt$net.gini.android.merchant.sdk.api.ResultWrapper.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewBottomSheet.kt$net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewBottomSheetViewModel.kt$net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheetViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewComponent.kt$net.gini.android.merchant.sdk.review.reviewComponent.ReviewComponent.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewConfiguration.kt$net.gini.android.merchant.sdk.review.ReviewConfiguration.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewView.kt$net.gini.android.merchant.sdk.review.reviewComponent.ReviewView.kt</ID>
+    <ID>NewLineAtEndOfFile:Session.kt$net.gini.android.merchant.sdk.api.authorization.model.Session.kt</ID>
+    <ID>NewLineAtEndOfFile:SessionManager.kt$net.gini.android.merchant.sdk.api.authorization.SessionManager.kt</ID>
+    <ID>NewLineAtEndOfFile:ShareWithBroadcastReceiver.kt$net.gini.android.merchant.sdk.util.ShareWithBroadcastReceiver.kt</ID>
+    <ID>NewLineAtEndOfFile:SupportFragmentManager.kt$net.gini.android.merchant.sdk.util.extensions.SupportFragmentManager.kt</ID>
+    <ID>NewLineAtEndOfFile:UserPreferences.kt$net.gini.android.merchant.sdk.preferences.UserPreferences.kt</ID>
+    <ID>ReturnCount:IbanValidator.kt$internal fun isValidIban(iban: String): Boolean</ID>
+    <ID>SwallowedException:PaymentFragment.kt$PaymentFragment$exception: ActivityNotFoundException</ID>
+    <ID>ThrowsCount:GiniPaymentManager.kt$GiniPaymentManager$suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails): PaymentRequest</ID>
+    <ID>TooGenericExceptionCaught:FlowBottomSheetsManager.kt$FlowBottomSheetsManager$throwable: Throwable</ID>
+    <ID>TooGenericExceptionCaught:GiniPaymentManager.kt$GiniPaymentManager$throwable: Throwable</ID>
+    <ID>TooGenericExceptionCaught:PaymentComponent.kt$PaymentComponent$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ResultWrapper.kt$throwable: Throwable</ID>
+    <ID>TooGenericExceptionCaught:SessionManager.kt$HealthApiSessionManagerAdapter$e: Exception</ID>
+    <ID>TooGenericExceptionThrown:GiniMerchant.kt$GiniMerchant$throw Exception(extractionsResource.exception)</ID>
+    <ID>TooGenericExceptionThrown:GiniPaymentManager.kt$GiniPaymentManager$throw Exception("Cancelled")</ID>
+    <ID>TooGenericExceptionThrown:GiniPaymentManager.kt$GiniPaymentManager$throw Exception("Cannot create PaymentRequest: No GiniMerchant instance set")</ID>
+    <ID>TooGenericExceptionThrown:GiniPaymentManager.kt$GiniPaymentManager$throw Exception("Cannot create PaymentRequest: No selected payment provider app")</ID>
+    <ID>TooGenericExceptionThrown:GiniPaymentManager.kt$GiniPaymentManager$throw Exception("Cannot initiate payment: No GiniMerchant instance set")</ID>
+    <ID>TooGenericExceptionThrown:GiniPaymentManager.kt$GiniPaymentManager$throw Exception("Payment request ID is null")</ID>
+    <ID>TooGenericExceptionThrown:GiniPaymentManager.kt$GiniPaymentManager$throw Exception(createPaymentRequestResource.exception)</ID>
+    <ID>TooManyFunctions:Extensions.kt$net.gini.android.merchant.sdk.util.Extensions.kt</ID>
+    <ID>TooManyFunctions:PaymentComponentView.kt$PaymentComponentView : ConstraintLayout</ID>
+    <ID>TooManyFunctions:PaymentFlowViewModel.kt$PaymentFlowViewModel : ViewModelFlowBottomSheetsManagerBackListener</ID>
+    <ID>TooManyFunctions:PaymentFragment.kt$PaymentFragment : Fragment</ID>
+    <ID>TopLevelPropertyNaming:IbanValidator.kt$private const val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"</ID>
+    <ID>TopLevelPropertyNaming:PaymentProviderApp.kt$internal const val QueryUri = "$Scheme://$PaymentPath/id"</ID>
+    <ID>TopLevelPropertyNaming:PaymentProviderApp.kt$internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest</ID>
+    <ID>TopLevelPropertyNaming:PaymentProviderApp.kt$private const val PaymentPath = "payment"</ID>
+    <ID>UnusedPrivateProperty:GiniMerchant.kt$GiniMerchant.Companion$private val LOG = LoggerFactory.getLogger(GiniMerchant::class.java)</ID>
+    <ID>UseCheckOrError:AutoClearedValue.kt$AutoClearedValue$throw IllegalStateException( "should never call auto-cleared-value get when it might not be available" )</ID>
+    <ID>VariableNaming:ShareWithBroadcastReceiver.kt$ShareWithBroadcastReceiver$val SHARE_WITH_INTENT_FILTER = "share_intent_filter"</ID>
+  </CurrentIssues>
+</SmellBaseline>
