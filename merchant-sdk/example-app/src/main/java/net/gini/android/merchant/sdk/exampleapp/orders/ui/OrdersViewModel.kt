@@ -59,7 +59,7 @@ class OrdersViewModel(
     }
 
     fun startPaymentFlow() {
-        _startIntegratedPaymentFlow.tryEmit(giniMerchant.getFragment(
+        _startIntegratedPaymentFlow.tryEmit(giniMerchant.createFragment(
             recipient = _selectedOrderItem.value?.recipient ?: "",
             iban = _selectedOrderItem.value?.order?.iban ?: "",
             purpose = _selectedOrderItem.value?.purpose ?: "",
