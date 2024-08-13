@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -77,6 +78,11 @@ class OrdersActivity : AppCompatActivity() {
                             }
                             else -> {}
                         }
+                    }
+                }
+                launch {
+                    viewModel.errorsFlow.collect {
+                        Toast.makeText(this@OrdersActivity, it, Toast.LENGTH_LONG).show()
                     }
                 }
             }

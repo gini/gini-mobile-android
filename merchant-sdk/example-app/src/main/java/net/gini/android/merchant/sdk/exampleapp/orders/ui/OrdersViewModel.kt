@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -31,6 +32,9 @@ class OrdersViewModel(
         extraBufferCapacity = 1
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
+
+    private val _errorsFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val errorsFlow: SharedFlow<String> = _errorsFlow
 
     private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
 
@@ -69,6 +73,7 @@ class OrdersViewModel(
                 flowConfiguration = paymentFlowConfiguration))
         } catch (e: IllegalStateException) {
             LOG.error(e.message)
+            _errorsFlow.tryEmit(e.message ?: "")
         }
     }
 
