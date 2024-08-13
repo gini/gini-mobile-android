@@ -26,6 +26,7 @@
     <ID>MagicNumber:PaymentFlowViewModel.kt$PaymentFlowViewModel$50</ID>
     <ID>MagicNumber:ReviewView.kt$ReviewView$0.4f</ID>
     <ID>MagicNumber:ReviewView.kt$ReviewView$255</ID>
+    <ID>MagicNumber:ReviewView.kt$ReviewView$3</ID>
     <ID>MagicNumber:Session.kt$Session.Companion$1000</ID>
     <ID>MatchingDeclarationName:Errors.kt$NoPaymentDataExtracted : Throwable</ID>
     <ID>MaxLineLength:BankSelectionBottomSheet.kt$BankSelectionBottomSheet$*</ID>
@@ -47,7 +48,6 @@
     <ID>MaxLineLength:DocumentPageAdapter.kt$DocumentPageAdapter$HorizontalViewHolder(giniMerchant, GmsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false))</ID>
     <ID>MaxLineLength:DocumentPageAdapter.kt$DocumentPageAdapter.PageViewHolder$imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageResult.value, 0, imageResult.value.size))</ID>
     <ID>MaxLineLength:DocumentPageAdapter.kt$DocumentPageAdapter.PageViewHolder$when</ID>
-    <ID>MaxLineLength:Extensions.kt$if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.gms_amount_input_edit_text_background)</ID>
     <ID>MaxLineLength:Extensions.kt$if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_background)</ID>
     <ID>MaxLineLength:Extensions.kt$internal</ID>
     <ID>MaxLineLength:FlowBottomSheetsManager.kt$FlowBottomSheetsManager$fun</ID>
@@ -137,7 +137,7 @@
     <ID>MaxLineLength:ReviewView.kt$ReviewView$binding.amountLayout.isEnabled = !isLoading &amp;&amp; reviewComponent?.reviewConfig?.isAmountFieldEditable ?: false</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setPurpose(text.toString()) })</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setRecipient(text.toString()) })</ID>
-    <ID>MaxLineLength:ReviewView.kt$ReviewView$recipient.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, recipientLayout, false) }</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$spannableString.setSpan(imageSpan, spannableString.length - 1, spannableString.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)</ID>
     <ID>MaxLineLength:SessionManager.kt$HealthApiSessionManagerAdapter$internal</ID>
     <ID>MaxLineLength:SupportFragmentManager.kt$internal</ID>
     <ID>MaxLineLength:UserPreferences.kt$UserPreferences$is String, (String is T) -> userPreference.value = sharedPreferences.getString(userPreference.id, "") as T</ID>
@@ -207,6 +207,7 @@
     <ID>TooManyFunctions:PaymentComponentView.kt$PaymentComponentView : ConstraintLayout</ID>
     <ID>TooManyFunctions:PaymentFlowViewModel.kt$PaymentFlowViewModel : ViewModelFlowBottomSheetsManagerBackListener</ID>
     <ID>TooManyFunctions:PaymentFragment.kt$PaymentFragment : Fragment</ID>
+    <ID>TooManyFunctions:ReviewView.kt$ReviewView : ConstraintLayout</ID>
     <ID>TopLevelPropertyNaming:IbanValidator.kt$private const val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"</ID>
     <ID>TopLevelPropertyNaming:PaymentProviderApp.kt$internal const val QueryUri = "$Scheme://$PaymentPath/id"</ID>
     <ID>TopLevelPropertyNaming:PaymentProviderApp.kt$internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest</ID>
