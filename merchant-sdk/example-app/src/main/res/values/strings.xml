@@ -4,7 +4,7 @@
     <string name="title_activity_orders">Bestellungen</string>
     <string name="title_fragment_order_details">Bestelldetails</string>
     <string name="no_orders">Keine Bestellungen</string>
-    <string name="custom_order">Sonderbestellung</string>
+    <string name="custom_order">Sonderbest.</string>
     <string name="welcome_to_gini">Willkommen bei Gini</string>
     <string name="example_of_merchant_sdk">Beispiel für die Integration von Gini Pay Connect in der Händler-App</string>
 
@@ -18,7 +18,7 @@
     <string name="recipient">Empfänger</string>
     <string name="iban">IBAN</string>
     <string name="amount">Betrag</string>
-    <string name="purpose">Verwendungszweck</string>
+    <string name="purpose">Vwz.</string>
     <string name="pay_now">Bezahlen</string>
     <string name="orders_screen">Bestellungen</string>
 
