@@ -132,6 +132,7 @@
     <ID>MaxLineLength:ReviewComponent.kt$ReviewComponent$.</ID>
     <ID>MaxLineLength:ReviewComponent.kt$ReviewComponent$nonEmptyValidationMessages.addAll(validateIban(paymentDetails.iban).filterIsInstance&lt;ValidationMessage.InvalidIban>())</ID>
     <ID>MaxLineLength:ReviewConfiguration.kt$ReviewConfiguration$*</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$// Padding the end of the text is needed to add space between the text and the image, and because setting the imageSpan replaces the character in the string, it does not add to the beginning or the end of it.</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setAmount(text.toString()) })</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$binding.amount.focusable = if (reviewComponent?.reviewConfig?.isAmountFieldEditable == true) View.FOCUSABLE else View.NOT_FOCUSABLE</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$binding.amountLayout.isEnabled = !isLoading &amp;&amp; reviewComponent?.reviewConfig?.isAmountFieldEditable ?: false</ID>
