@@ -23,7 +23,8 @@ data class SkontoHelpScreenColors(
         fun colors(
             backgroundColor: Color = GiniTheme.colorScheme.background.primary,
             topAppBarColors: GiniTopBarColors = GiniTopBarColors.colors(),
-            skontoHelpDescriptionSectionColors: SkontoHelpDescriptionSectionColors = SkontoHelpDescriptionSectionColors.colors(),
+            skontoHelpDescriptionSectionColors: SkontoHelpDescriptionSectionColors =
+                SkontoHelpDescriptionSectionColors.colors(),
             skontoHelpItemsSectionColors: SkontoHelpItemsSectionColors = SkontoHelpItemsSectionColors.colors(),
             skontoHelpFooterSectionColors: SkontoHelpFooterSectionColors = SkontoHelpFooterSectionColors.colors(),
         ) = SkontoHelpScreenColors(
@@ -31,8 +32,8 @@ data class SkontoHelpScreenColors(
             topAppBarColors = topAppBarColors,
             skontoHelpDescriptionSectionColors = skontoHelpDescriptionSectionColors,
             skontoHelpItemsSectionColors = skontoHelpItemsSectionColors,
-            skontoHelpFooterSectionColors = SkontoHelpFooterSectionColors.colors(),
+            skontoHelpFooterSectionColors = skontoHelpFooterSectionColors,
 
-        )
+            )
     }
 }
