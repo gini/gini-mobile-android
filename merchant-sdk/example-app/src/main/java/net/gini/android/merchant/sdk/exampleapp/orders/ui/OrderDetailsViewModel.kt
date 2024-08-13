@@ -19,6 +19,10 @@ class OrderDetailsViewModel : ViewModel() {
         _orderFlow.value = order
     }
 
+    fun getOrder(): Order {
+        return _orderFlow.value
+    }
+
     fun updateRecipient(recipient: String) {
         _orderFlow.value = _orderFlow.value.copy(recipient = recipient)
     }
