@@ -134,18 +134,18 @@ internal fun TextInputLayout.setErrorMessage(@StringRes errorStringId: Int) {
     setBackground()
 }
 
-internal fun TextInputLayout.clearErrorMessage(isAmount: Boolean) {
+internal fun TextInputLayout.clearErrorMessage() {
     isErrorEnabled = false
     setTag(R.id.text_input_layout_tag_is_error_enabled, false)
     error = ""
     setTag(R.id.text_input_layout_tag_error_string_id, null)
-    if (!isAmount) setBackground() else setAmountFieldBackground()
+    setBackground()
 }
 
-internal fun TextInputLayout.hideErrorMessage(isAmount: Boolean) {
+internal fun TextInputLayout.hideErrorMessage() {
     isErrorEnabled = false
     error = ""
-    if (isAmount) setBackground() else setAmountFieldBackground()
+    setBackground()
 }
 
 internal fun TextInputLayout.showErrorMessage() {
@@ -157,10 +157,6 @@ internal fun TextInputLayout.showErrorMessage() {
 
 internal fun TextInputLayout.setBackground() {
     if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_background)
-}
-
-internal fun TextInputLayout.setAmountFieldBackground() {
-    if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.gms_amount_input_edit_text_background)
 }
 
 private fun String.nonEmpty() = if (isEmpty()) " " else this
