@@ -4,19 +4,11 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-        style="@style/GiniMerchantTheme.Widget.BottomSheet.DragHandle"
-        android:id="@+id/drag_handle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
     <net.gini.android.merchant.sdk.review.reviewComponent.ReviewView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/gms_review_layout"
         android:layout_marginHorizontal="@dimen/gms_large"
-        app:layout_constraintTop_toBottomOf="@id/drag_handle"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
