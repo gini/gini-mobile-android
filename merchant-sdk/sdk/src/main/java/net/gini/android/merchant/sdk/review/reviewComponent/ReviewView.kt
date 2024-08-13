@@ -206,6 +206,7 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     private fun setDisabledIcon(text: String, textView:TextInputLayout) {
+        // Padding the end of the text is needed to add space between the text and the image, and because setting the imageSpan replaces the character in the string, it does not add to the beginning or the end of it.
         val spannableString = SpannableStringBuilder(text.padEnd(text.length + 3, ' '))
         val imageSpan = ImageSpan(context, R.drawable.gms_lock)
         spannableString.setSpan(imageSpan, spannableString.length - 1, spannableString.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
