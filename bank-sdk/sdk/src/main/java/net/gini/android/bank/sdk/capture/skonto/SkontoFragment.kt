@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -61,6 +62,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -272,6 +274,7 @@ private fun ScreenReadyState(
                 totalAmount = state.totalAmount,
                 isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                 onBackClicked = onBackClicked,
+                onHelpClicked = onHelpClicked,
                 customBottomNavBarAdapter = customBottomNavBarAdapter,
                 onProceedClicked = onProceedClicked,
                 isSkontoSectionActive = state.isSkontoSectionActive,
@@ -355,12 +358,16 @@ private fun TopAppBar(
         title = stringResource(id = R.string.gbs_skonto_screen_title),
         navigationIcon = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-                NavigationActionBack(onClick = onBackClicked)
+                NavigationActionBack(modifier = Modifier.padding(start = 16.dp),onClick = onBackClicked)
             }
         },
         actions = {
-            NavigationActionHelp(onClick = onHelpClicked)
-
+            AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
+            NavigationActionHelp(
+                modifier = Modifier.padding(end = 16.dp),
+                onClick = onHelpClicked
+            )
+              }
         })
 }
 
@@ -370,7 +377,9 @@ private fun NavigationActionHelp(
     modifier: Modifier = Modifier,
 ) {
     IconButton(
-        modifier = modifier,
+        modifier = modifier
+            .width(24.dp)
+            .height(24.dp),
         onClick = onClick
     ) {
         Icon(
@@ -386,7 +395,9 @@ private fun NavigationActionBack(
     modifier: Modifier = Modifier,
 ) {
     IconButton(
-        modifier = modifier,
+        modifier = modifier
+            .width(24.dp)
+            .height(24.dp),
         onClick = onClick
     ) {
         Icon(
@@ -792,6 +803,7 @@ private fun FooterSection(
     isBottomNavigationBarEnabled: Boolean,
     isSkontoSectionActive: Boolean,
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
     modifier: Modifier = Modifier,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
@@ -831,6 +843,7 @@ private fun FooterSection(
             with(customBottomNavBarAdapter.viewAdapter) {
                 setOnProceedClickListener(onProceedClicked)
                 setOnBackClickListener(onBackClicked)
+                setOnHelpClickListener(onHelpClicked)
                 onTotalAmountUpdated(totalPriceText)
                 onSkontoPercentageBadgeUpdated(discountLabelText)
                 onSkontoPercentageBadgeVisibilityUpdate(isSkontoSectionActive)
@@ -905,15 +918,15 @@ private fun FooterSection(
                         )
                     }
                 }
-                val buttonPaddingStart = if (isBottomNavigationBarEnabled) 0.dp else 20.dp
-                val buttonPaddingEnd = if (isBottomNavigationBarEnabled) 48.dp else 24.dp
+                val buttonPaddingStart = if (isBottomNavigationBarEnabled) 16.dp else 20.dp
+                val buttonPaddingEnd = if (isBottomNavigationBarEnabled) 16.dp else 20.dp
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
                         NavigationActionBack(
-                            modifier = Modifier.padding(horizontal = 4.dp),
+                            modifier = Modifier.padding(start = 16.dp),
                             onClick = onBackClicked
                         )
                     }
@@ -925,6 +938,12 @@ private fun FooterSection(
                         onClick = onProceedClicked,
                         giniButtonColors = colors.continueButtonColors
                     )
+                    AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
+                        NavigationActionHelp(
+                            modifier = Modifier.padding(end = 16.dp),
+                            onClick = onHelpClicked
+                        )
+                    }
                 }
             }
         }

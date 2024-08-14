@@ -11,6 +11,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -170,7 +171,7 @@ private fun ScreenStateContent(
                 onBackClicked = onBackClicked,
             )
         }, bottomBar = {
-            HelpCustomNavBarSection(customBottomNavBarAdapter, onBackClicked)
+            HelpCustomNavBarSection(isBottomNavigationBarEnabled, customBottomNavBarAdapter, onBackClicked)
         }) {
         Column(
             modifier = Modifier
@@ -206,6 +207,7 @@ private fun ScreenStateContent(
 
 @Composable
 private fun HelpCustomNavBarSection(
+    isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>?,
     onBackClicked: () -> Unit,
 ) {
@@ -218,6 +220,19 @@ private fun HelpCustomNavBarSection(
                 setOnBackClickListener(onBackClicked)
             }
         })
+    } else {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
+                NavigationActionBack(
+                    modifier = Modifier.padding(start = 16.dp),
+                    onClick = onBackClicked
+                )
+            }
+
+        }
     }
 }
 
