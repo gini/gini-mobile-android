@@ -84,7 +84,7 @@ data class PaymentFlowConfiguration(
      *
      * Default value is `false`
      */
-    val checkForReturningUser: Boolean = false,
+    internal val checkForReturningUser: Boolean = false,
 
     /**
      * If set to `true`, the [PaymentComponent] will be displayed on 2 rows
@@ -92,7 +92,7 @@ data class PaymentFlowConfiguration(
      *
      * Default value is `true`
      */
-    val paymentComponentOnTwoRows: Boolean = true
+    internal val paymentComponentOnTwoRows: Boolean = true
 
 ): Parcelable
 

@@ -21,10 +21,9 @@ Release order for :health-sdk:sdk 4.2.0:
  3. :health-sdk:sdk 4.2.0
 
 Release order for :merchant-sdk:sdk 1.0.0:
- 1. :core-api-library:library 2.1.4
- 2. :health-api-library:library 4.1.0
+ 1. :core-api-library:library 2.2.0
+ 2. :health-api-library:library 4.2.0
  3. :merchant-sdk:sdk 1.0.0
-
 
 Release order for :capture-sdk:default-network 3.11.0:
  1. :core-api-library:library 2.2.0

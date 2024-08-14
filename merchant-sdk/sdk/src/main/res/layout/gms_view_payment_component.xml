@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/gms_select_bank_picker_layout"
-        android:layout_marginTop="@dimen/gms_small"
+        android:layout_marginTop="@dimen/gms_medium"
         android:minHeight="@dimen/gms_accessibility_min_height"
         app:layout_constraintTop_toBottomOf="@id/gms_select_bank_label"
         app:layout_constraintStart_toStartOf="parent">
@@ -37,7 +37,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/gms_two_rows_bank_selection"
             android:visibility="visible"
-            android:layout_marginTop="@dimen/gms_large"
             app:layout_constraintTop_toTopOf="parent">
 
             <!--  Including the layout in a FrameLayout because background cannot be set on an `include` widget  -->
@@ -89,9 +88,10 @@
 
     <TextView
         android:id="@+id/gms_more_information"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/gms_powered_by_gini"
         app:layout_constraintTop_toTopOf="@id/gms_powered_by_gini"
         app:layout_constraintBottom_toBottomOf="@id/gms_powered_by_gini"
         style="@style/GiniMerchantTheme.Typography.Caption2"
@@ -103,5 +103,7 @@
         android:textColor="@color/gms_payment_component_caption"
         android:gravity="center_vertical"
         android:visibility="visible"
+        android:ellipsize="end"
+        android:lines="1"
         />
 </merge>

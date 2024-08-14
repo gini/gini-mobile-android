@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.exampleapp.orders.data.OrdersRepository
+import net.gini.android.merchant.sdk.exampleapp.orders.data.model.Order
 import net.gini.android.merchant.sdk.exampleapp.orders.ui.model.OrderItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
@@ -30,6 +32,9 @@ class OrdersViewModel(
         extraBufferCapacity = 1
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
+
+    private val _errorsFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val errorsFlow: SharedFlow<String> = _errorsFlow
 
     private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
 
@@ -58,14 +63,18 @@ class OrdersViewModel(
         _selectedOrderItem.emit(orderItem)
     }
 
-    fun startPaymentFlow() {
-        _startIntegratedPaymentFlow.tryEmit(giniMerchant.createFragment(
-            recipient = _selectedOrderItem.value?.recipient ?: "",
-            iban = _selectedOrderItem.value?.order?.iban ?: "",
-            purpose = _selectedOrderItem.value?.purpose ?: "",
-            amount = _selectedOrderItem.value?.amount?.replace("€", "") ?: ""
-            ,
-            flowConfiguration = paymentFlowConfiguration))
+    fun startPaymentFlow(order: Order) {
+        try {
+            _startIntegratedPaymentFlow.tryEmit(giniMerchant.createFragment(
+                recipient = order.recipient,
+                iban = order.iban,
+                purpose = order.purpose,
+                amount = order.amount.replace(":[A-Z]{3}$".toRegex(), ""),
+                flowConfiguration = paymentFlowConfiguration))
+        } catch (e: IllegalStateException) {
+            LOG.error(e.message)
+            _errorsFlow.tryEmit(e.message ?: "")
+        }
     }
 
     fun setIntegratedFlowConfiguration(flowConfiguration: PaymentFlowConfiguration) {

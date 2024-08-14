@@ -27,5 +27,5 @@ data class ReviewConfiguration(
      *
      * Default value is `true`
      */
-    val isAmountFieldEditable: Boolean = true
+    internal val isAmountFieldEditable: Boolean = true
 )

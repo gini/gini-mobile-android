@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexCondition:GiniMerchant.kt$GiniMerchant$iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()</ID>
     <ID>ComplexCondition:MoreInformationFragment.kt$MoreInformationFragment$(listView.isGroupExpanded(i) &amp;&amp; (i != group || isReload)) || !listView.isGroupExpanded(i) &amp;&amp; i == group</ID>
     <ID>CyclomaticComplexMethod:PaymentDetails.kt$internal fun MutableMap&lt;String, CompoundExtraction>.withFeedback(paymentDetails: PaymentDetails): Map&lt;String, CompoundExtraction></ID>
     <ID>CyclomaticComplexMethod:ReviewView.kt$ReviewView$private fun handleValidationResult(messages: List&lt;ValidationMessage>)</ID>
@@ -25,6 +26,7 @@
     <ID>MagicNumber:PaymentFlowViewModel.kt$PaymentFlowViewModel$50</ID>
     <ID>MagicNumber:ReviewView.kt$ReviewView$0.4f</ID>
     <ID>MagicNumber:ReviewView.kt$ReviewView$255</ID>
+    <ID>MagicNumber:ReviewView.kt$ReviewView$3</ID>
     <ID>MagicNumber:Session.kt$Session.Companion$1000</ID>
     <ID>MatchingDeclarationName:Errors.kt$NoPaymentDataExtracted : Throwable</ID>
     <ID>MaxLineLength:BankSelectionBottomSheet.kt$BankSelectionBottomSheet$*</ID>
@@ -52,6 +54,7 @@
     <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$*</ID>
     <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager), apiVersion = API_VERSION)</ID>
     <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$fun</ID>
+    <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant$if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()) throw IllegalStateException("Payment details are incomplete.")</ID>
     <ID>MaxLineLength:GiniMerchant.kt$GiniMerchant.MerchantSDKEvents$OnFinishedWithPaymentRequestCreated : MerchantSDKEvents</ID>
     <ID>MaxLineLength:GiniPaymentManager.kt$GiniPaymentManager$* Handles the validation of payment details, creation of payment request, sending feedback and emitting open bank event.</ID>
     <ID>MaxLineLength:GiniPaymentManager.kt$GiniPaymentManager$GiniMerchant.PaymentState.Success(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)</ID>
@@ -129,11 +132,13 @@
     <ID>MaxLineLength:ReviewComponent.kt$ReviewComponent$.</ID>
     <ID>MaxLineLength:ReviewComponent.kt$ReviewComponent$nonEmptyValidationMessages.addAll(validateIban(paymentDetails.iban).filterIsInstance&lt;ValidationMessage.InvalidIban>())</ID>
     <ID>MaxLineLength:ReviewConfiguration.kt$ReviewConfiguration$*</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$// Padding the end of the text is needed to add space between the text and the image, and because setting the imageSpan replaces the character in the string, it does not add to the beginning or the end of it.</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setAmount(text.toString()) })</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$binding.amount.focusable = if (reviewComponent?.reviewConfig?.isAmountFieldEditable == true) View.FOCUSABLE else View.NOT_FOCUSABLE</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$binding.amountLayout.isEnabled = !isLoading &amp;&amp; reviewComponent?.reviewConfig?.isAmountFieldEditable ?: false</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setPurpose(text.toString()) })</ID>
     <ID>MaxLineLength:ReviewView.kt$ReviewView$recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setRecipient(text.toString()) })</ID>
+    <ID>MaxLineLength:ReviewView.kt$ReviewView$spannableString.setSpan(imageSpan, spannableString.length - 1, spannableString.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)</ID>
     <ID>MaxLineLength:SessionManager.kt$HealthApiSessionManagerAdapter$internal</ID>
     <ID>MaxLineLength:SupportFragmentManager.kt$internal</ID>
     <ID>MaxLineLength:UserPreferences.kt$UserPreferences$is String, (String is T) -> userPreference.value = sharedPreferences.getString(userPreference.id, "") as T</ID>
@@ -203,12 +208,14 @@
     <ID>TooManyFunctions:PaymentComponentView.kt$PaymentComponentView : ConstraintLayout</ID>
     <ID>TooManyFunctions:PaymentFlowViewModel.kt$PaymentFlowViewModel : ViewModelFlowBottomSheetsManagerBackListener</ID>
     <ID>TooManyFunctions:PaymentFragment.kt$PaymentFragment : Fragment</ID>
+    <ID>TooManyFunctions:ReviewView.kt$ReviewView : ConstraintLayout</ID>
     <ID>TopLevelPropertyNaming:IbanValidator.kt$private const val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"</ID>
     <ID>TopLevelPropertyNaming:PaymentProviderApp.kt$internal const val QueryUri = "$Scheme://$PaymentPath/id"</ID>
     <ID>TopLevelPropertyNaming:PaymentProviderApp.kt$internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest</ID>
     <ID>TopLevelPropertyNaming:PaymentProviderApp.kt$private const val PaymentPath = "payment"</ID>
     <ID>UnusedPrivateProperty:GiniMerchant.kt$GiniMerchant.Companion$private val LOG = LoggerFactory.getLogger(GiniMerchant::class.java)</ID>
     <ID>UseCheckOrError:AutoClearedValue.kt$AutoClearedValue$throw IllegalStateException( "should never call auto-cleared-value get when it might not be available" )</ID>
+    <ID>UseCheckOrError:GiniMerchant.kt$GiniMerchant$throw IllegalStateException("Payment details are incomplete.")</ID>
     <ID>VariableNaming:ShareWithBroadcastReceiver.kt$ShareWithBroadcastReceiver$val SHARE_WITH_INTENT_FILTER = "share_intent_filter"</ID>
   </CurrentIssues>
 </SmellBaseline>

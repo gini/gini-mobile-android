@@ -59,5 +59,7 @@
     <color name="gms_open_with_app_placeholder">@color/gms_dark_07</color>
 
     <color name="gms_container_fragment_background">#60565656</color>
+    <color name="gms_disabled_field_text_color">@color/gms_dark_04</color>
+    <color name="gms_amount_field_border">@color/gms_dark_01</color>
 
 </resources>

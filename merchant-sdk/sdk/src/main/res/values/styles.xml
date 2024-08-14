@@ -181,6 +181,14 @@
     </style>
     <style name="GiniMerchantTheme.PaymentInputEditTextStyle" parent="Root.GiniMerchantTheme.PaymentInputEditTextStyle"/>
 
+    <style name="Root.GiniMerchantTheme.DisabledPaymentInputEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@drawable/gms_payment_input_edit_text_background</item>
+        <item name="android:textAppearance">@style/GiniMerchantTheme.Typography.Body1</item>
+        <item name="android:textColor">@color/gms_disabled_field_text_color</item>
+    </style>
+    <style name="GiniMerchantTheme.DisabledPaymentInputEditTextStyle" parent="Root.GiniMerchantTheme.DisabledPaymentInputEditTextStyle"/>
+
     <style name="Root.GiniMerchantTheme.PageErrorText">
         <item name="android:textColor">@color/gms_dark_07</item>
     </style>

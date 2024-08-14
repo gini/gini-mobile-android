@@ -1,6 +1,9 @@
 package net.gini.android.merchant.sdk.review.reviewComponent
 
 import android.content.Context
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ImageSpan
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -56,6 +59,7 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        setDisabledIcons()
         setButtonHandlers()
         setInputListeners()
         coroutineScope = CoroutineScope(coroutineContext)
@@ -199,6 +203,20 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
         binding.recipient.focusable = View.NOT_FOCUSABLE
         binding.purpose.focusable = View.NOT_FOCUSABLE
         binding.amount.focusable = if (reviewComponent?.reviewConfig?.isAmountFieldEditable == true) View.FOCUSABLE else View.NOT_FOCUSABLE
+    }
+
+    private fun setDisabledIcon(text: String, textView:TextInputLayout) {
+        // Padding the end of the text is needed to add space between the text and the image, and because setting the imageSpan replaces the character in the string, it does not add to the beginning or the end of it.
+        val spannableString = SpannableStringBuilder(text.padEnd(text.length + 3, ' '))
+        val imageSpan = ImageSpan(context, R.drawable.gms_lock)
+        spannableString.setSpan(imageSpan, spannableString.length - 1, spannableString.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        textView.hint = spannableString;
+    }
+
+    private fun setDisabledIcons() {
+        setDisabledIcon(context.getString(R.string.gms_iban_hint), binding.ibanLayout)
+        setDisabledIcon(context.getString(R.string.gms_recipient_hint), binding.recipientLayout)
+        setDisabledIcon(context.getString(R.string.gms_purpose_hint), binding.purposeLayout)
     }
 
     private fun handleInputFocusChange(hasFocus: Boolean, textInputLayout: TextInputLayout) {

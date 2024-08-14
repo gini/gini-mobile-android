@@ -72,7 +72,7 @@ class OrderDetailsFragment : Fragment() {
             amount.setTextIfDifferent(order.amount)
             purpose.setTextIfDifferent(order.purpose)
             payNowBtn.setIntervalClickListener {
-                ordersViewModel.startPaymentFlow()
+                ordersViewModel.startPaymentFlow(orderDetailsViewModel.getOrder())
             }
         }
     }

@@ -26,4 +26,7 @@
     <color name="gms_open_with_apps_background">@color/gms_light_05</color>
     <color name="gms_open_with_app_placeholder">@color/gms_light_07</color>
 
+    <color name="gms_disabled_field_text_color">@color/gms_light_04</color>
+    <color name="gms_amount_field_border">@color/gms_light_01</color>
+
 </resources>
