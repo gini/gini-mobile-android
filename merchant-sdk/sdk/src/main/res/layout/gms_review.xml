@@ -17,7 +17,6 @@
         style="@style/GiniMerchantTheme.PaymentInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/gms_medium_12"
         android:paddingTop="@dimen/gms_medium"
         android:nextFocusForward="@id/iban_layout"
         app:layout_constraintEnd_toEndOf="parent"
