@@ -88,9 +88,10 @@
 
     <TextView
         android:id="@+id/gms_more_information"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/gms_powered_by_gini"
         app:layout_constraintTop_toTopOf="@id/gms_powered_by_gini"
         app:layout_constraintBottom_toBottomOf="@id/gms_powered_by_gini"
         style="@style/GiniMerchantTheme.Typography.Caption2"
@@ -102,5 +103,7 @@
         android:textColor="@color/gms_payment_component_caption"
         android:gravity="center_vertical"
         android:visibility="visible"
+        android:ellipsize="end"
+        android:lines="1"
         />
 </merge>
