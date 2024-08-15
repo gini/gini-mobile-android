@@ -61,7 +61,6 @@ class GiniPaymentTest {
         iban = "iban",
         amount = "20",
         purpose = "purpose",
-        extractions = null
     )
 
     @Before

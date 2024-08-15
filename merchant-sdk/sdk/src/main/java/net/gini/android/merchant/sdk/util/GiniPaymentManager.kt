@@ -5,11 +5,9 @@ import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.api.payment.model.toPaymentRequest
-import net.gini.android.merchant.sdk.api.payment.model.withFeedback
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.ValidationMessage
 import net.gini.android.merchant.sdk.review.validate
