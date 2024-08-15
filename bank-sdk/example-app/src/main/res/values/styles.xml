@@ -10,6 +10,7 @@
         <item name="dividerColor">@color/gc_color_02</item>
         <item name="colorSurface">@color/gc_color_01</item>
         <item name="colorOnSurface">?attr/colorOnBackground</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="colorSurfaceInverse">@color/gc_color_contrast_03</item>
         <item name="colorOnSurfaceInverse">@color/gc_color_02</item>
         <item name="colorSurfaceVariant">@color/gc_color_01</item>
