@@ -40,13 +40,4 @@ internal class UserRepository(
             }
         } ?: loginClient()
 
-    suspend fun updateEmail(newEmail: String, oldEmail: String, accessToken: String): Resource<Unit> =
-        when (val authToken = getUserRepositorySession()) {
-            is Resource.Cancelled -> Resource.Cancelled()
-            is Resource.Error -> Resource.Error(authToken)
-            is Resource.Success -> wrapInResource {
-                val userId = userRemoteSource.getGiniApiSessionTokenInfo(accessToken, authToken.data.accessToken).userName
-                userRemoteSource.updateEmail(userId, UserRequestModel(email = newEmail, oldEmail = oldEmail), authToken.data.accessToken)
-            }
-        }
 }

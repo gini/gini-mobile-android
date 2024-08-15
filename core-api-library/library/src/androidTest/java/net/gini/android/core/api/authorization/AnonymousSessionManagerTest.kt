@@ -217,37 +217,6 @@ class AnonymousSessionManagerTest {
         assertFalse(mAnonymousSessionSessionManager!!.hasUserCredentialsEmailDomain("domain.com", userCredentials))
     }
 
-    @Test
-    @SdkSuppress(minSdkVersion = 28)
-    fun testThatLoginUserUpdatesEmailDomainIfChanged() = runTest{
-        val newEmailDomain = "beispiel.com"
-        val oldEmailDomain = "example.com"
-        mAnonymousSessionSessionManager = AnonymousSessionManager(mUserRepository!!, mCredentialsStore!!, newEmailDomain)
-
-        every { mCredentialsStore!!.userCredentials } returns (UserCredentials("1234@$oldEmailDomain", "5678"))
-        coEvery {mUserRepository?.updateEmail(any(), any(), any()) } returns Resource.Success(Unit)
-        coEvery {mUserRepository?.loginUser(ofType(UserRequestModel::class)) } returnsMany listOf(Resource.Success(
-            Session.fromAPIResponse(SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000))
-        ), Resource.Success(
-                Session.fromAPIResponse(SessionToken(accessToken = "1234-5678-9012", tokenType = "bearer", expiresIn = 30000))
-        ))
-
-        every { mCredentialsStore?.deleteUserCredentials() } returns (true)
-        every { mCredentialsStore?.storeUserCredentials(any()) } returns (true)
-
-        val session = mAnonymousSessionSessionManager?.loginUser()
-
-        assertTrue(session is Resource.Success)
-        verify { mCredentialsStore?.deleteUserCredentials() }
-
-        val userCredentialsSlot = slot<UserCredentials>()
-        verify { mCredentialsStore?.storeUserCredentials(capture(userCredentialsSlot)) }
-
-        val newUserCredentials = userCredentialsSlot.captured
-        assertEquals(newEmailDomain, extractEmailDomain(newUserCredentials.username))
-        assertEquals("5678", newUserCredentials.password)
-    }
-
     private fun email(name: String): String {
         return "$name@$mEmailDomain"
     }
