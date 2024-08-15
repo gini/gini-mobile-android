@@ -23,11 +23,13 @@ import net.gini.android.merchant.sdk.util.DisplayedScreen
 import org.slf4j.LoggerFactory
 
 /**
- * [GiniMerchant] is one of the main classes for interacting with the Gini Merchant SDK.
+ *  [GiniMerchant] is one of the main classes for interacting with the Gini Merchant SDK. It provides a way to create the [PaymentFragment],
+ *  which is the entrypoint to the Merchant SDK.
  *
- *  [documentFlow], [paymentFlow], [openBankState] are used by the [ReviewFragment] to observe their state, but they are public
- *  so that they can be observed anywhere, the main purpose for this is to observe errors.
+ *  [eventsFlow] is used by the [PaymentFragment] to observe its state, but it is public
+ *  so that it can be observed anywhere, the main purpose for this is to observe screen changes and finish events.
  */
+
 class GiniMerchant(
     private val context: Context,
     private val clientId: String = "",
@@ -95,7 +97,16 @@ class GiniMerchant(
     internal fun replaceHealthApiInstance(giniHealthAPI: GiniHealthAPI) {
         _giniHealthAPI = giniHealthAPI
     }
-    
+
+    /**
+     * Creates and returns the [PaymentFragment]. Checks if [iban], [recipient], [amount] and [purpose] are empty and throws [IllegalStateException] if any of them are.
+     *
+     * @param iban - the iban of the recipient
+     * @param recipient
+     * @param amount - the amount to be paid
+     * @param purpose - the purpose of the payment
+     * @param flowConfiguration - optional parameter with the [PaymentFlowConfiguration]
+     */
     fun createFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
         if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()) throw IllegalStateException("Payment details are incomplete.")
 
@@ -151,19 +162,68 @@ class GiniMerchant(
         class DocumentId(val id: String, val paymentDetails: PaymentDetails? = null) : CapturedArguments()
     }
 
+    /**
+     * State of the payment request
+     */
     sealed class PaymentState {
+        /**
+         * Not performing any operation.
+         */
         object NoAction : PaymentState()
+
+        /**
+         * Request is in progress.
+         */
         object Loading : PaymentState()
+
+        /**
+         * Payment request was completed successfully
+         *
+         * @param paymentRequest - the payment request
+         * @param paymentProviderName - the name of the payment provider with which the request was created
+         */
         class Success(val paymentRequest: PaymentRequest, val paymentProviderName: String) : PaymentState()
+
+        /**
+         * Payment request returned an error.
+         */
         class Error(val throwable: Throwable) : PaymentState()
     }
 
+    /**
+     * Different events that can be emitted by the MerchantSDK.
+     */
     sealed class MerchantSDKEvents {
         object NoAction: MerchantSDKEvents()
+
+        /**
+         * Signal loading started.
+         */
         object OnLoading: MerchantSDKEvents()
+
+        /**
+         * A change of screens within the [PaymentFragment].
+         *
+         * @param [displayedScreen] - the newly displayed screen. Can be observed to update the activity title.
+         */
         class OnScreenDisplayed(val displayedScreen: DisplayedScreen): MerchantSDKEvents()
+
+        /**
+         * Payment request finished with success.
+         *
+         * @param [paymentRequestId] - the id of the payment request
+         * @param [paymentProviderName] - the selected payment provider name
+         */
         class OnFinishedWithPaymentRequestCreated(val paymentRequestId: String, val paymentProviderName: String): MerchantSDKEvents()
+
+        /**
+         * Payment request was cancelled. Can be either from the server, or by cancelling the payment flow.
+         */
         class OnFinishedWithCancellation(): MerchantSDKEvents()
+
+        /**
+         * An error occurred during the payment request.
+         */
         class OnErrorOccurred(val throwable: Throwable): MerchantSDKEvents()
     }
 

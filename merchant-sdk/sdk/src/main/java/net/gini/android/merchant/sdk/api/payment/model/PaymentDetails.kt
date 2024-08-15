@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * Represents the payment details of an invoice as extracted from a document.
+ * Represents the payment details of an order.
  */
 @Parcelize
 data class PaymentDetails(
