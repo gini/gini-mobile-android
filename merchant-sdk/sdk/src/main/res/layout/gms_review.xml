@@ -115,7 +115,7 @@
             android:paddingEnd="@dimen/gms_zero" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/payment"
         style="@style/GiniMerchantTheme.Widget.Button.OutlinedButton"
         android:layout_width="0dp"
@@ -123,6 +123,7 @@
         android:layout_marginTop="@dimen/gms_medium"
         android:enabled="false"
         android:text="@string/gms_pay_button"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/purpose_layout" />

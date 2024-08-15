@@ -129,6 +129,9 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
                 null,
                 null
             )
+
+            // Adding negative icon padding in order to center the text on the button.
+            binding.payment.iconPadding = -roundedDrawable.intrinsicWidth
         }
         binding.payment.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
         binding.payment.setTextColor(paymentProviderApp.colors.textColor)
