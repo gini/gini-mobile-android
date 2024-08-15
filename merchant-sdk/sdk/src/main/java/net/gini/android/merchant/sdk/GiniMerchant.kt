@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.parcelize.Parcelize
-import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
@@ -17,7 +16,6 @@ import net.gini.android.merchant.sdk.api.authorization.HealthApiSessionManagerAd
 import net.gini.android.merchant.sdk.api.authorization.SessionManager
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
-import net.gini.android.merchant.sdk.api.payment.model.getPaymentExtraction
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
@@ -96,26 +94,6 @@ class GiniMerchant(
     @VisibleForTesting
     internal fun replaceHealthApiInstance(giniHealthAPI: GiniHealthAPI) {
         _giniHealthAPI = giniHealthAPI
-    }
-
-    /**
-     * Checks whether the document is payable by fetching the document and its extractions from the
-     * Gini Pay API and verifying that the extractions contain an IBAN.
-     *
-     * @return `true` if the document is payable and `false` otherwise
-     * @throws Exception if there was an error while retrieving the document or the extractions
-     */
-    suspend fun checkIfDocumentIsPayable(documentId: String): Boolean {
-        val extractionsResource = giniHealthAPI.documentManager.getDocument(documentId)
-            .mapSuccess { documentResource ->
-                giniHealthAPI.documentManager.getAllExtractionsWithPolling(documentResource.data)
-            }
-        return when (extractionsResource) {
-            is Resource.Cancelled -> false
-            is Resource.Error -> throw Exception(extractionsResource.exception)
-            is Resource.Success -> extractionsResource.data.compoundExtractions
-                .getPaymentExtraction("iban")?.value?.isNotEmpty() ?: false
-        }
     }
     
     fun createFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
