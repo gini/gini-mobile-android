@@ -65,7 +65,6 @@ class OrdersActivity : AppCompatActivity() {
                             is GiniMerchant.MerchantSDKEvents.OnScreenDisplayed -> {
                                 when (event.displayedScreen) {
                                     DisplayedScreen.MoreInformationFragment -> setActivityTitle(net.gini.android.merchant.sdk.R.string.gms_more_information_fragment_title)
-                                    DisplayedScreen.ReviewFragment -> setActivityTitle(R.string.title_fragment_order_details)
                                     else -> { setActivityTitle(R.string.title_activity_orders) }
                                 }
                             }

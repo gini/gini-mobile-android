@@ -6,7 +6,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import java.io.File
 
-fun Fragment.startSharePdfIntent(file: File, pendingIntent: PendingIntent? = null) {
+internal fun Fragment.startSharePdfIntent(file: File, pendingIntent: PendingIntent? = null) {
     val uriForFile = FileProvider.getUriForFile(
         requireContext(),
         requireContext().packageName + ".merchant.sdk.fileprovider",
