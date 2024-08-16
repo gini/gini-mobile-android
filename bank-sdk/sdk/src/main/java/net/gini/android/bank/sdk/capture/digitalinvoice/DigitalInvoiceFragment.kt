@@ -36,6 +36,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -128,6 +129,25 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         }
     }
 
+    private fun changeMarginAccordingToFontOversize() {
+        if (!ContextHelper.isTablet(requireContext()) && resources.configuration.fontScale > 1.0F) {
+            (binding.gbsArticleTxt.layoutParams as ViewGroup.MarginLayoutParams).run {
+                this.topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
+            (binding.totalLabel.layoutParams as ViewGroup.MarginLayoutParams).run {
+                topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
+            (binding.gbsPay.layoutParams as ViewGroup.MarginLayoutParams).run {
+                bottomMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+                topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
+        }
+    }
+
     private fun readArguments() {
         arguments?.run {
             getBundle(ARGS_EXTRACTIONS)?.run {
@@ -200,6 +220,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         setInputHandlers()
         initTopNavigationBar()
         initBottomBar()
+        changeMarginAccordingToFontOversize()
         presenter?.onViewCreated()
     }
 
