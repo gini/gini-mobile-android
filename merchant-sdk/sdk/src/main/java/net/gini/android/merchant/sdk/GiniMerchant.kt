@@ -214,7 +214,8 @@ class GiniMerchant(
          * @param [paymentRequestId] - the id of the payment request
          * @param [paymentProviderName] - the selected payment provider name
          */
-        class OnFinishedWithPaymentRequestCreated(val paymentRequestId: String, val paymentProviderName: String): MerchantSDKEvents()
+        class OnFinishedWithPaymentRequestCreated(val paymentRequestId: String,
+                                                  val paymentProviderName: String): MerchantSDKEvents()
 
         /**
          * Payment request was cancelled. Can be either from the server, or by cancelling the payment flow.
