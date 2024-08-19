@@ -149,10 +149,11 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     }
 
     /**
-     * Set the cache implementation to use with Volley. If no cache is set, the default Volley cache
+     * Set the cache implementation to use with OkHttp caching. If no cache is set, no caching
      * will be used.
      *
-     * @param cache A cache instance (specified by the com.android.volley.Cache interface).
+     * @param cache a cache instance (specified by the [okhttp3.Cache])
+     *
      * @return The builder instance to enable chaining.
      */
     open fun setCache(cache: Cache): GiniCoreAPIBuilder<DM, G, DR, E> {
