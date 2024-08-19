@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="gms_zero">0dp</dimen>
+    <dimen name="gms_small_1">1dp</dimen>
+    <dimen name="gms_small_2">2dp</dimen>
+    <dimen name="gms_small">4dp</dimen>
+    <dimen name="gms_medium">8dp</dimen>
+    <dimen name="gms_medium_10">10dp</dimen>
+    <dimen name="gms_medium_12">12dp</dimen>
+    <dimen name="gms_large">16dp</dimen>
+    <dimen name="gms_large_18">18dp</dimen>
+    <dimen name="gms_large_20">20dp</dimen>
+    <dimen name="gms_large_22">22dp</dimen>
+    <dimen name="gms_large_24">24dp</dimen>
+    <dimen name="gms_large_28">28dp</dimen>
+    <dimen name="gms_large_32">32dp</dimen>
+    <dimen name="gms_large_36">36dp</dimen>
+    <dimen name="gms_large_48">48dp</dimen>
+    <dimen name="gms_large_50">50dp</dimen>
+    <dimen name="gms_large_56">56dp</dimen>
+    <dimen name="gms_large_60">60dp</dimen>
+    <dimen name="gms_large_64">64dp</dimen>
+    <dimen name="gms_large_80">80dp</dimen>
+    <dimen name="gms_large_96">96dp</dimen>
+    <dimen name="gms_large_100">100dp</dimen>
+
+    <dimen name="gms_accessibility_min_height">44dp</dimen>
+    <dimen name="gms_payment_component_height">0dp</dimen>
+    <dimen name="gms_install_app_min_height">320dp</dimen>
+
+    <item name="gms_float_0.7" format="float" type="dimen">0.7</item>
+    <item name="gms_float_0.3" format="float" type="dimen">0.3</item>
+    <item name="gms_float_0.5" format="float" type="dimen">0.5</item>
+
+</resources>
