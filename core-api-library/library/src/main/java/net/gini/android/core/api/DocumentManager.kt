@@ -3,6 +3,8 @@ package net.gini.android.core.api
 import android.net.Uri
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.DocumentLayout
+import net.gini.android.core.api.models.DocumentPage
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.Payment
 import net.gini.android.core.api.models.PaymentRequest
@@ -134,10 +136,44 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      * @param document The document for which the layouts is requested.
      * @return [Resource] with a [JSONObject] instance containing the layout or information about the error
      */
+    @Deprecated(
+        "This method is deprecated and can be deleted in future. Use another one, please.",
+        replaceWith = ReplaceWith("getLayoutModel(documentId)")
+    )
     suspend fun getLayout(
         document: Document
     ): Resource<JSONObject> =
         documentRepository.getLayout(document)
+
+    /**
+     * Gets the pages of a document.
+     *
+     * @param documentId The document ID for which the pages are requested.
+     * @return [Resource] with a list of [DocumentPage] instance containing the pages or information about the error
+     */
+    suspend fun getDocumentPages(documentId: String) : Resource<List<DocumentPage>> =
+        documentRepository.getDocumentPages(documentId)
+
+
+    /**
+     * Gets the file of a document.
+     *
+     * @param location The location of the file.
+     * @return [Resource] with a byte array containing the file or information about the error
+     */
+
+    suspend fun getFile(location: String): Resource<ByteArray> =
+        documentRepository.getFile(location)
+
+    /**
+     * Gets the layout of a document. The layout of the document describes the textual content of a document with
+     * positional information, based on the processed document.
+     *
+     * @param documentId The document ID for which the layouts is requested.
+     * @return [Resource] with a [DocumentLayout] instance containing the layout or information about the error
+     */
+    suspend fun getLayoutModel(documentId: String) : Resource<DocumentLayout> =
+        documentRepository.getLayoutModel(documentId)
 
     /**
      * Get all extractions (specific and compound) for the given document.

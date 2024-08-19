@@ -20,7 +20,7 @@ import java.util.*
 
 
 @RunWith(JUnitParamsRunner::class)
-class LineItemDetailsScreenPresenterTest {
+class LineResponseItemDetailsScreenPresenterTest {
 
     private val returnReasonsFixture = listOf(
         GiniCaptureReturnReason("1", mapOf("de" to "Foo", "en" to "Foo")),

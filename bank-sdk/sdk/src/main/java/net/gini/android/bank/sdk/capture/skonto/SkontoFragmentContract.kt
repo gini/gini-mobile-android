@@ -22,6 +22,10 @@ internal object SkontoFragmentContract {
         ) : State()
     }
 
+    sealed interface SideEffect {
+        object OpenInvoiceScreen : SideEffect
+    }
+
     sealed class SkontoEdgeCase {
         object SkontoLastDay : SkontoEdgeCase()
         object PayByCashOnly : SkontoEdgeCase()

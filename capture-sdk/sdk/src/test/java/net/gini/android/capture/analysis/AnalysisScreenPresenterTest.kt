@@ -478,7 +478,7 @@ class AnalysisScreenPresenterTest {
 
         // Then
         verify(listener)
-            .onExtractionsAvailable(extractions, compoundExtraction, returnReasons)
+            .onExtractionsAvailable(imageDocument, extractions, compoundExtraction, returnReasons)
     }
 
     @Test

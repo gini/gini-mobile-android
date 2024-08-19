@@ -8,6 +8,8 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.internal.network.AmplitudeRoot;
 import net.gini.android.capture.internal.network.Configuration;
+import net.gini.android.capture.internal.network.model.DocumentLayout;
+import net.gini.android.capture.internal.network.model.DocumentPage;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLoggerListener;
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
@@ -15,11 +17,12 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.util.CancellationToken;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Alpar Szotyori on 29.01.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -37,7 +40,6 @@ import java.util.Map;
  * <p> In order for the Gini Capture SDK to use your implementation pass an instance of it to
  * {@link GiniCapture.Builder#setGiniCaptureNetworkService(GiniCaptureNetworkService)} when creating a
  * {@link GiniCapture} instance.
- *
  */
 public interface GiniCaptureNetworkService extends ErrorLoggerListener {
 
@@ -49,22 +51,20 @@ public interface GiniCaptureNetworkService extends ErrorLoggerListener {
      *
      * @param document a {@link Document} containing an image, pdf or other supported formats
      * @param callback a callback implementation to return the outcome of the upload
-     *
      * @return a {@link CancellationToken} to be used for requesting upload cancellation
      */
     CancellationToken upload(@NonNull final Document document,
-            @NonNull final GiniCaptureNetworkCallback<Result, Error> callback);
+                             @NonNull final GiniCaptureNetworkCallback<Result, Error> callback);
 
     /**
      * Called when a document needs to be deleted from the Gini API.
      *
      * @param giniApiDocumentId id of the document received when it was uploaded to the Gini API
      * @param callback          a callback implementation to return the outcome of the deletion
-     *
      * @return a {@link CancellationToken} to be used for requesting cancellation of the deletion
      */
     CancellationToken delete(@NonNull final String giniApiDocumentId,
-            @NonNull final GiniCaptureNetworkCallback<Result, Error> callback);
+                             @NonNull final GiniCaptureNetworkCallback<Result, Error> callback);
 
     /**
      * Called when a document needs to be analyzed by the Gini API.
@@ -76,14 +76,11 @@ public interface GiniCaptureNetworkService extends ErrorLoggerListener {
      *                                     document rotations
      * @param callback                     a callback implementation to return the outcome of the
      *                                     analysis
-     *
      * @return a {@link CancellationToken} to be used for requesting analysis cancellation
      */
     CancellationToken analyze(
             @NonNull final LinkedHashMap<String, Integer> giniApiDocumentIdRotationMap, // NOPMD
             @NonNull final GiniCaptureNetworkCallback<AnalysisResult, Error> callback);
-
-
 
     /**
      * Call this method with the extractions the user has seen and accepted. The {@link
@@ -112,6 +109,23 @@ public interface GiniCaptureNetworkService extends ErrorLoggerListener {
     void cleanup();
 
     default CancellationToken getConfiguration(@NonNull final GiniCaptureNetworkCallback<Configuration, Error> callback) {
+        return null;
+    }
+
+    default CancellationToken getDocumentLayout(
+            @NonNull final String documentId,
+            @NonNull final GiniCaptureNetworkCallback<DocumentLayout, Error> callback
+    ) {
+        return null;
+    }
+
+    default CancellationToken getDocumentPages(@NonNull final String documentId,
+                                               @NonNull final GiniCaptureNetworkCallback<List<DocumentPage>, Error> callback) {
+        return null;
+    }
+
+    default CancellationToken getFile(@NonNull final String fileUrl,
+                                      @NonNull final GiniCaptureNetworkCallback<Byte[], Error> callback) {
         return null;
     }
 

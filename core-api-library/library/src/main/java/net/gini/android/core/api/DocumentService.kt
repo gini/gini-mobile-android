@@ -1,8 +1,8 @@
 package net.gini.android.core.api
 
 import android.net.Uri
-import net.gini.android.core.api.authorization.UserService
-import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.response.DocumentLayoutResponse
+import net.gini.android.core.api.response.DocumentPageResponse
 import net.gini.android.core.api.response.PaymentRequestResponse
 import net.gini.android.core.api.response.PaymentResponse
 import okhttp3.RequestBody
@@ -37,8 +37,21 @@ interface DocumentService {
     @DELETE
     suspend fun deleteDocumentFromUri(@HeaderMap bearer: Map<String, String>, @Url documentUri: Uri): Response<ResponseBody>
 
+    @Deprecated(
+        "This function is deprecated. Use another one, please.",
+        replaceWith = ReplaceWith("getLayoutModel(documentId)"))
     @GET("documents/{documentId}/layout")
     suspend fun getLayoutForDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
+
+    @GET("documents/{documentId}/layout")
+    suspend fun getLayoutModel(
+        @HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String
+    ) : Response<DocumentLayoutResponse>
+
+    @GET("documents/{documentId}/pages")
+    suspend fun getDocumentPages(
+        @HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String
+    ) : Response<List<DocumentPageResponse>>
 
     @GET("paymentRequests/{id}")
     suspend fun getPaymentRequest(@HeaderMap bearer: Map<String, String>, @Path("id") id: String): Response<PaymentRequestResponse>

@@ -16,9 +16,11 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
+import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoInvoiceHighlightsExtractor
 import net.gini.android.bank.sdk.capture.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragment
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
+import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
 
 import net.gini.android.capture.CaptureSDKResult
@@ -46,6 +48,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private lateinit var navController: NavController
     private lateinit var captureFlowFragmentListener: CaptureFlowFragmentListener
+
+    private val skontoInvoiceHighlightsExtractor: SkontoInvoiceHighlightsExtractor
+            by getGiniBankKoin().inject()
 
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
     private var originalPrimaryNavigationFragment: Fragment? = null
@@ -191,8 +196,15 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                     result.compoundExtractions
                 )
 
+                val highlightBoxes = skontoInvoiceHighlightsExtractor.extract(
+                    result.compoundExtractions
+                )
+
                 navController.navigate(
-                    GiniCaptureFragmentDirections.toSkontoFragment(data = skontoData)
+                    GiniCaptureFragmentDirections.toSkontoFragment(
+                        data = skontoData,
+                        invoiceHighlights = highlightBoxes.toTypedArray(),
+                    )
                 )
             } catch (e: Exception) {
                 finishWithResult(result)
