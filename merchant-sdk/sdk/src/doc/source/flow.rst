@@ -2,7 +2,7 @@ Flow
 ====
 
 ``GiniMerchant`` and ``PaymentFragment`` are the main classes for interacting with the Gini Merchant SDK. ``GiniMerchant``
-manages interaction with the Gini Health API and ``PaymentFragment`` handles the data and the logic for displaying related screens.
+manages interaction with the Gini Merchant API and ``PaymentFragment`` handles the data and the logic for displaying related screens.
 
 .. contents:: The recommended flow is:
    :local:
@@ -47,6 +47,10 @@ The ``GiniMerchantSDK`` expects the payment details to not be empty, and will th
       snackbars for errors. If set to ``false``, errors will be ignored by the ``GiniMerchant``. In this case the flows
       exposed by ``GiniMerchant`` should be observed for errors. Default value is ``true``.
     - ``showReviewFragment``: If set to ``true``, the user will be able to review the payment details before continuing with the payment. Default value is ``false``.
+
+.. note::
+
+    Users will have the chance to edit their payment information in their banking app, even if ``showReviewFragment`` is set to false.
 
 Event Tracking
 --------------

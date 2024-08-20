@@ -334,7 +334,6 @@ class PaymentFragment private constructor(
                     val intent = viewModel.getPaymentProviderApp()?.getIntent(sdkEvent.paymentRequestId)
                     if (intent != null) {
                         startActivity(intent)
-                        viewModel.onBankOpened()
                     } else {
                         handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
                     }

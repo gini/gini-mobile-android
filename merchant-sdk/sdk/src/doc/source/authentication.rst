@@ -1,7 +1,7 @@
 Authentication
 ==============
 
-The entry point for the Gini Merchant SDK is ``GiniMerchant`` class.
+The entry point for the Gini Merchant SDK is the ``GiniMerchant`` class.
 
 The ``GiniMerchant`` class can be built either with client credentials (clientId and clientSecret)
 or with a ``SessionManager`` if you have a token:

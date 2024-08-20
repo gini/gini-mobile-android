@@ -18,7 +18,7 @@ Gini Pay Deep Link For Your App
 -------------------------------
 
 In order for banking apps to be able to return the user to your app after the payment has been resolved you can
-register one of your activities to respond to a deep link scheme known by the Gini Health API.
+register one of your activities to respond to a deep link scheme known by the Gini Merchant API.
 
 You should already have a scheme and host from us. Please contact us in case you don't have them.
 
@@ -38,9 +38,9 @@ The following is an example for the deep link ``ginipay-business://payment-reque
         </intent-filter>
     </activity>
 
-Gini Health API Client Credentials
+Gini Merchant API Client Credentials
 -------------------------------
 
-You should have received Gini Health API client credentials from us. Please get in touch with us in case you don't have them.
+You should have received Gini Merchant API client credentials from us. Please get in touch with us in case you don't have them.
 
 Continue to `Authentication <authentication.html>`_ to see how to use the client credentials to initialize the Gini Merchant SDK.

@@ -10,10 +10,10 @@ Example banking app
 An example banking app is available in the `Gini Bank SDK <https://github.com/gini/gini-mobile-android/tree/main/bank-sdk>`_
 repository called ``example-app``.
 
-You can use the same Gini Health API client credentials in the example banking app as in your app, if not otherwise
+You can use the same Gini Merchant API client credentials in the example banking app as in your app, if not otherwise
 specified.
 
-Development Gini Health API client credentials
+Development Gini Merchant API client credentials
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to test using the Gini Bank SDK's example banking app, you will need to use development client credentials in
@@ -96,7 +96,7 @@ Execute payment
 When clicking the "To the banking app" button on the ``ReviewFragment`` you should be redirected to the example banking
 app where the payment information will be fetched from Gini (including any changes you made on the
 ``ReviewFragment``). Press the "Pay" button to execute a test payment which will mark the payment as paid in the
-Gini Health API.
+Gini Merchant API.
 
 .. image:: images/testing/BankSDKExampleAppPaymentDetails.png
     :alt: Screenshot of the example banking app showing the same payment information as the Payment Review screen previously.
@@ -111,7 +111,7 @@ Return to your app
 After the test payment has been executed, the example banking app should show a "Return to Business" button which should
 take you back to your app.
 
-With these steps completed you have verified that your app, the Gini Health API, the Gini Merchant SDK and the Gini Bank
+With these steps completed you have verified that your app, the Gini Merchant API, the Gini Merchant SDK and the Gini Bank
 SDK work together correctly.
 
 .. image:: images/testing/BankSDKExampleAppReturnToBusinessApp.png
