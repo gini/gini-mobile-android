@@ -84,7 +84,6 @@ class PaymentFlowFragmentTest {
     @Test
     fun `shows review fragment when payment button is tapped and config allows showing of review fragment`() = runTest {
         // Given
-        every { paymentFlowViewModel!!.addToBackStack(DisplayedScreen.ReviewFragment) } returns Unit
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false
@@ -116,7 +115,6 @@ class PaymentFlowFragmentTest {
     @Test
     fun `updates payment details when payment button is tapped on the review fragment`() = runTest {
         // Given
-        every { paymentFlowViewModel!!.addToBackStack(DisplayedScreen.ReviewFragment) } returns Unit
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns true
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false

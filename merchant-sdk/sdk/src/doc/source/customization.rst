@@ -77,12 +77,12 @@ the following snippet to one of your resources XML file (e.g, ``colors.xml``):
     If you overridde the ``GiniMerchantTheme``, the theme colors you set there override the color palette customization.
 
 Find the names of the color resources in the color palette (you can also view it in Figma `here
-<https://www.figma.com/file/AJTss4k0M6R2OxH0VQepdP/Android-Gini-Health-SDK-3.0.0-UI-Customisation?type=design&node-id=8502%3A357&mode=design&t=A1pTQWjJWSBUR6Zi-1>`_): 
+<https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4709&t=SIAN8JzXJ0GIPfwg-0>`_):
 
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FAJTss4k0M6R2OxH0VQepdP%2FAndroid-Gini-Health-SDK-3.0.0-UI-Customisation%3Ftype%3Ddesign%26node-id%3D8502%253A357%26mode%3Ddesign%26t%3DA1pTQWjJWSBUR6Zi-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5745&t=SIAN8JzXJ0GIPfwg-0"
     allowfullscreen></iframe>
 
 |
@@ -128,12 +128,12 @@ application, use the root style as the parent, for example:
     We use ``android:lineSpacingMultiplier`` in combination with ``android:textSize`` to support resizing text for accessibility and avoid overlapping text.
 
 Preview our typography and find the names of the style resources (you can also view it in Figma `here
-<https://www.figma.com/file/AJTss4k0M6R2OxH0VQepdP/Android-Gini-Health-SDK-3.0.0-UI-Customisation?type=design&node-id=8503%3A491&mode=design&t=zZkiuvx3neNm8Tmv-1>`_):
+<https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5837&t=SIAN8JzXJ0GIPfwg-0>`_):
 
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FAJTss4k0M6R2OxH0VQepdP%2FAndroid-Gini-Health-SDK-3.0.0-UI-Customisation%3Ftype%3Ddesign%26node-id%3D8503%253A491%26mode%3Ddesign%26t%3DzZkiuvx3neNm8Tmv-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5837&t=SIAN8JzXJ0GIPfwg-0"
     allowfullscreen></iframe>
 
 |
@@ -157,7 +157,7 @@ Payment Component
 ~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8663-1324&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4843&t=SIAN8JzXJ0GIPfwg-0>`_.
 
 .. note::
 
@@ -166,7 +166,7 @@ You can also view the UI customisation guide in Figma `here
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8663-1324&mode=design&t=OX3i9T5ItG0jIln0-4"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4843&t=SIAN8JzXJ0GIPfwg-0"
     allowfullscreen></iframe>
 
 |
@@ -175,7 +175,7 @@ Bank Selection Bottom Sheet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8794-1437&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4904&t=SIAN8JzXJ0GIPfwg-0>`_.
 
 .. note::
 
@@ -184,7 +184,7 @@ You can also view the UI customisation guide in Figma `here
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8794-1437&mode=design&t=OX3i9T5ItG0jIln0-4"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4904&t=SIAN8JzXJ0GIPfwg-0"
     allowfullscreen></iframe>
 
 |
@@ -193,7 +193,7 @@ Payment Feature Info Screen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8865-1784&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4931&t=SIAN8JzXJ0GIPfwg-0>`_.
 
 .. warning::
 
@@ -207,19 +207,16 @@ You can also view the UI customisation guide in Figma `here
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8865-1784&mode=design&t=OX3i9T5ItG0jIln0-4"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4931&t=SIAN8JzXJ0GIPfwg-0"
     allowfullscreen></iframe>
+
+|
 
 Payment Review Screen
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8856-2345&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
-
-.. note::
-
-    The close button in the top right corner is disabled by default. You can enable it by setting the
-    ``showCloseButton`` to ``true`` when creating a ``ReviewConfiguration``.
+<https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5024&t=SIAN8JzXJ0GIPfwg-0>`_.
 
 .. note::
 
@@ -228,6 +225,6 @@ You can also view the UI customisation guide in Figma `here
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8856-2345&mode=design&t=OX3i9T5ItG0jIln0-4"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5024&t=SIAN8JzXJ0GIPfwg-0"
     allowfullscreen></iframe>
 

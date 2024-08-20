@@ -4,63 +4,16 @@ Event Tracking
 GiniMerchant
 ----------
 
-The ``GiniMerchant`` class exposes kotlin flows which you can collect to track events. The following flows are available:
+The ``GiniMerchant`` class exposes a kotlin flow which you can collect to track events:
 
-* ``documentFlow`` is a ``StateFlow`` of ``ResultWrapper<Document>`` which emits the Gini Health API's document used by
-  the ``ReviewFragment``. It emits the following states:
-   * ``ResultWrapper.Loading()`` when the document is being loaded.
-   * ``ResultWrapper.Success(document)`` when the document is available.
-   * ``ResultWrapper.Error(throwable)`` when there was an error loading the document.
-* ``paymentFlow`` is a ``StateFlow`` of ``ResultWrapper<PaymentDetails>`` which emits the payment information shown in
-  the ``ReviewFragment``.
-   * ``ResultWrapper.Loading()`` when the payment details are being loaded.
-   * ``ResultWrapper.Success(paymentDetails)`` when the payment details are available.
-   * ``ResultWrapper.Error(throwable)`` when there was an error loading the payment details.
-* ``openBankState`` is a ``StateFlow`` of ``PaymentState`` which emits the state of opening the banking app. It emits
-  the following states:
-   * ``PaymentState.NoAction()`` is the idle state.
-   * ``PaymentState.Loading()`` when the user requested to open the banking app and the Merchant SDK started creating a
-     payment request.
-   * ``PaymentState.Success(paymentRequest)`` when the payment request is ready and the banking app will be opened.
-   * ``PaymentState.Error(throwable)`` when there was an error creating the payment request or opening the banking app.
+* ``eventsFlow`` is a ``SharedFlow`` of ``MerchantSDKEvents``. It emits the following events:
+   * ``NoAction`` is the idle state
+   * ``OnLoading`` when communicating with the Gini Merchant API (e.g., creating a payment request).
+   * ``OnScreenDisplayed(displayedScreen)`` when there is a change in the screens displayed within the payment flow.
+   * ``OnFinishedWithPaymentRequestCreated(paymentRequestId, paymentProviderName)`` when the payment request is ready and the user is redirected to the bank.
+   * ``OnFinishedWithCancellation`` when the payment flow was cancelled. Can be either from an internal error, or from exiting the payment flow without finalising it.
+   * ``OnErrorOccurred(throwable)`` when there was an error within the payment flow.
 
-PaymentComponent
-----------------
+.. note::
 
-The ``PaymentComponent`` class also exposes kotlin flows which you can collect to track events. The following flows are available:
-
-* ``paymentProviderAppsFlow`` is a ``StateFlow`` of ``PaymentProviderAppsState`` which emits the available payment provider apps used by
-  the ``PaymentComponentView`` and related screens. It emits the following states:
-   * ``PaymentProviderAppsState.Loading()`` when the payment provider apps are being loaded.
-   * ``PaymentProviderAppsState.Success(paymentProviderApps)`` when the list of payment provider apps is available.
-   * ``PaymentProviderAppsState.Error(throwable)`` when there was an error loading the payment provider apps.
-* ``selectedPaymentProviderAppFlow`` is a ``StateFlow`` of ``SelectedPaymentProviderAppState`` which emits selected payment provider app shown in
-  the ``PaymentComponentView`` and related screens. It emits the following states:
-   * ``SelectedPaymentProviderAppState.NothingSelected()`` when there is no selection.
-   * ``SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)`` when a payment provider app has been selected.
-
-ReviewFragment
---------------
-
-To get informed of ``ReviewFragment`` events (like the user clicking the "close" or "next" button) you can implement
-the ``ReviewFragmentListener`` and set it on the fragment.
-
-.. code-block:: kotlin
-
-    val reviewConfiguration = ReviewConfiguration(...)
-
-    val paymentReviewFragment = paymentComponent.getPaymentReviewFragment(
-        documentId, reviewConfiguration
-    )
-
-    paymentReviewFragment.listener = object : ReviewFragmentListener {
-        override fun onCloseReview() {
-            // Called only when the ``ReviewConfiguration.showCloseButton`` was set to ``true``.
-            // Dismiss the ReviewFragment.
-        }
-
-        override fun onToTheBankButtonClicked(paymentProviderName: String) {
-            // Log or track the used payment provider name.
-            // No action required, the payment process is handled by the Gini Merchant SDK.
-        }
-    }
+    ``OnFinishedWithPaymentRequestCreated`` and ``OnFinishedWithCancellation`` can be checked for to remove the ``PaymentFragment`` from the hierarchy.
