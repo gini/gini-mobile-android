@@ -132,4 +132,7 @@
 
     <string name="splash_activity">Splash Activity</string>
     <string name="single_activity">Single Activity</string>
+    <string name="use_custom_credentials_label">Use custom credentials</string>
+    <string name="gini_client_id_label">Client Id</string>
+    <string name="client_secret_label">Client Secret</string>
 </resources>
