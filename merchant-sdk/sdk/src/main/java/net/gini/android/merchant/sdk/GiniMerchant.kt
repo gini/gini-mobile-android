@@ -109,8 +109,9 @@ class GiniMerchant(
      * @param flowConfiguration - optional parameter with the [PaymentFlowConfiguration]
      */
     fun createFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
-        if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty())
+        if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()) {
             error("Payment details are incomplete.")
+        }
 
         try {
             amount.toBackendFormat()
