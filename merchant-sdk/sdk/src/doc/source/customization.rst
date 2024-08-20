@@ -210,16 +210,13 @@ You can also view the UI customisation guide in Figma `here
     src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4931&t=SIAN8JzXJ0GIPfwg-0"
     allowfullscreen></iframe>
 
+|
+
 Payment Review Screen
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
 <https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5024&t=SIAN8JzXJ0GIPfwg-0>`_.
-
-.. note::
-
-    The close button in the top right corner is disabled by default. You can enable it by setting the
-    ``showCloseButton`` to ``true`` when creating a ``ReviewConfiguration``.
 
 .. note::
 
