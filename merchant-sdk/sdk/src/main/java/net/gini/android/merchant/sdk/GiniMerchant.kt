@@ -109,12 +109,13 @@ class GiniMerchant(
      * @param flowConfiguration - optional parameter with the [PaymentFlowConfiguration]
      */
     fun createFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
-        if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()) throw IllegalStateException("Payment details are incomplete.")
+        if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty())
+            error("Payment details are incomplete.")
 
         try {
             amount.toBackendFormat()
-        } catch (e: Exception) {
-            throw IllegalStateException("Amount format is incorrect.")
+        } catch (e: NumberFormatException) {
+            error("Amount format is incorrect.")
         }
 
         val paymentDetails = PaymentDetails(
