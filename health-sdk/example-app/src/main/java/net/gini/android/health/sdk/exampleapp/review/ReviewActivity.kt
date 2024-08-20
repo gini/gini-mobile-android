@@ -160,14 +160,14 @@ class ReviewActivity : AppCompatActivity() {
             val isDocumentPayable = viewModel.giniHealth.checkIfDocumentIsPayable(documentId)
 
             if (!isDocumentPayable) {
+                val containsMultipleDocuments = viewModel.giniHealth.checkIfDocumentContainsMultipleDocuments(documentId)
+                val alertTitle = if (containsMultipleDocuments) R.string.multiple_documents else R.string.document_not_payable_title
+
                 AlertDialog.Builder(this@ReviewActivity)
-                    .setTitle(R.string.document_not_payable_title)
+                    .setTitle(alertTitle)
                     .setMessage(R.string.document_not_payable_message)
-                    .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface, which: Int) {
-                            finish()
-                        }
-                    })
+                    .setPositiveButton(android.R.string.ok
+                    ) { _, _ -> finish() }
                     .show()
                 return@launch
             }
