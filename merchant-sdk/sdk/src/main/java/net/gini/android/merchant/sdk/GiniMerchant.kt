@@ -20,6 +20,7 @@ import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.util.DisplayedScreen
+import net.gini.android.merchant.sdk.util.toBackendFormat
 import org.slf4j.LoggerFactory
 
 /**
@@ -109,6 +110,12 @@ class GiniMerchant(
      */
     fun createFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
         if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()) throw IllegalStateException("Payment details are incomplete.")
+
+        try {
+            amount.toBackendFormat()
+        } catch (e: Exception) {
+            throw IllegalStateException("Amount format is incorrect.")
+        }
 
         val paymentDetails = PaymentDetails(
             recipient = recipient,
