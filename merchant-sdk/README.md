@@ -7,9 +7,7 @@ The Gini Merchant SDK for Android provides all the UI and functionality needed t
 method in Android apps. The payment information can be reviewed and paid using any available payment provider app (e.g.,
 banking app).
 
-The Gini Merchant API provides a secure channel for sharing payment related information between clients. In addition, it
-also provides an information extraction service for analyzing invoices. Specifically, it extracts information such as
-the document sender or the payment relevant information (amount to pay, IBAN, etc.).
+The Gini Merchant API provides a secure channel for sharing payment related information between clients.
 
 Documentation
 -------------

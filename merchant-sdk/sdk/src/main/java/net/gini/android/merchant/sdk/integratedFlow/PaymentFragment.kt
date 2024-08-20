@@ -50,12 +50,12 @@ import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
 import org.jetbrains.annotations.VisibleForTesting
 
 /**
- * Configuration for the integrated payment flow
+ * Configuration for the payment flow.
  */
 @Parcelize
 data class PaymentFlowConfiguration(
     /**
-     * If set to `true`, the [ReviewFragment] will be shown before initiating payment.
+     * If set to `true`, the [ReviewBottomSheet] will be shown before initiating payment.
      * If set to `false`, the payment request process will be executed under the hood before redirecting to the selected payment provider
      *
      * Default value is `false`
@@ -64,19 +64,19 @@ data class PaymentFlowConfiguration(
 
     /**
      * If set to `true`, the errors will be handled internally and snackbars will be shown for errors.
-     * If set to `false`, errors will be ignored by the [PaymentFragment] and the [ReviewFragment]. In this case the flows exposed by [GiniMerchant] should be observed for errors.
+     * If set to `false`, errors will be ignored by the [PaymentFragment] and the [ReviewBottomSheet]. In this case the flows exposed by [GiniMerchant] should be observed for errors.
      *
      * Default value is `true`.
      */
     val shouldHandleErrorsInternally: Boolean = true,
 
     /**
-     * If set to `true`, the [Amount] field of shown as part of the [ReviewFragment] will be editable.
+     * If set to `true`, the [Amount] field of shown as part of the [ReviewBottomSheet] will be editable.
      * If set to `false`, the [Amount] field will be read-only.
      *
      * Default value is `false`
      */
-    val isAmountFieldEditable: Boolean = true,
+    internal val isAmountFieldEditable: Boolean = true,
 
     /**
      * If set to `true` and the user is a returning one, the `Select your bank to pay` and `More Information` labels will be hidden
@@ -334,7 +334,6 @@ class PaymentFragment private constructor(
                     val intent = viewModel.getPaymentProviderApp()?.getIntent(sdkEvent.paymentRequestId)
                     if (intent != null) {
                         startActivity(intent)
-                        viewModel.onBankOpened()
                     } else {
                         handleError(getString(R.string.gms_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
                     }

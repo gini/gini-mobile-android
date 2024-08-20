@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
  * Copyright (c) 2021 Gini GmbH.
  */
 
-val installedPaymentProviderAppsFixture = listOf(
+private val installedPaymentProviderAppsFixture = listOf(
     InstalledPaymentProviderApp(
         packageName = "net.gini.android.bank.exampleapp1",
         version = "1.2.3",
