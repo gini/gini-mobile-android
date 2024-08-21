@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
@@ -23,7 +22,6 @@ import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         binding.importFile.setOnClickListener {
             if (useTestDocument) {
                 viewModel.setDocumentForReview(testDocumentId)
-                startActivity(ReviewActivity.getStartIntent(this))
+                startActivity(ReviewActivity.getStartIntent(this, paymentComponentConfiguration = viewModel.getPaymentComponentConfiguration()))
             } else {
                 importFile()
             }
@@ -67,7 +65,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(
                 UploadActivity.getStartIntent(
                     this@MainActivity,
-                    viewModel.pages.value.map { it.uri })
+                    viewModel.pages.value.map { it.uri },
+                    viewModel.getPaymentComponentConfiguration())
             )
         }
 
@@ -114,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun importResult(uri: Uri?) {
         uri?.let {
-            startActivity(UploadActivity.getStartIntent(this, listOf(it)))
+            startActivity(UploadActivity.getStartIntent(this, listOf(it), viewModel.getPaymentComponentConfiguration()))
         } ?: run {
             Toast.makeText(this, "No document received", Toast.LENGTH_LONG).show()
         }

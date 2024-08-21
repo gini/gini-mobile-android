@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:ConfigurationViewModel.kt$ConfigurationViewModel$fun configureGiniBank(context: Context)</ID>
+    <ID>EmptyFunctionBlock:CustomOnButtonLoadingIndicatorAdapter.kt$CustomOnButtonLoadingIndicatorAdapter${}</ID>
+    <ID>LongMethod:ConfigurationActivity.kt$ConfigurationActivity$private fun setConfigurationFeatures()</ID>
+    <ID>LongMethod:ConfigurationActivity.kt$ConfigurationActivity$private fun updateUIWithConfigurationObject(configuration: Configuration)</ID>
+    <ID>LongMethod:ConfigurationViewModel.kt$ConfigurationViewModel$fun configureGiniBank(context: Context)</ID>
+    <ID>LongParameterList:ClientCaptureSDKFragment.kt$ClientCaptureSDKFragment$(paymentRecipient: String, paymentReference: String, paymentPurpose: String, iban: String, bic: String, amount: Amount )</ID>
+    <ID>MagicNumber:ExtractionsActivity.kt$ExtractionsActivity$0.5f</ID>
+    <ID>MagicNumber:MainActivity.kt$MainActivity$600</ID>
+    <ID>MaxLineLength:ClientBankSDKFragment.kt$ClientBankSDKFragment$"Error: ${(result.value as ResultError.Capture).giniCaptureError.errorCode} ${(result.value as ResultError.Capture).giniCaptureError.message}"</ID>
+    <ID>MaxLineLength:ClientBankSDKFragment.kt$ClientBankSDKFragment$"Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}"</ID>
+    <ID>MaxLineLength:ClientCaptureSDKFragment.kt$ClientCaptureSDKFragment$"Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}"</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration$// net.gini.android.capture.GiniCapture.Builder#setCameraNavigationBarBottomAdapter → on/off switch to show a custom adapter implementation</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration$// net.gini.android.capture.GiniCapture.Builder#setCustomOnboardingPages → on/off switch to show custom onboarding pages</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration$// net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration$// net.gini.android.capture.GiniCapture.Builder#setHelpNavigationBarBottomAdapter → on/off switch to show a custom adapter implementation</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration$// net.gini.android.capture.GiniCapture.Builder#setLoadingIndicatorAdapter → on/off switch to show a custom adapter implementation</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration$// net.gini.android.capture.GiniCapture.Builder#setNavigationBarTopAdapter → on/off switch to show a custom adapter implementation</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration$// net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter → on/off switch to show a custom adapter implementation</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration$// net.gini.android.capture.GiniCapture.Builder#setOnboardingQRCodeIllustrationAdapter-> on/off switch to show custom adapter with animated illustrations</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration$// net.gini.android.capture.GiniCapture.Builder#setReviewBottomBarNavigationAdapter → on/off switch to show a custom adapter implementation</ID>
+    <ID>MaxLineLength:Configuration.kt$Configuration.Companion$fun</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutBottomNavigationToggles.switchCameraScreenCustomBottomNavbar</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutBottomNavigationToggles.switchDigitalInvoiceBottomNavigationBar</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutBottomNavigationToggles.switchDigitalInvoiceHelpBottomNavigationBar</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutBottomNavigationToggles.switchDigitalInvoiceOnboardingBottomNavigationBar</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutBottomNavigationToggles.switchShowBottomNavbar.isChecked = configuration.isBottomNavigationBarEnabled</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutBottomNavigationToggles.switchShowHelpScreenCustomBottomNavbar</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutDebugDevelopmentOptionsToggles.switchCustomErrorLogger</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutDebugDevelopmentOptionsToggles.switchCustomErrorLogger.isChecked = configuration.isCustomErrorLoggerEnabled</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutDebugDevelopmentOptionsToggles.switchDisableCameraPermission</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutDebugDevelopmentOptionsToggles.switchGiniErrorLogger.isChecked = configuration.isGiniErrorLoggerEnabled</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutFeatureToggle.toggleBtnFileImportSetup</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutGeneralUiCustomizationToggles.switchButtonsCustomLoadingIndicator</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutGeneralUiCustomizationToggles.switchCustomNavigationController</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutGeneralUiCustomizationToggles.switchCustomNavigationController.isChecked = configuration.isCustomNavBarEnabled</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutOnboardingToggles.switchCustomOnboardingAlignCornersPage</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutOnboardingToggles.switchCustomOnboardingPages.isChecked = configuration.isCustomOnboardingPagesEnabled</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutOnboardingToggles.switchOnboardingScreensAtEveryLaunch</ID>
+    <ID>MaxLineLength:ConfigurationActivity.kt$ConfigurationActivity$binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration</ID>
+    <ID>MaxLineLength:ConfigurationViewModel.kt$ConfigurationViewModel$@GiniCaptureNetworkServiceDebugDisabled private val giniCaptureDefaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService</ID>
+    <ID>MaxLineLength:ConfigurationViewModel.kt$ConfigurationViewModel$@GiniCaptureNetworkServiceDebugEnabled private val giniCaptureDefaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService</ID>
+    <ID>MaxLineLength:ConfigurationViewModel.kt$ConfigurationViewModel$if</ID>
+    <ID>MaxLineLength:ConfigurationViewModel.kt$ConfigurationViewModel$networkService = if (configuration.isDebugModeEnabled) giniCaptureDefaultNetworkServiceDebugEnabled else giniCaptureDefaultNetworkServiceDebugDisabled</ID>
+    <ID>MaxLineLength:CustomCameraNavigationBarBottomAdapter.kt$CustomCameraNavigationBarBottomAdapter$val binding = CustomCameraNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
+    <ID>MaxLineLength:CustomDigitalInvoiceHelpNavigationBarBottomAdapter.kt$CustomDigitalInvoiceHelpNavigationBarBottomAdapter$val binding = CustomDigitalInvoiceHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
+    <ID>MaxLineLength:CustomDigitalInvoiceNavigationBarBottomAdapter.kt$CustomDigitalInvoiceNavigationBarBottomAdapter$binding = CustomDigitalInvoiceNavigationBarBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
+    <ID>MaxLineLength:CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter.kt$CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter$val binding = CustomDigitalInvoiceOnboardingBottomNavigationBarBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
+    <ID>MaxLineLength:CustomOnboardingNavigationBarBottomAdapter.kt$CustomOnboardingNavigationBarBottomAdapter$OnboardingNavigationBarBottomButton.GET_STARTED -> viewBinding?.buttonGetStarted?.visibility = View.VISIBLE</ID>
+    <ID>MaxLineLength:CustomReviewNavigationBarBottomAdapter.kt$CustomReviewNavigationBarBottomAdapter$viewBinding.injectedViewContainerInjectedLoadingIndicatorContainer.injectedViewAdapterHolder</ID>
+    <ID>MaxLineLength:DocumentAnalyzer.kt$DocumentAnalyzer$Log.d("gini-api", "Analysis failed for document ${giniApiDocument?.id}: ${extractionsResource!!.message}")</ID>
+    <ID>MaxLineLength:ExampleUtil.kt$ExampleUtil$return extractionName == "amountToPay" || extractionName == "bic" || extractionName == "iban" || extractionName == "paymentReference" || extractionName == "paymentRecipient"</ID>
+    <ID>MaxLineLength:GiniExampleModule.kt$GiniExampleModule$"Missing Gini API client credentials. Either create a local.properties file " + "with clientId and clientSecret properties or pass them in as gradle " + "parameters with -PclientId and -PclientSecret."</ID>
+    <ID>MaxLineLength:MainActivity.kt$MainActivity$"Error: ${(result.value as ResultError.Capture).giniCaptureError.errorCode} ${(result.value as ResultError.Capture).giniCaptureError.message}"</ID>
+    <ID>MaxLineLength:MainActivity.kt$MainActivity$"Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}"</ID>
+    <ID>MaxLineLength:PermissionHandler.kt$PermissionHandler$private</ID>
+    <ID>MaxLineLength:SplashActivity.kt$SplashActivity$is GiniBank.CreateDocumentFromImportedFileResult.Error -> showErrorToast("Open with failed with error ${documentCreationResult.error}")</ID>
+    <ID>NewLineAtEndOfFile:CaptureFlowHostActivity.kt$net.gini.android.bank.sdk.exampleapp.ui.CaptureFlowHostActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:ConfigurationActivity.kt$net.gini.android.bank.sdk.exampleapp.ui.ConfigurationActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:ConfigurationViewModel.kt$net.gini.android.bank.sdk.exampleapp.ui.ConfigurationViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomCameraNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomCameraNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomDigitalInvoiceNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomHelpActivity.kt$net.gini.android.bank.sdk.exampleapp.ui.CustomHelpActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomNavigationBarTopAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomOnButtonLoadingIndicatorAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingIndicatorAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomOnboardingIllustrationAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustrationAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomOnboardingNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomReviewNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomSkontoNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:DocumentAnalyzer.kt$net.gini.android.bank.sdk.exampleapp.core.DocumentAnalyzer.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleApp.kt$net.gini.android.bank.sdk.exampleapp.ExampleApp.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleUtil.kt$net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.kt</ID>
+    <ID>NewLineAtEndOfFile:MainActivity.kt$net.gini.android.bank.sdk.exampleapp.ui.MainActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:PayViewModel.kt$net.gini.android.bank.sdk.exampleapp.ui.pay.PayViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:PermissionHandler.kt$net.gini.android.bank.sdk.exampleapp.core.PermissionHandler.kt</ID>
+    <ID>NewLineAtEndOfFile:ResultWrapper.kt$net.gini.android.bank.sdk.exampleapp.core.ResultWrapper.kt</ID>
+    <ID>NewLineAtEndOfFile:SplashActivity.kt$net.gini.android.bank.sdk.exampleapp.ui.SplashActivity.kt</ID>
+    <ID>SwallowedException:ExampleApp.kt$ExampleApp$e: IllegalStateException</ID>
+    <ID>TooGenericExceptionCaught:PayActivity.kt$PayActivity$t: Throwable</ID>
+    <ID>TooGenericExceptionCaught:ResultWrapper.kt$throwable: Throwable</ID>
+    <ID>TooManyFunctions:ExtractionsActivity.kt$ExtractionsActivity : AppCompatActivityExtractionsAdapterInterface</ID>
+    <ID>TooManyFunctions:MainActivity.kt$MainActivity : AppCompatActivity</ID>
+    <ID>UnusedParameter:ExtractionsActivity.kt$ExtractionsActivity$binding: ActivityExtractionsBinding</ID>
+    <ID>UnusedPrivateMember:ClientBankSDKFragment.kt$ClientBankSDKFragment$private fun overrideBankSDKConfiguration()</ID>
+    <ID>UnusedPrivateMember:ExtractionsActivity.kt$ExtractionsActivity$private fun hideProgressIndicator(binding: ActivityExtractionsBinding)</ID>
+    <ID>UnusedPrivateMember:ExtractionsActivity.kt$ExtractionsActivity$private fun showProgressIndicator(binding: ActivityExtractionsBinding)</ID>
+    <ID>UnusedPrivateProperty:ClientCaptureSDKFragment.kt$ClientCaptureSDKFragment$val capture = GiniCapture.Builder() .setGiniCaptureNetworkService(networkService) .setFileImportEnabled(true) .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES) .setQRCodeScanningEnabled(true) .setFlashButtonEnabled(true) .setMultiPageEnabled(true) .build()</ID>
+    <ID>UnusedPrivateProperty:MainActivity.kt$MainActivity.Companion$private const val REQUEST_CONFIGURATION = 3</ID>
+  </CurrentIssues>
+</SmellBaseline>

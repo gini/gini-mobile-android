@@ -98,7 +98,7 @@ android {
             resValue("string", "gini_api_client_secret", credentials["clientSecret"] ?: "")
         }
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
             signingConfig = signingConfigs.getByName("release")

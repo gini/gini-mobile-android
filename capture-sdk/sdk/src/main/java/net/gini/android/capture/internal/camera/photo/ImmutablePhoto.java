@@ -29,6 +29,7 @@ import androidx.annotation.VisibleForTesting;
 class ImmutablePhoto implements Photo {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImmutablePhoto.class);
+    private static final int PREVIEW_SHRINK_WEIGHT = 5_000;
 
     Bitmap mBitmapPreview;
     byte[] mData;
@@ -61,7 +62,11 @@ class ImmutablePhoto implements Photo {
         }
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 2;
+        if (mData.length / 1_000 > PREVIEW_SHRINK_WEIGHT) {
+            options.inSampleSize = 8;
+        } else {
+            options.inSampleSize = 2;
+        }
 
         return BitmapFactory.decodeByteArray(mData, 0, mData.length, options);
     }

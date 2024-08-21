@@ -19,11 +19,15 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.viewModels
+import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsBottomSheetOpenWithBinding
+import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
+import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
+import net.gini.android.health.sdk.util.getLocaleStringResource
 import net.gini.android.health.sdk.util.setBackgroundTint
 
 /**
@@ -32,12 +36,17 @@ import net.gini.android.health.sdk.util.setBackgroundTint
 internal interface OpenWithForwardListener {
     fun onForwardSelected()
 }
-internal class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?) : GhsBottomSheetDialogFragment() {
+internal class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val paymentComponent: PaymentComponent?) : GhsBottomSheetDialogFragment() {
 
-    constructor(): this(null, null)
+    constructor(): this(null, null, null)
 
     private val viewModel by viewModels<OpenWithViewModel> { OpenWithViewModel.Factory(paymentProviderApp) }
     private var binding: GhsBottomSheetOpenWithBinding by autoCleared()
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, GiniHealth.getSDKLanguage(requireContext())?.languageLocale())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,12 +66,12 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
                 setTextColor(paymentProviderApp.colors.textColor)
             }
             binding.ghsAppLayout.ghsAppName.text = paymentProviderApp.name
-            binding.ghsOpenWithTitle.text = String.format(getString(R.string.ghs_open_with_title), paymentProviderApp.name)
-            binding.ghsOpenWithDetails.text = String.format(getString(R.string.ghs_open_with_details), paymentProviderApp.name)
-            binding.ghsOpenWithInfo.text = createSpannableString(String.format(getString(R.string.ghs_open_with_info), paymentProviderApp.name, paymentProviderApp.name), paymentProviderApp.paymentProvider.playStoreUrl)
+            binding.ghsOpenWithTitle.text = String.format(getLocaleStringResource(R.string.ghs_open_with_title), paymentProviderApp.name)
+            binding.ghsOpenWithDetails.text = String.format(getLocaleStringResource(R.string.ghs_open_with_details), paymentProviderApp.name)
+            binding.ghsOpenWithInfo.text = createSpannableString(String.format(getLocaleStringResource(R.string.ghs_open_with_info), paymentProviderApp.name, paymentProviderApp.name), paymentProviderApp.paymentProvider.playStoreUrl)
             binding.ghsOpenWithInfo.movementMethod = LinkMovementMethod.getInstance()
         }
-        binding.ghsMoreLayout.ghsAppName.text = getString(R.string.ghs_open_with_more)
+        binding.ghsMoreLayout.ghsAppName.text = getLocaleStringResource(R.string.ghs_open_with_more)
         with(binding.ghsMoreLayout.ghsAppIcon) {
             setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ghs_more_icon))
             elevation = 0f
@@ -72,7 +81,7 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
     }
 
     private fun createSpannableString(text: String, playStoreUrl: String?): SpannedString {
-        val linkSpan = SpannableString(getString(R.string.ghs_open_with_download_app))
+        val linkSpan = SpannableString(getLocaleStringResource(R.string.ghs_open_with_download_app))
         val playStoreLauncher = object: ClickableSpan() {
             override fun onClick(p0: View) {
                 playStoreUrl?.let {
@@ -98,6 +107,10 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
         }
     }
 
+    private fun getLocaleStringResource(resourceId: Int): String {
+        return getLocaleStringResource(resourceId, paymentComponent?.giniHealth)
+    }
+
     companion object {
         /**
          * Create a new instance of the [OpenWithBottomSheet].
@@ -105,6 +118,6 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
          * @param paymentProviderApp the [PaymentProviderApp] which the user needs ti identify in the 'Share PDF' screen
          * @param listener the [OpenWithForwardListener] which will forward requests
          */
-        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener)
+        fun newInstance(paymentProviderApp: PaymentProviderApp, paymentComponent: PaymentComponent?, listener: OpenWithForwardListener) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener, paymentComponent)
     }
 }

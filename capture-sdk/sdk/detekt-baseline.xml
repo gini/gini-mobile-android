@@ -1,0 +1,311 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:DefaultPages.kt$DefaultPages.Companion$@JvmStatic fun asArrayList(isMultiPageEnabled: Boolean, isQRCodeScanningEnabled: Boolean): ArrayList&lt;OnboardingPage></ID>
+    <ID>CyclomaticComplexMethod:ErrorType.kt$ErrorType.Companion$@JvmStatic fun typeFromError(error: Error): ErrorType</ID>
+    <ID>CyclomaticComplexMethod:TypographyToTextStyleBridge.kt$@Composable fun textStyleFromTextAppearance( @StyleRes id: Int, density: Density = Density(LocalContext.current), setTextColors: Boolean = true ): TextStyle</ID>
+    <ID>CyclomaticComplexMethod:TypographyToTextStyleBridge.kt$internal fun TypedArray.getFontFamilyOrNull(index: Int): FontFamilyWithWeight?</ID>
+    <ID>EmptyCatchBlock:DeviceInfo.kt$DeviceInfo.CachedInfo${ }</ID>
+    <ID>EmptyDefaultConstructor:CameraXController.kt$CameraLifecycle$()</ID>
+    <ID>EmptyElseBlock:IntervalClickListener.kt$IntervalClickListener$if (view == null) return</ID>
+    <ID>EmptyFunctionBlock:CameraXController.kt$CameraXController.&lt;no name provided>${}</ID>
+    <ID>EmptyFunctionBlock:CustomLoadingIndicatorAdapter.kt$DefaultLoadingIndicatorAdapter${}</ID>
+    <ID>EmptyFunctionBlock:OnButtonLoadingIndicatorAdapter.kt$DefaultOnButtonLoadingIndicatorAdapter${}</ID>
+    <ID>EmptyFunctionBlock:OnboardingIllustrationAdapter.kt$ImageOnboardingIllustrationAdapter${}</ID>
+    <ID>EmptyFunctionBlock:PreviewPagesAdapter.kt$PreviewPagesAdapter.&lt;no name provided>${ }</ID>
+    <ID>ForbiddenComment:TypographyToTextStyleBridge.kt$// FIXME: Normally we'd use TextUnit.Unspecified,</ID>
+    <ID>ForbiddenComment:TypographyToTextStyleBridge.kt$// TODO: Compose does not expose a FontFamily for all strings yet</ID>
+    <ID>FunctionNaming:GiniAmountTextInput.kt$@Composable fun GiniAmountTextInput( amount: BigDecimal, currencyCode: String, label: String, modifier: Modifier = Modifier, onValueChange: (BigDecimal) -> Unit, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, decimalFormatter: DecimalFormatter = DecimalFormatter(), colors: GiniTextInputColors = GiniTextInputColors.colors(), )</ID>
+    <ID>FunctionNaming:GiniAmountTextInput.kt$@Composable private fun GiniTextInputPreview()</ID>
+    <ID>FunctionNaming:GiniAmountTextInput.kt$@Preview( showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES ) @Composable private fun GiniTextInputPreviewDark()</ID>
+    <ID>FunctionNaming:GiniAmountTextInput.kt$@Preview(showBackground = true) @Composable private fun GiniTextInputPreviewLight()</ID>
+    <ID>FunctionNaming:GiniButton.kt$@Composable fun GiniButton( onClick: () -> Unit, modifier: Modifier = Modifier, giniButtonColors: GiniButtonColors = GiniButtonColors.colors(), content: @Composable () -> Unit, )</ID>
+    <ID>FunctionNaming:GiniButton.kt$@Composable fun GiniButton( text: String, onClick: () -> Unit, modifier: Modifier = Modifier, giniButtonColors: GiniButtonColors = GiniButtonColors(), )</ID>
+    <ID>FunctionNaming:GiniButton.kt$@Preview @Composable private fun GiniContentButtonPreview()</ID>
+    <ID>FunctionNaming:GiniButton.kt$@Preview @Composable private fun GiniTextButtonPreview()</ID>
+    <ID>FunctionNaming:GiniDatePickerDialog.kt$@Composable fun GiniDatePickerDialog( onDismissRequest: () -> Unit, onSaved: (LocalDate) -> Unit, modifier: Modifier = Modifier, date: LocalDate = LocalDate.now(), selectableDates: SelectableDates = DatePickerDefaults.AllDates, colors: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors() )</ID>
+    <ID>FunctionNaming:GiniDatePickerDialog.kt$@Composable private fun DatePickerDialogPreview()</ID>
+    <ID>FunctionNaming:GiniDatePickerDialog.kt$@Preview @Composable private fun DatePickerDialogPreviewLight()</ID>
+    <ID>FunctionNaming:GiniDatePickerDialog.kt$@Preview(uiMode = UI_MODE_NIGHT_YES) @Composable private fun DatePickerDialogPreviewDark()</ID>
+    <ID>FunctionNaming:GiniSwitch.kt$@Composable fun GiniSwitch( modifier: Modifier = Modifier, checked: Boolean, onCheckedChange: (Boolean) -> Unit, giniSwitchColors: GiniSwitchColors = GiniSwitchColors.colors(), )</ID>
+    <ID>FunctionNaming:GiniSwitch.kt$@Preview(showBackground = true) @Composable private fun GiniSwitchPreview()</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Composable fun GiniTextInput( text: String, label: @Composable () -> Unit, onValueChange: (String) -> Unit, modifier: Modifier = Modifier, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, readOnly: Boolean = false, keyboardOptions: KeyboardOptions = KeyboardOptions.Default, colors: GiniTextInputColors = GiniTextInputColors.colors(), visualTransformation: VisualTransformation = VisualTransformation.None, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, )</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Composable fun GiniTextInput( text: String, label: String, modifier: Modifier = Modifier, onValueChange: (String) -> Unit, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, readOnly: Boolean = false, keyboardOptions: KeyboardOptions = KeyboardOptions.Default, colors: GiniTextInputColors = GiniTextInputColors.colors(), visualTransformation: VisualTransformation = VisualTransformation.None, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, )</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Composable private fun GiniTextInputPreview()</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Preview( showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES ) @Composable private fun GiniTextInputPreviewDark()</ID>
+    <ID>FunctionNaming:GiniTextInput.kt$@Preview(showBackground = true) @Composable private fun GiniTextInputPreviewLight()</ID>
+    <ID>FunctionNaming:GiniTheme.kt$@Composable fun GiniTheme( content: @Composable () -> Unit )</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Composable fun GiniTopBar( title: @Composable () -> Unit, navigationIcon: @Composable () -> Unit, actions: @Composable RowScope.() -> Unit, modifier: Modifier = Modifier, colors: GiniTopBarColors = GiniTopBarColors.colors(), )</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Composable fun GiniTopBar( title: String, modifier: Modifier = Modifier, navigationIcon: @Composable () -> Unit = {}, actions: @Composable RowScope.() -> Unit = {}, colors: GiniTopBarColors = GiniTopBarColors.colors(), )</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Composable private fun GiniTopBarPreview()</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Preview @Composable private fun GiniTopBarPreviewLight()</ID>
+    <ID>FunctionNaming:GiniTopBar.kt$@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES) @Composable private fun GiniTopBarPreviewDark()</ID>
+    <ID>LongMethod:CameraXController.kt$CameraXController$override fun open(): CompletableFuture&lt;Void></ID>
+    <ID>LongMethod:GiniColorPalette.kt$internal fun giniDarkColorScheme( giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives() )</ID>
+    <ID>LongMethod:GiniColorPalette.kt$internal fun giniLightColorScheme( giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives() )</ID>
+    <ID>LongMethod:GiniDatePickerDialog.kt$@Composable fun GiniDatePickerDialog( onDismissRequest: () -> Unit, onSaved: (LocalDate) -> Unit, modifier: Modifier = Modifier, date: LocalDate = LocalDate.now(), selectableDates: SelectableDates = DatePickerDefaults.AllDates, colors: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors() )</ID>
+    <ID>LongMethod:TypographyToTextStyleBridge.kt$@Composable fun textStyleFromTextAppearance( @StyleRes id: Int, density: Density = Density(LocalContext.current), setTextColors: Boolean = true ): TextStyle</ID>
+    <ID>LongParameterList:GiniAmountTextInput.kt$( amount: BigDecimal, currencyCode: String, label: String, modifier: Modifier = Modifier, onValueChange: (BigDecimal) -> Unit, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, decimalFormatter: DecimalFormatter = DecimalFormatter(), colors: GiniTextInputColors = GiniTextInputColors.colors(), )</ID>
+    <ID>LongParameterList:GiniDatePickerDialog.kt$( onDismissRequest: () -> Unit, onSaved: (LocalDate) -> Unit, modifier: Modifier = Modifier, date: LocalDate = LocalDate.now(), selectableDates: SelectableDates = DatePickerDefaults.AllDates, colors: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors() )</ID>
+    <ID>LongParameterList:GiniDatePickerDialogColors.kt$GiniDatePickerDialogColors.Companion$( dateSelected: Color = GiniTheme.colorScheme.datePicker.date.containerFocused, borderDate: Color = GiniTheme.colorScheme.datePicker.date.containerOutlined, textHeadline: Color = GiniTheme.colorScheme.datePicker.text.primary, textSupporting: Color = GiniTheme.colorScheme.datePicker.text.secondary, textButtons: Color = GiniTheme.colorScheme.datePicker.text.accent, textDateToday: Color = GiniTheme.colorScheme.datePicker.text.primary, textDateSelected: Color = GiniTheme.colorScheme.datePicker.date.contentFocused, textDateEnabled: Color = GiniTheme.colorScheme.datePicker.text.primary, textDateDisabled: Color = GiniTheme.colorScheme.datePicker.text.secondary, divider: Color = GiniTheme.colorScheme.datePicker.divider, )</ID>
+    <ID>LongParameterList:GiniTextInput.kt$( text: String, label: @Composable () -> Unit, onValueChange: (String) -> Unit, modifier: Modifier = Modifier, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, readOnly: Boolean = false, keyboardOptions: KeyboardOptions = KeyboardOptions.Default, colors: GiniTextInputColors = GiniTextInputColors.colors(), visualTransformation: VisualTransformation = VisualTransformation.None, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, )</ID>
+    <ID>LongParameterList:GiniTextInput.kt$( text: String, label: String, modifier: Modifier = Modifier, onValueChange: (String) -> Unit, trailingContent: @Composable () -> Unit = {}, enabled: Boolean = true, isError: Boolean = false, readOnly: Boolean = false, keyboardOptions: KeyboardOptions = KeyboardOptions.Default, colors: GiniTextInputColors = GiniTextInputColors.colors(), visualTransformation: VisualTransformation = VisualTransformation.None, interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }, )</ID>
+    <ID>LongParameterList:GiniTextInputColors.kt$GiniTextInputColors.Companion$( containerFocused: Color = GiniTheme.colorScheme.textField.container, containerUnfocused: Color = GiniTheme.colorScheme.textField.container, containerDisabled: Color = GiniTheme.colorScheme.textField.container, textFocused: Color = GiniTheme.colorScheme.textField.text.focused, textUnfocused: Color = GiniTheme.colorScheme.textField.text.unfocused, textDisabled: Color = GiniTheme.colorScheme.textField.text.disabled, textError: Color = GiniTheme.colorScheme.textField.text.focused, indicatorFocused: Color = GiniTheme.colorScheme.textField.indicator.focused, indicatorUnfocused: Color = GiniTheme.colorScheme.textField.indicator.unfocused, indicatorDisabled: Color = GiniTheme.colorScheme.textField.indicator.disabled, indicatorError: Color = GiniTheme.colorScheme.textField.indicator.error, trailingContentFocused: Color = GiniTheme.colorScheme.textField.content.trailing, trailingContentUnfocused: Color = GiniTheme.colorScheme.textField.content.trailing, trailingContentDisabled: Color = GiniTheme.colorScheme.textField.content.trailing, trailingContentError: Color = GiniTheme.colorScheme.textField.content.trailing, labelError: Color = GiniTheme.colorScheme.textField.label.error, labelUnfocused: Color = GiniTheme.colorScheme.textField.label.unfocused, labelFocused: Color = GiniTheme.colorScheme.textField.label.focused, labelDisabled: Color = GiniTheme.colorScheme.textField.label.disabled, )</ID>
+    <ID>LongParameterList:IBANRecognizer.kt$IBANRecognizer$( byteArray: ByteArray, width: Int, height: Int, rotationDegrees: Int, doneCallback: (List&lt;String>) -> Unit, cancelledCallback: () -> Unit )</ID>
+    <ID>LongParameterList:IBANRecognizer.kt$IBANRecognizer$( image: Image, width: Int, height: Int, rotationDegrees: Int, doneCallback: (List&lt;String>) -> Unit, cancelledCallback: () -> Unit )</ID>
+    <ID>LongParameterList:QRCodePopup.kt$QRCodePopup$( private val fragmentImplCallback: FragmentImplCallback, private val popupView: View, private val supportedBackgroundView: View? = null, private val loadingIndicatorContainer: InjectedViewContainer&lt;CustomLoadingIndicatorAdapter>?, private val hideDelayMs: Long, private val supported: Boolean, private var onClicked: ((T?) -> Unit)? = {}, private val onHide: (() -> Unit)? = null )</ID>
+    <ID>LongParameterList:TextRecognizer.kt$TextRecognizer$( byteArray: ByteArray, width: Int, height: Int, rotationDegrees: Int, doneCallback: (RecognizedText?) -> Unit, cancelledCallback: () -> Unit)</ID>
+    <ID>LongParameterList:TextRecognizer.kt$TextRecognizer$(image: Image, width: Int, height: Int, rotationDegrees: Int, doneCallback: (RecognizedText?) -> Unit, cancelledCallback: () -> Unit)</ID>
+    <ID>MagicNumber:AmplitudeUserAnalyticsEventTracker.kt$AmplitudeUserAnalyticsEventTracker$5000</ID>
+    <ID>MagicNumber:CameraXController.kt$CameraXController$2372</ID>
+    <ID>MagicNumber:CameraXController.kt$CameraXController$4216</ID>
+    <ID>MagicNumber:CropToCameraFrameTextRecognizer.kt$CropToCameraFrameTextRecognizer$270</ID>
+    <ID>MagicNumber:CropToCameraFrameTextRecognizer.kt$CropToCameraFrameTextRecognizer$360</ID>
+    <ID>MagicNumber:CropToCameraFrameTextRecognizer.kt$CropToCameraFrameTextRecognizer$90</ID>
+    <ID>MagicNumber:DecimalFormatter.kt$DecimalFormatter$100</ID>
+    <ID>MagicNumber:DecimalFormatter.kt$DecimalFormatter$7</ID>
+    <ID>MagicNumber:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$3</ID>
+    <ID>MagicNumber:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$4</ID>
+    <ID>MagicNumber:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$5</ID>
+    <ID>MagicNumber:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$6</ID>
+    <ID>MagicNumber:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$7</ID>
+    <ID>MagicNumber:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$8</ID>
+    <ID>MagicNumber:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$9</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$400</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$401</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$402</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$498</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$500</ID>
+    <ID>MagicNumber:ErrorType.kt$ErrorType.Companion$503</ID>
+    <ID>MagicNumber:Extensions.kt$100</ID>
+    <ID>MagicNumber:FileImportHelpFragment.kt$FileImportHelpFragment$5</ID>
+    <ID>MagicNumber:FileImportHelpFragment.kt$FileImportHelpFragment$500</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF000000</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF048016</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF09B523</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF0A84FF</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF121212</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF313131</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF3193FD</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF32D74B</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF4A4A4A</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF626262</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF62ACFB</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF7A7A7A</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF830801</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF93C4F9</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFA17503</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFBFBFBF</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFC4DDF7</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFCCCCCC</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFD0ECD4</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFD9190E</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFD9A00E</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFD9D9D9</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFDEEEE1</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFE5E5E5</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFECD0D0</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFECE4D0</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFEEDEDE</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFEEEADE</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFF2F2F2</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFFF453A</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFFFC73A</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFFFFFFF</ID>
+    <ID>MagicNumber:GiniDatePickerDialog.kt$0.95f</ID>
+    <ID>MagicNumber:GiniDatePickerDialog.kt$12</ID>
+    <ID>MagicNumber:GiniSwitch.kt$0.7f</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$15</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$16</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$18</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$19</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$20</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$21</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$22</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$23</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$24</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$25</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$26</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$27</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$28</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$29</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$30</ID>
+    <ID>MagicNumber:IBANKnowledge.kt$IBANKnowledge$31</ID>
+    <ID>MagicNumber:IBANRecognizerFilter.kt$IBANRecognizerFilter$4</ID>
+    <ID>MagicNumber:IBANValidator.kt$IBANValidator$10</ID>
+    <ID>MagicNumber:IBANValidator.kt$IBANValidator$35</ID>
+    <ID>MagicNumber:IBANValidator.kt$IBANValidator$4</ID>
+    <ID>MagicNumber:IBANValidator.kt$IBANValidator$55</ID>
+    <ID>MagicNumber:IntervalClickListenerHelper.kt$IntervalClickListenerHelper$500L</ID>
+    <ID>MagicNumber:QRCodePopup.kt$QRCodePopup$1000</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$149</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$150</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$22</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$23</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$249</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$250</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$349</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$350</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$449</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$450</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$549</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$550</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$649</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$650</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$749</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$750</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$849</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$850</ID>
+    <ID>MagicNumber:TypographyToTextStyleBridge.kt$999</ID>
+    <ID>MagicNumber:Width.kt$600</ID>
+    <ID>MagicNumber:Width.kt$840</ID>
+    <ID>MatchingDeclarationName:GiniColorPalette.kt$GiniColorScheme</ID>
+    <ID>MatchingDeclarationName:GiniColorPrimirives.kt$GiniColorPrimitives</ID>
+    <ID>MaxLineLength:BundleHelper.kt$classLoader: ClassLoader? = null</ID>
+    <ID>MaxLineLength:BundleHelper.kt$fun</ID>
+    <ID>MaxLineLength:CropToCameraFrameTextRecognizer.kt$CropToCameraFrameTextRecognizer$actualTextRecognizer</ID>
+    <ID>MaxLineLength:DefaultPages.kt$DefaultPages.Companion$if</ID>
+    <ID>MaxLineLength:DefaultPages.kt$DefaultPages.Companion$onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingAlignCornersIllustrationAdapter</ID>
+    <ID>MaxLineLength:DefaultPages.kt$DefaultPages.Companion$onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingLightingIllustrationAdapter</ID>
+    <ID>MaxLineLength:DefaultPages.kt$DefaultPages.Companion$onboardingPage.illustrationAdapter = GiniCapture.getInstance().onboardingMultiPageIllustrationAdapter</ID>
+    <ID>MaxLineLength:ErrorFragmentImpl.kt$ErrorFragmentImpl$view.findViewById&lt;InjectedViewContainer&lt;NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)</ID>
+    <ID>MaxLineLength:FailureException.kt$FailureException.Companion$*</ID>
+    <ID>MaxLineLength:FailureException.kt$FailureException.Companion$throwable is CompletionException &amp;&amp; throwable.cause is FailureException -> throwable.cause as FailureException</ID>
+    <ID>MaxLineLength:FileImportHelpFragment.kt$FileImportHelpFragment$params.setMargins(resources.getDimension(R.dimen.gc_large).toInt(), 0, resources.getDimension(R.dimen.gc_large).toInt(), bottomPadding)</ID>
+    <ID>MaxLineLength:FileImportHelpFragment.kt$FileImportHelpFragment$snackbar</ID>
+    <ID>MaxLineLength:GiniCaptureFragment.kt$GiniCaptureFragment$// To be the first to handle back button pressed events we need to set this fragment as the primary navigation fragment</ID>
+    <ID>MaxLineLength:GiniCaptureFragment.kt$GiniCaptureFragment$UserAnalyticsEventSuperProperty.EntryPoint(UserAnalyticsEventSuperProperty.EntryPoint.EntryPointType.OPEN_WITH)</ID>
+    <ID>MaxLineLength:HelpFragment.kt$HelpFragment$HelpItem.SupportedFormats -> findNavController().navigate(HelpFragmentDirections.toSupportedFormatsHelpFragment())</ID>
+    <ID>MaxLineLength:HelpNavigationBarBottomAdapter.kt$DefaultHelpNavigationBarBottomAdapter$val viewBinding = GcHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
+    <ID>MaxLineLength:IBANKnowledge.kt$IBANKnowledge$*</ID>
+    <ID>MaxLineLength:IBANRecognizerImpl.kt$IBANRecognizerImpl$*</ID>
+    <ID>MaxLineLength:IBANValidator.kt$IBANValidator.IBANError$EMPTY</ID>
+    <ID>MaxLineLength:InjectedViewAdapter.kt$InjectedViewAdapterInstance$*</ID>
+    <ID>MaxLineLength:InjectedViewContainer.kt$InjectedViewAdapterConfigurator$*</ID>
+    <ID>MaxLineLength:InjectedViewContainer.kt$InjectedViewContainer.&lt;no name provided>$"{}: Injected view adapter for instance {} is in another container and was not destroyed"</ID>
+    <ID>MaxLineLength:IntervalToolbarMenuItemIntervalClickListener.kt$IntervalToolbarMenuItemIntervalClickListener$class</ID>
+    <ID>MaxLineLength:TypographyToTextStyleBridge.kt$fontFeatureSettings = a.getString(R.styleable.ComposeThemeAdapterTextAppearance_android_fontFeatureSettings)</ID>
+    <ID>MaxLineLength:UserAnalytics.kt$UserAnalytics$(eventTracker as? BufferedUserAnalyticsEventTracker)?.setPlatformTokens(*tokens, networkRequestsManager = networkRequestsManager)</ID>
+    <ID>NestedBlockDepth:TypographyToTextStyleBridge.kt$internal fun TypedArray.getFontFamilyOrNull(index: Int): FontFamilyWithWeight?</ID>
+    <ID>NewLineAtEndOfFile:Amount.kt$net.gini.android.capture.Amount.kt</ID>
+    <ID>NewLineAtEndOfFile:AmountCurrency.kt$net.gini.android.capture.AmountCurrency.kt</ID>
+    <ID>NewLineAtEndOfFile:AmplitudeUserAnalyticsEventTracker.kt$net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker.kt</ID>
+    <ID>NewLineAtEndOfFile:AnalyticsKeyPairProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.AnalyticsKeyPairProperty.kt</ID>
+    <ID>NewLineAtEndOfFile:AutoClearedValue.kt$net.gini.android.capture.internal.util.AutoClearedValue.kt</ID>
+    <ID>NewLineAtEndOfFile:BufferedUserAnalyticsEventTracker.kt$net.gini.android.capture.tracking.useranalytics.BufferedUserAnalyticsEventTracker.kt</ID>
+    <ID>NewLineAtEndOfFile:BundleHelper.kt$net.gini.android.capture.internal.util.BundleHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraHolder.kt$net.gini.android.capture.requirements.CameraHolder.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraParametersHelper.kt$net.gini.android.capture.internal.camera.api.CameraParametersHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraPreviewContainer.kt$net.gini.android.capture.internal.camera.view.CameraPreviewContainer.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraXController.kt$net.gini.android.capture.internal.camera.api.camerax.CameraXController.kt</ID>
+    <ID>NewLineAtEndOfFile:CameraXHolder.kt$net.gini.android.capture.requirements.CameraXHolder.kt</ID>
+    <ID>NewLineAtEndOfFile:CancelListener.kt$net.gini.android.capture.internal.util.CancelListener.kt</ID>
+    <ID>NewLineAtEndOfFile:CaptureSDKResult.kt$net.gini.android.capture.CaptureSDKResult.kt</ID>
+    <ID>NewLineAtEndOfFile:ClickListenerExt.kt$net.gini.android.capture.internal.ui.ClickListenerExt.kt</ID>
+    <ID>NewLineAtEndOfFile:ConfigurationNetworkResult.kt$net.gini.android.capture.internal.network.ConfigurationNetworkResult.kt</ID>
+    <ID>NewLineAtEndOfFile:CropToCameraFrameTextRecognizer.kt$net.gini.android.capture.internal.textrecognition.CropToCameraFrameTextRecognizer.kt</ID>
+    <ID>NewLineAtEndOfFile:DecimalFormatter.kt$net.gini.android.capture.ui.components.textinput.amount.DecimalFormatter.kt</ID>
+    <ID>NewLineAtEndOfFile:DecimalInputVisualTransformation.kt$net.gini.android.capture.ui.components.textinput.amount.DecimalInputVisualTransformation.kt</ID>
+    <ID>NewLineAtEndOfFile:DeviceInfo.kt$net.gini.android.capture.tracking.useranalytics.tracker.DeviceInfo.kt</ID>
+    <ID>NewLineAtEndOfFile:EntryPoint.kt$net.gini.android.capture.EntryPoint.kt</ID>
+    <ID>NewLineAtEndOfFile:ErrorLogger.kt$net.gini.android.capture.logging.ErrorLogger.kt</ID>
+    <ID>NewLineAtEndOfFile:ErrorLoggerListener.kt$net.gini.android.capture.logging.ErrorLoggerListener.kt</ID>
+    <ID>NewLineAtEndOfFile:ErrorType.kt$net.gini.android.capture.error.ErrorType.kt</ID>
+    <ID>NewLineAtEndOfFile:FailureException.kt$net.gini.android.capture.internal.network.FailureException.kt</ID>
+    <ID>NewLineAtEndOfFile:FileImportHelpFragment.kt$net.gini.android.capture.help.FileImportHelpFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:FragmentExtensions.kt$net.gini.android.capture.internal.util.FragmentExtensions.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniButton.kt$net.gini.android.capture.ui.components.button.filled.GiniButton.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniButtonColors.kt$net.gini.android.capture.ui.components.button.filled.GiniButtonColors.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniDatePickerDialog.kt$net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniDatePickerDialogColors.kt$net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialogColors.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniSwitch.kt$net.gini.android.capture.ui.components.switcher.GiniSwitch.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniSwitchColors.kt$net.gini.android.capture.ui.components.switcher.GiniSwitchColors.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniTextInput.kt$net.gini.android.capture.ui.components.textinput.GiniTextInput.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniTextInputColors.kt$net.gini.android.capture.ui.components.textinput.GiniTextInputColors.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniTopBar.kt$net.gini.android.capture.ui.components.topbar.GiniTopBar.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniTopBarColors.kt$net.gini.android.capture.ui.components.topbar.GiniTopBarColors.kt</ID>
+    <ID>NewLineAtEndOfFile:HelpFragment.kt$net.gini.android.capture.help.HelpFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:HelpItem.kt$net.gini.android.capture.help.HelpItem.kt</ID>
+    <ID>NewLineAtEndOfFile:HelpItemsAdapter.kt$net.gini.android.capture.help.HelpItemsAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:HintPopup.kt$net.gini.android.capture.internal.camera.view.HintPopup.kt</ID>
+    <ID>NewLineAtEndOfFile:IBANKnowledge.kt$net.gini.android.capture.internal.iban.IBANKnowledge.kt</ID>
+    <ID>NewLineAtEndOfFile:IBANRecognizer.kt$net.gini.android.capture.internal.iban.IBANRecognizer.kt</ID>
+    <ID>NewLineAtEndOfFile:IBANRecognizerFilter.kt$net.gini.android.capture.internal.iban.IBANRecognizerFilter.kt</ID>
+    <ID>NewLineAtEndOfFile:IBANValidator.kt$net.gini.android.capture.internal.iban.IBANValidator.kt</ID>
+    <ID>NewLineAtEndOfFile:InjectedViewAdapter.kt$net.gini.android.capture.view.InjectedViewAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListener.kt$net.gini.android.capture.internal.ui.IntervalClickListener.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListenerHelper.kt$net.gini.android.capture.internal.ui.IntervalClickListenerHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalToolbarMenuItemIntervalClickListener.kt$net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener.kt</ID>
+    <ID>NewLineAtEndOfFile:MiddlePageManager.kt$net.gini.android.capture.review.multipage.previews.MiddlePageManager.kt</ID>
+    <ID>NewLineAtEndOfFile:NavigationBarTopAdapter.kt$net.gini.android.capture.view.NavigationBarTopAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:OnButtonLoadingIndicatorAdapter.kt$net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:OnboardingIllustrationAdapter.kt$net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:OnboardingNavigationBarBottomAdapter.kt$net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:PhotoTipsHelpFragment.kt$net.gini.android.capture.help.PhotoTipsHelpFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:PreviewPagesAdapter.kt$net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:QRCodePopup.kt$net.gini.android.capture.internal.camera.view.QRCodePopup.kt</ID>
+    <ID>NewLineAtEndOfFile:RecognizedText.kt$net.gini.android.capture.internal.textrecognition.RecognizedText.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewNavigationBarBottomAdapter.kt$net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:SnappedItemChangeRecyclerViewListener.kt$net.gini.android.capture.util.recyclerview.SnappedItemChangeRecyclerViewListener.kt</ID>
+    <ID>NewLineAtEndOfFile:SupportedFormatsHelpFragment.kt$net.gini.android.capture.help.SupportedFormatsHelpFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:TextRecognizer.kt$net.gini.android.capture.internal.textrecognition.TextRecognizer.kt</ID>
+    <ID>NewLineAtEndOfFile:TypographyToTextStyleBridge.kt$net.gini.android.capture.ui.theme.typography.TypographyToTextStyleBridge.kt</ID>
+    <ID>NewLineAtEndOfFile:UniqueIdProvider.kt$net.gini.android.capture.internal.provider.UniqueIdProvider.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalytics.kt$net.gini.android.capture.tracking.useranalytics.UserAnalytics.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsEvent.kt$net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsEventProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsEventSuperProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsMappers.kt$net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappers.kt</ID>
+    <ID>NewLineAtEndOfFile:UserAnalyticsUserProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty.kt</ID>
+    <ID>NewLineAtEndOfFile:Width.kt$net.gini.android.capture.ui.theme.modifier.Width.kt</ID>
+    <ID>ReturnCount:CameraXController.kt$CameraXController$override fun open(): CompletableFuture&lt;Void></ID>
+    <ID>ReturnCount:CameraXController.kt$CameraXController$override fun takePicture(): CompletableFuture&lt;Photo></ID>
+    <ID>ReturnCount:ErrorFragmentImpl.kt$ErrorFragmentImpl$private fun shouldAllowRetakeImages(): Boolean</ID>
+    <ID>ReturnCount:ErrorType.kt$ErrorType.Companion$@JvmStatic fun typeFromError(error: Error): ErrorType</ID>
+    <ID>ReturnCount:ErrorType.kt$ErrorType.Companion$private fun isInvalidUserError(error: Error): Boolean</ID>
+    <ID>ReturnCount:GiniCaptureFragment.kt$CaptureFragmentFactory$override fun instantiate(classLoader: ClassLoader, className: String): Fragment</ID>
+    <ID>ReturnCount:SnappedItemChangeRecyclerViewListener.kt$SnappedItemChangeRecyclerViewListener$override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int)</ID>
+    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$e: Exception</ID>
+    <ID>SwallowedException:DeviceInfo.kt$DeviceInfo.CachedInfo$e: PackageManager.NameNotFoundException</ID>
+    <ID>SwallowedException:ErrorType.kt$ErrorType.Companion$e: Exception</ID>
+    <ID>SwallowedException:IBANRecognizerImpl.kt$IBANRecognizerImpl$e: IBANValidator.IllegalIBANException</ID>
+    <ID>ThrowsCount:Extensions.kt$@Throws(CameraException::class) private fun cropByteArray(data: ByteArray, cropRect: Rect?): ByteArray</ID>
+    <ID>ThrowsCount:IBANValidator.kt$IBANValidator$@Throws(IllegalIBANException::class) private fun validateLength(iban: String)</ID>
+    <ID>TooGenericExceptionCaught:CameraXController.kt$CameraXController$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:CameraXHolder.kt$CameraXHolder$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DeviceInfo.kt$DeviceInfo.CachedInfo$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ErrorType.kt$ErrorType.Companion$e: Exception</ID>
+    <ID>TooManyFunctions:CameraXController.kt$CameraXController : CameraInterface</ID>
+    <ID>TooManyFunctions:FileChooserFragment.kt$FileChooserFragment : BottomSheetDialogFragment</ID>
+    <ID>TooManyFunctions:GiniCaptureFragment.kt$GiniCaptureFragment : FragmentCameraFragmentListenerAnalysisFragmentListenerEnterManuallyButtonListenerCancelListener</ID>
+    <ID>TooManyFunctions:HelpFragment.kt$HelpFragment : Fragment</ID>
+    <ID>UnusedParameter:ErrorFragmentImpl.kt$ErrorFragmentImpl$savedInstanceState: Bundle?</ID>
+    <ID>UnusedParameter:TypographyToTextStyleBridge.kt$setTextColors: Boolean = true</ID>
+    <ID>UnusedPrivateMember:GiniAmountTextInput.kt$@Preview( showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES ) @Composable private fun GiniTextInputPreviewDark()</ID>
+    <ID>UnusedPrivateMember:GiniAmountTextInput.kt$@Preview(showBackground = true) @Composable private fun GiniTextInputPreviewLight()</ID>
+    <ID>UnusedPrivateMember:GiniButton.kt$@Preview @Composable private fun GiniContentButtonPreview()</ID>
+    <ID>UnusedPrivateMember:GiniButton.kt$@Preview @Composable private fun GiniTextButtonPreview()</ID>
+    <ID>UnusedPrivateMember:GiniDatePickerDialog.kt$@Preview @Composable private fun DatePickerDialogPreviewLight()</ID>
+    <ID>UnusedPrivateMember:GiniDatePickerDialog.kt$@Preview(uiMode = UI_MODE_NIGHT_YES) @Composable private fun DatePickerDialogPreviewDark()</ID>
+    <ID>UnusedPrivateMember:GiniSwitch.kt$@Preview(showBackground = true) @Composable private fun GiniSwitchPreview()</ID>
+    <ID>UnusedPrivateMember:GiniTextInput.kt$@Preview( showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES ) @Composable private fun GiniTextInputPreviewDark()</ID>
+    <ID>UnusedPrivateMember:GiniTextInput.kt$@Preview(showBackground = true) @Composable private fun GiniTextInputPreviewLight()</ID>
+    <ID>UnusedPrivateMember:GiniTopBar.kt$@Preview @Composable private fun GiniTopBarPreviewLight()</ID>
+    <ID>UnusedPrivateMember:GiniTopBar.kt$@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES) @Composable private fun GiniTopBarPreviewDark()</ID>
+    <ID>UnusedPrivateProperty:AmplitudeUserAnalyticsEventTracker.kt$AmplitudeUserAnalyticsEventTracker$val version = BuildConfig.VERSION_NAME</ID>
+    <ID>UnusedPrivateProperty:DecimalInputVisualTransformation.kt$DecimalInputVisualTransformation.CustomOffsetMapping$val thousandSeparatorCount = formatted.count { it == formattingSymbols.groupingSeparator }</ID>
+    <ID>UnusedPrivateProperty:DeviceInfo.kt$DeviceInfo$private val LOG = LoggerFactory.getLogger(DeviceInfo::class.java)</ID>
+    <ID>UseCheckOrError:AutoClearedValue.kt$AutoClearedValue$throw IllegalStateException( "should never call auto-cleared-value get when it might not be available" )</ID>
+    <ID>UseCheckOrError:UserAnalytics.kt$UserAnalytics$throw IllegalStateException( "You need to initialize analytics by calling `UserAnalytics.initialize(...)`" )</ID>
+    <ID>UseRequire:IBANRecognizerImpl.kt$IBANRecognizerImpl$throw IllegalArgumentException("Image height is 0")</ID>
+    <ID>UseRequire:IBANRecognizerImpl.kt$IBANRecognizerImpl$throw IllegalArgumentException("Image width is 0")</ID>
+    <ID>VariableNaming:AmplitudeUserAnalyticsEventTracker.kt$AmplitudeUserAnalyticsEventTracker$private val LOG = LoggerFactory.getLogger(AmplitudeUserAnalyticsEventTracker::class.java)</ID>
+    <ID>VariableNaming:BufferedUserAnalyticsEventTracker.kt$BufferedUserAnalyticsEventTracker$private val LOG = LoggerFactory.getLogger(BufferedUserAnalyticsEventTracker::class.java)</ID>
+    <ID>VariableNaming:DeviceInfo.kt$DeviceInfo$private val LOG = LoggerFactory.getLogger(DeviceInfo::class.java)</ID>
+    <ID>WildcardImport:CameraXController.kt$import android.graphics.*</ID>
+    <ID>WildcardImport:CameraXController.kt$import androidx.camera.core.*</ID>
+    <ID>WildcardImport:NavigationBarTopAdapter.kt$import android.view.*</ID>
+    <ID>WildcardImport:NavigationBarTopAdapter.kt$import net.gini.android.capture.view.NavButtonType.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

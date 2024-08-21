@@ -1,5 +1,7 @@
 package net.gini.android.bank.api;
 
+import net.gini.android.bank.api.models.AmplitudeRoot
+import net.gini.android.bank.api.models.Configuration
 import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
@@ -45,4 +47,11 @@ class BankApiDocumentManager internal constructor(private val documentRepository
         errorEvent: ErrorEvent
     ): Resource<Unit> =
         documentRepository.logErrorEvent(errorEvent)
+
+
+    suspend fun getConfigurations(): Resource<Configuration> =
+        documentRepository.getConfigurations()
+
+    suspend fun sendEvents(amplitudeRoot: AmplitudeRoot): Resource<Unit> =
+        documentRepository.sendEvents(amplitudeRoot)
 }

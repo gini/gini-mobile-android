@@ -3,7 +3,6 @@ package net.gini.android.core.api.authorization
 import android.util.Base64
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.authorization.apimodels.SessionToken
-import net.gini.android.core.api.authorization.apimodels.SessionTokenInfo
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import net.gini.android.core.api.authorization.apimodels.UserResponseModel
 import net.gini.android.core.api.requests.ApiException
@@ -38,13 +37,6 @@ internal class UserRemoteSource(
         SafeApiRequest.apiRequest {
             userService.createUser(bearerHeaderMap(accessToken), userRequestModel)
         }
-    }
-
-    suspend fun getGiniApiSessionTokenInfo(token: String, authAccessToken: String): SessionTokenInfo = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
-           userService.getGiniApiSessionTokenInfo(bearerHeaderMap(authAccessToken), token)
-        }
-        response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
     suspend fun getUserInfo(uri: String, accessToken: String): UserResponseModel = withContext(coroutineContext) {
