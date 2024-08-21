@@ -33,6 +33,7 @@ class CaptureScreenTests {
     @Test
     fun test1_flashIsOnByDefault() {
         mainScreen.clickSettingButton()
+        configurationScreen.scrollToAnalysisText()
         configurationScreen.clickFlashToggleToEnable()
         pressBack()
         mainScreen.clickPhotoPaymentButton()
@@ -44,6 +45,7 @@ class CaptureScreenTests {
     @Test
     fun test2_flashEnabledWhenImageIsCaptured() {
         mainScreen.clickSettingButton()
+        configurationScreen.scrollToAnalysisText()
         configurationScreen.clickFlashToggleToEnable()
         pressBack()
         mainScreen.clickPhotoPaymentButton()
@@ -56,6 +58,7 @@ class CaptureScreenTests {
     @Test
     fun test3_flashIsOffByDefault() {
         mainScreen.clickSettingButton()
+        configurationScreen.scrollToAnalysisText()
         configurationScreen.assertFlashToggleIsDisable()
         pressBack()
         mainScreen.clickPhotoPaymentButton()
@@ -67,6 +70,7 @@ class CaptureScreenTests {
     @Test
     fun test4_flashDisabledWhenImageIsCaptured() {
         mainScreen.clickSettingButton()
+        configurationScreen.scrollToAnalysisText()
         configurationScreen.assertFlashToggleIsDisable()
         pressBack()
         mainScreen.clickPhotoPaymentButton()
