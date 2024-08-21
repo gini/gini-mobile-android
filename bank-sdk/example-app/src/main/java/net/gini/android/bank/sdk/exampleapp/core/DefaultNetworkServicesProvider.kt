@@ -8,7 +8,7 @@ import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
 
-class DefaultServiceNetworkApi (internal val context: Context, internal val logger: org.slf4j.Logger) {
+class DefaultNetworkServicesProvider (internal val context: Context, internal val logger: org.slf4j.Logger) {
 
     private var clientSecret: String? = null
     private var clientId: String? = null

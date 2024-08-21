@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.exampleapp.core.DefaultServiceNetworkApi
+import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.core.ResultWrapper
 import net.gini.android.bank.sdk.exampleapp.core.wrapToResult
 import net.gini.android.core.api.models.PaymentRequest
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PayViewModel @Inject constructor(
-    defaultServiceNetworkApi: DefaultServiceNetworkApi,
+    defaultNetworkServicesProvider: DefaultNetworkServicesProvider,
 ) : ViewModel(), PayViewModelInterface {
 
     private val _paymentRequest = MutableStateFlow<ResultWrapper<PaymentRequest>>(ResultWrapper.Loading())
@@ -30,7 +30,7 @@ class PayViewModel @Inject constructor(
     private var requestId: String? = null
 
     init {
-        GiniBank.setGiniApi(defaultServiceNetworkApi.giniBankAPI)
+        GiniBank.setGiniApi(defaultNetworkServicesProvider.giniBankAPI)
     }
 
     override fun fetchPaymentRequest(requestId: String) {

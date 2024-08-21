@@ -6,7 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import net.gini.android.bank.sdk.exampleapp.core.DefaultServiceNetworkApi
+import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import org.slf4j.Logger
 import javax.inject.Singleton
 
@@ -16,10 +16,10 @@ class GiniExampleModule {
 
     @Singleton
     @Provides
-    fun bindDefaultServiceNetworkApi(
+    fun bindDefaultNetworkServicesProvider(
         @ApplicationContext context: Context,
         logger: Logger
-    ): DefaultServiceNetworkApi {
-        return DefaultServiceNetworkApi(context, logger)
+    ): DefaultNetworkServicesProvider {
+        return DefaultNetworkServicesProvider(context, logger)
     }
 }

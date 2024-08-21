@@ -20,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.ExampleApp
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.DefaultServiceNetworkApi
+import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityExtractionsBinding
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
@@ -42,7 +42,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
 
     @Inject
-    internal lateinit var defaultServiceNetworkApi: DefaultServiceNetworkApi
+    internal lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
 
     // {extraction name} to it's {entity name}
     private val editableSpecificExtractions = hashMapOf(
@@ -67,8 +67,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     }
 
     private fun showAnalyzedDocumentId() {
-        val documentId = defaultServiceNetworkApi.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id
-            ?: defaultServiceNetworkApi.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id ?: ""
+        val documentId = defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id
+            ?: defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id ?: ""
         binding.textDocumentId.text = getString(R.string.analyzed_document_id, documentId)
     }
 

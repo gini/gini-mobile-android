@@ -14,7 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.DefaultServiceNetworkApi
+import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityConfigurationBinding
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CAMERA_PERMISSION_BUNDLE
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
@@ -28,7 +28,7 @@ class ConfigurationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityConfigurationBinding
     @Inject
-    lateinit var defaultServiceNetworkApi: DefaultServiceNetworkApi
+    lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
 
     private val configurationViewModel: ConfigurationViewModel by viewModels()
 
@@ -553,7 +553,7 @@ class ConfigurationActivity : AppCompatActivity() {
                     .isNotEmpty() && binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.toString()
                     .isNotEmpty()
             ) {
-                checkClientSecretAndClientId()
+                applyClientSecretAndClientId()
             }
         }
         binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.doAfterTextChanged {
@@ -566,7 +566,7 @@ class ConfigurationActivity : AppCompatActivity() {
                     .isNotEmpty() && binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.toString()
                     .isNotEmpty()
             ) {
-                checkClientSecretAndClientId()
+                applyClientSecretAndClientId()
             }
         }
 
@@ -651,9 +651,9 @@ class ConfigurationActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkClientSecretAndClientId() {
+    private fun applyClientSecretAndClientId() {
         val configurationFlow = configurationViewModel.configurationFlow.value
-        defaultServiceNetworkApi.reinitNetworkServices(configurationFlow.clientId, configurationFlow.clientSecret)
+        defaultNetworkServicesProvider.reinitNetworkServices(configurationFlow.clientId, configurationFlow.clientSecret)
     }
 
 }
