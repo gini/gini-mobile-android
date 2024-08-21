@@ -145,7 +145,6 @@ class GiniHealth(
      * Gini Pay API and verifying that the extraction's payment state is "Payable".
      *
      * @return `true` if the document is payable and `false` otherwise
-     * @throws Exception if there was an error while retrieving the document or the extractions
      */
     suspend fun checkIfDocumentIsPayable(documentId: String): Boolean {
         return when (val extractions = getExtractionsForDocument(documentId)) {
@@ -159,7 +158,6 @@ class GiniHealth(
      * Gini Pay API and verifying whether it has multiple documents or not.
      *
      * @return `true` if the document contains multiple documents and `false` otherwise
-     * @throws Exception if there was an error while retrieving the document or the extractions
      */
     suspend fun checkIfDocumentContainsMultipleDocuments(documentId: String): Boolean {
         return when (val extractions = getExtractionsForDocument(documentId)) {
@@ -168,6 +166,13 @@ class GiniHealth(
         }
     }
 
+    /**
+     * Fetches the invoice and its extractions.
+     *
+     * @param documentId the document id
+     * @return document's extractions
+     * @throws Exception if there was an error while retrieving the document or the extractions
+     */
     private suspend fun getExtractionsForDocument(documentId: String): ExtractionsContainer? {
         val extractionsResource = documentManager.getDocument(documentId)
             .mapSuccess { documentResource ->
