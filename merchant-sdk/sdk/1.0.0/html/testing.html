@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Testing &mdash; Gini Merchant SDK for Android  documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Merchant SDK for Android  documentation" href="index.html"/>
+        <link rel="next" title="UI Customization Guide" href="customization.html"/>
+        <link rel="prev" title="Event Tracking" href="event-tracking.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-deep-link-for-your-app">Gini Pay Deep Link For Your App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-merchant-api-client-credentials">Gini Merchant API Client Credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-ginimerchant-instance">Create the GiniMerchant instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#load-payment-providers">Load payment providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-paymentfragment-instance">Create the PaymentFragment instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#event-tracking">Event Tracking</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="event-tracking.html">Event Tracking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#ginimerchant">GiniMerchant</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-banking-app">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#development-gini-merchant-api-client-credentials">Development Gini Merchant API client credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#end-to-end-testing">End to end testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#payment-fragment">Payment fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bank-picker">Bank picker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#more-information-and-faq">More information and FAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#payment-review">Payment review</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#execute-payment">Execute payment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#return-to-your-app">Return to your app</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-in-production">Testing in production</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">UI Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#overview-of-ui-customization-options">Overview of UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#ui-customization-options">UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-component">Payment Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#bank-selection-bottom-sheet">Bank Selection Bottom Sheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-feature-info-screen">Payment Feature Info Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-review-screen">Payment Review Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#photoview">PhotoView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#insetter">Insetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Merchant SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Testing</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="testing">
+<h1>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="example-banking-app">
+<h3>Example banking app<a class="headerlink" href="#example-banking-app" title="Permalink to this headline">¶</a></h3>
+<p>An example banking app is available in the <a class="reference external" href="https://github.com/gini/gini-mobile-android/tree/main/bank-sdk">Gini Bank SDK</a>
+repository called <code class="docutils literal notranslate"><span class="pre">example-app</span></code>.</p>
+<p>You can use the same Gini Merchant API client credentials in the example banking app as in your app, if not otherwise
+specified.</p>
+</div>
+<div class="section" id="development-gini-merchant-api-client-credentials">
+<h3>Development Gini Merchant API client credentials<a class="headerlink" href="#development-gini-merchant-api-client-credentials" title="Permalink to this headline">¶</a></h3>
+<p>In order to test using the Gini Bank SDK’s example banking app, you will need to use development client credentials in
+your app for the Gini Merchant SDK. This will make sure the Gini Merchant SDK receives test payment providers that work
+with the Gini Bank SDK’s example banking app.</p>
+</div>
+</div>
+<div class="section" id="end-to-end-testing">
+<h2>End to end testing<a class="headerlink" href="#end-to-end-testing" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Example banking app<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>After you’ve set the client credentials in the Gini Bank SDK example app you can install it on your device by using the
+<code class="docutils literal notranslate"><span class="pre">devPaymentProvider1Debug</span></code> build flavor. This will allow the Gini Merchant SDK to detect it as the banking app for
+the <code class="docutils literal notranslate"><span class="pre">Gini-Test-Payment-Provider</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can also install the Gini Bank SDK example app’s <code class="docutils literal notranslate"><span class="pre">devPaymentProvider2Debug</span></code> and <code class="docutils literal notranslate"><span class="pre">devPaymentProvider3Debug</span></code> build
+variants to test with two additional example banking apps named <code class="docutils literal notranslate"><span class="pre">GiniBank</span></code> and <code class="docutils literal notranslate"><span class="pre">Bank</span></code>.</p>
+</div>
+</div>
+<div class="section" id="payment-fragment">
+<h3>Payment fragment<a class="headerlink" href="#payment-fragment" title="Permalink to this headline">¶</a></h3>
+<p>By following the <a class="reference external" href="flow.html">flow guide</a> you should be showing the <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code> when wanting to pay an order. The following screenshot shows a sample invoice for which
+the <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code> is shown.</p>
+<a class="reference internal image-reference" href="_images/PaymentComponentScreen.png"><img alt="Screenshot of an order with PayymentFragment showing the Gini-Test-Payment-Provider." class="align-center" src="_images/PaymentComponentScreen.png" style="width: 200px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="bank-picker">
+<h3>Bank picker<a class="headerlink" href="#bank-picker" title="Permalink to this headline">¶</a></h3>
+<p>You should see the <code class="docutils literal notranslate"><span class="pre">Gini-Test-Payment-Provider</span></code> preselected in <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code> everytime when starting the flow.  By clicking the picker
+you should see the <code class="docutils literal notranslate"><span class="pre">BankSelectionBottomSheet</span></code> with the list of available banking apps (including
+<code class="docutils literal notranslate"><span class="pre">Gini-Test-Payment-Provider</span></code> and other testing and production apps).</p>
+<a class="reference internal image-reference" href="_images/BankSelectionBottomSheet.png"><img alt="Screenshot of BankPickerBottomSheet where Gini-Test-Payment-Provider is selected." class="align-center" src="_images/BankSelectionBottomSheet.png" style="width: 200px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="more-information-and-faq">
+<h3>More information and FAQ<a class="headerlink" href="#more-information-and-faq" title="Permalink to this headline">¶</a></h3>
+<p>By clicking the <code class="docutils literal notranslate"><span class="pre">More</span> <span class="pre">information</span></code> button in <code class="docutils literal notranslate"><span class="pre">BankSelectionBottomSheet</span></code> you should see the
+<code class="docutils literal notranslate"><span class="pre">MoreInformationFragment</span></code> with information about the payment feature and an FAQ section.</p>
+<a class="reference internal image-reference" href="_images/MoreInformationScreen.png"><img alt="Screenshot of the More Information and FAQ screen." class="align-center" src="_images/MoreInformationScreen.png" style="width: 200px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="payment-review">
+<h3>Payment review<a class="headerlink" href="#payment-review" title="Permalink to this headline">¶</a></h3>
+<p>If the <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code> was created with an instance of <code class="docutils literal notranslate"><span class="pre">PaymentFlowConfiguration</span></code> with the <code class="docutils literal notranslate"><span class="pre">showReviewFragment</span></code> option set to true,
+by clicking the “Pay the invoice” button on the <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code> you should see the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code>. It
+shows the payment information. It also allows editing the amount. The “To the
+banking app” button should have the icon and colors of the banking app, which was selected in the
+<code class="docutils literal notranslate"><span class="pre">BankSelectionBottomSheet</span></code>.</p>
+<a class="reference internal image-reference" href="_images/PaymentReviewScreen.png"><img alt="Screenshot of the Payment Review screen showing the Gini-Test-Payment-Provider." class="align-center" src="_images/PaymentReviewScreen.png" style="width: 200px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="execute-payment">
+<h3>Execute payment<a class="headerlink" href="#execute-payment" title="Permalink to this headline">¶</a></h3>
+<p>When clicking the “To the banking app” button on the <code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code> you should be redirected to the example banking
+app where the payment information will be fetched from Gini (including any changes you made on the
+<code class="docutils literal notranslate"><span class="pre">ReviewFragment</span></code>). Press the “Pay” button to execute a test payment which will mark the payment as paid in the
+Gini Merchant API.</p>
+<a class="reference internal image-reference" href="_images/BankSDKExampleAppPaymentDetails.png"><img alt="Screenshot of the example banking app showing the same payment information as the Payment Review screen previously." class="align-center" src="_images/BankSDKExampleAppPaymentDetails.png" style="width: 200px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="return-to-your-app">
+<h3>Return to your app<a class="headerlink" href="#return-to-your-app" title="Permalink to this headline">¶</a></h3>
+<p>After the test payment has been executed, the example banking app should show a “Return to Business” button which should
+take you back to your app.</p>
+<p>With these steps completed you have verified that your app, the Gini Merchant API, the Gini Merchant SDK and the Gini Bank
+SDK work together correctly.</p>
+<a class="reference internal image-reference" href="_images/BankSDKExampleAppReturnToBusinessApp.png"><img alt="Screenshot of the example banking app showing the &quot;Return to Business&quot; button with the same extractions as previously." class="align-center" src="_images/BankSDKExampleAppReturnToBusinessApp.png" style="width: 200px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-in-production">
+<h2>Testing in production<a class="headerlink" href="#testing-in-production" title="Permalink to this headline">¶</a></h2>
+<p>The steps are almost the same with the only difference, that instead of the development client credentials you will need
+to use production credentials in your app. This will make sure the Gini Merchant SDK receives only real payment providers
+which open real banking apps.</p>
+<p>You will also need to install a banking app which uses the Gini Bank SDK. You should be able to install these from the
+list shown by clicking the bank picker button in the <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code>.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="customization.html" class="btn btn-neutral float-right" title="UI Customization Guide">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="event-tracking.html" class="btn btn-neutral" title="Event Tracking"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>

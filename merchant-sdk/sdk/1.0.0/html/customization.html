@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>UI Customization Guide &mdash; Gini Merchant SDK for Android  documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Merchant SDK for Android  documentation" href="index.html"/>
+        <link rel="next" title="Reference Docs" href="reference.html"/>
+        <link rel="prev" title="Testing" href="testing.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-deep-link-for-your-app">Gini Pay Deep Link For Your App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-merchant-api-client-credentials">Gini Merchant API Client Credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-ginimerchant-instance">Create the GiniMerchant instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#load-payment-providers">Load payment providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-paymentfragment-instance">Create the PaymentFragment instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#event-tracking">Event Tracking</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="event-tracking.html">Event Tracking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#ginimerchant">GiniMerchant</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#example-banking-app">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#development-gini-merchant-api-client-credentials">Development Gini Merchant API client credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#end-to-end-testing">End to end testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#id1">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-fragment">Payment fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#bank-picker">Bank picker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#more-information-and-faq">More information and FAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-review">Payment review</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#execute-payment">Execute payment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#return-to-your-app">Return to your app</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#testing-in-production">Testing in production</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UI Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview-of-ui-customization-options">Overview of UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ui-customization-options">UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#payment-component">Payment Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bank-selection-bottom-sheet">Bank Selection Bottom Sheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#payment-feature-info-screen">Payment Feature Info Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#payment-review-screen">Payment Review Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#photoview">PhotoView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#insetter">Insetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Merchant SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>UI Customization Guide</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="ui-customization-guide">
+<h1>UI Customization Guide<a class="headerlink" href="#ui-customization-guide" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#overview-of-ui-customization-options" id="id6">Overview of UI customization options</a></li>
+<li><a class="reference internal" href="#ui-customization-options" id="id7">UI customization options</a></li>
+</ul>
+</div>
+<div class="section" id="overview-of-ui-customization-options">
+<h2><a class="toc-backref" href="#id6">Overview of UI customization options</a><a class="headerlink" href="#overview-of-ui-customization-options" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="styles">
+<h3>Styles<a class="headerlink" href="#styles" title="Permalink to this headline">¶</a></h3>
+<p>We leverage the power of Material Design to configure a theme for the SDK with a global color palette and typography
+that is applied on all the screens. By using global styles for the various widgets, we enable you to customize them in a
+single place. They are then consistently applied on all screens.</p>
+<div class="section" id="theme">
+<h4>Theme<a class="headerlink" href="#theme" title="Permalink to this headline">¶</a></h4>
+<p>The theme style is based on Material Design v3 and is named <code class="docutils literal notranslate"><span class="pre">GiniMerchantTheme</span></code>. To override the theme in your
+application, use <code class="docutils literal notranslate"><span class="pre">Root.GiniMerchantTheme</span></code> as the parent:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniMerchantTheme&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniMerchantTheme&quot;</span><span class="nt">&gt;</span>
+  (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="widgets">
+<h4>Widgets<a class="headerlink" href="#widgets" title="Permalink to this headline">¶</a></h4>
+<p>The style of buttons and other widgets is based on Material Design v3. To override them in your application, use the
+root style as the parent, for example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniMerchantTheme.Widget.Button.OutlinedButton&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniMerchantTheme.Widget.Button.OutlinedButton&quot;</span><span class="nt">&gt;</span>
+  (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If you wish to change the button height please override <code class="docutils literal notranslate"><span class="pre">android:minHeight</span></code>. We are using <code class="docutils literal notranslate"><span class="pre">android:minHeight</span></code> to
+support text resizing for accessibility.</p>
+<p class="last">You may also force the height to a certain dimension by overriding both
+<code class="docutils literal notranslate"><span class="pre">android:minHeight</span></code> and <code class="docutils literal notranslate"><span class="pre">android:height</span></code>, although we don’t recommend this as it will prevent the button from increasing
+height to fit larger font sizes.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Material Design buttons include insets which will decrease the visible height of the buttons. You can override
+<code class="docutils literal notranslate"><span class="pre">android:insetTop</span></code> and <code class="docutils literal notranslate"><span class="pre">android:insetBottom</span></code> to remove or adjust the vertical insets.</p>
+</div>
+</div>
+</div>
+<div class="section" id="colors">
+<h3>Colors<a class="headerlink" href="#colors" title="Permalink to this headline">¶</a></h3>
+<p>We provide a global color palette which you are free to override. The custom colors are then applied to all screens.
+Customization of colors is done via overriding of color resources. For example to override the color <code class="docutils literal notranslate"><span class="pre">gms_accent_01</span></code> add
+the following snippet to one of your resources XML file (e.g, <code class="docutils literal notranslate"><span class="pre">colors.xml</span></code>):</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;color</span> <span class="na">name=</span><span class="s">&quot;gms_accent_01&quot;</span><span class="nt">&gt;</span>#424242<span class="nt">&lt;/color&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you overridde the <code class="docutils literal notranslate"><span class="pre">GiniMerchantTheme</span></code>, the theme colors you set there override the color palette customization.</p>
+</div>
+<p>Find the names of the color resources in the color palette (you can also view it in Figma <a class="reference external" href="https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4709&amp;t=SIAN8JzXJ0GIPfwg-0">here</a>):</p>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5745&t=SIAN8JzXJ0GIPfwg-0"
+allowfullscreen></iframe><div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="images">
+<h3>Images<a class="headerlink" href="#images" title="Permalink to this headline">¶</a></h3>
+<p>Customizing of images is done via overriding of drawable resources. Find the drawable resource names in the
+screen-by-screen UI customisation sections below. We mostly use vector drawables.
+Due to the limitations of vector drawables, some images had to be added as PNGs.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you use vector drawables, add them to the <code class="docutils literal notranslate"><span class="pre">drawable-anydpi</span></code> and <code class="docutils literal notranslate"><span class="pre">drawable-night-anydpi</span></code> folders so that they also
+override any density specific PNGs.</p>
+</div>
+<p>If you want to override specific SDK images:</p>
+<ol class="arabic simple">
+<li>Add your own images to your app’s <code class="docutils literal notranslate"><span class="pre">res/drawable-*</span></code> folders using the image names from the UI customization guide.
+It is important to name the images you wish to override exactly as shown in the UI customization guide, otherwise
+overriding won’t work.</li>
+<li>If you use vector drawables, add them to the <code class="docutils literal notranslate"><span class="pre">drawable-anydpi</span></code> (<code class="docutils literal notranslate"><span class="pre">drawable-night-anydpi</span></code> for dark mode) folders so
+that they also override any density specific images.</li>
+</ol>
+</div>
+<div class="section" id="typography">
+<h3>Typography<a class="headerlink" href="#typography" title="Permalink to this headline">¶</a></h3>
+<p>We provide global typography based on text appearance styles from Material Design v2. To override them in your
+application, use the root style as the parent, for example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">&quot;GiniMerchantTheme.Typography.Body1&quot;</span> <span class="na">parent=</span><span class="s">&quot;Root.GiniMerchantTheme.Typography.Body1&quot;</span><span class="nt">&gt;</span>
+   (...)
+<span class="nt">&lt;/style&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If you override the <code class="docutils literal notranslate"><span class="pre">GiniMerchantTheme</span></code>, the text appearances you set there override the typography customization. The
+same applies to the override of widget styles where you set a custom text appearance.</p>
+<p class="last">We use <code class="docutils literal notranslate"><span class="pre">android:lineSpacingMultiplier</span></code> in combination with <code class="docutils literal notranslate"><span class="pre">android:textSize</span></code> to support resizing text for accessibility and avoid overlapping text.</p>
+</div>
+<p>Preview our typography and find the names of the style resources (you can also view it in Figma <a class="reference external" href="https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5837&amp;t=SIAN8JzXJ0GIPfwg-0">here</a>):</p>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5837&t=SIAN8JzXJ0GIPfwg-0"
+allowfullscreen></iframe><div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="text">
+<h3>Text<a class="headerlink" href="#text" title="Permalink to this headline">¶</a></h3>
+<p>Text customization is done via overriding of string resources.</p>
+</div>
+<div class="section" id="dark-mode">
+<h3>Dark mode<a class="headerlink" href="#dark-mode" title="Permalink to this headline">¶</a></h3>
+<p>To customize resources for dark mode, add them to resource folders containing the <code class="docutils literal notranslate"><span class="pre">-night</span></code> resource qualifier. If you
+decide to customize the color palette, please ensure that the text colors are also set in contrast to the background
+colors.</p>
+</div>
+</div>
+<div class="section" id="ui-customization-options">
+<h2><a class="toc-backref" href="#id7">UI customization options</a><a class="headerlink" href="#ui-customization-options" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="payment-component">
+<h3>Payment Component<a class="headerlink" href="#payment-component" title="Permalink to this headline">¶</a></h3>
+<p>You can also view the UI customisation guide in Figma <a class="reference external" href="https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4843&amp;t=SIAN8JzXJ0GIPfwg-0">here</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To copy text from Figma you need to have a Figma account. If you don’t have one, you can create one for free.</p>
+</div>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4843&t=SIAN8JzXJ0GIPfwg-0"
+allowfullscreen></iframe><div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="bank-selection-bottom-sheet">
+<h3>Bank Selection Bottom Sheet<a class="headerlink" href="#bank-selection-bottom-sheet" title="Permalink to this headline">¶</a></h3>
+<p>You can also view the UI customisation guide in Figma <a class="reference external" href="https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4904&amp;t=SIAN8JzXJ0GIPfwg-0">here</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To copy text from Figma you need to have a Figma account. If you don’t have one, you can create one for free.</p>
+</div>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4904&t=SIAN8JzXJ0GIPfwg-0"
+allowfullscreen></iframe><div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="payment-feature-info-screen">
+<h3>Payment Feature Info Screen<a class="headerlink" href="#payment-feature-info-screen" title="Permalink to this headline">¶</a></h3>
+<p>You can also view the UI customisation guide in Figma <a class="reference external" href="https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4931&amp;t=SIAN8JzXJ0GIPfwg-0">here</a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You need to override the <code class="docutils literal notranslate"><span class="pre">gms_privacy_policy_link_url</span></code> string resource to provide a link to your company’s privacy
+policy page. This link will be shown to users in the answer to the “Who or what is Gini?” question.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To copy text from Figma you need to have a Figma account. If you don’t have one, you can create one for free.</p>
+</div>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-4931&t=SIAN8JzXJ0GIPfwg-0"
+allowfullscreen></iframe><div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="payment-review-screen">
+<h3>Payment Review Screen<a class="headerlink" href="#payment-review-screen" title="Permalink to this headline">¶</a></h3>
+<p>You can also view the UI customisation guide in Figma <a class="reference external" href="https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5024&amp;t=SIAN8JzXJ0GIPfwg-0">here</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To copy text from Figma you need to have a Figma account. If you don’t have one, you can create one for free.</p>
+</div>
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
+src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/L4VkRRCLQcUR6pvSe0axtE/Android-Gini-Merchant-SDK-1.0-UI-Customisation?node-id=12530-5024&t=SIAN8JzXJ0GIPfwg-0"
+allowfullscreen></iframe></div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="reference.html" class="btn btn-neutral float-right" title="Reference Docs">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="testing.html" class="btn btn-neutral" title="Testing"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>

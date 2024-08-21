@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Flow &mdash; Gini Merchant SDK for Android  documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Merchant SDK for Android  documentation" href="index.html"/>
+        <link rel="next" title="Event Tracking" href="event-tracking.html"/>
+        <link rel="prev" title="Authentication" href="authentication.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-deep-link-for-your-app">Gini Pay Deep Link For Your App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-merchant-api-client-credentials">Gini Merchant API Client Credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-ginimerchant-instance">Create the GiniMerchant instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#load-payment-providers">Load payment providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-paymentfragment-instance">Create the PaymentFragment instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#event-tracking">Event Tracking</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="event-tracking.html">Event Tracking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#ginimerchant">GiniMerchant</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#example-banking-app">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#development-gini-merchant-api-client-credentials">Development Gini Merchant API client credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#end-to-end-testing">End to end testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#id1">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-fragment">Payment fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#bank-picker">Bank picker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#more-information-and-faq">More information and FAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-review">Payment review</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#execute-payment">Execute payment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#return-to-your-app">Return to your app</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#testing-in-production">Testing in production</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">UI Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#overview-of-ui-customization-options">Overview of UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#ui-customization-options">UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-component">Payment Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#bank-selection-bottom-sheet">Bank Selection Bottom Sheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-feature-info-screen">Payment Feature Info Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-review-screen">Payment Review Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#photoview">PhotoView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#insetter">Insetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Merchant SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Flow</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="flow">
+<h1>Flow<a class="headerlink" href="#flow" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code> and <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code> are the main classes for interacting with the Gini Merchant SDK. <code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code>
+manages interaction with the Gini Merchant API and <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code> handles the data and the logic for displaying related screens.</p>
+<div class="contents local topic" id="the-recommended-flow-is">
+<p class="topic-title">The recommended flow is:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#create-the-ginimerchant-instance" id="id1">Create the GiniMerchant instance</a></li>
+<li><a class="reference internal" href="#load-payment-providers" id="id2">Load payment providers</a></li>
+<li><a class="reference internal" href="#create-the-paymentfragment-instance" id="id3">Create the PaymentFragment instance</a></li>
+<li><a class="reference internal" href="#event-tracking" id="id4">Event Tracking</a></li>
+</ul>
+</div>
+<div class="section" id="create-the-ginimerchant-instance">
+<h2><a class="toc-backref" href="#id1">Create the GiniMerchant instance</a><a class="headerlink" href="#create-the-ginimerchant-instance" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code> class can be built either with client credentials (clientId and clientSecret)
+or with a <code class="docutils literal notranslate"><span class="pre">SessionManager</span></code> if you have a token:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">GiniMerchant(context:</span> <span class="pre">Context,</span> <span class="pre">clientId:</span> <span class="pre">String,</span> <span class="pre">clientSecret:</span> <span class="pre">String,</span> <span class="pre">emailDomain:</span> <span class="pre">String)</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">GiniMerchant(context:</span> <span class="pre">Context,</span> <span class="pre">sessionManager:</span> <span class="pre">SessionManager)</span></code></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">SessionManager</span></code> is an interface which you need to implement to send the token.</p>
+</div>
+<div class="section" id="load-payment-providers">
+<h2><a class="toc-backref" href="#id2">Load payment providers</a><a class="headerlink" href="#load-payment-providers" title="Permalink to this headline">¶</a></h2>
+<p>You can call <code class="docutils literal notranslate"><span class="pre">giniMerchant.loadPaymentProviderApps()</span></code> to load the available payment providers and to check which ones are installed on the user’s device.</p>
+<p>This step is optional, as the method is called when starting the payment flow. Calling it beforehand will lead to a faster load of the payment flow.</p>
+</div>
+<div class="section" id="create-the-paymentfragment-instance">
+<h2><a class="toc-backref" href="#id3">Create the PaymentFragment instance</a><a class="headerlink" href="#create-the-paymentfragment-instance" title="Permalink to this headline">¶</a></h2>
+<p>Create an instance of <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code> and load it into the hierarchy.</p>
+<p>For creating an instance of the <code class="docutils literal notranslate"><span class="pre">PaymentFragment</span></code> you need to use the <code class="docutils literal notranslate"><span class="pre">createFragment</span></code> method provided by <code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code>, passing in the payment details (IBAN, Amount, Purpose and Recipient).
+The <code class="docutils literal notranslate"><span class="pre">GiniMerchantSDK</span></code> expects the payment details to not be empty, and will throw an <code class="docutils literal notranslate"><span class="pre">IllegalStateException</span></code> if any of the fields are empty.</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">val</span> <span class="py">paymentFragment</span> <span class="p">=</span> <span class="n">giniMerchant</span><span class="p">.</span><span class="n">createFragment</span><span class="p">(</span><span class="n">iban</span><span class="p">,</span> <span class="n">recipient</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">purpose</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Optionally, you can pass in an instance of <code class="docutils literal notranslate"><span class="pre">PaymentFlowConfiguration</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">PaymentFlowConfiguration</span></code> class contains the following options:</p>
+<ul class="last simple">
+<li><code class="docutils literal notranslate"><span class="pre">shouldHandleErrorsInternally</span></code>: If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code> will handle errors internally and show
+snackbars for errors. If set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, errors will be ignored by the <code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code>. In this case the flows
+exposed by <code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code> should be observed for errors. Default value is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">showReviewFragment</span></code>: If set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, the user will be able to review the payment details before continuing with the payment. Default value is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Users will have the chance to edit their payment information in their banking app, even if <code class="docutils literal notranslate"><span class="pre">showReviewFragment</span></code> is set to false.</p>
+</div>
+</div>
+<div class="section" id="event-tracking">
+<h2><a class="toc-backref" href="#id4">Event Tracking</a><a class="headerlink" href="#event-tracking" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code> exposes <code class="docutils literal notranslate"><span class="pre">eventFlow</span></code>, which can be collected by client apps to be aware of state / events / errors happening within the SDK.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="event-tracking.html" class="btn btn-neutral float-right" title="Event Tracking">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="authentication.html" class="btn btn-neutral" title="Authentication"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>

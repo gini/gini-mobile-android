@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>PaymentRequest</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>Gini Merchant SDK for Android</span>
+            </a>
+    </div>
+    <div>
+    </div>
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageIds="Gini Merchant SDK for Android::net.gini.android.merchant.sdk.api.payment.model/PaymentRequest///PointingToDeclaration//1052012711">
+  <div class="breadcrumbs"><a href="../../../index.html">Gini Merchant SDK for Android</a><span class="delimiter">/</span><a href="../index.html">net.gini.android.merchant.sdk.api.payment.model</a><span class="delimiter">/</span><span class="current">PaymentRequest</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Payment</span><wbr></wbr><span><span>Request</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span class="token keyword">class </span><a href="index.html">PaymentRequest</a></div><p class="paragraph">Holds information about a payment request.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button><button class="section-tab" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+    <div class="tabs-section-body">
+      <h2 class="tabbedcontent">Constructors</h2>
+      <div class="table" data-togglable="Constructors"><a data-name="264764557%2FConstructors%2F1052012711" anchor-label="PaymentRequest" id="264764557%2FConstructors%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-payment-request.html"><span>Payment</span><wbr></wbr><span><span>Request</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="264764557%2FConstructors%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">PaymentRequest</a> <a href="-payment-request.html"><span class="token function">PaymentRequest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> id<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> paymentProviderId<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> requesterUri<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> recipient<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> iban<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> bic<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> amount<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> purpose<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-status/index.html">PaymentRequest.Status</a> status</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Types</h2>
+      <div class="table" data-togglable="Types"><a data-name="-263897001%2FClasslikes%2F1052012711" anchor-label="Status" id="-263897001%2FClasslikes%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="-status/index.html"><span><span>Status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-263897001%2FClasslikes%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">enum </span><a href="-status/index.html">Status</a><span class="token keyword"> extends </span><a href="https://developer.android.com/reference/kotlin/java/lang/Enum.html">Enum</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-status/index.html">PaymentRequest.Status</a><span class="token operator">&gt;</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Functions</h2>
+      <div class="table" data-togglable="Functions"><a data-name="-758844680%2FFunctions%2F1052012711" anchor-label="getAmount" id="-758844680%2FFunctions%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-amount.html"><span>get</span><wbr></wbr><span><span>Amount</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-758844680%2FFunctions%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-amount.html"><span class="token function">getAmount</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="2066542222%2FFunctions%2F1052012711" anchor-label="getBic" id="2066542222%2FFunctions%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-bic.html"><span>get</span><wbr></wbr><span><span>Bic</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2066542222%2FFunctions%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-bic.html"><span class="token function">getBic</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1466127562%2FFunctions%2F1052012711" anchor-label="getIban" id="1466127562%2FFunctions%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-iban.html"><span>get</span><wbr></wbr><span><span>Iban</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1466127562%2FFunctions%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-iban.html"><span class="token function">getIban</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-41924331%2FFunctions%2F1052012711" anchor-label="getId" id="-41924331%2FFunctions%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-id.html"><span>get</span><wbr></wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-41924331%2FFunctions%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-id.html"><span class="token function">getId</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-2007629832%2FFunctions%2F1052012711" anchor-label="getPaymentProviderId" id="-2007629832%2FFunctions%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-payment-provider-id.html"><span>get</span><wbr></wbr><span>Payment</span><wbr></wbr><span>Provider</span><wbr></wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2007629832%2FFunctions%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-payment-provider-id.html"><span class="token function">getPaymentProviderId</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1449298476%2FFunctions%2F1052012711" anchor-label="getPurpose" id="1449298476%2FFunctions%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-purpose.html"><span>get</span><wbr></wbr><span><span>Purpose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1449298476%2FFunctions%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-purpose.html"><span class="token function">getPurpose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1236391505%2FFunctions%2F1052012711" anchor-label="getRecipient" id="1236391505%2FFunctions%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-recipient.html"><span>get</span><wbr></wbr><span><span>Recipient</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1236391505%2FFunctions%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-recipient.html"><span class="token function">getRecipient</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-800687168%2FFunctions%2F1052012711" anchor-label="getRequesterUri" id="-800687168%2FFunctions%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-requester-uri.html"><span>get</span><wbr></wbr><span>Requester</span><wbr></wbr><span><span>Uri</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-800687168%2FFunctions%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="get-requester-uri.html"><span class="token function">getRequesterUri</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1408609122%2FFunctions%2F1052012711" anchor-label="getStatus" id="-1408609122%2FFunctions%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-status.html"><span>get</span><wbr></wbr><span><span>Status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1408609122%2FFunctions%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="-status/index.html">PaymentRequest.Status</a> <a href="get-status.html"><span class="token function">getStatus</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Properties</h2>
+      <div class="table" data-togglable="Properties"><a data-name="1815508028%2FProperties%2F1052012711" anchor-label="amount" id="1815508028%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1815508028%2FProperties%2F1052012711"><span><span>amount</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1815508028%2FProperties%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><a data-name="1815508028%2FProperties%2F1052012711" anchor-label="amount" id="1815508028%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="index.html#1815508028%2FProperties%2F1052012711">amount</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-721906742%2FProperties%2F1052012711" anchor-label="bic" id="-721906742%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-721906742%2FProperties%2F1052012711"><span><span>bic</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-721906742%2FProperties%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><a data-name="-721906742%2FProperties%2F1052012711" anchor-label="bic" id="-721906742%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="index.html#-721906742%2FProperties%2F1052012711">bic</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="923555598%2FProperties%2F1052012711" anchor-label="iban" id="923555598%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#923555598%2FProperties%2F1052012711"><span><span>iban</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="923555598%2FProperties%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><a data-name="923555598%2FProperties%2F1052012711" anchor-label="iban" id="923555598%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="index.html#923555598%2FProperties%2F1052012711">iban</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1655894951%2FProperties%2F1052012711" anchor-label="id" id="-1655894951%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1655894951%2FProperties%2F1052012711"><span><span>id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1655894951%2FProperties%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><a data-name="-1655894951%2FProperties%2F1052012711" anchor-label="id" id="-1655894951%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="index.html#-1655894951%2FProperties%2F1052012711">id</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-573977548%2FProperties%2F1052012711" anchor-label="paymentProviderId" id="-573977548%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-573977548%2FProperties%2F1052012711"><span>payment</span><wbr></wbr><span>Provider</span><wbr></wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-573977548%2FProperties%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><a data-name="-573977548%2FProperties%2F1052012711" anchor-label="paymentProviderId" id="-573977548%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="index.html#-573977548%2FProperties%2F1052012711">paymentProviderId</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-350146200%2FProperties%2F1052012711" anchor-label="purpose" id="-350146200%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-350146200%2FProperties%2F1052012711"><span><span>purpose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-350146200%2FProperties%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><a data-name="-350146200%2FProperties%2F1052012711" anchor-label="purpose" id="-350146200%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="index.html#-350146200%2FProperties%2F1052012711">purpose</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1453089139%2FProperties%2F1052012711" anchor-label="recipient" id="-1453089139%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1453089139%2FProperties%2F1052012711"><span><span>recipient</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1453089139%2FProperties%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><a data-name="-1453089139%2FProperties%2F1052012711" anchor-label="recipient" id="-1453089139%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="index.html#-1453089139%2FProperties%2F1052012711">recipient</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-503645692%2FProperties%2F1052012711" anchor-label="requesterUri" id="-503645692%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-503645692%2FProperties%2F1052012711"><span>requester</span><wbr></wbr><span><span>Uri</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-503645692%2FProperties%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><a data-name="-503645692%2FProperties%2F1052012711" anchor-label="requesterUri" id="-503645692%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a> <a href="index.html#-503645692%2FProperties%2F1052012711">requesterUri</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1165743586%2FProperties%2F1052012711" anchor-label="status" id="1165743586%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":merchant-sdk:sdk:dokkaHtml/release" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1165743586%2FProperties%2F1052012711"><span><span>status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1165743586%2FProperties%2F1052012711"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":merchant-sdk:sdk:dokkaHtml/release"><a data-name="1165743586%2FProperties%2F1052012711" anchor-label="status" id="1165743586%2FProperties%2F1052012711" data-filterable-set=":merchant-sdk:sdk:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="-status/index.html">PaymentRequest.Status</a> <a href="index.html#1165743586%2FProperties%2F1052012711">status</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
