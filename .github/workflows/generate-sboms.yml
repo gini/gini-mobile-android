@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -57,7 +57,7 @@ jobs:
           bank-sdk/sdk/build/reports/gini-bank-sdk-sbom.json
 
       - name: archive the cyclonedx sboms
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: CycloneDX SBOM JSONs
           path: sbom-jsons.zip
