@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -66,5 +67,82 @@ class ExtractionScreenTests {
         reviewScreen.clickProcessButton()
         idlingResource.waitForIdle()
         extractionScreen.clickTransferSummaryButton()
+    }
+
+    @Test
+    fun test3_editIbanFieldAndClickSendFeedbackButton() {
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButton()
+        captureScreen.clickFilesButton()
+        captureScreen.clickPhotos()
+        imageUploader.uploadImageFromPhotos()
+        imageUploader.clickAddButton()
+        idlingResource.waitForIdle()
+        reviewScreen.assertReviewTitleIsDisplayed()
+        reviewScreen.clickProcessButton()
+        idlingResource.waitForIdle()
+        extractionScreen.editIbanField()
+        extractionScreen.clickTransferSummaryButton()
+    }
+
+    @Test
+    fun test4_editAmountFieldAndClickSendFeedbackButton() {
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButton()
+        captureScreen.clickFilesButton()
+        captureScreen.clickPhotos()
+        imageUploader.uploadImageFromPhotos()
+        imageUploader.clickAddButton()
+        idlingResource.waitForIdle()
+        reviewScreen.assertReviewTitleIsDisplayed()
+        reviewScreen.clickProcessButton()
+        idlingResource.waitForIdle()
+        extractionScreen.editAmountField()
+        extractionScreen.clickTransferSummaryButton()
+    }
+    @Test
+    fun test5_editPurposeFieldAndClickSendFeedbackButton() {
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButton()
+        captureScreen.clickFilesButton()
+        captureScreen.clickPhotos()
+        imageUploader.uploadImageFromPhotos()
+        imageUploader.clickAddButton()
+        idlingResource.waitForIdle()
+        reviewScreen.assertReviewTitleIsDisplayed()
+        reviewScreen.clickProcessButton()
+        idlingResource.waitForIdle()
+        extractionScreen.editPurposeField()
+        extractionScreen.clickTransferSummaryButton()
+    }
+
+    @Test
+    fun test6_editRecipientFieldAndClickSendFeedbackButton() {
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButton()
+        captureScreen.clickFilesButton()
+        captureScreen.clickPhotos()
+        imageUploader.uploadImageFromPhotos()
+        imageUploader.clickAddButton()
+        idlingResource.waitForIdle()
+        reviewScreen.assertReviewTitleIsDisplayed()
+        reviewScreen.clickProcessButton()
+        idlingResource.waitForIdle()
+        extractionScreen.editReceiptField()
+        extractionScreen.clickTransferSummaryButton()
+    }
+    @Test
+    fun test7_pressBackOnTransferSummaryAndShowsMainScreenOnSubsequentLaunches() {
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButton()
+        captureScreen.clickFilesButton()
+        captureScreen.clickPhotos()
+        imageUploader.uploadImageFromPhotos()
+        imageUploader.clickAddButton()
+        idlingResource.waitForIdle()
+        reviewScreen.assertReviewTitleIsDisplayed()
+        reviewScreen.clickProcessButton()
+        pressBack()
+        mainScreen.assertDescriptionTitle()
     }
 }
