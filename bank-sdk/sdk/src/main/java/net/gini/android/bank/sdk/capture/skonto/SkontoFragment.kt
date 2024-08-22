@@ -78,7 +78,7 @@ import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInfoDialogColors
-import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoiceScanSectionColors
+import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoicePreviewSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
@@ -323,7 +323,7 @@ private fun ScreenReadyState(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                YourInvoiceScanSection(
+                InvoicePreviewSection(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .tabletMaxWidth(),
@@ -417,9 +417,9 @@ private fun NavigationActionBack(
 }
 
 @Composable
-private fun YourInvoiceScanSection(
+private fun InvoicePreviewSection(
     modifier: Modifier = Modifier,
-    colorScheme: SkontoInvoiceScanSectionColors,
+    colorScheme: SkontoInvoicePreviewSectionColors,
     onClick: () -> Unit,
 ) {
     Card(
