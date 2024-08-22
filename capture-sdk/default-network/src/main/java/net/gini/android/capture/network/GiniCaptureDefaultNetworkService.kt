@@ -380,7 +380,7 @@ class GiniCaptureDefaultNetworkService(
 
         return launchCancellable {
 
-            when (val resource = giniBankApi.documentManager.getLayoutModel(documentId)) {
+            when (val resource = giniBankApi.documentManager.getDocumentLayout(documentId)) {
 
                 is Resource.Cancelled -> {
                     LOG.debug("Getting layout for document {} canceled", documentId)

@@ -44,7 +44,7 @@ interface DocumentService {
     suspend fun getLayoutForDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
 
     @GET("documents/{documentId}/layout")
-    suspend fun getLayoutModel(
+    suspend fun getDocumentLayout(
         @HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String
     ) : Response<DocumentLayoutResponse>
 

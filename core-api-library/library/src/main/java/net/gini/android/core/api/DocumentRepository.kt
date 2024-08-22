@@ -243,10 +243,10 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         }
     }
 
-    suspend fun getLayoutModel(documentId: String) : Resource<DocumentLayout> {
+    suspend fun getDocumentLayout(documentId: String) : Resource<DocumentLayout> {
         return withAccessToken { accessToken ->
             wrapInResource {
-                 documentRemoteSource.getLayoutModel(accessToken, documentId)
+                 documentRemoteSource.getDocumentLayout(accessToken, documentId)
             }
         }
     }

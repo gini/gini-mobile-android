@@ -86,10 +86,10 @@ abstract class DocumentRemoteSource(
         response.body()?.string() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
-    suspend fun getLayoutModel(accessToken: String, documentId: String): DocumentLayout =
+    suspend fun getDocumentLayout(accessToken: String, documentId: String): DocumentLayout =
         withContext(coroutineContext) {
             val response = SafeApiRequest.apiRequest {
-                documentService.getLayoutModel(
+                documentService.getDocumentLayout(
                     bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId
                 )
         }

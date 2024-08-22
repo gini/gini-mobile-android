@@ -172,8 +172,8 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
      * @param documentId The document ID for which the layouts is requested.
      * @return [Resource] with a [DocumentLayout] instance containing the layout or information about the error
      */
-    suspend fun getLayoutModel(documentId: String) : Resource<DocumentLayout> =
-        documentRepository.getLayoutModel(documentId)
+    suspend fun getDocumentLayout(documentId: String) : Resource<DocumentLayout> =
+        documentRepository.getDocumentLayout(documentId)
 
     /**
      * Get all extractions (specific and compound) for the given document.
