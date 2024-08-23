@@ -1,2 +1,3 @@
 -keep class net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
 -keep class net.gini.android.bank.sdk.capture.skonto.model.SkontoData { *; }
+-keep class net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes { *; }
