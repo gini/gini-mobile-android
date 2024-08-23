@@ -23,11 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+
 import jersey.repackaged.jsr166e.CompletableFuture;
 
 /**
  * Created by Alpar Szotyori on 09.05.2019.
- *
+ * <p>
  * Copyright (c) 2019 Gini GmbH.
  */
 
@@ -77,12 +78,13 @@ public class AnalysisInteractor {
                                     final Map<String, GiniCaptureCompoundExtraction> compoundExtractions =
                                             requestResult.getAnalysisResult().getCompoundExtractions();
                                     if (extractions.isEmpty() && compoundExtractions.isEmpty()) {
-                                        return new ResultHolder(Result.SUCCESS_NO_EXTRACTIONS);
+                                        return new ResultHolder(Result.SUCCESS_NO_EXTRACTIONS, requestResult.getApiDocumentId());
                                     } else {
                                         return new ResultHolder(Result.SUCCESS_WITH_EXTRACTIONS,
                                                 extractions,
                                                 compoundExtractions,
-                                                requestResult.getAnalysisResult().getReturnReasons());
+                                                requestResult.getAnalysisResult().getReturnReasons(),
+                                                requestResult.getApiDocumentId());
                                     }
                                 }
                                 return null;
@@ -90,10 +92,10 @@ public class AnalysisInteractor {
                         });
             } else {
                 return CompletableFuture.completedFuture(
-                        new ResultHolder(Result.NO_NETWORK_SERVICE));
+                        new ResultHolder(Result.NO_NETWORK_SERVICE, null));
             }
         } else {
-            return CompletableFuture.completedFuture(new ResultHolder(Result.NO_NETWORK_SERVICE));
+            return CompletableFuture.completedFuture(new ResultHolder(Result.NO_NETWORK_SERVICE, null));
         }
     }
 
@@ -170,22 +172,26 @@ public class AnalysisInteractor {
         private final Map<String, GiniCaptureSpecificExtraction> mExtractions;
         private final Map<String, GiniCaptureCompoundExtraction> mCompoundExtractions;
         private final List<GiniCaptureReturnReason> mReturnReasons;
+        private final String mDocumentId;
 
-        ResultHolder(@NonNull final Result result) {
-            this(result, Collections.<String, GiniCaptureSpecificExtraction>emptyMap(),
-                    Collections.<String, GiniCaptureCompoundExtraction>emptyMap(),
-                    Collections.<GiniCaptureReturnReason>emptyList());
+        ResultHolder(@NonNull final Result result, final String documentId) {
+            this(result, Collections.emptyMap(),
+                    Collections.emptyMap(),
+                    Collections.emptyList(),
+                    documentId);
         }
 
         ResultHolder(
                 @NonNull final Result result,
                 @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
                 @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions,
-                @NonNull final List<GiniCaptureReturnReason> returnReasons) {
+                @NonNull final List<GiniCaptureReturnReason> returnReasons,
+                final String documentId) {
             mResult = result;
             mExtractions = extractions;
             mCompoundExtractions = compoundExtractions;
             mReturnReasons = returnReasons;
+            mDocumentId = documentId;
         }
 
         @NonNull
@@ -206,6 +212,10 @@ public class AnalysisInteractor {
         @NonNull
         public List<GiniCaptureReturnReason> getReturnReasons() {
             return mReturnReasons;
+        }
+
+        public String getDocumentId() {
+            return mDocumentId;
         }
     }
 }

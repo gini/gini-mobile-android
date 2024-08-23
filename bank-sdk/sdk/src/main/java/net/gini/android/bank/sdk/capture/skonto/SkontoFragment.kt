@@ -2,6 +2,7 @@
 
 package net.gini.android.bank.sdk.capture.skonto
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -57,6 +58,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -67,6 +69,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
@@ -74,12 +78,12 @@ import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInfoDialogColors
-import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoiceScanSectionColors
+import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoicePreviewSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
-import net.gini.android.bank.sdk.di.getGiniKoin
+import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
@@ -105,7 +109,7 @@ class SkontoFragment : Fragment() {
 
     private val args: SkontoFragmentArgs by navArgs<SkontoFragmentArgs>()
 
-    private val viewModel: SkontoFragmentViewModel by getGiniKoin().inject {
+    private val viewModel: SkontoFragmentViewModel by getGiniBankKoin().inject {
         parametersOf(args.data)
     }
 
@@ -155,9 +159,34 @@ class SkontoFragment : Fragment() {
                         navigateBack = {
                             findNavController()
                                 .navigate(SkontoFragmentDirections.toCaptureFragment())
+                        },
+                        navigateToInvoiceScreen = {
+                            findNavController()
+                                .navigate(
+                                    SkontoFragmentDirections.toSkontoInvoiceFragment(
+                                        args.invoiceHighlights
+                                    )
+                                )
                         }
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+@SuppressLint("ComposableNaming")
+private fun SkontoFragmentViewModel.collectSideEffect(
+    action: (SkontoFragmentContract.SideEffect) -> Unit
+) {
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(sideEffectFlow, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            sideEffectFlow.collect {
+                action(it)
             }
         }
     }
@@ -171,11 +200,19 @@ private fun ScreenContent(
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
+    navigateToInvoiceScreen: () -> Unit,
 ) {
 
     BackHandler { navigateBack() }
 
     val state by viewModel.stateFlow.collectAsState()
+
+    viewModel.collectSideEffect {
+        when (it) {
+            SkontoFragmentContract.SideEffect.OpenInvoiceScreen -> navigateToInvoiceScreen()
+        }
+    }
+
     ScreenStateContent(
         modifier = modifier,
         state = state,
@@ -187,9 +224,10 @@ private fun ScreenContent(
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
         onBackClicked = navigateBack,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
-        onProceedClicked = { viewModel.onProceedClicked() },
+        onProceedClicked = viewModel::onProceedClicked,
         onInfoBannerClicked = viewModel::onInfoBannerClicked,
-        onInfoDialogDismissed = viewModel::onInfoDialogDismissed
+        onInfoDialogDismissed = viewModel::onInfoDialogDismissed,
+        onInvoiceClicked = viewModel::onInvoiceClicked
     )
 }
 
@@ -206,6 +244,7 @@ private fun ScreenStateContent(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
+    onInvoiceClicked: () -> Unit,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors()
 ) {
@@ -224,6 +263,7 @@ private fun ScreenStateContent(
             onProceedClicked = onProceedClicked,
             onInfoBannerClicked = onInfoBannerClicked,
             onInfoDialogDismissed = onInfoDialogDismissed,
+            onInvoiceClicked = onInvoiceClicked,
         )
     }
 
@@ -233,6 +273,7 @@ private fun ScreenStateContent(
 private fun ScreenReadyState(
     onBackClicked: () -> Unit,
     onProceedClicked: () -> Unit,
+    onInvoiceClicked: () -> Unit,
     state: SkontoFragmentContract.State.Ready,
     onDiscountSectionActiveChange: (Boolean) -> Unit,
     onDiscountAmountChange: (BigDecimal) -> Unit,
@@ -276,12 +317,21 @@ private fun ScreenReadyState(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                InvoicePreviewSection(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .tabletMaxWidth(),
+                    colorScheme = screenColorScheme.invoiceScanSectionColors,
+                    onClick = onInvoiceClicked,
+                )
                 SkontoSection(
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
                         .tabletMaxWidth(),
                     colors = screenColorScheme.skontoSectionColors,
                     amount = state.skontoAmount,
@@ -367,12 +417,15 @@ private fun NavigationActionBack(
 }
 
 @Composable
-private fun YourInvoiceScanSection(
+private fun InvoicePreviewSection(
     modifier: Modifier = Modifier,
-    colorScheme: SkontoInvoiceScanSectionColors,
+    colorScheme: SkontoInvoicePreviewSectionColors,
+    onClick: () -> Unit,
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RectangleShape,
         colors = CardDefaults.cardColors(containerColor = colorScheme.cardBackgroundColor)
     ) {
@@ -932,6 +985,7 @@ private fun ScreenReadyStatePreview() {
             customBottomNavBarAdapter = null,
             onInfoDialogDismissed = {},
             onInfoBannerClicked = {},
+            onInvoiceClicked = {}
         )
     }
 }

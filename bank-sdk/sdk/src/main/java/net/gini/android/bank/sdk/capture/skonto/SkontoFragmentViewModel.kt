@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.capture.skonto
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
@@ -17,6 +18,8 @@ internal class SkontoFragmentViewModel(
 
     val stateFlow: MutableStateFlow<SkontoFragmentContract.State> =
         MutableStateFlow(createInitalState(data))
+
+    val sideEffectFlow: MutableSharedFlow<SkontoFragmentContract.SideEffect> = MutableSharedFlow()
 
     private var listener: SkontoFragmentListener? = null
 
@@ -173,6 +176,10 @@ internal class SkontoFragmentViewModel(
                 edgeCaseInfoDialogVisible = false,
             )
         )
+    }
+
+    fun onInvoiceClicked() = viewModelScope.launch {
+        sideEffectFlow.emit(SkontoFragmentContract.SideEffect.OpenInvoiceScreen)
     }
 
     private fun calculateDiscount(skontoAmount: BigDecimal, fullAmount: BigDecimal): BigDecimal {

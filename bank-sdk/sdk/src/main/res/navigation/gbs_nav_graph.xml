@@ -36,7 +36,7 @@
 
         <action
             android:id="@+id/to_skonto_fragment"
-            app:destination="@id/gbs_destination_skonto_fragment"
+            app:destination="@id/skonto_nav_graph"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
@@ -95,23 +95,56 @@
         android:label="gbs_fragment_digital_invoice"
         tools:layout="@layout/gbs_edit_item_bottom_sheet" />
 
-    <fragment
-        android:id="@+id/gbs_destination_skonto_fragment"
-        android:name="net.gini.android.bank.sdk.capture.skonto.SkontoFragment"
-        android:label="SkontoFragment">
+    <navigation
+        android:id="@+id/skonto_nav_graph"
+        app:startDestination="@id/gbs_destination_skonto_fragment">
 
         <argument
             android:name="data"
             app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoData" />
-        <action
-            android:id="@+id/to_capture_fragment"
-            app:destination="@id/gbs_destination_capture_fragment"
-            app:enterAnim="@anim/gc_nav_enter_anim"
-            app:exitAnim="@anim/gc_nav_exit_anim"
-            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
-            app:popUpTo="@id/gbs_destination_capture_fragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+
+        <argument
+            android:name="invoiceHighlights"
+            app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes[]" />
+
+        <fragment
+            android:id="@+id/gbs_destination_skonto_fragment"
+            android:name="net.gini.android.bank.sdk.capture.skonto.SkontoFragment"
+            android:label="SkontoFragment">
+
+            <argument
+                android:name="data"
+                app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoData" />
+
+            <argument
+                android:name="invoiceHighlights"
+                app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes[]" />
+
+            <action
+                android:id="@+id/to_capture_fragment"
+                app:destination="@id/gbs_destination_capture_fragment"
+                app:enterAnim="@anim/gc_nav_enter_anim"
+                app:exitAnim="@anim/gc_nav_exit_anim"
+                app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+                app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+                app:popUpTo="@id/gbs_destination_capture_fragment"
+                app:popUpToInclusive="true" />
+            <action
+                android:id="@+id/to_skonto_invoice_fragment"
+                app:destination="@id/gbs_destination_skonto_invoice_fragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/gbs_destination_skonto_invoice_fragment"
+            android:name="net.gini.android.bank.sdk.capture.skonto.invoice.SkontoInvoiceFragment"
+            android:label="SkontoInvoiceFragment">
+
+            <argument
+                android:name="invoiceHighlights"
+                app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes[]" />
+
+        </fragment>
+
+    </navigation>
 
 </navigation>

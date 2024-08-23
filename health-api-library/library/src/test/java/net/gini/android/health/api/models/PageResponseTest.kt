@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
  */
 
 @RunWith(AndroidJUnit4::class)
-class PageTest {
+class PageResponseTest {
 
     @Test
     fun `finds largest image uri which is smaller than max size`() {

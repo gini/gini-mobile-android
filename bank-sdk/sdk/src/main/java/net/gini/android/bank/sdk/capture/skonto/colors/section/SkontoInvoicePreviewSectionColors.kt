@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Immutable
-data class SkontoInvoiceScanSectionColors(
+data class SkontoInvoicePreviewSectionColors(
     val cardBackgroundColor: Color,
     val titleTextColor: Color,
     val subtitleTextColor: Color,
@@ -24,7 +24,7 @@ data class SkontoInvoiceScanSectionColors(
             iconBackgroundColor: Color = GiniTheme.colorScheme.placeholder.background,
             iconTint: Color = GiniTheme.colorScheme.placeholder.tint,
             arrowTint: Color = GiniTheme.colorScheme.icons.secondary,
-        ) = SkontoInvoiceScanSectionColors(
+        ) = SkontoInvoicePreviewSectionColors(
             cardBackgroundColor = cardBackgroundColor,
             titleTextColor = titleTextColor,
             subtitleTextColor = subtitleTextColor,
