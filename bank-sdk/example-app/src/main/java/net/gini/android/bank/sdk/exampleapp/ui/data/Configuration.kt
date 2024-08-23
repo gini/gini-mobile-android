@@ -163,6 +163,9 @@ data class Configuration(
     // 40 enable Skonto
     val isSkontoEnabled: Boolean = true,
 
+    // 41 Skonto help Custom bottom navigation
+    val isSkontoHelpCustomNavBarEnabled: Boolean = false,
+
     ) : Parcelable {
 
     companion object {

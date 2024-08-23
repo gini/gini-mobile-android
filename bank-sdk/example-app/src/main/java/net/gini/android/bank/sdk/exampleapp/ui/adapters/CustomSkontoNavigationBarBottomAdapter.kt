@@ -25,7 +25,7 @@ class CustomSkontoNavigationBarBottomAdapter : SkontoNavigationBarBottomAdapter 
     }
 
     override fun setOnHelpClickListener(onClick: () -> Unit) {
-        // Unused now
+        binding?.gbsHelpBtn?.setOnClickListener { onClick() }
     }
 
     override fun onSkontoPercentageBadgeUpdated(text: String) {
