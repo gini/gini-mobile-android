@@ -16,12 +16,16 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
+import net.gini.android.bank.sdk.capture.digitalinvoice.args.DigitalInvoiceSpecificExtractionsArg
+import net.gini.android.bank.sdk.capture.digitalinvoice.args.ExtractionsResultData
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoInvoiceHighlightsExtractor
 import net.gini.android.bank.sdk.capture.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragment
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
+import net.gini.android.capture.Amount
 
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
@@ -38,6 +42,8 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
+import java.math.BigDecimal
+import java.time.LocalDate
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -178,12 +184,40 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private fun tryShowingReturnAssistant(result: CaptureSDKResult.Success) {
         LineItemsValidator.validate(result.compoundExtractions)
+        val skontoData = kotlin.runCatching {
+            val data = SkontoDataExtractor.extractSkontoData(
+                result.specificExtractions,
+                result.compoundExtractions
+            )
+            SkontoData(
+                skontoPercentageDiscounted = data.skontoPercentageDiscounted,
+                skontoPaymentMethod = when (data.skontoPaymentMethod) {
+                    SkontoData.SkontoPaymentMethod.Cash -> SkontoData.SkontoPaymentMethod.Cash
+                    SkontoData.SkontoPaymentMethod.PayPal -> SkontoData.SkontoPaymentMethod.PayPal
+                    else -> SkontoData.SkontoPaymentMethod.Unspecified
+                },
+                skontoAmountToPay = data.skontoAmountToPay,
+                fullAmountToPay = data.fullAmountToPay,
+                skontoRemainingDays = data.skontoRemainingDays,
+                skontoDueDate = data.skontoDueDate
+            )
+        }.getOrNull()
+
+        val highlightBoxes = kotlin.runCatching {
+            skontoInvoiceHighlightsExtractor.extract(
+                result.compoundExtractions
+            )
+        }.getOrNull() ?: emptyList()
+
         navController.navigate(
             GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
-                DigitalInvoiceFragment.getExtractionsBundle(result.specificExtractions),
-                DigitalInvoiceFragment.getCompoundExtractionsBundle(result.compoundExtractions),
-                result.returnReasons.toTypedArray(),
-                DigitalInvoiceFragment.getAmountsAreConsistentExtraction(result.specificExtractions)
+                ExtractionsResultData(
+                    specificExtractions = result.specificExtractions,
+                    compoundExtractions = result.compoundExtractions,
+                    returnReasons = result.returnReasons
+                ),
+                skontoData = skontoData,
+                skontoInvoiceHighlights = highlightBoxes.toTypedArray(),
             )
         )
     }

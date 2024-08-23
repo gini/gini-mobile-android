@@ -6,10 +6,14 @@ import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
 import net.gini.android.bank.sdk.capture.util.BusEvent
 import net.gini.android.bank.sdk.capture.util.OncePerInstallEvent
 import net.gini.android.bank.sdk.capture.util.OncePerInstallEventStore
 import net.gini.android.bank.sdk.capture.util.SimpleBusEventStore
+import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -34,6 +38,7 @@ internal class DigitalInvoiceScreenPresenter(
     val extractions: Map<String, GiniCaptureSpecificExtraction> = emptyMap(),
     val compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
     val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
+    val skontoData: SkontoData? = null,
     private val isInaccurateExtraction: Boolean = false,
     savedInstanceBundle: Bundle?,
     private val oncePerInstallEventStore: OncePerInstallEventStore = OncePerInstallEventStore(
@@ -55,6 +60,11 @@ internal class DigitalInvoiceScreenPresenter(
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.ReturnAssistant
 
+    private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase by getGiniBankKoin().inject()
+    private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase by getGiniBankKoin().inject()
+
+    private var isSkontoSectionActive: Boolean = false
+
     init {
         view.setPresenter(this)
         digitalInvoice = DigitalInvoice(
@@ -62,6 +72,11 @@ internal class DigitalInvoiceScreenPresenter(
                 KEY_SELECTABLE_ITEMS
             )?.filterIsInstance<SelectableLineItem>()?.toList()
         )
+
+        isSkontoSectionActive = skontoData?.let { data ->
+            val edgeCase = getSkontoEdgeCaseUseCase.execute(data.skontoDueDate, data.skontoPaymentMethod)
+            getSkontoDefaultSelectionStateUseCase.execute(edgeCase)
+        } ?: false
     }
 
     override fun saveState(outState: Bundle) {
@@ -73,6 +88,16 @@ internal class DigitalInvoiceScreenPresenter(
 
     override fun selectLineItem(lineItem: SelectableLineItem) {
         digitalInvoice.selectLineItem(lineItem)
+        updateView()
+    }
+
+    override fun enableSkonto() {
+        isSkontoSectionActive = true
+        updateView()
+    }
+
+    override fun disableSkonto() {
+        isSkontoSectionActive = false
         updateView()
     }
 
@@ -102,7 +127,8 @@ internal class DigitalInvoiceScreenPresenter(
         digitalInvoice.selectableLineItems.forEach { deselectLineItem(it) }
     }
 
-    private fun canShowReturnReasonsDialog() = GiniBank.enableReturnReasons && returnReasons.isNotEmpty()
+    private fun canShowReturnReasonsDialog() =
+        GiniBank.enableReturnReasons && returnReasons.isNotEmpty()
 
     override fun editLineItem(lineItem: SelectableLineItem) {
         view.onEditLineItem(lineItem)
@@ -157,6 +183,11 @@ internal class DigitalInvoiceScreenPresenter(
         view.apply {
             showLineItems(digitalInvoice.selectableLineItems, isInaccurateExtraction)
             showAddons(digitalInvoice.addons)
+            skontoData?.let { skontoData ->
+                showSkonto(
+                    DigitalInvoiceSkontoListItem(skontoData, isSkontoSectionActive)
+                )
+            }
             digitalInvoice.selectedAndTotalLineItemsCount().let { (selected, total) ->
                 footerDetails = footerDetails
                     .copy(

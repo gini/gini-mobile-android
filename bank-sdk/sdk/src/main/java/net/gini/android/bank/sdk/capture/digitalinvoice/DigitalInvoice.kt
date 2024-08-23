@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import androidx.annotation.VisibleForTesting
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.capture.AmountCurrency
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -30,7 +31,7 @@ internal val FRACTION_FORMAT = DecimalFormat(".00").apply { roundingMode = Round
 internal class DigitalInvoice(
     extractions: Map<String, GiniCaptureSpecificExtraction>,
     compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
-    savedSelectableItems: List<SelectableLineItem>? = null
+    savedSelectableItems: List<SelectableLineItem>? = null,
 ) {
 
     private var _extractions: Map<String, GiniCaptureSpecificExtraction> = extractions
@@ -52,6 +53,7 @@ internal class DigitalInvoice(
         get() = _addons
 
     private val amountToPay: BigDecimal
+
 
     init {
         _selectableLineItems = when (savedSelectableItems) {

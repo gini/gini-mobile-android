@@ -6,6 +6,14 @@ import org.koin.dsl.module
 
 val skontoScreenModule = module {
     viewModel { (data: SkontoData) ->
-        SkontoFragmentViewModel(data)
+        SkontoFragmentViewModel(
+            data = data,
+            getSkontoAmountUseCase = get(),
+            getSkontoDiscountPercentageUseCase = get(),
+            getSkontoEdgeCaseUseCase = get(),
+            getSkontoSavedAmountUseCase = get(),
+            getSkontoRemainingDaysUseCase = get(),
+            getSkontoDefaultSelectionStateUseCase = get(),
+        )
     }
 }

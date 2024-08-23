@@ -14,11 +14,15 @@ import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoFragment
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoArgs
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoResultArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
@@ -28,7 +32,6 @@ import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
@@ -46,19 +49,16 @@ import net.gini.android.capture.view.NavButtonType
  * Copyright (c) 2019 Gini GmbH.
  */
 
-private const val ARGS_EXTRACTIONS = "GBS_ARGS_EXTRACTIONS"
-private const val ARGS_COMPOUND_EXTRACTIONS = "GBS_ARGS_COMPOUND_EXTRACTIONS"
-private const val ARGS_RETURN_REASONS = "GBS_ARGS_RETURN_REASONS"
-private const val ARGS_INACCURATE_EXTRACTION = "GBS_ARGS_INACCURATE_EXTRACTION"
 
 private const val TAG_RETURN_REASON_DIALOG = "TAG_RETURN_REASON_DIALOG"
-private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"
 
 /**
  * Internal use only.
  */
 open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
     LineItemsAdapterListener {
+
+    private val args: DigitalInvoiceFragmentArgs by navArgs<DigitalInvoiceFragmentArgs>()
 
     private var binding by autoCleared<GbsFragmentDigitalInvoiceBinding>()
     private var lineItemsAdapter by autoCleared<LineItemsAdapter>()
@@ -77,30 +77,30 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
     private var presenter: DigitalInvoiceScreenContract.Presenter? = null
 
-    private var extractions: Map<String, GiniCaptureSpecificExtraction> = emptyMap()
-    private var compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap()
-    private var returnReasons: List<GiniCaptureReturnReason> = emptyList()
-    private var isInaccurateExtraction: Boolean = false
     private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private var onBackPressedCallback: OnBackPressedCallback? = null
 
-    companion object {
-        internal fun getExtractionsBundle(extractions: Map<String, GiniCaptureSpecificExtraction>): Bundle =
-            Bundle().apply {
-                extractions.forEach { putParcelable(it.key, it.value) }
-            }
+    private val skontoAdapterListener = object : SkontoListItemAdapterListener {
 
-        internal fun getCompoundExtractionsBundle(compoundExtractions: Map<String, GiniCaptureCompoundExtraction>): Bundle =
-            Bundle().apply {
-                compoundExtractions.forEach { putParcelable(it.key, it.value) }
-            }
+        override fun onSkontoEditClicked(listItem: DigitalInvoiceSkontoListItem) {
+            findNavController().navigate(
+                DigitalInvoiceFragmentDirections.toDigitalInvoiceSkontoFragment(
+                    DigitalInvoiceSkontoArgs(
+                        listItem.data,
+                        args.skontoInvoiceHighlights.toList(),
+                        listItem.enabled
+                    )
+                )
+            )
+        }
 
-        internal fun getAmountsAreConsistentExtraction(extractions: Map<String, GiniCaptureSpecificExtraction>): Boolean {
-            val isInaccurateExtraction = extractions["amountsAreConsistent"]?.let {
-                it.value == "false"
-            } ?: true
-            return isInaccurateExtraction
+        override fun onSkontoEnabled(listItem: DigitalInvoiceSkontoListItem) {
+            showSkonto(listItem.copy(enabled = true))
+        }
+
+        override fun onSkontoDisabled(listItem: DigitalInvoiceSkontoListItem) {
+            showSkonto(listItem.copy(enabled = false))
         }
     }
 
@@ -119,7 +119,6 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             requireActivity().window.disallowScreenshots()
         }
         forcePortraitOrientationOnPhones(activity)
-        readArguments()
         initListener()
         createPresenter(activity, savedInstanceState)
 
@@ -128,38 +127,15 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         }
     }
 
-    private fun readArguments() {
-        arguments?.run {
-            getBundle(ARGS_EXTRACTIONS)?.run {
-                extractions =
-                    keySet().map { it to getParcelable<GiniCaptureSpecificExtraction>(it)!! }
-                        .toMap()
-            }
-            getBundle(ARGS_COMPOUND_EXTRACTIONS)?.run {
-                compoundExtractions =
-                    keySet().map { it to getParcelable<GiniCaptureCompoundExtraction>(it)!! }
-                        .toMap()
-            }
-            returnReasons =
-                (BundleCompat.getParcelableArray(
-                    this,
-                    ARGS_RETURN_REASONS,
-                    GiniCaptureReturnReason::class.java
-                )
-                    ?.toList() as? List<GiniCaptureReturnReason>) ?: emptyList()
-
-            isInaccurateExtraction = getBoolean(ARGS_INACCURATE_EXTRACTION, false)
-        }
-    }
-
     private fun createPresenter(activity: Activity, savedInstanceState: Bundle?) =
         DigitalInvoiceScreenPresenter(
             activity,
             this,
-            extractions,
-            compoundExtractions,
-            returnReasons,
-            isInaccurateExtraction,
+            args.extractionsResult.specificExtractions,
+            args.extractionsResult.compoundExtractions,
+            args.extractionsResult.returnReasons,
+            args.skontoData,
+            getAmountsAreConsistentExtraction(args.extractionsResult.specificExtractions),
             savedInstanceState,
         ).apply {
             listener = this@DigitalInvoiceFragment.listener
@@ -291,7 +267,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     private fun initRecyclerView() {
-        lineItemsAdapter = LineItemsAdapter(this, requireContext())
+        lineItemsAdapter = LineItemsAdapter(this, skontoAdapterListener, requireContext())
         activity?.let {
             binding.lineItems.apply {
                 layoutManager = LinearLayoutManager(it)
@@ -425,6 +401,9 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         lineItemsAdapter.addons = addons
     }
 
+    override fun showSkonto(data: DigitalInvoiceSkontoListItem) {
+        lineItemsAdapter.skontoDiscount = listOf(data)
+    }
 
     /**
      * Internal use only.
@@ -461,6 +440,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         super.onStart()
         presenter?.start()
         setBottomSheetResultListener()
+        setSkontoResultListener()
     }
 
     private fun setBottomSheetResultListener() {
@@ -477,6 +457,27 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     ?.let { selectableLineItem ->
                         presenter?.updateLineItem(selectableLineItem)
                     }
+            }
+    }
+
+    private fun setSkontoResultListener() {
+        parentFragmentManager
+            .setFragmentResultListener(
+                DigitalInvoiceSkontoFragment.REQUEST_KEY,
+                viewLifecycleOwner
+            ) { _: String?, result: Bundle ->
+                BundleCompat.getParcelable(
+                    result,
+                    DigitalInvoiceSkontoFragment.RESULT_KEY,
+                    DigitalInvoiceSkontoResultArgs::class.java
+                )?.let { skontoResult ->
+                    showSkonto(
+                        DigitalInvoiceSkontoListItem(
+                            skontoResult.skontoData,
+                            skontoResult.isSkontoEnabled
+                        )
+                    )
+                }
             }
     }
 
@@ -568,6 +569,13 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful)
             )
         )
+    }
+
+    private fun getAmountsAreConsistentExtraction(extractions: Map<String, GiniCaptureSpecificExtraction>): Boolean {
+        val isInaccurateExtraction = extractions["amountsAreConsistent"]?.let {
+            it.value == "false"
+        } ?: true
+        return isInaccurateExtraction
     }
 }
 // endregion

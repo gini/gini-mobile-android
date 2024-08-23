@@ -1,8 +1,8 @@
 package net.gini.android.bank.sdk.capture.skonto
 
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoData.Amount
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData.SkontoPaymentMethod
+import net.gini.android.capture.Amount
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import java.math.BigDecimal
@@ -25,7 +25,7 @@ internal class SkontoDataExtractor {
 
 
         fun updateGiniExtractions(updatedData: SkontoFragmentContract.State.Ready) {
-            _extractions["amountToPay"]?.value = updatedData.totalAmount.amount.toString()
+            _extractions["amountToPay"]?.value = updatedData.totalAmount.value.toString()
 
             val skontoDiscountMaps = compoundExtractions["skontoDiscounts"]?.specificExtractionMaps
             skontoDiscountMaps?.map { skontoDiscountData ->
@@ -36,7 +36,7 @@ internal class SkontoDataExtractor {
                 ) ?: throw NoSuchElementException("Data for `PercentageDiscounted` is missing")
 
                 skontoDiscountData.putDataByKeys(
-                    updatedData.skontoAmount.amount.toString(),
+                    updatedData.skontoAmount.value.toString(),
                     "skontoAmountToPay",
                     "skontoAmountToPayCalculated"
                 )
