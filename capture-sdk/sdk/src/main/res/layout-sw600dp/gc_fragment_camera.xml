@@ -361,6 +361,19 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <include
+        layout="@layout/gc_detection_error_layout"
+        android:id="@+id/gc_detection_error_layout"
+        android:layout_width="@dimen/gc_photo_disabled_detection_width"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame_wrapper"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="@dimen/gc_large_32"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        app:layout_constraintVertical_bias="0.9" />
+
 
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gc_injected_navigation_bar_container_bottom"

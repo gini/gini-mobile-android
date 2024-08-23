@@ -177,6 +177,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private static final String IN_MULTI_PAGE_STATE_KEY = "IN_MULTI_PAGE_STATE_KEY";
     private static final String IS_FLASH_ENABLED_KEY = "IS_FLASH_ENABLED_KEY";
+    private static final String IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY = "IS_ARGS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY";
 
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
@@ -221,9 +222,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
     private ConstraintLayout mPaneWrapper;
+    private ConstraintLayout mDetectionErrorLayout;
     private TextView mScanTextView;
     private TextView mIbanDetectedTextView;
     private boolean mIsTakingPicture;
+    private boolean mIsDetectionErrorPopupShowed;
 
     private boolean mImportDocumentButtonEnabled;
     private ImportImageFileUrisAsyncTask mImportUrisAsyncTask;
@@ -239,6 +242,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private IBANRecognizerFilter ibanRecognizerFilter;
     private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Camera.INSTANCE;
+    private View mDetectionErrorDismissButton;
 
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, final boolean addPages) {
         mFragment = fragment;
@@ -265,6 +269,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 "QRCode detector dependencies are not yet available. QRCode detection is disabled.");
 
         setQRDisabledTexts();
+        if (!mIsDetectionErrorPopupShowed) {
+            mIsDetectionErrorPopupShowed = true;
+            mDetectionErrorLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private void handleQRCodeDetected(@Nullable final PaymentQRCodeData paymentQRCodeData,
@@ -355,6 +363,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void restoreSavedState(@NonNull final Bundle savedInstanceState) {
         mInMultiPageState = savedInstanceState.getBoolean(IN_MULTI_PAGE_STATE_KEY);
         mIsFlashEnabled = savedInstanceState.getBoolean(IS_FLASH_ENABLED_KEY);
+        mIsDetectionErrorPopupShowed = savedInstanceState.getBoolean(IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY);
     }
 
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -672,6 +681,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     void onSaveInstanceState(@NonNull final Bundle outState) {
         outState.putBoolean(IN_MULTI_PAGE_STATE_KEY, mInMultiPageState);
         outState.putBoolean(IS_FLASH_ENABLED_KEY, mIsFlashEnabled);
+        outState.putBoolean(IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY, mIsDetectionErrorPopupShowed);
     }
 
     void onStop() {
@@ -733,6 +743,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mPaneWrapper = view.findViewById(R.id.gc_pane_wrapper);
         mLoadingIndicator = view.findViewById(R.id.gc_injected_loading_indicator);
         mIbanDetectedTextView = view.findViewById(R.id.gc_iban_detected);
+        mDetectionErrorLayout = view.findViewById(R.id.gc_detection_error_layout);
+        mDetectionErrorDismissButton = mDetectionErrorLayout.findViewById(R.id.gc_detection_error_popup_dismiss_button);
 
         if (!ContextHelper.isTablet(mFragment.getActivity())) {
             mScanTextView = view.findViewById(R.id.gc_camera_title);
@@ -946,6 +958,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     }
             );
             onBackPressed();
+        });
+
+        ClickListenerExtKt.setIntervalClickListener(mDetectionErrorDismissButton, v -> {
+            mDetectionErrorLayout.setVisibility(View.GONE);
         });
     }
 
