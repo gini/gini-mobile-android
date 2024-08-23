@@ -11,7 +11,7 @@ import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
 import net.gini.android.merchant.sdk.review.openWith.OpenWithForwardListener
 import net.gini.android.merchant.sdk.util.BackListener
 
-fun FragmentManager.add(@IdRes containerId: Int, fragment: Fragment, addToBackStack: Boolean) {
+internal fun FragmentManager.add(@IdRes containerId: Int, fragment: Fragment, addToBackStack: Boolean) {
     beginTransaction()
      .add(containerId, fragment, fragment::class.java.name)
      .apply { if (addToBackStack) addToBackStack(fragment::class.java.name) }

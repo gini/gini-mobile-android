@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory
 /**
  * Interface for forwarding the request to redirect to bank app.
  */
-interface InstallAppForwardListener {
+internal interface InstallAppForwardListener {
     fun onForwardToBankSelected()
 }
 

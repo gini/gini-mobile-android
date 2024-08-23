@@ -131,12 +131,12 @@ internal data class PaymentProviderApp(
     }
 }
 
-data class PaymentProviderAppColors(
+internal data class PaymentProviderAppColors(
     @ColorInt val backgroundColor: Int,
     @ColorInt val textColor: Int
 )
 
-data class InstalledPaymentProviderApp(
+internal data class InstalledPaymentProviderApp(
     val packageName: String,
     val version: String,
     val launchIntent: Intent

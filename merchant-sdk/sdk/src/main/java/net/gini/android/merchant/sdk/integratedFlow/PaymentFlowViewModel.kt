@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.api.payment.model.Payment
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.paymentcomponent.BankPickerRows
@@ -112,12 +111,6 @@ internal class PaymentFlowViewModel(
 
     fun onPayment() = viewModelScope.launch {
         giniPaymentManager.onPayment(initialSelectedPaymentProvider, paymentDetails)
-    }
-
-    fun onBankOpened() {
-        // Schedule on the main dispatcher to allow all collectors to receive the current state before
-        // the state is overridden
-        giniMerchant.emitSDKEvent(GiniMerchant.PaymentState.NoAction)
     }
 
     fun getPaymentProviderApp() = initialSelectedPaymentProvider

@@ -210,6 +210,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
             } catch (e: Exception) {
                 finishWithResult(interceptSuccessResult(result).toCaptureResult())
             }
+        } else {
+            finishWithResult(result.toCaptureResult())
         }
     }
 

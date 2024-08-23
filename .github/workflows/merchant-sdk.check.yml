@@ -30,10 +30,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -44,7 +44,7 @@ jobs:
 
       - name: archive unit test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: merchant-sdk-unit-test-results
           path: merchant-sdk/sdk/build/reports/tests
@@ -53,9 +53,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -72,7 +72,7 @@ jobs:
           -PreleaseKeyPassword='${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
 
       - name: archive release example app for QA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: merchant-sdk-example-app-qa-release
           path: merchant-sdk/example-app/build/outputs/apk/qa/release
@@ -88,7 +88,7 @@ jobs:
           -PreleaseKeyPassword='${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
 
       - name: archive release example app for production
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: merchant-sdk-example-app-prod-release
           path: merchant-sdk/example-app/build/outputs/apk/prod/release
@@ -97,9 +97,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -109,7 +109,7 @@ jobs:
         run: ./gradlew merchant-sdk:sdk:lint
 
       - name: archive android lint report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: merchant-sdk-android-lint-report
           path: merchant-sdk/sdk/build/reports/lint-results*.html
@@ -118,9 +118,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -130,7 +130,7 @@ jobs:
         run: ./gradlew merchant-sdk:sdk:detekt
 
       - name: archive detekt report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: merchant-sdk-detekt-report
           path: merchant-sdk/sdk/build/reports/detekt/*.html
@@ -139,9 +139,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -151,7 +151,7 @@ jobs:
         run: ./gradlew merchant-sdk:sdk:ktlintCheck
 
       - name: archive ktlint report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: merchant-sdk-ktlint-report
           path: merchant-sdk/sdk/build/reports/ktlint/**/*.html

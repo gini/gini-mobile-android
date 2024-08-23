@@ -19,8 +19,7 @@ import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
 import org.jetbrains.annotations.VisibleForTesting
 
-
-class PaymentComponentBottomSheet private constructor(
+internal class PaymentComponentBottomSheet private constructor(
     paymentComponent: PaymentComponent?,
     reviewFragmentShown: Boolean,
     backListener: BackListener? = null

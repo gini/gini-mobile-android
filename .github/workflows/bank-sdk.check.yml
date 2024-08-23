@@ -32,10 +32,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -46,7 +46,7 @@ jobs:
 
       - name: archive unit test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bank-sdk-unit-test-results
           path: bank-sdk/sdk/build/reports/tests
@@ -67,10 +67,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: setup java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -121,7 +121,7 @@ jobs:
 
       - name: archive instrumented test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bank-sdk-instrumented-test-results
           path: bank-sdk/sdk/build/outputs/androidTest-results/connected
@@ -143,7 +143,7 @@ jobs:
 
       - name: archive instrumented test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bank-sdk-example-app-instrumented-test-results
           path: bank-sdk/example-app/build/outputs/androidTest-results/connected
@@ -152,9 +152,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -171,7 +171,7 @@ jobs:
           -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
 
       - name: archive release example app for QA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bank-sdk-example-app-qa-release
           path: bank-sdk/example-app/build/outputs/apk/qaExampleApp/release
@@ -187,7 +187,7 @@ jobs:
           -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
 
       - name: archive release example app for production
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bank-sdk-example-app-prod-release
           path: bank-sdk/example-app/build/outputs/apk/prodExampleApp/release
@@ -196,9 +196,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -208,7 +208,7 @@ jobs:
         run: ./gradlew bank-sdk:sdk:lint
 
       - name: archive android lint report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bank-sdk-android-lint-report
           path: bank-sdk/sdk/build/reports/lint-results*.html
@@ -217,9 +217,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -229,7 +229,7 @@ jobs:
         run: ./gradlew bank-sdk:sdk:detekt
 
       - name: archive detekt report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bank-sdk-detekt-report
           path: bank-sdk/sdk/build/reports/detekt/*.html
@@ -238,9 +238,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -250,7 +250,7 @@ jobs:
         run: ./gradlew bank-sdk:sdk:ktlintCheck
 
       - name: archive ktlint report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bank-sdk-ktlint-report
           path: bank-sdk/sdk/build/reports/ktlint/**/*.html

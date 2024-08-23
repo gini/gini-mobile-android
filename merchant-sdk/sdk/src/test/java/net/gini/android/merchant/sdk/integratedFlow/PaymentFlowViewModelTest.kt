@@ -211,20 +211,6 @@ class PaymentFlowViewModelTest {
     }
 
     @Test
-    fun `forwards on bank opened event to giniMerchant`() = runTest {
-        val viewModel = PaymentFlowViewModel(
-            paymentComponent = paymentComponent!!,
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant!!,
-            giniPaymentManager = giniPayment!!
-        )
-
-        viewModel.onBankOpened()
-        verify(exactly = 1) { giniMerchant!!.emitSDKEvent(any()) }
-    }
-
-    @Test
     fun `emits share with started event`() = runTest {
         val viewModel = PaymentFlowViewModel(
             paymentComponent = paymentComponent!!,

@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -167,6 +168,9 @@ class SkontoFragment : Fragment() {
                                         args.invoiceHighlights
                                     )
                                 )
+                        },
+                        navigateToHelp = {
+                            findNavController().navigate(SkontoFragmentDirections.toSkontoHelpFragment())
                         }
                     )
                 }
@@ -195,6 +199,7 @@ private fun SkontoFragmentViewModel.collectSideEffect(
 @Composable
 private fun ScreenContent(
     navigateBack: () -> Unit,
+    navigateToHelp: () -> Unit,
     viewModel: SkontoFragmentViewModel,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
@@ -223,6 +228,7 @@ private fun ScreenContent(
         onFullAmountChange = viewModel::onFullAmountFieldChanged,
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
         onBackClicked = navigateBack,
+        onHelpClicked = navigateToHelp,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onProceedClicked = viewModel::onProceedClicked,
         onInfoBannerClicked = viewModel::onInfoBannerClicked,
@@ -239,6 +245,7 @@ private fun ScreenStateContent(
     onFullAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
@@ -258,6 +265,7 @@ private fun ScreenStateContent(
             onDueDateChanged = onDueDateChanged,
             onFullAmountChange = onFullAmountChange,
             onBackClicked = onBackClicked,
+            onHelpClicked = onHelpClicked,
             isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
             customBottomNavBarAdapter = customBottomNavBarAdapter,
             onProceedClicked = onProceedClicked,
@@ -272,6 +280,7 @@ private fun ScreenStateContent(
 @Composable
 private fun ScreenReadyState(
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
     onInvoiceClicked: () -> Unit,
     state: SkontoFragmentContract.State.Ready,
@@ -295,6 +304,7 @@ private fun ScreenReadyState(
                 isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                 colors = screenColorScheme.topAppBarColors,
                 onBackClicked = onBackClicked,
+                onHelpClicked = onHelpClicked
             )
         },
         bottomBar = {
@@ -304,6 +314,7 @@ private fun ScreenReadyState(
                 totalAmount = state.totalAmount,
                 isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                 onBackClicked = onBackClicked,
+                onHelpClicked = onHelpClicked,
                 customBottomNavBarAdapter = customBottomNavBarAdapter,
                 onProceedClicked = onProceedClicked,
                 isSkontoSectionActive = state.isSkontoSectionActive,
@@ -385,6 +396,7 @@ private fun ScreenReadyState(
 @Composable
 private fun TopAppBar(
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     modifier: Modifier = Modifier,
     isBottomNavigationBarEnabled: Boolean,
     colors: GiniTopBarColors,
@@ -395,9 +407,35 @@ private fun TopAppBar(
         title = stringResource(id = R.string.gbs_skonto_screen_title),
         navigationIcon = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-                NavigationActionBack(onClick = onBackClicked)
+                NavigationActionBack(modifier = Modifier.padding(start = 16.dp),onClick = onBackClicked)
             }
+        },
+        actions = {
+            AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
+            NavigationActionHelp(
+                modifier = Modifier.padding(end = 16.dp),
+                onClick = onHelpClicked
+            )
+              }
         })
+}
+
+@Composable
+private fun NavigationActionHelp(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IconButton(
+        modifier = modifier
+            .width(24.dp)
+            .height(24.dp),
+        onClick = onClick
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.gbs_help_question_icon),
+            contentDescription = null,
+        )
+    }
 }
 
 @Composable
@@ -406,7 +444,9 @@ private fun NavigationActionBack(
     modifier: Modifier = Modifier,
 ) {
     IconButton(
-        modifier = modifier,
+        modifier = modifier
+            .width(24.dp)
+            .height(24.dp),
         onClick = onClick
     ) {
         Icon(
@@ -815,6 +855,7 @@ private fun FooterSection(
     isBottomNavigationBarEnabled: Boolean,
     isSkontoSectionActive: Boolean,
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
     modifier: Modifier = Modifier,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
@@ -854,6 +895,7 @@ private fun FooterSection(
             with(customBottomNavBarAdapter.viewAdapter) {
                 setOnProceedClickListener(onProceedClicked)
                 setOnBackClickListener(onBackClicked)
+                setOnHelpClickListener(onHelpClicked)
                 onTotalAmountUpdated(totalPriceText)
                 onSkontoPercentageBadgeUpdated(discountLabelText)
                 onSkontoPercentageBadgeVisibilityUpdate(isSkontoSectionActive)
@@ -928,15 +970,15 @@ private fun FooterSection(
                         )
                     }
                 }
-                val buttonPaddingStart = if (isBottomNavigationBarEnabled) 0.dp else 20.dp
-                val buttonPaddingEnd = if (isBottomNavigationBarEnabled) 48.dp else 24.dp
+                val buttonPaddingStart = if (isBottomNavigationBarEnabled) 16.dp else 20.dp
+                val buttonPaddingEnd = if (isBottomNavigationBarEnabled) 16.dp else 20.dp
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
                         NavigationActionBack(
-                            modifier = Modifier.padding(horizontal = 4.dp),
+                            modifier = Modifier.padding(start = 16.dp),
                             onClick = onBackClicked
                         )
                     }
@@ -948,6 +990,12 @@ private fun FooterSection(
                         onClick = onProceedClicked,
                         giniButtonColors = colors.continueButtonColors
                     )
+                    AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
+                        NavigationActionHelp(
+                            modifier = Modifier.padding(end = 16.dp),
+                            onClick = onHelpClicked
+                        )
+                    }
                 }
             }
         }
@@ -980,6 +1028,7 @@ private fun ScreenReadyStatePreview() {
             onDueDateChanged = {},
             onFullAmountChange = {},
             onBackClicked = {},
+            onHelpClicked = {},
             isBottomNavigationBarEnabled = true,
             onProceedClicked = {},
             customBottomNavBarAdapter = null,
