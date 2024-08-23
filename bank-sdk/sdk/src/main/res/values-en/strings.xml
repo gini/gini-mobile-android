@@ -41,47 +41,47 @@
     <string name="gbs_help_online_shops_text">We are currently focused on the most popular online merchants in the market. More retailers will be added in the future.</string>
     <string name="gbs_articles">Articles</string>
     <!-- region Skonto -->
-    <string name="gbs_skonto_screen_title">Discount</string>
+    <string name="gbs_skonto_screen_title">Skonto discount</string>
     <!--   region Section Invoice Scan -->
     <string name="gbs_skonto_section_invoice_preview_title">Invoice</string>
     <string name="gbs_skonto_invoice_section_preview_subtitle">Tap to view</string>
     <!--   endregion  -->
     <!--   region Section Discount -->
-    <string name="gbs_skonto_section_discount_title">With discount</string>
+    <string name="gbs_skonto_section_discount_title">With Skonto discount</string>
     <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Active</string>
-    <string name="gbs_skonto_section_discount_info_banner_normal_message">Pay in %1$s: %2$s discount</string>
-    <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Pay today: %1$s discount</string>
-    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">A %1$s discount is possible for cash payment within %2$s</string>
+    <string name="gbs_skonto_section_discount_info_banner_normal_message">Pay in %1$s: %2$s Skonto discount</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Pay today: %1$s Skonto discount</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">Pay in cash within the next %2$s days and receive a %1$s Skonto discount</string>
     <string name="gbs_skonto_section_discount_info_banner_date_expired_message">The %1$s discount has expired</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Final amount</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Expiry date</string>
     <!--   endregion -->
     <!--   region Section Without Discount -->
-    <string name="gbs_skonto_section_without_discount_title">Without discount</string>
+    <string name="gbs_skonto_section_without_discount_title">Without Skonto discount</string>
     <string name="gbs_skonto_section_without_discount_hint_label_enabled">  •  Active</string>
     <string name="gbs_skonto_section_without_discount_field_amount_hint">Full amount</string>
     <!--   endregion -->
     <!--   region Footer -->
     <string name="gbs_skonto_section_footer_title">Total</string>
-    <string name="gbs_skonto_section_footer_label_discount">%1$s discount</string>
+    <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto discount</string>
     <string name="gbs_skonto_section_footer_label_save">Save %1$s</string>
     <string name="gbs_skonto_section_footer_continue_button_text">Proceed</string>
     <!--   endregion -->
     <!--   region InfoDialog -->
-    <string name="gbs_skonto_section_info_dialog_pay_today_message">A discount is indicated on this invoice, it will expire after today.</string>
-    <string name="gbs_skonto_section_info_dialog_pay_cash_message">A discount is indicated on this invoice, but it can only be used for cash deposit through a bank terminal.</string>
-    <string name="gbs_skonto_section_info_dialog_date_expired_message">You could have paid this invoice with a %1$s cash discount, but the discount period has already expired.</string>
-    <string name="gbs_skonto_section_info_dialog_ok_button_text">Got it</string>
+    <string name="gbs_skonto_section_info_dialog_pay_today_message">A Skonto discount can be applied to this invoice, it will expire after today.</string>
+    <string name="gbs_skonto_section_info_dialog_pay_cash_message">A Skonto discount can be applied to this invoice, exclusively for payments in cash.</string>
+    <string name="gbs_skonto_section_info_dialog_date_expired_message">This invoice contained a discount period which has unfortunately expired.</string>
+    <string name="gbs_skonto_section_info_dialog_ok_button_text">Understood</string>
     <!--   endregion -->
     <!--   region Skonto help -->
     <string name="gbs_skonto_help_title">Help</string>
     <string name="gbs_skonto_help_save_money_title">Save money by paying promptly</string>
-    <string name="gbs_skonto_help_save_money_text">Many companies offer cash discounts, which are discounts for paying bills within a specified time frame. With our new feature, you can now:</string>
-    <string name="gbs_skonto_help_item_capture_invoice">Use your camera to capture invoices with cash discounts</string>
+    <string name="gbs_skonto_help_save_money_text">Many companies offer Skonto discounts, which are discounts for paying bills within a specified time frame. With our new feature, you can now:</string>
+    <string name="gbs_skonto_help_item_capture_invoice">Use your camera to capture invoices with Skonto discounts</string>
     <string name="gbs_skonto_help_item_identify_discount">Immediately identify discounted amounts and due dates</string>
     <string name="gbs_skonto_help_item_adjust_payment_details">Approve or adjust payment details</string>
     <string name="gbs_skonto_help_item_pay_promptly">Save money by paying promptly</string>
-    <string name="gbs_skonto_help_footer_text">Snap a photo of your invoice and the app will automatically calculate the cash discount. Just review the details, confirm, and enjoy the savings!</string>
+    <string name="gbs_skonto_help_footer_text">Take a photo of your invoice and the app will automatically calculate the Skonto discount. Just review the details, confirm, and enjoy the savings!</string>
     <!--   endregion -->
     <!-- endregion -->
 </resources>
