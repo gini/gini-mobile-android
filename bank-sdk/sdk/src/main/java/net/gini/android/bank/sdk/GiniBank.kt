@@ -308,6 +308,7 @@ object GiniBank {
         callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit
     ): CancellationToken {
         check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        BankSdkIsolatedKoinContext.init(context)
         return giniCapture!!.createDocumentForImportedFiles(
             intent,
             context,
