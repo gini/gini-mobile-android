@@ -5,17 +5,19 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
+import net.gini.android.capture.internal.util.DeviceHelper;
 import net.gini.android.capture.internal.util.UriReaderAsyncTask;
 import net.gini.android.capture.util.IntentHelper;
+import net.gini.android.capture.util.UploadMetadataBuilder;
 
 import java.util.Arrays;
 import java.util.UUID;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * Internal use only.
@@ -220,6 +222,16 @@ public class GiniCaptureDocument implements Document {
     }
 
     @Override
+    public String generateUploadMetadata(Context context) {
+        return UploadMetadataBuilder.INSTANCE
+                .setSource(mSource.getName())
+                .setDeviceType(DeviceHelper.getDeviceType(context))
+                .setDeviceOrientation(DeviceHelper.getDeviceOrientation(context))
+                .setImportMethod(mImportMethod.name())
+                .build();
+    }
+
+    @Override
     public String toString() {
         return "GiniCaptureDocument{"
                 + "mUniqueId='" + mUniqueId + '\''
@@ -309,6 +321,7 @@ public class GiniCaptureDocument implements Document {
         if (mImportMethod != that.mImportMethod) {
             return false;
         }
+
         return mMimeType.equals(that.mMimeType);
     }
 

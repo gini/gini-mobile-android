@@ -57,10 +57,11 @@ import net.gini.android.bank.api.models.Configuration as BankConfiguration
  * [GiniCapture.Builder.setGiniCaptureNetworkService] when creating a
  * [GiniCapture] instance.
  */
-class GiniCaptureDefaultNetworkService(
+class GiniCaptureDefaultNetworkService private constructor(
     internal val giniBankApi: GiniBankAPI,
     private val documentMetadata: DocumentMetadata?,
-    coroutineContext: CoroutineContext = Dispatchers.Main
+    private val context: Context,
+    coroutineContext: CoroutineContext = Dispatchers.Main,
 ) : GiniCaptureNetworkService {
 
     private val coroutineScope = CoroutineScope(coroutineContext)
@@ -212,12 +213,18 @@ class GiniCaptureDefaultNetworkService(
             return@launchCancellable
         }
 
+        val documentMetadataCopy = DocumentMetadata()
+        documentMetadata?.metadata?.forEach { entry ->
+            documentMetadataCopy.add(entry.key, entry.value)
+        }
+        documentMetadataCopy.add(DocumentMetadata.UPLOAD_METADATA_HEADER_FIELD_NAME, document.generateUploadMetadata(context))
+
         val partialDocumentResource = giniBankApi.documentManager.createPartialDocument(
             document = documentData,
             contentType = document.mimeType,
             filename = null,
             documentType = null,
-            documentMetadata
+            documentMetadataCopy
         )
 
         when (partialDocumentResource) {
@@ -512,7 +519,7 @@ class GiniCaptureDefaultNetworkService(
             trustManager?.let { giniApiBuilder.setTrustManager(it) }
             giniApiBuilder.setDebuggingEnabled(isDebuggingEnabled)
             val giniBankApi = giniApiBuilder.build()
-            return GiniCaptureDefaultNetworkService(giniBankApi, documentMetadata)
+            return GiniCaptureDefaultNetworkService(giniBankApi, documentMetadata, mContext)
         }
 
         /**

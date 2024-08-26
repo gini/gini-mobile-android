@@ -1,5 +1,6 @@
 package net.gini.android.capture;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
@@ -124,7 +125,7 @@ public interface Document extends Parcelable {
      * Generate metadata to be sent to backend when creating partial document.
      *
      */
-    String generateUploadMetadata();
+    String generateUploadMetadata(Context context);
 
     /**
      * Supported document types.
