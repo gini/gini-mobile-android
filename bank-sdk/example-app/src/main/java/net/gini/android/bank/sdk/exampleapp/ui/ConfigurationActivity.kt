@@ -388,7 +388,8 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         // 41 enable skonto screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
+        binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar
+            .setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isSkontoHelpCustomNavBarEnabled = isChecked

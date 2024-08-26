@@ -7,10 +7,16 @@ import android.graphics.RectF
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
 import net.gini.android.capture.internal.network.model.DocumentLayout
 import net.gini.android.capture.network.model.GiniCaptureBox
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class SkontoPageImageProcessor {
+
+    companion object {
+        var LOG: Logger = LoggerFactory.getLogger(SkontoPageImageProcessor::class.java)
+    }
 
     suspend fun processImage(
         image: Bitmap,
@@ -36,7 +42,11 @@ class SkontoPageImageProcessor {
             this.color = color
         }
 
-        canvas.drawHighlightRect(scaledRectList.unionAll(), paint)
+        if (scaledRectList.isNotEmpty()) {
+            canvas.drawHighlightRect(scaledRectList.unionAll(), paint)
+        } else {
+            LOG.error("No boxes to highlight detected")
+        }
 
         continuation.resume(finalBitmap)
     }
