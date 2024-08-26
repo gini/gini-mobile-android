@@ -5,9 +5,11 @@ import android.os.Bundle
 import kotlinx.coroutines.CoroutineScope
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
+import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCaptureBasePresenter
 import net.gini.android.capture.GiniCaptureBaseView
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import java.math.BigDecimal
 
 /**
  * Created by Alpar Szotyori on 05.12.2019.
@@ -42,6 +44,10 @@ interface DigitalInvoiceScreenContract {
         fun onEditLineItem(selectableLineItem: SelectableLineItem)
 
         fun showOnboarding()
+        fun showSkontoEditScreen(
+            data: SkontoData,
+            isSkontoSectionActive: Boolean,
+        )
     }
 
     /**
@@ -63,6 +69,8 @@ interface DigitalInvoiceScreenContract {
         abstract fun updateLineItem(selectableLineItem: SelectableLineItem)
         abstract fun enableSkonto()
         abstract fun disableSkonto()
+        abstract fun updateSkontoData(skontoData: SkontoData?)
+        abstract fun editSkontoDataListItem(skontoListItem: DigitalInvoiceSkontoListItem)
     }
 
     data class FooterDetails(
@@ -70,6 +78,8 @@ interface DigitalInvoiceScreenContract {
         val buttonEnabled: Boolean = true,
         val count: Int = 0,
         val total: Int = 0,
-        val inaccurateExtraction: Boolean
+        val inaccurateExtraction: Boolean,
+        val skontoSavedAmount: Amount? = null,
+        val skontoDiscountPercentage: BigDecimal? = null,
     )
 }

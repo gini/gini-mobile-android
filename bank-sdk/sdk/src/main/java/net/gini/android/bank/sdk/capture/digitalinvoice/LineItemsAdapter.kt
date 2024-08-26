@@ -13,9 +13,12 @@ import net.gini.android.bank.sdk.R
 import java.util.Collections.emptyList
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.*
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.LineItem
+import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
+import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceAddonBinding
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceLineItemBinding
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceSkontoBinding
+import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.capture.internal.ui.IntervalClickListener
 
 /**
@@ -56,9 +59,9 @@ internal class LineItemsAdapter(
     private val listener: LineItemsAdapterListener,
     private val skontoListener: SkontoListItemAdapterListener,
     private val context: Context
-) :
-    RecyclerView.Adapter<ViewHolder<*>>() {
+) : RecyclerView.Adapter<ViewHolder<*>>() {
 
+    private val amountFormatter: AmountFormatter by getGiniBankKoin().inject()
 
     var lineItems: List<SelectableLineItem> = emptyList()
         set(value) {
@@ -87,7 +90,7 @@ internal class LineItemsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewTypeId: Int): ViewHolder<*> {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return ViewHolder.forViewTypeId(viewTypeId, layoutInflater, parent)
+        return ViewHolder.forViewTypeId(viewTypeId, layoutInflater, parent, amountFormatter)
     }
 
 
@@ -325,17 +328,22 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         }
     }
 
-    internal class SkontoViewHolder(private val binding: GbsItemDigitalInvoiceSkontoBinding) :
+    internal class SkontoViewHolder(
+        private val binding: GbsItemDigitalInvoiceSkontoBinding,
+        private val amountFormatter: AmountFormatter,
+    ) :
         ViewHolder<DigitalInvoiceSkontoListItem>(binding.root, SkontoInfo) {
 
         internal var listener: SkontoListItemAdapterListener? = null
 
+        @SuppressLint("SetTextI18n")
         override fun bind(
             data: DigitalInvoiceSkontoListItem,
             allData: List<DigitalInvoiceSkontoListItem>?,
             dataIndex: Int?
         ) = with(binding) {
-            gbsSkontoAmount.text = data.data.skontoAmountToPay.value.toEngineeringString()
+            gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
+            gbsMessage.text = data.message
             gbsEnableSwitch.isChecked = data.enabled
             gbsEditButton.setOnClickListener {
                 listener?.onSkontoEditClicked(data)
@@ -356,7 +364,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
 
     companion object {
         fun forViewTypeId(
-            viewTypeId: Int, layoutInflater: LayoutInflater, parent: ViewGroup
+            viewTypeId: Int, layoutInflater: LayoutInflater, parent: ViewGroup,
+            amountFormatter: AmountFormatter,
         ) =
             when (ViewType.from(viewTypeId)) {
                 LineItem -> LineItemViewHolder(
@@ -379,8 +388,9 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     GbsItemDigitalInvoiceSkontoBinding.inflate(
                         layoutInflater,
                         parent,
-                        false
-                    )
+                        false,
+                    ),
+                    amountFormatter
                 )
             }
     }

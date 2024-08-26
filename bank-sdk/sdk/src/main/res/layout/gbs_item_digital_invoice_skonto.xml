@@ -10,6 +10,21 @@
     android:focusable="true">
 
     <TextView
+        android:id="@+id/gbs_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginTop="@dimen/gc_small"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="5sp"
+        android:textAppearance="@style/GiniCaptureTheme.Typography.Caption1"
+        android:textColor="@color/gc_dark_06"
+        app:layout_constraintEnd_toStartOf="@+id/gbs_enable_switch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_skonto_amount"
+        tools:text="Pay in cash within the next 14 days and receive a 3% Skonto discount" />
+
+    <TextView
         android:id="@+id/gbs_per_unit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -30,11 +45,11 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/gc_small"
+        android:text="-0,55 EUR"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
         android:textColor="@color/gc_success_01"
         app:layout_constraintStart_toStartOf="@id/gbs_per_unit"
-        app:layout_constraintTop_toBottomOf="@id/gbs_per_unit"
-        android:text="-0,55 EUR" />
+        app:layout_constraintTop_toBottomOf="@id/gbs_per_unit" />
 
     <TextView
         android:id="@+id/gbs_edit_button"
@@ -51,7 +66,7 @@
         android:textColor="@color/gc_accent_01"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/gbs_skonto_amount"
-        app:layout_constraintTop_toBottomOf="@id/gbs_skonto_amount"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_message"
         app:layout_constraintVertical_bias="0.0" />
 
 

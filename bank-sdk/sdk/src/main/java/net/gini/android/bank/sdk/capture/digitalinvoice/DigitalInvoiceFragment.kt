@@ -11,6 +11,7 @@ import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.core.os.BundleCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,9 +25,14 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSko
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoResultArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoDiscountLabelTextFactory
+import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoSavedAmountTextFactory
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
+import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
@@ -81,27 +87,37 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private var onBackPressedCallback: OnBackPressedCallback? = null
 
+    private val skontoSavedAmountTextFactory: SkontoSavedAmountTextFactory by getGiniBankKoin().inject()
+    private val skontoDiscountLabelTextFactory: SkontoDiscountLabelTextFactory by getGiniBankKoin().inject()
+
     private val skontoAdapterListener = object : SkontoListItemAdapterListener {
 
         override fun onSkontoEditClicked(listItem: DigitalInvoiceSkontoListItem) {
-            findNavController().navigate(
-                DigitalInvoiceFragmentDirections.toDigitalInvoiceSkontoFragment(
-                    DigitalInvoiceSkontoArgs(
-                        listItem.data,
-                        args.skontoInvoiceHighlights.toList(),
-                        listItem.enabled
-                    )
-                )
-            )
+            presenter?.editSkontoDataListItem(listItem)
         }
 
         override fun onSkontoEnabled(listItem: DigitalInvoiceSkontoListItem) {
-            showSkonto(listItem.copy(enabled = true))
+            presenter?.enableSkonto()
         }
 
         override fun onSkontoDisabled(listItem: DigitalInvoiceSkontoListItem) {
-            showSkonto(listItem.copy(enabled = false))
+            presenter?.disableSkonto()
         }
+    }
+
+    override fun showSkontoEditScreen(
+        data: SkontoData,
+        isSkontoSectionActive: Boolean,
+    ) {
+        findNavController().navigate(
+            DigitalInvoiceFragmentDirections.toDigitalInvoiceSkontoFragment(
+                DigitalInvoiceSkontoArgs(
+                    data = data,
+                    invoiceHighlights = args.skontoInvoiceHighlights.toList(),
+                    isSkontoSectionActive = isSkontoSectionActive
+                )
+            )
+        )
     }
 
     /**
@@ -380,6 +396,19 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         binding.grossPriceTotalFractionalPart.text = fractional
         binding.gbsPay.isEnabled = data.buttonEnabled
 
+        binding.skontoSavedAmount.isVisible = data.skontoSavedAmount != null
+        if (data.skontoSavedAmount != null) {
+            binding.skontoSavedAmount.text =
+                skontoSavedAmountTextFactory.create(data.skontoSavedAmount)
+        }
+
+        binding.skontoDiscountLabel.isVisible = data.skontoDiscountPercentage != null
+        if (data.skontoDiscountPercentage != null) {
+            binding.skontoDiscountLabel.text =
+                skontoDiscountLabelTextFactory.create(data.skontoDiscountPercentage)
+        }
+
+
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
             binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
                 (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
@@ -471,12 +500,12 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     DigitalInvoiceSkontoFragment.RESULT_KEY,
                     DigitalInvoiceSkontoResultArgs::class.java
                 )?.let { skontoResult ->
-                    showSkonto(
-                        DigitalInvoiceSkontoListItem(
-                            skontoResult.skontoData,
-                            skontoResult.isSkontoEnabled
-                        )
-                    )
+                    presenter?.updateSkontoData(skontoResult.skontoData)
+                    if (skontoResult.isSkontoEnabled) {
+                        presenter?.enableSkonto()
+                    } else {
+                        presenter?.disableSkonto()
+                    }
                 }
             }
     }
