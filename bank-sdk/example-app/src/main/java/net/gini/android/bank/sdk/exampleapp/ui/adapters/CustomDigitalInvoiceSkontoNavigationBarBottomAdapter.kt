@@ -19,7 +19,7 @@ class CustomDigitalInvoiceSkontoNavigationBarBottomAdapter : DigitalInvoiceSkont
 
 
     override fun setOnHelpClickListener(onClick: () -> Unit) {
-        // TODO help here
+        binding?.gbsHelpBtn?.setOnClickListener { onClick() }
     }
 
     override fun onCreateView(container: ViewGroup): View {

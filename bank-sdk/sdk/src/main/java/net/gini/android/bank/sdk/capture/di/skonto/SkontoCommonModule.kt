@@ -39,7 +39,7 @@ val skontoCommonModule = module {
     }
     factory {
         AmountFormatter(
-            amountFormatter = currencyFormatterWithoutSymbol(), // TODO
+            amountFormatter = currencyFormatterWithoutSymbol(),
         )
     }
 }
