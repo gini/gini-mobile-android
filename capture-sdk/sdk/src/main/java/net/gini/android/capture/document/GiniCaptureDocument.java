@@ -14,7 +14,7 @@ import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.util.DeviceHelper;
 import net.gini.android.capture.internal.util.UriReaderAsyncTask;
 import net.gini.android.capture.util.IntentHelper;
-import net.gini.android.capture.util.UploadMetadataBuilder;
+import net.gini.android.capture.util.UploadMetadata;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -223,7 +223,7 @@ public class GiniCaptureDocument implements Document {
 
     @Override
     public String generateUploadMetadata(Context context) {
-        return UploadMetadataBuilder.INSTANCE
+        return UploadMetadata.INSTANCE
                 .setSource(mSource.getName())
                 .setDeviceType(DeviceHelper.getDeviceType(context))
                 .setDeviceOrientation(DeviceHelper.getDeviceOrientation(context))

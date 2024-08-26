@@ -5,7 +5,7 @@ import net.gini.android.capture.BuildConfig
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 
-internal object UploadMetadataBuilder {
+internal object UploadMetadata {
 
     private const val USER_COMMENT_PLATFORM = "Platform"
     private const val USER_COMMENT_OS_VERSION = "OSVer"
@@ -37,15 +37,15 @@ internal object UploadMetadataBuilder {
         return csvBuilder.toString()
     }
 
-    fun setDeviceOrientation(deviceOrientation: String): UploadMetadataBuilder =
+    fun setDeviceOrientation(deviceOrientation: String): UploadMetadata =
         this.also { it.deviceOrientation = deviceOrientation }
 
-    fun setDeviceType(deviceType: String): UploadMetadataBuilder =
+    fun setDeviceType(deviceType: String): UploadMetadata =
         this.also { it.deviceType = deviceType }
 
-    fun setSource(source: String): UploadMetadataBuilder = this.also { it.source = source }
+    fun setSource(source: String): UploadMetadata = this.also { it.source = source }
 
-    fun setImportMethod(importMethod: String): UploadMetadataBuilder = this.also { it.importMethod = importMethod }
+    fun setImportMethod(importMethod: String): UploadMetadata = this.also { it.importMethod = importMethod }
 
     fun build(): String {
         val metadataMap = mutableMapOf<String, String>()
