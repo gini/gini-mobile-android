@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>GiniColorScheme</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>Gini Bank SDK for Android</span>
+            </a>
+    </div>
+    <div>
+    </div>
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageIds="Gini Bank SDK for Android::net.gini.android.capture.ui.theme.colors/GiniColorScheme/GiniColorScheme/#net.gini.android.capture.ui.theme.colors.GiniColorScheme.Background#net.gini.android.capture.ui.theme.colors.GiniColorScheme.BottomBar#net.gini.android.capture.ui.theme.colors.GiniColorScheme.TopAppBar#net.gini.android.capture.ui.theme.colors.GiniColorScheme.Placeholder#net.gini.android.capture.ui.theme.colors.GiniColorScheme.Text#net.gini.android.capture.ui.theme.colors.GiniColorScheme.Card#net.gini.android.capture.ui.theme.colors.GiniColorScheme.Badge#net.gini.android.capture.ui.theme.colors.GiniColorScheme.Button#net.gini.android.capture.ui.theme.colors.GiniColorScheme.ButtonOutlined#net.gini.android.capture.ui.theme.colors.GiniColorScheme.TextField#net.gini.android.capture.ui.theme.colors.GiniColorScheme.Toggles#net.gini.android.capture.ui.theme.colors.GiniColorScheme.Dialogs#net.gini.android.capture.ui.theme.colors.GiniColorScheme.Icons#net.gini.android.capture.ui.theme.colors.GiniColorScheme.DatePicker/PointingToDeclaration//-1647097541">
+  <div class="breadcrumbs"><a href="../../../index.html">Gini Bank SDK for Android</a><span class="delimiter">/</span><a href="../index.html">net.gini.android.capture.ui.theme.colors</a><span class="delimiter">/</span><a href="index.html">GiniColorScheme</a><span class="delimiter">/</span><span class="current">GiniColorScheme</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Gini</span><wbr></wbr><span>Color</span><wbr></wbr><span><span>Scheme</span></span></h1>
+  </div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">GiniColorScheme</a> <a href="-gini-color-scheme.html"><span class="token function">GiniColorScheme</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="-background/index.html">GiniColorScheme.Background</a> background<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-bottom-bar/index.html">GiniColorScheme.BottomBar</a> bottomBar<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-top-app-bar/index.html">GiniColorScheme.TopAppBar</a> topAppBar<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-placeholder/index.html">GiniColorScheme.Placeholder</a> placeholder<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-text/index.html">GiniColorScheme.Text</a> text<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-card/index.html">GiniColorScheme.Card</a> card<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-badge/index.html">GiniColorScheme.Badge</a> badge<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-button/index.html">GiniColorScheme.Button</a> button<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-button-outlined/index.html">GiniColorScheme.ButtonOutlined</a> buttonOutlined<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-text-field/index.html">GiniColorScheme.TextField</a> textField<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-toggles/index.html">GiniColorScheme.Toggles</a> toggles<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-dialogs/index.html">GiniColorScheme.Dialogs</a> dialogs<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-icons/index.html">GiniColorScheme.Icons</a> icons<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="-date-picker/index.html">GiniColorScheme.DatePicker</a> datePicker</span></span><span class="token punctuation">)</span></div></div></div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
