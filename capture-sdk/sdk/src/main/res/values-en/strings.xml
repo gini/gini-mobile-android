@@ -159,4 +159,5 @@
     <string name="gc_date_picker_select">Select</string>
     <string name="gc_date_picker_cancel">Cancel</string>
     <!--   endregion -->
+    <string name="gc_detection_error_layout_description">QR code scanning is currently unavailable. Please take a picture of your invoice instead.</string>
 </resources>
