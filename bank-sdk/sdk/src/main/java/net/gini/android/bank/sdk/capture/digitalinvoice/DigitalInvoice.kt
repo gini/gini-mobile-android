@@ -42,6 +42,7 @@ internal class DigitalInvoice(
     private val getSkontoAmountUseCase: GetSkontoAmountUseCase,
     private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase,
     private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase,
+    private val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase,
 ) {
 
     private var _extractions: Map<String, GiniCaptureSpecificExtraction> = extractions
@@ -100,12 +101,12 @@ internal class DigitalInvoice(
             extractions["amountToPay"]?.let { parsePriceString(it.value).first } ?: BigDecimal.ZERO
     }
 
-    fun getSkontoSavedAmount(): Amount? = skontoData?.let { skontoData ->
-        val skontoAmount =
-            getSkontoAmountUseCase.execute(totalPrice(), skontoData.skontoPercentageDiscounted)
-        Amount(
-            totalPrice() - skontoAmount, skontoData.fullAmountToPay.currency
+    fun getSkontoSavedAmount(): Amount? = skontoData?.let { data ->
+        val amount = getSkontoSavedAmountUseCase.execute(
+            data.skontoAmountToPay.value,
+            data.fullAmountToPay.value
         )
+        data.skontoAmountToPay.copy(value = amount)
     }
 
     private fun getDefaultSkontoEnabledState(): Boolean = skontoData?.let { data ->
@@ -176,6 +177,23 @@ internal class DigitalInvoice(
                 }
             }
         }
+        recalculateSkontoData()
+    }
+
+    private fun recalculateSkontoData() = skontoData?.apply {
+        updateSkontoData(
+            this.copy(
+                skontoAmountToPay = this.skontoAmountToPay.copy(
+                    value = getSkontoAmountUseCase.execute(
+                        totalPrice(),
+                        this.skontoPercentageDiscounted
+                    )
+                ),
+                fullAmountToPay = this.fullAmountToPay.copy(
+                    value = totalPrice(),
+                )
+            )
+        )
     }
 
     fun removeLineItem(selectableLineItem: SelectableLineItem) {
@@ -194,6 +212,7 @@ internal class DigitalInvoice(
                 sli.selected = true
                 sli.reason = null
             }
+        recalculateSkontoData()
     }
 
     fun updateSkontoData(skontoData: SkontoData?) {
@@ -210,10 +229,11 @@ internal class DigitalInvoice(
                 sli.selected = false
                 sli.reason = reason
             }
+        recalculateSkontoData()
     }
 
     fun totalPriceIntegralAndFractionalParts(): Pair<String, String> {
-        val price = totalPriceWithSkonto()
+        val price = getAmountToPay()
         val currency = lineItemsCurency()
         return Pair(
             priceIntegralPartWithCurrencySymbol(price, currency),
@@ -261,12 +281,12 @@ internal class DigitalInvoice(
             amountToPay
         }
 
-    fun totalPriceWithSkonto(): BigDecimal =
-        applySkontoToPrice(totalPrice(), skontoData)
-
-    private fun applySkontoToPrice(price: BigDecimal, skontoData: SkontoData?): BigDecimal {
-        if (skontoData == null || price == BigDecimal.ZERO || !skontoEnabled) return price
-        return getSkontoAmountUseCase.execute(price, skontoData.skontoPercentageDiscounted)
+    internal fun getAmountToPay(): BigDecimal {
+        return if (skontoEnabled) {
+            skontoData?.skontoAmountToPay?.value!!
+        } else {
+            totalPrice()
+        }
     }
 
     fun selectedAndTotalLineItemsCount(): Pair<Int, Int> =
@@ -346,7 +366,7 @@ internal class DigitalInvoice(
     }
 
     fun updateAmountToPayExtractionWithTotalPrice() {
-        val totalPrice = totalPriceWithSkonto().toPriceString(
+        val totalPrice = getAmountToPay().toPriceString(
             selectableLineItems.firstOrNull()?.lineItem?.rawCurrency ?: "EUR"
         )
 

@@ -23,5 +23,6 @@ internal sealed class DigitalInvoiceSkontoScreenState {
 
 internal sealed interface DigitalInvoiceSkontoSideEffect {
     object OpenInvoiceScreen : DigitalInvoiceSkontoSideEffect
+    object OpenHelpScreen : DigitalInvoiceSkontoSideEffect
 }
 

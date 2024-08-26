@@ -267,6 +267,22 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                         val (integral, fractional) = it.totalGrossPriceIntegralAndFractionalParts
                         injectedViewAdapter.setTotalPrice(integral + fractional)
                         injectedViewAdapter.setProceedButtonEnabled(it.buttonEnabled)
+                        injectedViewAdapter.onSkontoPercentageBadgeVisibilityUpdate(
+                            it.skontoDiscountPercentage != null
+                        )
+                        injectedViewAdapter.onSkontoSavingsAmountVisibilityUpdated(
+                            it.skontoSavedAmount != null
+                        )
+                        it.skontoDiscountPercentage?.let { percentage ->
+                            injectedViewAdapter.onSkontoPercentageBadgeUpdated(
+                                skontoDiscountLabelTextFactory.create(percentage)
+                            )
+                        }
+                        it.skontoSavedAmount?.let { amount ->
+                            injectedViewAdapter.onSkontoSavingsAmountUpdated(
+                                skontoSavedAmountTextFactory.create(amount)
+                            )
+                        }
                     }
                 }
         }
@@ -396,13 +412,16 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         binding.grossPriceTotalFractionalPart.text = fractional
         binding.gbsPay.isEnabled = data.buttonEnabled
 
-        binding.skontoSavedAmount.isVisible = data.skontoSavedAmount != null
+        val isSkontoSavedAmountVisible = data.skontoSavedAmount != null
+        val isSkontoDiscountVisible = data.skontoDiscountPercentage != null
+
+        binding.skontoSavedAmount.isVisible = isSkontoSavedAmountVisible
         if (data.skontoSavedAmount != null) {
             binding.skontoSavedAmount.text =
                 skontoSavedAmountTextFactory.create(data.skontoSavedAmount)
         }
 
-        binding.skontoDiscountLabel.isVisible = data.skontoDiscountPercentage != null
+        binding.skontoDiscountLabel.isVisible = isSkontoDiscountVisible
         if (data.skontoDiscountPercentage != null) {
             binding.skontoDiscountLabel.text =
                 skontoDiscountLabelTextFactory.create(data.skontoDiscountPercentage)
@@ -414,6 +433,18 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
                     setTotalPrice(integral + fractional)
                     setProceedButtonEnabled(data.buttonEnabled)
+                    onSkontoSavingsAmountVisibilityUpdated(isSkontoSavedAmountVisible)
+                    onSkontoPercentageBadgeVisibilityUpdate(isSkontoDiscountVisible)
+                    data.skontoDiscountPercentage?.let { percentage ->
+                        onSkontoPercentageBadgeUpdated(
+                            skontoDiscountLabelTextFactory.create(
+                                percentage
+                            )
+                        )
+                    }
+                    data.skontoSavedAmount?.let { amount ->
+                        onSkontoSavingsAmountUpdated(skontoSavedAmountTextFactory.create(amount))
+                    }
                 }
             }
         }

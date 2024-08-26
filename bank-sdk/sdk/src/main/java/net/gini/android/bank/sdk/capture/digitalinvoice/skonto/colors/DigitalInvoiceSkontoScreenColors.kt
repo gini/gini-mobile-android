@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoInfoDialogColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoInvoicePreviewSectionColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoSectionColors
@@ -18,6 +19,7 @@ data class DigitalInvoiceSkontoScreenColors(
     val scontoSectionColors: DigitalInvoiceSkontoSectionColors,
     val datePickerColor: GiniDatePickerDialogColors,
     val infoDialogColors: DigitalInvoiceSkontoInfoDialogColors,
+    val footerSectionColors: DigitalInvoiceSkontoFooterSectionColors,
 ) {
 
     companion object {
@@ -34,6 +36,8 @@ data class DigitalInvoiceSkontoScreenColors(
                 GiniDatePickerDialogColors.colors(),
             infoDialogColors: DigitalInvoiceSkontoInfoDialogColors =
                 DigitalInvoiceSkontoInfoDialogColors.colors(),
+            footerSectionColors: DigitalInvoiceSkontoFooterSectionColors =
+                DigitalInvoiceSkontoFooterSectionColors.colors(),
         ) = DigitalInvoiceSkontoScreenColors(
             backgroundColor = backgroundColor,
             topAppBarColors = topAppBarColors,
@@ -41,6 +45,7 @@ data class DigitalInvoiceSkontoScreenColors(
             scontoSectionColors = discountSectionColors,
             datePickerColor = datePickerColor,
             infoDialogColors = infoDialogColors,
+            footerSectionColors = footerSectionColors,
         )
     }
 }

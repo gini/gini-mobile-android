@@ -20,6 +20,7 @@ import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
@@ -114,6 +115,15 @@ object GiniBank {
         }
         get() = skontoNavigationBarBottomAdapterInstance?.viewAdapter
 
+    internal var digitalInvocieSkontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
+        null
+
+    var digitalInvoiceSkontoNavigationBarBottomAdapter: DigitalInvoiceSkontoNavigationBarBottomAdapter?
+        set(value) {
+            digitalInvocieSkontoNavigationBarBottomAdapterInstance =
+                value?.let { InjectedViewAdapterInstance(it) }
+        }
+        get() = digitalInvocieSkontoNavigationBarBottomAdapterInstance?.viewAdapter
 
     internal fun getCaptureConfiguration() = captureConfiguration
 

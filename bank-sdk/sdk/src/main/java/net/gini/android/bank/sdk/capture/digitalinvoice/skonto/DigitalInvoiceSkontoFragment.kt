@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -54,6 +56,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
@@ -61,6 +64,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
@@ -69,10 +73,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.DigitalInvoiceSkontoScreenColors
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoInfoDialogColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoInvoicePreviewSectionColors
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.DigitalInvoiceSkontoScreenColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
@@ -89,6 +95,7 @@ import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
+import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.koin.core.parameter.parametersOf
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -111,6 +118,10 @@ class DigitalInvoiceSkontoFragment : Fragment() {
     private val isBottomNavigationBarEnabled =
         GiniCapture.getInstance().isBottomNavigationBarEnabled
 
+    private val customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
+        GiniBank.digitalInvocieSkontoNavigationBarBottomAdapterInstance
+    private var customBottomNavigationBarView: View? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
@@ -126,6 +137,10 @@ class DigitalInvoiceSkontoFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+
+        customBottomNavigationBarView =
+            container?.let { customBottomNavBarAdapter?.viewAdapter?.onCreateView(it) }
+
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -133,6 +148,7 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                     ScreenContent(
                         viewModel = viewModel,
                         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
+                        customBottomNavBarAdapter = customBottomNavBarAdapter,
                         navigateBack = {
                             setFragmentResult(REQUEST_KEY, Bundle().apply {
                                 putParcelable(
@@ -150,6 +166,11 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                                         invoiceHighlights = args.data.invoiceHighlights.toTypedArray(),
                                     )
                                 )
+                        },
+                        navigateToHelpScreen = {
+                            /*findNavController().navigate(
+                                DigitalInvoiceSkontoFragmentDirections.toHelpFragment()
+                            )*/
                         }
                     )
                 }
@@ -178,10 +199,12 @@ private fun DigitalInvoiceSkontoFragmentViewModel.collectSideEffect(
 @Composable
 private fun ScreenContent(
     navigateBack: () -> Unit,
+    navigateToHelpScreen: () -> Unit,
     viewModel: DigitalInvoiceSkontoFragmentViewModel,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
     isBottomNavigationBarEnabled: Boolean,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     navigateToInvoiceScreen: () -> Unit,
 ) {
 
@@ -192,6 +215,7 @@ private fun ScreenContent(
     viewModel.collectSideEffect {
         when (it) {
             DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen -> navigateToInvoiceScreen()
+            DigitalInvoiceSkontoSideEffect.OpenHelpScreen -> navigateToHelpScreen()
         }
     }
 
@@ -206,7 +230,9 @@ private fun ScreenContent(
         onBackClicked = navigateBack,
         onInfoBannerClicked = viewModel::onInfoBannerClicked,
         onInfoDialogDismissed = viewModel::onInfoDialogDismissed,
-        onInvoiceClicked = viewModel::onInvoiceClicked
+        onInvoiceClicked = viewModel::onInvoiceClicked,
+        customBottomNavBarAdapter = customBottomNavBarAdapter,
+        onHelpClicked = viewModel::onHelpClicked
     )
 }
 
@@ -221,6 +247,8 @@ private fun ScreenStateContent(
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
     onInvoiceClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors()
 ) {
@@ -237,6 +265,8 @@ private fun ScreenStateContent(
             onInfoBannerClicked = onInfoBannerClicked,
             onInfoDialogDismissed = onInfoDialogDismissed,
             onInvoiceClicked = onInvoiceClicked,
+            customBottomNavBarAdapter = customBottomNavBarAdapter,
+            onHelpClicked = onHelpClicked,
         )
     }
 
@@ -246,11 +276,13 @@ private fun ScreenStateContent(
 private fun ScreenReadyState(
     onBackClicked: () -> Unit,
     onInvoiceClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     state: DigitalInvoiceSkontoScreenState.Ready,
     onDiscountSectionActiveChange: (Boolean) -> Unit,
     onDiscountAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     isBottomNavigationBarEnabled: Boolean,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
     onInfoBannerClicked: () -> Unit,
@@ -261,6 +293,15 @@ private fun ScreenReadyState(
     Scaffold(
         modifier = modifier,
         containerColor = screenColorScheme.backgroundColor,
+        bottomBar = {
+            FooterSection(
+                colors = screenColorScheme.footerSectionColors,
+                isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
+                onBackClicked = onBackClicked,
+                customBottomNavBarAdapter = customBottomNavBarAdapter,
+                onHelpClicked = onHelpClicked
+            )
+        },
         topBar = {
             TopAppBar(
                 isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
@@ -601,6 +642,57 @@ private fun SkontoSection(
     }
 }
 
+@Composable
+private fun FooterSection(
+    isBottomNavigationBarEnabled: Boolean,
+    onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    colors: DigitalInvoiceSkontoFooterSectionColors = DigitalInvoiceSkontoFooterSectionColors.colors(),
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
+) {
+    if (customBottomNavBarAdapter != null) {
+        val ctx = LocalContext.current
+        AndroidView(factory = {
+            customBottomNavBarAdapter.viewAdapter.onCreateView(FrameLayout(ctx))
+        }, update = {
+            with(customBottomNavBarAdapter.viewAdapter) {
+                setOnHelpClickListener(onHelpClicked)
+                setOnBackClickListener(onBackClicked)
+            }
+        })
+    } else {
+        Card(
+            modifier = modifier.fillMaxWidth(),
+            shape = RectangleShape,
+            colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor),
+        ) {
+            Column(
+                modifier = Modifier
+                    .tabletMaxWidth()
+                    .align(Alignment.CenterHorizontally),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
+                        NavigationActionBack(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            onClick = onBackClicked
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(0.1f))
+                    AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
+                        // TODO Help icon
+                    }
+                }
+            }
+        }
+    }
+}
+
 private fun getSkontoSelectableDates() = object : SelectableDates {
 
     val minDateCalendar = Calendar.getInstance().apply {
@@ -728,7 +820,9 @@ private fun ScreenReadyStatePreview() {
             isBottomNavigationBarEnabled = true,
             onInfoDialogDismissed = {},
             onInfoBannerClicked = {},
-            onInvoiceClicked = {}
+            onInvoiceClicked = {},
+            onHelpClicked = {},
+            customBottomNavBarAdapter = null,
         )
     }
 }

@@ -144,6 +144,10 @@ internal class DigitalInvoiceSkontoFragmentViewModel(
         sideEffectFlow.emit(DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen)
     }
 
+    fun onHelpClicked() = viewModelScope.launch {
+        sideEffectFlow.emit(DigitalInvoiceSkontoSideEffect.OpenHelpScreen)
+    }
+
     private fun calculateDiscount(skontoAmount: BigDecimal, fullAmount: BigDecimal): BigDecimal {
         if (fullAmount == BigDecimal.ZERO) return BigDecimal("100")
         return BigDecimal.ONE

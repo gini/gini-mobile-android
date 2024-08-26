@@ -36,8 +36,6 @@ object BankSdkIsolatedKoinContext {
 
     @Synchronized
     fun init(context: Context) {
-        check(this.context == null) { "Already initialized!" }
-
         this.context = context
     }
 

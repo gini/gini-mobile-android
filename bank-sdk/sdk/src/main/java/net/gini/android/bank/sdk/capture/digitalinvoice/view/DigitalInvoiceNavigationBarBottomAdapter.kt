@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import net.gini.android.bank.sdk.databinding.GbsDigitalInvoiceNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 
@@ -40,6 +41,44 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
      */
     fun setTotalPrice(priceWithCurrencySymbol: String)
 
+    /**
+     * Called when Skonto percentage badge text updated.
+     *
+     * @param text formatted text.
+     * Example value: "3% Skonto discount"
+     */
+    fun onSkontoPercentageBadgeUpdated(text: String) {
+
+    }
+
+    /**
+     * Called when visibility of Skonto badge should be changed.
+     *
+     * @param isVisible visibility flag
+     */
+    fun onSkontoPercentageBadgeVisibilityUpdate(isVisible: Boolean) {
+
+    }
+
+    /**
+     * Called when Skonto savings amount text updated.
+     *
+     * @param text formatted text.
+     * Example value: `"Save 100.00 EUR"`
+     */
+    fun onSkontoSavingsAmountUpdated(text: String) {
+
+    }
+
+    /**
+     * Called when Skonto savings amount visibility updated.
+     *
+     * @param isVisible visibility flag
+     */
+    fun onSkontoSavingsAmountVisibilityUpdated(isVisible: Boolean) {
+
+    }
+
 }
 
 /**
@@ -47,7 +86,7 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
  *
  * @suppress
  */
-class DefaultDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter {
+class DefaultDigitalInvoiceNavigationBarBottomAdapter : DigitalInvoiceNavigationBarBottomAdapter {
 
     private var binding: GbsDigitalInvoiceNavigationBarBottomBinding? = null
 
@@ -68,7 +107,11 @@ class DefaultDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationB
     }
 
     override fun onCreateView(container: ViewGroup): View {
-        binding = GbsDigitalInvoiceNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)
+        binding = GbsDigitalInvoiceNavigationBarBottomBinding.inflate(
+            LayoutInflater.from(container.context),
+            container,
+            false
+        )
         return binding!!.root
     }
 
@@ -76,4 +119,20 @@ class DefaultDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationB
         binding = null
     }
 
+    override fun onSkontoPercentageBadgeUpdated(text: String) {
+        super.onSkontoPercentageBadgeUpdated(text)
+        binding?.skontoDiscountLabel?.text = text
+    }
+
+    override fun onSkontoPercentageBadgeVisibilityUpdate(isVisible: Boolean) {
+        binding?.skontoDiscountLabel?.isVisible = isVisible
+    }
+
+    override fun onSkontoSavingsAmountUpdated(text: String) {
+        binding?.skontoSavedAmount?.text = text
+    }
+
+    override fun onSkontoSavingsAmountVisibilityUpdated(isVisible: Boolean) {
+        binding?.skontoSavedAmount?.isVisible = isVisible
+    }
 }

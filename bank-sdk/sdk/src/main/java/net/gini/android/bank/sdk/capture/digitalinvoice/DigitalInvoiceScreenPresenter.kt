@@ -66,6 +66,7 @@ internal class DigitalInvoiceScreenPresenter(
     private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase by getGiniBankKoin().inject()
     private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase by getGiniBankKoin().inject()
     private val getSkontoAmountUseCase: GetSkontoAmountUseCase by getGiniBankKoin().inject()
+    private val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase by getGiniBankKoin().inject()
 
     private val skontoInfoBannerTextFactory: SkontoInfoBannerTextFactory by getGiniBankKoin().inject()
 
@@ -82,6 +83,7 @@ internal class DigitalInvoiceScreenPresenter(
             getSkontoAmountUseCase = getSkontoAmountUseCase,
             getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
             getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+            getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase
         )
     }
 
@@ -98,7 +100,7 @@ internal class DigitalInvoiceScreenPresenter(
     }
 
     override fun editSkontoDataListItem(skontoListItem: DigitalInvoiceSkontoListItem) {
-        skontoData?.let { data ->
+        digitalInvoice.skontoData?.let { data ->
             view.showSkontoEditScreen(
                 data = data,
                 isSkontoSectionActive = skontoListItem.enabled
@@ -228,7 +230,7 @@ internal class DigitalInvoiceScreenPresenter(
                 footerDetails = footerDetails
                     .copy(
                         totalGrossPriceIntegralAndFractionalParts = digitalInvoice.totalPriceIntegralAndFractionalParts(),
-                        buttonEnabled = digitalInvoice.totalPriceWithSkonto() > BigDecimal.ZERO,
+                        buttonEnabled = digitalInvoice.getAmountToPay() > BigDecimal.ZERO,
                         count = selected,
                         total = total,
                         skontoSavedAmount = skontoSavedAmount
