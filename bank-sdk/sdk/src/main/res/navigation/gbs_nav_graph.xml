@@ -42,7 +42,7 @@
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
             app:popExitAnim="@anim/gc_nav_pop_exit_anim"
             app:popUpTo="@id/gbs_destination_capture_fragment"
-            app:popUpToInclusive="false" />
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
