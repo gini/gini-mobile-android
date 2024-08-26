@@ -1,13 +1,13 @@
 package net.gini.android.core.api;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 
 /**
  * Created by Alpar Szotyori on 25.10.2018.
@@ -26,6 +26,8 @@ public class DocumentMetadata {
     public static final String HEADER_FIELD_NAME_PREFIX = "X-Document-Metadata-";
     @VisibleForTesting
     public static final String BRANCH_ID_HEADER_FIELD_NAME = HEADER_FIELD_NAME_PREFIX + "BranchId";
+    @VisibleForTesting
+    public static final String UPLOAD_METADATA_HEADER_FIELD_NAME = HEADER_FIELD_NAME_PREFIX + "Upload";
 
 
     private final Map<String, String> mMetadataMap = new HashMap<>();
@@ -60,6 +62,14 @@ public class DocumentMetadata {
             mMetadataMap.put(BRANCH_ID_HEADER_FIELD_NAME, branchId);
         } else {
             throw new IllegalArgumentException("Metadata is not encodable as ASCII: " + branchId);
+        }
+    }
+
+    protected void setUploadMetadata(@NonNull final String userComment) {
+        if (isASCIIEncodable(userComment)) {
+            mMetadataMap.put(UPLOAD_METADATA_HEADER_FIELD_NAME, userComment);
+        } else {
+            throw new IllegalArgumentException("Metadata is not encodable as ASCII: " + userComment);
         }
     }
 

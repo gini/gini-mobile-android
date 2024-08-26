@@ -5,11 +5,11 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -119,6 +119,12 @@ public interface Document extends Parcelable {
      * document has to be passed directly to the Analysis Screen
      */
     boolean isReviewable();
+
+    /**
+     * Generate metadata to be sent to backend when creating partial document.
+     *
+     */
+    String generateUploadMetadata();
 
     /**
      * Supported document types.
