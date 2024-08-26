@@ -329,8 +329,7 @@ private fun ScreenReadyState(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
@@ -343,6 +342,7 @@ private fun ScreenReadyState(
                 )
                 SkontoSection(
                     modifier = Modifier
+                        .padding(top = 8.dp)
                         .tabletMaxWidth(),
                     colors = screenColorScheme.skontoSectionColors,
                     amount = state.skontoAmount,
