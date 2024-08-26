@@ -55,6 +55,7 @@ interface DigitalInvoiceScreenContract {
      *
      * @suppress
      */
+    @Suppress("TooManyFunctions")
     abstract class Presenter(activity: Activity, view: View) :
         GiniCaptureBasePresenter<View>(activity, view) {
 

@@ -175,6 +175,14 @@
         <action
             android:id="@+id/to_skonto_invoice_fragment"
             app:destination="@id/gbs_destination_skonto_invoice_fragment" />
+
+        <action
+            android:id="@+id/to_skonto_help_fragment"
+            app:destination="@id/gbs_destination_skonto_help_fragment"
+            app:enterAnim="@anim/gc_nav_enter_anim"
+            app:exitAnim="@anim/gc_nav_exit_anim"
+            app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim" />
     </fragment>
 
 </navigation>

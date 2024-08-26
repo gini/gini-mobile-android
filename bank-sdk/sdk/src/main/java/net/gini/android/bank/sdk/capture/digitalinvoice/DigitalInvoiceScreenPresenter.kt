@@ -63,12 +63,17 @@ internal class DigitalInvoiceScreenPresenter(
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.ReturnAssistant
 
-    private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase by getGiniBankKoin().inject()
-    private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase by getGiniBankKoin().inject()
-    private val getSkontoAmountUseCase: GetSkontoAmountUseCase by getGiniBankKoin().inject()
-    private val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase by getGiniBankKoin().inject()
+    private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase
+            by getGiniBankKoin().inject()
+    private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase
+            by getGiniBankKoin().inject()
+    private val getSkontoAmountUseCase: GetSkontoAmountUseCase
+            by getGiniBankKoin().inject()
+    private val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase
+            by getGiniBankKoin().inject()
 
-    private val skontoInfoBannerTextFactory: SkontoInfoBannerTextFactory by getGiniBankKoin().inject()
+    private val skontoInfoBannerTextFactory: SkontoInfoBannerTextFactory
+            by getGiniBankKoin().inject()
 
 
     init {

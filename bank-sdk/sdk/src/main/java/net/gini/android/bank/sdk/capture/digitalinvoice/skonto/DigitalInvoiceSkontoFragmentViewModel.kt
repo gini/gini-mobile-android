@@ -27,7 +27,7 @@ internal class DigitalInvoiceSkontoFragmentViewModel(
     internal fun provideFragmentResult(): DigitalInvoiceSkontoResultArgs {
         val currentState =
             stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready
-                ?: throw IllegalStateException("Can't extract result. State is not ready")
+                ?: error("Can't extract result. State is not ready")
 
         return DigitalInvoiceSkontoResultArgs(
             skontoData = SkontoData(
@@ -148,6 +148,7 @@ internal class DigitalInvoiceSkontoFragmentViewModel(
         sideEffectFlow.emit(DigitalInvoiceSkontoSideEffect.OpenHelpScreen)
     }
 
+    @Suppress("MagicNumber")
     private fun calculateDiscount(skontoAmount: BigDecimal, fullAmount: BigDecimal): BigDecimal {
         if (fullAmount == BigDecimal.ZERO) return BigDecimal("100")
         return BigDecimal.ONE

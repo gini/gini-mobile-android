@@ -402,7 +402,8 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         // 42 enable digital invoice skonto screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
+        binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar
+            .setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isDigitalInvoiceSkontoCustomNavBarEnabled = isChecked

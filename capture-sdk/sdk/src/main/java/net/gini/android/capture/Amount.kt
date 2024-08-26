@@ -41,6 +41,7 @@ data class Amount(
         /**
          * Creates [Amount] from string in format `value:currency_code` or throws an Exception
          */
+        @Suppress("ThrowsCount")
         @Throws(IllegalArgumentException::class)
         fun parse(amountStr: String): Amount {
             val amountParts = amountStr.split(":").also {

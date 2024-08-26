@@ -25,8 +25,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -118,7 +120,8 @@ class DigitalInvoiceSkontoFragment : Fragment() {
     private val isBottomNavigationBarEnabled =
         GiniCapture.getInstance().isBottomNavigationBarEnabled
 
-    private val customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
+    private val customBottomNavBarAdapter:
+            InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
         GiniBank.digitalInvocieSkontoNavigationBarBottomAdapterInstance
     private var customBottomNavigationBarView: View? = null
 
@@ -168,9 +171,9 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                                 )
                         },
                         navigateToHelpScreen = {
-                            /*findNavController().navigate(
-                                DigitalInvoiceSkontoFragmentDirections.toHelpFragment()
-                            )*/
+                            findNavController().navigate(
+                                DigitalInvoiceSkontoFragmentDirections.toSkontoHelpFragment()
+                            )
                         }
                     )
                 }
@@ -307,6 +310,7 @@ private fun ScreenReadyState(
                 isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                 colors = screenColorScheme.topAppBarColors,
                 onBackClicked = onBackClicked,
+                onHelpClicked = onHelpClicked,
             )
         },
     ) {
@@ -318,8 +322,7 @@ private fun ScreenReadyState(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
@@ -332,6 +335,7 @@ private fun ScreenReadyState(
                 )
                 SkontoSection(
                     modifier = Modifier
+                        .padding(top = 8.dp)
                         .tabletMaxWidth(),
                     colors = screenColorScheme.scontoSectionColors,
                     amount = state.skontoAmount,
@@ -378,6 +382,7 @@ private fun ScreenReadyState(
 @Composable
 private fun TopAppBar(
     onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
     modifier: Modifier = Modifier,
     isBottomNavigationBarEnabled: Boolean,
     colors: GiniTopBarColors,
@@ -389,6 +394,10 @@ private fun TopAppBar(
         navigationIcon = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
                 NavigationActionBack(onClick = onBackClicked)
+            }
+        }, actions = {
+            AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
+                NavigationActionHelp(onClick = onHelpClicked)
             }
         })
 }
@@ -404,6 +413,25 @@ private fun NavigationActionBack(
     ) {
         Icon(
             painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.ArrowBack),
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
+private fun NavigationActionHelp(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IconButton(
+        modifier = modifier
+            .padding(8.dp)
+            .width(24.dp)
+            .height(24.dp),
+        onClick = onClick
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.gbs_help_question_icon),
             contentDescription = null,
         )
     }
@@ -685,7 +713,7 @@ private fun FooterSection(
                     }
                     Spacer(modifier = Modifier.weight(0.1f))
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
-                        // TODO Help icon
+                        NavigationActionHelp(onClick = onHelpClicked)
                     }
                 }
             }

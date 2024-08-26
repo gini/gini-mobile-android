@@ -289,7 +289,8 @@ class ConfigurationViewModel @Inject constructor(
         }
 
         if (configuration.isDigitalInvoiceSkontoCustomNavBarEnabled) {
-            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter = CustomDigitalInvoiceSkontoNavigationBarBottomAdapter()
+            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter =
+                CustomDigitalInvoiceSkontoNavigationBarBottomAdapter()
         } else {
             GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter = null
         }

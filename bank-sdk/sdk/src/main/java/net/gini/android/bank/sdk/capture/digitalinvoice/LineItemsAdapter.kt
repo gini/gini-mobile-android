@@ -182,6 +182,8 @@ internal sealed class ViewType {
     }
 
     internal companion object {
+
+        @Suppress("MagicNumber")
         fun from(viewTypeId: Int): ViewType = when (viewTypeId) {
             1 -> LineItem
             2 -> Addon
@@ -358,7 +360,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         }
 
         override fun unbind() {
-
+            listener = null
         }
     }
 
