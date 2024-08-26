@@ -84,7 +84,6 @@
         android:background="@android:color/transparent"
         android:contentDescription="@string/gbs_digital_invoice_help_info"
         android:padding="@dimen/gc_medium"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/gbs_pay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/gbs_pay"

@@ -677,10 +677,10 @@ class GiniCaptureDefaultNetworkService(
         }
 
         /**
-         * Set the cache implementation to use with Volley. If no cache is set, the default Volley
-         * cache will be used.
+         * Set the cache implementation to use with OkHttp caching. If no cache is set, no caching
+         * will be used.
          *
-         * @param cache a cache instance (specified by the com.android.volley.Cache interface)
+         * @param cache a cache instance (specified by the [okhttp3.Cache])
          *
          * @return the [Builder] instance
          */

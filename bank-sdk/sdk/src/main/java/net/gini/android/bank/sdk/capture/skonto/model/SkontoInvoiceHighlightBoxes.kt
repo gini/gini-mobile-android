@@ -12,6 +12,7 @@ data class SkontoInvoiceHighlightBoxes(
     val skontoAmountDiscounted: GiniCaptureBox?,
     val skontoRemainingDays: GiniCaptureBox?,
     val skontoDueDate: GiniCaptureBox?,
+    val skontoDuePeriod: GiniCaptureBox?,
 ) : Parcelable {
 
     fun getExistBoxes() = listOfNotNull(
@@ -21,5 +22,6 @@ data class SkontoInvoiceHighlightBoxes(
         skontoAmountDiscounted,
         skontoRemainingDays,
         skontoDueDate,
+        skontoDuePeriod
     )
 }

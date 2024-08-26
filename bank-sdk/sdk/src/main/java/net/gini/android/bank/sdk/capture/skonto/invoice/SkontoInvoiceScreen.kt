@@ -91,21 +91,6 @@ private fun SkontoInvoiceScreenContent(
             .background(colors.background)
     ) {
 
-        Box(
-            modifier = Modifier
-                .padding(vertical = 24.dp, horizontal = 24.dp)
-                .background(colors.closeButton.backgroundColor, CircleShape)
-                .clickable(onClick = onCloseClicked)
-                .padding(8.dp),
-        ) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(id = net.gini.android.capture.R.drawable.gc_close),
-                contentDescription = null,
-                tint = colors.closeButton.contentColor
-            )
-        }
-
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.Center), visible = state.isLoading
         ) {
@@ -120,6 +105,21 @@ private fun SkontoInvoiceScreenContent(
         ) {
             ImagesList(
                 pages = state.images, modifier = Modifier
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .padding(vertical = 24.dp, horizontal = 24.dp)
+                .background(colors.closeButton.backgroundColor, CircleShape)
+                .clickable(onClick = onCloseClicked)
+                .padding(8.dp),
+        ) {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(id = net.gini.android.capture.R.drawable.gc_close),
+                contentDescription = null,
+                tint = colors.closeButton.contentColor
             )
         }
     }

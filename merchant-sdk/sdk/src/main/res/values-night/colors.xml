@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="gms_payment_component_caption">@color/gms_light_04</color>
+    <color name="gms_bank_selection_bottom_sheet_caption">@color/gms_light_03</color>
+    <color name="gms_bank_selection_bottom_sheet_title">@color/gms_light_02</color>
+    <color name="gms_more_information_fragment_background">@color/gms_light_07</color>
+    <color name="gms_payment_provider_border_color">@color/gms_light_05</color>
+    <color name="gms_payment_input_border_color">@color/gms_light_05</color>
+    <color name="gms_payment_input_hint">@color/gms_light_04</color>
+    <color name="gms_bordered_background_color">@color/gms_light_06</color>
+    <color name="gms_bank_selector_button_color">@color/gms_light_01</color>
+    <color name="gms_payment_details_background_color">@color/gms_light_07</color>
+    <color name="gms_payment_input_background_color">@color/gms_light_06</color>
+    <color name="gms_faq_divider">@color/gms_light_05</color>
+    <color name="gms_bottom_sheet_scrim">#fff</color>
+    <color name="gms_install_app_title_color">@color/gms_light_02</color>
+    <color name="gms_install_app_details_color">@color/gms_light_03</color>
+    <color name="gms_select_bank_and_pay_color">@color/gms_light_01</color>
+    <color name="gms_info_button_tint">@color/gms_light_02</color>
+    <color name="gms_more_information_color">@color/gms_light_02</color>
+
+    <!--  Open With  -->
+    <color name="gms_open_with_title">@color/gms_light_02</color>
+    <color name="gms_open_with_details">@color/gms_light_03</color>
+    <color name="gms_open_with_apps_background">@color/gms_light_05</color>
+    <color name="gms_open_with_app_placeholder">@color/gms_light_07</color>
+
+    <color name="gms_disabled_field_text_color">@color/gms_light_04</color>
+    <color name="gms_amount_field_border">@color/gms_light_01</color>
+
+</resources>

@@ -84,42 +84,9 @@ internal class AnonymousSessionManager(
     suspend fun loginUser(): Resource<Session> {
         val userCredentials = credentialsStore.userCredentials
         if (userCredentials != null) {
-            if (hasUserCredentialsEmailDomain(emailDomain, userCredentials)) {
-                return userRepository.loginUser(UserRequestModel(userCredentials.username, userCredentials.password))
-            }
-
-            return when (val updateCredentials = updateEmailDomain(userCredentials)) {
-                is Resource.Cancelled -> Resource.Cancelled()
-                is Resource.Error -> Resource.Error(updateCredentials)
-                is Resource.Success -> {
-                    userRepository.loginUser(UserRequestModel(updateCredentials.data.username, updateCredentials.data.password))
-                }
-            }
+            return userRepository.loginUser(UserRequestModel(userCredentials.username, userCredentials.password))
         }
         return Resource.Error()
-    }
-
-    private suspend fun updateEmailDomain(userCredentials: UserCredentials): Resource<UserCredentials> {
-        val oldEmail = userCredentials.username
-        val newEmail = generateUserName()
-
-        return when (val loginUser = userRepository.loginUser(UserRequestModel(userCredentials.username, userCredentials.password))) {
-            is Resource.Cancelled -> Resource.Cancelled()
-            is Resource.Error -> Resource.Error(loginUser)
-            is Resource.Success -> {
-                val session = loginUser.data
-                return when (val updateEmail = userRepository.updateEmail(newEmail, oldEmail, session.accessToken)) {
-                    is Resource.Cancelled -> Resource.Cancelled()
-                    is Resource.Error -> Resource.Error(updateEmail)
-                    is Resource.Success -> {
-                        credentialsStore.deleteUserCredentials()
-                        val newCredentials = UserCredentials(newEmail, userCredentials.password)
-                        credentialsStore.storeUserCredentials(newCredentials)
-                        Resource.Success(newCredentials)
-                    }
-                }
-            }
-        }
     }
 
     fun hasUserCredentialsEmailDomain(emailDomain: String, userCredentials: UserCredentials): Boolean {

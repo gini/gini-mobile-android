@@ -138,10 +138,14 @@ class ConfigurationActivity : AppCompatActivity() {
         // 11 enable review screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.isChecked =
             configuration.isReviewScreenCustomBottomNavBarEnabled
-
+        // 39 enable skonto screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.isChecked  =
                 configuration.isSkontoCustomNavBarEnabled
+        // 41 enable skonto help screens custom bottom navigation bar
+        binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar.isChecked  =
+            configuration.isSkontoHelpCustomNavBarEnabled
 
+        // 42 enable digital invoice skonto screen custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar.isChecked  =
             configuration.isDigitalInvoiceSkontoCustomNavBarEnabled
 
@@ -222,6 +226,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // 37 Debug mode
         binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode.isChecked =
             configuration.isDebugModeEnabled
+
+        // 40 enable skonto
+        binding.layoutFeatureToggle.switchSkontoFeature.isChecked = configuration.isSkontoEnabled
     }
 
     private fun setConfigurationFeatures() {
@@ -375,6 +382,7 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
+        // 39 enable skonto screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -383,6 +391,17 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
+        // 41 enable skonto screens custom bottom navigation bar
+        binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar
+            .setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isSkontoHelpCustomNavBarEnabled = isChecked
+                )
+            )
+        }
+
+        // 42 enable digital invoice skonto screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -611,6 +630,14 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isDebugModeEnabled = isChecked
+                )
+            )
+        }
+
+        binding.layoutFeatureToggle.switchSkontoFeature.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isSkontoEnabled = isChecked
                 )
             )
         }

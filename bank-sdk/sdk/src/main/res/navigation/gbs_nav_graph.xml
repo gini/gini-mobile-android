@@ -129,11 +129,19 @@
                 app:exitAnim="@anim/gc_nav_exit_anim"
                 app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
                 app:popExitAnim="@anim/gc_nav_pop_exit_anim"
-                app:popUpTo="@id/gbs_destination_capture_fragment"
+                app:popUpTo="@id/gbs_destination_skonto_fragment"
                 app:popUpToInclusive="true" />
             <action
                 android:id="@+id/to_skonto_invoice_fragment"
                 app:destination="@id/gbs_destination_skonto_invoice_fragment" />
+
+            <action
+                android:id="@+id/to_skonto_help_fragment"
+                app:destination="@id/gbs_destination_skonto_help_fragment"
+                app:enterAnim="@anim/gc_nav_enter_anim"
+                app:exitAnim="@anim/gc_nav_exit_anim"
+                app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
+                app:popExitAnim="@anim/gc_nav_pop_exit_anim" />
         </fragment>
 
     </navigation>
@@ -148,6 +156,12 @@
             app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes[]" />
 
     </fragment>
+
+
+    <fragment
+        android:id="@+id/gbs_destination_skonto_help_fragment"
+        android:name="net.gini.android.bank.sdk.capture.skonto.help.SkontoHelpFragment"
+        android:label="SkontoHelpFragment" />
 
     <fragment
         android:id="@+id/digitalInvoiceSkontoFragment"

@@ -160,9 +160,14 @@ data class Configuration(
     // 39 Skonto Custom bottom navigation
     val isSkontoCustomNavBarEnabled: Boolean = false,
 
-    // 40 Digital Invoice Skonto Custom bottom navigation
-    val isDigitalInvoiceSkontoCustomNavBarEnabled: Boolean = false,
+    // 40 enable Skonto
+    val isSkontoEnabled: Boolean = true,
 
+    // 41 Skonto help Custom bottom navigation
+    val isSkontoHelpCustomNavBarEnabled: Boolean = false,
+
+    // 42 Digital Invoice Skonto Custom bottom navigation
+    val isDigitalInvoiceSkontoCustomNavBarEnabled: Boolean = false,
 
     ) : Parcelable {
 
@@ -182,7 +187,8 @@ data class Configuration(
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
                 isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
                 isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
-                isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots
+                isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
+                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled
             )
 
 

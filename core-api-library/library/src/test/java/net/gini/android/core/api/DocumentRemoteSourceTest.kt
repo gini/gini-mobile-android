@@ -213,6 +213,14 @@ class DocumentRemoteSourceTest {
             return Response.success(listOf(PaymentRequestResponse(null, null, "", "", null, "", "", "")))
         }
 
+        override suspend fun getPayment(
+            bearer: Map<String, String>,
+            id: String
+        ): Response<PaymentResponse> {
+            bearerAuthHeader = bearer["Authorization"]
+            return Response.success(PaymentResponse("", "", "", null, "", "" ))
+        }
+
         override suspend fun getFile(bearer: Map<String, String>, location: String): Response<ResponseBody> {
             bearerAuthHeader = bearer["Authorization"]
             return Response.success("response".toResponseBody())

@@ -159,12 +159,13 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     @Test
     @Throws(IOException::class, InterruptedException::class, JSONException::class)
-    fun emailDomainIsUpdatedForExistingUserIfEmailDomainWasChanged() = runTest(timeout = 30.seconds) {
+    fun emailDomainIsNotUpdatedForExistingUserIfEmailDomainWasChanged() = runTest(timeout = 30.seconds) {
 
         // Upload a document to make sure we have a valid user
         val credentialsStore = EncryptedCredentialsStore(ApplicationProvider.getApplicationContext<Context>()
             .getSharedPreferences("GiniTests", Context.MODE_PRIVATE), ApplicationProvider.getApplicationContext())
-        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
+        val oldEmailDomain = "example.com"
+        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, oldEmailDomain)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
             .setConnectionTimeoutInMs(60000)
@@ -191,7 +192,8 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         processDocument(testDocument, "image/jpeg", "test.jpg", DocumentManager.DocumentType.INVOICE)
 
         val newUserCredentials = credentialsStore.userCredentials
-        Assert.assertEquals(newEmailDomain, extractEmailDomain(newUserCredentials.username))
+        Assert.assertNotEquals(newEmailDomain, extractEmailDomain(newUserCredentials.username))
+        Assert.assertEquals(oldEmailDomain, extractEmailDomain(newUserCredentials.username))
     }
 
     @XmlRes

@@ -20,6 +20,7 @@ internal class SkontoInvoiceHighlightsExtractor {
             val skontoPaymentMethod = skontoDiscountData.extractDataByKeys("skontoPaymentMethod")
             val skontoAmountToPay = extractAmountToPayOrError(skontoDiscountData)
             val skontoRemainingDays = extractRemainingDaysOrError(skontoDiscountData)
+            val skontoDuePeriod = extractSkontoDuePeriod(skontoDiscountData)
 
             val skontoDueDate = extractDueDateOrError(skontoDiscountData)
 
@@ -35,6 +36,7 @@ internal class SkontoInvoiceHighlightsExtractor {
                 skontoDueDate = skontoDueDate.box,
                 skontoAmountToPay = skontoAmountToPay.box,
                 skontoAmountDiscounted = skontoAmountDiscounted?.box,
+                skontoDuePeriod = skontoDuePeriod?.box
             )
         }
     }
@@ -74,5 +76,13 @@ internal class SkontoInvoiceHighlightsExtractor {
             "skontoDueDate",
             "skontoDueDateCalculated"
         ) ?: throw NoSuchElementException("Skonto data for `DueDate` is missing")
+
+    private fun extractSkontoDuePeriod(
+        skontoDiscountMap: Map<String, GiniCaptureSpecificExtraction>
+    ): GiniCaptureSpecificExtraction? =
+        skontoDiscountMap.extractDataByKeys(
+            "skontoDuePeriod",
+            "skontoDuePeriodCalculated"
+        )
 
 }
