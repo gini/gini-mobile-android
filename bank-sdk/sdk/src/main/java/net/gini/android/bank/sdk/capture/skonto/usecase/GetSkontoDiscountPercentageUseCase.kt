@@ -31,7 +31,7 @@ internal class GetSkontoDiscountPercentageUseCase {
     }
 
     companion object {
-        private const val PERCENTAGE_CALCULATIONS_SCALE = 2
+        private const val PERCENTAGE_CALCULATIONS_SCALE = 4
         private const val CALCULATIONS_SCALE = 2
     }
 }

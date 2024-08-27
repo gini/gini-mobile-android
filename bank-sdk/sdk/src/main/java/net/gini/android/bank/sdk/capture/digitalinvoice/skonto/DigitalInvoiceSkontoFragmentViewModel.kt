@@ -8,15 +8,17 @@ import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoResultArgs
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercentageUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoRemainingDaysUseCase
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
-import kotlin.math.absoluteValue
 
 internal class DigitalInvoiceSkontoFragmentViewModel(
     args: DigitalInvoiceSkontoArgs,
+    private val getSkontoDiscountPercentageUseCase: GetSkontoDiscountPercentageUseCase,
+    private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase,
+    private val getSkontoRemainingDaysUseCase: GetSkontoRemainingDaysUseCase,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<DigitalInvoiceSkontoScreenState> =
@@ -52,7 +54,7 @@ internal class DigitalInvoiceSkontoFragmentViewModel(
 
         val paymentMethod =
             data.skontoPaymentMethod ?: SkontoData.SkontoPaymentMethod.Unspecified
-        val edgeCase = extractSkontoEdgeCase(data.skontoDueDate, paymentMethod)
+        val edgeCase = getSkontoEdgeCaseUseCase.execute(data.skontoDueDate, paymentMethod)
 
         return DigitalInvoiceSkontoScreenState.Ready(
             isSkontoSectionActive = isSkontoSectionActive,
@@ -71,7 +73,10 @@ internal class DigitalInvoiceSkontoFragmentViewModel(
         val currentState =
             stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch
         val discount =
-            calculateDiscount(currentState.skontoAmount.value, currentState.fullAmount.value)
+            getSkontoDiscountPercentageUseCase.execute(
+                currentState.skontoAmount.value,
+                currentState.fullAmount.value
+            )
 
         stateFlow.emit(
             currentState.copy(
@@ -92,7 +97,10 @@ internal class DigitalInvoiceSkontoFragmentViewModel(
             return@launch
         }
 
-        val discount = calculateDiscount(newValue, currentState.fullAmount.value)
+        val discount = getSkontoDiscountPercentageUseCase.execute(
+            newValue,
+            currentState.fullAmount.value
+        )
 
         val newSkontoAmount = currentState.skontoAmount.copy(value = newValue)
 
@@ -107,12 +115,12 @@ internal class DigitalInvoiceSkontoFragmentViewModel(
     fun onSkontoDueDateChanged(newDate: LocalDate) = viewModelScope.launch {
         val currentState =
             stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch
-        val newPayInDays = ChronoUnit.DAYS.between(newDate, LocalDate.now()).absoluteValue.toInt()
+        val newPayInDays = getSkontoRemainingDaysUseCase.execute(newDate)
         stateFlow.emit(
             currentState.copy(
                 discountDueDate = newDate,
                 paymentInDays = newPayInDays,
-                edgeCase = extractSkontoEdgeCase(
+                edgeCase = getSkontoEdgeCaseUseCase.execute(
                     dueDate = newDate,
                     paymentMethod = currentState.paymentMethod
                 )
@@ -146,33 +154,5 @@ internal class DigitalInvoiceSkontoFragmentViewModel(
 
     fun onHelpClicked() = viewModelScope.launch {
         sideEffectFlow.emit(DigitalInvoiceSkontoSideEffect.OpenHelpScreen)
-    }
-
-    @Suppress("MagicNumber")
-    private fun calculateDiscount(skontoAmount: BigDecimal, fullAmount: BigDecimal): BigDecimal {
-        if (fullAmount == BigDecimal.ZERO) return BigDecimal("100")
-        return BigDecimal.ONE
-            .minus(skontoAmount.divide(fullAmount, 4, RoundingMode.HALF_UP))
-            .multiply(BigDecimal("100"))
-            .coerceAtLeast(BigDecimal.ZERO)
-    }
-
-    private fun extractSkontoEdgeCase(
-        dueDate: LocalDate,
-        paymentMethod: SkontoData.SkontoPaymentMethod,
-    ): SkontoEdgeCase? {
-        val today = LocalDate.now()
-        return when {
-            dueDate.isBefore(today) ->
-                SkontoEdgeCase.SkontoExpired
-
-            paymentMethod == SkontoData.SkontoPaymentMethod.Cash ->
-                SkontoEdgeCase.PayByCashOnly
-
-            dueDate == today ->
-                SkontoEdgeCase.SkontoLastDay
-
-            else -> null
-        }
     }
 }

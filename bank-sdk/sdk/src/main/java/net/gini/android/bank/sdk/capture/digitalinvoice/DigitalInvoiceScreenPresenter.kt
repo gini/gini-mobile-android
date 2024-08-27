@@ -218,7 +218,7 @@ internal class DigitalInvoiceScreenPresenter(
             showLineItems(digitalInvoice.selectableLineItems, isInaccurateExtraction)
             showAddons(digitalInvoice.addons)
 
-            skontoData?.let { skontoData ->
+            digitalInvoice.skontoData?.let { skontoData ->
                 showSkonto(
                     DigitalInvoiceSkontoListItem(
                         savedAmount = skontoSavedAmount!!,
