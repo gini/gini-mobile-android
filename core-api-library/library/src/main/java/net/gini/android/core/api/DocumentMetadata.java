@@ -65,11 +65,16 @@ public class DocumentMetadata {
         }
     }
 
-    protected void setUploadMetadata(@NonNull final String userComment) {
-        if (isASCIIEncodable(userComment)) {
-            mMetadataMap.put(UPLOAD_METADATA_HEADER_FIELD_NAME, userComment);
+    /**
+     * Set upload metadata to be sent to backend
+     *
+     * @param uploadMetadata containing info related to the device, file import type etc...
+     */
+    public void setUploadMetadata(@NonNull final String uploadMetadata) {
+        if (isASCIIEncodable(uploadMetadata)) {
+            mMetadataMap.put(UPLOAD_METADATA_HEADER_FIELD_NAME, uploadMetadata);
         } else {
-            throw new IllegalArgumentException("Metadata is not encodable as ASCII: " + userComment);
+            throw new IllegalArgumentException("Metadata is not encodable as ASCII: " + uploadMetadata);
         }
     }
 
@@ -106,6 +111,17 @@ public class DocumentMetadata {
             completeName = HEADER_FIELD_NAME_PREFIX + name;
         }
         mMetadataMap.put(completeName, value);
+    }
+
+    /**
+     * Provides a copy of the [DocumentMetadata] object
+     *
+     * @return the copy of the metadata object
+     */
+    public DocumentMetadata copy() {
+        DocumentMetadata copy = new DocumentMetadata();
+        mMetadataMap.forEach((key, value) -> copy.add(key, value));
+        return copy;
     }
 
     @NonNull

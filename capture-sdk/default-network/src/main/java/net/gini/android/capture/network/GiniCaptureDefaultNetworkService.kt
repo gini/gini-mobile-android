@@ -213,18 +213,18 @@ class GiniCaptureDefaultNetworkService private constructor(
             return@launchCancellable
         }
 
-        val documentMetadataCopy = DocumentMetadata()
-        documentMetadata?.metadata?.forEach { entry ->
-            documentMetadataCopy.add(entry.key, entry.value)
-        }
-        documentMetadataCopy.add(DocumentMetadata.UPLOAD_METADATA_HEADER_FIELD_NAME, document.generateUploadMetadata(context))
+        val uploadMetadata = document.generateUploadMetadata(context)
 
         val partialDocumentResource = giniBankApi.documentManager.createPartialDocument(
             document = documentData,
             contentType = document.mimeType,
             filename = null,
             documentType = null,
-            documentMetadataCopy
+            documentMetadata?.copy()?.apply {
+                setUploadMetadata(uploadMetadata)
+            } ?: DocumentMetadata().apply {
+                setUploadMetadata(uploadMetadata)
+            }
         )
 
         when (partialDocumentResource) {
