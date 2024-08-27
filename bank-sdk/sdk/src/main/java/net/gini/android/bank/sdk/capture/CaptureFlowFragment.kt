@@ -17,16 +17,15 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
-import net.gini.android.bank.sdk.capture.digitalinvoice.args.DigitalInvoiceSpecificExtractionsArg
 import net.gini.android.bank.sdk.capture.digitalinvoice.args.ExtractionsResultData
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoInvoiceHighlightsExtractor
-import net.gini.android.bank.sdk.capture.skonto.SkontoDataExtractor
+import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoDataExtractor
+import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragment
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
-import net.gini.android.capture.Amount
 
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
@@ -44,8 +43,6 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
-import java.math.BigDecimal
-import java.time.LocalDate
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -58,6 +55,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     private lateinit var captureFlowFragmentListener: CaptureFlowFragmentListener
 
     private val skontoInvoiceHighlightsExtractor: SkontoInvoiceHighlightsExtractor
+            by getGiniBankKoin().inject()
+    private val skontoDataExtractor : SkontoDataExtractor
+            by getGiniBankKoin().inject()
+    private val skontoExtractionsHandler : SkontoExtractionsHandler
             by getGiniBankKoin().inject()
 
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
@@ -186,7 +187,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     private fun tryShowingReturnAssistant(result: CaptureSDKResult.Success) {
         LineItemsValidator.validate(result.compoundExtractions)
         val skontoData = kotlin.runCatching {
-            val data = SkontoDataExtractor.extractSkontoData(
+            val data = skontoDataExtractor.extractSkontoData(
                 result.specificExtractions,
                 result.compoundExtractions
             )
@@ -226,7 +227,12 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     private fun tryShowingSkontoScreen(result: CaptureSDKResult.Success) {
         if (GiniBank.getCaptureConfiguration()?.skontoEnabled == true) {
             try {
-                val skontoData = SkontoDataExtractor.extractSkontoData(
+                skontoExtractionsHandler.initialize(
+                    result.specificExtractions,
+                    result.compoundExtractions
+                )
+
+                val skontoData = skontoDataExtractor.extractSkontoData(
                     result.specificExtractions,
                     result.compoundExtractions
                 )

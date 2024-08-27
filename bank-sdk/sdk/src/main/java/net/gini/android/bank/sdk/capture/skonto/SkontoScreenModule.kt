@@ -14,6 +14,7 @@ val skontoScreenModule = module {
             getSkontoSavedAmountUseCase = get(),
             getSkontoRemainingDaysUseCase = get(),
             getSkontoDefaultSelectionStateUseCase = get(),
+            skontoExtractionsHandler = get()
         )
     }
 }

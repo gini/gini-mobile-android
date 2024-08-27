@@ -20,7 +20,7 @@ object BankSdkIsolatedKoinContext {
     val koin: Koin by lazy {
         koinApplication {
             val ctx = context
-             check(ctx != null) {
+            check(ctx != null) {
                 "Koin needs to be initialized first. " +
                         "Call BankSdkIsolatedKoinContext.init(context)!"
             }
@@ -30,6 +30,7 @@ object BankSdkIsolatedKoinContext {
                 screenModules
                     .plus(useCaseModules)
                     .plus(commonModules)
+                    .plus(handlerModule)
             )
         }.koin
     }

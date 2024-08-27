@@ -1,5 +1,6 @@
 package net.gini.android.bank.sdk.capture.di.skonto
 
+import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoDiscountLabelTextFactory
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoInfoBannerTextFactory
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoSavedAmountTextFactory
@@ -41,5 +42,8 @@ val skontoCommonModule = module {
         AmountFormatter(
             amountFormatter = currencyFormatterWithoutSymbol(),
         )
+    }
+    factory {
+        SkontoDataExtractor()
     }
 }

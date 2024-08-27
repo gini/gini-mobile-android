@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoDataExtractor
+import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
@@ -24,6 +26,7 @@ internal class SkontoFragmentViewModel(
     private val getSkontoAmountUseCase: GetSkontoAmountUseCase,
     private val getSkontoRemainingDaysUseCase: GetSkontoRemainingDaysUseCase,
     private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase,
+    private val skontoExtractionsHandler: SkontoExtractionsHandler,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<SkontoFragmentContract.State> =
@@ -39,10 +42,16 @@ internal class SkontoFragmentViewModel(
 
     fun onProceedClicked() {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return
-        SkontoDataExtractor.updateGiniExtractions(currentState)
+        skontoExtractionsHandler.updateExtractions(
+            totalAmount = currentState.totalAmount,
+                    skontoPercentage = currentState.skontoPercentage,
+                    skontoAmount = currentState.skontoAmount,
+                    paymentInDays = currentState.paymentInDays,
+                    discountDueDate = currentState.discountDueDate.toString(),
+        )
         listener?.onPayInvoiceWithSkonto(
-            SkontoDataExtractor.extractions,
-            SkontoDataExtractor.compoundExtractions
+            skontoExtractionsHandler.getExtractions(),
+            skontoExtractionsHandler.getCompoundExtractions()
         )
     }
 
