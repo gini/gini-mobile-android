@@ -1,4 +1,4 @@
-package net.gini.android.capture.util
+package net.gini.android.capture.document
 
 import android.os.Build
 import net.gini.android.capture.BuildConfig

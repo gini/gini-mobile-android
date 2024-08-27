@@ -14,7 +14,6 @@ import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.util.DeviceHelper;
 import net.gini.android.capture.internal.util.UriReaderAsyncTask;
 import net.gini.android.capture.util.IntentHelper;
-import net.gini.android.capture.util.UploadMetadata;
 
 import java.util.Arrays;
 import java.util.UUID;
