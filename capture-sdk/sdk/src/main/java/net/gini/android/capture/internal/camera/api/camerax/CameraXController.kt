@@ -307,49 +307,52 @@ internal class CameraXController(val activity: Activity) : CameraInterface {
             return pictureFuture
         }
 
-        imageCaptureUseCase?.takePicture(ContextCompat.getMainExecutor(activity),
-            object : ImageCapture.OnImageCapturedCallback() {
-                override fun onCaptureSuccess(image: ImageProxy) {
-                    // Not playing shutter sound because on some devices (for eg. Samsung Galaxy S9) it
-                    // always plays at 100% volume
-                    // mediaActionSound?.play(MediaActionSound.SHUTTER_CLICK)
+        focus().thenApply {
+            imageCaptureUseCase?.takePicture(ContextCompat.getMainExecutor(activity),
+                object : ImageCapture.OnImageCapturedCallback() {
+                    override fun onCaptureSuccess(image: ImageProxy) {
+                        // Not playing shutter sound because on some devices (for eg. Samsung Galaxy S9) it
+                        // always plays at 100% volume
+                        // mediaActionSound?.play(MediaActionSound.SHUTTER_CLICK)
 
-                    vibrate(SHUTTER_VIBRATION_DURATION_MS)
+                        vibrate(SHUTTER_VIBRATION_DURATION_MS)
 
-                    val byteArray = try {
-                        image.toCroppedByteArray()
-                    } catch (e: CameraException) {
-                        LOG.error("Failed to take picture", e)
-                        pictureFuture.completeExceptionally(e)
+                        val byteArray = try {
+                            image.toCroppedByteArray()
+                        } catch (e: CameraException) {
+                            LOG.error("Failed to take picture", e)
+                            pictureFuture.completeExceptionally(e)
+                            image.close()
+                            return
+                        }
+
+                        val photo = PhotoFactory.newPhotoFromJpeg(
+                            byteArray,
+                            image.imageInfo.rotationDegrees,
+                            DeviceHelper.getDeviceOrientation(activity),
+                            DeviceHelper.getDeviceType(activity),
+                            Document.Source.newCameraSource()
+                        )
+
+                        LOG.info("Picture taken with resolution {}x{}", image.cropRect.width(),
+                            image.cropRect.height())
+
+                        pictureFuture.complete(photo)
                         image.close()
                         return
                     }
 
-                    val photo = PhotoFactory.newPhotoFromJpeg(
-                        byteArray,
-                        image.imageInfo.rotationDegrees,
-                        DeviceHelper.getDeviceOrientation(activity),
-                        DeviceHelper.getDeviceType(activity),
-                        Document.Source.newCameraSource()
-                    )
-
-                    LOG.info("Picture taken with resolution {}x{}", image.cropRect.width(),
-                        image.cropRect.height())
-
-                    pictureFuture.complete(photo)
-                    image.close()
-                }
-
-                override fun onError(exception: ImageCaptureException) {
-                    LOG.error("Failed to take picture", exception)
-                    pictureFuture.completeExceptionally(
-                        CameraException(
-                            exception,
-                            CameraException.Type.SHOT_FAILED
+                    override fun onError(exception: ImageCaptureException) {
+                        LOG.error("Failed to take picture", exception)
+                        pictureFuture.completeExceptionally(
+                            CameraException(
+                                exception,
+                                CameraException.Type.SHOT_FAILED
+                            )
                         )
-                    )
-                }
-            })
+                    }
+                })
+        }
 
         return pictureFuture
     }
