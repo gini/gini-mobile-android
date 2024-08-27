@@ -168,6 +168,9 @@ class ReviewActivity : AppCompatActivity() {
                     .setMessage(R.string.document_not_payable_message)
                     .setPositiveButton(android.R.string.ok
                     ) { _, _ -> finish() }
+                    .setOnDismissListener {
+                        finish()
+                    }
                     .show()
                 return@launch
             }
