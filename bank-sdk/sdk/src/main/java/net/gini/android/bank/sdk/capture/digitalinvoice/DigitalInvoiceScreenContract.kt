@@ -75,12 +75,12 @@ interface DigitalInvoiceScreenContract {
     }
 
     data class FooterDetails(
-        val totalGrossPriceIntegralAndFractionalParts: Pair<String, String> = Pair("", ""),
+        val inaccurateExtraction: Boolean,
         val buttonEnabled: Boolean = true,
         val count: Int = 0,
         val total: Int = 0,
-        val inaccurateExtraction: Boolean,
         val skontoSavedAmount: Amount? = null,
         val skontoDiscountPercentage: BigDecimal? = null,
+        val totalGrossPriceIntegralAndFractionalParts: Pair<String, String> = Pair("", ""),
     )
 }

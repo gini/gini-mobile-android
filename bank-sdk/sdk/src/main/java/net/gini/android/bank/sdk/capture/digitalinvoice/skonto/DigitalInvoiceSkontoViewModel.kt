@@ -14,7 +14,7 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoRemainingDaysUs
 import java.math.BigDecimal
 import java.time.LocalDate
 
-internal class DigitalInvoiceSkontoFragmentViewModel(
+internal class DigitalInvoiceSkontoViewModel(
     args: DigitalInvoiceSkontoArgs,
     private val getSkontoDiscountPercentageUseCase: GetSkontoDiscountPercentageUseCase,
     private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase,

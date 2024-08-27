@@ -113,7 +113,7 @@ class DigitalInvoiceSkontoFragment : Fragment() {
 
     private val args: DigitalInvoiceSkontoFragmentArgs by navArgs<DigitalInvoiceSkontoFragmentArgs>()
 
-    private val viewModel: DigitalInvoiceSkontoFragmentViewModel by getGiniBankKoin().inject {
+    private val viewModel: DigitalInvoiceSkontoViewModel by getGiniBankKoin().inject {
         parametersOf(args.data)
     }
 
@@ -184,7 +184,7 @@ class DigitalInvoiceSkontoFragment : Fragment() {
 
 @Composable
 @SuppressLint("ComposableNaming")
-private fun DigitalInvoiceSkontoFragmentViewModel.collectSideEffect(
+private fun DigitalInvoiceSkontoViewModel.collectSideEffect(
     action: (DigitalInvoiceSkontoSideEffect) -> Unit
 ) {
 
@@ -201,14 +201,14 @@ private fun DigitalInvoiceSkontoFragmentViewModel.collectSideEffect(
 
 @Composable
 private fun ScreenContent(
+    isBottomNavigationBarEnabled: Boolean,
     navigateBack: () -> Unit,
     navigateToHelpScreen: () -> Unit,
-    viewModel: DigitalInvoiceSkontoFragmentViewModel,
+    navigateToInvoiceScreen: () -> Unit,
+    viewModel: DigitalInvoiceSkontoViewModel,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
-    isBottomNavigationBarEnabled: Boolean,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
-    navigateToInvoiceScreen: () -> Unit,
 ) {
 
     BackHandler { navigateBack() }
@@ -242,11 +242,11 @@ private fun ScreenContent(
 @Composable
 private fun ScreenStateContent(
     state: DigitalInvoiceSkontoScreenState,
+    isBottomNavigationBarEnabled: Boolean,
     onDiscountSectionActiveChange: (Boolean) -> Unit,
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onBackClicked: () -> Unit,
-    isBottomNavigationBarEnabled: Boolean,
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
     onInvoiceClicked: () -> Unit,
@@ -277,10 +277,12 @@ private fun ScreenStateContent(
 
 @Composable
 private fun ScreenReadyState(
+    state: DigitalInvoiceSkontoScreenState.Ready,
     onBackClicked: () -> Unit,
     onInvoiceClicked: () -> Unit,
     onHelpClicked: () -> Unit,
-    state: DigitalInvoiceSkontoScreenState.Ready,
+    onInfoBannerClicked: () -> Unit,
+    onInfoDialogDismissed: () -> Unit,
     onDiscountSectionActiveChange: (Boolean) -> Unit,
     onDiscountAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
@@ -288,8 +290,6 @@ private fun ScreenReadyState(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
-    onInfoBannerClicked: () -> Unit,
-    onInfoDialogDismissed: () -> Unit,
 ) {
 
     val scrollState = rememberScrollState()
@@ -381,11 +381,11 @@ private fun ScreenReadyState(
 
 @Composable
 private fun TopAppBar(
+    isBottomNavigationBarEnabled: Boolean,
+    colors: GiniTopBarColors,
     onBackClicked: () -> Unit,
     onHelpClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    isBottomNavigationBarEnabled: Boolean,
-    colors: GiniTopBarColors,
 ) {
     GiniTopBar(
         modifier = modifier,
@@ -439,9 +439,9 @@ private fun NavigationActionHelp(
 
 @Composable
 private fun YourInvoiceScanSection(
-    modifier: Modifier = Modifier,
     colorScheme: DigitalInvoiceSkontoInvoicePreviewSectionColors,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier
@@ -499,7 +499,7 @@ private fun YourInvoiceScanSection(
 
 @Composable
 private fun SkontoSection(
-    colors: DigitalInvoiceSkontoSectionColors,
+    isActive: Boolean,
     amount: Amount,
     dueDate: LocalDate,
     infoPaymentInDays: Int,
@@ -509,8 +509,8 @@ private fun SkontoSection(
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
     edgeCase: SkontoEdgeCase?,
+    colors: DigitalInvoiceSkontoSectionColors,
     modifier: Modifier = Modifier,
-    isActive: Boolean,
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
@@ -675,9 +675,9 @@ private fun FooterSection(
     isBottomNavigationBarEnabled: Boolean,
     onBackClicked: () -> Unit,
     onHelpClicked: () -> Unit,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     colors: DigitalInvoiceSkontoFooterSectionColors = DigitalInvoiceSkontoFooterSectionColors.colors(),
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
 ) {
     if (customBottomNavBarAdapter != null) {
         val ctx = LocalContext.current
