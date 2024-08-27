@@ -9,7 +9,7 @@ internal object UploadMetadata {
 
     private const val USER_COMMENT_PLATFORM = "Platform"
     private const val USER_COMMENT_OS_VERSION = "OSVer"
-    private const val USER_COMMENT_GINI_CAPTURE_VERSION = "GiniVisionVer"
+    private const val USER_COMMENT_GINI_CAPTURE_VERSION = "GiniCaptureVer"
     private const val USER_COMMENT_DEVICE_ORIENTATION = "DeviceOrientation"
     private const val USER_COMMENT_DEVICE_TYPE = "DeviceType"
     private const val USER_COMMENT_SOURCE = "Source"
