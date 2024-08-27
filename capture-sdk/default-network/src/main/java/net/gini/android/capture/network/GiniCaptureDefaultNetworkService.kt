@@ -2,6 +2,7 @@ package net.gini.android.capture.network
 
 import android.content.Context
 import android.text.TextUtils
+import androidx.annotation.VisibleForTesting
 import androidx.annotation.XmlRes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +58,10 @@ import net.gini.android.bank.api.models.Configuration as BankConfiguration
  * [GiniCapture.Builder.setGiniCaptureNetworkService] when creating a
  * [GiniCapture] instance.
  */
-class GiniCaptureDefaultNetworkService private constructor(
+class GiniCaptureDefaultNetworkService
+
+@VisibleForTesting
+internal constructor(
     internal val giniBankApi: GiniBankAPI,
     private val documentMetadata: DocumentMetadata?,
     private val context: Context,
