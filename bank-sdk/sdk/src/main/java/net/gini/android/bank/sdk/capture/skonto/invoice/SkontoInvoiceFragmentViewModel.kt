@@ -9,11 +9,17 @@ import net.gini.android.bank.sdk.capture.skonto.invoice.image.SkontoPageImagePro
 import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoDocumentLayoutNetworkService
 import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoDocumentPagesNetworkService
 import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoFileNetworkService
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
+import net.gini.android.capture.Amount
+import net.gini.android.capture.AmountCurrency
+import java.math.BigDecimal
+import java.time.LocalDate
 
 internal class SkontoInvoiceFragmentViewModel(
     private val documentId: String?,
     private val skontoInvoiceHighlights: List<SkontoInvoiceHighlightBoxes>,
+    private val skontoData: SkontoData?,
     private val skontoDocumentLayoutNetworkService: SkontoDocumentLayoutNetworkService,
     private val skontoDocumentPagesNetworkService: SkontoDocumentPagesNetworkService,
     private val skontoFileNetworkService: SkontoFileNetworkService,
@@ -24,7 +30,11 @@ internal class SkontoInvoiceFragmentViewModel(
         MutableStateFlow(createInitalState())
 
     private fun createInitalState() =
-        SkontoInvoiceFragmentState(isLoading = true, images = emptyList())
+        SkontoInvoiceFragmentState(
+            isLoading = true,
+            images = emptyList(),
+            skontoData = skontoData,
+        )
 
     init {
         init()

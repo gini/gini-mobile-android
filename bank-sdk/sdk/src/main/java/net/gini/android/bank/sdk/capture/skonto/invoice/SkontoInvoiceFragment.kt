@@ -26,7 +26,7 @@ class SkontoInvoiceFragment : Fragment() {
     private val args: SkontoInvoiceFragmentArgs by navArgs<SkontoInvoiceFragmentArgs>()
 
     private val viewModel: SkontoInvoiceFragmentViewModel by getGiniBankKoin().inject {
-        parametersOf(args.invoiceHighlights)
+        parametersOf(args.skontoData, args.invoiceHighlights)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -162,10 +162,11 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                             )
                             findNavController().popBackStack()
                         },
-                        navigateToInvoiceScreen = {
+                        navigateToInvoiceScreen = { data ->
                             findNavController()
                                 .navigate(
                                     DigitalInvoiceSkontoFragmentDirections.toSkontoInvoiceFragment(
+                                        skontoData = data,
                                         invoiceHighlights = args.data.invoiceHighlights.toTypedArray(),
                                     )
                                 )
@@ -208,7 +209,7 @@ private fun ScreenContent(
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
-    navigateToInvoiceScreen: () -> Unit,
+    navigateToInvoiceScreen: (skontoData: SkontoData) -> Unit,
 ) {
 
     BackHandler { navigateBack() }
@@ -217,7 +218,7 @@ private fun ScreenContent(
 
     viewModel.collectSideEffect {
         when (it) {
-            DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen -> navigateToInvoiceScreen()
+            is DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen -> navigateToInvoiceScreen(it.skontoData)
             DigitalInvoiceSkontoSideEffect.OpenHelpScreen -> navigateToHelpScreen()
         }
     }
