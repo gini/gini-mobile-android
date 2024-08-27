@@ -1,11 +1,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/gc_medium"
+    android:elevation="@dimen/gc_large"
+    android:padding="@dimen/gc_inner_padding_detection_error_layout"
     android:background="@drawable/gc_detection_error_background"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <TextView
+        style="@style/GiniCaptureTheme.Typography.Body2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,6 +20,7 @@
 
 
     <TextView
+        style="@style/GiniCaptureTheme.Typography.Body2"
         android:id="@+id/gc_detection_error_popup_dismiss_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
