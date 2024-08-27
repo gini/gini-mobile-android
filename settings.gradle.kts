@@ -1,3 +1,4 @@
+include(":gini-internal-payment-sdk:library")
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
