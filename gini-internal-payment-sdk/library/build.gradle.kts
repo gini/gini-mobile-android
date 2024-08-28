@@ -1,3 +1,5 @@
+import net.gini.gradle.extensions.apiProjectDependencyForSBOM
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -36,10 +38,18 @@ android {
 }
 
 dependencies {
+    val healthApiLibrary = project(":health-api-library:library")
+    if (properties["createSBOM"] == "true") {
+        apiProjectDependencyForSBOM(healthApiLibrary)
+    } else {
+        api(healthApiLibrary)
+    }
 
+    api(libs.slf4j.api)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
