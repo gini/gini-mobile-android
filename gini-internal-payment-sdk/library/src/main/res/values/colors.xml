@@ -1,10 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <color name="gps_accent_01">#009EDC</color>
+    <color name="gps_accent_02">#45B4DF</color>
+    <color name="gps_accent_03">#89C8E1</color>
+    <color name="gps_accent_04">#BFE7F6</color>
+    <color name="gps_accent_05">#E5F5FB</color>
+
+    <color name="gps_dark_01">#191D30</color>
+    <color name="gps_dark_02">#565656</color>
+    <color name="gps_dark_03">#808080</color>
+    <color name="gps_dark_04">#8A8A8E</color>
+    <color name="gps_dark_05">#E8E9EB</color>
+    <color name="gps_dark_06">#F3F3F3</color>
+    <color name="gps_dark_07">#FAFAFA</color>
+
+    <color name="gps_light_01">#F2F2F2</color>
+    <color name="gps_light_02">#E8E9EB</color>
+    <color name="gps_light_03">#f3f3f3</color>
+    <color name="gps_light_04">#8A8A8E</color>
+    <color name="gps_light_05">#565656</color>
+    <color name="gps_light_06">#353535</color>
+    <color name="gps_light_07">#212121</color>
+
+    <color name="gps_success_01">#B0B347</color>
+    <color name="gps_success_02">#D5D6A0</color>
+    <color name="gps_success_03">#E7E8CD</color>
+    <color name="gps_success_04">#F2F2E7</color>
+
+    <color name="gps_feedback_01">#FA1C1C</color>
+    <color name="gps_feedback_02">#F19597</color>
+    <color name="gps_feedback_03">#ECD0D0</color>
+    <color name="gps_feedback_04">#EEDEDE</color>
+
+    <color name="gps_payment_component_caption">@color/gps_dark_04</color>
+    <color name="gps_bank_selection_bottom_sheet_caption">@color/gps_dark_03</color>
+    <color name="gps_bank_selection_bottom_sheet_title">@color/gps_dark_02</color>
+    <color name="gps_payment_details_background_color">@color/gps_dark_07</color>
+    <color name="gps_payment_input_border_color">@color/gps_dark_05</color>
+    <color name="gps_payment_input_background_color">@color/gps_dark_06</color>
+    <color name="gps_payment_input_hint">@color/gps_dark_04</color>
+    <color name="gps_more_information_fragment_background">@color/gps_dark_07</color>
+    <color name="gps_payment_provider_border_color">@color/gps_dark_05</color>
+    <color name="gps_bordered_background_color">@color/gps_dark_06</color>
+    <color name="gps_bank_selector_button_color">@color/gps_dark_01</color>
+    <color name="gps_faq_divider">@color/gps_dark_05</color>
+    <color name="gps_bottom_sheet_scrim">#000</color>
+    <color name="gps_install_app_title_color">@color/gps_dark_02</color>
+    <color name="gps_install_app_details_color">@color/gps_dark_03</color>
+    <color name="gps_select_bank_and_pay_color">@color/gps_dark_01</color>
+    <color name="gps_info_button_tint">@color/gps_dark_02</color>
+    <color name="gps_more_information_color">@color/gps_dark_02</color>
+
+    <!--  Open With  -->
+    <color name="gps_open_with_title">@color/gps_dark_02</color>
+    <color name="gps_open_with_details">@color/gps_dark_03</color>
+    <color name="gps_open_with_apps_background">@color/gps_dark_05</color>
+    <color name="gps_open_with_app_placeholder">@color/gps_dark_07</color>
+
+    <color name="gps_container_fragment_background">#60565656</color>
+    <color name="gps_disabled_field_text_color">@color/gps_dark_04</color>
+    <color name="gps_amount_field_border">@color/gps_dark_01</color>
+
 </resources>
