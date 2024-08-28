@@ -3,6 +3,8 @@ package net.gini.android.bank.sdk.exampleapp.ui.screens
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isClickable
 import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import net.gini.android.bank.sdk.exampleapp.R
@@ -15,27 +17,14 @@ class ExtractionScreen {
         return this
     }
 
-    fun editIbanField() {
-        onView(allOf(withId(R.id.text_value), withHint("iban")))
+    fun editTransferSummaryFields(hint: String, value: String) {
+        onView(allOf(withId(R.id.text_value), withHint(hint)))
             .perform(click())
-            .perform(replaceText("DE48120400000180115890"))
+            .perform(replaceText(value))
     }
 
-    fun editAmountField() {
-        onView(allOf(withId(R.id.text_value), withHint("amountToPay")))
-            .perform(click())
-            .perform(replaceText("200:EUR"))
-    }
-
-    fun editPurposeField() {
-        onView(allOf(withId(R.id.text_value), withHint("paymentPurpose")))
-            .perform(click())
-            .perform(replaceText("Rent"))
-    }
-
-    fun editReceiptField() {
-        onView(allOf(withId(R.id.text_value), withHint("paymentRecipient")))
-            .perform(click())
-            .perform(replaceText("Zalando Gmbh & Co. KG"))
+    fun checkTransferSummaryButtonIsClickable(): ExtractionScreen {
+        onView(withId(R.id.transfer_summary)).check(matches(isClickable()))
+        return this
     }
 }

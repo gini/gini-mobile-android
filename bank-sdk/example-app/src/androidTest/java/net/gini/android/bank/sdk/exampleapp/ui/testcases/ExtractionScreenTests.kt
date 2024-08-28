@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.ExtractionScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -55,7 +56,7 @@ class ExtractionScreenTests {
     }
 
     @Test
-    fun test2_clickSendFeedbackAndCloseButton() {
+    fun test1_clickTransferSummaryButton() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -70,7 +71,7 @@ class ExtractionScreenTests {
     }
 
     @Test
-    fun test3_editIbanFieldAndClickSendFeedbackButton() {
+    fun test2_editIbanFieldAndCheckTransferSummaryButtonClickable() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -81,12 +82,12 @@ class ExtractionScreenTests {
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
         idlingResource.waitForIdle()
-        extractionScreen.editIbanField()
-        extractionScreen.clickTransferSummaryButton()
+        extractionScreen.editTransferSummaryFields("iban", "DE48120400000180115890")
+        extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
     @Test
-    fun test4_editAmountFieldAndClickSendFeedbackButton() {
+    fun test3_editAmountFieldAndCheckTransferSummaryButtonClickable() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -97,27 +98,12 @@ class ExtractionScreenTests {
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
         idlingResource.waitForIdle()
-        extractionScreen.editAmountField()
-        extractionScreen.clickTransferSummaryButton()
-    }
-    @Test
-    fun test5_editPurposeFieldAndClickSendFeedbackButton() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
-        idlingResource.waitForIdle()
-        reviewScreen.assertReviewTitleIsDisplayed()
-        reviewScreen.clickProcessButton()
-        idlingResource.waitForIdle()
-        extractionScreen.editPurposeField()
-        extractionScreen.clickTransferSummaryButton()
+        extractionScreen.editTransferSummaryFields("amountToPay", "200:EUR")
+        extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
     @Test
-    fun test6_editRecipientFieldAndClickSendFeedbackButton() {
+    fun test4_editPurposeFieldAndCheckTransferSummaryButtonClickable() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -128,11 +114,28 @@ class ExtractionScreenTests {
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
         idlingResource.waitForIdle()
-        extractionScreen.editReceiptField()
-        extractionScreen.clickTransferSummaryButton()
+        extractionScreen.editTransferSummaryFields("paymentPurpose", "Rent")
+        extractionScreen.checkTransferSummaryButtonIsClickable()
     }
+
     @Test
-    fun test7_pressBackOnTransferSummaryAndShowsMainScreenOnSubsequentLaunches() {
+    fun test5_editRecipientFieldAndCheckTransferSummaryButtonClickable() {
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButton()
+        captureScreen.clickFilesButton()
+        captureScreen.clickPhotos()
+        imageUploader.uploadImageFromPhotos()
+        imageUploader.clickAddButton()
+        idlingResource.waitForIdle()
+        reviewScreen.assertReviewTitleIsDisplayed()
+        reviewScreen.clickProcessButton()
+        idlingResource.waitForIdle()
+        extractionScreen.editTransferSummaryFields("paymentRecipient", "Zalando Gmbh & Co. KG")
+        extractionScreen.checkTransferSummaryButtonIsClickable()
+    }
+
+    @Test
+    fun test6_pressBackOnTransferSummaryAndShowsMainScreenOnSubsequentLaunches() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -144,5 +147,10 @@ class ExtractionScreenTests {
         reviewScreen.clickProcessButton()
         pressBack()
         mainScreen.assertDescriptionTitle()
+    }
+
+    @After
+    fun tearDown() {
+        IdlingRegistry.getInstance().unregister(idlingResource)
     }
 }
