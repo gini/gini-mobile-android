@@ -19,18 +19,3 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
-# Keep Parcelable classes untouced
--keep class * implements android.os.Parcelable {
-  public static final android.os.Parcelable$Creator *;
-}
-
--keepnames class * implements android.os.Parcelable {
-    public static final ** CREATOR;
-}
-
-# Keep Serializable classes and fields
--keep @java.io.Serializable class *
--keepclassmembers class * {
-    @java.io.Serializable *;
-}
