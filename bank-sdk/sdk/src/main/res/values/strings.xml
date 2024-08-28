@@ -52,6 +52,7 @@
     <string name="gbs_skonto_section_discount_info_banner_normal_message">Zahlung in %1$s: %2$s Skonto</string>
     <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Zahlung heute: %1$s Skonto</string>
     <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">Zahlen Sie diese Rechnung innerhalb von %2$s in bar und Sie erhalten %1$s Skonto</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_today_message">Zahlen Sie heute bar und erhalten Sie %1$s Skonto</string>
     <string name="gbs_skonto_section_discount_info_banner_date_expired_message">Die %1$s Skonto sind abgelaufen</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Betrag nach Abzug</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Ablaufdatum Skonto</string>

@@ -368,6 +368,7 @@ private fun ScreenReadyState(
 
         if (state.edgeCaseInfoDialogVisible) {
             val text = when (state.skontoEdgeCase) {
+                SkontoFragmentContract.SkontoEdgeCase.PayByCashToday,
                 SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly ->
                     stringResource(id = R.string.gbs_skonto_section_info_dialog_pay_cash_message)
 
@@ -591,6 +592,12 @@ private fun SkontoSection(
                         remainingDaysText
                     )
 
+                SkontoFragmentContract.SkontoEdgeCase.PayByCashToday ->
+                    stringResource(
+                        id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
+                        animatedDiscountAmount.formatAsDiscountPercentage()
+                    )
+
                 SkontoFragmentContract.SkontoEdgeCase.SkontoExpired ->
                     stringResource(
                         id = R.string.gbs_skonto_section_discount_info_banner_date_expired_message,
@@ -615,6 +622,7 @@ private fun SkontoSection(
                 modifier = Modifier.fillMaxWidth(),
                 colors = when (edgeCase) {
                     SkontoFragmentContract.SkontoEdgeCase.SkontoLastDay,
+                    SkontoFragmentContract.SkontoEdgeCase.PayByCashToday,
                     SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly -> colors.warningInfoBannerColors
 
                     SkontoFragmentContract.SkontoEdgeCase.SkontoExpired -> colors.errorInfoBannerColors

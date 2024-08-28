@@ -52,6 +52,7 @@
     <string name="gbs_skonto_section_discount_info_banner_normal_message">Pay in %1$s: receive %2$s Skonto discount</string>
     <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Pay today: receive %1$s Skonto discount</string>
     <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">Pay in cash within the next %2$s and receive a %1$s Skonto discount</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_today_message">Pay in cash today and receive a %1$s Skonto discount</string>
     <string name="gbs_skonto_section_discount_info_banner_date_expired_message">The %1$s discount has expired</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Final amount</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Expiry date</string>

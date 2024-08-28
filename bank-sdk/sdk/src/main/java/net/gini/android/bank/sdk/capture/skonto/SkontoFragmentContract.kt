@@ -29,6 +29,7 @@ internal object SkontoFragmentContract {
     sealed class SkontoEdgeCase {
         object SkontoLastDay : SkontoEdgeCase()
         object PayByCashOnly : SkontoEdgeCase()
+        object PayByCashToday : SkontoEdgeCase()
         object SkontoExpired : SkontoEdgeCase()
     }
 }

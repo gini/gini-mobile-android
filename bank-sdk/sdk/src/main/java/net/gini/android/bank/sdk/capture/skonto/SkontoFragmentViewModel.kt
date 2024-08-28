@@ -48,6 +48,7 @@ internal class SkontoFragmentViewModel(
 
         val isSkontoSectionActive = edgeCase != SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly
                 && edgeCase != SkontoFragmentContract.SkontoEdgeCase.SkontoExpired
+                && edgeCase != SkontoFragmentContract.SkontoEdgeCase.PayByCashToday
 
         val totalAmount =
             if (isSkontoSectionActive) data.skontoAmountToPay else data.fullAmountToPay
@@ -203,8 +204,14 @@ internal class SkontoFragmentViewModel(
                 SkontoFragmentContract.SkontoEdgeCase.SkontoExpired
 
 
-            paymentMethod == SkontoData.SkontoPaymentMethod.Cash ->
-                SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly
+            paymentMethod == SkontoData.SkontoPaymentMethod.Cash -> {
+
+                if (dueDate == today) {
+                    SkontoFragmentContract.SkontoEdgeCase.PayByCashToday
+                } else {
+                    SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly
+                }
+            }
 
             dueDate == today ->
                 SkontoFragmentContract.SkontoEdgeCase.SkontoLastDay
