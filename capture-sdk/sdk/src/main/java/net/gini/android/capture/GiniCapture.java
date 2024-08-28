@@ -125,6 +125,8 @@ public class GiniCapture {
     private final EntryPoint entryPoint;
     private final boolean allowScreenshots;
 
+    private final String mGiniBankVersion;
+
 
     /**
      * Retrieve the current instance.
@@ -345,6 +347,7 @@ public class GiniCapture {
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
         entryPoint = builder.getEntryPoint();
         allowScreenshots = builder.getAllowScreenshots();
+        mGiniBankVersion = builder.getGiniBankVersion();
     }
 
     /**
@@ -695,6 +698,13 @@ public class GiniCapture {
         return allowScreenshots;
     }
 
+    /**
+     * Get the version number of GiniBank
+     *
+     * @return the version number
+     */
+    public String getGiniBankVersion() { return mGiniBankVersion; }
+
     public static GiniCaptureFragment createGiniCaptureFragment() {
         if (!GiniCapture.hasInstance()) {
             throw new IllegalStateException("GiniCapture instance was created. Call GiniCapture.newInstance() before creating the GiniCaptureFragment.");
@@ -771,6 +781,8 @@ public class GiniCapture {
         private boolean mFlashButtonEnabled;
         private boolean mIsFlashOnByDefault = false;
 
+        private String mGiniBankVersion = "";
+
         private EventTracker mEventTracker = new EventTracker() {
             @Override
             public void onOnboardingScreenEvent(@NotNull final Event<OnboardingScreenEvent> event) {
@@ -807,6 +819,8 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
         private boolean allowScreenshots = true;
+
+        private String giniBankVersion;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1343,6 +1357,15 @@ public class GiniCapture {
 
         private boolean getAllowScreenshots() {
             return allowScreenshots;
+        }
+
+        public Builder setGiniBankVersion(String giniBankVersion) {
+            this.giniBankVersion = giniBankVersion;
+            return this;
+        }
+
+        private String getGiniBankVersion() {
+            return giniBankVersion;
         }
     }
 
