@@ -6,7 +6,7 @@ import org.koin.dsl.module
 
 val digitalInvoiceSkontoScreenModule = module {
     viewModel { (data: DigitalInvoiceSkontoArgs) ->
-        DigitalInvoiceSkontoFragmentViewModel(
+        DigitalInvoiceSkontoViewModel(
             args = data,
             getSkontoDiscountPercentageUseCase = get(),
             getSkontoEdgeCaseUseCase = get(),
