@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:topLeftRadius="@dimen/gps_medium_12"
+        android:topRightRadius="@dimen/gps_medium_12">
+    </corners>
+    <solid android:color="@color/gps_payment_details_background_color"/>
+</shape>
