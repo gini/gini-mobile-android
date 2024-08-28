@@ -145,6 +145,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar.isChecked  =
             configuration.isSkontoHelpCustomNavBarEnabled
 
+        // 42 enable digital invoice skonto screen custom bottom navigation bar
+        binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar.isChecked  =
+            configuration.isDigitalInvoiceSkontoCustomNavBarEnabled
+
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // 13 enable onboarding screens at first launch
@@ -396,6 +400,16 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+
+        // 42 enable digital invoice skonto screens custom bottom navigation bar
+        binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar
+            .setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isDigitalInvoiceSkontoCustomNavBarEnabled = isChecked
+                )
+            )
+            }
 
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 

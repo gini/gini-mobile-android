@@ -8,6 +8,8 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import net.gini.android.core.api.response.DocumentLayoutResponse
+import net.gini.android.core.api.response.DocumentPageResponse
 import net.gini.android.core.api.response.PaymentRequestResponse
 import net.gini.android.core.api.test.DocumentRemoteSourceForTests
 import net.gini.android.core.api.test.MockGiniApiType
@@ -231,6 +233,22 @@ class DocumentRemoteSourceTest {
             id: String,
             params: RequestBody
         ): Response<ResponseBody> {
+            bearerAuthHeader = bearer["Authorization"]
+            return Response.success(null)
+        }
+
+        override suspend fun getDocumentLayout(
+            bearer: Map<String, String>,
+            documentId: String
+        ): Response<DocumentLayoutResponse> {
+            bearerAuthHeader = bearer["Authorization"]
+            return Response.success(null)
+        }
+
+        override suspend fun getDocumentPages(
+            bearer: Map<String, String>,
+            documentId: String
+        ): Response<List<DocumentPageResponse>> {
             bearerAuthHeader = bearer["Authorization"]
             return Response.success(null)
         }

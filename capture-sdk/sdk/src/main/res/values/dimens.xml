@@ -1,4 +1,5 @@
 <resources>
+    <dimen name="gc_extra_small">2dp</dimen>
     <dimen name="gc_small">4dp</dimen>
     <dimen name="gc_medium">8dp</dimen>
     <dimen name="gc_medium_12">12dp</dimen>

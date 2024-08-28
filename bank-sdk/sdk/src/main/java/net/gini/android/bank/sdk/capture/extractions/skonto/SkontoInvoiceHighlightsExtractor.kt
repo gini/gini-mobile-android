@@ -1,6 +1,5 @@
 package net.gini.android.bank.sdk.capture.extractions.skonto
 
-import net.gini.android.bank.sdk.capture.skonto.extractDataByKeys
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
@@ -86,3 +85,6 @@ internal class SkontoInvoiceHighlightsExtractor {
         )
 
 }
+
+private fun Map<String, GiniCaptureSpecificExtraction>.extractDataByKeys(vararg keys: String) =
+    keys.firstNotNullOfOrNull { this[it] }
