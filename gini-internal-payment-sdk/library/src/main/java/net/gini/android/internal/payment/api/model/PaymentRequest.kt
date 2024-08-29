@@ -1,12 +1,4 @@
-package net.gini.android.merchant.sdk.api.payment.model
-
-///**
-// * A payment request used for starting the bank app. Only the id is sent, but it is associated with a bank.
-// */
-//data class PaymentRequest(
-//    val id: String,
-//    val bankApp: PaymentProviderApp,
-//)
+package net.gini.android.internal.payment.api.model
 
 /**
  * Holds information about a payment request.
@@ -27,7 +19,7 @@ data class PaymentRequest(
     }
 }
 
-internal fun net.gini.android.core.api.models.PaymentRequest.toPaymentRequest(
+fun net.gini.android.core.api.models.PaymentRequest.toPaymentRequest(
     paymentRequestId: String,
 ) = PaymentRequest(
     id = paymentRequestId,
