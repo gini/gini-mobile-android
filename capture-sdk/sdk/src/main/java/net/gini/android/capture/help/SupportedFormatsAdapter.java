@@ -50,6 +50,7 @@ public class SupportedFormatsAdapter extends
             items.add(SupportedFormat.QR_EPS);
             items.add(SupportedFormat.QR_STUZZA);
             items.add(SupportedFormat.QR_GIROCODE);
+            items.add(SupportedFormat.QR_GINI_PAYMENT);
             return items;
         }
 
@@ -173,7 +174,8 @@ public class SupportedFormatsAdapter extends
         QR_BEZAHL(R.string.gc_supported_format_qr_type_bezahl),
         QR_EPS(R.string.gc_supported_format_qr_type_eps),
         QR_STUZZA(R.string.gc_supported_format_qr_type_stuzza),
-        QR_GIROCODE(R.string.gc_supported_format_qr_type_girocode);
+        QR_GIROCODE(R.string.gc_supported_format_qr_type_girocode),
+        QR_GINI_PAYMENT(R.string.gc_supported_format_qr_type_gini_payment);
 
         @DrawableRes
         private final int mSupportedIcon;

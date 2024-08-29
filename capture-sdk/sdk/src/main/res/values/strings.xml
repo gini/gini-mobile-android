@@ -105,6 +105,7 @@
     <string name="gc_supported_format_qr_type_eps" translatable="false">eps Überweisung</string>
     <string name="gc_supported_format_qr_type_stuzza" translatable="false">Stuzza (AT)</string>
     <string name="gc_supported_format_qr_type_girocode" translatable="false">Girocode (DE)</string>
+    <string name="gc_supported_format_qr_type_gini_payment" translatable="false">QR by Gini</string>
     <string name="gc_unsupported_format_handwriting">Handschrift</string>
     <string name="gc_unsupported_format_photos_of_screens">Fotos von Bildschirmen</string>
     <string name="gc_supported_format_section_header">Unterstützte Formate:</string>

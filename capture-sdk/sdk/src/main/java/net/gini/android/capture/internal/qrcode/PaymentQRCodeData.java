@@ -245,6 +245,10 @@ public class PaymentQRCodeData implements Parcelable {
          * Eps e-payment QR Code format. You can view the specification <a
          * href="https://eservice.stuzza.at/de/eps-ueberweisung-dokumentation/category/5-dokumentation.html">here</a>.
          */
-        EPS_PAYMENT
+        EPS_PAYMENT,
+        /**
+         * Gini Payment QR Code format. Can't be disabled
+         */
+        GINI_PAYMENT
     }
 }
