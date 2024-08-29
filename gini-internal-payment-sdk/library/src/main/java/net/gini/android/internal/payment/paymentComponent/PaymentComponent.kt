@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.models.PaymentProvider
+import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.getPaymentProviderApps
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory
  *
  * It requires a [GiniMerchant] instance and a [Context] (application or activity) to be created.
  */
-internal class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val healthAPI: GiniHealthAPI) {
+internal class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val paymentModule: GiniInternalPaymentModule) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
