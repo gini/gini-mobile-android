@@ -40,7 +40,7 @@ class CameraFragmentImplTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        val fragmentImpl = object : CameraFragmentImpl(mock(), mock<CancelListener>(), false) {
+        val fragmentImpl = object : CameraFragmentImpl(mock(), mock<CancelListener>(), mockk(), false) {
             override fun createCameraController(activity: Activity?): CameraInterface {
                 return mock<CameraInterface>().apply {
                     whenever(isPreviewRunning).thenReturn(true)
@@ -94,7 +94,7 @@ class CameraFragmentImplTest {
         })
         whenever(fragmentCallbackStub.findNavController()).thenReturn(mock())
 
-        val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub, mock(),false)
+        val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub, mock(), mockk(),false)
 
         val noPermissionLayoutMock = mock<ConstraintLayout> {
             on { visibility } doReturn View.INVISIBLE
