@@ -83,5 +83,15 @@
     <string name="gbs_skonto_help_item_pay_promptly">Save money by paying promptly</string>
     <string name="gbs_skonto_help_footer_text">Snap a photo of your invoice and the app will automatically calculate the cash discount. Just review the details, confirm, and enjoy the savings!</string>
     <!--   endregion -->
+    <!--   region Transaction List. Attach Document Dialog TODO-->
+    <string name="gbs_tl_attach_document_dialog_title">Fügen Sie der Transaktion ein Anhang hinzu</string>
+    <string name="gbs_tl_attach_document_dialog_content">Sie können dieser Transaktion einen Anhang hinzufügen. Das erleichert es Ihnen, Ausgaben effizient zu verwalten und Einkäufe einfacher zurückzurufen.</string>
+    <string name="gbs_tl_attach_document_dialog_always_attach_text">Immer anhängen und nicht erneut fragen</string>
+    <string name="gbs_tl_attach_document_dialog_confirm_button_text">Anhängen</string>
+    <string name="gbs_tl_attach_document_dialog_cancel_button_text">Nicht anhängen</string>
+    <!--   endregion -->
+    <!--   region Transaction List. Extraction Result Documents Section -->
+    <string name="gbs_tl_extraction_result_documents_section_title">Anhänge</string>
+    <!--   endregion -->
     <!-- endregion -->
 </resources>
