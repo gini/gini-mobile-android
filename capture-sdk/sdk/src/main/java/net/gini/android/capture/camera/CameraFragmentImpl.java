@@ -48,6 +48,8 @@ import androidx.core.os.BundleCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavDestination;
 
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
@@ -180,6 +182,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
+    private final BarcodeScanner mBarcodeScanner;
     private final boolean addPages;
 
     @VisibleForTesting
@@ -240,10 +243,11 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private CropToCameraFrameTextRecognizer cropToCameraFrameTextRecognizer;
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Camera.INSTANCE;
 
-    CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, final boolean addPages) {
+    CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, @NonNull final BarcodeScanner barcodeScanner, final boolean addPages) {
         mFragment = fragment;
         mCancelListener = cancelListener;
         this.addPages = addPages;
+        this.mBarcodeScanner = barcodeScanner;
     }
 
     @Override
@@ -567,7 +571,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             return;
         }
         final QRCodeDetectorTask qrCodeDetectorTask =
-                new QRCodeDetectorTaskMLKit();
+                new QRCodeDetectorTaskMLKit(mBarcodeScanner);
         qrCodeDetectorTask.checkAvailability(new QRCodeDetectorTask.Callback() {
             @Override
             public void onResult(final boolean isAvailable) {

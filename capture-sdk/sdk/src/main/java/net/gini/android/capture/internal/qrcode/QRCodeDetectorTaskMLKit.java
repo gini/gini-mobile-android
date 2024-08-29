@@ -45,11 +45,15 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
     private static final Logger LOG = NOPLogger.NOP_LOGGER;
     private final BarcodeScanner mBarcodeScanner;
 
-    public QRCodeDetectorTaskMLKit() {
-        BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
-                .build();
-        mBarcodeScanner = BarcodeScanning.getClient(options);
+    public QRCodeDetectorTaskMLKit(BarcodeScanner barcodeScanner) {
+        if (barcodeScanner == null) {
+            BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
+                    .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                    .build();
+            mBarcodeScanner = BarcodeScanning.getClient(options);
+        } else {
+            mBarcodeScanner = barcodeScanner;
+        }
     }
 
     @NonNull

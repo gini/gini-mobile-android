@@ -43,6 +43,7 @@ class CameraFragmentTest {
                     return CameraFragment().apply {
                         setListener(mock())
                         setCancelListener(mock())
+                        setBarcodeScanner(mock())
                     }.also { fragment ->
                         fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->
                             if (viewLifecycleOwner != null) {
