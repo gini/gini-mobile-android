@@ -31,7 +31,7 @@ jobs:
           bundler-cache: true
 
       - name: build release example app for QA
-      run: >
+        run: >
         ./gradlew bank-sdk:example-app:assembleQaExampleAppRelease
         -PclientId="gini-mobile-test" 
         -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
@@ -39,7 +39,7 @@ jobs:
         -PreleaseKeystorePassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
         -PreleaseKeyAlias="screen_api_example"
         -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
-  
+
       - name: archive release example app for QA
         uses: actions/upload-artifact@v3
         with:
@@ -47,7 +47,7 @@ jobs:
           path: bank-sdk/example-app/build/outputs/apk/qaExampleApp/release
 
       - name: build release example app for production
-      run: >
+        run: >
         ./gradlew bank-sdk:example-app:assembleProdExampleAppRelease
         -PclientId="gini-mobile-test" 
         -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
@@ -55,7 +55,7 @@ jobs:
         -PreleaseKeystorePassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
         -PreleaseKeyAlias="screen_api_example"
         -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
-    
+        
       - name: archive release example app for production
         uses: actions/upload-artifact@v3
         with:
@@ -64,7 +64,7 @@ jobs:
     
 
       - name: Install appcenter-cli
-      run: |
+        run: |
           npm install -g appcenter-cli
         
       - name: Distribute ipa to App Center
