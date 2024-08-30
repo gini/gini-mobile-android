@@ -131,7 +131,7 @@ class ConfigurationViewModel @Inject constructor(
             // 40 enable skonto
             skontoEnabled = configuration.isSkontoEnabled,
 
-            // 42 enable transaction list
+            // 43 enable transaction list
             transactionListEnabled = configuration.isTransactionListEnabled,
         )
 
