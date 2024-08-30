@@ -64,7 +64,6 @@ class CaptureScreen {
         return this
     }
 
-
     fun clickFilesButton(): CaptureScreen {
         onView(withId(net.gini.android.capture.R.id.gc_button_import_document)).perform(click())
         return this
@@ -74,6 +73,13 @@ class CaptureScreen {
         onView(
             allOf(withId(net.gini.android.capture.R.id.gc_app_label), withText("Photos")))
              .perform(click())
+        return this
+    }
+
+    fun clickFiles(): CaptureScreen {
+        onView(
+            allOf(withId(net.gini.android.capture.R.id.gc_app_label), withText("Files")))
+            .perform(click())
         return this
     }
 }
