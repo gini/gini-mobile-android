@@ -22,7 +22,7 @@ internal sealed class DigitalInvoiceSkontoScreenState {
 }
 
 internal sealed interface DigitalInvoiceSkontoSideEffect {
-    object OpenInvoiceScreen : DigitalInvoiceSkontoSideEffect
+    data class OpenInvoiceScreen(val skontoData: SkontoData) : DigitalInvoiceSkontoSideEffect
     object OpenHelpScreen : DigitalInvoiceSkontoSideEffect
 }
 

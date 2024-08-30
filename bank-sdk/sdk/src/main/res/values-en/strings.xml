@@ -83,5 +83,11 @@
     <string name="gbs_skonto_help_item_pay_promptly">Save money by paying promptly</string>
     <string name="gbs_skonto_help_footer_text">Snap a photo of your invoice and the app will automatically calculate the cash discount. Just review the details, confirm, and enjoy the savings!</string>
     <!--   endregion -->
+    <!--   region Skonto Invoice Preview -->
+    <string name="gbs_skonto_invoice_preview_title">Skonto discount details</string>
+    <string name="gbs_skonto_invoice_preview_expire_date">Expiry date: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_final_amount">Final amount: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_full_amount">Full amount: %1$s</string>
+    <!--   endregion -->
     <!-- endregion -->
 </resources>

@@ -168,6 +168,7 @@ class SkontoFragment : Fragment() {
                             findNavController()
                                 .navigate(
                                     SkontoFragmentDirections.toSkontoInvoiceFragment(
+                                        it,
                                         args.invoiceHighlights
                                     )
                                 )
@@ -208,7 +209,7 @@ private fun ScreenContent(
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
-    navigateToInvoiceScreen: () -> Unit,
+    navigateToInvoiceScreen: (SkontoData) -> Unit,
 ) {
 
     BackHandler { navigateBack() }
@@ -217,7 +218,8 @@ private fun ScreenContent(
 
     viewModel.collectSideEffect {
         when (it) {
-            SkontoFragmentContract.SideEffect.OpenInvoiceScreen -> navigateToInvoiceScreen()
+            is SkontoFragmentContract.SideEffect.OpenInvoiceScreen ->
+                navigateToInvoiceScreen(it.skontoData)
         }
     }
 
@@ -413,16 +415,19 @@ private fun TopAppBar(
         title = stringResource(id = R.string.gbs_skonto_screen_title),
         navigationIcon = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-                NavigationActionBack(modifier = Modifier.padding(start = 16.dp),onClick = onBackClicked)
+                NavigationActionBack(
+                    modifier = Modifier.padding(start = 16.dp),
+                    onClick = onBackClicked
+                )
             }
         },
         actions = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-            NavigationActionHelp(
-                modifier = Modifier.padding(end = 16.dp),
-                onClick = onHelpClicked
-            )
-              }
+                NavigationActionHelp(
+                    modifier = Modifier.padding(end = 16.dp),
+                    onClick = onHelpClicked
+                )
+            }
         })
 }
 
