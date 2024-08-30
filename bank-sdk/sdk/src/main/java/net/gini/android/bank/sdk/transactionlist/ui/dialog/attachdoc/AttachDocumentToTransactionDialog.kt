@@ -60,14 +60,14 @@ fun AttachDocumentToTransactionDialog(
                 )
                 Text(
                     text = stringResource(id = R.string.gbs_tl_attach_document_dialog_title),
-                    style = GiniTheme.typography.headline5, // TODO
+                    style = GiniTheme.typography.headline5,
                     color = colors.titleColor,
                     textAlign = TextAlign.Center,
                 )
                 Column {
                     Text(
                         text = stringResource(id = R.string.gbs_tl_attach_document_dialog_content),
-                        style = GiniTheme.typography.body1, // TODO
+                        style = GiniTheme.typography.body2,
                         color = colors.contentColor,
                     )
                     AlwaysAttachCheckableText(
@@ -87,7 +87,7 @@ fun AttachDocumentToTransactionDialog(
                         onClick = { onDismiss() }) {
                         Text(
                             text = stringResource(id = R.string.gbs_tl_attach_document_dialog_cancel_button_text),
-                            style = GiniTheme.typography.body1
+                            style = GiniTheme.typography.subtitle2
                         )
                     }
                     TextButton(
@@ -96,7 +96,7 @@ fun AttachDocumentToTransactionDialog(
                         }) {
                         Text(
                             text = stringResource(id = R.string.gbs_tl_attach_document_dialog_confirm_button_text),
-                            style = GiniTheme.typography.body1
+                            style = GiniTheme.typography.subtitle2
                         )
                     }
                 }
@@ -124,8 +124,8 @@ private fun AlwaysAttachCheckableText(
         )
         Text(
             modifier = Modifier.padding(start = 16.dp),
-            text = "Immer anhängen und nicht erneut fragen",
-            style = GiniTheme.typography.body1,
+            text = stringResource(id = R.string.gbs_tl_attach_document_dialog_always_attach_text),
+            style = GiniTheme.typography.subtitle1,
             color = colors.textColor
         )
     }

@@ -2,6 +2,7 @@ package net.gini.android.capture.ui.components.checkbox
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 
 data class GiniCheckboxColors(
@@ -21,23 +22,20 @@ data class GiniCheckboxColors(
 
     companion object {
 
-        // TODO
         @Composable
         fun colors(
-            uncheckedCheckmarkColor: Color = GiniColorPrimitives().light01,
-            uncheckedBorderColor: Color = Color(0xFF49454F),
+            uncheckedCheckmarkColor: Color = GiniTheme.colorScheme.checkbox.checkmark.unchecked,
+            uncheckedBorderColor: Color = GiniTheme.colorScheme.checkbox.box.unchecked,
             uncheckedBoxColor: Color = Color.Transparent,
-
-            checkedCheckmarkColor: Color = GiniColorPrimitives().light01,
-            checkedBoxColor: Color = GiniColorPrimitives().accent01,
-            checkedBorderColor: Color = GiniColorPrimitives().accent01,
-
-            disabledCheckedBoxColor: Color = Color.Gray,
-            disabledUncheckedBoxColor: Color = Color.Gray,
-            disabledIndeterminateBoxColor: Color = Color.Gray,
-            disabledBorderColor: Color = Color.Gray,
-            disabledUncheckedBorderColor: Color = Color.Gray,
-            disabledIndeterminateBorderColor: Color = Color.Gray,
+            checkedCheckmarkColor: Color = GiniTheme.colorScheme.checkbox.checkmark.checked,
+            checkedBoxColor: Color = GiniTheme.colorScheme.checkbox.box.checked,
+            checkedBorderColor: Color = GiniTheme.colorScheme.checkbox.box.checked,
+            disabledCheckedBoxColor: Color = GiniTheme.colorScheme.checkbox.box.disabled,
+            disabledUncheckedBoxColor: Color = GiniTheme.colorScheme.checkbox.box.disabled,
+            disabledBorderColor: Color = GiniTheme.colorScheme.checkbox.box.disabled,
+            disabledUncheckedBorderColor: Color = GiniTheme.colorScheme.checkbox.box.disabled,
+            disabledIndeterminateBoxColor: Color = GiniTheme.colorScheme.checkbox.box.disabled,
+            disabledIndeterminateBorderColor: Color = GiniTheme.colorScheme.checkbox.box.disabled,
         ) = GiniCheckboxColors(
             checkedCheckmarkColor = checkedCheckmarkColor,
             uncheckedCheckmarkColor = uncheckedCheckmarkColor,

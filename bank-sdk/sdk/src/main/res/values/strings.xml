@@ -90,9 +90,11 @@
     <string name="gbs_tl_attach_document_dialog_always_attach_text">Immer anhängen und nicht erneut fragen</string>
     <string name="gbs_tl_attach_document_dialog_confirm_button_text">Anhängen</string>
     <string name="gbs_tl_attach_document_dialog_cancel_button_text">Nicht anhängen</string>
+    <string name="gbs_tl_attach_document_dialog_check_box_text">Immer anhängen und nicht erneut fragen</string>
     <!--   endregion -->
     <!--   region Transaction List. Extraction Result Documents Section -->
     <string name="gbs_tl_extraction_result_documents_section_title">Anhänge</string>
+    <string name="gbs_tl_extraction_result_documents_section_menu_delete">Löschen</string>
     <!--   endregion -->
     <!-- endregion -->
 </resources>
