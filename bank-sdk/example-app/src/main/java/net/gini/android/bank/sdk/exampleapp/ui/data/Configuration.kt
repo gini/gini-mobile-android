@@ -166,6 +166,9 @@ data class Configuration(
     // 41 Skonto help Custom bottom navigation
     val isSkontoHelpCustomNavBarEnabled: Boolean = false,
 
+    // 42 enable transaction list
+    val isTransactionListEnabled: Boolean = true,
+
     ) : Parcelable {
 
     companion object {
@@ -185,7 +188,8 @@ data class Configuration(
                 isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
                 isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
                 isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
-                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled
+                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled,
+                isTransactionListEnabled = defaultCaptureConfiguration.transactionListEnabled
             )
 
 

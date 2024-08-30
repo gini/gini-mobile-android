@@ -128,6 +128,9 @@ class ConfigurationViewModel @Inject constructor(
 
             // 40 enable skonto
             skontoEnabled = configuration.isSkontoEnabled,
+
+            // 42 enable transaction list
+            transactionListEnabled = configuration.isTransactionListEnabled,
         )
 
         // 9 enable Help screens custom bottom navigation bar
