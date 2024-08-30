@@ -166,7 +166,10 @@ data class Configuration(
     // 41 Skonto help Custom bottom navigation
     val isSkontoHelpCustomNavBarEnabled: Boolean = false,
 
-    // 42 enable transaction list
+    // 42 Digital Invoice Skonto Custom bottom navigation
+    val isDigitalInvoiceSkontoCustomNavBarEnabled: Boolean = false,
+
+    // 43 enable transaction list
     val isTransactionListEnabled: Boolean = true,
 
     ) : Parcelable {

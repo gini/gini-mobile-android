@@ -11,6 +11,7 @@ import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.di.CaptureSdkIsolatedKoinContextKt;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
@@ -42,6 +43,7 @@ import java.util.Map;
 import java.util.Random;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Lazy;
 
 import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
 import static net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty;
@@ -62,6 +64,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @VisibleForTesting
     static final String PARCELABLE_MEMORY_CACHE_TAG = "ANALYSIS_FRAGMENT";
     private static final Logger LOG = LoggerFactory.getLogger(AnalysisScreenPresenter.class);
+    private final AnalysisScreenPresenterExtension analysisScreenPresenterExtension;
+
     private static final AnalysisFragmentListener NO_OP_LISTENER = new AnalysisFragmentListener() {
         @Override
         public void onError(@NonNull final GiniCaptureError error) {
@@ -118,6 +122,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         mDocumentAnalysisErrorMessage = documentAnalysisErrorMessage;
         mAnalysisInteractor = analysisInteractor;
         mHints = generateRandomHintsList();
+        analysisScreenPresenterExtension = new AnalysisScreenPresenterExtension();
     }
 
     private List<AnalysisHint> generateRandomHintsList() {
@@ -301,12 +306,16 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         switch (result) {
                             case SUCCESS_NO_EXTRACTIONS:
                                 mAnalysisCompleted = true;
+                                analysisScreenPresenterExtension.getLastAnalyzedDocumentIdProvider()
+                                        .update(resultHolder.getDocumentId());
                                 trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
                                 getAnalysisFragmentListenerOrNoOp()
                                         .onProceedToNoExtractionsScreen(mMultiPageDocument);
                                 break;
                             case SUCCESS_WITH_EXTRACTIONS:
                                 mAnalysisCompleted = true;
+                                analysisScreenPresenterExtension.getLastAnalyzedDocumentIdProvider()
+                                        .update(resultHolder.getDocumentId());
                                 if (resultHolder.getExtractions().isEmpty()) {
                                     trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
                                     getAnalysisFragmentListenerOrNoOp()

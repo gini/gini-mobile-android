@@ -337,7 +337,9 @@ class CaptureFragmentFactory(
 }
 
 interface GiniCaptureFragmentListener {
-    fun onFinishedWithResult(result: CaptureSDKResult)
+    fun onFinishedWithResult(
+        result: CaptureSDKResult
+    )
 
     fun onCheckImportedDocument(
         document: Document,

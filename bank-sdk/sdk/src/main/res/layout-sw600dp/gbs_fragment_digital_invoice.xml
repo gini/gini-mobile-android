@@ -109,6 +109,38 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/gross_price_total_integral_part" />
+
+            <TextView
+                android:id="@+id/skonto_saved_amount"
+                style="@style/GiniCaptureTheme.Typography.Caption1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/gc_large_24"
+                android:layout_marginTop="@dimen/gc_extra_small"
+                android:textColor="@color/gc_success_01"
+                app:layout_constraintBottom_toTopOf="@+id/gbs_pay"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gross_price_total_integral_part"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="Save 0,55 EUR" />
+
+            <TextView
+                android:id="@+id/skonto_discount_label"
+                style="@style/GiniCaptureTheme.Typography.Caption1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/gc_large_24"
+                android:background="@drawable/gbs_success_01_rectangle_rounded_4dp"
+                android:paddingHorizontal="@dimen/gc_medium"
+                android:paddingVertical="@dimen/gc_small"
+                android:textColor="@color/gc_light_01"
+                app:layout_constraintBaseline_toBaselineOf="@+id/total_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toEndOf="@+id/total_label"
+                tools:text="3% Skonto discount " />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

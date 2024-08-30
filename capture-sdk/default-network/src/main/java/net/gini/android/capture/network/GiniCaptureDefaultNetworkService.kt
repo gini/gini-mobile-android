@@ -15,6 +15,8 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
 import net.gini.android.capture.internal.network.AmplitudeRoot
 import net.gini.android.capture.internal.network.Configuration
+import net.gini.android.capture.internal.network.model.DocumentLayout
+import net.gini.android.capture.internal.network.model.DocumentPage
 import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService.Companion.builder
 import net.gini.android.capture.network.logging.formattedErrorMessage
@@ -365,6 +367,109 @@ class GiniCaptureDefaultNetworkService(
                         returnReasons
                     )
                 )
+            }
+        }
+    }
+
+    override fun getDocumentLayout(
+        documentId: String,
+        callback: GiniCaptureNetworkCallback<DocumentLayout, Error>
+    ): CancellationToken {
+
+        LOG.debug("Getting layout for document {}", documentId)
+
+        return launchCancellable {
+
+            when (val resource = giniBankApi.documentManager.getDocumentLayout(documentId)) {
+
+                is Resource.Cancelled -> {
+                    LOG.debug("Getting layout for document {} canceled", documentId)
+                }
+
+                is Resource.Error -> {
+                    val errorMessage = Error(resource.formattedErrorMessage)
+                    LOG.error(
+                        "Getting layout for document {} failed. {}",
+                        documentId,
+                        errorMessage
+                    )
+                    callback.failure(errorMessage)
+                }
+
+                is Resource.Success -> {
+                    LOG.debug(
+                        "Getting layout for document {} success.\n{}",
+                        documentId,
+                        resource.data
+                    )
+                    callback.success(resource.data.toCaptureDocumentLayout())
+                }
+            }
+        }
+    }
+
+    override fun getDocumentPages(
+        documentId: String,
+        callback: GiniCaptureNetworkCallback<List<DocumentPage>, Error>
+    ): CancellationToken {
+
+        return launchCancellable {
+            when (val resource = giniBankApi.documentManager.getDocumentPages(documentId)) {
+                is Resource.Cancelled -> {
+                    LOG.debug("Getting pages for document {} canceled", documentId)
+                }
+
+                is Resource.Error -> {
+                    val errorMessage = Error(resource.formattedErrorMessage)
+                    LOG.error(
+                        "Getting pages for document {} failed. {}",
+                        documentId,
+                        errorMessage
+                    )
+                    callback.failure(errorMessage)
+                }
+
+                is Resource.Success -> {
+                    LOG.debug(
+                        "Getting pages for document {} success. {}",
+                        documentId,
+                        resource.data.toString()
+                    )
+                    callback.success(resource.data.map { it.toCaptureDocumentPages() })
+                }
+            }
+        }
+    }
+
+    override fun getFile(
+        fileUrl: String,
+        callback: GiniCaptureNetworkCallback<Array<Byte>, Error>
+    ): CancellationToken {
+
+        return launchCancellable {
+            when (val resource = giniBankApi.documentManager.getFile(fileUrl)) {
+                is Resource.Cancelled -> {
+                    LOG.debug("Getting file for document {} canceled", fileUrl)
+                }
+
+                is Resource.Error -> {
+                    val errorMessage = Error(resource.formattedErrorMessage)
+                    LOG.error(
+                        "Getting file for document {} failed. {}",
+                        fileUrl,
+                        errorMessage
+                    )
+                    callback.failure(errorMessage)
+                }
+
+                is Resource.Success -> {
+                    LOG.debug(
+                        "Getting file for document {} success. ByteArray size: {}",
+                        fileUrl,
+                        resource.data.size
+                    )
+                    callback.success(resource.data.toTypedArray())
+                }
             }
         }
     }

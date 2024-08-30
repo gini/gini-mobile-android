@@ -20,12 +20,14 @@ import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.skonto.help.SkontoHelpNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
@@ -114,6 +116,15 @@ object GiniBank {
         }
         get() = skontoNavigationBarBottomAdapterInstance?.viewAdapter
 
+    internal var digitalInvocieSkontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
+        null
+
+    var digitalInvoiceSkontoNavigationBarBottomAdapter: DigitalInvoiceSkontoNavigationBarBottomAdapter?
+        set(value) {
+            digitalInvocieSkontoNavigationBarBottomAdapterInstance =
+                value?.let { InjectedViewAdapterInstance(it) }
+        }
+        get() = digitalInvocieSkontoNavigationBarBottomAdapterInstance?.viewAdapter
 
     internal var skontoHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? =
         null
@@ -229,6 +240,7 @@ object GiniBank {
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
         )
         releaseCapture(context)
+        BankSdkIsolatedKoinContext.clean()
     }
 
 
@@ -258,6 +270,7 @@ object GiniBank {
         )
 
         digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
+        BankSdkIsolatedKoinContext.clean()
     }
 
     /**
@@ -295,6 +308,7 @@ object GiniBank {
         callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit
     ): CancellationToken {
         check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        BankSdkIsolatedKoinContext.init(context)
         return giniCapture!!.createDocumentForImportedFiles(
             intent,
             context,
