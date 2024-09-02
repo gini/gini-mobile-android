@@ -15,8 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.google.mlkit.vision.barcode.BarcodeScanner;
-
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.CancelListener;
@@ -39,7 +37,6 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
 
     private CameraFragmentImpl mFragmentImpl;
     private boolean addPages = false;
-    private BarcodeScanner mBarcodeScanner;
 
     /**
      * Internal use only.
@@ -163,10 +160,6 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
             mFragmentImpl.setListener(listener);
         }
         mListener = listener;
-    }
-
-    public void setBarcodeScanner(@NonNull final BarcodeScanner barcodeScanner) {
-        this.mBarcodeScanner = barcodeScanner;
     }
 
     public void setCancelListener(@Nullable final CancelListener listener) {

@@ -8,9 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.barcode.common.Barcode
 import net.gini.android.capture.analysis.AnalysisFragment
 import net.gini.android.capture.analysis.AnalysisFragmentDirections
 import net.gini.android.capture.analysis.AnalysisFragmentListener
@@ -297,15 +294,10 @@ class CaptureFragmentFactory(
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         when (className) {
             CameraFragment::class.java.name -> return CameraFragment().apply {
-                val options = BarcodeScannerOptions.Builder()
-                    .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
-                    .build()
-
                 setListener(
                     cameraListener
                 )
                 setCancelListener(cancelListener)
-                setBarcodeScanner(BarcodeScanning.getClient(options))
             }
 
             AnalysisFragment::class.java.name -> return AnalysisFragment()
