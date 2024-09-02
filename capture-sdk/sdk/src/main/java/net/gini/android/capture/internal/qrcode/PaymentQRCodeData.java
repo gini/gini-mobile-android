@@ -116,14 +116,7 @@ public class PaymentQRCodeData implements Parcelable {
         try {
             jsonWriter.beginObject();
             jsonWriter.name("qrcode").value(mUnparsedContent);
-            jsonWriter.name("paymentdata");
-            jsonWriter.beginObject();
-            writeNameAndValueIfNotEmpty(jsonWriter, "amountToPay", mAmount);
-            writeNameAndValueIfNotEmpty(jsonWriter, "paymentRecipient", mPaymentRecipient);
-            writeNameAndValueIfNotEmpty(jsonWriter, "iban", mIBAN);
-            writeNameAndValueIfNotEmpty(jsonWriter, "bic", mBIC);
-            writeNameAndValueIfNotEmpty(jsonWriter, "paymentReference", mPaymentReference);
-            jsonWriter.endObject();
+            writePaymentDataIfAvailable(jsonWriter);
             jsonWriter.endObject();
         } catch (final IOException e) {
             LOG.error("Could not write to json", e);
@@ -134,6 +127,27 @@ public class PaymentQRCodeData implements Parcelable {
             }
         }
         return stringWriter.toString();
+    }
+
+    private void writePaymentDataIfAvailable(JsonWriter jsonWriter) throws IOException {
+        if (hasAnyPaymentData()) {
+            jsonWriter.name("paymentdata");
+            jsonWriter.beginObject();
+            writeNameAndValueIfNotEmpty(jsonWriter, "amountToPay", mAmount);
+            writeNameAndValueIfNotEmpty(jsonWriter, "paymentRecipient", mPaymentRecipient);
+            writeNameAndValueIfNotEmpty(jsonWriter, "iban", mIBAN);
+            writeNameAndValueIfNotEmpty(jsonWriter, "bic", mBIC);
+            writeNameAndValueIfNotEmpty(jsonWriter, "paymentReference", mPaymentReference);
+            jsonWriter.endObject();
+        }
+    }
+
+    private boolean hasAnyPaymentData() {
+        return !TextUtils.isEmpty(mAmount) ||
+                !TextUtils.isEmpty(mPaymentRecipient) ||
+                !TextUtils.isEmpty(mIBAN) ||
+                !TextUtils.isEmpty(mBIC) ||
+                !TextUtils.isEmpty(mPaymentReference);
     }
 
     private void writeNameAndValueIfNotEmpty(@NonNull final JsonWriter jsonWriter,
