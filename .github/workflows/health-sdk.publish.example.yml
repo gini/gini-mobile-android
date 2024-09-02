@@ -6,10 +6,10 @@ on:
 
 jobs:
   check:
-    uses: ./.github/workflows/bank-sdk.check.yml
+    uses: ./.github/workflows/health-sdk.check.yml
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
-      BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
+      HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
         
   publish_to_app_center:
     needs: check
@@ -33,23 +33,23 @@ jobs:
 
       - name: build release example app for QA
         run: >
-          ./gradlew bank-sdk:example-app:assembleQaExampleAppRelease
+          ./gradlew health-sdk:example-app:assembleQaRelease
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-          -PreleaseKeystoreFile="screen_api_example.jks"
-          -PreleaseKeystorePassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
-          -PreleaseKeyAlias="screen_api_example"
-          -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'      
+          -PreleaseKeystoreFile="health_sdk_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="health_sdk_example"
+          -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'      
 
       - name: Install appcenter-cli
         run: >
           npm install -g appcenter-cli
         
-      - name: Distribute Bank-sdk example apk to App Center
+      - name: Distribute Health-sdk example apk to App Center
         uses: akiojin/appcenter-distribute-github-action@v1.4.11
         with:
-          token: ${{ secrets.GINI_BANK_SDK_EXAMPLE_APPCENTER_API_TOKEN }}
-          path: bank-sdk/example-app/build/outputs/apk/qaExampleApp/release/example-app-qa-exampleApp-release.apk
-          app: Gini-Team-Organization/Screen-API-Example-Gini-Pay-Bank-SDK
+          token: ${{ secrets.GINI_HEALTH_SDK_EXAMPLE_APPCENTER_API_TOKEN }}
+          path: health-sdk/example-app/build/outputs/apk/qa/release/example-app-qa-release.apk
+          app: Gini-Team-Organization/Business-Example
           group: 'Internal'
           release_notes: ${{ github.event.head_commit.message }}
