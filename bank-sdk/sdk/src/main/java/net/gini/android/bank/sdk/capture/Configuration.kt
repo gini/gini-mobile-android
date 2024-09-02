@@ -25,6 +25,7 @@ import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
  * Configuration class for Capture feature.
  */
 data class CaptureConfiguration(
+    val USER_COMMENT_GINI_BANK_VERSION: String = "GiniBankVer",
 
     /**
      * Set the [GiniCaptureNetworkService] instance which will be used by the library to
@@ -234,7 +235,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
-        .setGiniBankVersion(BuildConfig.VERSION_NAME)
+        .addCustomUploadMetadata(configuration.USER_COMMENT_GINI_BANK_VERSION, BuildConfig.VERSION_NAME)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }
             configuration.errorLoggerListener?.let { setCustomErrorLoggerListener(it) }
