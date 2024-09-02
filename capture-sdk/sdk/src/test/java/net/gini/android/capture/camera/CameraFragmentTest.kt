@@ -12,6 +12,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
@@ -37,13 +38,12 @@ class CameraFragmentTest {
 
         val navController = mock<NavController>()
 
-        FragmentScenario.launchInContainer(fragmentClass = CameraFragment::class.java,
+        FragmentScenario.launchInContainer(fragmentClass = CameraFragmentWithoutQRCodeReader::class.java,
             factory = object : FragmentFactory() {
                 override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-                    return CameraFragment().apply {
+                    return CameraFragmentWithoutQRCodeReader().apply {
                         setListener(mock())
                         setCancelListener(mock())
-                        setBarcodeScanner(mock())
                     }.also { fragment ->
                         fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->
                             if (viewLifecycleOwner != null) {
@@ -66,4 +66,13 @@ class CameraFragmentTest {
         }
     }
 
+    internal class CameraFragmentWithoutQRCodeReader : CameraFragment() {
+        override fun createFragmentImpl(cancelListener: CancelListener, addPages: Boolean): CameraFragmentImpl {
+            return object : CameraFragmentImpl(this, cancelListener, false) {
+                override fun initQRCodeReader() {
+                    // Do nothing, because no QR code reader is available in JVM tests
+                }
+            }
+        }
+    }
 }

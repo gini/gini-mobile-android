@@ -562,7 +562,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void initQRCodeReader() {
+    protected void initQRCodeReader() {
         if (mPaymentQRCodeReader != null) {
             return;
         }
