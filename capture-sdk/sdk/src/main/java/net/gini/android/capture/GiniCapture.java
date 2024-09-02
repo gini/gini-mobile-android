@@ -125,7 +125,7 @@ public class GiniCapture {
     private final EntryPoint entryPoint;
     private final boolean allowScreenshots;
 
-    private final String mGiniBankVersion;
+    private final Map<String, String> mCustomUploadMetadata;
 
 
     /**
@@ -347,7 +347,7 @@ public class GiniCapture {
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
         entryPoint = builder.getEntryPoint();
         allowScreenshots = builder.getAllowScreenshots();
-        mGiniBankVersion = builder.getGiniBankVersion();
+        mCustomUploadMetadata = builder.getCustomUploadMetadata();
     }
 
     /**
@@ -703,7 +703,7 @@ public class GiniCapture {
      *
      * @return the version number
      */
-    public String getGiniBankVersion() { return mGiniBankVersion; }
+    public Map<String, String> getCustomUploadMetadata() { return mCustomUploadMetadata; }
 
     public static GiniCaptureFragment createGiniCaptureFragment() {
         if (!GiniCapture.hasInstance()) {
@@ -820,7 +820,7 @@ public class GiniCapture {
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
         private boolean allowScreenshots = true;
 
-        private String giniBankVersion;
+        private Map<String, String> customUploadMetadata;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1359,13 +1359,16 @@ public class GiniCapture {
             return allowScreenshots;
         }
 
-        public Builder setGiniBankVersion(String giniBankVersion) {
-            this.giniBankVersion = giniBankVersion;
+        public Builder addCustomUploadMetadata(String key, String value) {
+            if (customUploadMetadata == null) {
+                customUploadMetadata = new HashMap<>();
+            }
+            customUploadMetadata.put(key, value);
             return this;
         }
 
-        private String getGiniBankVersion() {
-            return giniBankVersion;
+        private Map<String, String> getCustomUploadMetadata() {
+            return customUploadMetadata;
         }
     }
 
