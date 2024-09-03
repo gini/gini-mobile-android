@@ -242,9 +242,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // 40 enable skonto
         binding.layoutFeatureToggle.switchSkontoFeature.isChecked = configuration.isSkontoEnabled
 
-        // 43 enable transaction list
-        binding.layoutFeatureToggle.switchTransactionListFeature.isChecked =
-            configuration.isTransactionListEnabled
+        // 43 enable transaction docs
+        binding.layoutFeatureToggle.switchTransactionDocsFeature.isChecked =
+            configuration.isTransactionDocsEnabled
 
     }
 
@@ -661,11 +661,11 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
-        // 43 enable transaction list
-        binding.layoutFeatureToggle.switchTransactionListFeature.setOnCheckedChangeListener { _, isChecked ->
+        // 43 enable transaction docs
+        binding.layoutFeatureToggle.switchTransactionDocsFeature.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
-                    isTransactionListEnabled = isChecked
+                    isTransactionDocsEnabled = isChecked
                 )
             )
         }

@@ -117,12 +117,12 @@
         android:text="@string/skonto_feature_switch_label" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch_transactionListFeature"
+        android:id="@+id/switch_transactionDocsFeature"
         style="@style/SwitchConfigurationStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gc_medium_12"
-        android:text="@string/transaction_list_feature_switch_label" />
+        android:text="@string/transaction_docs_feature_switch_label" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_setupSdkWithDefaultConfiguration"

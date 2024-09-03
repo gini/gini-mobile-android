@@ -169,8 +169,8 @@ data class Configuration(
     // 42 Digital Invoice Skonto Custom bottom navigation
     val isDigitalInvoiceSkontoCustomNavBarEnabled: Boolean = false,
 
-    // 43 enable transaction list
-    val isTransactionListEnabled: Boolean = true,
+    // 43 enable transaction docs
+    val isTransactionDocsEnabled: Boolean = true,
 
     ) : Parcelable {
 
@@ -192,7 +192,7 @@ data class Configuration(
                 isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
                 isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
                 isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled,
-                isTransactionListEnabled = defaultCaptureConfiguration.transactionListEnabled
+                isTransactionDocsEnabled = defaultCaptureConfiguration.transactionDocsEnabled
             )
 
 
