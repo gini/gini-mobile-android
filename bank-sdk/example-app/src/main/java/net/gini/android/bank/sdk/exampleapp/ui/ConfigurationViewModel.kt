@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugDisabled
 import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
@@ -130,6 +129,9 @@ class ConfigurationViewModel @Inject constructor(
 
             // 40 enable skonto
             skontoEnabled = configuration.isSkontoEnabled,
+
+            // 43 enable transaction docs
+            transactionDocsEnabled = configuration.isTransactionDocsEnabled,
         )
 
         // 9 enable Help screens custom bottom navigation bar
