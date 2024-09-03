@@ -699,10 +699,11 @@ public class GiniCapture {
     }
 
     /**
-     * Get the version number of GiniBank
+     * Get upload metadata to be added to the HTTP headers
      *
-     * @return the version number
+     * @return the map of custom metadata
      */
+    @Nullable
     public Map<String, String> getCustomUploadMetadata() { return mCustomUploadMetadata; }
 
     public static GiniCaptureFragment createGiniCaptureFragment() {
@@ -780,8 +781,6 @@ public class GiniCapture {
         private boolean mIsSupportedFormatsHelpScreenEnabled = true;
         private boolean mFlashButtonEnabled;
         private boolean mIsFlashOnByDefault = false;
-
-        private String mGiniBankVersion = "";
 
         private EventTracker mEventTracker = new EventTracker() {
             @Override
