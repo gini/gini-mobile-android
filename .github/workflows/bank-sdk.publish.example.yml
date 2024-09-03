@@ -52,4 +52,6 @@ jobs:
           path: bank-sdk/example-app/build/outputs/apk/qaExampleApp/release/example-app-qa-exampleApp-release.apk
           app: Gini-Team-Organization/Screen-API-Example-Gini-Pay-Bank-SDK
           group: 'Internal'
-          release_notes: ${{ github.event.head_commit.message }}
+          release_notes: |
+            ${{ format('{{ {0} {1} }}', github.ref, github.sha) }}
+            ${{ github.event.head_commit.message }}
