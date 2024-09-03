@@ -158,10 +158,20 @@ class ReviewActivity : AppCompatActivity() {
             val documentId = (viewModel.giniHealth.documentFlow.value as ResultWrapper.Success<Document>).value.id
 
             val isDocumentPayable = viewModel.giniHealth.checkIfDocumentIsPayable(documentId)
+            val containsMultipleDocuments = viewModel.giniHealth.checkIfDocumentContainsMultipleDocuments(documentId)
 
-            if (!isDocumentPayable) {
-                val containsMultipleDocuments = viewModel.giniHealth.checkIfDocumentContainsMultipleDocuments(documentId)
-                val alertTitle = if (containsMultipleDocuments) R.string.multiple_documents else R.string.document_not_payable_title
+            if (!isDocumentPayable || containsMultipleDocuments) {
+                val alertTitle = when {
+                    !isDocumentPayable && containsMultipleDocuments -> {
+                        getString(R.string.multiple_documents) + " & " + getString(R.string.document_not_payable_title)
+                    }
+                    !isDocumentPayable -> {
+                        getString(R.string.document_not_payable_title)
+                    }
+                    else -> {
+                        getString(R.string.multiple_documents)
+                    }
+                }
 
                 AlertDialog.Builder(this@ReviewActivity)
                     .setTitle(alertTitle)
