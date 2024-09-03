@@ -18,7 +18,6 @@ import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.api.ResultWrapper
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

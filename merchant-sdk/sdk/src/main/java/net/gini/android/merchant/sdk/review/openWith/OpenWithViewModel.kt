@@ -2,7 +2,7 @@ package net.gini.android.merchant.sdk.review.openWith
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
 
 internal class OpenWithViewModel private constructor(val paymentProviderApp: PaymentProviderApp?, val backListener: BackListener?): ViewModel() {

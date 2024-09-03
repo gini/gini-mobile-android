@@ -23,11 +23,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsFragmentPaymentMoreInformationBinding
 import net.gini.android.merchant.sdk.databinding.GmsPaymentProviderIconHolderBinding
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme

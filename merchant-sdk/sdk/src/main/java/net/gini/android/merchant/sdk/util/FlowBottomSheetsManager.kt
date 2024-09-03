@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.Resource
+import net.gini.android.internal.payment.api.model.PaymentRequest
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.review.reviewComponent.ReviewComponent.Companion.SHOW_OPEN_WITH_TIMES
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
-import net.gini.android.merchant.sdk.review.reviewComponent.ReviewComponent.Companion.SHOW_OPEN_WITH_TIMES
 import net.gini.android.merchant.sdk.util.extensions.createTempPdfFile
 import java.io.File
 

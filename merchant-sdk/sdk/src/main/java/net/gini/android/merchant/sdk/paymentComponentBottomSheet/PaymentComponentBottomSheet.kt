@@ -10,8 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetPaymentComponentBinding
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment

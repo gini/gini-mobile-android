@@ -1,6 +1,7 @@
 package net.gini.android.internal.payment
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -26,7 +27,8 @@ class GiniInternalPaymentModule(private val context: Context,
                                 private var sessionManager: SessionManager? = null,
                                 private val baseUrl: String = "",
                                 private val userCenterApiBaseUrl: String? = null,
-                                private val debuggingEnabled: Boolean = false,) {
+                                private val debuggingEnabled: Boolean = false,
+                                private val apiVersion: Int = API_VERSION) {
 
     constructor(
         context: Context,
@@ -47,10 +49,10 @@ class GiniInternalPaymentModule(private val context: Context,
                             clientId,
                             clientSecret,
                             emailDomain,
-                            apiVersion = API_VERSION
+                            apiVersion = apiVersion
                         )
                     } else {
-                        GiniHealthAPIBuilder(context, sessionManager = sessionManager, apiVersion = API_VERSION)
+                        GiniHealthAPIBuilder(context, sessionManager = sessionManager, apiVersion = apiVersion)
                     }.apply {
                         setApiBaseUrl(baseUrl)
                         if (userCenterApiBaseUrl != null) {
@@ -59,25 +61,27 @@ class GiniInternalPaymentModule(private val context: Context,
                         setDebuggingEnabled(debuggingEnabled)
                     }.build()
                     _giniHealthAPI = healthAPI
+                    Log.e("", "---- in build health api ${_giniHealthAPI.hashCode()}")
                     return healthAPI
                 }
         }
 
-    internal var paymentComponent = PaymentComponent(context, healthAPI = giniHealthAPI)
+    var paymentComponent = PaymentComponent(context, healthAPI = giniHealthAPI)
+
     internal val giniPaymentManager = GiniPaymentManager(giniHealthAPI, object: PaymentEventListener {
         override fun onError(e: Exception) {
-            TODO("Not yet implemented")
+            _eventsFlow.tryEmit(InternalPaymentEvents.OnErrorOccurred(e))
         }
 
         override fun onLoading() {
-            TODO("Not yet implemented")
+            _eventsFlow.tryEmit(InternalPaymentEvents.OnLoading)
         }
 
         override fun onPaymentRequestCreated(
             paymentRequest: PaymentRequest,
             paymentProviderName: String
         ) {
-            TODO("Not yet implemented")
+            _eventsFlow.tryEmit(InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(paymentRequest.id, paymentProviderName))
         }
 
     })
@@ -109,46 +113,10 @@ class GiniInternalPaymentModule(private val context: Context,
 
     val eventsFlow: SharedFlow<InternalPaymentEvents> = _eventsFlow
 
-    fun emitSDKEvent(state: PaymentState) {
-        when (state) {
-            is PaymentState.Success -> _eventsFlow.tryEmit(
-                InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(
-                    state.paymentRequest.id,
-                    state.paymentProviderName
-                )
-            )
-
-            is PaymentState.Error -> _eventsFlow.tryEmit(InternalPaymentEvents.OnErrorOccurred(state.throwable))
-            PaymentState.Loading -> _eventsFlow.tryEmit(InternalPaymentEvents.OnLoading)
-            PaymentState.NoAction -> _eventsFlow.tryEmit(InternalPaymentEvents.NoAction)
-        }
-    }
-
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
-    sealed class PaymentState {
-        /**
-         * Not performing any operation.
-         */
-        object NoAction : PaymentState()
-
-        /**
-         * Request is in progress.
-         */
-        object Loading : PaymentState()
-
-        /**
-         * Payment request was completed successfully
-         *
-         * @param paymentRequest - the payment request
-         * @param paymentProviderName - the name of the payment provider with which the request was created
-         */
-        class Success(val paymentRequest: PaymentRequest, val paymentProviderName: String) : PaymentState()
-
-        /**
-         * Payment request returned an error.
-         */
-        class Error(val throwable: Throwable) : PaymentState()
+    fun setPaymentDetails(paymentDetails: PaymentDetails) {
+        _paymentFlow.tryEmit(ResultWrapper.Success(paymentDetails))
     }
 
     /**
@@ -177,11 +145,6 @@ class GiniInternalPaymentModule(private val context: Context,
          */
         class OnFinishedWithPaymentRequestCreated(val paymentRequestId: String,
                                                   val paymentProviderName: String): InternalPaymentEvents()
-
-        /**
-         * Payment request was cancelled. Can be either from the server, or by cancelling the payment flow.
-         */
-        class OnFinishedWithCancellation(): InternalPaymentEvents()
 
         /**
          * An error occurred during the payment request.

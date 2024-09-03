@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
-import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
 import org.slf4j.LoggerFactory
 

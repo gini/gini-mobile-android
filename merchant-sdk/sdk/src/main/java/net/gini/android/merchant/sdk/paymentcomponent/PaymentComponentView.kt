@@ -13,10 +13,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.paymentComponent.BankPickerRows
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsPaymentProviderIconHolderBinding
 import net.gini.android.merchant.sdk.databinding.GmsViewPaymentComponentBinding
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.setBackgroundTint
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
@@ -162,7 +165,7 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
         }
     }
 
-    private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
+    private fun customizeBankPicker(paymentProviderApp: net.gini.android.internal.payment.paymentprovider.PaymentProviderApp) {
         LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
         context?.wrappedWithGiniMerchantTheme()?.let { context ->
             selectBankButton.apply {
@@ -183,7 +186,7 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
         }
     }
 
-    private fun customizePayInvoiceButton(paymentProviderApp: PaymentProviderApp) {
+    private fun customizePayInvoiceButton(paymentProviderApp: net.gini.android.internal.payment.paymentprovider.PaymentProviderApp) {
         LOG.debug("Customizing pay invoice button for payment provider app: {}", paymentProviderApp.name)
         payInvoiceButton.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
         payInvoiceButton.setTextColor(paymentProviderApp.colors.textColor)

@@ -5,6 +5,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
@@ -18,24 +19,25 @@ import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.databinding.GpsReviewBinding
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.review.PaymentField
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.amountWatcher
+import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
-import net.gini.android.internal.payment.utils.extensions.showErrorMessage
-import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
 import net.gini.android.internal.payment.utils.extensions.hideKeyboard
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
+import net.gini.android.internal.payment.utils.extensions.showErrorMessage
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import net.gini.android.internal.payment.utils.setTextIfDifferent
 import org.slf4j.LoggerFactory
 
-internal interface ReviewViewListener {
+interface ReviewViewListener {
     fun onPaymentButtonTapped(paymentDetails: PaymentDetails)
 }
-internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
+class ReviewView(private val context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
 
     private val binding = GpsReviewBinding.inflate(getLayoutInflaterWithGiniPaymentTheme(), this)
@@ -72,13 +74,13 @@ internal class ReviewView(private val context: Context, attrs: AttributeSet?) :
                 }
             }
             launch {
-//                reviewComponent?.paymentComponent?.selectedPaymentProviderAppFlow?.collect {
-//                    if (it is SelectedPaymentProviderAppState.AppSelected) {
-//                        setSelectedPaymentProviderApp(it.paymentProviderApp)
-//                    } else {
-//                        LOG.error("No selected payment provider app")
-//                    }
-//                }
+                reviewComponent?.paymentComponent?.selectedPaymentProviderAppFlow?.collect {
+                    if (it is SelectedPaymentProviderAppState.AppSelected) {
+                        setSelectedPaymentProviderApp(it.paymentProviderApp)
+                    } else {
+                        LOG.error("No selected payment provider app")
+                    }
+                }
             }
             launch {
                 reviewComponent?.paymentDetails?.collect {

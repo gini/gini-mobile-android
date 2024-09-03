@@ -23,20 +23,20 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import net.gini.android.internal.payment.api.model.PaymentDetails
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.databinding.GmsFragmentMerchantBinding
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.review.ReviewConfiguration
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet
-import net.gini.android.merchant.sdk.review.reviewComponent.ReviewViewListener
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.PaymentNextStep
 import net.gini.android.merchant.sdk.util.autoCleared
@@ -297,7 +297,6 @@ class PaymentFragment private constructor(
         viewModel.addToBackStack(DisplayedScreen.ReviewBottomSheet)
         val reviewBottomSheet = ReviewBottomSheet.newInstance(
             giniMerchant = viewModel.giniMerchant,
-            giniPaymentManager = viewModel.giniPaymentManager,
             backListener = viewModel,
             configuration = ReviewConfiguration(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
@@ -396,7 +395,7 @@ class PaymentFragment private constructor(
 
     companion object {
         fun newInstance(giniMerchant: GiniMerchant, paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration,
-                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(giniMerchant.paymentComponent, paymentDetails, paymentFlowConfiguration, giniMerchant)) = PaymentFragment(viewModelFactory)
+                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(paymentDetails, paymentFlowConfiguration, giniMerchant)) = PaymentFragment(viewModelFactory)
 
     }
 }

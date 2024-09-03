@@ -176,14 +176,14 @@
     <ID>NewLineAtEndOfFile:PaymentDetails.kt$net.gini.android.merchant.sdk.api.payment.model.PaymentDetails.kt</ID>
     <ID>NewLineAtEndOfFile:PaymentFlowViewModel.kt$net.gini.android.merchant.sdk.integratedFlow.PaymentFlowViewModel.kt</ID>
     <ID>NewLineAtEndOfFile:PaymentNextStep.kt$net.gini.android.merchant.sdk.util.PaymentNextStep.kt</ID>
-    <ID>NewLineAtEndOfFile:PaymentRequest.kt$net.gini.android.merchant.sdk.api.payment.model.PaymentRequest.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentRequest.kt$net.gini.android.core.api.models.PaymentRequest.kt</ID>
     <ID>NewLineAtEndOfFile:Resource.kt$net.gini.android.merchant.sdk.util.extensions.Resource.kt</ID>
     <ID>NewLineAtEndOfFile:ResultWrapper.kt$net.gini.android.merchant.sdk.api.ResultWrapper.kt</ID>
     <ID>NewLineAtEndOfFile:ReviewBottomSheet.kt$net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet.kt</ID>
     <ID>NewLineAtEndOfFile:ReviewBottomSheetViewModel.kt$net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheetViewModel.kt</ID>
-    <ID>NewLineAtEndOfFile:ReviewComponent.kt$net.gini.android.merchant.sdk.review.reviewComponent.ReviewComponent.kt</ID>
-    <ID>NewLineAtEndOfFile:ReviewConfiguration.kt$net.gini.android.merchant.sdk.review.ReviewConfiguration.kt</ID>
-    <ID>NewLineAtEndOfFile:ReviewView.kt$net.gini.android.merchant.sdk.review.reviewComponent.ReviewView.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewComponent.kt$net.gini.android.internal.payment.review.reviewComponent.ReviewComponent.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewConfiguration.kt$net.gini.android.internal.payment.review.ReviewConfiguration.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewView.kt$net.gini.android.internal.payment.review.reviewComponent.ReviewView.kt</ID>
     <ID>NewLineAtEndOfFile:Session.kt$net.gini.android.merchant.sdk.api.authorization.model.Session.kt</ID>
     <ID>NewLineAtEndOfFile:SessionManager.kt$net.gini.android.merchant.sdk.api.authorization.SessionManager.kt</ID>
     <ID>NewLineAtEndOfFile:ShareWithBroadcastReceiver.kt$net.gini.android.merchant.sdk.util.ShareWithBroadcastReceiver.kt</ID>

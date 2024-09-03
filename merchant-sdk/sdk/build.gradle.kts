@@ -103,10 +103,13 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 
 dependencies {
     val healthApiLibrary = project(":health-api-library:library")
+    val internalPaymentLibrary = project(":gini-internal-payment-sdk:library")
     if (properties["createSBOM"] == "true") {
         implementationProjectDependencyForSBOM(healthApiLibrary)
+        implementationProjectDependencyForSBOM(internalPaymentLibrary)
     } else {
         implementation(healthApiLibrary)
+        implementation(internalPaymentLibrary)
     }
 
     api(libs.slf4j.api)

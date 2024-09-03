@@ -16,7 +16,7 @@
     // In the Figma design the height of the drag handle component is 36dp
     // In Material3 the height of the BottomSheetDragHandleView is 44dp - this is where the margin difference came from.
     // Switched to constraint to top of the view, not the drag handle, and set marginTop to 36dp.
-    <net.gini.android.merchant.sdk.review.reviewComponent.ReviewView
+    <net.gini.android.internal.payment.review.reviewComponent.ReviewView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/gms_review_layout"

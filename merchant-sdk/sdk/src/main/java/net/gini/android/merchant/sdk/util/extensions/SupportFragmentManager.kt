@@ -3,8 +3,8 @@ package net.gini.android.merchant.sdk.util.extensions
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet
 import net.gini.android.merchant.sdk.review.installApp.InstallAppForwardListener
 import net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet
@@ -27,7 +27,7 @@ internal fun FragmentManager.showInstallAppBottomSheet(paymentComponent: Payment
     dialog.show(this, InstallAppBottomSheet::class.simpleName)
 }
 
-internal fun FragmentManager.showOpenWithBottomSheet(paymentProviderApp: PaymentProviderApp, backListener: BackListener? = null,buttonClickListener: () -> Unit) {
+internal fun FragmentManager.showOpenWithBottomSheet(paymentProviderApp: PaymentProviderApp, backListener: BackListener? = null, buttonClickListener: () -> Unit) {
     val dialog = OpenWithBottomSheet.newInstance(paymentProviderApp, object: OpenWithForwardListener {
         override fun onForwardSelected() {
             buttonClickListener()

@@ -19,7 +19,6 @@ import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet
-import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.PaymentNextStep
 import org.junit.Before
 import org.junit.Test

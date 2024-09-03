@@ -14,10 +14,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetInstallAppBinding
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared

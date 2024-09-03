@@ -7,7 +7,7 @@ sealed class DisplayedScreen {
     /**
      * Default state - nothing visible
      */
-    object Nothing : DisplayedScreen()
+    object Nothing: DisplayedScreen()
 
     /**
      * Entrypoint to the payment flow - shows which bank is selected
@@ -44,4 +44,16 @@ sealed class DisplayedScreen {
      * Payment details review screen.
      */
     object ReviewBottomSheet: DisplayedScreen()
+
+    companion object {
+        fun toDisplayedScreen(screen: net.gini.android.internal.payment.utils.DisplayedScreen): DisplayedScreen = when (screen) {
+            net.gini.android.internal.payment.utils.DisplayedScreen.Nothing -> Nothing
+            net.gini.android.internal.payment.utils.DisplayedScreen.BankSelectionBottomSheet -> BankSelectionBottomSheet
+            net.gini.android.internal.payment.utils.DisplayedScreen.InstallAppBottomSheet -> InstallAppBottomSheet
+            net.gini.android.internal.payment.utils.DisplayedScreen.MoreInformationFragment -> MoreInformationFragment
+            net.gini.android.internal.payment.utils.DisplayedScreen.OpenWithBottomSheet -> OpenWithBottomSheet
+            net.gini.android.internal.payment.utils.DisplayedScreen.ReviewScreen -> ReviewBottomSheet
+            net.gini.android.internal.payment.utils.DisplayedScreen.ShareSheet -> ShareSheet
+        }
+    }
 }

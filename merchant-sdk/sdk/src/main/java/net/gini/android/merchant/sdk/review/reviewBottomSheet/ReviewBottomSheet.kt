@@ -9,13 +9,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetReviewBinding
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.review.ReviewConfiguration
-import net.gini.android.merchant.sdk.review.reviewComponent.ReviewViewListener
 import net.gini.android.merchant.sdk.util.BackListener
-import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
@@ -61,12 +60,10 @@ internal class ReviewBottomSheet private constructor(
             listener: ReviewViewListener,
             paymentComponent: PaymentComponent,
             backListener: BackListener,
-            giniPaymentManager: GiniPaymentManager = GiniPaymentManager(giniMerchant),
             viewModelFactory: ViewModelProvider.Factory = ReviewBottomSheetViewModel.Factory(
                 paymentComponent = paymentComponent,
                 reviewConfiguration = configuration,
                 giniMerchant = giniMerchant,
-                giniPaymentManager = giniPaymentManager,
                 backListener = backListener
             ),
         ): ReviewBottomSheet = ReviewBottomSheet(listener, viewModelFactory)

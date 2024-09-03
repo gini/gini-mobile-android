@@ -29,8 +29,6 @@ import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderAppColors
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
-import net.gini.android.merchant.sdk.util.DisplayedScreen
-import net.gini.android.merchant.sdk.util.GiniPaymentManager
 import net.gini.android.merchant.sdk.util.PaymentNextStep
 import org.junit.After
 import org.junit.Before

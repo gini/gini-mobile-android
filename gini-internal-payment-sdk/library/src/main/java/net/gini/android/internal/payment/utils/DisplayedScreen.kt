@@ -7,23 +7,17 @@ sealed class DisplayedScreen {
     /**
      * Default state - nothing visible
      */
-    object Nothing : DisplayedScreen()
-
-    /**
-     * Entrypoint to the payment flow - shows which bank is selected
-     * (or prompts the user to choose a payment provider if there is no previous selection) for making the payment.
-     */
-    object PaymentComponentBottomSheet : DisplayedScreen()
+    object Nothing: DisplayedScreen()
 
     /**
      * Bottom sheet for selecting a bank to pay with.
      */
-    object BankSelectionBottomSheet : DisplayedScreen()
+    object BankSelectionBottomSheet: DisplayedScreen()
 
     /**
      * More information screen.
      */
-    object MoreInformationFragment : DisplayedScreen()
+    object MoreInformationFragment: DisplayedScreen()
 
     /**
      * Prompt for the user to install the selected banking app.
@@ -43,5 +37,5 @@ sealed class DisplayedScreen {
     /**
      * Payment details review screen.
      */
-    object ReviewBottomSheet: DisplayedScreen()
+    object ReviewScreen: DisplayedScreen()
 }

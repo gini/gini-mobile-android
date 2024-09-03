@@ -21,9 +21,9 @@ import android.widget.Toast
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetOpenWithBinding
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
