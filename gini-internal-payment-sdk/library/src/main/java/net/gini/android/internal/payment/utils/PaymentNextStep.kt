@@ -1,8 +1,8 @@
-package net.gini.android.merchant.sdk.util
+package net.gini.android.internal.payment.utils
 
 import java.io.File
 
-internal sealed class PaymentNextStep {
+sealed class PaymentNextStep {
     object RedirectToBank : PaymentNextStep()
     object ShowOpenWithSheet : PaymentNextStep()
     object ShowInstallApp : PaymentNextStep()

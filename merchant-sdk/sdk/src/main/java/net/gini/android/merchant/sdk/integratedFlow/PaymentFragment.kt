@@ -29,22 +29,21 @@ import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProvide
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
+import net.gini.android.internal.payment.utils.PaymentNextStep
+import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.createShareWithPendingIntent
+import net.gini.android.internal.payment.utils.extensions.showInstallAppBottomSheet
+import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomSheet
+import net.gini.android.internal.payment.utils.extensions.startSharePdfIntent
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.databinding.GmsFragmentMerchantBinding
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet
-import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet
 import net.gini.android.merchant.sdk.util.DisplayedScreen
-import net.gini.android.merchant.sdk.util.PaymentNextStep
-import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.add
-import net.gini.android.merchant.sdk.util.extensions.createShareWithPendingIntent
-import net.gini.android.merchant.sdk.util.extensions.showInstallAppBottomSheet
-import net.gini.android.merchant.sdk.util.extensions.showOpenWithBottomSheet
-import net.gini.android.merchant.sdk.util.extensions.startSharePdfIntent
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
 import org.jetbrains.annotations.VisibleForTesting
@@ -169,7 +168,6 @@ class PaymentFragment private constructor(
         binding.setStateListeners()
 
         viewModel.paymentComponent.listener = paymentComponentListener
-        viewModel.openWithPreferences = OpenWithPreferences(requireContext())
 
         viewModel.loadPaymentProviderApps()
         viewLifecycleOwner.lifecycleScope.launch {
@@ -362,6 +360,7 @@ class PaymentFragment private constructor(
             is PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
+                startSharePdfIntent(paymentNextStep.file)
                 viewModel.addToBackStack(DisplayedScreen.ShareSheet)
             }
         }

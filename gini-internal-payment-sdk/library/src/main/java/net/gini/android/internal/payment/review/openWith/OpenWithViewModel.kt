@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.openWith
+package net.gini.android.internal.payment.review.openWith
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

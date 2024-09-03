@@ -19,7 +19,7 @@ import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet
-import net.gini.android.merchant.sdk.util.PaymentNextStep
+import net.gini.android.internal.payment.utils.PaymentNextStep
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -160,7 +160,8 @@ class PaymentFlowFragmentTest {
         // Given
         val paymentFlow = MutableSharedFlow<PaymentNextStep>(extraBufferCapacity = 1)
         every { paymentFlowViewModel!!.getLastBackstackEntry() } returns DisplayedScreen.Nothing
-        every { paymentFlowViewModel!!.paymentNextStep } returns paymentFlow.also { it.tryEmit(PaymentNextStep.RedirectToBank) }
+        every { paymentFlowViewModel!!.paymentNextStep } returns paymentFlow.also { it.tryEmit(
+            PaymentNextStep.RedirectToBank) }
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewFragment } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.isAmountFieldEditable } returns false

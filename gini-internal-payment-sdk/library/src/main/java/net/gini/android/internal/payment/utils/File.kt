@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.util.extensions
+package net.gini.android.internal.payment.utils
 
 import java.io.File
 import java.io.FileOutputStream

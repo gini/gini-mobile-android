@@ -1,6 +1,8 @@
 package net.gini.android.internal.payment.utils.extensions
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
@@ -9,6 +11,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.view.ContextThemeWrapper
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.ShareWithBroadcastReceiver
 
 
 internal fun Context.wrappedWithGiniPaymentTheme(): Context = ContextThemeWrapper(this, R.style.GiniPaymentTheme)
@@ -38,8 +41,8 @@ internal fun Context.generateBitmapDrawableIcon(icon: ByteArray, iconSize: Int):
 
 internal fun Context.getFontScale() = resources.configuration.fontScale
 
-//internal fun Context.createShareWithPendingIntent() = PendingIntent.getBroadcast(
-//    this, 123,
-//    Intent(this, ShareWithBroadcastReceiver::class.java),
-//    PendingIntent.FLAG_IMMUTABLE
-//)
+fun Context.createShareWithPendingIntent(): PendingIntent = PendingIntent.getBroadcast(
+    this, 123,
+    Intent(this, ShareWithBroadcastReceiver::class.java),
+    PendingIntent.FLAG_IMMUTABLE
+)

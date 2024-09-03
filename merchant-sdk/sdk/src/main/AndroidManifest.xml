@@ -2,18 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.gini.android.merchant.sdk">
 
-    <application>
-        <provider
-            android:name=".util.MerchantSDKFileProvider"
-            android:authorities="${applicationId}.merchant.sdk.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-        <receiver android:name=".util.ShareWithBroadcastReceiver" android:exported="false"/>
-    </application>
+    <application/>
 
     <queries>
         <intent>

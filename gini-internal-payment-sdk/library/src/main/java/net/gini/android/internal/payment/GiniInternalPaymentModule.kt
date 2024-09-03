@@ -1,7 +1,6 @@
 package net.gini.android.internal.payment
 
 import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -15,6 +14,7 @@ import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniPaymentManager
 import net.gini.android.internal.payment.utils.PaymentEventListener
@@ -61,12 +61,12 @@ class GiniInternalPaymentModule(private val context: Context,
                         setDebuggingEnabled(debuggingEnabled)
                     }.build()
                     _giniHealthAPI = healthAPI
-                    Log.e("", "---- in build health api ${_giniHealthAPI.hashCode()}")
                     return healthAPI
                 }
         }
 
     var paymentComponent = PaymentComponent(context, healthAPI = giniHealthAPI)
+    private val openWithPreferences = OpenWithPreferences(context)
 
     internal val giniPaymentManager = GiniPaymentManager(giniHealthAPI, object: PaymentEventListener {
         override fun onError(e: Exception) {
@@ -119,8 +119,19 @@ class GiniInternalPaymentModule(private val context: Context,
         _paymentFlow.tryEmit(ResultWrapper.Success(paymentDetails))
     }
 
+    suspend fun incrementCountForPaymentProviderId(paymentProviderAppId: String) {
+        openWithPreferences.incrementCountForPaymentProviderId(paymentProviderAppId)
+    }
+
+    suspend fun getLiveCountForPaymentProviderId(paymentProviderAppId: String) = openWithPreferences.getLiveCountForPaymentProviderId(paymentProviderAppId)
+
+
+    fun emitSdkEvent(event: InternalPaymentEvents) {
+        _eventsFlow.tryEmit(event)
+    }
+
     /**
-     * Different events that can be emitted by the MerchantSDK.
+     * Different events that can be emitted by the GiniInternalPaymentModule.
      */
     sealed class InternalPaymentEvents {
         object NoAction: InternalPaymentEvents()

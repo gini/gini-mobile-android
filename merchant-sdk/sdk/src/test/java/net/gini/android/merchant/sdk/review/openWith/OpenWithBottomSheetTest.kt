@@ -9,6 +9,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
+import net.gini.android.internal.payment.review.openWith.OpenWithBottomSheet
+import net.gini.android.internal.payment.review.openWith.OpenWithForwardListener
 import org.junit.Test
 import org.junit.runner.RunWith
 import net.gini.android.merchant.sdk.R

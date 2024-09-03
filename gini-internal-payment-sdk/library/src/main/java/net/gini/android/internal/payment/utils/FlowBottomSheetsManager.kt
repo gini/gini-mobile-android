@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.util
+package net.gini.android.internal.payment.utils
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,17 +9,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.Resource
+import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.review.reviewComponent.ReviewComponent.Companion.SHOW_OPEN_WITH_TIMES
-import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
-import net.gini.android.merchant.sdk.util.extensions.createTempPdfFile
 import java.io.File
 
 
-internal interface FlowBottomSheetsManager {
-    var openWithPreferences: OpenWithPreferences?
+interface FlowBottomSheetsManager {
+    val giniInternalPaymentModule: GiniInternalPaymentModule?
     var openWithCounter: Int
     val paymentNextStepFlow: MutableSharedFlow<PaymentNextStep>
     val paymentRequestFlow: MutableStateFlow<PaymentRequest?>
@@ -27,7 +25,7 @@ internal interface FlowBottomSheetsManager {
 
     fun startObservingOpenWithCount(coroutineScope: CoroutineScope, paymentProviderAppId: String) {
         coroutineScope.launch {
-            openWithPreferences?.getLiveCountForPaymentProviderId(paymentProviderAppId)
+            giniInternalPaymentModule?.getLiveCountForPaymentProviderId(paymentProviderAppId)
                 ?.collectLatest {
                     openWithCounter = it ?: 0
                 }
@@ -36,7 +34,7 @@ internal interface FlowBottomSheetsManager {
 
     fun incrementOpenWithCounter(coroutineScope: CoroutineScope, paymentProviderAppId: String) {
         coroutineScope.launch {
-            openWithPreferences?.incrementCountForPaymentProviderId(paymentProviderAppId)
+            giniInternalPaymentModule?.incrementCountForPaymentProviderId(paymentProviderAppId)
         }
     }
 
@@ -46,11 +44,11 @@ internal interface FlowBottomSheetsManager {
                 val paymentRequest = try {
                     getPaymentRequest()
                 } catch (throwable: Throwable) {
-                    emitSDKEvent(GiniMerchant.PaymentState.Error(throwable))
+                    giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(throwable))
                     return@withContext
                 }
                 if (paymentRequest == null) {
-                    emitSDKEvent(GiniMerchant.PaymentState.Error(Exception("Payment request is null")))
+                    giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(Exception("Payment request is null")))
                     return@withContext
                 }
                 val byteArrayResource = async {
@@ -58,10 +56,10 @@ internal interface FlowBottomSheetsManager {
                 }.await()
                 when (byteArrayResource) {
                     is Resource.Cancelled -> {
-                        emitSDKEvent(GiniMerchant.PaymentState.Error(Exception("Cancelled")))
+                        giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(Exception("Cancelled")))
                     }
                     is Resource.Error -> {
-                        emitSDKEvent(GiniMerchant.PaymentState.Error(byteArrayResource.exception ?: Exception("Error")))
+                        giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(byteArrayResource.exception ?: Exception("Error")))
                     }
                     is Resource.Success -> {
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
@@ -99,7 +97,6 @@ internal interface FlowBottomSheetsManager {
         paymentNextStepFlow.tryEmit(paymentNextStep)
     }
 
-    fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState)
     suspend fun getPaymentRequest(): PaymentRequest?
     suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray>
 

@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.openWith
+package net.gini.android.internal.payment.review.openWith
 
 import android.app.Dialog
 import android.content.DialogInterface
@@ -21,27 +21,32 @@ import android.widget.Toast
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import net.gini.android.internal.payment.R
+import net.gini.android.internal.payment.databinding.GpsBottomSheetOpenWithBinding
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.databinding.GmsBottomSheetOpenWithBinding
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
-import net.gini.android.merchant.sdk.util.extensions.setBackListener
-import net.gini.android.merchant.sdk.util.setBackgroundTint
+import net.gini.android.internal.payment.utils.extensions.setBackListener
+import net.gini.android.internal.payment.utils.setBackgroundTint
 
 /**
  * Interface for forwarding the request to share a PDF document
  */
-internal interface OpenWithForwardListener {
+interface OpenWithForwardListener {
     fun onForwardSelected()
 }
-internal class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?) : GpsBottomSheetDialogFragment() {
+class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?) : GpsBottomSheetDialogFragment() {
 
     constructor(): this(null, null, null)
 
-    private val viewModel by viewModels<OpenWithViewModel> { OpenWithViewModel.Factory(paymentProviderApp, backListener) }
-    private var binding: GmsBottomSheetOpenWithBinding by autoCleared()
+    private val viewModel by viewModels<OpenWithViewModel> {
+        OpenWithViewModel.Factory(
+            paymentProviderApp,
+            backListener
+        )
+    }
+    private var binding: GpsBottomSheetOpenWithBinding by autoCleared()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -56,11 +61,11 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = GmsBottomSheetOpenWithBinding.inflate(inflater, container, false)
-        binding.gmsAppLayout.gmsAppName.ellipsize = TextUtils.TruncateAt.END
-        binding.gmsAppLayout.gmsAppIcon.setImageDrawable(viewModel.paymentProviderApp?.icon)
+        binding = GpsBottomSheetOpenWithBinding.inflate(inflater, container, false)
+        binding.gpsAppLayout.gpsAppName.ellipsize = TextUtils.TruncateAt.END
+        binding.gpsAppLayout.gpsAppIcon.setImageDrawable(viewModel.paymentProviderApp?.icon)
         viewModel.paymentProviderApp?.let { paymentProviderApp ->
-            with(binding.gmsForwardButton) {
+            with(binding.gpsForwardButton) {
                 setOnClickListener {
                     listener?.onForwardSelected()
                     dismiss()
@@ -68,17 +73,17 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
                 setTextColor(paymentProviderApp.colors.textColor)
             }
-            binding.gmsAppLayout.gmsAppName.text = paymentProviderApp.name
-            binding.gmsOpenWithTitle.text = String.format(getString(R.string.gms_open_with_title), paymentProviderApp.name)
-            binding.gmsOpenWithDetails.text = String.format(getString(R.string.gms_open_with_details), paymentProviderApp.name)
-            binding.gmsOpenWithInfo.text = createSpannableString(String.format(getString(R.string.gms_open_with_info), paymentProviderApp.name, paymentProviderApp.name), paymentProviderApp.paymentProvider.playStoreUrl)
-            binding.gmsOpenWithInfo.movementMethod = LinkMovementMethod.getInstance()
+            binding.gpsAppLayout.gpsAppName.text = paymentProviderApp.name
+            binding.gpsOpenWithTitle.text = String.format(getString(R.string.gps_open_with_title), paymentProviderApp.name)
+            binding.gpsOpenWithDetails.text = String.format(getString(R.string.gps_open_with_details), paymentProviderApp.name)
+            binding.gpsOpenWithInfo.text = createSpannableString(String.format(getString(R.string.gps_open_with_info), paymentProviderApp.name, paymentProviderApp.name), paymentProviderApp.paymentProvider.playStoreUrl)
+            binding.gpsOpenWithInfo.movementMethod = LinkMovementMethod.getInstance()
         }
         return binding.root
     }
 
     private fun createSpannableString(text: String, playStoreUrl: String?): SpannedString {
-        val linkSpan = SpannableString(getString(R.string.gms_open_with_download_app))
+        val linkSpan = SpannableString(getString(R.string.gps_open_with_download_app))
         val playStoreLauncher = object: ClickableSpan() {
             override fun onClick(p0: View) {
                 playStoreUrl?.let {
@@ -94,7 +99,7 @@ internal class OpenWithBottomSheet private constructor(paymentProviderApp: Payme
         linkSpan.apply {
             setSpan(StyleSpan(Typeface.BOLD),0,length,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             setSpan(playStoreLauncher, 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            setSpan(ForegroundColorSpan(requireContext().getColor(R.color.gms_open_with_details)),0,length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(requireContext().getColor(R.color.gps_open_with_details)),0,length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         return buildSpannedString {
             append(text)
