@@ -19,7 +19,7 @@ import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetInstallAppBinding
 import net.gini.android.merchant.sdk.util.BackListener
-import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
+import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
 import net.gini.android.merchant.sdk.util.setBackgroundTint
@@ -38,7 +38,7 @@ internal class InstallAppBottomSheet private constructor(
     backListener: BackListener?,
     private val minHeight: Int?
 ) :
-    GmsBottomSheetDialogFragment() {
+    GpsBottomSheetDialogFragment() {
     constructor() : this(null, null, null, null)
 
     private var binding: GmsBottomSheetInstallAppBinding by autoCleared()

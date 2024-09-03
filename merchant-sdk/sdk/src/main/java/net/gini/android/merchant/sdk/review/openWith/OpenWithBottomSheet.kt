@@ -25,7 +25,7 @@ import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetOpenWithBinding
 import net.gini.android.merchant.sdk.util.BackListener
-import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
+import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
 import net.gini.android.merchant.sdk.util.setBackgroundTint
@@ -36,7 +36,7 @@ import net.gini.android.merchant.sdk.util.setBackgroundTint
 internal interface OpenWithForwardListener {
     fun onForwardSelected()
 }
-internal class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?) : GmsBottomSheetDialogFragment() {
+internal class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?) : GpsBottomSheetDialogFragment() {
 
     constructor(): this(null, null, null)
 

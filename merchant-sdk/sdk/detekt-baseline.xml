@@ -153,10 +153,10 @@
     <ID>NewLineAtEndOfFile:Extensions.kt$net.gini.android.merchant.sdk.util.Extensions.kt</ID>
     <ID>NewLineAtEndOfFile:FaqExpandableListAdapter.kt$net.gini.android.merchant.sdk.moreinformation.FaqExpandableListAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:File.kt$net.gini.android.merchant.sdk.util.extensions.File.kt</ID>
-    <ID>NewLineAtEndOfFile:FlowBottomSheetsManager.kt$net.gini.android.merchant.sdk.util.FlowBottomSheetsManager.kt</ID>
+    <ID>NewLineAtEndOfFile:FlowBottomSheetsManager.kt$net.gini.android.internal.payment.utils.FlowBottomSheetsManager.kt</ID>
     <ID>NewLineAtEndOfFile:Fragment.kt$net.gini.android.merchant.sdk.util.extensions.Fragment.kt</ID>
     <ID>NewLineAtEndOfFile:GiniPaymentManager.kt$net.gini.android.merchant.sdk.util.GiniPaymentManager.kt</ID>
-    <ID>NewLineAtEndOfFile:GmsBottomSheetDialogFragment.kt$net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:GmsBottomSheetDialogFragment.kt$net.gini.android.internal.payment.utils.GmsBottomSheetDialogFragment.kt</ID>
     <ID>NewLineAtEndOfFile:IbanValidator.kt$net.gini.android.merchant.sdk.util.IbanValidator.kt</ID>
     <ID>NewLineAtEndOfFile:InstallAppBottomSheet.kt$net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet.kt</ID>
     <ID>NewLineAtEndOfFile:InstallAppViewModel.kt$net.gini.android.merchant.sdk.review.installApp.InstallAppViewModel.kt</ID>

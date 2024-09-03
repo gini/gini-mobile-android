@@ -25,7 +25,7 @@ import net.gini.android.merchant.sdk.databinding.GmsBottomSheetBankSelectionBind
 import net.gini.android.merchant.sdk.databinding.GmsItemPaymentProviderAppBinding
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
 import net.gini.android.merchant.sdk.util.BackListener
-import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
+import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory
  * installed it will also display its Play Store link.
  */
 internal class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
-    GmsBottomSheetDialogFragment() {
+    GpsBottomSheetDialogFragment() {
 
     constructor() : this(null)
 

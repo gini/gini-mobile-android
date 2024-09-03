@@ -61,5 +61,4 @@
     <color name="gps_container_fragment_background">#60565656</color>
     <color name="gps_disabled_field_text_color">@color/gps_dark_04</color>
     <color name="gps_amount_field_border">@color/gps_dark_01</color>
-
 </resources>

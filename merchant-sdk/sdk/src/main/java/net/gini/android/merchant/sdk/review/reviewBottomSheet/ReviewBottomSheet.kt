@@ -15,14 +15,14 @@ import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListen
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetReviewBinding
 import net.gini.android.merchant.sdk.util.BackListener
-import net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment
+import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
 
 internal class ReviewBottomSheet private constructor(
     internal val paymentButtonListener: ReviewViewListener?,
     private val viewModelFactory: ViewModelProvider.Factory?
-) : GmsBottomSheetDialogFragment() {
+) : GpsBottomSheetDialogFragment() {
 
     constructor(): this(null, null)
 

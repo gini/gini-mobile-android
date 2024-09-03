@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.util
+package net.gini.android.internal.payment.utils
 
 import android.app.Dialog
 import android.graphics.drawable.ColorDrawable
@@ -8,20 +8,21 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import net.gini.android.merchant.sdk.R
+import net.gini.android.internal.payment.R
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
 
-
-internal open class GmsBottomSheetDialogFragment: BottomSheetDialogFragment() {
+open class GpsBottomSheetDialogFragment: BottomSheetDialogFragment() {
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniMerchantTheme(inflater)
+        return this.getLayoutInflaterWithGiniPaymentTheme(inflater)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val wrappedContext = requireContext().wrappedWithGiniMerchantTheme()
+        val wrappedContext = requireContext().wrappedWithGiniPaymentTheme()
         val dialog = BottomSheetDialog(wrappedContext, theme)
 
-        val colorDrawable = ColorDrawable(ContextCompat.getColor(wrappedContext, R.color.gms_bottom_sheet_scrim))
+        val colorDrawable = ColorDrawable(ContextCompat.getColor(wrappedContext, R.color.gps_bottom_sheet_scrim))
         colorDrawable.alpha = 102 // 40% alpha
         dialog.window?.setBackgroundDrawable(colorDrawable)
 
