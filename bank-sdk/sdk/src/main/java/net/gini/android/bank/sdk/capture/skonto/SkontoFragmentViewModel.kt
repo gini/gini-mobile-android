@@ -5,9 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoScreenState
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoSideEffect
-import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
@@ -66,7 +63,6 @@ internal class SkontoFragmentViewModel(
         val paymentMethod = data.skontoPaymentMethod ?: SkontoData.SkontoPaymentMethod.Unspecified
         val edgeCase = getSkontoEdgeCaseUseCase.execute(data.skontoDueDate, paymentMethod)
 
-        //TODO: check for PayByCashToday
         val isSkontoSectionActive = getSkontoDefaultSelectionStateUseCase.execute(edgeCase)
 
         val totalAmount =
@@ -208,7 +204,6 @@ internal class SkontoFragmentViewModel(
         )
     }
 
-    //TODO: check for PayByCashToday
     fun onInvoiceClicked() = viewModelScope.launch {
         val currentState =
             stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch

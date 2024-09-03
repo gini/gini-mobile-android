@@ -376,8 +376,8 @@ private fun ScreenReadyState(
 
         if (state.edgeCaseInfoDialogVisible) {
             val text = when (state.skontoEdgeCase) {
-                SkontoFragmentContract.SkontoEdgeCase.PayByCashToday,
-                SkontoFragmentContract.SkontoEdgeCase.PayByCashOnly ->
+                SkontoEdgeCase.PayByCashToday,
+                SkontoEdgeCase.PayByCashOnly ->
                     stringResource(id = R.string.gbs_skonto_section_info_dialog_pay_cash_message)
 
                 SkontoEdgeCase.SkontoExpired ->
@@ -417,7 +417,7 @@ private fun TopAppBar(
         navigationIcon = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
                 NavigationActionBack(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = 16.dp, end = 32.dp),
                     onClick = onBackClicked
                 )
             }
@@ -425,7 +425,7 @@ private fun TopAppBar(
         actions = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
                 NavigationActionHelp(
-                    modifier = Modifier.padding(end = 16.dp),
+                    modifier = Modifier.padding(start = 16.dp, end = 32.dp),
                     onClick = onHelpClicked
                 )
             }

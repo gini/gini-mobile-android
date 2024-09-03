@@ -355,7 +355,8 @@ private fun ScreenReadyState(
 
         if (state.edgeCaseInfoDialogVisible) {
             val text = when (state.edgeCase) {
-                SkontoEdgeCase.PayByCashOnly ->
+                SkontoEdgeCase.PayByCashOnly,
+                SkontoEdgeCase.PayByCashToday ->
                     stringResource(id = R.string.gbs_skonto_section_info_dialog_pay_cash_message)
 
                 SkontoEdgeCase.SkontoExpired ->
