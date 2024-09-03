@@ -13,12 +13,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
 import net.gini.android.internal.payment.paymentComponent.BankPickerRows
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.databinding.GmsPaymentProviderIconHolderBinding
 import net.gini.android.merchant.sdk.databinding.GmsViewPaymentComponentBinding
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.setBackgroundTint
@@ -75,7 +75,7 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
     private val binding = GmsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniMerchantTheme(), this)
     private lateinit var selectBankButton: Button
     private lateinit var payInvoiceButton: Button
-    private lateinit var paymentProviderAppIconHolder: GmsPaymentProviderIconHolderBinding
+    private lateinit var paymentProviderAppIconHolder: GpsPaymentProviderIconHolderBinding
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -179,7 +179,7 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
             }
 
             paymentProviderAppIconHolder.apply {
-                gmsPaymentProviderIcon.setImageDrawable(paymentProviderApp.icon)
+                gpsPaymentProviderIcon.setImageDrawable(paymentProviderApp.icon)
                 root.visibility = View.VISIBLE
                 root.contentDescription = paymentProviderApp.name
             }

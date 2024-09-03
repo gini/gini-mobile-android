@@ -12,7 +12,7 @@ import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.util.BackListener
+import net.gini.android.internal.payment.utils.BackListener
 import org.slf4j.LoggerFactory
 
 internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?, val backListener: BackListener?) : ViewModel() {

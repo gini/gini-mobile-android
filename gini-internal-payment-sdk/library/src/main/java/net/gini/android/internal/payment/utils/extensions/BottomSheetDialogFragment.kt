@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.util.extensions
+package net.gini.android.internal.payment.utils.extensions
 
 import androidx.activity.OnBackPressedCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog

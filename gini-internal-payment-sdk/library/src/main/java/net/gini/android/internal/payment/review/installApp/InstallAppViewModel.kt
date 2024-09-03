@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.installApp
+package net.gini.android.internal.payment.review.installApp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.util.BackListener
+import net.gini.android.internal.payment.utils.BackListener
 import org.slf4j.LoggerFactory
 
 internal class InstallAppViewModel(private val paymentComponent: PaymentComponent?, val backListener: BackListener?) : ViewModel() {

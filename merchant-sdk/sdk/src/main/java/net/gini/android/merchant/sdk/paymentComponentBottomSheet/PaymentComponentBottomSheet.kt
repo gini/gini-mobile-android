@@ -13,9 +13,9 @@ import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetPaymentComponentBinding
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView
-import net.gini.android.merchant.sdk.util.BackListener
+import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
-import net.gini.android.merchant.sdk.util.autoCleared
+import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
 import org.jetbrains.annotations.VisibleForTesting
 

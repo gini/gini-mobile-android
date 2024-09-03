@@ -39,7 +39,7 @@ import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.PaymentNextStep
-import net.gini.android.merchant.sdk.util.autoCleared
+import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.add
 import net.gini.android.merchant.sdk.util.extensions.createShareWithPendingIntent
 import net.gini.android.merchant.sdk.util.extensions.showInstallAppBottomSheet

@@ -17,7 +17,7 @@ import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsSta
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
-import net.gini.android.merchant.sdk.util.BackListener
+import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.FlowBottomSheetsManager
 import net.gini.android.merchant.sdk.util.PaymentNextStep

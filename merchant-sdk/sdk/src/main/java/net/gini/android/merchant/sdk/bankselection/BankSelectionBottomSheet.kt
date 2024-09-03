@@ -20,13 +20,13 @@ import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
+import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetBankSelectionBinding
 import net.gini.android.merchant.sdk.databinding.GmsItemPaymentProviderAppBinding
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
-import net.gini.android.merchant.sdk.util.BackListener
-import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
-import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.setIntervalClickListener
@@ -145,7 +145,7 @@ internal class PaymentProviderAppsAdapter(
         val iconView: ShapeableImageView
 
         init {
-            iconView = binding.gmsSelectorLayout.gmsPaymentProviderAppIconHolder.gmsPaymentProviderIcon
+            iconView = binding.gmsSelectorLayout.gmsPaymentProviderAppIconHolder.gpsPaymentProviderIcon
             button = binding.gmsSelectorLayout.gmsSelectBankButton
             button.setIntervalClickListener { onClickListener.onClick(adapterPosition) }
         }

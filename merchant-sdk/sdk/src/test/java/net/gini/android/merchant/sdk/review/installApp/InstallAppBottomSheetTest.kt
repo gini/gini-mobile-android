@@ -12,6 +12,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import net.gini.android.internal.payment.review.installApp.InstallAppBottomSheet
+import net.gini.android.internal.payment.review.installApp.InstallAppForwardListener
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState

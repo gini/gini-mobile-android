@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.installApp
+package net.gini.android.internal.payment.review.installApp
 
 import android.app.Dialog
 import android.content.DialogInterface
@@ -14,25 +14,25 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.R
+import net.gini.android.internal.payment.databinding.GpsBottomSheetInstallAppBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.databinding.GmsBottomSheetInstallAppBinding
-import net.gini.android.merchant.sdk.util.BackListener
+import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
-import net.gini.android.merchant.sdk.util.autoCleared
-import net.gini.android.merchant.sdk.util.extensions.setBackListener
-import net.gini.android.merchant.sdk.util.setBackgroundTint
+import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.setBackListener
+import net.gini.android.internal.payment.utils.setBackgroundTint
 import org.slf4j.LoggerFactory
 
 /**
  * Interface for forwarding the request to redirect to bank app.
  */
-internal interface InstallAppForwardListener {
+interface InstallAppForwardListener {
     fun onForwardToBankSelected()
 }
 
-internal class InstallAppBottomSheet private constructor(
+class InstallAppBottomSheet private constructor(
     private val paymentComponent: PaymentComponent?,
     private val listener: InstallAppForwardListener?,
     backListener: BackListener?,
@@ -41,7 +41,7 @@ internal class InstallAppBottomSheet private constructor(
     GpsBottomSheetDialogFragment() {
     constructor() : this(null, null, null, null)
 
-    private var binding: GmsBottomSheetInstallAppBinding by autoCleared()
+    private var binding: GpsBottomSheetInstallAppBinding by autoCleared()
     private val viewModel: InstallAppViewModel by viewModels {
         InstallAppViewModel.Factory(
             paymentComponent,
@@ -62,8 +62,8 @@ internal class InstallAppBottomSheet private constructor(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = GmsBottomSheetInstallAppBinding.inflate(inflater, container, false)
-        binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gms_install_app_min_height).toInt()
+        binding = GpsBottomSheetInstallAppBinding.inflate(inflater, container, false)
+        binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
         return binding.root
     }
 
@@ -74,20 +74,20 @@ internal class InstallAppBottomSheet private constructor(
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.paymentProviderApp.collect { paymentProviderApp ->
                     if (paymentProviderApp != null) {
-                        binding.gmsPaymentProviderIcon.gmsPaymentProviderIcon.setImageDrawable(
+                        binding.gpsPaymentProviderIcon.gpsPaymentProviderIcon.setImageDrawable(
                             paymentProviderApp.icon
                         )
-                        binding.gmsPaymentProviderIcon.gmsPaymentProviderIcon.contentDescription =
-                            "${paymentProviderApp.name} ${getString(R.string.gms_payment_provider_logo_content_description)}"
-                        binding.gmsInstallAppTitle.text = String.format(
-                            getString(R.string.gms_install_app_title),
+                        binding.gpsPaymentProviderIcon.gpsPaymentProviderIcon.contentDescription =
+                            "${paymentProviderApp.name} ${getString(R.string.gps_payment_provider_logo_content_description)}"
+                        binding.gpsInstallAppTitle.text = String.format(
+                            getString(R.string.gps_install_app_title),
                             paymentProviderApp.paymentProvider.name
                         )
-                        binding.gmsInstallAppDetails.text = String.format(
-                            getString(R.string.gms_install_app_detail),
+                        binding.gpsInstallAppDetails.text = String.format(
+                            getString(R.string.gps_install_app_detail),
                             paymentProviderApp.paymentProvider.name
                         )
-                        binding.gmsPlayStoreLogo.setOnClickListener {
+                        binding.gpsPlayStoreLogo.setOnClickListener {
                             paymentProviderApp.paymentProvider.playStoreUrl?.let { openPlayStoreUrl(it) }
                         }
                         if (paymentProviderApp.isInstalled()) {
@@ -104,12 +104,12 @@ internal class InstallAppBottomSheet private constructor(
     }
 
     private fun updateUI(paymentProviderApp: PaymentProviderApp) {
-        binding.gmsInstallAppDetails.text = String.format(
-            getString(R.string.gms_install_app_tap_to_continue),
+        binding.gpsInstallAppDetails.text = String.format(
+            getString(R.string.gps_install_app_tap_to_continue),
             paymentProviderApp.paymentProvider.name
         )
-        binding.gmsPlayStoreLogo.visibility = View.GONE
-        binding.gmsForwardButton.apply {
+        binding.gpsPlayStoreLogo.visibility = View.GONE
+        binding.gpsForwardButton.apply {
             paymentProviderApp.let { paymentProviderApp ->
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
                 setTextColor(paymentProviderApp.colors.textColor)
@@ -117,15 +117,15 @@ internal class InstallAppBottomSheet private constructor(
             visibility = View.VISIBLE
         }
 
-        binding.gmsForwardButton.setOnClickListener {
+        binding.gpsForwardButton.setOnClickListener {
             listener?.onForwardToBankSelected()
             dismiss()
         }
     }
 
     private fun resetUI() {
-        binding.gmsForwardButton.visibility = View.GONE
-        binding.gmsPlayStoreLogo.visibility = View.VISIBLE
+        binding.gpsForwardButton.visibility = View.GONE
+        binding.gpsPlayStoreLogo.visibility = View.VISIBLE
     }
 
     private fun openPlayStoreUrl(playStoreUrl: String) {

@@ -14,9 +14,9 @@ import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetReviewBinding
-import net.gini.android.merchant.sdk.util.BackListener
+import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
-import net.gini.android.merchant.sdk.util.autoCleared
+import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.setBackListener
 
 internal class ReviewBottomSheet private constructor(
