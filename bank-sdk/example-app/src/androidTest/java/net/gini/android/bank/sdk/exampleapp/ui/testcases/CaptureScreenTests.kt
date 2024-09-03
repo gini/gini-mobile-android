@@ -14,8 +14,6 @@ import org.junit.Test
 
 /**
  * Test class for flash on/off on CaptureScreen.
- *
- * Jira link for test case: [https://ginis.atlassian.net/browse/PM-22](https://ginis.atlassian.net/browse/PM-22)
  */
 class CaptureScreenTests {
     @get:Rule

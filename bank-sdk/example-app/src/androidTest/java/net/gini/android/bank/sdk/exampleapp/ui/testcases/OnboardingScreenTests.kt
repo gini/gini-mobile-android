@@ -19,8 +19,6 @@ import org.junit.runner.RunWith
 
 /**
  * Test class for onboarding screen flow.
- *
- * Jira link for test case: [https://ginis.atlassian.net/browse/PM-18](https://ginis.atlassian.net/browse/PM-18)
  */
 @RunWith(AndroidJUnit4::class)
 class OnboardingScreenTests {

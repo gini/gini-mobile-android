@@ -21,8 +21,6 @@ import org.junit.Test
 
 /**
  * Test class for Review screen.
- *
- * Jira link for test case: [https://ginis.atlassian.net/browse/PM-24](https://ginis.atlassian.net/browse/PM-24)
  */
 class ReviewScreenTests {
     @get:Rule

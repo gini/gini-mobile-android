@@ -13,12 +13,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
-import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
-import net.gini.android.bank.sdk.exampleapp.ui.screens.HelpScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
-import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import org.hamcrest.Matchers.allOf
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

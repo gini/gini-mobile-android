@@ -13,8 +13,6 @@ import org.junit.Test
 
 /**
  * Test class for help screen flow.
- *
- * Jira link for test case: [https://ginis.atlassian.net/browse/PM-23](https://ginis.atlassian.net/browse/PM-23)
  */
 class HelpScreenTests {
 

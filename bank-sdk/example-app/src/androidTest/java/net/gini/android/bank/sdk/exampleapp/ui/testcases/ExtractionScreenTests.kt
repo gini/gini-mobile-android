@@ -23,8 +23,6 @@ import org.junit.Test
 
 /**
  * Test class for Extraction screen.
- *
- * Jira link for test case: [https://ginis.atlassian.net/browse/PM-25](https://ginis.atlassian.net/browse/PM-25)
  */
 class ExtractionScreenTests {
     @get:Rule
