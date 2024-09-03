@@ -12,13 +12,13 @@ import androidx.annotation.NonNull;
  */
 class GiniPaymentParser implements QRCodeParser<PaymentQRCodeData> {
 
-    private static final String GINIPAYMENT_HOTS = "payment.gini.net";
+    private static final String GINIPAYMENT_HOST = "payment.gini.net";
 
     @Override
     public PaymentQRCodeData parse(@NonNull final String qrCodeContent)
             throws IllegalArgumentException {
         final Uri uri = Uri.parse(qrCodeContent);
-        if (!GINIPAYMENT_HOTS.equals(uri.getHost())) {
+        if (!GINIPAYMENT_HOST.equals(uri.getHost())) {
             throw new IllegalArgumentException(
                     "QRCode content does not conform to the gini payment QRCodeUrl format.");
         }
