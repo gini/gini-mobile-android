@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gsb_line_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorSurface"
+    android:clickable="true"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/gbs_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginTop="@dimen/gc_small"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="5sp"
+        android:textAppearance="@style/GiniCaptureTheme.Typography.Caption1"
+        android:textColor="@color/gc_dark_06"
+        app:layout_constraintEnd_toStartOf="@+id/gbs_enable_switch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_skonto_amount"
+        tools:text="Pay in cash within the next 14 days and receive a 3% Skonto discount" />
+
+    <TextView
+        android:id="@+id/gbs_per_unit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large"
+        android:layout_marginTop="@dimen/gc_large"
+        android:layout_marginEnd="@dimen/gc_large"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="5sp"
+        android:text="Skonto discount"
+        android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
+        android:textColor="@color/gc_dark_06"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/gbs_skonto_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/gc_small"
+        android:text="-0,55 EUR"
+        android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
+        android:textColor="@color/gc_success_01"
+        app:layout_constraintStart_toStartOf="@id/gbs_per_unit"
+        app:layout_constraintTop_toBottomOf="@id/gbs_per_unit" />
+
+    <TextView
+        android:id="@+id/gbs_edit_button"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_small"
+        android:layout_marginBottom="@dimen/gc_medium"
+        android:clickable="false"
+        android:focusable="false"
+        android:gravity="top"
+        android:minHeight="0dp"
+        android:text="@string/gbs_digital_invoice_line_item_edit"
+        android:textColor="@color/gc_accent_01"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/gbs_skonto_amount"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_message"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/gbs_enable_switch"
+        style="@style/GiniCaptureTheme.DigitalInvoice.Switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/gc_large"
+        android:padding="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/gbs_per_unit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/gbs_per_unit"
+        app:layout_constraintTop_toTopOf="@+id/gbs_per_unit"
+        app:showText="false"
+        app:switchPadding="0dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

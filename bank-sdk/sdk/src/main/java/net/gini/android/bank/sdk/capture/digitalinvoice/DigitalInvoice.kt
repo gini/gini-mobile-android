@@ -1,6 +1,13 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import androidx.annotation.VisibleForTesting
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseCase
+import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -30,7 +37,12 @@ internal val FRACTION_FORMAT = DecimalFormat(".00").apply { roundingMode = Round
 internal class DigitalInvoice(
     extractions: Map<String, GiniCaptureSpecificExtraction>,
     compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
-    savedSelectableItems: List<SelectableLineItem>? = null
+    savedSelectableItems: List<SelectableLineItem>? = null,
+    var skontoData: SkontoData? = null,
+    private val getSkontoAmountUseCase: GetSkontoAmountUseCase,
+    private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase,
+    private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase,
+    private val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase,
 ) {
 
     private var _extractions: Map<String, GiniCaptureSpecificExtraction> = extractions
@@ -53,6 +65,10 @@ internal class DigitalInvoice(
 
     private val amountToPay: BigDecimal
 
+
+    var skontoEnabled: Boolean = getDefaultSkontoEnabledState()
+        private set
+
     init {
         _selectableLineItems = when (savedSelectableItems) {
             null -> {
@@ -62,6 +78,7 @@ internal class DigitalInvoice(
                     )
                 }
             }
+
             else -> {
                 savedSelectableItems
             }
@@ -83,6 +100,20 @@ internal class DigitalInvoice(
         amountToPay =
             extractions["amountToPay"]?.let { parsePriceString(it.value).first } ?: BigDecimal.ZERO
     }
+
+    fun getSkontoSavedAmount(): Amount? = skontoData?.let { data ->
+        val amount = getSkontoSavedAmountUseCase.execute(
+            data.skontoAmountToPay.value,
+            data.fullAmountToPay.value
+        )
+        data.skontoAmountToPay.copy(value = amount)
+    }
+
+    private fun getDefaultSkontoEnabledState(): Boolean = skontoData?.let { data ->
+        val edgeCase =
+            getSkontoEdgeCaseUseCase.execute(data.skontoDueDate, data.skontoPaymentMethod)
+        getSkontoDefaultSelectionStateUseCase.execute(edgeCase)
+    } ?: false
 
     companion object {
         fun lineItemTotalGrossPriceIntegralAndFractionalParts(lineItem: LineItem): Pair<String, String> {
@@ -139,12 +170,30 @@ internal class DigitalInvoice(
             index >= 0 -> {
                 selectableLineItems.map { sli -> if (sli.lineItem.id == selectableLineItem.lineItem.id) selectableLineItem else sli }
             }
+
             else -> {
                 selectableLineItems.toMutableList().apply {
                     add(selectableLineItem)
                 }
             }
         }
+        recalculateSkontoData()
+    }
+
+    private fun recalculateSkontoData() = skontoData?.apply {
+        updateSkontoData(
+            this.copy(
+                skontoAmountToPay = this.skontoAmountToPay.copy(
+                    value = getSkontoAmountUseCase.execute(
+                        totalPrice(),
+                        this.skontoPercentageDiscounted
+                    )
+                ),
+                fullAmountToPay = this.fullAmountToPay.copy(
+                    value = totalPrice(),
+                )
+            )
+        )
     }
 
     fun removeLineItem(selectableLineItem: SelectableLineItem) {
@@ -163,6 +212,15 @@ internal class DigitalInvoice(
                 sli.selected = true
                 sli.reason = null
             }
+        recalculateSkontoData()
+    }
+
+    fun updateSkontoData(skontoData: SkontoData?) {
+        this.skontoData = skontoData
+    }
+
+    fun updateSkontoEnabled(enabled: Boolean) {
+        this.skontoEnabled = enabled
     }
 
     fun deselectLineItem(selectableLineItem: SelectableLineItem, reason: GiniCaptureReturnReason?) {
@@ -171,10 +229,11 @@ internal class DigitalInvoice(
                 sli.selected = false
                 sli.reason = reason
             }
+        recalculateSkontoData()
     }
 
     fun totalPriceIntegralAndFractionalParts(): Pair<String, String> {
-        val price = totalPrice()
+        val price = getAmountToPay()
         val currency = lineItemsCurency()
         return Pair(
             priceIntegralPartWithCurrencySymbol(price, currency),
@@ -211,7 +270,7 @@ internal class DigitalInvoice(
         )
     }
 
-    fun totalPrice(): BigDecimal =
+    private fun totalPrice(): BigDecimal =
         if (amountToPay > BigDecimal.ZERO) {
             amountToPay
                 .subtract(deselectedLineItemsTotalGrossPriceSum())
@@ -221,6 +280,14 @@ internal class DigitalInvoice(
         } else {
             amountToPay
         }
+
+    internal fun getAmountToPay(): BigDecimal {
+        return if (skontoEnabled) {
+            skontoData?.skontoAmountToPay?.value!!
+        } else {
+            totalPrice()
+        }
+    }
 
     fun selectedAndTotalLineItemsCount(): Pair<Int, Int> =
         Pair(selectedLineItemsCount(), totalLineItemsCount())
@@ -246,10 +313,12 @@ internal class DigitalInvoice(
                                                     lineItemExtraction,
                                                     sli.lineItem.description
                                                 )
+
                                                 "baseGross" -> copyGiniCaptureSpecificExtraction(
                                                     lineItemExtraction,
                                                     sli.lineItem.rawGrossPrice
                                                 )
+
                                                 "quantity" -> copyGiniCaptureSpecificExtraction(
                                                     lineItemExtraction,
                                                     if (sli.selected) {
@@ -258,6 +327,7 @@ internal class DigitalInvoice(
                                                         "0"
                                                     }
                                                 )
+
                                                 else -> lineItemExtraction
                                             }
                                         }.toMutableMap()
@@ -289,13 +359,14 @@ internal class DigitalInvoice(
                         cameraExtractions
                     )
                 }
+
                 else -> return@mapValues extraction
             }
         }
     }
 
     fun updateAmountToPayExtractionWithTotalPrice() {
-        val totalPrice = totalPrice().toPriceString(
+        val totalPrice = getAmountToPay().toPriceString(
             selectableLineItems.firstOrNull()?.lineItem?.rawCurrency ?: "EUR"
         )
 

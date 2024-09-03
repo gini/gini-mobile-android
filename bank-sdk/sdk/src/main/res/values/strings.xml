@@ -84,5 +84,11 @@
     <string name="gbs_skonto_help_item_pay_promptly">Geld sparen durch schnelles Bezahlen</string>
     <string name="gbs_skonto_help_footer_text">Machen Sie einfach ein Foto der Rechnung und die App erkennt automatisch die Rabatte. Überprüfen Sie die Details, bestätigen Sie und sparen Sie mit den Rabatten!</string>
     <!--   endregion -->
+    <!--   region Skonto Invoice Preview -->
+    <string name="gbs_skonto_invoice_preview_title">Skonto-Details</string>
+    <string name="gbs_skonto_invoice_preview_expire_date">Ablaufdatum Skonto: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_final_amount">Betrag nach Abzug: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_full_amount">Betrag ohne Abzug: %1$s</string>
+    <!--   endregion -->
     <!-- endregion -->
 </resources>

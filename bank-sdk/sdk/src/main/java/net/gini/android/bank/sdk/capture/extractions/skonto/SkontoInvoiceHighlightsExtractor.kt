@@ -1,6 +1,5 @@
 package net.gini.android.bank.sdk.capture.extractions.skonto
 
-import net.gini.android.bank.sdk.capture.skonto.extractDataByKeys
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
@@ -20,6 +19,7 @@ internal class SkontoInvoiceHighlightsExtractor {
             val skontoPaymentMethod = skontoDiscountData.extractDataByKeys("skontoPaymentMethod")
             val skontoAmountToPay = extractAmountToPayOrError(skontoDiscountData)
             val skontoRemainingDays = extractRemainingDaysOrError(skontoDiscountData)
+            val skontoDuePeriod = extractSkontoDuePeriod(skontoDiscountData)
 
             val skontoDueDate = extractDueDateOrError(skontoDiscountData)
 
@@ -35,6 +35,7 @@ internal class SkontoInvoiceHighlightsExtractor {
                 skontoDueDate = skontoDueDate.box,
                 skontoAmountToPay = skontoAmountToPay.box,
                 skontoAmountDiscounted = skontoAmountDiscounted?.box,
+                skontoDuePeriod = skontoDuePeriod?.box
             )
         }
     }
@@ -75,4 +76,15 @@ internal class SkontoInvoiceHighlightsExtractor {
             "skontoDueDateCalculated"
         ) ?: throw NoSuchElementException("Skonto data for `DueDate` is missing")
 
+    private fun extractSkontoDuePeriod(
+        skontoDiscountMap: Map<String, GiniCaptureSpecificExtraction>
+    ): GiniCaptureSpecificExtraction? =
+        skontoDiscountMap.extractDataByKeys(
+            "skontoDuePeriod",
+            "skontoDuePeriodCalculated"
+        )
+
 }
+
+private fun Map<String, GiniCaptureSpecificExtraction>.extractDataByKeys(vararg keys: String) =
+    keys.firstNotNullOfOrNull { this[it] }

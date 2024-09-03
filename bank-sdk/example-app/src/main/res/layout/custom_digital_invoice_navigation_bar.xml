@@ -44,6 +44,34 @@
         app:layout_constraintTop_toBottomOf="@id/total_label"
         tools:text="€242.99" />
 
+    <TextView
+        android:id="@+id/skonto_saved_amount"
+        style="@style/GiniCaptureTheme.Typography.Caption1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gc_large_24"
+        android:textColor="@color/gc_dark_01"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gross_price_total"
+        tools:text="Save 0,55 EUR" />
+
+    <TextView
+        android:id="@+id/skonto_discount_label"
+        style="@style/GiniCaptureTheme.Typography.Caption1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/gc_large_24"
+        android:paddingHorizontal="@dimen/gc_medium"
+        android:paddingVertical="@dimen/gc_small"
+        android:textColor="@color/gc_dark_01"
+        app:layout_constraintBaseline_toBaselineOf="@+id/total_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toEndOf="@+id/total_label"
+        tools:text="3% Skonto discount " />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/gbs_pay"
         style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
