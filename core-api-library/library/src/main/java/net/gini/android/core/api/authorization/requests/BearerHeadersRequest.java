@@ -59,7 +59,7 @@ public class BearerHeadersRequest extends JsonObjectRequest {
         try {
             final Map<String, String> headersMap = new HashMap<>();
             for (Map.Entry<String, String> entry : Objects.requireNonNull(response.headers).entrySet()) {
-                headersMap.put(entry.getKey(), entry.getValue().toLowerCase());
+                headersMap.put(entry.getKey().toLowerCase(), entry.getValue().toLowerCase());
             }
             final JSONObject jsonObject = new JSONObject(headersMap);
             return Response.success(jsonObject, HttpHeaderParser.parseCacheHeaders(response));
