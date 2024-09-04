@@ -1,4 +1,4 @@
-name: Release Merchant SDK
+name: Publish Merchant SDK Example App QA Build to App Center
 
 on:
   workflow_dispatch:
