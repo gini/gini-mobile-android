@@ -3,6 +3,11 @@ name: Release Health SDK
 on:
   workflow_dispatch:
   push:
+    paths:
+      - 'health-sdk/**'
+      - 'health-api-library/**'
+      - 'core-api-library/**'
+      - 'gradle/**'
 
 jobs:
   check:

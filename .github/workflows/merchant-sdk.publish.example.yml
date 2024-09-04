@@ -3,6 +3,11 @@ name: Release Merchant SDK
 on:
   workflow_dispatch:
   push:
+    paths:
+      - 'merchant-sdk/**'
+      - 'health-api-library/**'
+      - 'core-api-library/**'
+      - 'gradle/**'
 
 jobs:
   check:
