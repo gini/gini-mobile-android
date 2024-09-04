@@ -1,0 +1,62 @@
+name: Release Health SDK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'health-sdk/**'
+      - 'health-api-library/**'
+      - 'core-api-library/**'
+      - 'gradle/**'
+
+jobs:
+  check:
+    uses: ./.github/workflows/health-sdk.check.yml
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
+        
+  publish_to_app_center:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2.0'
+          bundler-cache: true
+
+      - name: build release example app for QA
+        run: >
+          ./gradlew health-sdk:example-app:assembleQaRelease
+          -PclientId="gini-mobile-test" 
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+          -PreleaseKeystoreFile="health_sdk_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="health_sdk_example"
+          -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'      
+
+      - name: Install appcenter-cli
+        run: >
+          npm install -g appcenter-cli
+        
+      - name: Distribute Health-sdk example apk to App Center
+        uses: akiojin/appcenter-distribute-github-action@v1.4.11
+        with:
+          token: ${{ secrets.GINI_HEALTH_SDK_EXAMPLE_APPCENTER_API_TOKEN }}
+          path: health-sdk/example-app/build/outputs/apk/qa/release/example-app-qa-release.apk
+          app: Gini-Team-Organization/Gini-Health-SDK-Example
+          group: 'Internal'
+          release_notes: |
+            ${{ format('{{ {0} {1} }}', github.ref, github.sha) }}
+            ${{ github.event.head_commit.message }}
