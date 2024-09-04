@@ -1,4 +1,4 @@
-name: Release Bank SDK
+name: Publish Bank SDK Example App QA Build to App Center
 
 on:
   workflow_dispatch:
