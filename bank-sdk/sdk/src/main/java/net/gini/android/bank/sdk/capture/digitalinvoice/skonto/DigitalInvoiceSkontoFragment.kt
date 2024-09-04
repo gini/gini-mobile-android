@@ -355,7 +355,8 @@ private fun ScreenReadyState(
 
         if (state.edgeCaseInfoDialogVisible) {
             val text = when (state.edgeCase) {
-                SkontoEdgeCase.PayByCashOnly ->
+                SkontoEdgeCase.PayByCashOnly,
+                SkontoEdgeCase.PayByCashToday ->
                     stringResource(id = R.string.gbs_skonto_section_info_dialog_pay_cash_message)
 
                 SkontoEdgeCase.SkontoExpired ->
@@ -858,7 +859,7 @@ private fun ScreenReadyStatePreview() {
 
 private fun Float.formatAsDiscountPercentage(): String {
     val value = BigDecimal(this.toString()).setScale(2, RoundingMode.HALF_UP)
-    return "${value.toString().trimEnd('0').trimEnd('.')} %"
+    return "${value.toString().trimEnd('0').trimEnd('.')}%"
 }
 
 private val previewState = DigitalInvoiceSkontoScreenState.Ready(

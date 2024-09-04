@@ -4,4 +4,5 @@ internal sealed class SkontoEdgeCase {
     object SkontoLastDay : SkontoEdgeCase()
     object PayByCashOnly : SkontoEdgeCase()
     object SkontoExpired : SkontoEdgeCase()
+    object PayByCashToday : SkontoEdgeCase()
 }
