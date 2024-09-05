@@ -86,9 +86,6 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
 
         feedbackCompound["payment"] = CompoundExtraction("payment", singletonList(feedbackPayment))
 
-        // All compound extractions are correct, that means we have nothing to correct and will only send positive feedback
-        // we should only send feedback for extractions we have seen and accepted
-        feedbackCompound["line_items"] = compoundExtractions["line_items"]!!
         val sendFeedback =
             giniCoreAPI.documentTaskManager.sendFeedbackForExtractions(document, feedbackSpecific, feedbackCompound)
         sendFeedback.waitForCompletion()
