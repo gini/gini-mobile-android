@@ -33,7 +33,14 @@ end
 # Creates a release tag with this format: `<project-id>;<version>`.
 #
 def git_create_release_tag(project_id, version)
-  git_create_tag("#{project_id};#{version}")
+  git_create_tag(get_release_tag_name(project_id, version))
+end
+
+##
+# Returns a release tag name with this format: `<project-id>;<version>`.
+#
+def get_release_tag_name(project_id, version)
+  "#{project_id};#{version}"
 end
 
 ##
@@ -47,7 +54,7 @@ end
 # Pushes the release tag of this format: `<project-id>;<version>`.
 #
 def git_push_release_tag(project_id, version)
-  git_push_tag("#{project_id};#{version}")
+  git_push_tag(get_release_tag_name(project_id, version))
 end
 
 ##
@@ -65,6 +72,16 @@ def get_latest_release_tag(project_id)
 end
 
 ##
+# Retrieve the latest release tag for the project id and version.
+#
+# The returned release tag can also be a documentation release tag.
+#
+def get_latest_release_tag_for_version(project_id, version)
+  release_tag_name = get_release_tag_name(project_id, version)
+  sh("git tag --list '#{release_tag_name}*' --sort=taggerdate", log: false).split.last
+end
+
+##
 # Retrieve all release tags for the project id.
 #
 def get_release_tags(project_id)
@@ -72,11 +89,10 @@ def get_release_tags(project_id)
 end
 
 ##
-# Returns `true` if the folder contains changes since the last release tag of the project.
+# Returns `true` if the folder contains changes since the given release tag of the project.
 #
-def did_folder_change_since_last_release(project_id, folder, ui)
-  latest_release_tag = get_latest_release_tag(project_id)
-  sh("git diff --quiet HEAD '#{latest_release_tag}' #{folder}", log: false) do |status, result|
+def did_folder_change_since_release_tag(release_tag, folder, ui)
+  sh("git diff --quiet HEAD '#{release_tag}' #{folder}", log: false) do |status, result|
       case status.exitstatus
       when 0
         false
