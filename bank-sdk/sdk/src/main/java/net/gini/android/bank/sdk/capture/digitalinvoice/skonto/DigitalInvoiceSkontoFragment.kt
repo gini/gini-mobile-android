@@ -535,7 +535,7 @@ private fun SkontoSection(
                     style = GiniTheme.typography.subtitle1,
                     color = colors.titleTextColor,
                 )
-                Box(modifier = modifier.weight(0.1f)) {
+                Box {
                     androidx.compose.animation.AnimatedVisibility(visible = isActive) {
                         Text(
                             text = stringResource(id = R.string.gbs_skonto_section_discount_hint_label_enabled),
@@ -544,6 +544,8 @@ private fun SkontoSection(
                         )
                     }
                 }
+
+                Spacer(Modifier.weight(1f))
                 GiniSwitch(
                     checked = isActive,
                     onCheckedChange = onActiveChange,
