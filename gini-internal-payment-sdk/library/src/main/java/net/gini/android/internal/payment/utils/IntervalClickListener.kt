@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.util
+package net.gini.android.internal.payment.utils
 
 import android.view.View
 
@@ -11,7 +11,7 @@ import android.view.View
  * @param click
  * @suppress
  */
-internal class IntervalClickListener(
+class IntervalClickListener(
     private val click: View.OnClickListener?
 ) : View.OnClickListener, IntervalClickListenerHelper() {
 

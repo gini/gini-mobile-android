@@ -24,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import net.gini.android.internal.payment.api.model.PaymentDetails
+import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
@@ -37,7 +38,6 @@ import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomShee
 import net.gini.android.internal.payment.utils.extensions.startSharePdfIntent
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.databinding.GmsFragmentMerchantBinding
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet

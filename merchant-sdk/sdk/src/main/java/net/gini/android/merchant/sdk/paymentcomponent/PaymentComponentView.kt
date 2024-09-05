@@ -243,10 +243,9 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
     }
 
     private fun initViews() {
-        selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gmsSelectBankButton else binding.gmsSingleRowBankSelection.gmsSelectBankButton
+        selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gpsSelectBankButton else binding.gmsSingleRowBankSelection.gmsSelectBankButton
         payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsPayInvoiceButtonTwoRows else binding.gmsSingleRowBankSelection.gmsPayInvoiceButton
-        paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gmsPaymentProviderAppIconHolder else binding.gmsSingleRowBankSelection.gmsPaymentProviderAppIconHolder
-
+        paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gmsSingleRowBankSelection.gmsPaymentProviderAppIconHolder
         payInvoiceButton.text = if (reviewFragmentWillBeShown) resources.getString(R.string.gms_continue_to_overview) else resources.getString(R.string.gms_pay_button)
     }
 

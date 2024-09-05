@@ -12,7 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
+import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState

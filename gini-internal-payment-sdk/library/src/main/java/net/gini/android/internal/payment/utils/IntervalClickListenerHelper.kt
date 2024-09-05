@@ -1,11 +1,11 @@
-package net.gini.android.merchant.sdk.util
+package net.gini.android.internal.payment.utils
 
 /**
  * Internal use only.
  *
  * @suppress
  */
-internal abstract class IntervalClickListenerHelper {
+abstract class IntervalClickListenerHelper {
     //Override if needed otherwise, keep the default values
     open var isEnabled: Boolean = true
     open var interval: Long = 500L

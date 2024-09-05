@@ -5,6 +5,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import net.gini.android.internal.payment.utils.IntervalClickListener
 
 internal fun View.getLayoutInflaterWithGiniPaymentTheme(): LayoutInflater =
     LayoutInflater.from(context.wrappedWithGiniPaymentTheme())
@@ -19,4 +20,8 @@ internal fun View.hideKeyboard() {
             imm.hideSoftInputFromWindow(windowToken, 0)
         }
     }
+}
+
+fun View.setIntervalClickListener(click: View.OnClickListener?) {
+    setOnClickListener(IntervalClickListener(click))
 }

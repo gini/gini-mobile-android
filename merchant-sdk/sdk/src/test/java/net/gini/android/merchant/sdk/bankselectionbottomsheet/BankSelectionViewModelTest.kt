@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.api.models.PaymentProvider
-import net.gini.android.merchant.sdk.bankselection.BankSelectionViewModel
-import net.gini.android.merchant.sdk.bankselection.PaymentProviderAppsListState
+import net.gini.android.internal.payment.bankselection.BankSelectionViewModel
+import net.gini.android.internal.payment.bankselection.PaymentProviderAppsListState
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
@@ -199,7 +199,8 @@ class BankSelectionViewModelTest {
 
             // Then
             val paymentAppProviderSelectedValidation = awaitItem()
-            assertThat(paymentAppProviderSelectedValidation).isInstanceOf(PaymentProviderAppsListState.Success::class.java)
+            assertThat(paymentAppProviderSelectedValidation).isInstanceOf(
+                PaymentProviderAppsListState.Success::class.java)
 
             val selectedPaymentProvidersList = (paymentAppProviderSelectedValidation as PaymentProviderAppsListState.Success).paymentProviderAppsList.filter { it.isSelected }
             assertThat(selectedPaymentProvidersList.size).isEqualTo(1)
@@ -238,7 +239,8 @@ class BankSelectionViewModelTest {
 
         viewModel.paymentProviderAppsListFlow.test {
             val validateNoPaymentProviderAppInstalled = awaitItem()
-            assertThat(validateNoPaymentProviderAppInstalled).isInstanceOf(PaymentProviderAppsListState.Success::class.java)
+            assertThat(validateNoPaymentProviderAppInstalled).isInstanceOf(
+                PaymentProviderAppsListState.Success::class.java)
             assertThat((validateNoPaymentProviderAppInstalled as PaymentProviderAppsListState.Success).paymentProviderAppsList).isNotEmpty()
             assertThat(validateNoPaymentProviderAppInstalled.paymentProviderAppsList.filter { it.paymentProviderApp.isInstalled() }).isEmpty()
 
@@ -249,7 +251,8 @@ class BankSelectionViewModelTest {
 
             // Then
             val validateOnePaymentProviderAppInstalled = awaitItem()
-            assertThat(validateOnePaymentProviderAppInstalled).isInstanceOf(PaymentProviderAppsListState.Success::class.java)
+            assertThat(validateOnePaymentProviderAppInstalled).isInstanceOf(
+                PaymentProviderAppsListState.Success::class.java)
             assertThat((validateOnePaymentProviderAppInstalled as PaymentProviderAppsListState.Success).paymentProviderAppsList).isNotEmpty()
             assertThat(validateOnePaymentProviderAppInstalled.paymentProviderAppsList.filter { it.paymentProviderApp.isInstalled() }).isNotEmpty()
         }

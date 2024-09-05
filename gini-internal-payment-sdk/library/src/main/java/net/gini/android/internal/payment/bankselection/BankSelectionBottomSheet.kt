@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.bankselection
+package net.gini.android.internal.payment.bankselection
 
 import android.app.Dialog
 import android.content.DialogInterface
@@ -18,55 +18,59 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.R
+import net.gini.android.internal.payment.databinding.GpsBottomSheetBankSelectionBinding
+import net.gini.android.internal.payment.databinding.GpsItemPaymentProviderAppBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
-import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.databinding.GmsBottomSheetBankSelectionBinding
-import net.gini.android.merchant.sdk.databinding.GmsItemPaymentProviderAppBinding
-import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
-import net.gini.android.merchant.sdk.util.extensions.setBackListener
-import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
-import net.gini.android.merchant.sdk.util.setIntervalClickListener
-import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.setBackListener
+import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
+import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
 import org.slf4j.LoggerFactory
 
 /**
  * The [BankSelectionBottomSheet] displays a list of available banks for the user to choose from. If a banking app is not
  * installed it will also display its Play Store link.
  */
-internal class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
+class BankSelectionBottomSheet private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
     GpsBottomSheetDialogFragment() {
 
     constructor() : this(null)
 
-    private var binding: GmsBottomSheetBankSelectionBinding by autoCleared()
-    private val viewModel: BankSelectionViewModel by viewModels { BankSelectionViewModel.Factory(paymentComponent, backListener) }
+    private var binding: GpsBottomSheetBankSelectionBinding by autoCleared()
+    private val viewModel: BankSelectionViewModel by viewModels {
+        BankSelectionViewModel.Factory(
+            paymentComponent,
+            backListener
+        )
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = GmsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
+        binding = GpsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
 
-        binding.gmsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
-        binding.gmsPaymentProviderAppsList.adapter =
+        binding.gpsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
+        binding.gpsPaymentProviderAppsList.adapter =
             PaymentProviderAppsAdapter(emptyList(), object : PaymentProviderAppsAdapter.OnItemClickListener {
                 override fun onItemClick(paymentProviderApp: PaymentProviderApp) {
                     LOG.debug("Selected payment provider app: {}", paymentProviderApp.name)
 
                     viewModel.setSelectedPaymentProviderApp(paymentProviderApp)
                     this@BankSelectionBottomSheet.dismiss()
-                    (this@BankSelectionBottomSheet.parentFragment as PaymentFragment).handleBackFlow()
+                    viewModel.backListener?.backCalled()
                 }
             })
 
-        binding.gmsCloseButton.setOnClickListener {
+        binding.gpsCloseButton.setOnClickListener {
             viewModel.backListener?.backCalled()
             dismiss()
         }
 
-        binding.gmsMoreInformationLabel.apply {
-            paintFlags = binding.gmsMoreInformationLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        binding.gpsMoreInformationLabel.apply {
+            paintFlags = binding.gpsMoreInformationLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
                 viewModel.paymentComponent?.listener?.onMoreInformationClicked()
                 dismiss()
@@ -91,7 +95,7 @@ internal class BankSelectionBottomSheet private constructor(private val paymentC
                         PaymentProviderAppsListState.Loading -> {}
 
                         is PaymentProviderAppsListState.Success -> {
-                            (binding.gmsPaymentProviderAppsList.adapter as PaymentProviderAppsAdapter).apply {
+                            (binding.gpsPaymentProviderAppsList.adapter as PaymentProviderAppsAdapter).apply {
                                 dataSet = paymentProviderAppsListState.paymentProviderAppsList
                                 notifyDataSetChanged()
                             }
@@ -140,13 +144,13 @@ internal class PaymentProviderAppsAdapter(
     val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PaymentProviderAppsAdapter.ViewHolder>() {
 
-    class ViewHolder(binding: GmsItemPaymentProviderAppBinding, onClickListener: OnClickListener) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: GpsItemPaymentProviderAppBinding, onClickListener: OnClickListener) : RecyclerView.ViewHolder(binding.root) {
         val button: Button
         val iconView: ShapeableImageView
 
         init {
-            iconView = binding.gmsSelectorLayout.gmsPaymentProviderAppIconHolder.gpsPaymentProviderIcon
-            button = binding.gmsSelectorLayout.gmsSelectBankButton
+            iconView = binding.gpsSelectorLayout.gpsPaymentProviderAppIconHolder.gpsPaymentProviderIcon
+            button = binding.gpsSelectorLayout.gpsSelectBankButton
             button.setIntervalClickListener { onClickListener.onClick(adapterPosition) }
         }
 
@@ -156,7 +160,7 @@ internal class PaymentProviderAppsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = GmsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniMerchantTheme(), parent, false)
+        val view = GpsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniPaymentTheme(), parent, false)
         val viewHolder = ViewHolder(view, object : ViewHolder.OnClickListener {
             override fun onClick(adapterPosition: Int) {
                 onItemClickListener.onItemClick(dataSet[adapterPosition].paymentProviderApp)
@@ -167,14 +171,14 @@ internal class PaymentProviderAppsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val paymentProviderAppListItem = dataSet[position]
-        holder.itemView.context.wrappedWithGiniMerchantTheme().let { context ->
+        holder.itemView.context.wrappedWithGiniPaymentTheme().let { context ->
             holder.button.text = paymentProviderAppListItem.paymentProviderApp.name
             holder.iconView.setImageDrawable(paymentProviderAppListItem.paymentProviderApp.icon)
             holder.itemView.isSelected = paymentProviderAppListItem.isSelected
             holder.button.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
-                if (paymentProviderAppListItem.isSelected) ContextCompat.getDrawable(context, R.drawable.gms_checkmark) else null,
+                if (paymentProviderAppListItem.isSelected) ContextCompat.getDrawable(context, R.drawable.gps_checkmark) else null,
                 null
             )
         }

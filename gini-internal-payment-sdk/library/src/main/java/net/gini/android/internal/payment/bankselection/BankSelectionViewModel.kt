@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.bankselection
+package net.gini.android.internal.payment.bankselection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -71,7 +71,8 @@ internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?, v
                         }
                     }
 
-                    _paymentProviderAppsListFlow.value = PaymentProviderAppsListState.Success(paymentProviderAppsList)
+                    _paymentProviderAppsListFlow.value =
+                        PaymentProviderAppsListState.Success(paymentProviderAppsList)
                 } else if (paymentProviderAppsState is PaymentProviderAppsState.Error) {
                     LOG.error("Error loading payment provider apps", paymentProviderAppsState.throwable)
                     _paymentProviderAppsListFlow.value =

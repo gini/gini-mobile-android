@@ -2,16 +2,16 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true">
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/gms_small"/>
+            <corners android:radius="@dimen/gps_small"/>
             <solid android:color="?attr/colorSurface"/>
-            <stroke android:color="?attr/colorPrimary" android:width="@dimen/gms_small_2"/>
+            <stroke android:color="?attr/colorPrimary" android:width="@dimen/gps_small_2"/>
         </shape>
     </item>
     <item android:state_selected="false">
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/gms_small"/>
+            <corners android:radius="@dimen/gps_small"/>
             <solid android:color="?attr/colorSurface"/>
-            <stroke android:color="@color/gms_payment_provider_border_color" android:width="@dimen/gms_small_2"/>
+            <stroke android:color="@color/gps_payment_provider_border_color" android:width="@dimen/gps_small_2"/>
         </shape>
     </item>
 </selector>

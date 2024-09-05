@@ -2,12 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/gms_medium"
-    android:background="@drawable/gms_selectable_payment_provider_background"
+    android:layout_marginBottom="@dimen/gps_medium"
+    android:background="@drawable/gps_selectable_payment_provider_background"
     >
 
-    <include layout="@layout/gms_payment_provider_picker_button"
-        android:id="@+id/gms_selector_layout"
+    <include layout="@layout/gps_payment_provider_picker_button"
+        android:id="@+id/gps_selector_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@null"

@@ -160,8 +160,8 @@
     <ID>NewLineAtEndOfFile:IbanValidator.kt$net.gini.android.merchant.sdk.util.IbanValidator.kt</ID>
     <ID>NewLineAtEndOfFile:InstallAppBottomSheet.kt$net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet.kt</ID>
     <ID>NewLineAtEndOfFile:InstallAppViewModel.kt$net.gini.android.merchant.sdk.review.installApp.InstallAppViewModel.kt</ID>
-    <ID>NewLineAtEndOfFile:IntervalClickListener.kt$net.gini.android.merchant.sdk.util.IntervalClickListener.kt</ID>
-    <ID>NewLineAtEndOfFile:IntervalClickListenerHelper.kt$net.gini.android.merchant.sdk.util.IntervalClickListenerHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListener.kt$net.gini.android.internal.payment.utils.IntervalClickListener.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListenerHelper.kt$net.gini.android.internal.payment.utils.IntervalClickListenerHelper.kt</ID>
     <ID>NewLineAtEndOfFile:MerchantSDKFileProvider.kt$net.gini.android.internal.payment.utils.MerchantSDKFileProvider.kt</ID>
     <ID>NewLineAtEndOfFile:MoreInformationFragment.kt$net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment.kt</ID>
     <ID>NewLineAtEndOfFile:MoreInformationViewModel.kt$net.gini.android.merchant.sdk.moreinformation.MoreInformationViewModel.kt</ID>
