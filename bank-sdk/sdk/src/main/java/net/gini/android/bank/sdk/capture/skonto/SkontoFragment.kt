@@ -521,7 +521,7 @@ private fun InvoicePreviewSection(
             Icon(
                 painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.KeyboardArrowRight),
                 contentDescription = null,
-                tint = colorScheme.arrowTint.copy(alpha = 0.3f)
+                tint = colorScheme.arrowTint
             )
         }
 
