@@ -11,10 +11,8 @@ import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoDocumentPa
 import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoFileNetworkService
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
-import net.gini.android.capture.Amount
-import net.gini.android.capture.AmountCurrency
-import java.math.BigDecimal
-import java.time.LocalDate
+import net.gini.android.capture.internal.network.model.DocumentLayout
+import net.gini.android.capture.internal.network.model.DocumentPage
 
 internal class SkontoInvoiceFragmentViewModel(
     private val documentId: String?,
@@ -43,17 +41,29 @@ internal class SkontoInvoiceFragmentViewModel(
     private fun init() = viewModelScope.launch {
         requireNotNull(documentId)
 
-        val layout = skontoDocumentLayoutNetworkService.getLayout(documentId)
-        val pages = skontoDocumentPagesNetworkService.getDocumentPages(documentId)
+        val layout: DocumentLayout? =
+            try {
+                skontoDocumentLayoutNetworkService.getLayout(documentId)
+            } catch (e: Exception) {
+                null
+            }
 
-        val bitmaps = pages.map { documentPage ->
+        val pages: List<DocumentPage>? =
+            try {
+                skontoDocumentPagesNetworkService.getDocumentPages(documentId)
+            } catch (e: Exception) {
+                null
+            }
+
+
+        val bitmaps = pages?.map { documentPage ->
             val bitmapBytes = skontoFileNetworkService.getFile(documentPage.getSmallestImage()!!)
             val bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.size)
             val pageHighlights = skontoInvoiceHighlights.find {
                 it.getExistBoxes().all { it.pageNumber == documentPage.pageNumber }
             }
 
-            val skontoPageLayout = layout.pages.find { documentPage.pageNumber == it.number }
+            val skontoPageLayout = layout?.pages?.find { documentPage.pageNumber == it.number }
 
 
             pageHighlights?.let {
@@ -67,11 +77,13 @@ internal class SkontoInvoiceFragmentViewModel(
         }
 
         val currentState = stateFlow.value
-        stateFlow.emit(
-            currentState.copy(
-                isLoading = false,
-                images = bitmaps
+        if (bitmaps != null) {
+            stateFlow.emit(
+                currentState.copy(
+                    isLoading = false,
+                    images = bitmaps
+                )
             )
-        )
+        }
     }
 }
