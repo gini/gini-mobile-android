@@ -7,12 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.Resource
-import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.paymentprovider.getPaymentProviderApps
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.getPaymentProviderApps
 import org.slf4j.LoggerFactory
 
 /**
@@ -21,7 +19,7 @@ import org.slf4j.LoggerFactory
  *
  * It requires a [GiniMerchant] instance and a [Context] (application or activity) to be created.
  */
-internal class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val paymentModule: GiniInternalPaymentModule) {
+internal class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val paymentModule: GiniInternalPaymentModule, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -51,11 +49,17 @@ internal class PaymentComponent(@get:VisibleForTesting internal val context: Con
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
+    internal val giniHealthLanguage = GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()
+
     /**
      * A listener for the payment component. It exposes the user interactions with all of the [PaymentComponentView]s.
      * See [Listener] for the methods you need to implement.
      */
     var listener: Listener? = null
+
+    var paymentComponentConfiguration: PaymentComponentConfiguration
+        get() = configuration
+        set(value) { configuration = value}
 
     /**
      * Holds information about which layout to use for the bank picker: single line or two lines.
@@ -80,7 +84,7 @@ internal class PaymentComponent(@get:VisibleForTesting internal val context: Con
         LOG.debug("Loading payment providers")
         _paymentProviderAppsFlow.value = PaymentProviderAppsState.Loading
         _paymentProviderAppsFlow.value = try {
-            when (val paymentProvidersResource = healthAPI.documentManager.getPaymentProviders()) {
+            when (val paymentProvidersResource = paymentModule.giniHealthAPI.documentManager.getPaymentProviders()) {
                 is Resource.Cancelled -> {
                     LOG.debug("Loading payment providers cancelled")
                     _initialStatePaymentProviderAppsFlow.value = PaymentProviderAppsState.Error(Exception("Cancelled"))

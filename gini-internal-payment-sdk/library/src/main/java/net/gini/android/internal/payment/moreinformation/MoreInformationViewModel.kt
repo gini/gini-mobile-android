@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import org.slf4j.LoggerFactory
 import java.util.Locale
 
@@ -75,5 +76,4 @@ internal class MoreInformationViewModel(val paymentComponent: PaymentComponent?)
     companion object {
         private val LOG = LoggerFactory.getLogger(MoreInformationViewModel::class.java)
     }
-
 }
