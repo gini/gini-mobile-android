@@ -458,7 +458,7 @@ private fun YourInvoiceScanSection(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .padding(8.dp)
+
                     .background(colorScheme.iconBackgroundColor, shape = RoundedCornerShape(4.dp))
             ) {
                 Icon(
@@ -492,7 +492,7 @@ private fun YourInvoiceScanSection(
             Icon(
                 painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.KeyboardArrowRight),
                 contentDescription = null,
-                tint = colorScheme.arrowTint.copy(alpha = 0.3f)
+                tint = colorScheme.arrowTint
             )
         }
 
@@ -597,7 +597,9 @@ private fun SkontoSection(
 
             InfoBanner(
                 text = infoBannerText,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp),
                 colors = when (edgeCase) {
                     SkontoEdgeCase.SkontoLastDay,
                     SkontoEdgeCase.PayByCashOnly -> colors.warningInfoBannerColors
@@ -773,7 +775,7 @@ private fun InfoBanner(
         )
 
         Text(
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(top = 12.dp, bottom = 12.dp, end = 16.dp),
             text = text,
             style = GiniTheme.typography.subtitle2,
             color = colors.textColor,

@@ -43,12 +43,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -489,7 +487,6 @@ private fun InvoicePreviewSection(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .padding(8.dp)
                     .background(colorScheme.iconBackgroundColor, shape = RoundedCornerShape(4.dp))
             ) {
                 Icon(
@@ -579,12 +576,12 @@ private fun SkontoSection(
 
                 Spacer(Modifier.weight(1f))
 
+
                 GiniSwitch(
                     checked = isActive,
                     onCheckedChange = onActiveChange,
                 )
             }
-
             val animatedDiscountAmount by animateFloatAsState(
                 targetValue = infoDiscountValue.toFloat(),
                 label = "discountAmount"
@@ -636,7 +633,9 @@ private fun SkontoSection(
 
             InfoBanner(
                 text = infoBannerText,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp),
                 colors = when (edgeCase) {
                     SkontoEdgeCase.SkontoLastDay,
                     SkontoEdgeCase.PayByCashToday,
@@ -762,7 +761,7 @@ private fun InfoBanner(
         )
 
         Text(
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(top = 12.dp, bottom = 12.dp, end = 16.dp),
             text = text,
             style = GiniTheme.typography.subtitle2,
             color = colors.textColor,
