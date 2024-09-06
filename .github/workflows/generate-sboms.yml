@@ -5,6 +5,7 @@ name: Generate SBOMs for all projects
 #       https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/using-the-dependency-submission-api
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   generate-sbom:
@@ -61,3 +62,68 @@ jobs:
         with:
           name: CycloneDX SBOM JSONs
           path: sbom-jsons.zip
+
+      # Step 2: Loop over each SBOM file and submit it
+      - name: Submit SBOMs to GitHub Dependency Graph
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_PASSWORD }}
+        run: |
+          sha=$(git rev-parse HEAD)
+          timestamp=$(date +%s)
+          correlatorName="${timestamp}_${GITHUB_WORKFLOW}"
+          json_sboms=(
+            "core-api-library/library/build/reports/gini-internal-core-api-lib-sbom.json"
+            "health-api-library/library/build/reports/gini-health-api-lib-sbom.json"
+            "bank-api-library/library/build/reports/gini-bank-api-lib-sbom.json"
+            "health-sdk/sdk/build/reports/gini-health-sdk-sbom.json"
+            "capture-sdk/sdk/build/reports/gini-capture-sdk-sbom.json"
+            "capture-sdk/default-network/build/reports/gini-capture-sdk-default-network-sbom.json"
+            "bank-sdk/sdk/build/reports/gini-bank-sdk-sbom.json"
+          )
+          echo "Submitting $sbom to GitHub Dependency Graph ${GITHUB_RUN_ID}"
+          manifests_json=""
+          for sbom in "${json_sboms[@]}"; do
+            sbom_name=$(basename "$sbom")
+            manifests_json+=$'
+              "'"$sbom_name"'": {
+              "name": "'"$sbom_name"'",
+              "file": {
+                "source_location": "'"$sbom"'"
+              }
+            },'
+          done
+          
+          manifests_json="${manifests_json%?${manifests_json##*,}}"
+          payload=$(cat <<EOF 
+          {
+              "version": 5,
+              "sha": "$sha",
+              "ref": "refs/heads/${GITHUB_REF#refs/heads/}",
+              "job": {
+                "correlator": "$correlatorName",
+                "id": "${GITHUB_RUN_ID}"
+              },
+              "detector": {
+                "name": "CycloneDX",
+                "version": "1.4",
+                "url": "https://cyclonedx.org"
+              },
+              "scanned": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+              "manifests": {
+                 $manifests_json
+               }
+            }
+          EOF
+          )
+          echo "Payload info   $payload"
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/dependency-graph/snapshots \
+            -d "$payload"
+
+      # Step 3: Confirm Submission
+      - name: Confirm SBOM Submission
+        run: echo "SBOM submitted successfully"
