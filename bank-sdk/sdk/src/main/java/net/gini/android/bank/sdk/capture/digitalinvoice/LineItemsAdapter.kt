@@ -344,7 +344,12 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             allData: List<DigitalInvoiceSkontoListItem>?,
             dataIndex: Int?
         ) = with(binding) {
-            gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
+            if (data.enabled) {
+                gbsSkontoAmount.visibility = View.VISIBLE
+                gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
+            } else {
+                gbsSkontoAmount.visibility = View.GONE
+            }
             gbsMessage.text = data.message
             gbsEnableSwitch.isChecked = data.enabled
             gbsEditButton.setOnClickListener {
