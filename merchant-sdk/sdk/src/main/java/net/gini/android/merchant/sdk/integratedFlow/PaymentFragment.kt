@@ -41,7 +41,7 @@ import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsFragmentMerchantBinding
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet
-import net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet
+import net.gini.android.internal.payment.review.reviewBottomSheet.ReviewBottomSheet
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.extensions.add
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
@@ -294,7 +294,6 @@ class PaymentFragment private constructor(
     internal fun showReviewBottomDialog() {
         viewModel.addToBackStack(DisplayedScreen.ReviewBottomSheet)
         val reviewBottomSheet = ReviewBottomSheet.newInstance(
-            giniMerchant = viewModel.giniMerchant,
             backListener = viewModel,
             configuration = ReviewConfiguration(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
@@ -307,7 +306,8 @@ class PaymentFragment private constructor(
                     viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
                 }
             },
-            paymentComponent = viewModel.paymentComponent
+            giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
+            paymentComponent = viewModel.paymentComponent,
         )
         reviewBottomSheet.show(childFragmentManager, ReviewBottomSheet::class.java.name)
     }

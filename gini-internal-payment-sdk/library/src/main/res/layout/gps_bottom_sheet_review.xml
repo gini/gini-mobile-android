@@ -6,11 +6,11 @@
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         android:id="@+id/drag_handle"
-        style="@style/GiniMerchantTheme.Widget.BottomSheet.DragHandle"
+        style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/gms_medium"
+        android:layout_marginTop="@dimen/gps_medium"
         />
 
     // In the Figma design the height of the drag handle component is 36dp
@@ -19,9 +19,9 @@
     <net.gini.android.internal.payment.review.reviewComponent.ReviewView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/gms_review_layout"
-        android:layout_marginHorizontal="@dimen/gms_large"
+        android:id="@+id/gps_review_layout"
+        android:layout_marginHorizontal="@dimen/gps_large"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/gms_large_36"/>
+        android:layout_marginTop="@dimen/gps_large_36"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
