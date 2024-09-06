@@ -16,13 +16,21 @@ import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.R
+import net.gini.android.internal.payment.databinding.GpsFragmentPaymentMoreInformationBinding
+import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.util.autoCleared
+import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniHealthThemeAndLocale
+import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.util.extensions.getLocaleStringResource
 import java.util.Locale
 
 /**
@@ -33,7 +41,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
     Fragment() {
     constructor() : this(paymentComponent = null)
 
-    private var binding: gpsFragmentPaymentMoreInformationBinding by autoCleared()
+    private var binding: GpsFragmentPaymentMoreInformationBinding by autoCleared()
     private val viewModel: MoreInformationViewModel by viewModels {
         MoreInformationViewModel.Factory(
             paymentComponent
@@ -41,7 +49,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
     }
 
     private fun getLocaleStringResource(resourceId: Int): String {
-        return getLocaleStringResource(resourceId, viewModel.paymentComponent?.giniHealth)
+        return getLocaleStringResource(resourceId, viewModel.paymentComponent?.paymentModule)
     }
 
     @VisibleForTesting
@@ -67,7 +75,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         savedInstanceState: Bundle?
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        binding = gpsFragmentPaymentMoreInformationBinding.inflate(inflater, container, false)
+        binding = GpsFragmentPaymentMoreInformationBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -190,8 +198,8 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
         RecyclerView.Adapter<PaymentProvidersIconsAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = gpsPaymentProviderIconHolderBinding.inflate(
-                parent.getLayoutInflaterWithGiniHealthThemeAndLocale(locale),
+            val view = GpsPaymentProviderIconHolderBinding.inflate(
+                parent.getLayoutInflaterWithGiniPaymentThemeAndLocale(locale),
                 parent,
                 false
             )
@@ -206,7 +214,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
             holder.binding.gpsPaymentProviderIcon.contentDescription = dataSet[position]?.paymentProvider?.name + " ${context.getString(R.string.gps_payment_provider_logo_content_description)}"
         }
 
-        class ViewHolder(val binding: gpsPaymentProviderIconHolderBinding) :
+        class ViewHolder(val binding: GpsPaymentProviderIconHolderBinding) :
             RecyclerView.ViewHolder(binding.root)
     }
 

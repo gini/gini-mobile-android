@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory
  *
  * It requires a [GiniMerchant] instance and a [Context] (application or activity) to be created.
  */
-internal class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val paymentModule: GiniInternalPaymentModule, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
+class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val paymentModule: GiniInternalPaymentModule, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -247,7 +247,7 @@ internal class PaymentComponent(@get:VisibleForTesting internal val context: Con
 /**
  * The states of the payment provider apps loading process.
  */
-internal sealed class PaymentProviderAppsState {
+sealed class PaymentProviderAppsState {
     object Nothing: PaymentProviderAppsState()
     /**
      * The payment provider apps are being loaded.
@@ -268,7 +268,7 @@ internal sealed class PaymentProviderAppsState {
 /**
  * The states of the selected payment provider app.
  */
-internal sealed class SelectedPaymentProviderAppState {
+sealed class SelectedPaymentProviderAppState {
     /**
      * No payment provider app is selected.
      */
@@ -280,7 +280,7 @@ internal sealed class SelectedPaymentProviderAppState {
     class AppSelected(val paymentProviderApp: PaymentProviderApp) : SelectedPaymentProviderAppState()
 }
 
-internal enum class BankPickerRows {
+enum class BankPickerRows {
     SINGLE,
     TWO
 }
