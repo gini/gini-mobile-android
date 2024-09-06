@@ -90,7 +90,6 @@ import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
-import net.gini.android.capture.ui.components.switcher.GiniSwitch
 import net.gini.android.capture.ui.components.textinput.GiniTextInput
 import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInput
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
@@ -343,7 +342,6 @@ private fun ScreenReadyState(
                     dueDate = state.discountDueDate,
                     infoPaymentInDays = state.paymentInDays,
                     infoDiscountValue = state.skontoPercentage,
-                    onActiveChange = onDiscountSectionActiveChange,
                     isActive = state.isSkontoSectionActive,
                     onSkontoAmountChange = onDiscountAmountChange,
                     onDueDateChanged = onDueDateChanged,
@@ -506,7 +504,6 @@ private fun SkontoSection(
     dueDate: LocalDate,
     infoPaymentInDays: Int,
     infoDiscountValue: BigDecimal,
-    onActiveChange: (Boolean) -> Unit,
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
@@ -545,11 +542,6 @@ private fun SkontoSection(
                     }
                 }
 
-                Spacer(Modifier.weight(1f))
-                GiniSwitch(
-                    checked = isActive,
-                    onCheckedChange = onActiveChange,
-                )
             }
 
             val animatedDiscountAmount by animateFloatAsState(
@@ -599,7 +591,7 @@ private fun SkontoSection(
                 text = infoBannerText,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 6.dp),
+                    .padding(top = 12.dp),
                 colors = when (edgeCase) {
                     SkontoEdgeCase.SkontoLastDay,
                     SkontoEdgeCase.PayByCashOnly -> colors.warningInfoBannerColors
