@@ -10,16 +10,16 @@ import androidx.core.view.isInvisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.bank.sdk.R
-import java.util.Collections.emptyList
-import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.*
+import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.Addon
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.LineItem
+import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.SkontoInfo
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
-import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceAddonBinding
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceLineItemBinding
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceSkontoBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.capture.internal.ui.IntervalClickListener
+import java.util.Collections.emptyList
 
 /**
  * Created by Alpar Szotyori on 11.12.2019.
@@ -344,13 +344,22 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             allData: List<DigitalInvoiceSkontoListItem>?,
             dataIndex: Int?
         ) = with(binding) {
+            // amount should be visible if the skonto is enabled
             if (data.enabled) {
                 gbsSkontoAmount.visibility = View.VISIBLE
                 gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
             } else {
                 gbsSkontoAmount.visibility = View.GONE
             }
-            gbsMessage.text = data.message
+
+            // message should be visible if it is an edgeCase or if the skonto is disabled
+            if (data.isEdgeCase || !data.enabled) {
+                gbsMessage.visibility = View.VISIBLE
+                gbsMessage.text = data.message
+            } else {
+                gbsMessage.visibility = View.GONE
+            }
+
             gbsEnableSwitch.isChecked = data.enabled
             gbsEditButton.setOnClickListener {
                 listener?.onSkontoEditClicked(data)

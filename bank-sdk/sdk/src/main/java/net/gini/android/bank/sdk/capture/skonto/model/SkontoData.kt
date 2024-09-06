@@ -3,7 +3,6 @@ package net.gini.android.bank.sdk.capture.skonto.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import net.gini.android.capture.Amount
-import java.io.Serializable
 import java.math.BigDecimal
 import java.time.LocalDate
 
