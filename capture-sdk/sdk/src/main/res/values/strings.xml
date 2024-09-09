@@ -177,4 +177,5 @@
     <string name="gc_date_picker_select">Auswählen</string>
     <string name="gc_date_picker_cancel">Abbrechen</string>
     <!--   endregion -->
+    <string name="gc_detection_error_layout_description">QR-Code scannen ist derzeit nicht verfügbar. Bitte fotografieren Sie stattdessen Ihre Rechnung.</string>
 </resources>

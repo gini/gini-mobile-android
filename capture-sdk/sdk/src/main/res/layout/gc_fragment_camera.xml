@@ -371,8 +371,22 @@
             app:layout_constraintStart_toStartOf="@+id/gc_injected_loading_indicator"
             app:layout_constraintTop_toBottomOf="@+id/gc_injected_loading_indicator" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <include
+            layout="@layout/gc_detection_error_layout"
+            android:id="@+id/gc_detection_error_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginHorizontal="@dimen/gc_large_32"
+            android:layout_marginBottom="@dimen/gc_medium"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gc_injected_navigation_bar_container_bottom"
