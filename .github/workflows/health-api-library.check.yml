@@ -121,7 +121,7 @@ jobs:
           disable-animations: true
           script: >
             adb uninstall net.gini.android.health.api.test ;
-            ./gradlew health-api-library:library:connectedCheck
+            ./gradlew -Pandroid.testInstrumentationRunnerArguments.apiEnv=${{ inputs.healthApiEnvironment }} health-api-library:library:connectedCheck
             -PtestClientId="gini-mobile-test"
             -PtestClientSecret="${{ inputs.healthApiEnvironment == 'production' && secrets.GINI_MOBILE_TEST_CLIENT_SECRET || secrets.STAGING_GINI_MOBILE_TEST_CLIENT_SECRET }}"
             -PtestApiUri="${{ inputs.healthApiEnvironment == 'production' && 'https://health-api.gini.net' || 'https://health-api.stage.gini.net' }}"
