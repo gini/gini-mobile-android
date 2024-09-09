@@ -41,19 +41,13 @@ internal class SkontoInvoiceFragmentViewModel(
     private fun init() = viewModelScope.launch {
         requireNotNull(documentId)
 
-        val layout: DocumentLayout? =
-            try {
-                skontoDocumentLayoutNetworkService.getLayout(documentId)
-            } catch (e: Exception) {
-                null
-            }
+        val layout = runCatching {
+            skontoDocumentLayoutNetworkService.getLayout(documentId)
+        }.getOrNull()
 
-        val pages: List<DocumentPage>? =
-            try {
-                skontoDocumentPagesNetworkService.getDocumentPages(documentId)
-            } catch (e: Exception) {
-                null
-            }
+        val pages = runCatching {
+            skontoDocumentPagesNetworkService.getDocumentPages(documentId)
+        }.getOrElse { emptyList() }
 
 
         val bitmaps = pages?.map { documentPage ->
@@ -64,7 +58,6 @@ internal class SkontoInvoiceFragmentViewModel(
             }
 
             val skontoPageLayout = layout?.pages?.find { documentPage.pageNumber == it.number }
-
 
             pageHighlights?.let {
                 skontoPageImageProcessor.processImage(
