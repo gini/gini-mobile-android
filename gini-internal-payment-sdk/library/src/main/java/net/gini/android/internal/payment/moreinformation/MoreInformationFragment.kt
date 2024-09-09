@@ -28,7 +28,6 @@ import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolde
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.util.autoCleared
-import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.util.extensions.getLocaleStringResource
 import java.util.Locale
@@ -66,7 +65,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, viewModel.getLocale())
+        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, viewModel.getLocale())
     }
 
     override fun onCreateView(

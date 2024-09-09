@@ -53,7 +53,7 @@ internal class MoreInformationViewModel(val paymentComponent: PaymentComponent?)
         }
     }
 
-    fun getLocale(): Locale? = paymentComponent?.giniHealthLanguage
+    fun getLocale(): Locale? = paymentComponent?.giniPaymentLanguage
 
     private fun processError(throwable: Throwable) {
         LOG.error("Error loading payment provider apps", throwable)

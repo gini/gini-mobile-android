@@ -241,9 +241,9 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
     }
 
     private fun initViews() {
-        selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gmsSelectBankButton else binding.gpsSingleRowBankSelection.gmsSelectBankButton
-        payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gmsPayInvoiceButton
-        paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gmsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gmsPaymentProviderAppIconHolder
+        selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsSelectBankButton else binding.gpsSingleRowBankSelection.gpsSelectBankButton
+        payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
+        paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
 
         payInvoiceButton.text = if (reviewFragmentWillBeShown) resources.getString(R.string.gps_continue_to_overview) else resources.getString(R.string.gps_pay_button)
     }
