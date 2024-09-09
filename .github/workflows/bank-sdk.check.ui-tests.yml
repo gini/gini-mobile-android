@@ -78,6 +78,10 @@ jobs:
           disable-animations: true
           script: >
             adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
+            adb push bank-sdk/example-app/src/androidTest/testDocuments/test_image.jpeg /sdcard/Download ;
+            adb shell am start -a android.intent.action.VIEW -n com.google.android.apps.photos/.home.HomeActivity -d file:///sdcard/Download/test_image.jpeg ;
+            adb push bank-sdk/example-app/src/androidTest/testDocuments/Testrechnung-RA-1.pdf /sdcard/Download ;
+            adb push bank-sdk/example-app/src/androidTest/testDocuments/sample.pdf /sdcard/Download ;
             ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest
             -PclientId="gini-mobile-test"
             -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
