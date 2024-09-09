@@ -74,7 +74,7 @@ class ImportPdfImageTests {
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles()
+        pdfUploader.uploadPdfFromFiles("sample.pdf")
         idlingResource.waitForIdle()
     }
 }

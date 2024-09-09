@@ -19,12 +19,29 @@ class ConfigurationScreen {
     }
 
     fun clickFlashToggleToEnable(): ConfigurationScreen {
-        onView(ViewMatchers.withId(R.id.switch_flashOnByDefault)).perform(closeSoftKeyboard(), click())
+        onView(ViewMatchers.withId(R.id.switch_flashOnByDefault)).perform(
+            closeSoftKeyboard(),
+            click()
+        )
         return this
     }
 
     fun assertFlashToggleIsDisable(): ConfigurationScreen {
         onView(ViewMatchers.withId(R.id.switch_flashOnByDefault)).check(matches(isDisplayed()))
+        return this
+    }
+
+    fun scrollToUICustomizationText(): ConfigurationScreen {
+        onView(withText("UI customization"))
+            .perform(scrollTo())
+        return this
+    }
+
+    fun clickReturnReasonsDialogToEnable(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_returnReasonsDialog)).perform(
+           // closeSoftKeyboard(),
+            click()
+        )
         return this
     }
 }
