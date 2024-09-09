@@ -71,6 +71,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
@@ -85,6 +86,8 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.Di
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
 import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.bank.sdk.di.koin.getGiniBankViewModel
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
@@ -97,6 +100,7 @@ import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.view.InjectedViewAdapterInstance
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -112,7 +116,7 @@ class DigitalInvoiceSkontoFragment : Fragment() {
 
     private val args: DigitalInvoiceSkontoFragmentArgs by navArgs<DigitalInvoiceSkontoFragmentArgs>()
 
-    private val viewModel: DigitalInvoiceSkontoViewModel by getGiniBankKoin().inject {
+    private val viewModel: DigitalInvoiceSkontoViewModel by giniBankViewModel {
         parametersOf(args.data)
     }
 
@@ -226,7 +230,6 @@ private fun ScreenContent(
         modifier = modifier,
         state = state,
         screenColorScheme = screenColorScheme,
-        onDiscountSectionActiveChange = viewModel::onSkontoActiveChanged,
         onSkontoAmountChange = viewModel::onSkontoAmountFieldChanged,
         onDueDateChanged = viewModel::onSkontoDueDateChanged,
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
@@ -243,7 +246,6 @@ private fun ScreenContent(
 private fun ScreenStateContent(
     state: DigitalInvoiceSkontoScreenState,
     isBottomNavigationBarEnabled: Boolean,
-    onDiscountSectionActiveChange: (Boolean) -> Unit,
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onBackClicked: () -> Unit,
@@ -260,7 +262,6 @@ private fun ScreenStateContent(
             modifier = modifier,
             state = state,
             screenColorScheme = screenColorScheme,
-            onDiscountSectionActiveChange = onDiscountSectionActiveChange,
             onDiscountAmountChange = onSkontoAmountChange,
             onDueDateChanged = onDueDateChanged,
             onBackClicked = onBackClicked,
@@ -283,7 +284,6 @@ private fun ScreenReadyState(
     onHelpClicked: () -> Unit,
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
-    onDiscountSectionActiveChange: (Boolean) -> Unit,
     onDiscountAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     isBottomNavigationBarEnabled: Boolean,
@@ -837,9 +837,6 @@ private fun ScreenReadyStatePreview() {
 
         ScreenReadyState(
             state = state,
-            onDiscountSectionActiveChange = {
-                state = state.copy(isSkontoSectionActive = !state.isSkontoSectionActive)
-            },
             onDiscountAmountChange = {},
             onDueDateChanged = {},
             onBackClicked = {},
