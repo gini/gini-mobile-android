@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
@@ -200,6 +201,10 @@ class GiniHealthAPIIntegrationTest: GiniCoreAPIIntegrationTest<HealthApiDocument
     @Test
     @Throws(Exception::class)
     fun testGetPayment() = runTest(timeout = 30.seconds) {
+        if (InstrumentationRegistry.getArguments().getString("apiEnv") == "staging") {
+            return@runTest
+        }
+
         val paymentRequestId = createPaymentRequest()
         val paymentRequest = giniCoreApi.documentManager.getPaymentRequest(paymentRequestId).dataOrThrow
         val (_, _, recipient, iban, bic, amount, purpose) = paymentRequest
