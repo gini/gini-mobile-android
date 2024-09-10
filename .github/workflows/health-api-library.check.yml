@@ -110,7 +110,7 @@ jobs:
           disable-animations: true
           script: echo "Generated AVD snapshot for caching."
 
-      - name: run instrumented tests
+      - name: "run instrumented tests using Health API environment: ${{ inputs.healthApiEnvironment }}"
         timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2
         if: ${{ inputs.healthApiEnvironment != 'staging' || matrix.api-level != 22 }}
