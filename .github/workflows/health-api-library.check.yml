@@ -63,7 +63,7 @@ jobs:
 #
 #      - name: archive unit test coverage report
 #        if: always()
-#        uses: actions/upload-artifact@v3
+#        uses: actions/upload-artifact@v4
 #        with:
 #          name: health-api-library-unit-test-coverage
 #          path: health-api-library/library/build/jacoco/jacocoHtml
@@ -194,7 +194,7 @@ jobs:
         run: ./gradlew health-api-library:library:lint
 
       - name: archive android lint report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: health-api-library-android-lint-report
           path: health-api-library/library/build/reports/lint-results*.html
