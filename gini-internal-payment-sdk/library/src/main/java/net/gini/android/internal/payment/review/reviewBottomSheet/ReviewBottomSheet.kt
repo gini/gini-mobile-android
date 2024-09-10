@@ -20,7 +20,7 @@ import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 
 class ReviewBottomSheet private constructor(
-    internal val paymentButtonListener: ReviewViewListener?,
+    val paymentButtonListener: ReviewViewListener?,
     private val viewModelFactory: ViewModelProvider.Factory?
 ) : GpsBottomSheetDialogFragment() {
 

@@ -1,9 +1,9 @@
-package net.gini.android.merchant.sdk.review
+package net.gini.android.internal.payment.review
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
+import net.gini.android.internal.payment.api.model.PaymentDetails
 import org.junit.Test
 import org.junit.runner.RunWith
 

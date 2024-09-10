@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.reviewComponent
+package net.gini.android.internal.payment.review.reviewComponent
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
@@ -13,11 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.api.ResultWrapper
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.R
+import net.gini.android.internal.payment.api.model.PaymentDetails
+import net.gini.android.internal.payment.api.model.ResultWrapper
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.utils.GiniPaymentManager
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,9 +27,9 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ReviewComponentTest {
     private lateinit var context: Context
-    private lateinit var giniMerchant: GiniMerchant
     private lateinit var paymentComponent: PaymentComponent
     private lateinit var giniPaymentManager: GiniPaymentManager
+    private lateinit var giniPaymentModule: GiniInternalPaymentModule
     private val testCoroutineDispatcher = StandardTestDispatcher()
     private val testCoroutineScope =
         TestScope(testCoroutineDispatcher + Job())
@@ -36,10 +37,10 @@ class ReviewComponentTest {
     @Before
     fun setup() {
         context = ApplicationProvider.getApplicationContext()
-        context.setTheme(R.style.GiniMerchantTheme)
-        giniMerchant = mockk(relaxed = true)
+        context.setTheme(R.style.GiniPaymentTheme)
         paymentComponent = mockk(relaxed = true)
         giniPaymentManager = mockk(relaxed = true)
+        giniPaymentModule = mockk(relaxed = true)
     }
 
 
@@ -54,13 +55,12 @@ class ReviewComponentTest {
         )
 
         // When
-        every { giniMerchant.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
+        every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
             reviewConfig = mockk(relaxed = true),
-            giniMerchant = giniMerchant,
-            giniPaymentManager = giniPaymentManager,
+            giniInternalPaymentModule = giniPaymentModule,
             coroutineScope = testCoroutineScope
         )
 
@@ -74,13 +74,12 @@ class ReviewComponentTest {
     @Test
     fun `sets payment button not enabled if still loading`() = runTest {
         //Given
-        every { giniMerchant.paymentFlow } returns MutableStateFlow(ResultWrapper.Loading())
+        every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Loading())
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
             reviewConfig = mockk(relaxed = true),
-            giniMerchant = giniMerchant,
-            giniPaymentManager = giniPaymentManager,
+            giniInternalPaymentModule = giniPaymentModule,
             coroutineScope = testCoroutineScope
         )
 
@@ -101,13 +100,12 @@ class ReviewComponentTest {
             purpose = ""
         )
 
-        every { giniMerchant.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
+        every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
             reviewConfig = mockk(relaxed = true),
-            giniMerchant = giniMerchant,
-            giniPaymentManager = giniPaymentManager,
+            giniInternalPaymentModule = giniPaymentModule,
             coroutineScope = testCoroutineScope
         )
 

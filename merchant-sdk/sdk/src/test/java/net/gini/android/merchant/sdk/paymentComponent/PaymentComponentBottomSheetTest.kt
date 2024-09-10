@@ -6,9 +6,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +24,8 @@ class PaymentComponentBottomSheetTest {
         paymentComponent = mockk(relaxed = true)
         paymentComponentListener = mockk(relaxed = true)
         every { paymentComponent.listener } returns paymentComponentListener
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(
             mockk(relaxed = true)
         ))
     }

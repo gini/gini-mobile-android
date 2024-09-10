@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.openWith
+package net.gini.android.internal.payment.review.openWith
 
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
@@ -9,11 +9,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
-import net.gini.android.internal.payment.review.openWith.OpenWithBottomSheet
-import net.gini.android.internal.payment.review.openWith.OpenWithForwardListener
+import net.gini.android.internal.payment.R
 import org.junit.Test
 import org.junit.runner.RunWith
-import net.gini.android.merchant.sdk.R
 
 @RunWith(AndroidJUnit4::class)
 class OpenWithBottomSheetTest {
@@ -23,7 +21,7 @@ class OpenWithBottomSheetTest {
         val listener: OpenWithForwardListener = mockk()
         every { listener.onForwardSelected() } returns mockk()
 
-        launchFragmentInContainer(themeResId = R.style.GiniMerchantTheme) {
+        launchFragmentInContainer(themeResId = R.style.GiniPaymentTheme) {
             OpenWithBottomSheet.newInstance(
                 mockk(relaxed = true),
                 listener
@@ -31,7 +29,7 @@ class OpenWithBottomSheetTest {
         }
 
         // When
-        onView(withId(R.id.gms_forward_button)).perform(ViewActions.click())
+        onView(withId(R.id.gps_forward_button)).perform(ViewActions.click())
 
         // Then
         verify { listener.onForwardSelected() }

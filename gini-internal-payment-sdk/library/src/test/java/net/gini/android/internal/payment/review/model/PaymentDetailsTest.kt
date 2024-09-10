@@ -1,8 +1,8 @@
-package net.gini.android.merchant.sdk.review.model
+package net.gini.android.internal.payment.review.model
 
 import com.google.common.truth.Truth.assertThat
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
-import net.gini.android.merchant.sdk.api.payment.model.overwriteEmptyFields
+import net.gini.android.internal.payment.api.model.PaymentDetails
+import net.gini.android.internal.payment.api.model.overwriteEmptyFields
 import org.junit.Before
 import org.junit.Test
 import java.util.Locale

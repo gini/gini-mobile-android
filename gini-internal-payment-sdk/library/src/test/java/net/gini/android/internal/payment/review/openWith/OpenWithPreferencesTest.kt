@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.openWith
+package net.gini.android.internal.payment.review.openWith
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider

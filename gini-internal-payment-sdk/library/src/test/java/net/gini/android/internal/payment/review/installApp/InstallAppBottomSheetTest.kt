@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.review.installApp
+package net.gini.android.internal.payment.review.installApp
 
 import android.view.View
 import androidx.fragment.app.testing.launchFragmentInContainer
@@ -12,12 +12,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import net.gini.android.internal.payment.review.installApp.InstallAppBottomSheet
-import net.gini.android.internal.payment.review.installApp.InstallAppForwardListener
-import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.R
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -53,12 +51,12 @@ class InstallAppBottomSheetTest {
         )
 
         // When
-        launchFragmentInContainer(themeResId = R.style.GiniMerchantTheme) {
+        launchFragmentInContainer(themeResId = R.style.GiniPaymentTheme) {
             bottomSheet
         }
 
         // Then
-        onView(withId(R.id.gms_play_store_logo)).check { view, _ -> Truth.assertThat(view.visibility).isEqualTo(View.VISIBLE) }
+        onView(withId(R.id.gps_play_store_logo)).check { view, _ -> Truth.assertThat(view.visibility).isEqualTo(View.VISIBLE) }
     }
 
     @Test
@@ -76,12 +74,12 @@ class InstallAppBottomSheetTest {
         )
 
         // When
-        launchFragmentInContainer(themeResId = R.style.GiniMerchantTheme) {
+        launchFragmentInContainer(themeResId = R.style.GiniPaymentTheme) {
             bottomSheet
         }
 
         // Then
-        onView(withId(R.id.gms_forward_button)).check { view, _ -> Truth.assertThat(view.visibility).isEqualTo(View.VISIBLE) }
+        onView(withId(R.id.gps_forward_button)).check { view, _ -> Truth.assertThat(view.visibility).isEqualTo(View.VISIBLE) }
     }
 
     @Test
@@ -101,14 +99,14 @@ class InstallAppBottomSheetTest {
             0
         )
 
-        launchFragmentInContainer(themeResId = R.style.GiniMerchantTheme) {
+        launchFragmentInContainer(themeResId = R.style.GiniPaymentTheme) {
             bottomSheet
         }
 
-        onView(withId(R.id.gms_forward_button)).check { view, _ -> Truth.assertThat(view.visibility).isEqualTo(View.VISIBLE) }
+        onView(withId(R.id.gps_forward_button)).check { view, _ -> Truth.assertThat(view.visibility).isEqualTo(View.VISIBLE) }
 
         // When
-        onView(withId(R.id.gms_forward_button)).perform(ViewActions.click())
+        onView(withId(R.id.gps_forward_button)).perform(ViewActions.click())
 
         // Then
         verify(exactly = 1) { listener.onForwardToBankSelected() }
