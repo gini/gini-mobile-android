@@ -13,73 +13,59 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.internal.payment.util.GiniLocalization
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniPaymentManager
 import net.gini.android.internal.payment.utils.PaymentEventListener
 
-class GiniInternalPaymentModule {
-
-    constructor(
-        context: Context,
-        clientId: String = "",
-        clientSecret: String = "",
-        emailDomain: String = "",
-        sessionManager: SessionManager? = null,
-        apiVersion: Int = DEFAULT_API_VERSION
-    ) {
-        giniHealthAPI = GiniHealthAPIBuilder(
-            context,
-            clientId,
-            clientSecret,
-            emailDomain,
-            sessionManager,
-            apiVersion = apiVersion
-        ).build()
-    }
-
-    constructor(
-        context: Context,
-        clientId: String = "",
-        clientSecret: String = "",
-        emailDomain: String = "",
-        sessionManager: SessionManager? = null,
-        merchantApiBaseUrl: String = "",
-        userCenterApiBaseUrl: String? = null,
-        debuggingEnabled: Boolean = false,
-        apiVersion: Int = DEFAULT_API_VERSION
-    ) {
-        giniHealthAPI = if (sessionManager == null) {
-            GiniHealthAPIBuilder(
-                context,
-                clientId,
-                clientSecret,
-                emailDomain,
-                apiVersion = apiVersion
-            )
-        } else {
-            GiniHealthAPIBuilder(context, sessionManager = sessionManager, apiVersion = apiVersion)
-        }.apply {
-            setApiBaseUrl(merchantApiBaseUrl)
-            if (userCenterApiBaseUrl != null) {
-                setUserCenterApiBaseUrl(userCenterApiBaseUrl)
-            }
-            setDebuggingEnabled(debuggingEnabled)
-        }.build()
-    }
+class GiniInternalPaymentModule(private val context: Context,
+                                private val clientId: String = "",
+                                private val clientSecret: String = "",
+                                private val emailDomain: String = "",
+                                private val sessionManager: SessionManager? = null,
+                                private val baseUrl: String = "",
+                                private val userCenterApiBaseUrl: String? = null,
+                                private val debuggingEnabled: Boolean = false,
+                                private val apiVersion: Int = DEFAULT_API_VERSION,
+                                ) {
 
     constructor(
         context: Context,
         giniHealthAPI: GiniHealthAPI,
     ) : this(context) {
-        this.giniHealthAPI = giniHealthAPI
+        this._giniHealthAPI = giniHealthAPI
     }
 
-    var giniHealthAPI: GiniHealthAPI
-        private set
+    private var _giniHealthAPI: GiniHealthAPI? = null
+    val giniHealthAPI: GiniHealthAPI
+        get() {
+            _giniHealthAPI?.let { return it }
+                ?: run {
+                    val healthAPI = if (sessionManager == null) {
+                        GiniHealthAPIBuilder(
+                            context,
+                            clientId,
+                            clientSecret,
+                            emailDomain,
+                            apiVersion = apiVersion
+                        )
+                    } else {
+                        GiniHealthAPIBuilder(context, sessionManager = sessionManager, apiVersion = apiVersion)
+                    }.apply {
+                        setApiBaseUrl(baseUrl)
+                        if (userCenterApiBaseUrl != null) {
+                            setUserCenterApiBaseUrl(userCenterApiBaseUrl)
+                        }
+                        setDebuggingEnabled(debuggingEnabled)
+                    }.build()
+                    _giniHealthAPI = healthAPI
+                    return healthAPI
+                }
+        }
 
-    var paymentComponent = PaymentComponent(context, healthAPI = giniHealthAPI)
+    var paymentComponent = PaymentComponent(context, this)
     private val openWithPreferences = OpenWithPreferences(context)
 
     internal val giniPaymentManager = GiniPaymentManager(giniHealthAPI, object: PaymentEventListener {

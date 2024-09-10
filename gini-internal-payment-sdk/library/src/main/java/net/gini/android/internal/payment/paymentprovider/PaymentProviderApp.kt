@@ -10,7 +10,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.annotation.ColorInt
 import net.gini.android.health.api.models.PaymentProvider
-import net.gini.android.internal.payment.utils.extensions.generateBitmapDrawableIcon
+import net.gini.android.internal.payment.util.extensions.generateBitmapDrawableIcon
 import org.slf4j.LoggerFactory
 
 internal const val Scheme = "ginipay" // It has to match the scheme in query tag in manifest
@@ -47,7 +47,6 @@ private fun getPaymentProviderAppQueryIntent() = Intent().apply {
     action = Intent.ACTION_VIEW
     data = Uri.parse(QueryUri)
 }
-
 data class PaymentProviderApp(
     val name: String,
     val icon: BitmapDrawable?,

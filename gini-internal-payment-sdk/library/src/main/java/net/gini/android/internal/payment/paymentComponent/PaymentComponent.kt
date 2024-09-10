@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.paymentProvider.getPaymentProviderApps
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentprovider.getPaymentProviderApps
 import org.slf4j.LoggerFactory
 
 /**
@@ -127,7 +127,7 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
         paymentComponentPreferences.saveSelectedPaymentProviderId(paymentProviderApp.paymentProvider.id)
     }
 
-    internal fun recheckWhichPaymentProviderAppsAreInstalled() {
+    fun recheckWhichPaymentProviderAppsAreInstalled() {
         LOG.debug("Rechecking which payment provider apps are installed")
         when (val paymentProviderAppsState = _initialStatePaymentProviderAppsFlow.value) {
             is PaymentProviderAppsState.Success -> {
@@ -199,14 +199,14 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
         }
     }
 
-    internal suspend fun onPayInvoiceClicked(documentId: String = "") {
+    suspend fun onPayInvoiceClicked(documentId: String = "") {
         paymentComponentPreferences.saveReturningUser()
         listener?.onPayInvoiceClicked(documentId)
         delay(500)
         checkReturningUser()
     }
 
-    internal suspend fun checkReturningUser() {
+    suspend fun checkReturningUser() {
         if (!shouldCheckReturningUser) return
         _returningUserFlow.value = paymentComponentPreferences.getReturningUser()
     }
