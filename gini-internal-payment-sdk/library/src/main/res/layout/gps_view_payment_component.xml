@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/gps_select_bank_label"
+        style="@style/GiniPaymentTheme.Typography.Subtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gps_large"
+        android:text="@string/gps_select_bank_label"
+        android:textColor="@color/gps_select_bank_and_pay_color"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_select_bank_picker_layout"
+        android:layout_marginTop="@dimen/gps_medium"
+        android:minHeight="@dimen/gps_accessibility_min_height"
+        app:layout_constraintTop_toBottomOf="@id/gps_select_bank_label"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include layout="@layout/gps_view_single_line_bank_selection"
+            android:id="@+id/gps_single_row_bank_selection"
+            android:visibility="gone"
+            />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/gps_two_rows_bank_selection"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!--  Including the layout in a FrameLayout because background cannot be set on an `include` widget  -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/gps_large"
+                android:layout_marginBottom="@dimen/gps_medium"
+                android:background="@drawable/gps_bordered_background"
+                android:id="@+id/gps_two_rows_container"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                >
+                <include layout="@layout/gps_payment_provider_selector_button"
+                    android:id="@+id/gps_select_bank_picker"
+                    tools:visibility="visible"/>
+            </FrameLayout>
+
+            <Button
+                android:id="@+id/gps_pay_invoice_button_two_rows"
+                style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/gps_large"
+                android:layout_marginBottom="@dimen/gps_small"
+                android:layout_marginTop="@dimen/gps_medium"
+                android:text="@string/gps_pay_invoice_button"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/gps_two_rows_container" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/gps_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gps_medium"
+        android:layout_marginBottom="@dimen/gps_medium"
+        android:layout_marginEnd="@dimen/gps_large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gps_select_bank_picker_layout">
+        <include layout="@layout/gps_powered_by_gini"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/gps_more_information"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/gps_powered_by_gini"
+        app:layout_constraintTop_toTopOf="@id/gps_powered_by_gini"
+        app:layout_constraintBottom_toBottomOf="@id/gps_powered_by_gini"
+        style="@style/GiniPaymentTheme.Typography.Caption2"
+        android:layout_marginStart="@dimen/gps_large"
+        android:drawableStart="@drawable/gps_info_circle_icon"
+        android:drawablePadding="@dimen/gps_medium"
+        android:drawableTint="@color/gps_info_button_tint"
+        android:text="@string/gps_more_information_underlined_part"
+        android:textColor="@color/gps_payment_component_caption"
+        android:gravity="center_vertical"
+        android:visibility="visible"
+        android:ellipsize="end"
+        android:lines="1"
+        />
+</merge>

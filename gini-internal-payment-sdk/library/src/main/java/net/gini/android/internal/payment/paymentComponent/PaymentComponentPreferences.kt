@@ -13,6 +13,7 @@ private val Context.dataStore by preferencesDataStore(name = "payment-component-
 
 private val KEY_SELECTED_PAYMENT_PROVIDER_ID = stringPreferencesKey("selected-payment-provider-id")
 private val KEY_RETURNING_USER = booleanPreferencesKey("returning-user")
+
 internal class PaymentComponentPreferences(private val context: Context) {
 
     suspend fun saveSelectedPaymentProviderId(id: String) {

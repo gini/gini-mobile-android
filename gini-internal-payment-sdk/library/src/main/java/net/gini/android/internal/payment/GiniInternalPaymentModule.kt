@@ -1,6 +1,7 @@
 package net.gini.android.internal.payment
 
 import android.content.Context
+import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -8,62 +9,75 @@ import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
-import net.gini.android.health.api.GiniHealthAPIBuilder.Companion.API_VERSION
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
+import net.gini.android.internal.payment.util.GiniLocalization
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniPaymentManager
 import net.gini.android.internal.payment.utils.PaymentEventListener
 
+class GiniInternalPaymentModule {
 
-class GiniInternalPaymentModule(private val context: Context,
-                                private val clientId: String = "",
-                                private val clientSecret: String = "",
-                                private val emailDomain: String = "",
-                                private var sessionManager: SessionManager? = null,
-                                private val baseUrl: String = "",
-                                private val userCenterApiBaseUrl: String? = null,
-                                private val debuggingEnabled: Boolean = false,
-                                private val apiVersion: Int = API_VERSION) {
+    constructor(
+        context: Context,
+        clientId: String = "",
+        clientSecret: String = "",
+        emailDomain: String = "",
+        sessionManager: SessionManager? = null,
+        apiVersion: Int = DEFAULT_API_VERSION
+    ) {
+        giniHealthAPI = GiniHealthAPIBuilder(
+            context,
+            clientId,
+            clientSecret,
+            emailDomain,
+            sessionManager,
+            apiVersion = apiVersion
+        ).build()
+    }
+
+    constructor(
+        context: Context,
+        clientId: String = "",
+        clientSecret: String = "",
+        emailDomain: String = "",
+        sessionManager: SessionManager? = null,
+        merchantApiBaseUrl: String = "",
+        userCenterApiBaseUrl: String? = null,
+        debuggingEnabled: Boolean = false,
+        apiVersion: Int = DEFAULT_API_VERSION
+    ) {
+        giniHealthAPI = if (sessionManager == null) {
+            GiniHealthAPIBuilder(
+                context,
+                clientId,
+                clientSecret,
+                emailDomain,
+                apiVersion = apiVersion
+            )
+        } else {
+            GiniHealthAPIBuilder(context, sessionManager = sessionManager, apiVersion = apiVersion)
+        }.apply {
+            setApiBaseUrl(merchantApiBaseUrl)
+            if (userCenterApiBaseUrl != null) {
+                setUserCenterApiBaseUrl(userCenterApiBaseUrl)
+            }
+            setDebuggingEnabled(debuggingEnabled)
+        }.build()
+    }
 
     constructor(
         context: Context,
         giniHealthAPI: GiniHealthAPI,
     ) : this(context) {
-        this._giniHealthAPI = giniHealthAPI
+        this.giniHealthAPI = giniHealthAPI
     }
 
-    // Lazily initialized backing field for giniHealthAPI to allow mocking it for tests.
-    private var _giniHealthAPI: GiniHealthAPI? = null
-    val giniHealthAPI: GiniHealthAPI
-        get() {
-            _giniHealthAPI?.let { return it }
-                ?: run {
-                    val healthAPI = if (sessionManager == null) {
-                        GiniHealthAPIBuilder(
-                            context,
-                            clientId,
-                            clientSecret,
-                            emailDomain,
-                            apiVersion = apiVersion
-                        )
-                    } else {
-                        GiniHealthAPIBuilder(context, sessionManager = sessionManager, apiVersion = apiVersion)
-                    }.apply {
-                        setApiBaseUrl(baseUrl)
-                        if (userCenterApiBaseUrl != null) {
-                            setUserCenterApiBaseUrl(userCenterApiBaseUrl)
-                        }
-                        setDebuggingEnabled(debuggingEnabled)
-                    }.build()
-                    _giniHealthAPI = healthAPI
-                    return healthAPI
-                }
-        }
+    var giniHealthAPI: GiniHealthAPI
+        private set
 
     var paymentComponent = PaymentComponent(context, healthAPI = giniHealthAPI)
     private val openWithPreferences = OpenWithPreferences(context)
@@ -130,6 +144,44 @@ class GiniInternalPaymentModule(private val context: Context,
         _eventsFlow.tryEmit(event)
     }
 
+
+    /**
+     * Sets the app language to the desired one from the languages the SDK is supporting. If not set then defaults to the system's language locale.
+     *
+     * @param language enum value for the desired language or null for default system language
+     * @param context Context object to save the configuration.
+     */
+    fun setSDKLanguage(language: GiniLocalization?, context: Context) {
+        localizedContext = null
+        GiniPaymentPreferences(context).saveSDKLanguage(language)
+    }
+
+    internal class GiniPaymentPreferences(context: Context) {
+        private val sharedPreferences = context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)
+
+        fun saveSDKLanguage(value: GiniLocalization?) {
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putString(SDK_LANGUAGE_PREFS_KEY, value?.readableName?.uppercase())
+            editor.apply()
+        }
+
+        fun getSDKLanguage(): GiniLocalization? {
+            val enumValue = sharedPreferences.getString(SDK_LANGUAGE_PREFS_KEY, null)
+            return if (enumValue.isNullOrEmpty()) null else GiniLocalization.valueOf(enumValue)
+        }
+    }
+
+    internal var localizedContext: Context? = null
+
+    companion object {
+        private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
+        private const val DEFAULT_API_VERSION = 1
+
+        fun getSDKLanguage(context: Context): GiniLocalization? {
+            return GiniPaymentPreferences(context).getSDKLanguage()
+        }
+    }
+
     /**
      * Different events that can be emitted by the GiniInternalPaymentModule.
      */
@@ -162,5 +214,4 @@ class GiniInternalPaymentModule(private val context: Context,
          */
         class OnErrorOccurred(val throwable: Throwable): InternalPaymentEvents()
     }
-
 }

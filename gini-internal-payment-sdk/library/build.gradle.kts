@@ -1,4 +1,4 @@
-import net.gini.gradle.extensions.implementationProjectDependencyForSBOM
+import net.gini.gradle.extensions.apiProjectDependencyForSBOM
 
 plugins {
     id("com.android.library")
@@ -9,7 +9,7 @@ plugins {
 android {
     namespace = "net.gini.android.internal.payment"
     compileSdk = 34
-    
+
     // after upgrading to AGP 8, we need this to have the defaultConfig block
     buildFeatures {
         buildConfig = true
@@ -25,6 +25,10 @@ android {
 
         buildConfigField("String", "VERSION_NAME", "\"$version\"")
         buildConfigField("String", "VERSION_CODE", "\"${properties["versionCode"]}\"")
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     buildTypes {
@@ -60,24 +64,21 @@ android {
 dependencies {
     val healthApiLibrary = project(":health-api-library:library")
     if (properties["createSBOM"] == "true") {
-        implementationProjectDependencyForSBOM(healthApiLibrary)
+        apiProjectDependencyForSBOM(healthApiLibrary)
     } else {
-        implementation(healthApiLibrary)
+        api(healthApiLibrary)
     }
 
     api(libs.slf4j.api)
-    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.common.java8)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.insetter)
     implementation(libs.datastore.preferences)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
 
     debugImplementation(libs.androidx.test.core.ktx)
     debugImplementation(libs.androidx.fragment.testing)

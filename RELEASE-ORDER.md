@@ -25,6 +25,11 @@ Release order for :gini-internal-payment-sdk:library unspecified:
  2. :health-api-library:library 4.3.0
  3. :gini-internal-payment-sdk:library unspecified
 
+Release order for :gini-internal-payment-sdk:library unspecified:
+ 1. :core-api-library:library 2.2.1
+ 2. :health-api-library:library 4.3.0
+ 3. :gini-internal-payment-sdk:library unspecified
+
 Release order for :capture-sdk:default-network 3.11.1:
  1. :core-api-library:library 2.2.1
  2. :bank-api-library:library 3.2.1
