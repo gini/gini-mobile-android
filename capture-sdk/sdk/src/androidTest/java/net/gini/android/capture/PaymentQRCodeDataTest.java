@@ -53,4 +53,22 @@ public class PaymentQRCodeDataTest {
         assertThat(json).isEqualTo(
                 "{\"qrcode\":\"bank://singlepaymentsepa?name=GINI%20GMBH&reason=BezahlCode%20Test&iban=DE27100777770209299700&bic=DEUTDEMMXXX&amount=140%2C4\",\"paymentdata\":{\"paymentRecipient\":\"GINI GMBH\",\"iban\":\"DE27100777770209299700\",\"paymentReference\":\"BezahlCode Test\"}}");
     }
+
+    @Test
+    public void should_notWrite_paymentDataToJson_whenAllPaymentDataFieldsAreNull() {
+        // Given
+        final PaymentQRCodeData paymentData = new PaymentQRCodeData(
+                PaymentQRCodeData.Format.BEZAHL_CODE,
+                "https://payment.gini.net/bf6a4ad1-9090-4176-9345-9add5994e1de",
+                null,
+                null,
+                null,
+                null,
+                null);
+        // When
+        final String json = paymentData.toJson();
+        // Then
+        assertThat(json).isEqualTo(
+                "{\"qrcode\":\"https://payment.gini.net/bf6a4ad1-9090-4176-9345-9add5994e1de\"}");
+    }
 }

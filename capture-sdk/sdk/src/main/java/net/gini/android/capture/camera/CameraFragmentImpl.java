@@ -260,7 +260,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (mIbanDetectedTextView.getVisibility() == View.VISIBLE) {
             return;
         }
-        handleQRCodeDetected(null, qrCodeContent);
+        if (isQRCodeScanningEnabled()) {
+            handleQRCodeDetected(null, qrCodeContent);
+        }
     }
 
     @Override
@@ -457,9 +459,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         initViews();
         initCameraController(activity);
         addCameraPreviewView();
-        if (isQRCodeScanningEnabled()) {
-            initQRCodeReader();
-        }
+        initQRCodeReader();
         if (GiniCapture.hasInstance()
                 && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD
                 && !isOnlyQRCodeScanningEnabled()) {
@@ -571,7 +571,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void initQRCodeReader() {
+    protected void initQRCodeReader() {
         if (mPaymentQRCodeReader != null) {
             return;
         }
@@ -995,6 +995,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         switch (paymentQRCodeData.getFormat()) {
             case EPC069_12:
             case BEZAHL_CODE:
+            case GINI_PAYMENT:
                 QRCodeDocument mQRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(
                         paymentQRCodeData);
                 sendQRCodeScannedEventToUserAnalytics(true);
