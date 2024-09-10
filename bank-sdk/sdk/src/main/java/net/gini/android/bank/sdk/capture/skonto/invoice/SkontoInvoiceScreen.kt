@@ -109,7 +109,7 @@ private fun SkontoInvoiceScreenContent(
                     Icon(
                         modifier = Modifier
                             .clickable(onClick = onCloseClicked)
-                            .padding(horizontal = 8.dp),
+                            .padding(start = 16.dp, end = 32.dp),
                         painter = painterResource(id = net.gini.android.capture.R.drawable.gc_close),
                         contentDescription = null,
                         tint = colors.topBarColors.navigationContentColor
