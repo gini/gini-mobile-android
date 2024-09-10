@@ -62,7 +62,8 @@ Data types
    * - App info and performance
      - 🔴 Gini Health SDK doesn't collect crash logs or diagnostics.
    * - Device or other IDs
-     - 🟢 Gini Health SDK collects **anonymous user IDs** which are generated random IDs and unique to app installations.
+     - ℹ️ Gini Health SDK may collect **anonymous user IDs** which are generated random IDs and unique to app installations,
+       provided you didn't override authentication.
 
 Data usage and handling
 -----------------------
@@ -107,8 +108,9 @@ This data is only used internally and **is not shared with third-parties**.
 Device or other IDs
 ~~~~~~~~~~~~~~~~~~~
 
-The Gini Health SDK **collects** anonymous user IDs which are generated random IDs and unique to app installations. This
-data is **not processed ephemerally** and **users can't choose whether this data is collected**.
+The Gini Health SDK may **collect** anonymous user IDs which are generated random IDs and unique to app installations,
+provided you didn't override authentication (via a custom session manager). This data is **not processed ephemerally** and **users
+can't choose whether this data is collected**.
 
 The reason for collecting anonymous user IDs is to provide SDK functionality (**app functionality**) and for
 **analytics** to monitor service quality.
