@@ -14,17 +14,21 @@ import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityConfigurationBinding
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CAMERA_PERMISSION_BUNDLE
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ConfigurationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityConfigurationBinding
+    @Inject
+    lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
 
     private val configurationViewModel: ConfigurationViewModel by viewModels()
 
@@ -229,8 +233,13 @@ class ConfigurationActivity : AppCompatActivity() {
 
         // 40 enable skonto
         binding.layoutFeatureToggle.switchSkontoFeature.isChecked = configuration.isSkontoEnabled
+
+        binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.hint = configuration.clientId
+
+        binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.hint = configuration.clientSecret
     }
 
+    @Suppress("CyclomaticComplexMethod", "LongMethod")
     private fun setConfigurationFeatures() {
         // 0 setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.setOnCheckedChangeListener { _, isChecked ->
@@ -563,6 +572,33 @@ class ConfigurationActivity : AppCompatActivity() {
             }
         }
 
+        binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.doAfterTextChanged {
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    clientId = it.toString()
+                )
+            )
+            if (it.toString()
+                    .isNotEmpty() && binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.toString()
+                    .isNotEmpty()
+            ) {
+                applyClientSecretAndClientId()
+            }
+        }
+        binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.doAfterTextChanged {
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    clientSecret = it.toString()
+                )
+            )
+            if (it.toString()
+                    .isNotEmpty() && binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.toString()
+                    .isNotEmpty()
+            ) {
+                applyClientSecretAndClientId()
+            }
+        }
+
         // 31 enable return assistant
         binding.layoutFeatureToggle.switchReturnAssistantFeature.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
@@ -642,6 +678,11 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+    }
+
+    private fun applyClientSecretAndClientId() {
+        val configurationFlow = configurationViewModel.configurationFlow.value
+        defaultNetworkServicesProvider.reinitNetworkServices(configurationFlow.clientId, configurationFlow.clientSecret)
     }
 
 }

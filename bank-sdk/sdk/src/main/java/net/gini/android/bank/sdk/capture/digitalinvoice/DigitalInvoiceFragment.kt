@@ -38,6 +38,7 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
@@ -142,6 +143,25 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         }
     }
 
+    private fun changeMarginAccordingToFontOversize() {
+        if (!ContextHelper.isTablet(requireContext()) && resources.configuration.fontScale > 1.0F) {
+            (binding.gbsArticleTxt.layoutParams as ViewGroup.MarginLayoutParams).run {
+                this.topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
+            (binding.totalLabel.layoutParams as ViewGroup.MarginLayoutParams).run {
+                topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
+            (binding.gbsPay.layoutParams as ViewGroup.MarginLayoutParams).run {
+                bottomMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+                topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
+        }
+    }
+
     private fun createPresenter(activity: Activity, savedInstanceState: Bundle?) =
         DigitalInvoiceScreenPresenter(
             activity,
@@ -191,6 +211,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         setInputHandlers()
         initTopNavigationBar()
         initBottomBar()
+        changeMarginAccordingToFontOversize()
         presenter?.onViewCreated()
     }
 

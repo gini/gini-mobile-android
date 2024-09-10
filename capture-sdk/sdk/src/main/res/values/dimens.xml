@@ -12,6 +12,7 @@
     <dimen name="gc_large_64">64dp</dimen>
     <dimen name="gc_large_80">80dp</dimen>
     <dimen name="gc_large_96">96dp</dimen>
+    <dimen name="gc_inner_padding_detection_error_layout">8dp</dimen>
 
     <dimen name="gc_review_bottom_bar_height">80dp</dimen>
 
@@ -31,6 +32,7 @@
     <dimen name="gc_photo_tips_tip_icon_size_width">80dp</dimen>
     <dimen name="gc_photo_tips_tip_icon_size_height">48dp</dimen>
     <dimen name="gc_photo_tips_tip_text_max_width">250dp</dimen>
+    <dimen name="gc_photo_disabled_detection_width">350dp</dimen>
     <dimen name="gc_photo_tips_row_min_height">76dp</dimen>
 
     <dimen name="gc_file_import_paragraphs_margin">50dp</dimen>
