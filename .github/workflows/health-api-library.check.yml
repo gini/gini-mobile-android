@@ -123,11 +123,11 @@ jobs:
           script: >
             adb uninstall net.gini.android.health.api.test ;
             ./gradlew -Pandroid.testInstrumentationRunnerArguments.apiEnv=${{ inputs.healthApiEnvironment }} health-api-library:library:connectedCheck
-            -PtestClientId="gini-mobile-test"
-            -PtestClientSecret="${{ inputs.healthApiEnvironment == 'staging' && secrets.STAGING_GINI_MOBILE_TEST_CLIENT_SECRET || secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-            -PtestApiUri="${{ inputs.healthApiEnvironment == 'staging' && 'https://health-api.stage.gini.net' || 'https://health-api.gini.net' }}"
-            -PtestUserCenterUri="${{ inputs.healthApiEnvironment == 'staging' && 'https://user.stage.gini.net' || 'https://user.gini.net' }}"
-            -PtestBankApiUri="${{ inputs.healthApiEnvironment == 'staging' && 'https://pay-api.pia.stage.gini.net' || 'https://pay-api.gini.net' }}"
+            -PtestClientId='gini-mobile-test'
+            -PtestClientSecret='${{ inputs.healthApiEnvironment == 'staging' && secrets.STAGING_GINI_MOBILE_TEST_CLIENT_SECRET || secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}'
+            -PtestApiUri='${{ inputs.healthApiEnvironment == 'staging' && 'https://health-api.stage.gini.net' || 'https://health-api.gini.net' }}'
+            -PtestUserCenterUri='${{ inputs.healthApiEnvironment == 'staging' && 'https://user.stage.gini.net' || 'https://user.gini.net' }}'
+            -PtestBankApiUri='${{ inputs.healthApiEnvironment == 'staging' && 'https://pay-api.pia.stage.gini.net' || 'https://pay-api.gini.net' }}'
 
       - name: archive instrumented test results
         if: always()
