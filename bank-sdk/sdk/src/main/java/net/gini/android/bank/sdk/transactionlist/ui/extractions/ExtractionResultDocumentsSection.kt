@@ -1,11 +1,13 @@
 package net.gini.android.bank.sdk.transactionlist.ui.extractions
 
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -116,40 +119,45 @@ private fun Document(
                 maxLines = 1,
                 color = colors.textColor,
             )
-            Icon(
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .clickable {
-                        menuVisible = true
-                    },
-                painter = painterResource(id = R.drawable.gbs_more_horizontal),
-                tint = colors.moreIconTint,
-                contentDescription = null
-            )
-        }
-
-        GiniDropdownMenu(
-            modifier = Modifier.align(Alignment.BottomEnd),
-            colors = colors.menuColors,
-            expanded = menuVisible,
-            onDismissRequest = { menuVisible = false },
-        ) {
-            DocumentMenuItem(
-                onClick = { },
-                title = stringResource(id = R.string.gbs_tl_extraction_result_documents_section_menu_delete)
-            )
+            Box {
+                Icon(
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .clickable {
+                            menuVisible = true
+                        },
+                    painter = painterResource(id = R.drawable.gbs_more_horizontal),
+                    tint = colors.moreIconTint,
+                    contentDescription = null
+                )
+                if (menuVisible) {
+                    GiniDropdownMenu(
+                        colors = colors.menuColors,
+                        expanded = true,
+                        onDismissRequest = { menuVisible = false },
+                    ) {
+                        DocumentMenuItem(
+                            modifier = Modifier.align(Alignment.End),
+                            onClick = { },
+                            title = stringResource(id = R.string.gbs_tl_extraction_result_documents_section_menu_delete)
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
 private fun DocumentMenuItem(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
     title: String,
     colors: ExtractionResultDocumentsSectionColors.DocumentItemColors =
         ExtractionResultDocumentsSectionColors.DocumentItemColors.colors(),
 ) {
     GiniDropdownMenuItem(
+        modifier = modifier,
         text = {
             Text(
                 text = title,
@@ -159,7 +167,7 @@ private fun DocumentMenuItem(
         },
         leadingIcon = {
             Icon(
-                painter = rememberVectorPainter(image = Icons.Default.Add),
+                painter = painterResource(id = R.drawable.gbs_delete),
                 contentDescription = null,
                 tint = colors.textColor
             )
@@ -194,7 +202,7 @@ private fun DocumentImage(
                 modifier = Modifier
                     .size(40.dp)
                     .padding(8.dp),
-                painter = painterResource(id = R.drawable.gbs_delete),
+                painter = painterResource(id = iconResId),
                 contentDescription = null,
                 tint = colorScheme.iconTint,
             )
@@ -206,7 +214,9 @@ private fun DocumentImage(
 @Composable
 private fun ExtractionResultDocumentsSectionPreview() {
     GiniTheme {
-        ExtractionResultDocumentSection()
+        Surface(modifier = Modifier.fillMaxSize()) {
+            ExtractionResultDocumentSection()
+        }
     }
 }
 
@@ -217,6 +227,8 @@ private fun ExtractionResultDocumentsSectionPreview() {
 @Composable
 private fun ExtractionResultDocumentsSectionPreviewDark() {
     GiniTheme {
-        ExtractionResultDocumentSection()
+        Surface(modifier = Modifier.fillMaxSize()) {
+            ExtractionResultDocumentSection()
+        }
     }
 }
