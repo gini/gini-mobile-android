@@ -580,11 +580,17 @@ private fun SkontoSection(
                         animatedDiscountAmount.formatAsDiscountPercentage()
                     )
 
-                else -> stringResource(
-                    id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
+                SkontoEdgeCase.PayByCashToday -> stringResource(
+                    id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
                     remainingDaysText,
                     animatedDiscountAmount.formatAsDiscountPercentage()
                 )
+
+               else -> stringResource(
+                   id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
+                   remainingDaysText,
+                   animatedDiscountAmount.formatAsDiscountPercentage()
+               )
             }
 
             InfoBanner(

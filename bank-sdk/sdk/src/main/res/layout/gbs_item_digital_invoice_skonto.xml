@@ -33,7 +33,7 @@
         android:layout_marginEnd="@dimen/gc_large"
         android:gravity="center_vertical"
         android:lineSpacingExtra="5sp"
-        android:text="Skonto discount"
+        android:text="@string/gbs_skonto_screen_title"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
         android:textColor="@color/gc_dark_06"
         app:layout_constraintEnd_toEndOf="parent"
