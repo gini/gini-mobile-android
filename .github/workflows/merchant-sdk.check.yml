@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'merchant-sdk/**'
+      - 'gini-internal-payment-sdk/**'
       - 'health-api-library/**'
       - 'core-api-library/**'
       - 'gradle/**'
@@ -15,6 +16,7 @@ on:
     types: [opened, edited, reopened]
     paths:
       - 'merchant-sdk/**'
+      - 'gini-internal-payment-sdk/**'
       - 'health-api-library/**'
       - 'core-api-library/**'
       - 'gradle/**'
