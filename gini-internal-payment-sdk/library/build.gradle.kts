@@ -1,4 +1,5 @@
 import net.gini.gradle.CodeAnalysisPlugin
+import net.gini.gradle.DokkaPlugin
 import net.gini.gradle.extensions.apiProjectDependencyForSBOM
 
 plugins {
@@ -95,4 +96,5 @@ dependencies {
     testImplementation(libs.androidx.test.espresso.intents)
 }
 
+apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
