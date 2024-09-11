@@ -1,3 +1,4 @@
+import net.gini.gradle.CodeAnalysisPlugin
 import net.gini.gradle.extensions.apiProjectDependencyForSBOM
 
 plugins {
@@ -93,3 +94,5 @@ dependencies {
     testImplementation(libs.androidx.test.espresso.core)
     testImplementation(libs.androidx.test.espresso.intents)
 }
+
+apply<CodeAnalysisPlugin>()
