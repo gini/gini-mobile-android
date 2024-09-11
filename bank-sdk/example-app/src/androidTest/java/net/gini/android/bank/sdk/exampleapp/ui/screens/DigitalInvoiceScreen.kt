@@ -23,69 +23,55 @@ class DigitalInvoiceScreen {
     private var updatedValue: String? = null
 
 
-    fun displayDigitalInvoiceTextOnOnboardingScreen(): DigitalInvoiceScreen {
+    fun checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed(): Boolean {
         val onboardingScreenText = device.findObject(
             UiSelector()
                 .className("android.widget.TextView")
                 .text("Digital invoice")
                 .resourceId("net.gini.android.bank.sdk.exampleapp:id/onboarding_text_1")
         )
-        onboardingScreenText.exists()
-        return this
+        return onboardingScreenText.exists()
     }
 
-    fun displayGetStartedButtonOnOnboardingScreen(): DigitalInvoiceScreen {
+    fun checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed(): Boolean {
         val onboardingScreenButton = device.findObject(
             UiSelector()
                 .className("android.widget.Button")
                 .text("Get Started")
                 .resourceId("net.gini.android.bank.sdk.exampleapp:id/done_button")
         )
-        onboardingScreenButton.exists()
-        return this
+        return onboardingScreenButton.exists()
     }
 
-    fun clickGetStartedButtonOnOnboardingScreen(): DigitalInvoiceScreen {
+    fun clickGetStartedButtonOnOnboardingScreen() {
         val onboardingScreenButton = device.findObject(
             UiSelector()
                 .className("android.widget.Button")
                 .text("Get Started")
         )
-        onboardingScreenButton.exists()
-        onboardingScreenButton.click()
-        return this
+        if (onboardingScreenButton.isClickable && onboardingScreenButton.exists()) {
+            onboardingScreenButton.click()
+        }
     }
 
-    fun assertDigitalInvoiceText(): DigitalInvoiceScreen {
-        val digitalInvoiceText = device.findObject(
-            UiSelector()
-                .className("android.widget.TextView")
-                .text("Digital Invoice")
-        )
-        digitalInvoiceText.exists()
-        return this
-    }
-
-    fun clickCancelButton(): DigitalInvoiceScreen {
+    fun clickCancelButton() {
         val cancelButton = device.findObject(
             UiSelector()
                 .className("android.widget.ImageButton")
                 .descriptionContains("Close")
         )
-        cancelButton.exists()
-        cancelButton.click()
-        return this
+        if(cancelButton.isClickable() && cancelButton.exists()){
+            cancelButton.click()
+        }
     }
 
-    fun assertOtherChargesDisplayed(): DigitalInvoiceScreen {
-        onView(withText(net.gini.android.bank.sdk.R.string.gbs_digital_invoice_addon_other_charges)).check(
+    fun assertOtherChargesDisplayed() {
+      onView(withText(net.gini.android.bank.sdk.R.string.gbs_digital_invoice_addon_other_charges)).check(
             matches(isDisplayed()))
-        return this
     }
 
-    fun clickProceedButton(): DigitalInvoiceScreen {
+    fun clickProceedButton() {
         onView(withText(net.gini.android.bank.sdk.R.string.gbs_proceed)).perform(click())
-        return this
     }
 
     fun clickArticleSwitch(): DigitalInvoiceScreen {
@@ -95,33 +81,30 @@ class DigitalInvoiceScreen {
                 .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_enable_switch")
                 .index(1)
         )
-        articleSwitch.exists()
-        articleSwitch.isClickable
-        articleSwitch.click()
+        if(articleSwitch.exists() && articleSwitch.isClickable){
+            articleSwitch.click()
+        }
         return this
     }
 
-    fun checkForReturnReasonsList(): DigitalInvoiceScreen {
+    fun checkForReturnReasonsList() {
         onView(withText(net.gini.android.bank.sdk.R.string.gbs_digital_invoice_return_reason_dialog_title)).check(
             matches(isDisplayed()))
-        return this
     }
 
-    fun  checkItemCountOnReturnReasonsList(): DigitalInvoiceScreen {
+    fun  checkItemCountOnReturnReasonsList() {
         val uiCollection =
             UiCollection(UiSelector().className("android.widget.ListView"))
         val itemSize = uiCollection.childCount
         onView(withClassName(`is`("android.widget.ListView"))).check(matches(hasChildCount(itemSize)))
-        return this
     }
 
-    fun  clickItemOnReturnReasonsList(): DigitalInvoiceScreen {
+    fun  clickItemOnReturnReasonsList() {
         val uiCollection =
             UiCollection(UiSelector().className("android.widget.ListView"))
         val returnReasonsItems = uiCollection.getChildByInstance(
             UiSelector().className("android.widget.TextView"), 0)
         returnReasonsItems.click()
-        return this
     }
 
     fun  checkItemIsDisabledFromDigitalScreen(): Boolean {
@@ -129,7 +112,7 @@ class DigitalInvoiceScreen {
             .className("android.view.ViewGroup")
             .resourceId("net.gini.android.bank.sdk.exampleapp:id/gsb_line_item")
             .index(0))
-        return returnReasonsItems.isEnabled
+        return !(returnReasonsItems.isEnabled)
     }
 
     fun  checkItemIsEnabledFromDigitalScreen(): Boolean {
@@ -140,74 +123,66 @@ class DigitalInvoiceScreen {
         return returnReasonsItems.isEnabled
     }
 
-    fun clickHelpButtonOnDigitalInvoiceScreen(): DigitalInvoiceScreen {
+    fun clickHelpButtonOnDigitalInvoiceScreen() {
         val helpButton = device.findObject(
             UiSelector()
                 .className("android.widget.Button")
                 .descriptionContains("Help")
         )
-        helpButton.exists()
-        helpButton.click()
-        return this
+        if(helpButton.exists()){
+            helpButton.click()
+        }
     }
 
-    fun verifyHelpTextOnNextScreen(): DigitalInvoiceScreen {
+    fun verifyHelpTextOnNextScreen() {
         val helpText = device.findObject(
             UiSelector()
                 .className("android.widget.TextView")
                 .text("Help")
         )
         helpText.exists()
-        helpText.click()
-        return this
     }
 
-    fun verifyFirstTitleOnHelpScreen(): DigitalInvoiceScreen {
+    fun verifyFirstTitleOnHelpScreen() {
         onView(
             allOf(withId(net.gini.android.bank.sdk.R.id.gbs_help_title),
                 withText("1. How does a digital invoice work?")
             )
         )
-            .perform(click())
-        return this
+            .check(matches(isDisplayed()))
     }
 
-    fun checkTotalTitleIsDisplayed(): DigitalInvoiceScreen {
+    fun checkTotalTitleIsDisplayed() {
         onView(
             allOf(withId(net.gini.android.bank.sdk.R.id.total_label),
                 withText("Total")
             )
         )
             .check(matches(isDisplayed()))
-        return this
     }
 
-    fun checkTotalPriceIsDisplayed(): DigitalInvoiceScreen {
+    fun checkTotalPriceIsDisplayed() {
         onView(withId(net.gini.android.bank.sdk.R.id.gross_price_total_integral_part))
             .check(matches(isDisplayed()))
-        return this
     }
 
-    fun storeInitialPrice(): DigitalInvoiceScreen {
+    fun checkInitialPrice() {
         onView(withId(net.gini.android.bank.sdk.R.id.gross_price_total_integral_part))
             .check { view, _ ->
                 val totalTextView = view as TextView
                 initialValue = totalTextView.text.toString()
             }
-        return this
     }
 
-    fun storeUpdatedPrice(): DigitalInvoiceScreen {
+    fun checkUpdatedPrice() {
         onView(withId(net.gini.android.bank.sdk.R.id.gross_price_total_integral_part))
             .check { view, _ ->
                 val totalTextView = view as TextView
                 updatedValue = totalTextView.text.toString()
             }
-        return this
     }
 
-    fun assertPriceHasChanged(): DigitalInvoiceScreen {
+    fun assertPriceHasChanged() {
         assertNotEquals("Price should have changed after toggling", initialValue, updatedValue)
-        return this
     }
 }

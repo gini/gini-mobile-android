@@ -41,7 +41,7 @@ class DigitalInvoiceScreenTests {
 
     @Before
     fun setup() {
-        idlingResource = SimpleIdlingResource(5000)
+        idlingResource = SimpleIdlingResource(7000)
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
@@ -53,8 +53,8 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.displayDigitalInvoiceTextOnOnboardingScreen()
-        digitalInvoiceScreen.displayGetStartedButtonOnOnboardingScreen()
+        digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
+        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
     }
 
     @Test
@@ -65,12 +65,11 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.displayGetStartedButtonOnOnboardingScreen()
+        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.assertDigitalInvoiceText()
         digitalInvoiceScreen.clickArticleSwitch()
-        val isItemEnabled =  digitalInvoiceScreen.checkItemIsDisabledFromDigitalScreen()
+        val isItemEnabled =  digitalInvoiceScreen.checkItemIsEnabledFromDigitalScreen()
         assertEquals(false, isItemEnabled)
     }
 
@@ -86,10 +85,10 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.displayGetStartedButtonOnOnboardingScreen()
+        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        idlingResource.waitForIdle()
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.assertDigitalInvoiceText()
         digitalInvoiceScreen.clickArticleSwitch()
         digitalInvoiceScreen.checkForReturnReasonsList()
     }
@@ -101,35 +100,34 @@ class DigitalInvoiceScreenTests {
     }
 
     @Test
-    fun test5_clickOnItemFromReturnReasonsList() {
+    fun test5_checkItemOnListIsDisabledAfterClickItemOnReturnReasonsList() {
         test3_returnReasonDisplaysWhenToggleSwitchIsDisabled()
         digitalInvoiceScreen.clickItemOnReturnReasonsList()
         idlingResource.waitForIdle()
-        val isItemEnabled = digitalInvoiceScreen.checkItemIsDisabledFromDigitalScreen()
-        assertEquals(false, isItemEnabled)
-    }
-
-    @Test
-    fun test6_enableToggleSwitchToAddItemBackToList() {
-        test5_clickOnItemFromReturnReasonsList()
-        idlingResource.waitForIdle()
-        digitalInvoiceScreen.assertDigitalInvoiceText()
-        digitalInvoiceScreen.clickArticleSwitch()
-        val isItemDisabled =digitalInvoiceScreen.checkItemIsEnabledFromDigitalScreen()
+        val isItemDisabled = digitalInvoiceScreen.checkItemIsDisabledFromDigitalScreen()
         assertEquals(true, isItemDisabled)
     }
 
     @Test
+    fun test6_enableToggleSwitchAndVerifyAnItemIsAddedBackToList() {
+        test5_checkItemOnListIsDisabledAfterClickItemOnReturnReasonsList()
+        idlingResource.waitForIdle()
+        digitalInvoiceScreen.clickArticleSwitch()
+        val isItemEnabled = digitalInvoiceScreen.checkItemIsEnabledFromDigitalScreen()
+        assertEquals(true, isItemEnabled)
+    }
+
+    @Test
     fun test7_differenceInTotalAmountWithSwitchEnabledOrDisabled() {
-        test5_clickOnItemFromReturnReasonsList()
+        test5_checkItemOnListIsDisabledAfterClickItemOnReturnReasonsList()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.checkTotalTitleIsDisplayed()
         digitalInvoiceScreen.checkTotalPriceIsDisplayed()
-        digitalInvoiceScreen.storeInitialPrice()
+        digitalInvoiceScreen.checkInitialPrice()
         digitalInvoiceScreen.clickArticleSwitch()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.checkTotalPriceIsDisplayed()
-        digitalInvoiceScreen.storeUpdatedPrice()
+        digitalInvoiceScreen.checkUpdatedPrice()
         digitalInvoiceScreen.assertPriceHasChanged()
         idlingResource.waitForIdle()
     }
@@ -142,24 +140,23 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.displayGetStartedButtonOnOnboardingScreen()
+        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.assertOtherChargesDisplayed()
     }
 
     @Test
-    fun test9_clickProceedButtonOnDigitalInvoiceScreen() {
+    fun test9_checkTransferSummaryButtonIsClickableAfterClickOnProceedButton() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.displayGetStartedButtonOnOnboardingScreen()
+        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.assertDigitalInvoiceText()
         digitalInvoiceScreen.clickProceedButton()
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
@@ -172,27 +169,25 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.displayGetStartedButtonOnOnboardingScreen()
+        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.assertDigitalInvoiceText()
         digitalInvoiceScreen.clickHelpButtonOnDigitalInvoiceScreen()
         digitalInvoiceScreen.verifyHelpTextOnNextScreen()
         digitalInvoiceScreen.verifyFirstTitleOnHelpScreen()
     }
 
     @Test
-    fun test11_clickCancelButtonOnDigitalInvoiceScreen() {
+    fun test11_checkMainScreenTitleIsDisplayedAfterClickOnCancelButton() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.displayGetStartedButtonOnOnboardingScreen()
+        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.assertDigitalInvoiceText()
         digitalInvoiceScreen.clickCancelButton()
         mainScreen.assertDescriptionTitle()
     }

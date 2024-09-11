@@ -18,12 +18,11 @@ class ConfigurationScreen {
         return this
     }
 
-    fun clickFlashToggleToEnable(): ConfigurationScreen {
+    fun clickFlashToggleToEnable() {
         onView(ViewMatchers.withId(R.id.switch_flashOnByDefault)).perform(
             closeSoftKeyboard(),
             click()
         )
-        return this
     }
 
     fun assertFlashToggleIsDisable(): ConfigurationScreen {
@@ -38,9 +37,7 @@ class ConfigurationScreen {
     }
 
     fun clickReturnReasonsDialogToEnable(): ConfigurationScreen {
-        onView(ViewMatchers.withId(R.id.switch_returnReasonsDialog)).perform(
-           // closeSoftKeyboard(),
-            click()
+        onView(ViewMatchers.withId(R.id.switch_returnReasonsDialog)).perform(click()
         )
         return this
     }
