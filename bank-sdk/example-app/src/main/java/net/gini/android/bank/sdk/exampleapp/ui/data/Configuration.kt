@@ -169,6 +169,9 @@ data class Configuration(
     // 42 Digital Invoice Skonto Custom bottom navigation
     val isDigitalInvoiceSkontoCustomNavBarEnabled: Boolean = false,
 
+    // 43 enable transaction docs
+    val isTransactionDocsEnabled: Boolean = true,
+
     ) : Parcelable {
 
     companion object {
@@ -188,7 +191,8 @@ data class Configuration(
                 isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
                 isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
                 isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
-                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled
+                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled,
+                isTransactionDocsEnabled = defaultCaptureConfiguration.transactionDocsEnabled
             )
 
 

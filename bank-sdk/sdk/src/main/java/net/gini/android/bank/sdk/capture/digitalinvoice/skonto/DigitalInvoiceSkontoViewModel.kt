@@ -149,7 +149,18 @@ internal class DigitalInvoiceSkontoViewModel(
     }
 
     fun onInvoiceClicked() = viewModelScope.launch {
-        sideEffectFlow.emit(DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen)
+        val currentState =
+            stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch
+        sideEffectFlow.emit(DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen(
+            SkontoData(
+                skontoAmountToPay = currentState.skontoAmount,
+                skontoDueDate = currentState.discountDueDate,
+                skontoPercentageDiscounted = currentState.skontoPercentage,
+                skontoRemainingDays = currentState.paymentInDays,
+                fullAmountToPay = currentState.fullAmount,
+                skontoPaymentMethod = currentState.paymentMethod,
+            )
+        ))
     }
 
     fun onHelpClicked() = viewModelScope.launch {

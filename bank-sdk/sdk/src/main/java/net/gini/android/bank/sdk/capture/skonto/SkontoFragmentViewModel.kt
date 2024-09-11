@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoScreenState
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoSideEffect
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
@@ -44,10 +46,10 @@ internal class SkontoFragmentViewModel(
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return
         skontoExtractionsHandler.updateExtractions(
             totalAmount = currentState.totalAmount,
-                    skontoPercentage = currentState.skontoPercentage,
-                    skontoAmount = currentState.skontoAmount,
-                    paymentInDays = currentState.paymentInDays,
-                    discountDueDate = currentState.discountDueDate.toString(),
+            skontoPercentage = currentState.skontoPercentage,
+            skontoAmount = currentState.skontoAmount,
+            paymentInDays = currentState.paymentInDays,
+            discountDueDate = currentState.discountDueDate.toString(),
         )
         listener?.onPayInvoiceWithSkonto(
             skontoExtractionsHandler.getExtractions(),
@@ -206,6 +208,19 @@ internal class SkontoFragmentViewModel(
     }
 
     fun onInvoiceClicked() = viewModelScope.launch {
-        sideEffectFlow.emit(SkontoFragmentContract.SideEffect.OpenInvoiceScreen)
+        val currentState =
+            stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        sideEffectFlow.emit(
+            SkontoFragmentContract.SideEffect.OpenInvoiceScreen(
+                SkontoData(
+                    skontoAmountToPay = currentState.skontoAmount,
+                    skontoDueDate = currentState.discountDueDate,
+                    skontoPercentageDiscounted = currentState.skontoPercentage,
+                    skontoRemainingDays = currentState.paymentInDays,
+                    fullAmountToPay = currentState.fullAmount,
+                    skontoPaymentMethod = currentState.paymentMethod,
+                )
+            )
+        )
     }
 }

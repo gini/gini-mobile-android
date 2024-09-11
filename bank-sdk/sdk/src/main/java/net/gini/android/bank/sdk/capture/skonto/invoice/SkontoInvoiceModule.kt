@@ -5,6 +5,7 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoDocumentLayoutNetworkService
 import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoDocumentPagesNetworkService
 import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoFileNetworkService
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
 import net.gini.android.capture.analysis.LastAnalyzedDocumentIdProvider
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -40,9 +41,10 @@ val skontoInvoiceScreenModule = module {
     // Bridge between GiniCapture and GiniBank
     factory<LastAnalyzedDocumentIdProvider> { getGiniCaptureKoin().get() }
 
-    viewModel { (highlights: Array<SkontoInvoiceHighlightBoxes>) ->
+    viewModel { (skontoData: SkontoData, highlights: Array<SkontoInvoiceHighlightBoxes>) ->
         SkontoInvoiceFragmentViewModel(
             documentId = get<LastAnalyzedDocumentIdProvider>().provide(),
+            skontoData = skontoData,
             skontoInvoiceHighlights = highlights.toList(),
             skontoDocumentPagesNetworkService = get(),
             skontoDocumentLayoutNetworkService = get(),
