@@ -1,5 +1,7 @@
 import net.gini.gradle.CodeAnalysisPlugin
 import net.gini.gradle.DokkaPlugin
+import net.gini.gradle.PublishToMavenPlugin
+import net.gini.gradle.SBOMPlugin
 import net.gini.gradle.extensions.apiProjectDependencyForSBOM
 
 plugins {
@@ -61,6 +63,14 @@ android {
             jvmTarget = "1.8"
         }
     }
+
+    // After AGP 8, this replaces the tasks in PublishToMavenPlugin
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
@@ -96,5 +106,7 @@ dependencies {
     testImplementation(libs.androidx.test.espresso.intents)
 }
 
+apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<SBOMPlugin>()
