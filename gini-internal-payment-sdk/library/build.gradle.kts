@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "net.gini.android.internal.payment"
-    compileSdk = 34
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     // after upgrading to AGP 8, we need this to have the defaultConfig block
     buildFeatures {
