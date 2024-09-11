@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Authentication &mdash; Gini Merchant SDK for Android  documentation</title>
+  <title>Google Play Data Safety Guide &mdash; Gini Merchant SDK for Android  documentation</title>
   
 
   
@@ -55,8 +55,8 @@
   
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="Gini Merchant SDK for Android  documentation" href="index.html"/>
-        <link rel="next" title="Flow" href="flow.html"/>
-        <link rel="prev" title="Getting started" href="setup.html"/> 
+        <link rel="next" title="Reference Docs" href="reference.html"/>
+        <link rel="prev" title="UI Customization Guide" href="customization.html"/> 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
 
@@ -91,7 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="setup.html#gini-merchant-api-client-credentials">Gini Merchant API Client Credentials</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
 <li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-ginimerchant-instance">Create the GiniMerchant instance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#load-payment-providers">Load payment providers</a></li>
@@ -141,12 +141,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="data-safety.html">Google Play Data Safety Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data-safety.html#data-collection-and-security">Data collection and security</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data-safety.html#data-types">Data types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data-safety.html#data-usage-and-handling">Data usage and handling</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="data-safety.html#financial-info-purchase-history">Financial info - Purchase history</a></li>
-<li class="toctree-l3"><a class="reference internal" href="data-safety.html#device-or-other-ids">Device or other IDs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Google Play Data Safety Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-collection-and-security">Data collection and security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-types">Data types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-usage-and-handling">Data usage and handling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#financial-info-purchase-history">Financial info - Purchase history</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#device-or-other-ids">Device or other IDs</a></li>
 </ul>
 </li>
 </ul>
@@ -183,7 +183,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Authentication</li>
+    <li>Google Play Data Safety Guide</li>
       <li class="wy-breadcrumbs-aside">
         
       </li>
@@ -192,16 +192,103 @@
 </div>
           <div role="main">
             
-  <div class="section" id="authentication">
-<h1>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h1>
-<p>The entry point for the Gini Merchant SDK is the <code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code> class.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">GiniMerchant</span></code> class can be built either with client credentials (clientId and clientSecret)
-or with a <code class="docutils literal notranslate"><span class="pre">SessionManager</span></code> if you have a token:</p>
-<ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">GiniMerchant(context:</span> <span class="pre">Context,</span> <span class="pre">clientId:</span> <span class="pre">String,</span> <span class="pre">clientSecret:</span> <span class="pre">String,</span> <span class="pre">emailDomain:</span> <span class="pre">String)</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">GiniMerchant(context:</span> <span class="pre">Context,</span> <span class="pre">sessionManager:</span> <span class="pre">SessionManager)</span></code></li>
-</ul>
-<p><code class="docutils literal notranslate"><span class="pre">SessionManager</span></code> is an interface which you need to implement to send the token.</p>
+  <div class="section" id="google-play-data-safety-guide">
+<h1>Google Play Data Safety Guide<a class="headerlink" href="#google-play-data-safety-guide" title="Permalink to this headline">¶</a></h1>
+<p>Since <a class="reference external" href="https://support.google.com/googleplay/android-developer/answer/10787469?hl=en">July 20, 2022</a>, Google requires
+all apps published via the Google Play Store to declare how their app collects and handles user data. This document
+provides information about the Gini Merchant SDK’s data use to help you fill out or update your app’s <a class="reference external" href="https://developer.android.com/privacy-and-security/declare-data-use">Data safety
+form</a> for the Google Play Store.</p>
+<div class="section" id="data-collection-and-security">
+<h2>Data collection and security<a class="headerlink" href="#data-collection-and-security" title="Permalink to this headline">¶</a></h2>
+<p>For the question <strong>“Does your app collect or share any of the required user data types?”</strong> please answer <strong>Yes</strong>. Gini
+Merchant SDK collects information about purchases and transactions.</p>
+<p>For the questions <strong>“Is all of the user data collected by your app encrypted in transit?“</strong> please answer <strong>Yes.</strong> Gini
+Merchant SDK transmits data only via https and in addition you can also use certificate pinning.</p>
+<p>The answer to the question <strong>“Do you provide a way for users to request that their data is deleted?“</strong> depends on
+whether you provide your users a way to request data deletion. If you do, then you can contact Gini support or use the
+Gini Pay API to delete user data.</p>
+</div>
+<div class="section" id="data-types">
+<h2>Data types<a class="headerlink" href="#data-types" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Category</th>
+<th class="head">Used by Gini Merchant SDK</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Location</td>
+<td>🔴 Gini Merchant SDK doesn’t collect approximate or precise location data.</td>
+</tr>
+<tr class="row-odd"><td>Personal info</td>
+<td>🔴 Gini Merchant SDK doesn’t collect personal user data.</td>
+</tr>
+<tr class="row-even"><td>Financial info</td>
+<td>🟢 Gini Merchant SDK collects <strong>purchase history</strong> (purchases and transactions).</td>
+</tr>
+<tr class="row-odd"><td>Health and fitness</td>
+<td>🔴 Gini Merchant SDK doesn’t collect health or fitness data.</td>
+</tr>
+<tr class="row-even"><td>Messages</td>
+<td>🔴 Gini Merchant SDK doesn’t collect data about emails, SMS/MMS messages, or other in-app messages from users.</td>
+</tr>
+<tr class="row-odd"><td>Photos and videos</td>
+<td>🔴 Gini Merchant SDK doesn’t collect photos or videos.</td>
+</tr>
+<tr class="row-even"><td>Audio files</td>
+<td>🔴 Audio files</td>
+</tr>
+<tr class="row-odd"><td>Files and docs</td>
+<td>🔴 Gini Merchant SDK doesn’t collect files or documents.</td>
+</tr>
+<tr class="row-even"><td>Calendar</td>
+<td>🔴 Gini Merchant SDK doesn’t collect calendar events from users.</td>
+</tr>
+<tr class="row-odd"><td>Contacts</td>
+<td>🔴 Gini Merchant SDK doesn’t collect contacts from users.</td>
+</tr>
+<tr class="row-even"><td>App activity</td>
+<td>🔴 Gini Merchant SDK doesn’t collect app activity.</td>
+</tr>
+<tr class="row-odd"><td>Web browsing</td>
+<td>🔴 Gini Merchant SDK doesn’t collect web browsing history from users.</td>
+</tr>
+<tr class="row-even"><td>App info and performance</td>
+<td>🔴 Gini Merchant SDK doesn’t collect crash logs or diagnostics.</td>
+</tr>
+<tr class="row-odd"><td>Device or other IDs</td>
+<td>ℹ️ Gini Merchant SDK may collect <strong>anonymous user IDs</strong> which are generated random IDs and unique to app installations,
+provided you didn’t override authentication.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data-usage-and-handling">
+<h2>Data usage and handling<a class="headerlink" href="#data-usage-and-handling" title="Permalink to this headline">¶</a></h2>
+<p>The following sections provide information for filling out the “Data usage and handling” forms. For ease of use the
+terms and phrases which are used in the forms are highlighted in bold letters.</p>
+<div class="section" id="financial-info-purchase-history">
+<h3>Financial info - Purchase history<a class="headerlink" href="#financial-info-purchase-history" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Merchant SDK <strong>collects</strong> data related to purchases for a limited duration. This duration is 28 days unless a
+different period has been agreed upon during contract negotiations. This means that data is <strong>not processed
+ephemerally</strong>. In addition <strong>users can’t choose whether this data is collected</strong>.</p>
+<p>The <strong>purpose</strong> for collecting purchase history is to provide SDK functionality (<strong>app functionality</strong>) and for <strong>analytics</strong>.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+<div class="section" id="device-or-other-ids">
+<h3>Device or other IDs<a class="headerlink" href="#device-or-other-ids" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Merchant SDK may <strong>collect</strong> anonymous user IDs which are generated random IDs and unique to app installations,
+provided you didn’t override authentication (via a custom session manager). This data is <strong>not processed ephemerally</strong>
+and <strong>users can’t choose whether this data is collected</strong>.</p>
+<p>The reason for collecting anonymous user IDs is to provide SDK functionality (<strong>app functionality</strong>) and for
+<strong>analytics</strong> to monitor service quality.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+</div>
 </div>
 
 
@@ -210,10 +297,10 @@ or with a <code class="docutils literal notranslate"><span class="pre">SessionMa
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="flow.html" class="btn btn-neutral float-right" title="Flow">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="reference.html" class="btn btn-neutral float-right" title="Reference Docs">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="setup.html" class="btn btn-neutral" title="Getting started"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="customization.html" class="btn btn-neutral" title="UI Customization Guide"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
