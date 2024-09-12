@@ -71,7 +71,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
@@ -85,8 +84,6 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.Di
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
-import net.gini.android.bank.sdk.di.getGiniBankKoin
-import net.gini.android.bank.sdk.di.koin.getGiniBankViewModel
 import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.Amount
@@ -100,7 +97,6 @@ import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.view.InjectedViewAdapterInstance
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -326,9 +322,11 @@ private fun ScreenReadyState(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                val invoicePreviewPaddingTop =
+                    if (LocalContext.current.resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) 64.dp else 8.dp
                 YourInvoiceScanSection(
                     modifier = Modifier
-                        .padding(top = 8.dp)
+                        .padding(top = invoicePreviewPaddingTop)
                         .tabletMaxWidth(),
                     colorScheme = screenColorScheme.invoiceScanSectionColors,
                     onClick = onInvoiceClicked,
@@ -408,7 +406,9 @@ private fun NavigationActionBack(
     modifier: Modifier = Modifier,
 ) {
     IconButton(
-        modifier = modifier,
+        modifier = modifier
+            .width(24.dp)
+            .height(24.dp),
         onClick = onClick
     ) {
         Icon(
@@ -425,7 +425,6 @@ private fun NavigationActionHelp(
 ) {
     IconButton(
         modifier = modifier
-            .padding(8.dp)
             .width(24.dp)
             .height(24.dp),
         onClick = onClick
@@ -582,15 +581,14 @@ private fun SkontoSection(
 
                 SkontoEdgeCase.PayByCashToday -> stringResource(
                     id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
-                    remainingDaysText,
                     animatedDiscountAmount.formatAsDiscountPercentage()
                 )
 
-               else -> stringResource(
-                   id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
-                   remainingDaysText,
-                   animatedDiscountAmount.formatAsDiscountPercentage()
-               )
+                else -> stringResource(
+                    id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
+                    remainingDaysText,
+                    animatedDiscountAmount.formatAsDiscountPercentage()
+                )
             }
 
             InfoBanner(
@@ -600,6 +598,7 @@ private fun SkontoSection(
                     .padding(top = 12.dp),
                 colors = when (edgeCase) {
                     SkontoEdgeCase.SkontoLastDay,
+                    SkontoEdgeCase.PayByCashToday,
                     SkontoEdgeCase.PayByCashOnly -> colors.warningInfoBannerColors
 
                     SkontoEdgeCase.SkontoExpired -> colors.errorInfoBannerColors
@@ -701,23 +700,28 @@ private fun FooterSection(
         ) {
             Column(
                 modifier = Modifier
-                    .tabletMaxWidth()
+                    .fillMaxWidth()
                     .align(Alignment.CenterHorizontally),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
+                    Modifier
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
                         NavigationActionBack(
-                            modifier = Modifier.padding(horizontal = 4.dp),
+                            modifier = Modifier.padding(16.dp),
                             onClick = onBackClicked
                         )
                     }
-                    Spacer(modifier = Modifier.weight(0.1f))
+                    Spacer(modifier = Modifier.weight(1f))
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
-                        NavigationActionHelp(onClick = onHelpClicked)
+                        NavigationActionHelp(
+                            modifier = Modifier.padding(16.dp),
+                            onClick = onHelpClicked
+                        )
                     }
                 }
             }

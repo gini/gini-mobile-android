@@ -115,7 +115,6 @@
             style="@style/GiniCaptureTheme.Typography.Caption1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/gc_large_20"
             android:background="@drawable/gbs_success_01_rectangle_rounded_4dp"
             android:paddingHorizontal="@dimen/gc_medium"
             android:paddingVertical="@dimen/gc_small"

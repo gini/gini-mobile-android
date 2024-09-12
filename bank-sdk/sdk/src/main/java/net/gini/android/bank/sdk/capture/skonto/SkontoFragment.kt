@@ -340,9 +340,10 @@ private fun ScreenReadyState(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                val invoicePreviewPaddingTop = if (LocalContext.current.resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) 64.dp else 8.dp
                 InvoicePreviewSection(
                     modifier = Modifier
-                        .padding(top = 8.dp)
+                        .padding(top = invoicePreviewPaddingTop)
                         .tabletMaxWidth(),
                     colorScheme = screenColorScheme.invoiceScanSectionColors,
                     onClick = onInvoiceClicked,

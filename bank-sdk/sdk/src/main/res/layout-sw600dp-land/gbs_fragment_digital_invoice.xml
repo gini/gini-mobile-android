@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/gc_large"
-        android:layout_marginTop="@dimen/gc_large_24"
+        android:layout_marginTop="@dimen/gc_large_48"
         android:text="@string/gbs_articles"
         app:layout_constraintStart_toStartOf="@+id/line_items"
         app:layout_constraintTop_toBottomOf="@+id/gbs_top_bar_navigation" />
@@ -62,7 +62,8 @@
             android:layout_width="@dimen/gc_tablet_width"
             android:layout_height="match_parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            >
 
             <TextView
                 android:id="@+id/gross_price_total_fractional_part"
@@ -149,8 +150,9 @@
 
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gbs_bottom_bar_navigation"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/gc_tablet_width"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/gc_large_20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
