@@ -323,7 +323,11 @@ private fun ScreenReadyState(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 val invoicePreviewPaddingTop =
-                    if (LocalContext.current.resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) 64.dp else 8.dp
+                    if (LocalContext.current.resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+                        64.dp
+                    } else {
+                        8.dp
+                    }
                 YourInvoiceScanSection(
                     modifier = Modifier
                         .padding(top = invoicePreviewPaddingTop)
