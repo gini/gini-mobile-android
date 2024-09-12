@@ -30,13 +30,15 @@ import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.util.autoCleared
 import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.util.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.BackListener
 import java.util.Locale
 
 /**
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
  * [PaymentComponent] instance to show the icons of the available payment provider apps.
  */
-class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?) :
+class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
+
     Fragment() {
     constructor() : this(paymentComponent = null)
 
@@ -222,9 +224,10 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
          * Create a new instance of the [MoreInformationFragment].
          *
          * @param paymentComponent the [PaymentComponent] instance which contains the list of payment provider apps
+         * @param backListener a listener for back events
          */
-        fun newInstance(paymentComponent: PaymentComponent?): MoreInformationFragment =
-            MoreInformationFragment(paymentComponent = paymentComponent)
+        fun newInstance(paymentComponent: PaymentComponent?, backListener: BackListener? = null): MoreInformationFragment =
+            MoreInformationFragment(paymentComponent = paymentComponent, backListener = backListener)
     }
 
     private class URLSpanNoUnderline(url: String?) : URLSpan(url) {

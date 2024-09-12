@@ -11,8 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetPaymentComponentBinding
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared

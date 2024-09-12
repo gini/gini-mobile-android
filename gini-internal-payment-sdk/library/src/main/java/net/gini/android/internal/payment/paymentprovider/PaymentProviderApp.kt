@@ -96,7 +96,7 @@ data class PaymentProviderApp(
 
 
     companion object {
-        internal const val ICON_SIZE = 32f // in dp
+        const val ICON_SIZE = 32f // in dp
 
         private val LOG = LoggerFactory.getLogger(PaymentProviderApp::class.java)
 

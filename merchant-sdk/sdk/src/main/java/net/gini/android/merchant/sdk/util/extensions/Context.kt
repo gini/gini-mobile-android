@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.util.TypedValue
 import androidx.annotation.VisibleForTesting
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 
 // In a future refactoring we can split extensions into files according to what component they extend
 @VisibleForTesting

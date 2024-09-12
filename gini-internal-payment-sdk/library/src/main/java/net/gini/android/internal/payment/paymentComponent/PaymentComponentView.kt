@@ -47,7 +47,7 @@ import kotlin.coroutines.CoroutineContext
  *
  * _Note_: The [PaymentComponentView] will only be visible if its [PaymentComponentView.isPayable] property is `true`.
  */
-internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
+class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
 
     /**
      * The [PaymentComponent] instance which provides the data and state for the [PaymentComponentView].
