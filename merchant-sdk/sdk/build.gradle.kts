@@ -101,7 +101,7 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 }
 
 dependencies {
-    val internalPaymentLibrary = project(":gini-internal-payment-sdk:library")
+    val internalPaymentLibrary = project(":internal-payment-sdk:sdk")
     if (properties["createSBOM"] == "true") {
         implementationProjectDependencyForSBOM(internalPaymentLibrary)
     } else {
