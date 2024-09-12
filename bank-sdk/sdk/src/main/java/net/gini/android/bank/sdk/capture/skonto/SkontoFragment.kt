@@ -425,7 +425,7 @@ private fun TopAppBar(
         actions = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
                 NavigationActionHelp(
-                    modifier = Modifier.padding(start = 16.dp, end = 32.dp),
+                    modifier = Modifier.padding(start = 20.dp, end = 12.dp),
                     onClick = onHelpClicked
                 )
             }
@@ -957,7 +957,7 @@ private fun FooterSection(
                             Box(
                                 modifier = Modifier
                                     .height(IntrinsicSize.Min)
-                                    .padding(horizontal = 4.dp)
+
                                     .background(
                                         colors.discountLabelColorScheme.backgroundColor,
                                         RoundedCornerShape(4.dp)
@@ -1017,7 +1017,7 @@ private fun FooterSection(
                     )
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
                         NavigationActionHelp(
-                            modifier = Modifier.padding(end = 16.dp),
+                            modifier = Modifier.padding(end = 20.dp),
                             onClick = onHelpClicked
                         )
                     }
