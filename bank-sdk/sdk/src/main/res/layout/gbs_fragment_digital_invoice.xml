@@ -34,13 +34,20 @@
         android:layout_marginTop="@dimen/gc_small"
         android:background="?attr/backgroundColor"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/gbs_bottom_wrapper"
+        app:layout_constraintBottom_toTopOf="@+id/barrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gbs_article_txt"
         tools:itemCount="5"
         tools:listitem="@layout/gbs_item_digital_invoice_line_item" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        app:barrierDirection="top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="gbs_bottom_wrapper,gbs_bottom_bar_navigation"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gbs_bottom_wrapper"
@@ -118,6 +125,7 @@
             android:background="@drawable/gbs_success_01_rectangle_rounded_4dp"
             android:paddingHorizontal="@dimen/gc_medium"
             android:paddingVertical="@dimen/gc_small"
+            android:layout_marginHorizontal="@dimen/gc_large_24"
             android:textColor="@color/gc_light_01"
             app:layout_constraintBaseline_toBaselineOf="@+id/total_label"
             app:layout_constraintEnd_toEndOf="parent"
