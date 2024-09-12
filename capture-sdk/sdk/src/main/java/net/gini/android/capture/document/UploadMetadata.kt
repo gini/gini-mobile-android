@@ -9,7 +9,7 @@ internal object UploadMetadata {
 
     private const val USER_COMMENT_PLATFORM = "Platform"
     private const val USER_COMMENT_OS_VERSION = "OSVer"
-    private const val USER_COMMENT_GINI_CAPTURE_VERSION = "GiniVisionVer"
+    private const val USER_COMMENT_GINI_CAPTURE_VERSION = "GiniCaptureVer"
     private const val USER_COMMENT_DEVICE_ORIENTATION = "DeviceOrientation"
     private const val USER_COMMENT_DEVICE_TYPE = "DeviceType"
     private const val USER_COMMENT_SOURCE = "Source"
@@ -70,10 +70,14 @@ internal object UploadMetadata {
         metadataMap[USER_COMMENT_GINI_CAPTURE_VERSION] = BuildConfig.VERSION_NAME.replace(" ", "")
 
         if (GiniCapture.hasInstance()) {
-            metadataMap[USER_COMMENT_ENTRY_POINT] = entryPointToString(GiniCapture.getInstance().getEntryPoint())
+            metadataMap[USER_COMMENT_ENTRY_POINT] = entryPointToString(GiniCapture.getInstance().entryPoint)
+            GiniCapture.getInstance().customUploadMetadata?.forEach {
+                metadataMap[it.key] = it.value
+            }
         } else {
             metadataMap[USER_COMMENT_ENTRY_POINT] = entryPointToString(GiniCapture.Internal.DEFAULT_ENTRY_POINT)
         }
+
         return convertMapToCSV(metadataMap)
     }
 
