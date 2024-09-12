@@ -13,5 +13,12 @@
         <receiver android:name="net.gini.android.internal.payment.utils.ShareWithBroadcastReceiver" android:exported="false"/>
 
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <!-- It has to match the scheme in Bank.kt -->
+            <data android:scheme="ginipay" android:host="payment"/>
+        </intent>
+    </queries>
 </manifest>
