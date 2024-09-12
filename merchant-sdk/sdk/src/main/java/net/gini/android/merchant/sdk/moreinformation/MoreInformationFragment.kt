@@ -23,13 +23,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsFragmentPaymentMoreInformationBinding
-import net.gini.android.merchant.sdk.databinding.GmsPaymentProviderIconHolderBinding
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.util.BackListener
-import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 
 /**
@@ -200,7 +200,7 @@ internal class MoreInformationFragment private constructor(private val paymentCo
         RecyclerView.Adapter<PaymentProvidersIconsAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = GmsPaymentProviderIconHolderBinding.inflate(
+            val view = GpsPaymentProviderIconHolderBinding.inflate(
                 parent.getLayoutInflaterWithGiniMerchantTheme(),
                 parent,
                 false
@@ -212,12 +212,12 @@ internal class MoreInformationFragment private constructor(private val paymentCo
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val context = holder.binding.root.context
-            holder.binding.gmsPaymentProviderIcon.setImageDrawable(dataSet[position]?.icon)
-            holder.binding.gmsPaymentProviderIcon.contentDescription = dataSet[position]?.paymentProvider?.name + " ${context.getString(
+            holder.binding.gpsPaymentProviderIcon.setImageDrawable(dataSet[position]?.icon)
+            holder.binding.gpsPaymentProviderIcon.contentDescription = dataSet[position]?.paymentProvider?.name + " ${context.getString(
                 R.string.gms_payment_provider_logo_content_description)}"
         }
 
-        class ViewHolder(val binding: GmsPaymentProviderIconHolderBinding) :
+        class ViewHolder(val binding: GpsPaymentProviderIconHolderBinding) :
             RecyclerView.ViewHolder(binding.root)
     }
 

@@ -13,10 +13,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
+import net.gini.android.internal.payment.paymentComponent.BankPickerRows
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.databinding.GmsPaymentProviderIconHolderBinding
 import net.gini.android.merchant.sdk.databinding.GmsViewPaymentComponentBinding
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.setBackgroundTint
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
@@ -72,7 +75,7 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
     private val binding = GmsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniMerchantTheme(), this)
     private lateinit var selectBankButton: Button
     private lateinit var payInvoiceButton: Button
-    private lateinit var paymentProviderAppIconHolder: GmsPaymentProviderIconHolderBinding
+    private lateinit var paymentProviderAppIconHolder: GpsPaymentProviderIconHolderBinding
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -162,7 +165,7 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
         }
     }
 
-    private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
+    private fun customizeBankPicker(paymentProviderApp: net.gini.android.internal.payment.paymentprovider.PaymentProviderApp) {
         LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
         context?.wrappedWithGiniMerchantTheme()?.let { context ->
             selectBankButton.apply {
@@ -176,14 +179,14 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
             }
 
             paymentProviderAppIconHolder.apply {
-                gmsPaymentProviderIcon.setImageDrawable(paymentProviderApp.icon)
+                gpsPaymentProviderIcon.setImageDrawable(paymentProviderApp.icon)
                 root.visibility = View.VISIBLE
                 root.contentDescription = paymentProviderApp.name
             }
         }
     }
 
-    private fun customizePayInvoiceButton(paymentProviderApp: PaymentProviderApp) {
+    private fun customizePayInvoiceButton(paymentProviderApp: net.gini.android.internal.payment.paymentprovider.PaymentProviderApp) {
         LOG.debug("Customizing pay invoice button for payment provider app: {}", paymentProviderApp.name)
         payInvoiceButton.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
         payInvoiceButton.setTextColor(paymentProviderApp.colors.textColor)
@@ -240,10 +243,9 @@ internal class PaymentComponentView(context: Context, attrs: AttributeSet?) : Co
     }
 
     private fun initViews() {
-        selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gmsSelectBankButton else binding.gmsSingleRowBankSelection.gmsSelectBankButton
+        selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gpsSelectBankButton else binding.gmsSingleRowBankSelection.gmsSelectBankButton
         payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsPayInvoiceButtonTwoRows else binding.gmsSingleRowBankSelection.gmsPayInvoiceButton
-        paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gmsPaymentProviderAppIconHolder else binding.gmsSingleRowBankSelection.gmsPaymentProviderAppIconHolder
-
+        paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gmsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gmsSingleRowBankSelection.gmsPaymentProviderAppIconHolder
         payInvoiceButton.text = if (reviewFragmentWillBeShown) resources.getString(R.string.gms_continue_to_overview) else resources.getString(R.string.gms_pay_button)
     }
 

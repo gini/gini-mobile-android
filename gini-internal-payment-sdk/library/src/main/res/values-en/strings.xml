@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Gini Payment SDK</string>
     <string name="gps_amount_hint">Amount</string>
     <string name="gps_purpose_hint">Reference number</string>
     <string name="gps_recipient_hint">Recipient</string>

@@ -1,24 +1,17 @@
 package net.gini.android.merchant.sdk
 
 import android.content.Context
-import android.os.Parcelable
-import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.parcelize.Parcelize
-import net.gini.android.core.api.models.Document
-import net.gini.android.health.api.GiniHealthAPI
-import net.gini.android.health.api.GiniHealthAPIBuilder
-import net.gini.android.merchant.sdk.api.ResultWrapper
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.api.model.PaymentDetails
+import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.merchant.sdk.api.authorization.HealthApiSessionManagerAdapter
 import net.gini.android.merchant.sdk.api.authorization.SessionManager
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
-import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.toBackendFormat
 import org.slf4j.LoggerFactory
@@ -39,51 +32,20 @@ class GiniMerchant(
     private val sessionManager: SessionManager? = null,
     private val merchantApiBaseUrl: String = MERCHANT_BASE_URL,
     private val userCenterApiBaseUrl: String? = null,
-    private val debuggingEnabled: Boolean = false,
+    private val debuggingEnabled: Boolean = true,
 ) {
 
-    // Lazily initialized backing field for giniHealthAPI to allow mocking it for tests.
-    private var _giniHealthAPI: GiniHealthAPI? = null
-    internal val giniHealthAPI: GiniHealthAPI
-        get() {
-            _giniHealthAPI?.let { return it }
-                ?: run {
-                    val healthAPI = if (sessionManager == null) {
-                        GiniHealthAPIBuilder(
-                            context,
-                            clientId,
-                            clientSecret,
-                            emailDomain,
-                            apiVersion = API_VERSION
-                        )
-                    } else {
-                        GiniHealthAPIBuilder(context, sessionManager = HealthApiSessionManagerAdapter(sessionManager), apiVersion = API_VERSION)
-                    }.apply {
-                        setApiBaseUrl(merchantApiBaseUrl)
-                        if (userCenterApiBaseUrl != null) {
-                            setUserCenterApiBaseUrl(userCenterApiBaseUrl)
-                        }
-                        setDebuggingEnabled(debuggingEnabled)
-                    }.build()
-                    _giniHealthAPI = healthAPI
-                    return healthAPI
-                }
-        }
-
-    internal var paymentComponent = PaymentComponent(context, healthAPI = giniHealthAPI)
-
-    private val _paymentFlow = MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
-
-    /**
-     * A flow for getting extracted [PaymentDetails] for the document set for review (see [setDocumentForReview]).
-     *
-     * It always starts with [ResultWrapper.Loading] when setting a document.
-     * [PaymentDetails] will be wrapped in [ResultWrapper.Success], otherwise the throwable will
-     * be in a [ResultWrapper.Error].
-     *
-     * It never completes.
-     */
-    internal val paymentFlow: StateFlow<ResultWrapper<PaymentDetails>> = _paymentFlow
+    internal var giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
+        context = context,
+        clientId = clientId,
+        clientSecret = clientSecret,
+        emailDomain = emailDomain,
+        sessionManager = sessionManager?.let { HealthApiSessionManagerAdapter(it) },
+        baseUrl = MERCHANT_BASE_URL,
+        userCenterApiBaseUrl = userCenterApiBaseUrl,
+        debuggingEnabled = debuggingEnabled,
+        apiVersion = API_VERSION
+    )
 
     /**
      * A flow that exposes events from the Merchant SDK. You can collect this flow to be informed about events such as errors,
@@ -92,11 +54,14 @@ class GiniMerchant(
 
     private val _eventsFlow: MutableSharedFlow<MerchantSDKEvents> = MutableSharedFlow(extraBufferCapacity = 1)
 
-    val eventsFlow: SharedFlow<MerchantSDKEvents> = _eventsFlow
+    val eventsFlow: Flow<MerchantSDKEvents> = merge(_eventsFlow, giniInternalPaymentModule.eventsFlow.map { event -> mapInternalEvent(event) })
 
-    @VisibleForTesting
-    internal fun replaceHealthApiInstance(giniHealthAPI: GiniHealthAPI) {
-        _giniHealthAPI = giniHealthAPI
+    private fun mapInternalEvent(event: GiniInternalPaymentModule.InternalPaymentEvents): MerchantSDKEvents = when (event) {
+        GiniInternalPaymentModule.InternalPaymentEvents.NoAction -> MerchantSDKEvents.NoAction
+        GiniInternalPaymentModule.InternalPaymentEvents.OnLoading -> MerchantSDKEvents.OnLoading
+        is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> MerchantSDKEvents.OnScreenDisplayed(DisplayedScreen.toDisplayedScreen(event.displayedScreen))
+        is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> MerchantSDKEvents.OnErrorOccurred(event.throwable)
+        is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> MerchantSDKEvents.OnFinishedWithPaymentRequestCreated(event.paymentRequestId, event.paymentProviderName)
     }
 
     /**
@@ -131,7 +96,7 @@ class GiniMerchant(
             paymentDetails = paymentDetails,
             paymentFlowConfiguration = flowConfiguration ?: PaymentFlowConfiguration()
         )
-        _paymentFlow.tryEmit(ResultWrapper.Success(paymentDetails))
+        giniInternalPaymentModule.setPaymentDetails(paymentDetails)
         return paymentFragment
     }
 
@@ -155,21 +120,13 @@ class GiniMerchant(
     }
 
     internal fun setFlowCancelled() {
-        _eventsFlow.tryEmit(MerchantSDKEvents.OnFinishedWithCancellation())
+        _eventsFlow.tryEmit(MerchantSDKEvents.OnFinishedWithCancellation)
     }
 
     /**
      * Loads payment provider apps - can be used before starting the payment flow for faster loading
      */
-    suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
-
-    private sealed class CapturedArguments : Parcelable {
-        @Parcelize
-        class DocumentInstance(val value: Document) : CapturedArguments()
-
-        @Parcelize
-        class DocumentId(val id: String, val paymentDetails: PaymentDetails? = null) : CapturedArguments()
-    }
+    suspend fun loadPaymentProviderApps() = giniInternalPaymentModule.loadPaymentProviderApps()
 
     /**
      * State of the payment request
@@ -229,7 +186,7 @@ class GiniMerchant(
         /**
          * Payment request was cancelled. Can be either from the server, or by cancelling the payment flow.
          */
-        class OnFinishedWithCancellation(): MerchantSDKEvents()
+        object OnFinishedWithCancellation: MerchantSDKEvents()
 
         /**
          * An error occurred during the payment request.

@@ -15,7 +15,7 @@
         app:layout_constraintBottom_toBottomOf="@id/gms_select_bank_button"/>
 
     <include android:id="@+id/gms_payment_provider_app_icon_holder"
-        layout="@layout/gms_payment_provider_icon_holder"
+        layout="@layout/gps_payment_provider_icon_holder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/gms_medium"

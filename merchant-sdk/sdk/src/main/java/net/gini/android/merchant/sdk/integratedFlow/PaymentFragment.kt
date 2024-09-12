@@ -23,28 +23,27 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import net.gini.android.internal.payment.api.model.PaymentDetails
+import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.review.reviewBottomSheet.ReviewBottomSheet
+import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
+import net.gini.android.internal.payment.utils.PaymentNextStep
+import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.createShareWithPendingIntent
+import net.gini.android.internal.payment.utils.extensions.showInstallAppBottomSheet
+import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomSheet
+import net.gini.android.internal.payment.utils.extensions.startSharePdfIntent
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.R
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
-import net.gini.android.merchant.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.merchant.sdk.databinding.GmsFragmentMerchantBinding
 import net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.review.ReviewConfiguration
-import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
-import net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet
-import net.gini.android.merchant.sdk.review.reviewComponent.ReviewViewListener
 import net.gini.android.merchant.sdk.util.DisplayedScreen
-import net.gini.android.merchant.sdk.util.PaymentNextStep
-import net.gini.android.merchant.sdk.util.autoCleared
 import net.gini.android.merchant.sdk.util.extensions.add
-import net.gini.android.merchant.sdk.util.extensions.createShareWithPendingIntent
-import net.gini.android.merchant.sdk.util.extensions.showInstallAppBottomSheet
-import net.gini.android.merchant.sdk.util.extensions.showOpenWithBottomSheet
-import net.gini.android.merchant.sdk.util.extensions.startSharePdfIntent
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
 import org.jetbrains.annotations.VisibleForTesting
@@ -117,6 +116,14 @@ class PaymentFragment private constructor(
         }
     }
 
+    @VisibleForTesting
+    internal var reviewViewListener: ReviewViewListener = object: ReviewViewListener {
+        override fun onPaymentButtonTapped(paymentDetails: PaymentDetails) {
+            viewModel.updatePaymentDetails(paymentDetails)
+            viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
+        }
+    }
+
     private val paymentComponentListener = object: PaymentComponent.Listener {
         override fun onMoreInformationClicked() {
             viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
@@ -169,7 +176,6 @@ class PaymentFragment private constructor(
         binding.setStateListeners()
 
         viewModel.paymentComponent.listener = paymentComponentListener
-        viewModel.openWithPreferences = OpenWithPreferences(requireContext())
 
         viewModel.loadPaymentProviderApps()
         viewLifecycleOwner.lifecycleScope.launch {
@@ -296,21 +302,15 @@ class PaymentFragment private constructor(
     internal fun showReviewBottomDialog() {
         viewModel.addToBackStack(DisplayedScreen.ReviewBottomSheet)
         val reviewBottomSheet = ReviewBottomSheet.newInstance(
-            giniMerchant = viewModel.giniMerchant,
-            giniPaymentManager = viewModel.giniPaymentManager,
             backListener = viewModel,
             configuration = ReviewConfiguration(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
                 showCloseButton = true,
                 isAmountFieldEditable = viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true
             ),
-            listener = object: ReviewViewListener {
-                override fun onPaymentButtonTapped(paymentDetails: PaymentDetails) {
-                    viewModel.updatePaymentDetails(paymentDetails)
-                    viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
-                }
-            },
-            paymentComponent = viewModel.paymentComponent
+            listener = reviewViewListener,
+            giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
+            paymentComponent = viewModel.paymentComponent,
         )
         reviewBottomSheet.show(childFragmentManager, ReviewBottomSheet::class.java.name)
     }
@@ -363,6 +363,7 @@ class PaymentFragment private constructor(
             is PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
+                startSharePdfIntent(paymentNextStep.file)
                 viewModel.addToBackStack(DisplayedScreen.ShareSheet)
             }
         }
@@ -396,7 +397,7 @@ class PaymentFragment private constructor(
 
     companion object {
         fun newInstance(giniMerchant: GiniMerchant, paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration,
-                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(giniMerchant.paymentComponent, paymentDetails, paymentFlowConfiguration, giniMerchant)) = PaymentFragment(viewModelFactory)
+                        viewModelFactory : ViewModelProvider.Factory = PaymentFlowViewModel.Factory(paymentDetails, paymentFlowConfiguration, giniMerchant)) = PaymentFragment(viewModelFactory)
 
     }
 }

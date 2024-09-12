@@ -10,7 +10,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.internal.payment.GiniInternalPaymentModule
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,17 +23,15 @@ class GiniMerchantTest {
     private lateinit var giniMerchant: GiniMerchant
     private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
     private val documentManager: HealthApiDocumentManager = mockk(relaxed = true) { HealthApiDocumentManager::class.java }
+    private val giniInternalPaymentModule: GiniInternalPaymentModule = mockk(relaxed = true) { GiniInternalPaymentModule::class.java }
 
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         context!!.setTheme(R.style.GiniMerchantTheme)
         every { giniHealthAPI.documentManager } returns documentManager
-        giniMerchant = GiniMerchant(mockk(relaxed = true)).apply {
-            replaceHealthApiInstance(this@GiniMerchantTest.giniHealthAPI)
-        }
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
-        giniMerchant.paymentComponent = paymentComponent
+        giniMerchant = GiniMerchant(mockk(relaxed = true))
+        giniMerchant.giniInternalPaymentModule = giniInternalPaymentModule
     }
 
     @Test(expected = IllegalStateException::class)

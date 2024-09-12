@@ -15,7 +15,7 @@
         android:layout_marginStart="-8dp"
         android:clickable="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/gms_payment_provider_app_icon_holder"
+        app:layout_constraintStart_toEndOf="@id/gps_payment_provider_app_icon_holder"
         app:layout_constraintTop_toTopOf="parent"
         />
     <include android:id="@+id/gps_payment_provider_app_icon_holder"
