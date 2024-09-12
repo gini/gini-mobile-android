@@ -4,12 +4,4 @@
 
     <application/>
 
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.VIEW"/>
-            <!-- It has to match the scheme in Bank.kt -->
-            <data android:scheme="ginipay" android:host="payment"/>
-        </intent>
-    </queries>
-
 </manifest>
