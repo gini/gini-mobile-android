@@ -1,3 +1,7 @@
+import net.gini.gradle.CodeAnalysisPlugin
+import net.gini.gradle.DokkaPlugin
+import net.gini.gradle.PublishToMavenPlugin
+import net.gini.gradle.SBOMPlugin
 import net.gini.gradle.extensions.apiProjectDependencyForSBOM
 
 plugins {
@@ -8,7 +12,7 @@ plugins {
 
 android {
     namespace = "net.gini.android.internal.payment"
-    compileSdk = 34
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     // after upgrading to AGP 8, we need this to have the defaultConfig block
     buildFeatures {
@@ -59,6 +63,14 @@ android {
             jvmTarget = "1.8"
         }
     }
+
+    // After AGP 8, this replaces the tasks in PublishToMavenPlugin
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
@@ -93,3 +105,8 @@ dependencies {
     testImplementation(libs.androidx.test.espresso.core)
     testImplementation(libs.androidx.test.espresso.intents)
 }
+
+apply<PublishToMavenPlugin>()
+apply<DokkaPlugin>()
+apply<CodeAnalysisPlugin>()
+apply<SBOMPlugin>()
