@@ -40,7 +40,7 @@ class CameraFragmentImplTest {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
 
-        val fragmentImpl = object : CameraFragmentImpl(mock(), mock<CancelListener>(), false) {
+        val fragmentImpl = object : CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false) {
             override fun createCameraController(activity: Activity?): CameraInterface {
                 return mock<CameraInterface>().apply {
                     whenever(isPreviewRunning).thenReturn(true)
@@ -94,7 +94,7 @@ class CameraFragmentImplTest {
         })
         whenever(fragmentCallbackStub.findNavController()).thenReturn(mock())
 
-        val fragmentImpl = CameraFragmentImpl(fragmentCallbackStub, mock(),false)
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(fragmentCallbackStub, mock(), false)
 
         val noPermissionLayoutMock = mock<ConstraintLayout> {
             on { visibility } doReturn View.INVISIBLE
@@ -112,5 +112,13 @@ class CameraFragmentImplTest {
 
         // Then
         verify(eventTracker).onCameraScreenEvent(Event(CameraScreenEvent.HELP))
+    }
+
+    private open class CameraFragmentImplWithoutQRCodeReader(fragment: FragmentImplCallback,
+                                                        cancelListener: CancelListener, addPages: Boolean
+    ) : CameraFragmentImpl(fragment, cancelListener, addPages) {
+            override fun initQRCodeReader() {
+                // Do nothing, because no QR code reader is available in JVM tests
+            }
     }
 }
