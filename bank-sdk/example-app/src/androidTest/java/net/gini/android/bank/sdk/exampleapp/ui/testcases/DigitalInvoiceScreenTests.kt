@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.ExtractionScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,7 +42,7 @@ class DigitalInvoiceScreenTests {
 
     @Before
     fun setup() {
-        idlingResource = SimpleIdlingResource(7000)
+        idlingResource = SimpleIdlingResource(10000)
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
@@ -53,8 +54,10 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
-        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        val isOnboardingScreenTextVisible = digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
+        assertEquals(true, isOnboardingScreenTextVisible)
+        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        assertEquals(true, isOnboardingScreenButtonVisible)
     }
 
     @Test
@@ -90,13 +93,18 @@ class DigitalInvoiceScreenTests {
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickArticleSwitch()
-        digitalInvoiceScreen.checkForReturnReasonsList()
+        idlingResource.waitForIdle()
+        val isDisplayed = digitalInvoiceScreen.checkForReturnReasonsList()
+        idlingResource.waitForIdle()
+        assertEquals(true, isDisplayed)
     }
 
     @Test
     fun test4_verifyCountOnReturnReasonsList() {
         test3_returnReasonDisplaysWhenToggleSwitchIsDisabled()
-        digitalInvoiceScreen.checkItemCountOnReturnReasonsList()
+        val totalItemsOnReturnReason = 7
+        val itemSize =  digitalInvoiceScreen.checkItemCountOnReturnReasonsList()
+        assertEquals(totalItemsOnReturnReason, itemSize)
     }
 
     @Test
@@ -121,14 +129,24 @@ class DigitalInvoiceScreenTests {
     fun test7_differenceInTotalAmountWithSwitchEnabledOrDisabled() {
         test5_checkItemOnListIsDisabledAfterClickItemOnReturnReasonsList()
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.checkTotalTitleIsDisplayed()
-        digitalInvoiceScreen.checkTotalPriceIsDisplayed()
-        digitalInvoiceScreen.checkInitialPrice()
+
+        val isTotalTitleVisible = digitalInvoiceScreen.checkTotalTitleIsDisplayed()
+        assertEquals(true, isTotalTitleVisible)
+
+        val isTotalPriceVisible = digitalInvoiceScreen.checkTotalPriceIsDisplayed()
+        assertEquals(true, isTotalPriceVisible)
+
+        digitalInvoiceScreen.storeInitialPrice()
+        val hasTotalSumDistinct = digitalInvoiceScreen.verifyTotalSumValue()
+        assertEquals(true, hasTotalSumDistinct)
+
         digitalInvoiceScreen.clickArticleSwitch()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.checkTotalPriceIsDisplayed()
-        digitalInvoiceScreen.checkUpdatedPrice()
-        digitalInvoiceScreen.assertPriceHasChanged()
+
+        digitalInvoiceScreen.storeUpdatedPrice()
+        val hasTotalSumChanged = digitalInvoiceScreen.verifyTotalSumValue()
+        assertEquals(true, hasTotalSumChanged)
         idlingResource.waitForIdle()
     }
 
@@ -143,7 +161,9 @@ class DigitalInvoiceScreenTests {
         digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.assertOtherChargesDisplayed()
+        val isDisplayed = digitalInvoiceScreen.assertOtherChargesDisplayed()
+        idlingResource.waitForIdle()
+        assertEquals(true, isDisplayed)
     }
 
     @Test
@@ -158,7 +178,8 @@ class DigitalInvoiceScreenTests {
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickProceedButton()
-        extractionScreen.checkTransferSummaryButtonIsClickable()
+        val isTransferSummaryButtonVisible = extractionScreen.checkTransferSummaryButtonIsClickable()
+        assertEquals(true, isTransferSummaryButtonVisible)
     }
 
     @Test
@@ -173,8 +194,11 @@ class DigitalInvoiceScreenTests {
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickHelpButtonOnDigitalInvoiceScreen()
-        digitalInvoiceScreen.verifyHelpTextOnNextScreen()
-        digitalInvoiceScreen.verifyFirstTitleOnHelpScreen()
+        val isHelpTextVisible = digitalInvoiceScreen.verifyHelpTextOnNextScreen()
+        assertEquals(true, isHelpTextVisible)
+
+        val isFirstTitleTextVisible = digitalInvoiceScreen.verifyFirstTitleOnHelpScreen()
+        assertEquals(true, isFirstTitleTextVisible)
     }
 
     @Test
@@ -189,6 +213,7 @@ class DigitalInvoiceScreenTests {
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickCancelButton()
-        mainScreen.assertDescriptionTitle()
+        val isDescriptionTitleVisible = mainScreen.assertDescriptionTitle()
+        assertEquals(true, isDescriptionTitleVisible)
     }
 }

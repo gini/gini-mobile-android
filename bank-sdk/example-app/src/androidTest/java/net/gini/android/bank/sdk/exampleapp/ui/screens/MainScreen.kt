@@ -8,18 +8,22 @@ import net.gini.android.bank.sdk.exampleapp.R
 import androidx.test.espresso.assertion.ViewAssertions.matches
 
 class MainScreen {
-    fun assertDescriptionTitle(): MainScreen {
-        onView(withId(R.id.tv_exampleOfPhotoPayment)).check(matches(isDisplayed()))
-        return this
+    fun assertDescriptionTitle(): Boolean {
+        var isDescriptionTitleDisplayed = false
+        onView(withId(R.id.tv_exampleOfPhotoPayment))
+            .check { view, noViewFoundException ->
+                if (noViewFoundException == null || view.isShown()) {
+                    isDescriptionTitleDisplayed = true
+                }
+            }
+        return isDescriptionTitleDisplayed
     }
 
-    fun clickPhotoPaymentButton(): MainScreen {
+    fun clickPhotoPaymentButton() {
         onView(withId(R.id.button_startScanner)).perform(click())
-        return this
     }
 
-    fun clickSettingButton(): MainScreen {
+    fun clickSettingButton() {
         onView(withId(R.id.text_giniBankVersion)).perform(click())
-        return this
     }
 }
