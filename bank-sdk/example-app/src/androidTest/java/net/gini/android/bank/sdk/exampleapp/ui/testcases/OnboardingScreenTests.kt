@@ -20,7 +20,6 @@ import org.junit.runner.RunWith
 /**
  * Test class for onboarding screen flow.
  */
-@RunWith(AndroidJUnit4::class)
 class OnboardingScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
