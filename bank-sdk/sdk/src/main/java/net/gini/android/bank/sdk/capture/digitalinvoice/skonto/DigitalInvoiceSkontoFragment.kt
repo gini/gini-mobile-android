@@ -395,7 +395,10 @@ private fun TopAppBar(
         title = stringResource(id = R.string.gbs_skonto_screen_title),
         navigationIcon = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-                NavigationActionBack(onClick = onBackClicked)
+                NavigationActionBack(
+                    modifier = Modifier.padding(start = 16.dp, end = 32.dp),
+                    onClick = onBackClicked
+                )
             }
         }, actions = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
