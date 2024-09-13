@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.moreinformation
+package net.gini.android.internal.payment.moreInformation
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.api.models.PaymentProvider
+import net.gini.android.internal.payment.moreinformation.MoreInformationViewModel
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp

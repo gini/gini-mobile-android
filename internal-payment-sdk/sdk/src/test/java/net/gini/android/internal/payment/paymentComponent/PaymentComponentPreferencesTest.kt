@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.paymentComponent
+package net.gini.android.internal.payment.paymentComponent
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
@@ -9,7 +9,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentPreferences
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
 import org.junit.After
 import org.junit.Before

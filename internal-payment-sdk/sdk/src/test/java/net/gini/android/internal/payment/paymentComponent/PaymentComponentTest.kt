@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.paymentComponent
+package net.gini.android.internal.payment.paymentComponent
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -23,16 +23,13 @@ import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentPreferences
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
-import net.gini.android.merchant.sdk.paymentcomponent.SelectedPaymentProviderAppState
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderAppColors
-import net.gini.android.merchant.sdk.paymentprovider.getInstalledPaymentProviderApps
-import net.gini.android.merchant.sdk.paymentprovider.getPaymentProviderApps
+import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderAppColors
+import net.gini.android.internal.payment.paymentprovider.getInstalledPaymentProviderApps
+import net.gini.android.internal.payment.paymentprovider.getPaymentProviderApps
+import net.gini.android.internal.payment.util.extensions.generateBitmapDrawableIcon
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
-import net.gini.android.merchant.sdk.util.extensions.generateBitmapDrawableIcon
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -48,6 +45,7 @@ class PaymentComponentTest {
 
     private var context: Context? = null
     private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
+    private lateinit var giniPaymentModule: GiniInternalPaymentModule
     private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
     private val testCoroutineDispatcher = StandardTestDispatcher()
     private val testCoroutineScope =
@@ -102,6 +100,7 @@ class PaymentComponentTest {
     fun setUp() {
         every { giniHealthAPI.documentManager } returns documentManager
         context = getApplicationContext()
+        giniPaymentModule = GiniInternalPaymentModule(context!!, giniHealthAPI)
     }
 
     @After
@@ -148,7 +147,7 @@ class PaymentComponentTest {
         coEvery { documentManager.getPaymentProviders() } returns Resource.Error()
 
         // When
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
 
         // Then
@@ -163,7 +162,7 @@ class PaymentComponentTest {
         coEvery { documentManager.getPaymentProviders() } returns Resource.Cancelled()
 
         // When
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
 
         // Then
@@ -184,7 +183,7 @@ class PaymentComponentTest {
         coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
 
         // When
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
 
         // Then
@@ -218,7 +217,7 @@ class PaymentComponentTest {
         every { mockedContext.packageManager.getInstalledPaymentProviderApps() } returns emptyList()
 
         //When
-        val paymentComponent = PaymentComponent(mockedContext, giniHealthAPI)
+        val paymentComponent = PaymentComponent(mockedContext, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
 
         // Then
@@ -266,7 +265,7 @@ class PaymentComponentTest {
         val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
 
         //When
-        val paymentComponent = PaymentComponent(mockedContext, giniHealthAPI)
+        val paymentComponent = PaymentComponent(mockedContext, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
 
         // Then
@@ -307,7 +306,7 @@ class PaymentComponentTest {
         coEvery { documentManager.getPaymentProviders() } returns Resource.Success(paymentProviderList)
 
         //When
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
 
         // Then
@@ -339,7 +338,7 @@ class PaymentComponentTest {
         val paymentComponentPreferences = PaymentComponentPreferences(context!!)
         paymentComponentPreferences.deleteSelectedPaymentProviderId()
 
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
 
         paymentComponent.selectedPaymentProviderAppFlow.test {
@@ -379,7 +378,7 @@ class PaymentComponentTest {
         val paymentComponentPreferences = PaymentComponentPreferences(context!!)
         paymentComponentPreferences.deleteSelectedPaymentProviderId()
 
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
 
         paymentComponent.selectedPaymentProviderAppFlow.test {
@@ -396,7 +395,7 @@ class PaymentComponentTest {
         }
 
         // When
-        val newPaymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val newPaymentComponent = PaymentComponent(context!!, giniPaymentModule)
         newPaymentComponent.loadPaymentProviderApps()
 
         paymentComponent.selectedPaymentProviderAppFlow.test {
@@ -415,7 +414,7 @@ class PaymentComponentTest {
     @Test
     fun `sort function brings installed GCP apps to the front of the line`() = runTest {
         // Given
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         val paymentProviderAppList = listOf<PaymentProviderApp>(
             buildPaymentProviderApp(paymentProvider, false),
             buildPaymentProviderApp(paymentProvider1, false),
@@ -452,7 +451,7 @@ class PaymentComponentTest {
         )
         val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
 
-        val paymentComponent = PaymentComponent(mockedContext, giniHealthAPI)
+        val paymentComponent = PaymentComponent(mockedContext, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
         paymentComponent.setSelectedPaymentProviderApp(paymentProviderAppList[0])
 
@@ -485,7 +484,7 @@ class PaymentComponentTest {
     @Test
     fun `rechecks returning user`() = runTest {
         // Given
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         paymentComponent.shouldCheckReturningUser = true
 
         paymentComponent.checkReturningUser()
@@ -505,7 +504,7 @@ class PaymentComponentTest {
     @Test
     fun `calls to save returning user`() = runTest {
         // Given
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         paymentComponent.shouldCheckReturningUser = true
 
         paymentComponent.checkReturningUser()
@@ -525,7 +524,7 @@ class PaymentComponentTest {
     @Test
     fun `forwards onPay call to listener`() = runTest {
         // Given
-        val paymentComponent = PaymentComponent(context!!, giniHealthAPI)
+        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
         paymentComponent.listener = mockk(relaxed = true)
 
         // When
@@ -534,5 +533,4 @@ class PaymentComponentTest {
         // Then
         verify { paymentComponent.listener?.onPayInvoiceClicked("123") }
     }
-
 }
