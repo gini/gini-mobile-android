@@ -150,9 +150,8 @@
 
     <net.gini.android.capture.view.InjectedViewContainer
         android:id="@+id/gbs_bottom_bar_navigation"
-        android:layout_width="@dimen/gc_tablet_width"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/gc_large_20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

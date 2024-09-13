@@ -37,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gc_small"
+
         app:layout_constraintTop_toBottomOf="@id/total_label"
         app:layout_constraintStart_toStartOf="@id/total_label"
         tools:text="€242.99" />
@@ -73,7 +74,7 @@
     <com.google.android.material.button.MaterialButton
         style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
         android:id="@+id/gbs_pay"
-        android:layout_width="@dimen/gc_tablet_width"
+        android:layout_width="@dimen/gc_tablet_width_margin_applied"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gc_large_24"
         android:layout_marginBottom="@dimen/gc_large_24"
