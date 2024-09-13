@@ -6,7 +6,7 @@ import androidx.test.uiautomator.UiSelector
 
 class PdfUploader {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-    fun uploadPdfFromFiles(file: String) {
+    fun uploadPdfFromFiles() {
         device.waitForIdle()
         val tabTitle = device.findObject(UiSelector().className("android.widget.TextView").text("Recent"))
         if (tabTitle.exists()) {
@@ -23,12 +23,12 @@ class PdfUploader {
             downloadsOption.click()
 
             //Select desired pdf file
-            val selectPdfFile = device.findObject(UiSelector().text(file))
+            val selectPdfFile = device.findObject(UiSelector().text("sample.pdf"))
             selectPdfFile.click()
         }
         else {
             //Select desired pdf file
-            val selectPdfFile = device.findObject(UiSelector().text(file))
+            val selectPdfFile = device.findObject(UiSelector().text("sample.pdf"))
             selectPdfFile.click()
         }
     }
