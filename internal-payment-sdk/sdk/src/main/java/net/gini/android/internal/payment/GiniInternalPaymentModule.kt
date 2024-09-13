@@ -16,9 +16,9 @@ import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.internal.payment.util.GiniLocalization
-import net.gini.android.internal.payment.utils.DisplayedScreen
-import net.gini.android.internal.payment.utils.GiniPaymentManager
-import net.gini.android.internal.payment.utils.PaymentEventListener
+import net.gini.android.internal.payment.util.DisplayedScreen
+import net.gini.android.internal.payment.util.GiniPaymentManager
+import net.gini.android.internal.payment.util.PaymentEventListener
 
 class GiniInternalPaymentModule(private val context: Context,
                                 private val clientId: String = "",

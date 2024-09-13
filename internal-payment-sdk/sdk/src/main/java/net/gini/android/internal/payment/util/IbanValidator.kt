@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.utils
+package net.gini.android.internal.payment.util
 
 import java.util.*
 

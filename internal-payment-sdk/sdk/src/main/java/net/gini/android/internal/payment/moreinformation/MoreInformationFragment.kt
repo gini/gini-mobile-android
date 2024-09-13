@@ -30,7 +30,7 @@ import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.util.autoCleared
 import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.util.extensions.getLocaleStringResource
-import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.util.BackListener
 import java.util.Locale
 
 /**

@@ -46,14 +46,14 @@ sealed class DisplayedScreen {
     object ReviewBottomSheet: DisplayedScreen()
 
     companion object {
-        fun toDisplayedScreen(screen: net.gini.android.internal.payment.utils.DisplayedScreen): DisplayedScreen = when (screen) {
-            net.gini.android.internal.payment.utils.DisplayedScreen.Nothing -> Nothing
-            net.gini.android.internal.payment.utils.DisplayedScreen.BankSelectionBottomSheet -> BankSelectionBottomSheet
-            net.gini.android.internal.payment.utils.DisplayedScreen.InstallAppBottomSheet -> InstallAppBottomSheet
-            net.gini.android.internal.payment.utils.DisplayedScreen.MoreInformationFragment -> MoreInformationFragment
-            net.gini.android.internal.payment.utils.DisplayedScreen.OpenWithBottomSheet -> OpenWithBottomSheet
-            net.gini.android.internal.payment.utils.DisplayedScreen.ReviewScreen -> ReviewBottomSheet
-            net.gini.android.internal.payment.utils.DisplayedScreen.ShareSheet -> ShareSheet
+        fun toDisplayedScreen(screen: net.gini.android.internal.payment.util.DisplayedScreen): DisplayedScreen = when (screen) {
+            net.gini.android.internal.payment.util.DisplayedScreen.Nothing -> Nothing
+            net.gini.android.internal.payment.util.DisplayedScreen.BankSelectionBottomSheet -> BankSelectionBottomSheet
+            net.gini.android.internal.payment.util.DisplayedScreen.InstallAppBottomSheet -> InstallAppBottomSheet
+            net.gini.android.internal.payment.util.DisplayedScreen.MoreInformationFragment -> MoreInformationFragment
+            net.gini.android.internal.payment.util.DisplayedScreen.OpenWithBottomSheet -> OpenWithBottomSheet
+            net.gini.android.internal.payment.util.DisplayedScreen.ReviewScreen -> ReviewBottomSheet
+            net.gini.android.internal.payment.util.DisplayedScreen.ShareSheet -> ShareSheet
         }
     }
 }

@@ -23,13 +23,13 @@ import net.gini.android.internal.payment.databinding.GpsBottomSheetBankSelection
 import net.gini.android.internal.payment.databinding.GpsItemPaymentProviderAppBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.internal.payment.utils.BackListener
-import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
-import net.gini.android.internal.payment.utils.autoCleared
-import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
-import net.gini.android.internal.payment.utils.extensions.setBackListener
-import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
-import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
+import net.gini.android.internal.payment.util.BackListener
+import net.gini.android.internal.payment.util.GpsBottomSheetDialogFragment
+import net.gini.android.internal.payment.util.autoCleared
+import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentTheme
+import net.gini.android.internal.payment.util.extensions.setBackListener
+import net.gini.android.internal.payment.util.extensions.setIntervalClickListener
+import net.gini.android.internal.payment.util.extensions.wrappedWithGiniPaymentTheme
 import org.slf4j.LoggerFactory
 
 /**

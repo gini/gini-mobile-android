@@ -14,10 +14,10 @@ import net.gini.android.internal.payment.databinding.GpsBottomSheetReviewBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
-import net.gini.android.internal.payment.utils.BackListener
-import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
-import net.gini.android.internal.payment.utils.autoCleared
-import net.gini.android.internal.payment.utils.extensions.setBackListener
+import net.gini.android.internal.payment.util.BackListener
+import net.gini.android.internal.payment.util.GpsBottomSheetDialogFragment
+import net.gini.android.internal.payment.util.autoCleared
+import net.gini.android.internal.payment.util.extensions.setBackListener
 
 class ReviewBottomSheet private constructor(
     val paymentButtonListener: ReviewViewListener?,

@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.utils
+package net.gini.android.internal.payment.util
 
 import net.gini.android.internal.payment.api.model.PaymentRequest
 

@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.utils.extensions
+package net.gini.android.internal.payment.util.extensions
 
 import java.text.DecimalFormatSymbols
 

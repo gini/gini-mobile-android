@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.utils
+package net.gini.android.internal.payment.util
 
 /**
  * Represents the currently visible screen presented in [PaymentFragment]
