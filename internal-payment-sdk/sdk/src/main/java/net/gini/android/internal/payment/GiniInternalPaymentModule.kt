@@ -15,8 +15,8 @@ import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
-import net.gini.android.internal.payment.util.GiniLocalization
 import net.gini.android.internal.payment.util.DisplayedScreen
+import net.gini.android.internal.payment.util.GiniLocalization
 import net.gini.android.internal.payment.util.GiniPaymentManager
 import net.gini.android.internal.payment.util.PaymentEventListener
 
@@ -162,6 +162,7 @@ class GiniInternalPaymentModule(private val context: Context,
     companion object {
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
         private const val DEFAULT_API_VERSION = 1
+        const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
 
         fun getSDKLanguage(context: Context): GiniLocalization? {
             return GiniPaymentPreferences(context).getSDKLanguage()
@@ -172,19 +173,24 @@ class GiniInternalPaymentModule(private val context: Context,
      * Different events that can be emitted by the GiniInternalPaymentModule.
      */
     sealed class InternalPaymentEvents {
-        object NoAction: InternalPaymentEvents()
+        object NoAction : InternalPaymentEvents()
 
         /**
          * Signal loading started.
          */
-        object OnLoading: InternalPaymentEvents()
+        object OnLoading : InternalPaymentEvents()
+
+        /**
+         * Payment flow was cancelled.
+         */
+        object OnCancelled : InternalPaymentEvents()
 
         /**
          * A change of screens within the [PaymentFragment].
          *
          * @param [displayedScreen] - the newly displayed screen. Can be observed to update the activity title.
          */
-        class OnScreenDisplayed(val displayedScreen: DisplayedScreen): InternalPaymentEvents()
+        class OnScreenDisplayed(val displayedScreen: DisplayedScreen) : InternalPaymentEvents()
 
         /**
          * Payment request finished with success.
@@ -192,12 +198,14 @@ class GiniInternalPaymentModule(private val context: Context,
          * @param [paymentRequestId] - the id of the payment request
          * @param [paymentProviderName] - the selected payment provider name
          */
-        class OnFinishedWithPaymentRequestCreated(val paymentRequestId: String,
-                                                  val paymentProviderName: String): InternalPaymentEvents()
+        class OnFinishedWithPaymentRequestCreated(
+            val paymentRequestId: String,
+            val paymentProviderName: String
+        ) : InternalPaymentEvents()
 
         /**
          * An error occurred during the payment request.
          */
-        class OnErrorOccurred(val throwable: Throwable): InternalPaymentEvents()
+        class OnErrorOccurred(val throwable: Throwable) : InternalPaymentEvents()
     }
 }

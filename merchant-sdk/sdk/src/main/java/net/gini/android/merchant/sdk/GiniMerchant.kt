@@ -59,6 +59,7 @@ class GiniMerchant(
     private fun mapInternalEvent(event: GiniInternalPaymentModule.InternalPaymentEvents): MerchantSDKEvents = when (event) {
         GiniInternalPaymentModule.InternalPaymentEvents.NoAction -> MerchantSDKEvents.NoAction
         GiniInternalPaymentModule.InternalPaymentEvents.OnLoading -> MerchantSDKEvents.OnLoading
+        GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> MerchantSDKEvents.OnFinishedWithCancellation
         is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> MerchantSDKEvents.OnScreenDisplayed(DisplayedScreen.toDisplayedScreen(event.displayedScreen))
         is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> MerchantSDKEvents.OnErrorOccurred(event.throwable)
         is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> MerchantSDKEvents.OnFinishedWithPaymentRequestCreated(event.paymentRequestId, event.paymentProviderName)
@@ -199,7 +200,6 @@ class GiniMerchant(
 
         private val LOG = LoggerFactory.getLogger(GiniMerchant::class.java)
 
-        internal const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
         internal const val MERCHANT_BASE_URL = "https://merchant-api.gini.net/"
     }
 }

@@ -54,6 +54,7 @@ sealed class DisplayedScreen {
             net.gini.android.internal.payment.util.DisplayedScreen.OpenWithBottomSheet -> OpenWithBottomSheet
             net.gini.android.internal.payment.util.DisplayedScreen.ReviewScreen -> ReviewBottomSheet
             net.gini.android.internal.payment.util.DisplayedScreen.ShareSheet -> ShareSheet
+            net.gini.android.internal.payment.util.DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet
         }
     }
 }

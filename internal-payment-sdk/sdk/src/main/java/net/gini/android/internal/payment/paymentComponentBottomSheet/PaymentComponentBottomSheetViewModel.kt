@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.paymentComponentBottomSheet
+package net.gini.android.internal.payment.paymentComponentBottomSheet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
