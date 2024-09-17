@@ -103,7 +103,7 @@ class DigitalInvoiceScreenTests {
     fun test4_verifyCountOnReturnReasonsList() {
         test3_returnReasonDisplaysWhenToggleSwitchIsDisabled()
         val totalItemsOnReturnReason = 7
-        val itemSize =  digitalInvoiceScreen.checkItemCountOnReturnReasonsList()
+        val itemSize =  digitalInvoiceScreen.returnItemCountOnReturnReasonsList()
         assertEquals(totalItemsOnReturnReason, itemSize)
     }
 

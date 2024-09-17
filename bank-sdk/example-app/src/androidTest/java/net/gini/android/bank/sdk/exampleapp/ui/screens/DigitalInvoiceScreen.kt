@@ -15,6 +15,7 @@ import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.`is`
 
+
 class DigitalInvoiceScreen {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private var initialValue: String? = null
@@ -28,7 +29,7 @@ class DigitalInvoiceScreen {
                 .text("Digital invoice")
                 .resourceId("net.gini.android.bank.sdk.exampleapp:id/onboarding_text_1")
         )
-        return onboardingScreenText.exists()
+        return onboardingScreenText.waitForExists(8000)
     }
 
     fun checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed(): Boolean {
@@ -38,7 +39,7 @@ class DigitalInvoiceScreen {
                 .text("Get Started")
                 .resourceId("net.gini.android.bank.sdk.exampleapp:id/done_button")
         )
-        return onboardingScreenButton.exists()
+        return onboardingScreenButton.waitForExists(5000)
     }
 
     fun clickGetStartedButtonOnOnboardingScreen() {
@@ -46,8 +47,9 @@ class DigitalInvoiceScreen {
             UiSelector()
                 .className("android.widget.Button")
                 .text("Get Started")
+                .resourceId("net.gini.android.bank.sdk.exampleapp:id/done_button")
         )
-        if (onboardingScreenButton.isClickable() && onboardingScreenButton.exists()) {
+        if (onboardingScreenButton.waitForExists(5000) && onboardingScreenButton.isClickable) {
             onboardingScreenButton.click()
         }
     }
@@ -66,8 +68,8 @@ class DigitalInvoiceScreen {
     fun assertOtherChargesDisplayed() : Boolean {
         var isOtherChargesDisplayed = false
         onView(withText(net.gini.android.bank.sdk.R.string.gbs_digital_invoice_addon_other_charges))
-            .check { view, noViewFoundException ->
-                if (noViewFoundException == null || view.isShown()) {
+            .check { view,_ ->
+                if (view.isShown()) {
                     isOtherChargesDisplayed = true
                 }
             }
@@ -94,15 +96,15 @@ class DigitalInvoiceScreen {
     fun checkForReturnReasonsList(): Boolean {
         var isReturnReasonDisplayed = false
         onView(withText(net.gini.android.bank.sdk.R.string.gbs_digital_invoice_return_reason_dialog_title))
-            .check { view, noViewFoundException ->
-                if (noViewFoundException == null || view.isShown()) {
+            .check { view, _ ->
+                if (view.isShown()) {
                     isReturnReasonDisplayed = true
                 }
             }
         return isReturnReasonDisplayed
     }
 
-    fun  checkItemCountOnReturnReasonsList(): Int{
+    fun  returnItemCountOnReturnReasonsList(): Int{
         val uiCollection =
             UiCollection(UiSelector().className("android.widget.ListView"))
         val itemSize = uiCollection.childCount
@@ -161,8 +163,8 @@ class DigitalInvoiceScreen {
                 withText("1. How does a digital invoice work?")
             )
         )
-            .check { view, noViewFoundException ->
-                if (noViewFoundException == null || view.isShown()) {
+            .check { view, _ ->
+                if (view.isShown()) {
                     isFirstTitleDisplayed = true
                 }
             }
@@ -176,8 +178,8 @@ class DigitalInvoiceScreen {
                 withText("Total")
             )
         )
-            .check { view, noViewFoundException ->
-                if (noViewFoundException == null || view.isShown()) {
+            .check { view, _ ->
+                if (view.isShown()) {
                     isTotalTitleDisplayed = true
                 }
             }
@@ -187,8 +189,8 @@ class DigitalInvoiceScreen {
     fun checkTotalPriceIsDisplayed() : Boolean{
         var isTotalPriceDisplayed = false
         onView((withId(net.gini.android.bank.sdk.R.id.gross_price_total_integral_part)))
-            .check { view, noViewFoundException ->
-                if (noViewFoundException == null || view.isShown()) {
+            .check { view, _ ->
+                if (view.isShown()) {
                     isTotalPriceDisplayed = true
                 }
             }
@@ -209,17 +211,6 @@ class DigitalInvoiceScreen {
             isSumDifferent = true
         }
         return isSumDifferent
-//        assertNotEquals("Price should have changed after toggling", initialValue, updatedValue)
-//
-//        onView(withId(net.gini.android.bank.sdk.R.id.gross_price_total_integral_part))
-//            .check { view, _ ->
-//                val totalTextView = view as TextView
-//                val totalSum = totalTextView.text.toString().toInt()
-//                if(sum==totalSum){
-//                    isTotalSumDisplayed = true
-//                }
-//            }
-//        return isTotalSumDisplayed
     }
 
     fun storeUpdatedPrice() {
