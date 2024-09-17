@@ -86,7 +86,7 @@ public class PaymentQRCodeReader {
             public void onQRCodeScannerError(Exception e) {
 
                 //TODO: check content of exception if there will be more use cases in the future
-                if (!(e instanceof CancellationException)) {
+                if (!(e instanceof IllegalStateException)) {
                     mListener.onQRCodeReaderFail();
                 }
             }
