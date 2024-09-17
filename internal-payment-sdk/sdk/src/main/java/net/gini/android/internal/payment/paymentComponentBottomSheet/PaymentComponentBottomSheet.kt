@@ -64,8 +64,12 @@ class PaymentComponentBottomSheet private constructor(
         binding.gmsPaymentComponent.getPayInvoiceButton().setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.paymentComponent?.onPayInvoiceClicked()
-                // if payment provider does not support GPC and review fragment will not be shown, we're in the case where we show `Open With Bottom Sheet` from the payment component directly
-                if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false && !viewModel.reviewFragmentShown) return@launch
+                // if payment provider does not support GPC and review fragment will not be shown,
+                // we're in the case where we show `Open With Bottom Sheet` from the payment component directly
+                if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false
+                    && !viewModel.reviewFragmentShown) {
+                    return@launch
+                }
                 dismiss()
             }
         }
@@ -79,7 +83,7 @@ class PaymentComponentBottomSheet private constructor(
     }
 
     companion object {
-        fun newInstance(paymentComponent: PaymentComponent?, reviewFragmentShown: Boolean, backListener: BackListener) = PaymentComponentBottomSheet(paymentComponent, reviewFragmentShown, backListener)
+        fun newInstance(paymentComponent: PaymentComponent?, reviewFragmentShown: Boolean, backListener: BackListener)
+            = PaymentComponentBottomSheet(paymentComponent, reviewFragmentShown, backListener)
     }
-
 }
