@@ -1,5 +1,7 @@
 package net.gini.android.merchant.sdk.util
 
+import net.gini.android.internal.payment.util.DisplayedScreen as InternalDisplayedScreen
+
 /**
  * Represents the currently visible screen presented in [PaymentFragment]
  */
@@ -46,15 +48,16 @@ sealed class DisplayedScreen {
     object ReviewBottomSheet: DisplayedScreen()
 
     companion object {
-        fun toDisplayedScreen(screen: net.gini.android.internal.payment.util.DisplayedScreen): DisplayedScreen = when (screen) {
-            net.gini.android.internal.payment.util.DisplayedScreen.Nothing -> Nothing
-            net.gini.android.internal.payment.util.DisplayedScreen.BankSelectionBottomSheet -> BankSelectionBottomSheet
-            net.gini.android.internal.payment.util.DisplayedScreen.InstallAppBottomSheet -> InstallAppBottomSheet
-            net.gini.android.internal.payment.util.DisplayedScreen.MoreInformationFragment -> MoreInformationFragment
-            net.gini.android.internal.payment.util.DisplayedScreen.OpenWithBottomSheet -> OpenWithBottomSheet
-            net.gini.android.internal.payment.util.DisplayedScreen.ReviewScreen -> ReviewBottomSheet
-            net.gini.android.internal.payment.util.DisplayedScreen.ShareSheet -> ShareSheet
-            net.gini.android.internal.payment.util.DisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet
-        }
+        fun toDisplayedScreen(screen: InternalDisplayedScreen): DisplayedScreen =
+            when (screen) {
+                InternalDisplayedScreen.Nothing -> Nothing
+                InternalDisplayedScreen.BankSelectionBottomSheet -> BankSelectionBottomSheet
+                InternalDisplayedScreen.InstallAppBottomSheet -> InstallAppBottomSheet
+                InternalDisplayedScreen.MoreInformationFragment -> MoreInformationFragment
+                InternalDisplayedScreen.OpenWithBottomSheet -> OpenWithBottomSheet
+                InternalDisplayedScreen.ReviewScreen -> ReviewBottomSheet
+                InternalDisplayedScreen.ShareSheet -> ShareSheet
+                InternalDisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet
+            }
     }
 }

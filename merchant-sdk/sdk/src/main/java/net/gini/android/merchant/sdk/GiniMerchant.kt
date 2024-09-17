@@ -25,14 +25,13 @@ import org.slf4j.LoggerFactory
  */
 
 class GiniMerchant(
-    private val context: Context,
-    private val clientId: String = "",
-    private val clientSecret: String = "",
-    private val emailDomain: String = "",
-    private val sessionManager: SessionManager? = null,
-    private val merchantApiBaseUrl: String = MERCHANT_BASE_URL,
-    private val userCenterApiBaseUrl: String? = null,
-    private val debuggingEnabled: Boolean = true,
+    context: Context,
+    clientId: String = "",
+    clientSecret: String = "",
+    emailDomain: String = "",
+    sessionManager: SessionManager? = null,
+    userCenterApiBaseUrl: String? = null,
+    debuggingEnabled: Boolean = true,
 ) {
 
     internal var giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
@@ -54,16 +53,22 @@ class GiniMerchant(
 
     private val _eventsFlow: MutableSharedFlow<MerchantSDKEvents> = MutableSharedFlow(extraBufferCapacity = 1)
 
-    val eventsFlow: Flow<MerchantSDKEvents> = merge(_eventsFlow, giniInternalPaymentModule.eventsFlow.map { event -> mapInternalEvent(event) })
+    val eventsFlow: Flow<MerchantSDKEvents> = merge(_eventsFlow, giniInternalPaymentModule.eventsFlow.map {
+        event -> mapInternalEvent(event)
+    })
 
-    private fun mapInternalEvent(event: GiniInternalPaymentModule.InternalPaymentEvents): MerchantSDKEvents = when (event) {
-        GiniInternalPaymentModule.InternalPaymentEvents.NoAction -> MerchantSDKEvents.NoAction
-        GiniInternalPaymentModule.InternalPaymentEvents.OnLoading -> MerchantSDKEvents.OnLoading
-        GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> MerchantSDKEvents.OnFinishedWithCancellation
-        is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> MerchantSDKEvents.OnScreenDisplayed(DisplayedScreen.toDisplayedScreen(event.displayedScreen))
-        is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> MerchantSDKEvents.OnErrorOccurred(event.throwable)
-        is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> MerchantSDKEvents.OnFinishedWithPaymentRequestCreated(event.paymentRequestId, event.paymentProviderName)
-    }
+    private fun mapInternalEvent(event: GiniInternalPaymentModule.InternalPaymentEvents): MerchantSDKEvents =
+        when (event) {
+            GiniInternalPaymentModule.InternalPaymentEvents.NoAction -> MerchantSDKEvents.NoAction
+            GiniInternalPaymentModule.InternalPaymentEvents.OnLoading -> MerchantSDKEvents.OnLoading
+            GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> MerchantSDKEvents.OnFinishedWithCancellation
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed ->
+                MerchantSDKEvents.OnScreenDisplayed(DisplayedScreen.toDisplayedScreen(event.displayedScreen))
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred ->
+                MerchantSDKEvents.OnErrorOccurred(event.throwable)
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated ->
+                MerchantSDKEvents.OnFinishedWithPaymentRequestCreated(event.paymentRequestId, event.paymentProviderName)
+        }
 
     /**
      * Creates and returns the [PaymentFragment]. Checks if [iban], [recipient], [amount] and [purpose] are empty and throws [IllegalStateException] if any of them are.
