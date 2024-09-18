@@ -11,8 +11,8 @@ class MainScreen {
     fun assertDescriptionTitle(): Boolean {
         var isDescriptionTitleDisplayed = false
         onView(withId(R.id.tv_exampleOfPhotoPayment))
-            .check { view, noViewFoundException ->
-                if (noViewFoundException == null || view.isShown()) {
+            .check { view, _ ->
+                if (view.isShown()) {
                     isDescriptionTitleDisplayed = true
                 }
             }
