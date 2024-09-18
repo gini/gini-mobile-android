@@ -11,9 +11,9 @@ import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
 fun GiniCheckbox(
-    modifier: Modifier = Modifier,
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
+    modifier: Modifier = Modifier,
     colors: GiniCheckboxColors = GiniCheckboxColors.colors(),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true,

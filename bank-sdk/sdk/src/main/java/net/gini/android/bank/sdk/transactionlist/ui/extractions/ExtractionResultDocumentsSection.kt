@@ -150,9 +150,9 @@ private fun Document(
 
 @Composable
 private fun DocumentMenuItem(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
     title: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     colors: ExtractionResultDocumentsSectionColors.DocumentItemColors =
         ExtractionResultDocumentsSectionColors.DocumentItemColors.colors(),
 ) {
