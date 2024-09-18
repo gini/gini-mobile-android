@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
+import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import org.slf4j.LoggerFactory
-import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
-import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
-import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 
 /**
  * The [PaymentComponent] manages the data and state used by every [PaymentComponentView], the [MoreInformationFragment],
@@ -78,7 +78,7 @@ class PaymentComponent(private val context: Context, internal val giniHealth: Gi
         LOG.debug("Loading payment providers")
         _paymentProviderAppsFlow.value = PaymentProviderAppsState.Loading
         _paymentProviderAppsFlow.value = try {
-            when (val paymentProvidersResource = giniHealth.giniHealthAPI.documentManager.getPaymentProviders()) {
+            when (val paymentProvidersResource = giniHealth.giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentProviders()) {
                 is Resource.Cancelled -> {
                     LOG.debug("Loading payment providers cancelled")
                     _initialStatePaymentProviderAppsFlow.value = PaymentProviderAppsState.Error(Exception("Cancelled"))

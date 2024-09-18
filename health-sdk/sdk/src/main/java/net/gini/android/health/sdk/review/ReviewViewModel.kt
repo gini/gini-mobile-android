@@ -192,7 +192,7 @@ internal class ReviewViewModel(
             throw Exception("Cannot create PaymentRequest: No selected payment provider app")
         }
 
-        return when (val createPaymentRequestResource = giniHealth.giniHealthAPI.documentManager.createPaymentRequest(
+        return when (val createPaymentRequestResource = giniHealth.documentManager.createPaymentRequest(
             PaymentRequestInput(
                 paymentProvider = paymentProviderApp.paymentProvider.id,
                 recipient = paymentDetails.value.recipient,
@@ -251,7 +251,7 @@ internal class ReviewViewModel(
             try {
                 when (val documentResult = giniHealth.documentFlow.value) {
                     is ResultWrapper.Success -> paymentDetails.value.extractions?.let { extractionsContainer ->
-                        giniHealth.giniHealthAPI.documentManager.sendFeedbackForExtractions(
+                        giniHealth.documentManager.sendFeedbackForExtractions(
                             documentResult.value,
                             extractionsContainer.specificExtractions,
                             extractionsContainer.compoundExtractions.withFeedback(paymentDetails.value)
@@ -310,7 +310,7 @@ internal class ReviewViewModel(
                     return@withContext
                 }
                 _paymentRequestFlow.value = paymentRequest
-                val byteArrayResource = async {  giniHealth.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
+                val byteArrayResource = async {  giniHealth.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
                 when (byteArrayResource) {
                     is Resource.Cancelled -> {
                         giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(Exception("Cancelled")), viewModelScope)

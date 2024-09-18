@@ -26,9 +26,9 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.health.sdk.util.GiniLocalization
+import net.gini.android.internal.payment.GiniInternalPaymentModule
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
-import java.util.Locale
 
 /**
  * [GiniHealth] is one of the main classes for interacting with the Gini Health SDK. It manages interaction with the Gini Health API.
@@ -37,9 +37,17 @@ import java.util.Locale
  *  so that they can be observed anywhere, the main purpose for this is to observe errors.
  */
 class GiniHealth(
-    val giniHealthAPI: GiniHealthAPI
+    giniHealthAPI: GiniHealthAPI,
+    context: Context
 ) {
-    private val documentManager = giniHealthAPI.documentManager
+
+    val giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
+        context = context,
+        giniHealthAPI = giniHealthAPI
+    )
+
+    val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
+
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
     private var savedStateObserver: LifecycleEventObserver? = null
