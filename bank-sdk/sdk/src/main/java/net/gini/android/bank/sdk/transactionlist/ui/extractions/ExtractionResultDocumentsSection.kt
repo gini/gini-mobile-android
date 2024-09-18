@@ -1,6 +1,5 @@
 package net.gini.android.bank.sdk.transactionlist.ui.extractions
 
-import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,12 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,20 +22,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.transactionlist.ui.extractions.colors.ExtractionResultDocumentsSectionColors
+import net.gini.android.bank.sdk.transactionlist.model.extractions.ExtractionDocument
+import net.gini.android.bank.sdk.transactionlist.ui.extractions.colors.TransactionDocsWidgetColors
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenu
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenuItem
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -48,10 +38,14 @@ import net.gini.android.capture.ui.theme.GiniTheme
 private val imageExtensions = listOf(".jpg", ".jpeg", ".png", ".gif")
 
 @Composable
-fun ExtractionResultDocumentSection(
+internal fun TransactionDocumentsWidgetContent(
+    documents: List<ExtractionDocument>,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit = {},
+    colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
+    onDocumentClick: (ExtractionDocument) -> Unit = {},
+    onDocumentDelete: (ExtractionDocument) -> Unit = {},
 ) {
+
     Card(
         modifier = modifier,
         shape = RectangleShape
@@ -65,23 +59,35 @@ fun ExtractionResultDocumentSection(
             Column(
                 modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp),
             ) {
-                content()
+                DocumentList(
+                    documents = documents,
+                    colors = colors,
+                    onDocumentClick = onDocumentClick,
+                    onDocumentDelete = onDocumentDelete,
+                )
             }
         }
     }
 }
 
 @Composable
-fun ExtractionResultDocumentSection(
+private fun DocumentList(
+    documents: List<ExtractionDocument>,
+    onDocumentClick: (ExtractionDocument) -> Unit,
+    onDocumentDelete: (ExtractionDocument) -> Unit,
     modifier: Modifier = Modifier,
+    colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
 ) {
-    val dummyDocuments = listOf("IMG_20240807_075215616516515645664333.jpg", "Rechnung-223.pdf")
-
-    ExtractionResultDocumentSection(
+    Column(
         modifier = modifier.fillMaxWidth(),
         content = {
-            dummyDocuments.forEach {
-                Document(documentName = it)
+            documents.forEach {
+                Document(
+                    colors = colors.documentItemColors,
+                    document = it,
+                    onDocumentClick = onDocumentClick,
+                    onDocumentDelete = onDocumentDelete,
+                )
             }
         }
     )
@@ -89,10 +95,12 @@ fun ExtractionResultDocumentSection(
 
 @Composable
 private fun Document(
-    documentName: String,
+    document: ExtractionDocument,
+    onDocumentClick: (ExtractionDocument) -> Unit,
+    onDocumentDelete: (ExtractionDocument) -> Unit,
     modifier: Modifier = Modifier,
-    colors: ExtractionResultDocumentsSectionColors.DocumentItemColors =
-        ExtractionResultDocumentsSectionColors.DocumentItemColors.colors(),
+    colors: TransactionDocsWidgetColors.DocumentItemColors =
+        TransactionDocsWidgetColors.DocumentItemColors.colors(),
 ) {
 
     var menuVisible by remember { mutableStateOf(false) }
@@ -101,19 +109,21 @@ private fun Document(
         modifier = modifier.fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onDocumentClick(document) },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             DocumentImage(
                 imageUrl = null,
-                documentName = documentName,
+                documentName = document.documentFileName,
             )
             Text(
                 modifier = Modifier
                     .weight(0.1f)
                     .padding(horizontal = 16.dp),
-                text = documentName,
+                text = document.documentFileName,
                 style = GiniTheme.typography.subtitle1,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
@@ -138,7 +148,7 @@ private fun Document(
                     ) {
                         DocumentMenuItem(
                             modifier = Modifier.align(Alignment.End),
-                            onClick = { },
+                            onClick = { onDocumentDelete(document) },
                             title = stringResource(id = R.string.gbs_tl_extraction_result_documents_section_menu_delete)
                         )
                     }
@@ -150,11 +160,11 @@ private fun Document(
 
 @Composable
 private fun DocumentMenuItem(
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
     title: String,
-    colors: ExtractionResultDocumentsSectionColors.DocumentItemColors =
-        ExtractionResultDocumentsSectionColors.DocumentItemColors.colors(),
+    modifier: Modifier = Modifier,
+    colors: TransactionDocsWidgetColors.DocumentItemColors =
+        TransactionDocsWidgetColors.DocumentItemColors.colors(),
 ) {
     GiniDropdownMenuItem(
         modifier = modifier,
@@ -181,8 +191,8 @@ private fun DocumentImage(
     imageUrl: String?,
     documentName: String,
     modifier: Modifier = Modifier,
-    colorScheme: ExtractionResultDocumentsSectionColors.DocumentItemColors.IconPlaceholderColors =
-        ExtractionResultDocumentsSectionColors.DocumentItemColors.IconPlaceholderColors.colors(),
+    colorScheme: TransactionDocsWidgetColors.DocumentItemColors.IconPlaceholderColors =
+        TransactionDocsWidgetColors.DocumentItemColors.IconPlaceholderColors.colors(),
 ) {
     if (imageUrl != null) {
         // Place Async Image here in future
@@ -213,11 +223,7 @@ private fun DocumentImage(
 @Preview(showBackground = true)
 @Composable
 private fun ExtractionResultDocumentsSectionPreview() {
-    GiniTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            ExtractionResultDocumentSection()
-        }
-    }
+    PreviewContent()
 }
 
 @Preview(
@@ -226,9 +232,22 @@ private fun ExtractionResultDocumentsSectionPreview() {
 )
 @Composable
 private fun ExtractionResultDocumentsSectionPreviewDark() {
+    PreviewContent()
+}
+
+@Composable
+private fun PreviewContent() {
     GiniTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            ExtractionResultDocumentSection()
+            DocumentList(
+                documents = listOf(
+                    ExtractionDocument("id", "document1.jpg"),
+                    ExtractionDocument("id", "document2.jpg"),
+                    ExtractionDocument("id", "document3.pdf"),
+                ),
+                onDocumentClick = {},
+                onDocumentDelete = {},
+            )
         }
     }
 }

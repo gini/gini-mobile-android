@@ -8,6 +8,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.digitalInvoiceSko
 import net.gini.android.bank.sdk.capture.skonto.invoice.skontoInvoiceScreenModule
 import net.gini.android.bank.sdk.capture.skonto.skontoScreenModule
 import net.gini.android.bank.sdk.capture.skonto.usecase.di.skontoUseCaseModule
+import net.gini.android.bank.sdk.transactionlist.di.transactionListModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.Koin
 import org.koin.dsl.koinApplication
@@ -31,6 +32,7 @@ object BankSdkIsolatedKoinContext {
                     .plus(useCaseModules)
                     .plus(commonModules)
                     .plus(handlerModule)
+                    .plus(transactionListModule)
             )
         }.koin
     }

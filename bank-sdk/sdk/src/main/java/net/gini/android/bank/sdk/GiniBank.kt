@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
+import kotlinx.coroutines.Dispatchers
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
@@ -31,6 +32,10 @@ import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
+import net.gini.android.bank.sdk.transactionlist.TransactionDocs
+import net.gini.android.bank.sdk.transactionlist.TransactionDocsConfiguration
+import net.gini.android.bank.sdk.transactionlist.internal.GiniBankTransactionDocs
+import net.gini.android.bank.sdk.transactionlist.internal.GiniTransactionDocsSettings
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 import net.gini.android.capture.*
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
@@ -62,6 +67,12 @@ object GiniBank {
     private var giniCapture: GiniCapture? = null
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
+
+    private var giniBankTransactionDocs: GiniBankTransactionDocs? = null
+
+    val transactionDocs: TransactionDocs
+        get() = giniBankTransactionDocs
+            ?: error("Transaction list not initialized. Call `initializeTransactionListFeature(...)` first.")
 
     /**
      * Bottom navigation bar adapters. Could be changed to custom ones.
@@ -527,4 +538,24 @@ object GiniBank {
         check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
         return CaptureFlowFragment.createInstance(document)
     }
+
+
+    fun initializeTransactionDocsFeature(
+        context: Context,
+        transactionDocsConfiguration: TransactionDocsConfiguration
+    ) {
+        releaseTransactionDocsFeature(context)
+        val transactionDocsSettings = GiniTransactionDocsSettings(context)
+        this.giniBankTransactionDocs = GiniBankTransactionDocs(
+            configuration = transactionDocsConfiguration,
+            transactionDocsSettings = transactionDocsSettings,
+            backgroundDispatcher = Dispatchers.IO
+        )
+    }
+
+    fun releaseTransactionDocsFeature(context: Context) {
+        giniBankTransactionDocs = null
+    }
+
+    internal fun getGiniBankTransactionList() = giniBankTransactionDocs
 }

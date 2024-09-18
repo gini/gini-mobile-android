@@ -18,6 +18,7 @@ import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
+import net.gini.android.bank.sdk.transactionlist.TransactionDocsConfiguration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
@@ -100,6 +101,10 @@ class ClientBankSDKFragment :
         )
         GiniBank.setCaptureConfiguration(requireContext(), captureConfiguration)
 
+        GiniBank.initializeTransactionDocsFeature(
+            requireContext(),
+            TransactionDocsConfiguration(true)
+        )
     }
 
 
@@ -188,7 +193,6 @@ class ClientBankSDKFragment :
             }
         }
     }
-
 
 
 }

@@ -30,6 +30,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBa
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.bank.sdk.transactionlist.TransactionDocsConfiguration
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
@@ -298,7 +299,8 @@ class ConfigurationViewModel @Inject constructor(
         }
 
         if (configuration.isSkontoHelpCustomNavBarEnabled) {
-            GiniBank.skontoHelpNavigationBarBottomAdapter = CustomSkontoHelpNavigationBarBottomAdapter()
+            GiniBank.skontoHelpNavigationBarBottomAdapter =
+                CustomSkontoHelpNavigationBarBottomAdapter()
         } else {
             GiniBank.skontoHelpNavigationBarBottomAdapter = null
         }
@@ -322,6 +324,9 @@ class ConfigurationViewModel @Inject constructor(
             GiniCaptureDebug.enable()
             configureLogging()
         }
+
+        GiniBank
+            .initializeTransactionDocsFeature(context, TransactionDocsConfiguration(true))
 
     }
 

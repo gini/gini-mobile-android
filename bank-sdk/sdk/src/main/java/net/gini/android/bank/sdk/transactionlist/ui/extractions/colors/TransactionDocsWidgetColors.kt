@@ -7,7 +7,7 @@ import net.gini.android.capture.ui.components.menu.context.colors.GiniContextMen
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Immutable
-data class ExtractionResultDocumentsSectionColors(
+data class TransactionDocsWidgetColors(
     val documentItemColors: DocumentItemColors,
 ) {
 
@@ -58,7 +58,7 @@ data class ExtractionResultDocumentsSectionColors(
         @Composable
         fun colors(
             documentItemColors: DocumentItemColors = DocumentItemColors.colors(),
-        ) = ExtractionResultDocumentsSectionColors(
+        ) = TransactionDocsWidgetColors(
             documentItemColors = documentItemColors,
         )
     }

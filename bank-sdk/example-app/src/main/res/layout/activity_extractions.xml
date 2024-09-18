@@ -9,21 +9,21 @@
         android:id="@+id/text_document_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:paddingTop="10dp"
         android:paddingStart="10dp"
+        android:paddingTop="10dp"
         android:paddingEnd="10dp"
-        tools:text="Analyzed Gini Bank API Document ID: asdadsasd-asdadsasd-asdadsasd-asdadsasd-asdadsasd"/>
+        tools:text="Analyzed Gini Bank API Document ID: asdadsasd-asdadsasd-asdadsasd-asdadsasd-asdadsasd" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_extractions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/text_document_id"
         android:scrollbars="vertical"
-        tools:listitem="@layout/item_extraction"
-        android:layout_below="@id/text_document_id"/>
+        tools:listitem="@layout/item_extraction" />
 
     <LinearLayout
         android:id="@+id/layout_progress"
@@ -39,9 +39,9 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:paddingBottom="10dp"
             android:indeterminateOnly="true"
             android:indeterminateTintMode="src_in"
+            android:paddingBottom="10dp"
             tools:targetApi="lollipop" />
 
         <TextView
@@ -53,4 +53,8 @@
             android:textStyle="bold" />
 
     </LinearLayout>
+
+    <net.gini.android.bank.sdk.transactionlist.ui.extractions.view.TransactionDocsView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>
