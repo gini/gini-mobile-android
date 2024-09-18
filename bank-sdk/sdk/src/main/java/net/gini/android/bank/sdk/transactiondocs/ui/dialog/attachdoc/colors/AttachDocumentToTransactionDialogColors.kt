@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.transactionlist.ui.dialog.attachdoc.colors
+package net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.colors
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable

@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.transactionlist.ui.extractions
+package net.gini.android.bank.sdk.transactiondocs.ui.extractions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,8 +29,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.TransactionDocsWidgetColors
 import net.gini.android.bank.sdk.transactionlist.model.extractions.ExtractionDocument
-import net.gini.android.bank.sdk.transactionlist.ui.extractions.colors.TransactionDocsWidgetColors
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenu
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenuItem
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -38,7 +38,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
 private val imageExtensions = listOf(".jpg", ".jpeg", ".png", ".gif")
 
 @Composable
-internal fun TransactionDocumentsWidgetContent(
+internal fun TransactionDocsContent(
     documents: List<ExtractionDocument>,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
@@ -148,7 +148,10 @@ private fun Document(
                     ) {
                         DocumentMenuItem(
                             modifier = Modifier.align(Alignment.End),
-                            onClick = { onDocumentDelete(document) },
+                            onClick = {
+                                menuVisible = false
+                                onDocumentDelete(document)
+                            },
                             title = stringResource(id = R.string.gbs_tl_extraction_result_documents_section_menu_delete)
                         )
                     }

@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.transactionlist
+package net.gini.android.bank.sdk.transactiondocs
 
 import kotlinx.coroutines.flow.Flow
 import net.gini.android.bank.sdk.transactionlist.model.extractions.ExtractionDocument

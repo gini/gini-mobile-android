@@ -1,10 +1,11 @@
-package net.gini.android.bank.sdk.transactionlist.ui.extractions.view
+package net.gini.android.bank.sdk.transactiondocs.ui.extractions.view
 
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.compose.ui.platform.ComposeView
-import net.gini.android.bank.sdk.transactionlist.ui.extractions.TransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.ui.extractions.TransactionDocs
+import net.gini.android.capture.ui.theme.GiniTheme
 
 class TransactionDocsView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
@@ -17,7 +18,9 @@ class TransactionDocsView @JvmOverloads constructor(
         addView(composeView)
 
         composeView.setContent {
-            TransactionDocs()
+            GiniTheme {
+                TransactionDocs()
+            }
         }
     }
 }

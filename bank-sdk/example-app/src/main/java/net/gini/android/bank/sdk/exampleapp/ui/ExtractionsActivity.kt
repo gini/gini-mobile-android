@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +47,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     @Inject
     @GiniCaptureNetworkServiceDebugEnabled
     lateinit var defaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService
+
     @Inject
     @GiniCaptureNetworkServiceDebugDisabled
     lateinit var defaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService
@@ -191,36 +193,72 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 private class ExtractionsAdapter(
     var extractions: List<GiniCaptureSpecificExtraction>,
     var listener: ExtractionsAdapterInterface? = null,
-    val editableSpecificExtractions: List<String>
-) : RecyclerView.Adapter<ExtractionsViewHolder>() {
+    val editableSpecificExtractions: List<String>,
+) : RecyclerView.Adapter<ViewHolder>() {
 
     interface ExtractionsAdapterInterface {
         fun valueChanged(key: String, value: String)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExtractionsViewHolder {
-        val holder = ExtractionsViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_extraction, parent, false)
-        )
-        holder.mTextValue.addTextChangedListener {
-            listener?.valueChanged(holder.mTextInputLayout.hint.toString(), it.toString())
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return when (viewType) {
+            TYPE_EXTRACTION -> {
+                ExtractionsViewHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_extraction, parent, false)
+                ).also { holder ->
+                    holder.mTextValue.addTextChangedListener {
+                        listener?.valueChanged(
+                            holder.mTextInputLayout.hint.toString(),
+                            it.toString()
+                        )
+                    }
+                }
+            }
 
-        return holder
+            TYPE_TRANSACTION_DOCS -> {
+                ExtractionsDocsViewHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_transaction_docs, parent, false)
+                )
+            }
+
+            else -> error("Unknown view type")
+        }
     }
 
-    override fun onBindViewHolder(holder: ExtractionsViewHolder, position: Int) {
-        extractions.getOrNull(position)?.run {
-            holder.mTextValue.setText(value)
-            holder.mTextInputLayout.hint = name
-            holder.mTextValue.isEnabled = name in editableSpecificExtractions
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        when (holder) {
+            is ExtractionsViewHolder -> {
+                extractions.getOrNull(position)?.run {
+                    holder.mTextValue.setText(value)
+                    holder.mTextInputLayout.hint = name
+                    holder.mTextValue.isEnabled = name in editableSpecificExtractions
+                }
+            }
         }
     }
 
-    override fun getItemCount(): Int = extractions.size
+    override fun getItemCount(): Int = extractions.size + 1 // +1 for a TransactionDocView
+
+    override fun getItemViewType(position: Int): Int {
+        return when {
+            position in 0..extractions.lastIndex -> TYPE_EXTRACTION
+            else -> TYPE_TRANSACTION_DOCS
+        }
+    }
+
+    companion object {
+        const val TYPE_EXTRACTION = 0
+        const val TYPE_TRANSACTION_DOCS = 1
+    }
 }
 
-private class ExtractionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+private class ExtractionsViewHolder(itemView: View) : ViewHolder(itemView) {
     var mTextInputLayout: TextInputLayout = itemView.findViewById(R.id.text_input_layout)
     var mTextValue: TextInputEditText = itemView.findViewById(R.id.text_value)
+}
+
+private class ExtractionsDocsViewHolder(itemView: View) : ViewHolder(itemView) {
+
 }

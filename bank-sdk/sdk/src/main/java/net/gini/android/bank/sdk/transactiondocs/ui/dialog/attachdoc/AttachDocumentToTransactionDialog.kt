@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.transactionlist.ui.dialog.attachdoc
+package net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.transactionlist.ui.dialog.attachdoc.colors.AttachDocumentToTransactionDialogColors
+import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.colors.AttachDocumentToTransactionDialogColors
 import net.gini.android.capture.ui.components.checkbox.GiniCheckbox
 import net.gini.android.capture.ui.theme.GiniTheme
 

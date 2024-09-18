@@ -32,8 +32,8 @@ import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
-import net.gini.android.bank.sdk.transactionlist.TransactionDocs
-import net.gini.android.bank.sdk.transactionlist.TransactionDocsConfiguration
+import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
 import net.gini.android.bank.sdk.transactionlist.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.transactionlist.internal.GiniTransactionDocsSettings
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
@@ -68,7 +68,8 @@ object GiniBank {
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
 
-    private var giniBankTransactionDocs: GiniBankTransactionDocs? = null
+    internal var giniBankTransactionDocs: GiniBankTransactionDocs? = null
+        private set
 
     val transactionDocs: TransactionDocs
         get() = giniBankTransactionDocs
@@ -556,6 +557,4 @@ object GiniBank {
     fun releaseTransactionDocsFeature(context: Context) {
         giniBankTransactionDocs = null
     }
-
-    internal fun getGiniBankTransactionList() = giniBankTransactionDocs
 }

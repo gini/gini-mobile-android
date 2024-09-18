@@ -53,8 +53,4 @@
             android:textStyle="bold" />
 
     </LinearLayout>
-
-    <net.gini.android.bank.sdk.transactionlist.ui.extractions.view.TransactionDocsView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 </RelativeLayout>

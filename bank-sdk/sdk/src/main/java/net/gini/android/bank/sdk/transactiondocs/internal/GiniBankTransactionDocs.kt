@@ -4,8 +4,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import net.gini.android.bank.sdk.transactionlist.TransactionDocs
-import net.gini.android.bank.sdk.transactionlist.TransactionDocsConfiguration
+import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
 import net.gini.android.bank.sdk.transactionlist.model.extractions.ExtractionDocument
 
 internal class GiniBankTransactionDocs internal constructor(

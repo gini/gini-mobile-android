@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.transactionlist.ui.extractions.colors
+package net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable

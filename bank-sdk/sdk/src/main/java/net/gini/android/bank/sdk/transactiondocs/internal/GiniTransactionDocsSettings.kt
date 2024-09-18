@@ -1,7 +1,7 @@
 package net.gini.android.bank.sdk.transactionlist.internal
 
 import android.content.Context
-import net.gini.android.bank.sdk.transactionlist.TransactionDocsSettings
+import net.gini.android.bank.sdk.transactiondocs.TransactionDocsSettings
 
 class GiniTransactionDocsSettings(
     private val context: Context,
