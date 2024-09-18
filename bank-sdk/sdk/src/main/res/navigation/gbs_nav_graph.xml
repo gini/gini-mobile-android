@@ -152,13 +152,17 @@
         android:label="SkontoInvoiceFragment">
 
         <argument
-            android:name="skonto_data"
-            app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoData"
+            android:name="document_id"
+            app:argType="string" />
+
+        <argument
+            android:name="info_text_lines"
+            app:argType="string[]"
             app:nullable="true" />
 
         <argument
-            android:name="invoiceHighlights"
-            app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes[]" />
+            android:name="highlight_boxes"
+            app:argType="net.gini.android.capture.network.model.GiniCaptureBox[]" />
 
     </fragment>
 

@@ -12,14 +12,16 @@ package net.gini.android.capture.network;
 public class Result {
 
     private final String giniApiDocumentId;
+    private final String giniApiDocumentFilename;
 
     /**
      * Create a new result with a Gini API document id.
      *
      * @param giniApiDocumentId the id of a document in the Gini API
      */
-    public Result(final String giniApiDocumentId) {
+    public Result(final String giniApiDocumentId, final String giniApiDocumentFilename) {
         this.giniApiDocumentId = giniApiDocumentId;
+        this.giniApiDocumentFilename = giniApiDocumentFilename;
     }
 
     /**
@@ -27,5 +29,9 @@ public class Result {
      */
     public String getGiniApiDocumentId() {
         return giniApiDocumentId;
+    }
+
+    public String getGiniApiDocumentFilename() {
+        return giniApiDocumentFilename;
     }
 }

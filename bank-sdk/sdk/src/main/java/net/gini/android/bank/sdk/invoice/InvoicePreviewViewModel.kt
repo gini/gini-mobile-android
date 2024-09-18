@@ -10,12 +10,12 @@ import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentLayoutNet
 import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentPagesNetworkService
 import net.gini.android.bank.sdk.invoice.network.InvoicePreviewFileNetworkService
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
+import net.gini.android.capture.network.model.GiniCaptureBox
 
 internal class InvoicePreviewViewModel(
-    private val documentId: String?,
-    private val skontoInvoiceHighlights: List<SkontoInvoiceHighlightBoxes>,
-    private val skontoData: SkontoData?,
+    private val documentId: String,
+    private val highlightBoxes: List<GiniCaptureBox>,
+    private val infoTextLines: List<String>,
     private val invoicePreviewDocumentLayoutNetworkService: InvoicePreviewDocumentLayoutNetworkService,
     private val invoicePreviewDocumentPagesNetworkService: InvoicePreviewDocumentPagesNetworkService,
     private val invoicePreviewFileNetworkService: InvoicePreviewFileNetworkService,
@@ -29,7 +29,7 @@ internal class InvoicePreviewViewModel(
         InvoicePreviewFragmentState(
             isLoading = true,
             images = emptyList(),
-            skontoData = skontoData,
+            infoTextLines = infoTextLines,
         )
 
     init {
@@ -37,17 +37,15 @@ internal class InvoicePreviewViewModel(
     }
 
     private fun init() = viewModelScope.launch {
-        requireNotNull(documentId)
 
         val layout = invoicePreviewDocumentLayoutNetworkService.getLayout(documentId)
         val pages = invoicePreviewDocumentPagesNetworkService.getDocumentPages(documentId)
 
         val bitmaps = pages.map { documentPage ->
-            val bitmapBytes = invoicePreviewFileNetworkService.getFile(documentPage.getSmallestImage()!!)
+            val bitmapBytes =
+                invoicePreviewFileNetworkService.getFile(documentPage.getSmallestImage()!!)
             val bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.size)
-            val pageHighlights = skontoInvoiceHighlights.find {
-                it.getExistBoxes().all { it.pageNumber == documentPage.pageNumber }
-            }
+            val pageHighlights = highlightBoxes.filter { it.pageNumber == documentPage.pageNumber }
 
             val skontoPageLayout = layout.pages.find { documentPage.pageNumber == it.number }
 
@@ -55,7 +53,7 @@ internal class InvoicePreviewViewModel(
             pageHighlights?.let {
                 invoicePreviewPageImageProcessor.processImage(
                     image = bitmap,
-                    skontoInvoiceHighlightBoxes = pageHighlights,
+                    highlightBoxes = pageHighlights,
                     skontoPageLayout = skontoPageLayout
                         ?: error("Layout for page #$${documentPage.pageNumber} not found")
                 )

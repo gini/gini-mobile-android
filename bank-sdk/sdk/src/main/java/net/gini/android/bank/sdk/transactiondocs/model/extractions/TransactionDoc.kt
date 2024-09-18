@@ -1,6 +1,6 @@
-package net.gini.android.bank.sdk.transactionlist.model.extractions
+package net.gini.android.bank.sdk.transactiondocs.model.extractions
 
-data class ExtractionDocument(
+data class TransactionDoc(
     /**
      * Unique ID of the document **provided by Gini API**.
      */

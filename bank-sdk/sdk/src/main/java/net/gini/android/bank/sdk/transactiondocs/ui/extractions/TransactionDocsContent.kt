@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.TransactionDocsWidgetColors
-import net.gini.android.bank.sdk.transactionlist.model.extractions.ExtractionDocument
+import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenu
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenuItem
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -39,11 +39,11 @@ private val imageExtensions = listOf(".jpg", ".jpeg", ".png", ".gif")
 
 @Composable
 internal fun TransactionDocsContent(
-    documents: List<ExtractionDocument>,
+    documents: List<TransactionDoc>,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
-    onDocumentClick: (ExtractionDocument) -> Unit = {},
-    onDocumentDelete: (ExtractionDocument) -> Unit = {},
+    onDocumentClick: (TransactionDoc) -> Unit = {},
+    onDocumentDelete: (TransactionDoc) -> Unit = {},
 ) {
 
     Card(
@@ -72,9 +72,9 @@ internal fun TransactionDocsContent(
 
 @Composable
 private fun DocumentList(
-    documents: List<ExtractionDocument>,
-    onDocumentClick: (ExtractionDocument) -> Unit,
-    onDocumentDelete: (ExtractionDocument) -> Unit,
+    documents: List<TransactionDoc>,
+    onDocumentClick: (TransactionDoc) -> Unit,
+    onDocumentDelete: (TransactionDoc) -> Unit,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
 ) {
@@ -95,9 +95,9 @@ private fun DocumentList(
 
 @Composable
 private fun Document(
-    document: ExtractionDocument,
-    onDocumentClick: (ExtractionDocument) -> Unit,
-    onDocumentDelete: (ExtractionDocument) -> Unit,
+    document: TransactionDoc,
+    onDocumentClick: (TransactionDoc) -> Unit,
+    onDocumentDelete: (TransactionDoc) -> Unit,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors.DocumentItemColors =
         TransactionDocsWidgetColors.DocumentItemColors.colors(),
@@ -244,9 +244,9 @@ private fun PreviewContent() {
         Surface(modifier = Modifier.fillMaxSize()) {
             DocumentList(
                 documents = listOf(
-                    ExtractionDocument("id", "document1.jpg"),
-                    ExtractionDocument("id", "document2.jpg"),
-                    ExtractionDocument("id", "document3.pdf"),
+                    TransactionDoc("id", "document1.jpg"),
+                    TransactionDoc("id", "document2.jpg"),
+                    TransactionDoc("id", "document3.pdf"),
                 ),
                 onDocumentClick = {},
                 onDocumentDelete = {},

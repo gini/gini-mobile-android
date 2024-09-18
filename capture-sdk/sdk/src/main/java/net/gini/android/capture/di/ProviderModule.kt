@@ -1,8 +1,13 @@
 package net.gini.android.capture.di
 
-import net.gini.android.capture.analysis.LastAnalyzedDocumentIdProvider
+import kotlinx.coroutines.Dispatchers
+import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
 import org.koin.dsl.module
 
 internal val providerModule = module {
-    single<LastAnalyzedDocumentIdProvider> { LastAnalyzedDocumentIdProvider() }
+    single<LastAnalyzedDocumentProvider> {
+        LastAnalyzedDocumentProvider(
+            backgroundDispatcher = Dispatchers.IO
+        )
+    }
 }

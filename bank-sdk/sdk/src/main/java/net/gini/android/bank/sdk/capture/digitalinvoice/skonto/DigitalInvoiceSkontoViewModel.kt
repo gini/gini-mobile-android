@@ -11,11 +11,13 @@ import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercentageUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoRemainingDaysUseCase
+import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
 import java.math.BigDecimal
 import java.time.LocalDate
 
 internal class DigitalInvoiceSkontoViewModel(
     args: DigitalInvoiceSkontoArgs,
+    private val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider,
     private val getSkontoDiscountPercentageUseCase: GetSkontoDiscountPercentageUseCase,
     private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase,
     private val getSkontoRemainingDaysUseCase: GetSkontoRemainingDaysUseCase,
@@ -151,7 +153,9 @@ internal class DigitalInvoiceSkontoViewModel(
     fun onInvoiceClicked() = viewModelScope.launch {
         val currentState =
             stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch
+        val documentId = lastAnalyzedDocumentProvider.provide()?.first ?: return@launch
         sideEffectFlow.emit(DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen(
+            documentId,
             SkontoData(
                 skontoAmountToPay = currentState.skontoAmount,
                 skontoDueDate = currentState.discountDueDate,

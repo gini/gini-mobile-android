@@ -5,9 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoScreenState
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoSideEffect
-import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
@@ -17,6 +14,7 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoRemainingDaysUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseCase
 import net.gini.android.capture.Amount
+import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -29,6 +27,7 @@ internal class SkontoFragmentViewModel(
     private val getSkontoRemainingDaysUseCase: GetSkontoRemainingDaysUseCase,
     private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase,
     private val skontoExtractionsHandler: SkontoExtractionsHandler,
+    private val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<SkontoFragmentContract.State> =
@@ -210,8 +209,10 @@ internal class SkontoFragmentViewModel(
     fun onInvoiceClicked() = viewModelScope.launch {
         val currentState =
             stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        val documentId = lastAnalyzedDocumentProvider.provide()?.first ?: return@launch
         sideEffectFlow.emit(
             SkontoFragmentContract.SideEffect.OpenInvoiceScreen(
+                documentId,
                 SkontoData(
                     skontoAmountToPay = currentState.skontoAmount,
                     skontoDueDate = currentState.discountDueDate,

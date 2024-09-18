@@ -1,34 +1,33 @@
-package net.gini.android.bank.sdk.transactionlist.internal
+package net.gini.android.bank.sdk.transactiondocs.internal
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
-import net.gini.android.bank.sdk.transactionlist.model.extractions.ExtractionDocument
+import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
+import net.gini.android.bank.sdk.transactionlist.internal.GiniTransactionDocsSettings
+import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
+import net.gini.android.capture.di.getGiniCaptureKoin
 
 internal class GiniBankTransactionDocs internal constructor(
     override val configuration: TransactionDocsConfiguration,
     override val transactionDocsSettings: GiniTransactionDocsSettings,
-    backgroundDispatcher: CoroutineDispatcher,
+    private val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider = getGiniCaptureKoin().get(),
 ) : TransactionDocs {
 
-    private val coroutineScope = CoroutineScope(backgroundDispatcher)
-
-    override val extractionDocumentsFlow: MutableStateFlow<List<ExtractionDocument>> =
-        MutableStateFlow(listOf(
-            ExtractionDocument("id", "document1.jpg"),
-            ExtractionDocument("id", "document2.jpg"),
-            ExtractionDocument("id", "document3.pdf"),
-            ExtractionDocument("id", "document4.pdf"),
-        ))
-
-    internal suspend fun updateExtractionDocumentsBlocking(documents: List<ExtractionDocument>) {
-        extractionDocumentsFlow.emit(documents)
+    fun deleteDocument(document: TransactionDoc) {
+        lastAnalyzedDocumentProvider.clear()
     }
 
-    fun updateExtractionDocuments(documents: List<ExtractionDocument>) = coroutineScope.launch {
-        extractionDocumentsFlow.emit(documents)
-    }
+    override val extractionDocumentsFlow = lastAnalyzedDocumentProvider
+        .data
+        .filterNotNull()
+        .map {
+            listOf(
+                TransactionDoc(
+                    giniApiDocumentId = it.first,
+                    it.second
+                )
+            )
+        }
 }

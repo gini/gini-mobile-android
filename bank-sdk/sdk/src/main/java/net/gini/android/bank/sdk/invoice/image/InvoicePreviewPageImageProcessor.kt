@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
 import net.gini.android.capture.internal.network.model.DocumentLayout
 import net.gini.android.capture.network.model.GiniCaptureBox
 import org.slf4j.Logger
@@ -21,7 +20,7 @@ class InvoicePreviewPageImageProcessor {
     suspend fun processImage(
         image: Bitmap,
         skontoPageLayout: DocumentLayout.Page,
-        skontoInvoiceHighlightBoxes: SkontoInvoiceHighlightBoxes,
+        highlightBoxes: List<GiniCaptureBox>,
         color: Int = 0xAAFFFF00.toInt(),
     ): Bitmap = suspendCoroutine { continuation ->
 
@@ -32,9 +31,7 @@ class InvoicePreviewPageImageProcessor {
 
         val canvas = Canvas(finalBitmap)
 
-        val boxes = skontoInvoiceHighlightBoxes.getExistBoxes()
-
-        val scaledBoxes = boxes.map { it.scale(scaleX, scaleY) }
+        val scaledBoxes = highlightBoxes.map { it.scale(scaleX, scaleY) }
 
         val scaledRectList = scaledBoxes.map { it.toRect() }
 
@@ -45,7 +42,7 @@ class InvoicePreviewPageImageProcessor {
         if (scaledRectList.isNotEmpty()) {
             canvas.drawHighlightRect(scaledRectList.unionAll(), paint)
         } else {
-            LOG.error("No boxes to highlight detected")
+            LOG.debug("No boxes to highlight detected")
         }
 
         continuation.resume(finalBitmap)

@@ -36,25 +36,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
-import net.gini.android.bank.sdk.invoice.colors.SkontoInvoicePreviewScreenColors
-import net.gini.android.bank.sdk.invoice.colors.section.SkontoInvoicePreviewScreenFooterColors
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.bank.sdk.di.getGiniBankKoin
-import net.gini.android.capture.Amount
-import net.gini.android.capture.AmountCurrency
+import net.gini.android.bank.sdk.invoice.colors.SkontoInvoicePreviewScreenColors
+import net.gini.android.bank.sdk.invoice.colors.section.SkontoInvoicePreviewScreenFooterColors
 import net.gini.android.capture.ui.components.list.ZoomableLazyColumn
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.theme.GiniTheme
-import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun InvoicePreviewScreen(
     navigateBack: () -> Unit,
     viewModel: InvoicePreviewViewModel,
-    amountFormatter: AmountFormatter = getGiniBankKoin().get(),
     modifier: Modifier = Modifier,
     colors: SkontoInvoicePreviewScreenColors = SkontoInvoicePreviewScreenColors.colors()
 ) {
@@ -65,7 +58,6 @@ internal fun InvoicePreviewScreen(
         state = state,
         onCloseClicked = navigateBack,
         colors = colors,
-        amountFormatter = amountFormatter,
     )
 }
 
@@ -74,7 +66,6 @@ private const val INTERFACE_VISIBILITY_ZOOM_THRESHOLD = 1.5f
 
 @Composable
 private fun SkontoInvoiceScreenContent(
-    amountFormatter: AmountFormatter,
     state: InvoicePreviewFragmentState,
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier,
@@ -148,19 +139,14 @@ private fun SkontoInvoiceScreenContent(
                 )
             }
 
-            state.skontoData?.let { data ->
-                AnimatedVisibility(
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    visible = isInterfaceVisible
-                ) {
-                    Footer(
-                        expireDate = data.skontoDueDate,
-                        finalAmount = data.skontoAmountToPay,
-                        fullAmount = data.fullAmountToPay,
-                        colors = colors.footerColors,
-                        amountFormatter = amountFormatter
-                    )
-                }
+            AnimatedVisibility(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                visible = isInterfaceVisible
+            ) {
+                Footer(
+                    infoTextLines = state.infoTextLines,
+                    colors = colors.footerColors,
+                )
             }
         }
     }
@@ -190,14 +176,10 @@ private fun CloseScreenButton(
 
 @Composable
 private fun Footer(
-    amountFormatter: AmountFormatter,
-    expireDate: LocalDate,
-    finalAmount: Amount,
-    fullAmount: Amount,
+    infoTextLines: List<String>,
     modifier: Modifier = Modifier,
     colors: SkontoInvoicePreviewScreenFooterColors,
 ) {
-    val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
     Column(
         modifier = modifier
@@ -207,7 +189,14 @@ private fun Footer(
             .padding(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
+        infoTextLines.forEach {
+            Text(
+                text = it,
+                style = GiniTheme.typography.caption1,
+                color = colors.contentColor
+            )
+        }
+        /*Text(
             text = stringResource(
                 id = R.string.gbs_skonto_invoice_preview_expire_date,
                 dateFormatter.format(expireDate)
@@ -230,7 +219,7 @@ private fun Footer(
             ),
             style = GiniTheme.typography.caption1,
             color = colors.contentColor
-        )
+        )*/
     }
 }
 
@@ -268,11 +257,10 @@ private fun SkontoInvoiceScreenContentPreviewZoomOut() {
             state = InvoicePreviewFragmentState(
                 isLoading = true,
                 images = emptyList(),
-                skontoData = previewSkontoData,
+                infoTextLines = listOf("Line 1", "Line 2"),
             ),
             onCloseClicked = {},
             interfaceVisible = false,
-            amountFormatter = AmountFormatter(currencyFormatterWithoutSymbol())
         )
     }
 }
@@ -285,24 +273,10 @@ private fun SkontoInvoiceScreenContentPreviewZoomIn() {
             state = InvoicePreviewFragmentState(
                 isLoading = true,
                 images = emptyList(),
-                skontoData = previewSkontoData,
+                infoTextLines = listOf("Line 1", "Line 2"),
             ),
             onCloseClicked = {},
             interfaceVisible = true,
-            amountFormatter = AmountFormatter(currencyFormatterWithoutSymbol())
         )
     }
 }
-
-private val previewSkontoData = SkontoData(
-    skontoPercentageDiscounted = BigDecimal.TEN,
-    skontoPaymentMethod = SkontoData.SkontoPaymentMethod.Unspecified,
-    skontoAmountToPay = Amount(
-        value = BigDecimal.TEN,
-        currency = AmountCurrency.EUR
-    ), fullAmountToPay = Amount(
-        value = BigDecimal.TEN,
-        currency = AmountCurrency.EUR
-    ), skontoRemainingDays = 51,
-    skontoDueDate = LocalDate.now()
-)

@@ -5,11 +5,10 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentLayoutNetworkService
 import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentPagesNetworkService
 import net.gini.android.bank.sdk.invoice.network.InvoicePreviewFileNetworkService
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
-import net.gini.android.capture.analysis.LastAnalyzedDocumentIdProvider
+import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.network.GiniCaptureNetworkService
+import net.gini.android.capture.network.model.GiniCaptureBox
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -38,13 +37,13 @@ val invoicePreviewScreenModule = module {
     }
 
     // Bridge between GiniCapture and GiniBank
-    factory<LastAnalyzedDocumentIdProvider> { getGiniCaptureKoin().get() }
+    factory<LastAnalyzedDocumentProvider> { getGiniCaptureKoin().get() }
 
-    viewModel { (skontoData: SkontoData, highlights: Array<SkontoInvoiceHighlightBoxes>) ->
+    viewModel { (documentId: String, infoTextLines: Array<String>, highlights: Array<GiniCaptureBox>) ->
         InvoicePreviewViewModel(
-            documentId = get<LastAnalyzedDocumentIdProvider>().provide(),
-            skontoData = skontoData,
-            skontoInvoiceHighlights = highlights.toList(),
+            documentId = documentId,
+            infoTextLines = infoTextLines.toList(),
+            highlightBoxes = highlights.toList(),
             invoicePreviewDocumentPagesNetworkService = get(),
             invoicePreviewDocumentLayoutNetworkService = get(),
             invoicePreviewFileNetworkService = get(),

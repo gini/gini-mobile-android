@@ -30,11 +30,12 @@ import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.skonto.help.SkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.bank.sdk.error.AmountParsingException
+import net.gini.android.bank.sdk.invoice.InvoicePreviewFragment
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
-import net.gini.android.bank.sdk.transactionlist.internal.GiniBankTransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.transactionlist.internal.GiniTransactionDocsSettings
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 import net.gini.android.capture.*
@@ -540,6 +541,16 @@ object GiniBank {
         return CaptureFlowFragment.createInstance(document)
     }
 
+    fun createInvoicePreviewFragment(giniApiDocumentId: String) : InvoicePreviewFragment {
+        check(giniApiDocumentId.isNotBlank() && giniApiDocumentId.isNotEmpty()) {
+            "Gini Api Document Id should not be empty or blank" }
+        return InvoicePreviewFragment.createInstance(giniApiDocumentId)
+    }
+
+    fun startInvoicePreview() {
+
+    }
+
 
     fun initializeTransactionDocsFeature(
         context: Context,
@@ -550,7 +561,6 @@ object GiniBank {
         this.giniBankTransactionDocs = GiniBankTransactionDocs(
             configuration = transactionDocsConfiguration,
             transactionDocsSettings = transactionDocsSettings,
-            backgroundDispatcher = Dispatchers.IO
         )
     }
 

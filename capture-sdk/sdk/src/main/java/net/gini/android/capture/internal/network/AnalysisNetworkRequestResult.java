@@ -23,8 +23,9 @@ public class AnalysisNetworkRequestResult<T extends GiniCaptureDocument>
 
     public AnalysisNetworkRequestResult(@NonNull final T giniCaptureDocument,
             @NonNull final String apiDocumentId,
+            @NonNull final String apiDocumentFilename,
             @NonNull final AnalysisResult analysisResult) {
-        super(giniCaptureDocument, apiDocumentId);
+        super(giniCaptureDocument, apiDocumentId, apiDocumentFilename);
         mAnalysisResult = analysisResult;
     }
 

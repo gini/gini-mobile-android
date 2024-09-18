@@ -230,7 +230,7 @@ class GiniCaptureDefaultNetworkService(
                     apiDocument
                 )
                 giniApiDocuments[apiDocument.id] = apiDocument
-                callback.success(Result(apiDocument.id))
+                callback.success(Result(apiDocument.id, apiDocument.filename))
             }
 
             is Resource.Error -> {
@@ -273,7 +273,7 @@ class GiniCaptureDefaultNetworkService(
         when (deleteResource) {
             is Resource.Success -> {
                 LOG.debug("Document deletion success for api id {}", giniApiDocumentId)
-                callback.success(Result(giniApiDocumentId))
+                callback.success(Result(giniApiDocumentId, null))
             }
 
             is Resource.Error -> {
@@ -362,6 +362,7 @@ class GiniCaptureDefaultNetworkService(
                 callback.success(
                     AnalysisResult(
                         compositeDocument.id,
+                        compositeDocument.filename,
                         extractions,
                         compoundExtractions,
                         returnReasons

@@ -24,6 +24,7 @@ import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugDisabled
 import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityExtractionsBinding
+import net.gini.android.bank.sdk.transactiondocs.ui.extractions.view.TransactionDocsView
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
@@ -220,7 +221,15 @@ private class ExtractionsAdapter(
                 ExtractionsDocsViewHolder(
                     LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_transaction_docs, parent, false)
-                )
+                ).apply {
+                    this.transactionDocView.onDocumentClick {
+                        this.itemView.context.startActivity(
+                            InvoicePreviewActivity.newIntent(
+                                this.itemView.context, it.giniApiDocumentId
+                            )
+                        )
+                    }
+                }
             }
 
             else -> error("Unknown view type")
@@ -260,5 +269,5 @@ private class ExtractionsViewHolder(itemView: View) : ViewHolder(itemView) {
 }
 
 private class ExtractionsDocsViewHolder(itemView: View) : ViewHolder(itemView) {
-
+    val transactionDocView: TransactionDocsView = itemView.findViewById(R.id.transaction_docs_view)
 }

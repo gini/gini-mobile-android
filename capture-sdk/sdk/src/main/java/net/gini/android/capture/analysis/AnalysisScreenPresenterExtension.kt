@@ -4,7 +4,7 @@ import net.gini.android.capture.di.getGiniCaptureKoin
 
 open class AnalysisScreenPresenterExtension {
 
-    val lastAnalyzedDocumentIdProvider: LastAnalyzedDocumentIdProvider by
+    val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider by
     getGiniCaptureKoin().inject()
 
 }

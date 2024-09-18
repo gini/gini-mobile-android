@@ -14,13 +14,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.TransactionDocsWidgetColors
-import net.gini.android.bank.sdk.transactionlist.internal.GiniBankTransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
 fun TransactionDocs(
     modifier: Modifier = Modifier,
-    colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors()
+    colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
+    onDocumentClick: (TransactionDoc) -> Unit = {},
 ) {
     val transactionDocs: GiniBankTransactionDocs? = remember { GiniBank.giniBankTransactionDocs }
 
@@ -35,16 +37,12 @@ fun TransactionDocs(
                 style = GiniTheme.typography.headline6,
             )
         } else {
-            val documents by transactionDocs.extractionDocumentsFlow.collectAsState()
+            val documents by transactionDocs.extractionDocumentsFlow.collectAsState(listOf())
             TransactionDocsContent(
                 documents = documents,
                 colors = colors,
-                onDocumentDelete = {
-                    transactionDocs.updateExtractionDocuments(documents.minus(it))
-                },
-                onDocumentClick = {
-                    
-                }
+                onDocumentDelete = transactionDocs::deleteDocument,
+                onDocumentClick = onDocumentClick
             )
         }
     }

@@ -23,7 +23,7 @@ class InvoicePreviewFragment : Fragment() {
     private val args: InvoicePreviewFragmentArgs by navArgs<InvoicePreviewFragmentArgs>()
 
     private val viewModel: InvoicePreviewViewModel by getGiniBankKoin().inject {
-        parametersOf(args.skontoData, args.invoiceHighlights)
+        parametersOf(args.documentId, args.infoTextLines, args.highlightBoxes)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,10 +49,22 @@ class InvoicePreviewFragment : Fragment() {
                         modifier = Modifier,
                         viewModel = viewModel,
                         navigateBack = {
-                            findNavController().popBackStack()
+                            findNavController().navigateUp()
                         }
                     )
                 }
+            }
+        }
+    }
+
+    companion object {
+        fun createInstance(documentId: String): InvoicePreviewFragment {
+            return InvoicePreviewFragment().apply {
+                arguments = InvoicePreviewFragmentArgs(
+                    documentId = documentId,
+                    infoTextLines = arrayOf(),
+                    highlightBoxes = arrayOf()
+                ).toBundle()
             }
         }
     }

@@ -174,11 +174,11 @@ public class AnalysisInteractor {
         private final List<GiniCaptureReturnReason> mReturnReasons;
         private final String mDocumentId;
 
-        ResultHolder(@NonNull final Result result, final String documentId) {
+        ResultHolder(@NonNull final Result result, final String giniApiDocumentId) {
             this(result, Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyList(),
-                    documentId);
+                    giniApiDocumentId);
         }
 
         ResultHolder(
@@ -186,12 +186,12 @@ public class AnalysisInteractor {
                 @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
                 @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions,
                 @NonNull final List<GiniCaptureReturnReason> returnReasons,
-                final String documentId) {
+                final String giniApiDocumentId) {
             mResult = result;
             mExtractions = extractions;
             mCompoundExtractions = compoundExtractions;
             mReturnReasons = returnReasons;
-            mDocumentId = documentId;
+            mDocumentId = giniApiDocumentId;
         }
 
         @NonNull

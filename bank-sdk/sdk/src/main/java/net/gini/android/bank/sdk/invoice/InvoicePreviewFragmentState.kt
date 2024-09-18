@@ -6,5 +6,5 @@ import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 data class InvoicePreviewFragmentState(
     val isLoading: Boolean,
     val images: List<Bitmap>,
-    val skontoData: SkontoData?,
+    val infoTextLines: List<String>,
 )
