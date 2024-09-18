@@ -39,7 +39,7 @@ class DigitalInvoiceScreen {
                 .text("Get Started")
                 .resourceId("net.gini.android.bank.sdk.exampleapp:id/done_button")
         )
-        return onboardingScreenButton.waitForExists(5000)
+        return onboardingScreenButton.waitForExists(10000)
     }
 
     fun clickGetStartedButtonOnOnboardingScreen() {

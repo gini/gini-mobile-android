@@ -15,7 +15,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.ExtractionScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -68,7 +67,8 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickArticleSwitch()
@@ -88,7 +88,8 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        assertEquals(true, isOnboardingScreenButtonVisible)
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
@@ -142,7 +143,9 @@ class DigitalInvoiceScreenTests {
 
         digitalInvoiceScreen.clickArticleSwitch()
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.checkTotalPriceIsDisplayed()
+
+        val isTotalPriceReAppear = digitalInvoiceScreen.checkTotalPriceIsDisplayed()
+        assertEquals(true, isTotalPriceReAppear)
 
         digitalInvoiceScreen.storeUpdatedPrice()
         val hasTotalSumChanged = digitalInvoiceScreen.verifyTotalSumValue()
@@ -158,7 +161,8 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         val isDisplayed = digitalInvoiceScreen.assertOtherChargesDisplayed()
@@ -174,7 +178,8 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickProceedButton()
@@ -190,7 +195,8 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickHelpButtonOnDigitalInvoiceScreen()
@@ -209,7 +215,8 @@ class DigitalInvoiceScreenTests {
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickCancelButton()
