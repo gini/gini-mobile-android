@@ -1,6 +1,7 @@
 package net.gini.android.internal.payment.paymentComponent
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -216,6 +217,10 @@ class PaymentComponentTest {
         mockkStatic(PackageManager::getInstalledPaymentProviderApps)
         every { mockedContext.packageManager.getInstalledPaymentProviderApps() } returns emptyList()
 
+        val preferences: SharedPreferences = mockk()
+        every { mockedContext.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE) } returns preferences
+        every { preferences.getString("SDK_LANGUAGE_PREFS_KEY", null) } returns null
+
         //When
         val paymentComponent = PaymentComponent(mockedContext, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()
@@ -263,6 +268,10 @@ class PaymentComponentTest {
             buildPaymentProviderApp(paymentProvider2, false),
         )
         val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
+
+        val preferences: SharedPreferences = mockk()
+        every { mockedContext.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE) } returns preferences
+        every { preferences.getString("SDK_LANGUAGE_PREFS_KEY", null) } returns null
 
         //When
         val paymentComponent = PaymentComponent(mockedContext, giniPaymentModule)
@@ -450,6 +459,10 @@ class PaymentComponentTest {
             buildPaymentProviderApp(paymentProvider2, false),
         )
         val mockedContext = createMockedContextAndSetDependencies(paymentProviderList, paymentProviderAppList)
+
+        val preferences: SharedPreferences = mockk()
+        every { mockedContext.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE) } returns preferences
+        every { preferences.getString("SDK_LANGUAGE_PREFS_KEY", null) } returns null
 
         val paymentComponent = PaymentComponent(mockedContext, giniPaymentModule)
         paymentComponent.loadPaymentProviderApps()

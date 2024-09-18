@@ -17,6 +17,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
+import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
@@ -38,13 +39,11 @@ class MoreInformationTest {
     private lateinit var paymentComponentWithLocale: PaymentComponent
     private var context: Context? = null
     private lateinit var giniPaymentModule: GiniInternalPaymentModule
-    private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
 
     @Before
     fun setup() {
         paymentComponent = mockk(relaxed = true)
         context = ApplicationProvider.getApplicationContext()
-        giniPaymentModule = GiniInternalPaymentModule(context!!, giniHealthAPI)
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
         every { paymentComponent!!.paymentModule.localizedContext } returns context
@@ -130,6 +129,7 @@ class MoreInformationTest {
     @Test
     fun `shows text values in english if that is set to GiniHealth`() = runTest {
         // Given
+        giniPaymentModule = GiniInternalPaymentModule(context!!)
         giniPaymentModule.setSDKLanguage(GiniLocalization.ENGLISH, context!!)
         paymentComponentWithLocale = PaymentComponent(context!!, giniPaymentModule)
 
@@ -146,6 +146,7 @@ class MoreInformationTest {
     @Test
     fun `shows text values in german if that is set to GiniHealth`() = runTest {
         // Given
+        giniPaymentModule = GiniInternalPaymentModule(context!!)
         giniPaymentModule.setSDKLanguage(GiniLocalization.GERMAN, context!!)
         paymentComponentWithLocale = PaymentComponent(context!!, giniPaymentModule)
 
