@@ -4,7 +4,6 @@ import android.Manifest
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
@@ -15,12 +14,10 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Test class for onboarding screen flow.
  */
-@RunWith(AndroidJUnit4::class)
 class OnboardingScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()

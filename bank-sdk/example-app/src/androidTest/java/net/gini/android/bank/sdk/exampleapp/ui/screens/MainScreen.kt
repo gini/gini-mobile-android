@@ -8,9 +8,15 @@ import net.gini.android.bank.sdk.exampleapp.R
 import androidx.test.espresso.assertion.ViewAssertions.matches
 
 class MainScreen {
-    fun assertDescriptionTitle(): MainScreen {
-        onView(withId(R.id.tv_exampleOfPhotoPayment)).check(matches(isDisplayed()))
-        return this
+    fun assertDescriptionTitle(): Boolean {
+        var isDescriptionTitleDisplayed = false
+        onView(withId(R.id.tv_exampleOfPhotoPayment))
+            .check { view, _ ->
+                if (view.isShown()) {
+                    isDescriptionTitleDisplayed = true
+                }
+            }
+        return isDescriptionTitleDisplayed
     }
 
     fun clickPhotoPaymentButton(): MainScreen {

@@ -18,7 +18,7 @@ class HelpScreen {
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
-            .perform(click());
+            .perform(click())
         return this
     }
 
@@ -42,7 +42,7 @@ class HelpScreen {
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
-            .perform(click());
+            .perform(click())
         return this
     }
 
@@ -66,7 +66,7 @@ class HelpScreen {
                 isDescendantOfA(withId(net.gini.android.capture.R.id.gc_help_items))
             )
         )
-            .perform(click());
+            .perform(click())
         return this
     }
 
