@@ -3,7 +3,7 @@ package net.gini.android.bank.sdk.transactionlist.ui.extractions.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import net.gini.android.capture.ui.components.menu.context.colors.GiniContextMenuColors
+import net.gini.android.capture.ui.components.menu.context.GiniContextMenuColors
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Immutable
