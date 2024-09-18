@@ -19,13 +19,11 @@ class MainScreen {
         return isDescriptionTitleDisplayed
     }
 
-    fun clickPhotoPaymentButton(): MainScreen {
+    fun clickPhotoPaymentButton() {
         onView(withId(R.id.button_startScanner)).perform(click())
-        return this
     }
 
-    fun clickSettingButton(): MainScreen {
+    fun clickSettingButton() {
         onView(withId(R.id.text_giniBankVersion)).perform(click())
-        return this
     }
 }
