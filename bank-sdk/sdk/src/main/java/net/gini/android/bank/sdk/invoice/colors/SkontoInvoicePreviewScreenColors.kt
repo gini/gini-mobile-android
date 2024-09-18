@@ -1,9 +1,9 @@
-package net.gini.android.bank.sdk.capture.skonto.invoice.colors
+package net.gini.android.bank.sdk.invoice.colors
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import net.gini.android.bank.sdk.capture.skonto.invoice.colors.section.SkontoInvoicePreviewScreenFooterColors
+import net.gini.android.bank.sdk.invoice.colors.section.SkontoInvoicePreviewScreenFooterColors
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 

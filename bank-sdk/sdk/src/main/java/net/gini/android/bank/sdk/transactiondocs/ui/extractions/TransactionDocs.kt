@@ -1,5 +1,6 @@
 package net.gini.android.bank.sdk.transactiondocs.ui.extractions
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -30,7 +31,7 @@ fun TransactionDocs(
         if (transactionDocs == null) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                text = "Transaction list feature is not configured",
+                text = "Transaction Docs feature is not configured",
                 style = GiniTheme.typography.headline6,
             )
         } else {
@@ -42,16 +43,25 @@ fun TransactionDocs(
                     transactionDocs.updateExtractionDocuments(documents.minus(it))
                 },
                 onDocumentClick = {
-
+                    
                 }
             )
         }
     }
 }
 
+
 @Composable
 @Preview
 private fun TransactionListDocumentsPreview() {
+    GiniTheme {
+        TransactionDocs()
+    }
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+private fun TransactionListDocumentsPreviewNight() {
     GiniTheme {
         TransactionDocs()
     }

@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.capture.skonto.invoice.network
+package net.gini.android.bank.sdk.invoice.network
 
 import kotlinx.coroutines.suspendCancellableCoroutine
 import net.gini.android.capture.network.Error
@@ -7,7 +7,7 @@ import net.gini.android.capture.network.GiniCaptureNetworkService
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-internal class SkontoFileNetworkService(
+internal class InvoicePreviewFileNetworkService(
     private val giniCaptureNetworkService: GiniCaptureNetworkService,
 ) {
 

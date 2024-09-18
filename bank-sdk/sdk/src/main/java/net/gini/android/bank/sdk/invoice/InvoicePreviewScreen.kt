@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.capture.skonto.invoice
+package net.gini.android.bank.sdk.invoice
 
 import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
@@ -36,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
-import net.gini.android.bank.sdk.capture.skonto.invoice.colors.SkontoInvoicePreviewScreenColors
-import net.gini.android.bank.sdk.capture.skonto.invoice.colors.section.SkontoInvoicePreviewScreenFooterColors
+import net.gini.android.bank.sdk.invoice.colors.SkontoInvoicePreviewScreenColors
+import net.gini.android.bank.sdk.invoice.colors.section.SkontoInvoicePreviewScreenFooterColors
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.bank.sdk.di.getGiniBankKoin
@@ -51,9 +51,9 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-internal fun SkontoInvoiceScreen(
+internal fun InvoicePreviewScreen(
     navigateBack: () -> Unit,
-    viewModel: SkontoInvoiceFragmentViewModel,
+    viewModel: InvoicePreviewViewModel,
     amountFormatter: AmountFormatter = getGiniBankKoin().get(),
     modifier: Modifier = Modifier,
     colors: SkontoInvoicePreviewScreenColors = SkontoInvoicePreviewScreenColors.colors()
@@ -75,7 +75,7 @@ private const val INTERFACE_VISIBILITY_ZOOM_THRESHOLD = 1.5f
 @Composable
 private fun SkontoInvoiceScreenContent(
     amountFormatter: AmountFormatter,
-    state: SkontoInvoiceFragmentState,
+    state: InvoicePreviewFragmentState,
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier,
     colors: SkontoInvoicePreviewScreenColors = SkontoInvoicePreviewScreenColors.colors(),
@@ -265,7 +265,7 @@ private fun ImagesList(
 private fun SkontoInvoiceScreenContentPreviewZoomOut() {
     GiniTheme {
         SkontoInvoiceScreenContent(
-            state = SkontoInvoiceFragmentState(
+            state = InvoicePreviewFragmentState(
                 isLoading = true,
                 images = emptyList(),
                 skontoData = previewSkontoData,
@@ -282,7 +282,7 @@ private fun SkontoInvoiceScreenContentPreviewZoomOut() {
 private fun SkontoInvoiceScreenContentPreviewZoomIn() {
     GiniTheme {
         SkontoInvoiceScreenContent(
-            state = SkontoInvoiceFragmentState(
+            state = InvoicePreviewFragmentState(
                 isLoading = true,
                 images = emptyList(),
                 skontoData = previewSkontoData,

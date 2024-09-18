@@ -167,7 +167,7 @@ class SkontoFragment : Fragment() {
                         navigateToInvoiceScreen = {
                             findNavController()
                                 .navigate(
-                                    SkontoFragmentDirections.toSkontoInvoiceFragment(
+                                    SkontoFragmentDirections.toInvoicePreviewFragment(
                                         it,
                                         args.invoiceHighlights
                                     )

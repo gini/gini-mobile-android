@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.capture.skonto.invoice.image
+package net.gini.android.bank.sdk.invoice.image
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class SkontoPageImageProcessor {
+class InvoicePreviewPageImageProcessor {
 
     companion object {
-        var LOG: Logger = LoggerFactory.getLogger(SkontoPageImageProcessor::class.java)
+        var LOG: Logger = LoggerFactory.getLogger(InvoicePreviewPageImageProcessor::class.java)
     }
 
     suspend fun processImage(

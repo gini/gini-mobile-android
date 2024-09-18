@@ -1,9 +1,9 @@
-package net.gini.android.bank.sdk.capture.skonto.invoice
+package net.gini.android.bank.sdk.invoice
 
 import android.graphics.Bitmap
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 
-data class SkontoInvoiceFragmentState(
+data class InvoicePreviewFragmentState(
     val isLoading: Boolean,
     val images: List<Bitmap>,
     val skontoData: SkontoData?,

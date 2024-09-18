@@ -165,7 +165,7 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                         navigateToInvoiceScreen = { data ->
                             findNavController()
                                 .navigate(
-                                    DigitalInvoiceSkontoFragmentDirections.toSkontoInvoiceFragment(
+                                    DigitalInvoiceSkontoFragmentDirections.toInvoicePreviewFragment(
                                         skontoData = data,
                                         invoiceHighlights = args.data.invoiceHighlights.toTypedArray(),
                                     )

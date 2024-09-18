@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.capture.skonto.invoice.colors.section
+package net.gini.android.bank.sdk.invoice.colors.section
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.capture.skonto.invoice
+package net.gini.android.bank.sdk.invoice
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,21 +11,18 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ui.theme.GiniTheme
-import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.koin.core.parameter.parametersOf
 
-class SkontoInvoiceFragment : Fragment() {
+class InvoicePreviewFragment : Fragment() {
 
-    private val args: SkontoInvoiceFragmentArgs by navArgs<SkontoInvoiceFragmentArgs>()
+    private val args: InvoicePreviewFragmentArgs by navArgs<InvoicePreviewFragmentArgs>()
 
-    private val viewModel: SkontoInvoiceFragmentViewModel by getGiniBankKoin().inject {
+    private val viewModel: InvoicePreviewViewModel by getGiniBankKoin().inject {
         parametersOf(args.skontoData, args.invoiceHighlights)
     }
 
@@ -48,7 +45,7 @@ class SkontoInvoiceFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 GiniTheme {
-                    SkontoInvoiceScreen(
+                    InvoicePreviewScreen(
                         modifier = Modifier,
                         viewModel = viewModel,
                         navigateBack = {

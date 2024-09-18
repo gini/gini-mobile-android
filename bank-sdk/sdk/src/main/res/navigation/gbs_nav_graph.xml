@@ -132,8 +132,8 @@
                 app:popUpTo="@id/gbs_destination_skonto_fragment"
                 app:popUpToInclusive="true" />
             <action
-                android:id="@+id/to_skonto_invoice_fragment"
-                app:destination="@id/gbs_destination_skonto_invoice_fragment" />
+                android:id="@+id/to_invoice_preview_fragment"
+                app:destination="@id/gbs_destination_invoice_preview_fragment" />
 
             <action
                 android:id="@+id/to_skonto_help_fragment"
@@ -147,8 +147,8 @@
     </navigation>
 
     <fragment
-        android:id="@+id/gbs_destination_skonto_invoice_fragment"
-        android:name="net.gini.android.bank.sdk.capture.skonto.invoice.SkontoInvoiceFragment"
+        android:id="@+id/gbs_destination_invoice_preview_fragment"
+        android:name="net.gini.android.bank.sdk.invoice.InvoicePreviewFragment"
         android:label="SkontoInvoiceFragment">
 
         <argument
@@ -178,8 +178,8 @@
             app:argType="net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoArgs" />
 
         <action
-            android:id="@+id/to_skonto_invoice_fragment"
-            app:destination="@id/gbs_destination_skonto_invoice_fragment" />
+            android:id="@+id/to_invoice_preview_fragment"
+            app:destination="@id/gbs_destination_invoice_preview_fragment" />
 
         <action
             android:id="@+id/to_skonto_help_fragment"

@@ -1,27 +1,27 @@
-package net.gini.android.bank.sdk.capture.skonto.invoice.network
+package net.gini.android.bank.sdk.invoice.network
 
 import kotlinx.coroutines.suspendCancellableCoroutine
-import net.gini.android.capture.internal.network.model.DocumentPage
+import net.gini.android.capture.internal.network.model.DocumentLayout
 import net.gini.android.capture.network.Error
 import net.gini.android.capture.network.GiniCaptureNetworkCallback
 import net.gini.android.capture.network.GiniCaptureNetworkService
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-internal class SkontoDocumentPagesNetworkService(
+internal class InvoicePreviewDocumentLayoutNetworkService(
     private val giniCaptureNetworkService: GiniCaptureNetworkService,
 ) {
 
-    suspend fun getDocumentPages(documentId: String): List<DocumentPage> {
+    suspend fun getLayout(documentId: String): DocumentLayout {
         return suspendCancellableCoroutine { continuation ->
-            giniCaptureNetworkService.getDocumentPages(documentId, object :
-                GiniCaptureNetworkCallback<List<DocumentPage>, Error> {
+            giniCaptureNetworkService.getDocumentLayout(documentId, object :
+                GiniCaptureNetworkCallback<DocumentLayout, Error> {
 
                 override fun failure(error: Error) {
                     continuation.resumeWithException(IllegalStateException(error.message))
                 }
 
-                override fun success(result: List<DocumentPage>) {
+                override fun success(result: DocumentLayout) {
                     continuation.resume(result)
                 }
 

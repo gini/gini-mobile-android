@@ -5,7 +5,7 @@ import android.content.Context
 import net.gini.android.bank.sdk.capture.captureFlowFragmentModule
 import net.gini.android.bank.sdk.capture.di.skonto.skontoCommonModule
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.digitalInvoiceSkontoScreenModule
-import net.gini.android.bank.sdk.capture.skonto.invoice.skontoInvoiceScreenModule
+import net.gini.android.bank.sdk.invoice.invoicePreviewScreenModule
 import net.gini.android.bank.sdk.capture.skonto.skontoScreenModule
 import net.gini.android.bank.sdk.capture.skonto.usecase.di.skontoUseCaseModule
 import net.gini.android.bank.sdk.transactiondocs.di.transactionListModule
@@ -57,7 +57,7 @@ private val useCaseModules = listOf(
 
 private val screenModules = listOf(
     skontoScreenModule,
-    skontoInvoiceScreenModule,
+    invoicePreviewScreenModule,
     captureFlowFragmentModule,
     digitalInvoiceSkontoScreenModule
 )

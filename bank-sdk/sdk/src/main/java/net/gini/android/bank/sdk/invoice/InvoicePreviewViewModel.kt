@@ -1,36 +1,32 @@
-package net.gini.android.bank.sdk.capture.skonto.invoice
+package net.gini.android.bank.sdk.invoice
 
 import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import net.gini.android.bank.sdk.capture.skonto.invoice.image.SkontoPageImageProcessor
-import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoDocumentLayoutNetworkService
-import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoDocumentPagesNetworkService
-import net.gini.android.bank.sdk.capture.skonto.invoice.network.SkontoFileNetworkService
+import net.gini.android.bank.sdk.invoice.image.InvoicePreviewPageImageProcessor
+import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentLayoutNetworkService
+import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentPagesNetworkService
+import net.gini.android.bank.sdk.invoice.network.InvoicePreviewFileNetworkService
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
-import net.gini.android.capture.Amount
-import net.gini.android.capture.AmountCurrency
-import java.math.BigDecimal
-import java.time.LocalDate
 
-internal class SkontoInvoiceFragmentViewModel(
+internal class InvoicePreviewViewModel(
     private val documentId: String?,
     private val skontoInvoiceHighlights: List<SkontoInvoiceHighlightBoxes>,
     private val skontoData: SkontoData?,
-    private val skontoDocumentLayoutNetworkService: SkontoDocumentLayoutNetworkService,
-    private val skontoDocumentPagesNetworkService: SkontoDocumentPagesNetworkService,
-    private val skontoFileNetworkService: SkontoFileNetworkService,
-    private val skontoPageImageProcessor: SkontoPageImageProcessor,
+    private val invoicePreviewDocumentLayoutNetworkService: InvoicePreviewDocumentLayoutNetworkService,
+    private val invoicePreviewDocumentPagesNetworkService: InvoicePreviewDocumentPagesNetworkService,
+    private val invoicePreviewFileNetworkService: InvoicePreviewFileNetworkService,
+    private val invoicePreviewPageImageProcessor: InvoicePreviewPageImageProcessor,
 ) : ViewModel() {
 
-    val stateFlow: MutableStateFlow<SkontoInvoiceFragmentState> =
+    val stateFlow: MutableStateFlow<InvoicePreviewFragmentState> =
         MutableStateFlow(createInitalState())
 
     private fun createInitalState() =
-        SkontoInvoiceFragmentState(
+        InvoicePreviewFragmentState(
             isLoading = true,
             images = emptyList(),
             skontoData = skontoData,
@@ -43,11 +39,11 @@ internal class SkontoInvoiceFragmentViewModel(
     private fun init() = viewModelScope.launch {
         requireNotNull(documentId)
 
-        val layout = skontoDocumentLayoutNetworkService.getLayout(documentId)
-        val pages = skontoDocumentPagesNetworkService.getDocumentPages(documentId)
+        val layout = invoicePreviewDocumentLayoutNetworkService.getLayout(documentId)
+        val pages = invoicePreviewDocumentPagesNetworkService.getDocumentPages(documentId)
 
         val bitmaps = pages.map { documentPage ->
-            val bitmapBytes = skontoFileNetworkService.getFile(documentPage.getSmallestImage()!!)
+            val bitmapBytes = invoicePreviewFileNetworkService.getFile(documentPage.getSmallestImage()!!)
             val bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.size)
             val pageHighlights = skontoInvoiceHighlights.find {
                 it.getExistBoxes().all { it.pageNumber == documentPage.pageNumber }
@@ -57,7 +53,7 @@ internal class SkontoInvoiceFragmentViewModel(
 
 
             pageHighlights?.let {
-                skontoPageImageProcessor.processImage(
+                invoicePreviewPageImageProcessor.processImage(
                     image = bitmap,
                     skontoInvoiceHighlightBoxes = pageHighlights,
                     skontoPageLayout = skontoPageLayout
