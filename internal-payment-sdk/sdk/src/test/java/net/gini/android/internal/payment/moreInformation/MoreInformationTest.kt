@@ -23,8 +23,8 @@ import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderAppColors
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
 import net.gini.android.internal.payment.util.GiniLocalization

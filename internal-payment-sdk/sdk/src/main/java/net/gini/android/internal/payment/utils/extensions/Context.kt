@@ -10,7 +10,7 @@ import android.util.TypedValue
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.view.ContextThemeWrapper
 import net.gini.android.internal.payment.R
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.ShareWithBroadcastReceiver
 
 

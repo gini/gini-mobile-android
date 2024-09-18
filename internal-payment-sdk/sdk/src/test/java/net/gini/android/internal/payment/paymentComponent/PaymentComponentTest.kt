@@ -25,10 +25,10 @@ import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderAppColors
-import net.gini.android.internal.payment.paymentprovider.getInstalledPaymentProviderApps
-import net.gini.android.internal.payment.paymentprovider.getPaymentProviderApps
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
+import net.gini.android.internal.payment.paymentProvider.getInstalledPaymentProviderApps
+import net.gini.android.internal.payment.paymentProvider.getPaymentProviderApps
 import net.gini.android.internal.payment.util.extensions.generateBitmapDrawableIcon
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
 import org.junit.After

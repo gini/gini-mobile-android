@@ -28,7 +28,7 @@ import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
 import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewBottomSheet.ReviewBottomSheet
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener

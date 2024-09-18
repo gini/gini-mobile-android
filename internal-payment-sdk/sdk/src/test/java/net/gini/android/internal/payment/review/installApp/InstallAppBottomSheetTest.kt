@@ -15,7 +15,7 @@ import kotlinx.coroutines.test.runTest
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
