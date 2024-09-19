@@ -17,8 +17,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
-import net.gini.android.core.api.internal.GiniCoreAPIBuilder
-import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
@@ -27,7 +25,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
-import net.gini.android.internal.payment.util.GiniLocalization
+import net.gini.android.internal.payment.utils.GiniLocalization
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

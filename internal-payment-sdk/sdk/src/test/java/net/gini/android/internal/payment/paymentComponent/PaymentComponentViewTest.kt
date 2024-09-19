@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import com.google.android.material.button.MaterialButton
 import com.google.common.truth.Truth
 import io.mockk.every
 import io.mockk.mockk
@@ -19,7 +18,7 @@ import kotlinx.coroutines.test.runTest
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.util.GiniLocalization
+import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.R
 import org.junit.After
 import org.junit.Assert.assertEquals

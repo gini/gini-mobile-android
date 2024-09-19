@@ -27,10 +27,10 @@ import net.gini.android.internal.payment.databinding.GpsFragmentPaymentMoreInfor
 import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.util.BackListener
-import net.gini.android.internal.payment.util.autoCleared
-import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
-import net.gini.android.internal.payment.util.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import java.util.Locale
 
 /**

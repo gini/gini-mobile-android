@@ -15,10 +15,10 @@ import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
-import net.gini.android.internal.payment.util.DisplayedScreen
-import net.gini.android.internal.payment.util.GiniLocalization
-import net.gini.android.internal.payment.util.GiniPaymentManager
-import net.gini.android.internal.payment.util.PaymentEventListener
+import net.gini.android.internal.payment.utils.DisplayedScreen
+import net.gini.android.internal.payment.utils.GiniLocalization
+import net.gini.android.internal.payment.utils.GiniPaymentManager
+import net.gini.android.internal.payment.utils.PaymentEventListener
 
 class GiniInternalPaymentModule(private val context: Context,
                                 private val clientId: String = "",

@@ -1,6 +1,6 @@
 package net.gini.android.merchant.sdk.util
 
-import net.gini.android.internal.payment.util.DisplayedScreen as InternalDisplayedScreen
+import net.gini.android.internal.payment.utils.DisplayedScreen as InternalDisplayedScreen
 
 /**
  * Represents the currently visible screen presented in [PaymentFragment]

@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.util
+package net.gini.android.internal.payment.utils
 
 import androidx.core.content.FileProvider
 

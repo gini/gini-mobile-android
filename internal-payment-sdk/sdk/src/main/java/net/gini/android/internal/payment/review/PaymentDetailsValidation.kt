@@ -1,8 +1,8 @@
 package net.gini.android.internal.payment.review
 
 import net.gini.android.internal.payment.api.model.PaymentDetails
-import net.gini.android.internal.payment.util.extensions.isNumber
-import net.gini.android.internal.payment.util.isValidIban
+import net.gini.android.internal.payment.utils.extensions.isNumber
+import net.gini.android.internal.payment.utils.isValidIban
 
 
 enum class PaymentField { Recipient, Iban, Amount, Purpose }

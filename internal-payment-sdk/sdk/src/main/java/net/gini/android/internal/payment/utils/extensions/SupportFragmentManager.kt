@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.util.extensions
+package net.gini.android.internal.payment.utils.extensions
 
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
@@ -9,7 +9,7 @@ import net.gini.android.internal.payment.review.installApp.InstallAppBottomSheet
 import net.gini.android.internal.payment.review.installApp.InstallAppForwardListener
 import net.gini.android.internal.payment.review.openWith.OpenWithBottomSheet
 import net.gini.android.internal.payment.review.openWith.OpenWithForwardListener
-import net.gini.android.internal.payment.util.BackListener
+import net.gini.android.internal.payment.utils.BackListener
 
 fun FragmentManager.showInstallAppBottomSheet(
     paymentComponent: PaymentComponent,

@@ -18,8 +18,8 @@ import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.review.validate
 import net.gini.android.internal.payment.review.validateIban
-import net.gini.android.internal.payment.util.extensions.adjustToLocalDecimalSeparation
-import net.gini.android.internal.payment.util.withPrev
+import net.gini.android.internal.payment.utils.extensions.adjustToLocalDecimalSeparation
+import net.gini.android.internal.payment.utils.withPrev
 import org.slf4j.LoggerFactory
 
 

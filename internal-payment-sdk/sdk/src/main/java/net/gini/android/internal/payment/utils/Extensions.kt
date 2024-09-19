@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.util
+package net.gini.android.internal.payment.utils
 
 import android.R
 import android.content.res.ColorStateList

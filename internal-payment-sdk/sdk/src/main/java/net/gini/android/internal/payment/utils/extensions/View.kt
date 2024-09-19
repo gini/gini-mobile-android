@@ -1,11 +1,11 @@
-package net.gini.android.internal.payment.util.extensions
+package net.gini.android.internal.payment.utils.extensions
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import net.gini.android.internal.payment.util.IntervalClickListener
+import net.gini.android.internal.payment.utils.IntervalClickListener
 import java.util.Locale
 
 fun View.getLayoutInflaterWithGiniPaymentThemeAndLocale(locale: Locale? = null): LayoutInflater =

@@ -18,9 +18,9 @@ import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
 import net.gini.android.internal.payment.databinding.GpsViewPaymentComponentBinding
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
-import net.gini.android.internal.payment.util.extensions.setBackgroundTint
-import net.gini.android.internal.payment.util.extensions.wrappedWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.setBackgroundTint
+import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 

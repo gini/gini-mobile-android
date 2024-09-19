@@ -22,15 +22,15 @@ import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProvide
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.PaymentField
 import net.gini.android.internal.payment.review.ValidationMessage
-import net.gini.android.internal.payment.util.amountWatcher
-import net.gini.android.internal.payment.util.extensions.clearErrorMessage
-import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentTheme
-import net.gini.android.internal.payment.util.extensions.hideErrorMessage
-import net.gini.android.internal.payment.util.extensions.hideKeyboard
-import net.gini.android.internal.payment.util.extensions.setErrorMessage
-import net.gini.android.internal.payment.util.extensions.showErrorMessage
-import net.gini.android.internal.payment.util.setBackgroundTint
-import net.gini.android.internal.payment.util.setTextIfDifferent
+import net.gini.android.internal.payment.utils.amountWatcher
+import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
+import net.gini.android.internal.payment.utils.extensions.hideKeyboard
+import net.gini.android.internal.payment.utils.extensions.setErrorMessage
+import net.gini.android.internal.payment.utils.extensions.showErrorMessage
+import net.gini.android.internal.payment.utils.setBackgroundTint
+import net.gini.android.internal.payment.utils.setTextIfDifferent
 import org.slf4j.LoggerFactory
 
 interface ReviewViewListener {

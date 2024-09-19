@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.util
+package net.gini.android.internal.payment.utils
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +11,7 @@ import net.gini.android.internal.payment.api.model.toPaymentRequest
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.review.validate
-import net.gini.android.internal.payment.util.extensions.toBackendFormat
+import net.gini.android.internal.payment.utils.extensions.toBackendFormat
 import org.slf4j.LoggerFactory
 
 /**

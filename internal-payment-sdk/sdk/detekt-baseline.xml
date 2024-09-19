@@ -127,16 +127,16 @@
     <ID>NewLineAtEndOfFile:BackListener.kt$net.gini.android.internal.payment.utils.BackListener.kt</ID>
     <ID>NewLineAtEndOfFile:BankSelectionBottomSheet.kt$net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet.kt</ID>
     <ID>NewLineAtEndOfFile:BottomSheetDialogFragment.kt$net.gini.android.internal.payment.utils.extensions.BottomSheetDialogFragment.kt</ID>
-    <ID>NewLineAtEndOfFile:Button.kt$net.gini.android.internal.payment.util.extensions.Button.kt</ID>
+    <ID>NewLineAtEndOfFile:Button.kt$net.gini.android.internal.payment.utils.extensions.Button.kt</ID>
     <ID>NewLineAtEndOfFile:Context.kt$net.gini.android.internal.payment.utils.extensions.Context.kt</ID>
-    <ID>NewLineAtEndOfFile:CustomLocaleContextWrapper.kt$net.gini.android.internal.payment.util.CustomLocaleContextWrapper.kt</ID>
+    <ID>NewLineAtEndOfFile:CustomLocaleContextWrapper.kt$net.gini.android.internal.payment.utils.CustomLocaleContextWrapper.kt</ID>
     <ID>NewLineAtEndOfFile:DisplayedScreen.kt$net.gini.android.internal.payment.utils.DisplayedScreen.kt</ID>
     <ID>NewLineAtEndOfFile:ExtractionResult.kt$net.gini.android.internal.payment.api.model.ExtractionResult.kt</ID>
     <ID>NewLineAtEndOfFile:FaqExpandableListAdapter.kt$net.gini.android.internal.payment.moreinformation.FaqExpandableListAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:File.kt$net.gini.android.internal.payment.utils.File.kt</ID>
     <ID>NewLineAtEndOfFile:FlowBottomSheetsManager.kt$net.gini.android.internal.payment.utils.FlowBottomSheetsManager.kt</ID>
     <ID>NewLineAtEndOfFile:Fragment.kt$net.gini.android.internal.payment.utils.extensions.Fragment.kt</ID>
-    <ID>NewLineAtEndOfFile:GiniLocalization.kt$net.gini.android.internal.payment.util.GiniLocalization.kt</ID>
+    <ID>NewLineAtEndOfFile:GiniLocalization.kt$net.gini.android.internal.payment.utils.GiniLocalization.kt</ID>
     <ID>NewLineAtEndOfFile:GiniPaymentManager.kt$net.gini.android.internal.payment.utils.GiniPaymentManager.kt</ID>
     <ID>NewLineAtEndOfFile:GpsBottomSheetDialogFragment.kt$net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment.kt</ID>
     <ID>NewLineAtEndOfFile:IbanValidator.kt$net.gini.android.internal.payment.utils.IbanValidator.kt</ID>
