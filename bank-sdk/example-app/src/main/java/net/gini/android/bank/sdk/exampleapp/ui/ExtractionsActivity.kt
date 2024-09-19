@@ -69,8 +69,10 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     }
 
     private fun showAnalyzedDocumentId() {
-        val documentId = defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id
-            ?: defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id ?: ""
+        val documentId =
+            defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id
+                ?: defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id
+                ?: ""
         binding.textDocumentId.text = getString(R.string.analyzed_document_id, documentId)
     }
 
@@ -215,10 +217,13 @@ private class ExtractionsAdapter(
                     LayoutInflater.from(parent.context)
                         .inflate(R.layout.item_transaction_docs, parent, false)
                 ).apply {
-                    this.transactionDocView.onDocumentClick {
+                    this.transactionDocView.onDocumentClick { doc, infoTextLines ->
                         this.itemView.context.startActivity(
                             InvoicePreviewActivity.newIntent(
-                                this.itemView.context, it.giniApiDocumentId
+                                screenTitle = doc.documentFileName,
+                                context = this.itemView.context,
+                                documentId = doc.giniApiDocumentId,
+                                infoTextLines = infoTextLines
                             )
                         )
                     }

@@ -17,7 +17,8 @@ class TransactionDocsView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
-    private var openInvoicePreview: (TransactionDoc) -> Unit = {}
+    private var openInvoicePreview: (doc: TransactionDoc, infoTextLines: List<String>) -> Unit =
+        { _, _ -> }
 
     init {
         val composeView = ComposeView(context, attrs)
@@ -37,7 +38,7 @@ class TransactionDocsView @JvmOverloads constructor(
         }
     }
 
-    fun onDocumentClick(action: (TransactionDoc) -> Unit) {
+    fun onDocumentClick(action: (doc: TransactionDoc, infoTextLines: List<String>) -> Unit) {
         openInvoicePreview = action
     }
 }

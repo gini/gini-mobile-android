@@ -23,7 +23,7 @@ class InvoicePreviewFragment : Fragment() {
     private val args: InvoicePreviewFragmentArgs by navArgs<InvoicePreviewFragmentArgs>()
 
     private val viewModel: InvoicePreviewViewModel by getGiniBankKoin().inject {
-        parametersOf(args.documentId, args.infoTextLines, args.highlightBoxes)
+        parametersOf(args.screenTitle, args.documentId, args.infoTextLines, args.highlightBoxes)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

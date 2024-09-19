@@ -152,6 +152,10 @@
         android:label="SkontoInvoiceFragment">
 
         <argument
+            android:name="screen_title"
+            app:argType="string" />
+
+        <argument
             android:name="document_id"
             app:argType="string" />
 

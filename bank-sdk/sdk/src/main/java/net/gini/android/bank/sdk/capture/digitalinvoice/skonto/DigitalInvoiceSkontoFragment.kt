@@ -161,14 +161,15 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                             )
                             findNavController().popBackStack()
                         },
-                        navigateToInvoiceScreen = { documentId, data ->
+                        navigateToInvoiceScreen = { documentId, infoTextLines ->
                             findNavController()
                                 .navigate(
                                     DigitalInvoiceSkontoFragmentDirections.toInvoicePreviewFragment(
+                                        screenTitle = context.getString(R.string.gbs_skonto_invoice_preview_title),
                                         documentId = documentId,
                                         highlightBoxes = args.data.invoiceHighlights.flatMap { it.getExistBoxes() }
                                             .toTypedArray(),
-                                        infoTextLines = arrayOf() // TODO Add lines
+                                        infoTextLines = infoTextLines.toTypedArray()
                                     )
                                 )
                         },
@@ -206,7 +207,7 @@ private fun ScreenContent(
     isBottomNavigationBarEnabled: Boolean,
     navigateBack: () -> Unit,
     navigateToHelpScreen: () -> Unit,
-    navigateToInvoiceScreen: (documentId: String, skontoData: SkontoData) -> Unit,
+    navigateToInvoiceScreen: (documentId: String, infoTextLines: List<String>) -> Unit,
     viewModel: DigitalInvoiceSkontoViewModel,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
@@ -220,7 +221,7 @@ private fun ScreenContent(
     viewModel.collectSideEffect {
         when (it) {
             is DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen ->
-                navigateToInvoiceScreen(it.documentId, it.skontoData)
+                navigateToInvoiceScreen(it.documentId, it.infoTextLines)
 
             DigitalInvoiceSkontoSideEffect.OpenHelpScreen ->
                 navigateToHelpScreen()

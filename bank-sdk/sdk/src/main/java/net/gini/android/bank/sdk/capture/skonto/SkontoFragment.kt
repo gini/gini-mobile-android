@@ -168,6 +168,7 @@ class SkontoFragment : Fragment() {
                             findNavController()
                                 .navigate(
                                     SkontoFragmentDirections.toInvoicePreviewFragment(
+                                        screenTitle = context.getString(R.string.gbs_skonto_invoice_preview_title),
                                         documentId = documentId,
                                         highlightBoxes = args.invoiceHighlights.flatMap { it.getExistBoxes() }
                                             .toTypedArray(),

@@ -547,17 +547,30 @@ object GiniBank {
         return CaptureFlowFragment.createInstance(document)
     }
 
-    fun createInvoicePreviewFragment(giniApiDocumentId: String): InvoicePreviewFragment {
+    fun createInvoicePreviewFragment(
+        screenTitle: String,
+        giniApiDocumentId: String,
+        infoTextLines: List<String> = emptyList()
+    ): InvoicePreviewFragment {
         return InvoicePreviewFragment.createInstance(
-            createInvoicePreviewFragmentArgs(giniApiDocumentId)
+            createInvoicePreviewFragmentArgs(screenTitle, giniApiDocumentId, infoTextLines)
         )
     }
 
-    fun createInvoicePreviewFragmentArgs(giniApiDocumentId: String): InvoicePreviewFragmentArgs {
+    fun createInvoicePreviewFragmentArgs(
+        screenTitle: String,
+        giniApiDocumentId: String,
+        infoTextLines: List<String> = emptyList()
+    ): InvoicePreviewFragmentArgs {
         check(giniApiDocumentId.isNotBlank() && giniApiDocumentId.isNotEmpty()) {
             "Gini Api Document Id should not be empty or blank"
         }
-        return InvoicePreviewFragmentArgs(giniApiDocumentId, arrayOf(), arrayOf())
+        return InvoicePreviewFragmentArgs(
+            screenTitle,
+            giniApiDocumentId,
+            infoTextLines.toTypedArray(),
+            arrayOf()
+        )
     }
 
     fun initializeTransactionDocsFeature(

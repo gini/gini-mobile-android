@@ -44,7 +44,7 @@ internal fun TransactionDocsContent(
     documents: List<TransactionDoc>,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
-    onDocumentClick: (TransactionDoc) -> Unit = {},
+    onDocumentClick: (document: TransactionDoc) -> Unit = {},
     onDocumentDelete: (TransactionDoc) -> Unit = {},
 ) {
     AnimatedVisibility(visible = documents.isNotEmpty()) {
@@ -57,12 +57,12 @@ internal fun TransactionDocsContent(
         ) {
             Column {
                 Text(
-                    text = stringResource(id = R.string.gbs_tl_extraction_result_documents_section_title),
+                    text = stringResource(id = R.string.gbs_td_extraction_result_documents_section_title),
                     style = GiniTheme.typography.subtitle2,
                     color = colors.titleColor
                 )
                 Column(
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp),
+                    modifier = Modifier.padding(top = 4.dp),
                 ) {
                     DocumentList(
                         documents = documents,
@@ -157,7 +157,7 @@ private fun Document(
                                 menuVisible = false
                                 onDocumentDelete(document)
                             },
-                            title = stringResource(id = R.string.gbs_tl_extraction_result_documents_section_menu_delete)
+                            title = stringResource(id = R.string.gbs_td_extraction_result_documents_section_menu_delete)
                         )
                     }
                 }

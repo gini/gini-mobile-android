@@ -59,14 +59,14 @@ fun AttachDocumentToTransactionDialog(
                     tint = colors.headerIconColor,
                 )
                 Text(
-                    text = stringResource(id = R.string.gbs_tl_attach_document_dialog_title),
+                    text = stringResource(id = R.string.gbs_td_attach_document_dialog_title),
                     style = GiniTheme.typography.headline5,
                     color = colors.titleColor,
                     textAlign = TextAlign.Center,
                 )
                 Column {
                     Text(
-                        text = stringResource(id = R.string.gbs_tl_attach_document_dialog_content),
+                        text = stringResource(id = R.string.gbs_td_attach_document_dialog_content),
                         style = GiniTheme.typography.body2,
                         color = colors.contentColor,
                     )
@@ -86,7 +86,7 @@ fun AttachDocumentToTransactionDialog(
                     TextButton(
                         onClick = { onDismiss() }) {
                         Text(
-                            text = stringResource(id = R.string.gbs_tl_attach_document_dialog_cancel_button_text),
+                            text = stringResource(id = R.string.gbs_td_attach_document_dialog_cancel_button_text),
                             style = GiniTheme.typography.subtitle2
                         )
                     }
@@ -95,7 +95,7 @@ fun AttachDocumentToTransactionDialog(
                             onConfirm(alwaysAttachChecked)
                         }) {
                         Text(
-                            text = stringResource(id = R.string.gbs_tl_attach_document_dialog_confirm_button_text),
+                            text = stringResource(id = R.string.gbs_td_attach_document_dialog_confirm_button_text),
                             style = GiniTheme.typography.subtitle2
                         )
                     }
@@ -124,7 +124,7 @@ private fun AlwaysAttachCheckableText(
         )
         Text(
             modifier = Modifier.padding(start = 16.dp),
-            text = stringResource(id = R.string.gbs_tl_attach_document_dialog_always_attach_text),
+            text = stringResource(id = R.string.gbs_td_attach_document_dialog_always_attach_text),
             style = GiniTheme.typography.subtitle1,
             color = colors.textColor
         )

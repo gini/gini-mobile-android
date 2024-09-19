@@ -22,6 +22,10 @@ class InvoicePreviewActivity : AppCompatActivity() {
 
         val documentId =
             intent.getStringExtra(EXTRA_DOCUMENT_ID) ?: error("Missing $EXTRA_DOCUMENT_ID extra")
+        val infoTextLines =
+            intent.getStringArrayExtra(EXTRA_INFO_TEXT_LINES)?.toList() ?: emptyList()
+        val screenTitle =
+            intent.getStringExtra(EXTRA_SCREEN_TITLE) ?: error("Missing $EXTRA_SCREEN_TITLE extra")
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
@@ -29,17 +33,26 @@ class InvoicePreviewActivity : AppCompatActivity() {
 
         navController.setGraph(
             R.navigation.invoice_preview_nav_graph,
-            GiniBank.createInvoicePreviewFragmentArgs(documentId).toBundle()
+            GiniBank.createInvoicePreviewFragmentArgs(screenTitle, documentId, infoTextLines).toBundle()
         )
     }
 
     companion object {
 
         private const val EXTRA_DOCUMENT_ID = "document_id"
+        private const val EXTRA_INFO_TEXT_LINES = "info_text_lines"
+        private const val EXTRA_SCREEN_TITLE = "screen_title"
 
-        fun newIntent(context: Context, documentId: String): Intent {
+        fun newIntent(
+            context: Context,
+            screenTitle: String,
+            documentId: String,
+            infoTextLines: List<String>
+        ): Intent {
             return Intent(context, InvoicePreviewActivity::class.java).apply {
+                putExtra(EXTRA_SCREEN_TITLE, screenTitle)
                 putExtra(EXTRA_DOCUMENT_ID, documentId)
+                putExtra(EXTRA_INFO_TEXT_LINES, infoTextLines.toTypedArray())
             }
         }
     }

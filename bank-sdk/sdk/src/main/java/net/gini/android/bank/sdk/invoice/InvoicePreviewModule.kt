@@ -39,8 +39,12 @@ val invoicePreviewScreenModule = module {
     // Bridge between GiniCapture and GiniBank
     factory<LastAnalyzedDocumentProvider> { getGiniCaptureKoin().get() }
 
-    viewModel { (documentId: String, infoTextLines: Array<String>, highlights: Array<GiniCaptureBox>) ->
+    viewModel { (screenTitle: String,
+                    documentId: String,
+                    infoTextLines: Array<String>,
+                    highlights: Array<GiniCaptureBox>) ->
         InvoicePreviewViewModel(
+            screenTitle = screenTitle,
             documentId = documentId,
             infoTextLines = infoTextLines.toList(),
             highlightBoxes = highlights.toList(),

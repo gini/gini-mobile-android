@@ -16,7 +16,7 @@ internal class SkontoInvoicePreviewTextLinesFactory(
     fun create(skontoData: SkontoData) = listOf(
         resources.getString(
             R.string.gbs_skonto_invoice_preview_expire_date,
-            dateFormatter
+            dateFormatter.format(skontoData.skontoDueDate)
         ),
         resources.getString(
             R.string.gbs_skonto_invoice_preview_final_amount,

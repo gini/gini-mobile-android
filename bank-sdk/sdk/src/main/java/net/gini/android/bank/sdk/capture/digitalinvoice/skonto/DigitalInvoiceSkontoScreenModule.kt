@@ -12,6 +12,7 @@ val digitalInvoiceSkontoScreenModule = module {
             getSkontoEdgeCaseUseCase = get(),
             getSkontoRemainingDaysUseCase = get(),
             lastAnalyzedDocumentProvider = get(),
+            skontoInvoicePreviewTextLinesFactory = get()
         )
     }
 }

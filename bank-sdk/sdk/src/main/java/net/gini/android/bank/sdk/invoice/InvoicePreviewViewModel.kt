@@ -9,10 +9,10 @@ import net.gini.android.bank.sdk.invoice.image.InvoicePreviewPageImageProcessor
 import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentLayoutNetworkService
 import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentPagesNetworkService
 import net.gini.android.bank.sdk.invoice.network.InvoicePreviewFileNetworkService
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.capture.network.model.GiniCaptureBox
 
 internal class InvoicePreviewViewModel(
+    private val screenTitle: String,
     private val documentId: String,
     private val highlightBoxes: List<GiniCaptureBox>,
     private val infoTextLines: List<String>,
@@ -27,6 +27,7 @@ internal class InvoicePreviewViewModel(
 
     private fun createInitalState() =
         InvoicePreviewFragmentState(
+            screenTitle = screenTitle,
             isLoading = true,
             images = emptyList(),
             infoTextLines = infoTextLines,

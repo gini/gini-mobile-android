@@ -60,8 +60,6 @@ private fun SkontoInvoiceScreenContent(
     modifier: Modifier = Modifier,
     colors: SkontoInvoicePreviewScreenColors = SkontoInvoicePreviewScreenColors.colors(),
 ) {
-
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
     ) { paddings ->
@@ -91,7 +89,7 @@ private fun SkontoInvoiceScreenContent(
             }
 
             GiniTopBar(
-                title = stringResource(id = R.string.gbs_skonto_invoice_preview_title),
+                title = state.screenTitle,
                 colors = colors.topBarColors,
                 navigationIcon = {
                     Icon(
@@ -171,6 +169,7 @@ private fun SkontoInvoiceScreenContentPreviewZoomOut() {
     GiniTheme {
         SkontoInvoiceScreenContent(
             state = InvoicePreviewFragmentState(
+                screenTitle = "Screen Title",
                 isLoading = true,
                 images = emptyList(),
                 infoTextLines = listOf("Line 1", "Line 2"),
@@ -186,6 +185,7 @@ private fun SkontoInvoiceScreenContentPreviewZoomIn() {
     GiniTheme {
         SkontoInvoiceScreenContent(
             state = InvoicePreviewFragmentState(
+                screenTitle = "Screen Title",
                 isLoading = true,
                 images = emptyList(),
                 infoTextLines = listOf("Line 1", "Line 2"),

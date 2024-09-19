@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.di
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import net.gini.android.bank.sdk.capture.captureFlowFragmentModule
 import net.gini.android.bank.sdk.capture.di.skonto.skontoCommonModule
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.digitalInvoiceSkontoScreenModule
@@ -12,6 +13,7 @@ import net.gini.android.bank.sdk.transactiondocs.di.transactionListModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.Koin
 import org.koin.dsl.koinApplication
+import java.util.logging.Logger
 
 @SuppressLint("StaticFieldLeak")
 object BankSdkIsolatedKoinContext {
@@ -39,7 +41,11 @@ object BankSdkIsolatedKoinContext {
 
     @Synchronized
     fun init(context: Context) {
-        this.context = context
+        if (this.context == null) {
+            this.context = context
+        } else {
+            Log.d("BankIsolatedKoinContext", "Koin already initialized")
+        }
     }
 
     fun clean() {
