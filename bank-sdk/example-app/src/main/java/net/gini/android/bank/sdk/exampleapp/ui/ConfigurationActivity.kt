@@ -258,6 +258,7 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.clientSecret
     }
 
+    @Suppress("CyclomaticComplexMethod", "LongMethod")
     private fun setConfigurationFeatures() {
         // 0 setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.setOnCheckedChangeListener { _, isChecked ->

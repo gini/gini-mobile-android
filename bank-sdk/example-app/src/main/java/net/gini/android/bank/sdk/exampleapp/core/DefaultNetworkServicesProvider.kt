@@ -13,8 +13,10 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
     private var clientSecret: String? = null
     private var clientId: String? = null
     var giniBankAPI: GiniBankAPI = bindGiniBankAPI(context, logger)
-    var defaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService = bindGiniCaptureNetworkServiceDebugEnabled(context, logger)
-    var defaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService = bindGiniCaptureNetworkServiceDebugDisabled(context, logger)
+    var defaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService
+    = bindGiniCaptureNetworkServiceDebugEnabled(context, logger)
+    var defaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService
+    = bindGiniCaptureNetworkServiceDebugDisabled(context, logger)
 
     fun reinitNetworkServices(clientId: String, clientSecret: String) {
         this.clientId = clientId
@@ -73,7 +75,9 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
         val clientSecret = context.getString(R.string.gini_api_client_secret)
         if (TextUtils.isEmpty(clientId) || TextUtils.isEmpty(clientSecret)) {
             logger.warn(
-                "Missing Gini API client credentials. Either create a local.properties file " + "with clientId and clientSecret properties or pass them in as gradle " + "parameters with -PclientId and -PclientSecret."
+                "Missing Gini API client credentials. Either create a local.properties file "
+                        + "with clientId and clientSecret properties or pass them in as gradle "
+                        + "parameters with -PclientId and -PclientSecret."
             )
         }
         return Pair(clientId, clientSecret)
@@ -86,5 +90,4 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
 
         return documentMetadata
     }
-
 }

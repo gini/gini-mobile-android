@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
  */
 class GiniPaymentParser implements QRCodeParser<PaymentQRCodeData> {
 
-    private static final String GINIPAYMENT_HOST = "payment.gini.net";
+    private static final String GINIPAYMENT_HOST = "pay.gini.net";
 
     @Override
     public PaymentQRCodeData parse(@NonNull final String qrCodeContent)

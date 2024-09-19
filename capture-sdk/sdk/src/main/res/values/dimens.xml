@@ -38,6 +38,7 @@
     <dimen name="gc_file_import_paragraphs_margin">50dp</dimen>
 
     <dimen name="gc_tablet_width">582dp</dimen>
+    <dimen name="gc_tablet_width_margin_applied">542dp</dimen>
 
     <dimen name="gc_camera_pane_width">124dp</dimen>
     <dimen name="gc_give_permission_button_width">120dp</dimen>

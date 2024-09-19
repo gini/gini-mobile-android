@@ -1,8 +1,6 @@
 package net.gini.android.bank.sdk.capture.skonto.usecase
 
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 /**
  * Determines whether the Skonto default selection state should be enabled.
@@ -18,6 +16,7 @@ internal class GetSkontoDefaultSelectionStateUseCase {
      */
     fun execute(skontoEdgeCase: SkontoEdgeCase?): Boolean =
         skontoEdgeCase != SkontoEdgeCase.PayByCashOnly
+                && skontoEdgeCase != SkontoEdgeCase.PayByCashToday
                 && skontoEdgeCase != SkontoEdgeCase.SkontoExpired
 
 }

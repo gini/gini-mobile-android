@@ -78,7 +78,10 @@ class ConfigurationViewModel @Inject constructor(
 
         var captureConfiguration = CaptureConfiguration(
             // 37 Debug mode
-            networkService = if (configuration.isDebugModeEnabled) defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled else defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled,
+            networkService = if (configuration.isDebugModeEnabled)
+                defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled
+            else
+                defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled,
             // 1 file import
             fileImportEnabled = configuration.isFileImportEnabled,
             // 2 QR code scanning

@@ -23,7 +23,14 @@ internal class GetSkontoEdgeCaseUseCase {
         val today = LocalDate.now()
         return when {
             dueDate.isBefore(today) -> SkontoEdgeCase.SkontoExpired
-            paymentMethod == SkontoData.SkontoPaymentMethod.Cash -> SkontoEdgeCase.PayByCashOnly
+            paymentMethod == SkontoData.SkontoPaymentMethod.Cash -> {
+                if (dueDate == today) {
+                    SkontoEdgeCase.PayByCashToday
+                } else {
+                    SkontoEdgeCase.PayByCashOnly
+                }
+            }
+
             dueDate == today -> SkontoEdgeCase.SkontoLastDay
             else -> null
         }

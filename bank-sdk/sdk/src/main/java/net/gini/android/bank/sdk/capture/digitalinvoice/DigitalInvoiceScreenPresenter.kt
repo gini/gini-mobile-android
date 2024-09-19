@@ -221,6 +221,7 @@ internal class DigitalInvoiceScreenPresenter(
             digitalInvoice.skontoData?.let { skontoData ->
                 showSkonto(
                     DigitalInvoiceSkontoListItem(
+                        isEdgeCase = skontoEdgeCase != null,
                         savedAmount = skontoSavedAmount!!,
                         message = skontoInfoBannerTextFactory.create(
                             edgeCase = skontoEdgeCase,

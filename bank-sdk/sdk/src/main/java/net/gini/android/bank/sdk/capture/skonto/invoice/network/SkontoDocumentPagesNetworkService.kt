@@ -12,7 +12,7 @@ internal class SkontoDocumentPagesNetworkService(
     private val giniCaptureNetworkService: GiniCaptureNetworkService,
 ) {
 
-    suspend fun getDocumentPages(documentId: String): List<DocumentPage> {
+    suspend fun getDocumentPages(documentId: String): List<DocumentPage>? {
         return suspendCancellableCoroutine { continuation ->
             giniCaptureNetworkService.getDocumentPages(documentId, object :
                 GiniCaptureNetworkCallback<List<DocumentPage>, Error> {

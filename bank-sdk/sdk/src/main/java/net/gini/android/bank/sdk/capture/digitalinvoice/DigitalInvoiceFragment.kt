@@ -61,7 +61,7 @@ private const val TAG_RETURN_REASON_DIALOG = "TAG_RETURN_REASON_DIALOG"
 /**
  * Internal use only.
  */
-open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
+internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
     LineItemsAdapterListener {
 
     private val args: DigitalInvoiceFragmentArgs by navArgs<DigitalInvoiceFragmentArgs>()
