@@ -5,6 +5,7 @@ import android.media.Image;
 import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
+import java.util.concurrent.CancellationException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -85,7 +86,9 @@ public class PaymentQRCodeReader {
             public void onQRCodeScannerError(Exception e) {
 
                 //TODO: check content of exception if there will be more use cases in the future
-                mListener.onQRCodeReaderFail();
+                if (!(e instanceof IllegalStateException)) {
+                    mListener.onQRCodeReaderFail();
+                }
             }
         });
     }

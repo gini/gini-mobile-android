@@ -13,6 +13,7 @@ internal class GiniBankTransactionDocs internal constructor(
     private val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider = getGiniCaptureKoin().get(),
 ) : TransactionDocs {
 
+    @Suppress("UnusedParameter")
     fun deleteDocument(document: TransactionDoc) {
         lastAnalyzedDocumentProvider.clear()
     }

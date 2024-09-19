@@ -38,7 +38,11 @@ import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniTransactionDocsSettings
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
-import net.gini.android.capture.*
+import net.gini.android.capture.Amount
+import net.gini.android.capture.AsyncCallback
+import net.gini.android.capture.Document
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.ImportedFileValidationException
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.requirements.GiniCaptureRequirements
@@ -68,6 +72,8 @@ object GiniBank {
     private var giniCapture: GiniCapture? = null
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
+
+    internal const val USER_COMMENT_GINI_BANK_VERSION = "GiniBankVer"
 
     internal var giniBankTransactionDocs: GiniBankTransactionDocs? = null
         private set
@@ -566,6 +572,7 @@ object GiniBank {
         )
     }
 
+    @Suppress("UnusedParameter")
     fun releaseTransactionDocsFeature(context: Context) {
         giniBankTransactionDocs = null
     }

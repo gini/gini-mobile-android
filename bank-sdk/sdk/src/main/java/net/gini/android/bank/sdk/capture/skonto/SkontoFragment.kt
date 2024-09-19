@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -105,7 +106,6 @@ import net.gini.android.capture.ui.theme.typography.bold
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.koin.core.parameter.parametersOf
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -342,9 +342,15 @@ private fun ScreenReadyState(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                val invoicePreviewPaddingTop =
+                    if (LocalContext.current.resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+                        64.dp
+                    } else {
+                        8.dp
+                    }
                 InvoicePreviewSection(
                     modifier = Modifier
-                        .padding(top = 8.dp)
+                        .padding(top = invoicePreviewPaddingTop)
                         .tabletMaxWidth(),
                     colorScheme = screenColorScheme.invoiceScanSectionColors,
                     onClick = onInvoiceClicked,
@@ -378,6 +384,7 @@ private fun ScreenReadyState(
 
         if (state.edgeCaseInfoDialogVisible) {
             val text = when (state.skontoEdgeCase) {
+                SkontoEdgeCase.PayByCashToday,
                 SkontoEdgeCase.PayByCashOnly ->
                     stringResource(id = R.string.gbs_skonto_section_info_dialog_pay_cash_message)
 
@@ -418,7 +425,7 @@ private fun TopAppBar(
         navigationIcon = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
                 NavigationActionBack(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = 16.dp, end = 32.dp),
                     onClick = onBackClicked
                 )
             }
@@ -426,7 +433,7 @@ private fun TopAppBar(
         actions = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
                 NavigationActionHelp(
-                    modifier = Modifier.padding(end = 16.dp),
+                    modifier = Modifier.padding(start = 20.dp, end = 12.dp),
                     onClick = onHelpClicked
                 )
             }
@@ -488,7 +495,6 @@ private fun InvoicePreviewSection(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .padding(8.dp)
                     .background(colorScheme.iconBackgroundColor, shape = RoundedCornerShape(4.dp))
             ) {
                 Icon(
@@ -522,7 +528,7 @@ private fun InvoicePreviewSection(
             Icon(
                 painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.KeyboardArrowRight),
                 contentDescription = null,
-                tint = colorScheme.arrowTint.copy(alpha = 0.3f)
+                tint = colorScheme.arrowTint
             )
         }
 
@@ -566,7 +572,7 @@ private fun SkontoSection(
                     style = GiniTheme.typography.subtitle1,
                     color = colors.titleTextColor,
                 )
-                Box(modifier = modifier.weight(0.1f)) {
+                Box {
                     androidx.compose.animation.AnimatedVisibility(visible = isActive) {
                         Text(
                             text = stringResource(id = R.string.gbs_skonto_section_discount_hint_label_enabled),
@@ -575,12 +581,15 @@ private fun SkontoSection(
                         )
                     }
                 }
+
+                Spacer(Modifier.weight(1f))
+
+
                 GiniSwitch(
                     checked = isActive,
                     onCheckedChange = onActiveChange,
                 )
             }
-
             val animatedDiscountAmount by animateFloatAsState(
                 targetValue = infoDiscountValue.toFloat(),
                 label = "discountAmount"
@@ -605,6 +614,12 @@ private fun SkontoSection(
                         remainingDaysText
                     )
 
+                SkontoEdgeCase.PayByCashToday ->
+                    stringResource(
+                        id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
+                        discountPercentageFormatter.format(animatedDiscountAmount)
+                    )
+
                 SkontoEdgeCase.SkontoExpired ->
                     stringResource(
                         id = R.string.gbs_skonto_section_discount_info_banner_date_expired_message,
@@ -626,9 +641,12 @@ private fun SkontoSection(
 
             InfoBanner(
                 text = infoBannerText,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp),
                 colors = when (edgeCase) {
                     SkontoEdgeCase.SkontoLastDay,
+                    SkontoEdgeCase.PayByCashToday,
                     SkontoEdgeCase.PayByCashOnly -> colors.warningInfoBannerColors
 
                     SkontoEdgeCase.SkontoExpired -> colors.errorInfoBannerColors
@@ -751,7 +769,7 @@ private fun InfoBanner(
         )
 
         Text(
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(top = 12.dp, bottom = 12.dp, end = 16.dp),
             text = text,
             style = GiniTheme.typography.subtitle2,
             color = colors.textColor,
@@ -947,7 +965,7 @@ private fun FooterSection(
                             Box(
                                 modifier = Modifier
                                     .height(IntrinsicSize.Min)
-                                    .padding(horizontal = 4.dp)
+
                                     .background(
                                         colors.discountLabelColorScheme.backgroundColor,
                                         RoundedCornerShape(4.dp)
@@ -1007,7 +1025,7 @@ private fun FooterSection(
                     )
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
                         NavigationActionHelp(
-                            modifier = Modifier.padding(end = 16.dp),
+                            modifier = Modifier.padding(end = 20.dp),
                             onClick = onHelpClicked
                         )
                     }

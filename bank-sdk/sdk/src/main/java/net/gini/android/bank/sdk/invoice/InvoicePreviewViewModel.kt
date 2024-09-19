@@ -38,34 +38,40 @@ internal class InvoicePreviewViewModel(
 
     private fun init() = viewModelScope.launch {
 
-        val layout = invoicePreviewDocumentLayoutNetworkService.getLayout(documentId)
-        val pages = invoicePreviewDocumentPagesNetworkService.getDocumentPages(documentId)
+        val layout = runCatching {
+            invoicePreviewDocumentLayoutNetworkService.getLayout(documentId)
+        }.getOrNull()
+        val pages = kotlin.runCatching {
+            invoicePreviewDocumentPagesNetworkService.getDocumentPages(documentId)
+        }.getOrNull()
 
-        val bitmaps = pages.map { documentPage ->
+        val bitmaps = pages?.map { documentPage ->
             val bitmapBytes =
                 invoicePreviewFileNetworkService.getFile(documentPage.getSmallestImage()!!)
             val bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.size)
             val pageHighlights = highlightBoxes.filter { it.pageNumber == documentPage.pageNumber }
 
-            val skontoPageLayout = layout.pages.find { documentPage.pageNumber == it.number }
+            val skontoPageLayout = layout?.pages?.find { documentPage.pageNumber == it.number }
 
 
-            pageHighlights?.let {
+            pageHighlights.let {
                 invoicePreviewPageImageProcessor.processImage(
                     image = bitmap,
                     highlightBoxes = pageHighlights,
                     skontoPageLayout = skontoPageLayout
                         ?: error("Layout for page #$${documentPage.pageNumber} not found")
                 )
-            } ?: bitmap
+            }
         }
 
         val currentState = stateFlow.value
-        stateFlow.emit(
-            currentState.copy(
-                isLoading = false,
-                images = bitmaps
+        if (bitmaps != null) {
+            stateFlow.emit(
+                currentState.copy(
+                    isLoading = false,
+                    images = bitmaps
+                )
             )
-        )
+        }
     }
 }

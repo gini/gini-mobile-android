@@ -12,7 +12,7 @@ internal class InvoicePreviewDocumentLayoutNetworkService(
     private val giniCaptureNetworkService: GiniCaptureNetworkService,
 ) {
 
-    suspend fun getLayout(documentId: String): DocumentLayout {
+    suspend fun getLayout(documentId: String): DocumentLayout? {
         return suspendCancellableCoroutine { continuation ->
             giniCaptureNetworkService.getDocumentLayout(documentId, object :
                 GiniCaptureNetworkCallback<DocumentLayout, Error> {

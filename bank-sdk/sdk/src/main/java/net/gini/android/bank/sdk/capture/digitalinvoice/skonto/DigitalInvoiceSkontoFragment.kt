@@ -84,13 +84,12 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.Di
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
-import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
-import net.gini.android.capture.ui.components.switcher.GiniSwitch
 import net.gini.android.capture.ui.components.textinput.GiniTextInput
 import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInput
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
@@ -113,7 +112,7 @@ class DigitalInvoiceSkontoFragment : Fragment() {
 
     private val args: DigitalInvoiceSkontoFragmentArgs by navArgs<DigitalInvoiceSkontoFragmentArgs>()
 
-    private val viewModel: DigitalInvoiceSkontoViewModel by getGiniBankKoin().inject {
+    private val viewModel: DigitalInvoiceSkontoViewModel by giniBankViewModel {
         parametersOf(args.data)
     }
 
@@ -232,7 +231,6 @@ private fun ScreenContent(
         modifier = modifier,
         state = state,
         screenColorScheme = screenColorScheme,
-        onDiscountSectionActiveChange = viewModel::onSkontoActiveChanged,
         onSkontoAmountChange = viewModel::onSkontoAmountFieldChanged,
         onDueDateChanged = viewModel::onSkontoDueDateChanged,
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
@@ -249,7 +247,6 @@ private fun ScreenContent(
 private fun ScreenStateContent(
     state: DigitalInvoiceSkontoScreenState,
     isBottomNavigationBarEnabled: Boolean,
-    onDiscountSectionActiveChange: (Boolean) -> Unit,
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onBackClicked: () -> Unit,
@@ -266,7 +263,6 @@ private fun ScreenStateContent(
             modifier = modifier,
             state = state,
             screenColorScheme = screenColorScheme,
-            onDiscountSectionActiveChange = onDiscountSectionActiveChange,
             onDiscountAmountChange = onSkontoAmountChange,
             onDueDateChanged = onDueDateChanged,
             onBackClicked = onBackClicked,
@@ -289,7 +285,6 @@ private fun ScreenReadyState(
     onHelpClicked: () -> Unit,
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
-    onDiscountSectionActiveChange: (Boolean) -> Unit,
     onDiscountAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     isBottomNavigationBarEnabled: Boolean,
@@ -332,9 +327,15 @@ private fun ScreenReadyState(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                val invoicePreviewPaddingTop =
+                    if (LocalContext.current.resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+                        64.dp
+                    } else {
+                        8.dp
+                    }
                 YourInvoiceScanSection(
                     modifier = Modifier
-                        .padding(top = 8.dp)
+                        .padding(top = invoicePreviewPaddingTop)
                         .tabletMaxWidth(),
                     colorScheme = screenColorScheme.invoiceScanSectionColors,
                     onClick = onInvoiceClicked,
@@ -348,7 +349,6 @@ private fun ScreenReadyState(
                     dueDate = state.discountDueDate,
                     infoPaymentInDays = state.paymentInDays,
                     infoDiscountValue = state.skontoPercentage,
-                    onActiveChange = onDiscountSectionActiveChange,
                     isActive = state.isSkontoSectionActive,
                     onSkontoAmountChange = onDiscountAmountChange,
                     onDueDateChanged = onDueDateChanged,
@@ -360,7 +360,8 @@ private fun ScreenReadyState(
 
         if (state.edgeCaseInfoDialogVisible) {
             val text = when (state.edgeCase) {
-                SkontoEdgeCase.PayByCashOnly ->
+                SkontoEdgeCase.PayByCashOnly,
+                SkontoEdgeCase.PayByCashToday ->
                     stringResource(id = R.string.gbs_skonto_section_info_dialog_pay_cash_message)
 
                 SkontoEdgeCase.SkontoExpired ->
@@ -399,7 +400,10 @@ private fun TopAppBar(
         title = stringResource(id = R.string.gbs_skonto_screen_title),
         navigationIcon = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-                NavigationActionBack(onClick = onBackClicked)
+                NavigationActionBack(
+                    modifier = Modifier.padding(start = 16.dp, end = 32.dp),
+                    onClick = onBackClicked
+                )
             }
         }, actions = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
@@ -414,7 +418,9 @@ private fun NavigationActionBack(
     modifier: Modifier = Modifier,
 ) {
     IconButton(
-        modifier = modifier,
+        modifier = modifier
+            .width(24.dp)
+            .height(24.dp),
         onClick = onClick
     ) {
         Icon(
@@ -431,7 +437,6 @@ private fun NavigationActionHelp(
 ) {
     IconButton(
         modifier = modifier
-            .padding(8.dp)
             .width(24.dp)
             .height(24.dp),
         onClick = onClick
@@ -462,7 +467,7 @@ private fun YourInvoiceScanSection(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .padding(8.dp)
+
                     .background(colorScheme.iconBackgroundColor, shape = RoundedCornerShape(4.dp))
             ) {
                 Icon(
@@ -496,7 +501,7 @@ private fun YourInvoiceScanSection(
             Icon(
                 painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.KeyboardArrowRight),
                 contentDescription = null,
-                tint = colorScheme.arrowTint.copy(alpha = 0.3f)
+                tint = colorScheme.arrowTint
             )
         }
 
@@ -510,7 +515,6 @@ private fun SkontoSection(
     dueDate: LocalDate,
     infoPaymentInDays: Int,
     infoDiscountValue: BigDecimal,
-    onActiveChange: (Boolean) -> Unit,
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
@@ -539,7 +543,7 @@ private fun SkontoSection(
                     style = GiniTheme.typography.subtitle1,
                     color = colors.titleTextColor,
                 )
-                Box(modifier = modifier.weight(0.1f)) {
+                Box {
                     androidx.compose.animation.AnimatedVisibility(visible = isActive) {
                         Text(
                             text = stringResource(id = R.string.gbs_skonto_section_discount_hint_label_enabled),
@@ -548,10 +552,7 @@ private fun SkontoSection(
                         )
                     }
                 }
-                GiniSwitch(
-                    checked = isActive,
-                    onCheckedChange = onActiveChange,
-                )
+
             }
 
             val animatedDiscountAmount by animateFloatAsState(
@@ -590,6 +591,11 @@ private fun SkontoSection(
                         animatedDiscountAmount.formatAsDiscountPercentage()
                     )
 
+                SkontoEdgeCase.PayByCashToday -> stringResource(
+                    id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
+                    animatedDiscountAmount.formatAsDiscountPercentage()
+                )
+
                 else -> stringResource(
                     id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
                     remainingDaysText,
@@ -599,9 +605,12 @@ private fun SkontoSection(
 
             InfoBanner(
                 text = infoBannerText,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
                 colors = when (edgeCase) {
                     SkontoEdgeCase.SkontoLastDay,
+                    SkontoEdgeCase.PayByCashToday,
                     SkontoEdgeCase.PayByCashOnly -> colors.warningInfoBannerColors
 
                     SkontoEdgeCase.SkontoExpired -> colors.errorInfoBannerColors
@@ -703,23 +712,28 @@ private fun FooterSection(
         ) {
             Column(
                 modifier = Modifier
-                    .tabletMaxWidth()
+                    .fillMaxWidth()
                     .align(Alignment.CenterHorizontally),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
+                    Modifier
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
                         NavigationActionBack(
-                            modifier = Modifier.padding(horizontal = 4.dp),
+                            modifier = Modifier.padding(16.dp),
                             onClick = onBackClicked
                         )
                     }
-                    Spacer(modifier = Modifier.weight(0.1f))
+                    Spacer(modifier = Modifier.weight(1f))
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
-                        NavigationActionHelp(onClick = onHelpClicked)
+                        NavigationActionHelp(
+                            modifier = Modifier.padding(16.dp),
+                            onClick = onHelpClicked
+                        )
                     }
                 }
             }
@@ -775,7 +789,7 @@ private fun InfoBanner(
         )
 
         Text(
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(top = 12.dp, bottom = 12.dp, end = 16.dp),
             text = text,
             style = GiniTheme.typography.subtitle2,
             color = colors.textColor,
@@ -845,9 +859,6 @@ private fun ScreenReadyStatePreview() {
 
         ScreenReadyState(
             state = state,
-            onDiscountSectionActiveChange = {
-                state = state.copy(isSkontoSectionActive = !state.isSkontoSectionActive)
-            },
             onDiscountAmountChange = {},
             onDueDateChanged = {},
             onBackClicked = {},
@@ -863,7 +874,7 @@ private fun ScreenReadyStatePreview() {
 
 private fun Float.formatAsDiscountPercentage(): String {
     val value = BigDecimal(this.toString()).setScale(2, RoundingMode.HALF_UP)
-    return "${value.toString().trimEnd('0').trimEnd('.')} %"
+    return "${value.toString().trimEnd('0').trimEnd('.')}%"
 }
 
 private val previewState = DigitalInvoiceSkontoScreenState.Ready(

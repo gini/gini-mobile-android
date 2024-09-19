@@ -71,23 +71,6 @@ internal class DigitalInvoiceSkontoViewModel(
         )
     }
 
-    fun onSkontoActiveChanged(newValue: Boolean) = viewModelScope.launch {
-        val currentState =
-            stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch
-        val discount =
-            getSkontoDiscountPercentageUseCase.execute(
-                currentState.skontoAmount.value,
-                currentState.fullAmount.value
-            )
-
-        stateFlow.emit(
-            currentState.copy(
-                isSkontoSectionActive = newValue,
-                skontoPercentage = discount
-            )
-        )
-    }
-
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState =
             stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch

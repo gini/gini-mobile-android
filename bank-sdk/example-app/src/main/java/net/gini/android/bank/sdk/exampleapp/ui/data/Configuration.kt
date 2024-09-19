@@ -130,6 +130,10 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setImportedFileSizeBytesLimit → numeric text field
     val importedFileSizeBytesLimit: Int = FileImportValidator.FILE_SIZE_LIMIT,
 
+    val clientId: String = "",
+
+    val clientSecret: String = "",
+
     // 30 entry point
     val entryPoint: EntryPoint = EntryPoint.BUTTON,
 

@@ -28,7 +28,6 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavig
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoDiscountLabelTextFactory
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoSavedAmountTextFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
@@ -38,13 +37,14 @@ import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
+import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
-import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -61,7 +61,7 @@ private const val TAG_RETURN_REASON_DIALOG = "TAG_RETURN_REASON_DIALOG"
 /**
  * Internal use only.
  */
-open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
+internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
     LineItemsAdapterListener {
 
     private val args: DigitalInvoiceFragmentArgs by navArgs<DigitalInvoiceFragmentArgs>()
@@ -143,6 +143,25 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         }
     }
 
+    private fun changeMarginAccordingToFontOversize() {
+        if (!ContextHelper.isTablet(requireContext()) && resources.configuration.fontScale > 1.0F) {
+            (binding.gbsArticleTxt.layoutParams as ViewGroup.MarginLayoutParams).run {
+                this.topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
+            (binding.totalLabel.layoutParams as ViewGroup.MarginLayoutParams).run {
+                topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
+            (binding.gbsPay.layoutParams as ViewGroup.MarginLayoutParams).run {
+                bottomMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+                topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
+        }
+    }
+
     private fun createPresenter(activity: Activity, savedInstanceState: Bundle?) =
         DigitalInvoiceScreenPresenter(
             activity,
@@ -192,6 +211,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         setInputHandlers()
         initTopNavigationBar()
         initBottomBar()
+        changeMarginAccordingToFontOversize()
         presenter?.onViewCreated()
     }
 

@@ -11,21 +11,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -35,9 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
-import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
-import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.invoice.colors.SkontoInvoicePreviewScreenColors
 import net.gini.android.bank.sdk.invoice.colors.section.SkontoInvoicePreviewScreenFooterColors
 import net.gini.android.capture.ui.components.list.ZoomableLazyColumn
@@ -62,7 +52,6 @@ internal fun InvoicePreviewScreen(
 }
 
 private const val DEFAULT_ZOOM = 1f
-private const val INTERFACE_VISIBILITY_ZOOM_THRESHOLD = 1.5f
 
 @Composable
 private fun SkontoInvoiceScreenContent(
@@ -70,15 +59,8 @@ private fun SkontoInvoiceScreenContent(
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier,
     colors: SkontoInvoicePreviewScreenColors = SkontoInvoicePreviewScreenColors.colors(),
-    interfaceVisible: Boolean = false,
 ) {
 
-    var contentZoomScale by remember { mutableFloatStateOf(DEFAULT_ZOOM) }
-    var isInterfaceVisible by remember { mutableStateOf(interfaceVisible) }
-
-    LaunchedEffect(contentZoomScale) {
-        isInterfaceVisible = contentZoomScale > INTERFACE_VISIBILITY_ZOOM_THRESHOLD
-    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -104,75 +86,34 @@ private fun SkontoInvoiceScreenContent(
             ) {
                 ImagesList(
                     modifier = Modifier,
-                    pages = state.images,
-                    onScaleChanged = { contentZoomScale = it }
+                    pages = state.images
                 )
             }
 
-            AnimatedVisibility(
-                modifier = Modifier,
-                visible = !isInterfaceVisible
-            ) {
-                CloseScreenButton(
-                    onCloseClicked = onCloseClicked,
-                    colors = colors.closeButton,
-                )
-            }
+            GiniTopBar(
+                title = stringResource(id = R.string.gbs_skonto_invoice_preview_title),
+                colors = colors.topBarColors,
+                navigationIcon = {
+                    Icon(
+                        modifier = Modifier
+                            .clickable(onClick = onCloseClicked)
+                            .padding(start = 16.dp, end = 32.dp),
+                        painter = painterResource(id = net.gini.android.capture.R.drawable.gc_close),
+                        contentDescription = null,
+                        tint = colors.topBarColors.navigationContentColor
+                    )
+                }
+            )
 
-            AnimatedVisibility(
-                modifier = Modifier.fillMaxWidth(),
-                visible = isInterfaceVisible
-            ) {
-                GiniTopBar(
-                    title = stringResource(id = R.string.gbs_skonto_invoice_preview_title),
-                    colors = colors.topBarColors,
-                    navigationIcon = {
-                        Icon(
-                            modifier = Modifier
-                                .clickable(onClick = onCloseClicked)
-                                .padding(horizontal = 8.dp),
-                            painter = painterResource(id = net.gini.android.capture.R.drawable.gc_close),
-                            contentDescription = null,
-                            tint = colors.topBarColors.navigationContentColor
-                        )
-                    }
-                )
-            }
-
-            AnimatedVisibility(
+            Footer(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                visible = isInterfaceVisible
-            ) {
-                Footer(
-                    infoTextLines = state.infoTextLines,
-                    colors = colors.footerColors,
-                )
-            }
+                infoTextLines = state.infoTextLines,
+                colors = colors.footerColors,
+            )
         }
     }
 }
 
-@Composable
-private fun CloseScreenButton(
-    onCloseClicked: () -> Unit,
-    modifier: Modifier = Modifier,
-    colors: SkontoInvoicePreviewScreenColors.CloseButton,
-) {
-    Box(
-        modifier = modifier
-            .padding(vertical = 24.dp, horizontal = 24.dp)
-            .background(colors.backgroundColor, CircleShape)
-            .clickable(onClick = onCloseClicked)
-            .padding(8.dp),
-    ) {
-        Icon(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(id = net.gini.android.capture.R.drawable.gc_close),
-            contentDescription = null,
-            tint = colors.contentColor
-        )
-    }
-}
 
 @Composable
 private fun Footer(
@@ -185,8 +126,7 @@ private fun Footer(
         modifier = modifier
             .background(colors.backgroundColor)
             .fillMaxWidth()
-            .padding(16.dp)
-            .padding(bottom = 16.dp),
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 48.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         infoTextLines.forEach {
@@ -236,7 +176,6 @@ private fun SkontoInvoiceScreenContentPreviewZoomOut() {
                 infoTextLines = listOf("Line 1", "Line 2"),
             ),
             onCloseClicked = {},
-            interfaceVisible = false,
         )
     }
 }
@@ -252,7 +191,6 @@ private fun SkontoInvoiceScreenContentPreviewZoomIn() {
                 infoTextLines = listOf("Line 1", "Line 2"),
             ),
             onCloseClicked = {},
-            interfaceVisible = true,
         )
     }
 }
