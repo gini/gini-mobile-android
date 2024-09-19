@@ -158,16 +158,29 @@ class ReviewActivity : AppCompatActivity() {
             val documentId = (viewModel.giniHealth.documentFlow.value as ResultWrapper.Success<Document>).value.id
 
             val isDocumentPayable = viewModel.giniHealth.checkIfDocumentIsPayable(documentId)
+            val containsMultipleDocuments = viewModel.giniHealth.checkIfDocumentContainsMultipleDocuments(documentId)
 
-            if (!isDocumentPayable) {
+            if (!isDocumentPayable || containsMultipleDocuments) {
+                val alertTitle = when {
+                    !isDocumentPayable && containsMultipleDocuments -> {
+                        getString(R.string.multiple_documents) + " & " + getString(R.string.document_not_payable_title)
+                    }
+                    !isDocumentPayable -> {
+                        getString(R.string.document_not_payable_title)
+                    }
+                    else -> {
+                        getString(R.string.multiple_documents)
+                    }
+                }
+
                 AlertDialog.Builder(this@ReviewActivity)
-                    .setTitle(R.string.document_not_payable_title)
+                    .setTitle(alertTitle)
                     .setMessage(R.string.document_not_payable_message)
-                    .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface, which: Int) {
-                            finish()
-                        }
-                    })
+                    .setPositiveButton(android.R.string.ok
+                    ) { _, _ -> finish() }
+                    .setOnDismissListener {
+                        finish()
+                    }
                     .show()
                 return@launch
             }

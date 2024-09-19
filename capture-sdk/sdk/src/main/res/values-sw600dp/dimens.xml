@@ -12,6 +12,7 @@
     <dimen name="gc_large_64">80dp</dimen>
     <dimen name="gc_large_80">96dp</dimen>
     <dimen name="gc_large_96">96dp</dimen>
+    <dimen name="gc_inner_padding_detection_error_layout">16dp</dimen>
 
     <dimen name="gc_analysis_hint_container_width">336dp</dimen>
     <dimen name="gc_analysis_hint_container_bottom_margin_portrait">152dp</dimen>

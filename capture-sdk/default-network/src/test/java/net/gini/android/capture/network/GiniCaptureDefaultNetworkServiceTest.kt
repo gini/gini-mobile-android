@@ -2,6 +2,7 @@ package net.gini.android.capture.network
 
 import android.net.Uri
 import android.os.Looper
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import io.mockk.*
@@ -13,7 +14,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 /**
  * Created by Alpár Szotyori on 25.02.22.
@@ -56,7 +56,7 @@ class GiniCaptureDefaultNetworkServiceTest {
 
         // Mock DocumentTaskManager returning the mock documents
         val documentManager = mockk<BankApiDocumentManager>()
-        coEvery { documentManager.createPartialDocument(any(), any(), null, null) } returns Resource.Success(partialDocument)
+        coEvery { documentManager.createPartialDocument(any(), any(), null, null, any()) } returns Resource.Success(partialDocument)
         coEvery { documentManager.createCompositeDocument(any<LinkedHashMap<net.gini.android.core.api.models.Document, Int>>(), any()) } returns Resource.Success(compositeDocument)
         coEvery { documentManager.pollDocument(any()) } returns Resource.Success(compositeDocument)
         coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Success(mockk())
@@ -65,13 +65,14 @@ class GiniCaptureDefaultNetworkServiceTest {
         val bankApi = mockk<GiniBankAPI>()
         every { bankApi.documentManager } returns documentManager
 
-        val networkService = GiniCaptureDefaultNetworkService(bankApi, null)
+        val networkService = GiniCaptureDefaultNetworkService(bankApi, null, ApplicationProvider.getApplicationContext())
 
         // Mock Gini Capture SDK document
         val captureDocument = mockk<Document>()
         every { captureDocument.id } returns "id"
         every { captureDocument.data } returns byteArrayOf()
         every { captureDocument.mimeType } returns "image/jpeg"
+        every { captureDocument.generateUploadMetadata(ApplicationProvider.getApplicationContext()) } returns ""
 
         // When
         networkService.upload(captureDocument, mockk(relaxed = true))

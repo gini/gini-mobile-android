@@ -20,12 +20,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.ExampleApp
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugDisabled
-import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
+import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityExtractionsBinding
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -44,11 +42,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
 
     @Inject
-    @GiniCaptureNetworkServiceDebugEnabled
-    lateinit var defaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService
-    @Inject
-    @GiniCaptureNetworkServiceDebugDisabled
-    lateinit var defaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService
+    internal lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
 
     // {extraction name} to it's {entity name}
     private val editableSpecificExtractions = hashMapOf(
@@ -73,8 +67,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     }
 
     private fun showAnalyzedDocumentId() {
-        val documentId = defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id
-            ?: defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id ?: ""
+        val documentId = defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id
+            ?: defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled.analyzedGiniApiDocument?.id ?: ""
         binding.textDocumentId.text = getString(R.string.analyzed_document_id, documentId)
     }
 

@@ -1,5 +1,7 @@
 package net.gini.android.bank.sdk.capture
 
+import net.gini.android.bank.sdk.BuildConfig
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
@@ -238,6 +240,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
+        .addCustomUploadMetadata(GiniBank.USER_COMMENT_GINI_BANK_VERSION, BuildConfig.VERSION_NAME)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }
             configuration.errorLoggerListener?.let { setCustomErrorLoggerListener(it) }
