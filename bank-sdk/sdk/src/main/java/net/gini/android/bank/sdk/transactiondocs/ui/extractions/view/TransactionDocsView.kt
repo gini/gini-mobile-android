@@ -6,9 +6,11 @@ import android.widget.FrameLayout
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import net.gini.android.bank.sdk.transactiondocs.ui.extractions.TransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
+import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.TransactionDocsWidgetColors
 import net.gini.android.capture.ui.theme.GiniTheme
 
 class TransactionDocsView @JvmOverloads constructor(

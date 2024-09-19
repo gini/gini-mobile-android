@@ -302,7 +302,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                             case SUCCESS_NO_EXTRACTIONS:
                                 mAnalysisCompleted = true;
                                 analysisScreenPresenterExtension.getLastAnalyzedDocumentProvider()
-                                        .update(resultHolder.getDocumentId(), "AAAA");
+                                        .update(new RemoteAnalyzedDocument(
+                                                        resultHolder.getDocumentId(),
+                                                        resultHolder.getDocumentFileName()
+                                                )
+                                        );
                                 trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
                                 getAnalysisFragmentListenerOrNoOp()
                                         .onProceedToNoExtractionsScreen(mMultiPageDocument);
@@ -310,7 +314,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                             case SUCCESS_WITH_EXTRACTIONS:
                                 mAnalysisCompleted = true;
                                 analysisScreenPresenterExtension.getLastAnalyzedDocumentProvider()
-                                        .update(resultHolder.getDocumentId(), "AAAA");
+                                        .update(new RemoteAnalyzedDocument(
+                                                        resultHolder.getDocumentId(),
+                                                        resultHolder.getDocumentFileName()
+                                                )
+                                        );
                                 if (resultHolder.getExtractions().isEmpty()) {
                                     trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
                                     getAnalysisFragmentListenerOrNoOp()

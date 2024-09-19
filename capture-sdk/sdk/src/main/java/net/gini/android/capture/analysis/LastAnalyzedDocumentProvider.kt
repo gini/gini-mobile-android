@@ -12,12 +12,12 @@ class LastAnalyzedDocumentProvider(
 
     private val coroutineScope = CoroutineScope(backgroundDispatcher)
 
-    val data: MutableStateFlow<Pair<String, String>?> = MutableStateFlow(null)
+    val data: MutableStateFlow<RemoteAnalyzedDocument?> = MutableStateFlow(null)
 
-    fun provide(): Pair<String, String>? = data.value
+    fun provide(): RemoteAnalyzedDocument? = data.value
 
-    fun update(giniDocumentApiId: String, filename: String) {
-        coroutineScope.launch { data.emit(giniDocumentApiId to filename) }
+    fun update(document: RemoteAnalyzedDocument) {
+        coroutineScope.launch { data.emit(document) }
     }
 
     fun clear() {

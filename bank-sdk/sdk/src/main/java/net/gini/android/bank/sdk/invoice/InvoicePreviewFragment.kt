@@ -41,6 +41,9 @@ class InvoicePreviewFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+
+        val navigateBack = { requireActivity().onBackPressedDispatcher.onBackPressed() }
+
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -48,9 +51,7 @@ class InvoicePreviewFragment : Fragment() {
                     InvoicePreviewScreen(
                         modifier = Modifier,
                         viewModel = viewModel,
-                        navigateBack = {
-                            findNavController().navigateUp()
-                        }
+                        navigateBack = navigateBack
                     )
                 }
             }
@@ -58,13 +59,9 @@ class InvoicePreviewFragment : Fragment() {
     }
 
     companion object {
-        fun createInstance(documentId: String): InvoicePreviewFragment {
+        fun createInstance(args: InvoicePreviewFragmentArgs): InvoicePreviewFragment {
             return InvoicePreviewFragment().apply {
-                arguments = InvoicePreviewFragmentArgs(
-                    documentId = documentId,
-                    infoTextLines = arrayOf(),
-                    highlightBoxes = arrayOf()
-                ).toBundle()
+                arguments = args.toBundle()
             }
         }
     }

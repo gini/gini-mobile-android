@@ -1,5 +1,6 @@
 package net.gini.android.bank.sdk.transactiondocs.ui.extractions
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,26 +47,30 @@ internal fun TransactionDocsContent(
     onDocumentClick: (TransactionDoc) -> Unit = {},
     onDocumentDelete: (TransactionDoc) -> Unit = {},
 ) {
-
-    Card(
-        modifier = modifier,
-        shape = RectangleShape
-    ) {
-        Column {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                text = stringResource(id = R.string.gbs_tl_extraction_result_documents_section_title),
-                style = GiniTheme.typography.subtitle2,
+    AnimatedVisibility(visible = documents.isNotEmpty()) {
+        Card(
+            modifier = modifier,
+            shape = RectangleShape,
+            colors = CardDefaults.cardColors(
+                containerColor = colors.containerColor,
             )
-            Column(
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp),
-            ) {
-                DocumentList(
-                    documents = documents,
-                    colors = colors,
-                    onDocumentClick = onDocumentClick,
-                    onDocumentDelete = onDocumentDelete,
+        ) {
+            Column {
+                Text(
+                    text = stringResource(id = R.string.gbs_tl_extraction_result_documents_section_title),
+                    style = GiniTheme.typography.subtitle2,
+                    color = colors.titleColor
                 )
+                Column(
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp),
+                ) {
+                    DocumentList(
+                        documents = documents,
+                        colors = colors,
+                        onDocumentClick = onDocumentClick,
+                        onDocumentDelete = onDocumentDelete,
+                    )
+                }
             }
         }
     }
@@ -76,7 +82,7 @@ private fun DocumentList(
     onDocumentClick: (TransactionDoc) -> Unit,
     onDocumentDelete: (TransactionDoc) -> Unit,
     modifier: Modifier = Modifier,
-    colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
+    colors: TransactionDocsWidgetColors,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -99,8 +105,7 @@ private fun Document(
     onDocumentClick: (TransactionDoc) -> Unit,
     onDocumentDelete: (TransactionDoc) -> Unit,
     modifier: Modifier = Modifier,
-    colors: TransactionDocsWidgetColors.DocumentItemColors =
-        TransactionDocsWidgetColors.DocumentItemColors.colors(),
+    colors: TransactionDocsWidgetColors.DocumentItemColors,
 ) {
 
     var menuVisible by remember { mutableStateOf(false) }
@@ -242,7 +247,7 @@ private fun ExtractionResultDocumentsSectionPreviewDark() {
 private fun PreviewContent() {
     GiniTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            DocumentList(
+            TransactionDocsContent(
                 documents = listOf(
                     TransactionDoc("id", "document1.jpg"),
                     TransactionDoc("id", "document2.jpg"),

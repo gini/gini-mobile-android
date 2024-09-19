@@ -8,6 +8,8 @@ import net.gini.android.capture.ui.theme.GiniTheme
 
 @Immutable
 data class TransactionDocsWidgetColors(
+    val titleColor: Color,
+    val containerColor: Color,
     val documentItemColors: DocumentItemColors,
 ) {
 
@@ -57,9 +59,13 @@ data class TransactionDocsWidgetColors(
 
         @Composable
         fun colors(
+            titleColor: Color = GiniTheme.colorScheme.text.primary,
+            containerColor: Color = Color.Transparent,
             documentItemColors: DocumentItemColors = DocumentItemColors.colors(),
         ) = TransactionDocsWidgetColors(
+            containerColor = containerColor,
             documentItemColors = documentItemColors,
+            titleColor = titleColor
         )
     }
 }

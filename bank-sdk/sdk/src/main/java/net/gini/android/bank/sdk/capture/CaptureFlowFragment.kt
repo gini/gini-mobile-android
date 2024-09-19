@@ -56,9 +56,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private val skontoInvoiceHighlightsExtractor: SkontoInvoiceHighlightsExtractor
             by getGiniBankKoin().inject()
-    private val skontoDataExtractor : SkontoDataExtractor
+    private val skontoDataExtractor: SkontoDataExtractor
             by getGiniBankKoin().inject()
-    private val skontoExtractionsHandler : SkontoExtractionsHandler
+    private val skontoExtractionsHandler: SkontoExtractionsHandler
             by getGiniBankKoin().inject()
 
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
@@ -293,11 +293,13 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
-        finishWithResult(CaptureResult.Success(
-            specificExtractions,
-            compoundExtractions,
-            emptyList()
-        ))
+        finishWithResult(
+            CaptureResult.Success(
+                specificExtractions,
+                compoundExtractions,
+                emptyList()
+            )
+        )
     }
 
 
@@ -305,11 +307,13 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
-        finishWithResult(CaptureResult.Success(
-            specificExtractions,
-            compoundExtractions,
-            emptyList()
-        ))
+        finishWithResult(
+            CaptureResult.Success(
+                specificExtractions,
+                compoundExtractions,
+                emptyList()
+            )
+        )
     }
 
 

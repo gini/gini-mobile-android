@@ -21,13 +21,12 @@ internal class GiniBankTransactionDocs internal constructor(
 
     override val extractionDocumentsFlow = lastAnalyzedDocumentProvider
         .data
-        .filterNotNull()
         .map {
-            listOf(
+            listOfNotNull(it?.let {
                 TransactionDoc(
-                    giniApiDocumentId = it.first,
-                    it.second
+                    giniApiDocumentId = it.giniApiDocumentId,
+                    documentFileName = it.filename
                 )
-            )
+            })
         }
 }

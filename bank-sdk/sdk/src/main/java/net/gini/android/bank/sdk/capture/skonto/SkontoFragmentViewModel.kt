@@ -209,7 +209,7 @@ internal class SkontoFragmentViewModel(
     fun onInvoiceClicked() = viewModelScope.launch {
         val currentState =
             stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
-        val documentId = lastAnalyzedDocumentProvider.provide()?.first ?: return@launch
+        val documentId = lastAnalyzedDocumentProvider.provide()?.giniApiDocumentId ?: return@launch
         sideEffectFlow.emit(
             SkontoFragmentContract.SideEffect.OpenInvoiceScreen(
                 documentId,

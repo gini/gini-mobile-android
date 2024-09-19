@@ -153,7 +153,7 @@ internal class DigitalInvoiceSkontoViewModel(
     fun onInvoiceClicked() = viewModelScope.launch {
         val currentState =
             stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch
-        val documentId = lastAnalyzedDocumentProvider.provide()?.first ?: return@launch
+        val documentId = lastAnalyzedDocumentProvider.provide()?.giniApiDocumentId ?: return@launch
         sideEffectFlow.emit(DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen(
             documentId,
             SkontoData(

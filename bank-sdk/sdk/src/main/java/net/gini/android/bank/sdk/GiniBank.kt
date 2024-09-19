@@ -3,7 +3,6 @@ package net.gini.android.bank.sdk
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import kotlinx.coroutines.Dispatchers
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
@@ -31,6 +30,7 @@ import net.gini.android.bank.sdk.capture.skonto.help.SkontoHelpNavigationBarBott
 import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.invoice.InvoicePreviewFragment
+import net.gini.android.bank.sdk.invoice.InvoicePreviewFragmentArgs
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
@@ -541,10 +541,17 @@ object GiniBank {
         return CaptureFlowFragment.createInstance(document)
     }
 
-    fun createInvoicePreviewFragment(giniApiDocumentId: String) : InvoicePreviewFragment {
+    fun createInvoicePreviewFragment(giniApiDocumentId: String): InvoicePreviewFragment {
+        return InvoicePreviewFragment.createInstance(
+            createInvoicePreviewFragmentArgs(giniApiDocumentId)
+        )
+    }
+
+    fun createInvoicePreviewFragmentArgs(giniApiDocumentId: String): InvoicePreviewFragmentArgs {
         check(giniApiDocumentId.isNotBlank() && giniApiDocumentId.isNotEmpty()) {
-            "Gini Api Document Id should not be empty or blank" }
-        return InvoicePreviewFragment.createInstance(giniApiDocumentId)
+            "Gini Api Document Id should not be empty or blank"
+        }
+        return InvoicePreviewFragmentArgs(giniApiDocumentId, arrayOf(), arrayOf())
     }
 
     fun startInvoicePreview() {

@@ -396,6 +396,7 @@ class AnalysisScreenPresenterTest {
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
                 "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val presenter =
@@ -433,7 +434,8 @@ class AnalysisScreenPresenterTest {
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
-                "dummy_doc_id"
+                "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val presenter =
@@ -467,7 +469,11 @@ class AnalysisScreenPresenterTest {
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
-                extractions, compoundExtraction, returnReasons, "dummy_doc_id"
+                extractions,
+                compoundExtraction,
+                returnReasons,
+                "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val presenter =
@@ -493,7 +499,8 @@ class AnalysisScreenPresenterTest {
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
-                "dummy_doc_id"
+                "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val presenter = spy(
@@ -641,7 +648,8 @@ class AnalysisScreenPresenterTest {
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
-                "dummy_doc_id"
+                "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val memoryStore = mock<ImageMultiPageDocumentMemoryStore>()

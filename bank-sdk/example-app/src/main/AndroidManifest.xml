@@ -41,7 +41,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.InvoicePreviewActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Root.GiniCaptureTheme.Internal" />
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"

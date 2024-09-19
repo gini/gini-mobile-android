@@ -3,24 +3,34 @@ package net.gini.android.bank.sdk.exampleapp.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.fragment.NavHostFragment
+import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.databinding.ActivityInvoicePreviewBinding
 
+@AndroidEntryPoint
 class InvoicePreviewActivity : AppCompatActivity() {
+
+    lateinit var binding: ActivityInvoicePreviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_invoice_preview)
+        binding = ActivityInvoicePreviewBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         val documentId =
             intent.getStringExtra(EXTRA_DOCUMENT_ID) ?: error("Missing $EXTRA_DOCUMENT_ID extra")
 
-        val fragment = GiniBank.createInvoicePreviewFragment(documentId)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
+        navController.setGraph(
+            R.navigation.invoice_preview_nav_graph,
+            GiniBank.createInvoicePreviewFragmentArgs(documentId).toBundle()
+        )
     }
 
     companion object {
