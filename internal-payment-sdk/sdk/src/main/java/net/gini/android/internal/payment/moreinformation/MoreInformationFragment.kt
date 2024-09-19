@@ -37,9 +37,10 @@ import java.util.Locale
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
  * [PaymentComponent] instance to show the icons of the available payment provider apps.
  */
-class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) :
+class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?,
+                                                  private val backListener: BackListener? = null
+): Fragment() {
 
-    Fragment() {
     constructor() : this(paymentComponent = null)
 
     private var binding: GpsFragmentPaymentMoreInformationBinding by autoCleared()
@@ -226,7 +227,8 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
          * @param paymentComponent the [PaymentComponent] instance which contains the list of payment provider apps
          * @param backListener a listener for back events
          */
-        fun newInstance(paymentComponent: PaymentComponent?, backListener: BackListener? = null): MoreInformationFragment =
+        fun newInstance(paymentComponent: PaymentComponent?,
+                        backListener: BackListener? = null): MoreInformationFragment =
             MoreInformationFragment(paymentComponent = paymentComponent, backListener = backListener)
     }
 

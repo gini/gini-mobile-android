@@ -59,7 +59,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         }
 
     /**
-     * Sets the payable state of the [PaymentComponentView]. If `true`, the view will be shown, otherwise it will be hidden.
+     * Sets the payable state of the [PaymentComponentView].
+     * If `true`, the view will be shown, otherwise it will be hidden.
      */
 
     var isPayable: Boolean = false
@@ -163,7 +164,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     /**
-     * Resets the internal state of the [PaymentComponentView] to its default state. This should be called before the view is reused.
+     * Resets the internal state of the [PaymentComponentView] to its default state.
+     * This should be called before the view is reused.
      */
     fun prepareForReuse() {
         isPayable = false
@@ -267,7 +269,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun show() {
         LOG.debug("Showing payment component")
-        binding.gpsPoweredByGini.visibility = if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else GONE
+        binding.gpsPoweredByGini.visibility =
+            if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else GONE
         changeLabelsVisibilityIfNeeded()
     }
 
