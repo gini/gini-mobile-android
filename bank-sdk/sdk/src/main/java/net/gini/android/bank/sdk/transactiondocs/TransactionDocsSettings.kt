@@ -1,8 +1,10 @@
 package net.gini.android.bank.sdk.transactiondocs
 
+import kotlinx.coroutines.flow.Flow
+
 interface TransactionDocsSettings {
 
-    fun getAlwaysAttachSetting(): Boolean
+    fun getAlwaysAttachSetting(): Flow<Boolean>
 
-    fun setAlwaysAttachSetting(value: Boolean)
+    suspend fun setAlwaysAttachSetting(value: Boolean)
 }

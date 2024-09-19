@@ -164,14 +164,14 @@ class SkontoFragment : Fragment() {
                             findNavController()
                                 .navigate(SkontoFragmentDirections.toCaptureFragment())
                         },
-                        navigateToInvoiceScreen = { documentId, data ->
+                        navigateToInvoiceScreen = { documentId, infoTextLines ->
                             findNavController()
                                 .navigate(
                                     SkontoFragmentDirections.toInvoicePreviewFragment(
                                         documentId = documentId,
                                         highlightBoxes = args.invoiceHighlights.flatMap { it.getExistBoxes() }
                                             .toTypedArray(),
-                                        infoTextLines = arrayOf() // TODO Add lines
+                                        infoTextLines = infoTextLines.toTypedArray()
                                     )
                                 )
                         },
@@ -211,7 +211,7 @@ private fun ScreenContent(
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
-    navigateToInvoiceScreen: (documentId: String, data: SkontoData) -> Unit,
+    navigateToInvoiceScreen: (documentId: String, infoTextLines: List<String>) -> Unit,
 ) {
 
     BackHandler { navigateBack() }
@@ -221,7 +221,7 @@ private fun ScreenContent(
     viewModel.collectSideEffect {
         when (it) {
             is SkontoFragmentContract.SideEffect.OpenInvoiceScreen ->
-                navigateToInvoiceScreen(it.documentId, it.skontoData)
+                navigateToInvoiceScreen(it.documentId, it.infoTextLines)
         }
     }
 

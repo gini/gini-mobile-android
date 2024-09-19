@@ -1,11 +1,9 @@
 package net.gini.android.bank.sdk.transactiondocs.internal
 
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
-import net.gini.android.bank.sdk.transactionlist.internal.GiniTransactionDocsSettings
 import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
 import net.gini.android.capture.di.getGiniCaptureKoin
 

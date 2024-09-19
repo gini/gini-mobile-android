@@ -196,30 +196,6 @@ private fun Footer(
                 color = colors.contentColor
             )
         }
-        /*Text(
-            text = stringResource(
-                id = R.string.gbs_skonto_invoice_preview_expire_date,
-                dateFormatter.format(expireDate)
-            ),
-            style = GiniTheme.typography.caption1,
-            color = colors.contentColor
-        )
-        Text(
-            text = stringResource(
-                id = R.string.gbs_skonto_invoice_preview_final_amount,
-                amountFormatter.format(finalAmount)
-            ),
-            style = GiniTheme.typography.caption1,
-            color = colors.contentColor
-        )
-        Text(
-            text = stringResource(
-                id = R.string.gbs_skonto_invoice_preview_full_amount,
-                amountFormatter.format(fullAmount)
-            ),
-            style = GiniTheme.typography.caption1,
-            color = colors.contentColor
-        )*/
     }
 }
 

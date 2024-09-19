@@ -36,7 +36,7 @@ import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
-import net.gini.android.bank.sdk.transactionlist.internal.GiniTransactionDocsSettings
+import net.gini.android.bank.sdk.transactiondocs.internal.GiniTransactionDocsSettings
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 import net.gini.android.capture.*
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
@@ -553,11 +553,6 @@ object GiniBank {
         }
         return InvoicePreviewFragmentArgs(giniApiDocumentId, arrayOf(), arrayOf())
     }
-
-    fun startInvoicePreview() {
-
-    }
-
 
     fun initializeTransactionDocsFeature(
         context: Context,

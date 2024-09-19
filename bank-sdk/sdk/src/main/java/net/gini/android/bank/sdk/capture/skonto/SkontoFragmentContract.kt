@@ -27,7 +27,7 @@ internal object SkontoFragmentContract {
     sealed interface SideEffect {
         data class OpenInvoiceScreen(
             val documentId: String,
-            val skontoData: SkontoData
+            val infoTextLines: List<String>,
         ) : SideEffect
     }
 }

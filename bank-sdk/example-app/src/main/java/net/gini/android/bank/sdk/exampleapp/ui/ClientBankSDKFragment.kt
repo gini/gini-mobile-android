@@ -100,11 +100,6 @@ class ClientBankSDKFragment :
             multiPageEnabled = true,
         )
         GiniBank.setCaptureConfiguration(requireContext(), captureConfiguration)
-
-        GiniBank.initializeTransactionDocsFeature(
-            requireContext(),
-            TransactionDocsConfiguration(true)
-        )
     }
 
 
