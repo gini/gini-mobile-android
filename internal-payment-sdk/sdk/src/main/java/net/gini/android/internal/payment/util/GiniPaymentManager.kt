@@ -8,7 +8,7 @@ import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.toPaymentRequest
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.review.validate
 import net.gini.android.internal.payment.util.extensions.toBackendFormat

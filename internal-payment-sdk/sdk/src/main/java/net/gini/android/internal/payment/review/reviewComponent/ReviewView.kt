@@ -19,7 +19,7 @@ import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.databinding.GpsReviewBinding
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.PaymentField
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.util.amountWatcher

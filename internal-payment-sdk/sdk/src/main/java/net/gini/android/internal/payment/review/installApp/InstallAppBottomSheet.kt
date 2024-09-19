@@ -17,12 +17,12 @@ import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetInstallAppBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.internal.payment.util.BackListener
-import net.gini.android.internal.payment.util.GpsBottomSheetDialogFragment
-import net.gini.android.internal.payment.util.autoCleared
-import net.gini.android.internal.payment.util.extensions.setBackListener
-import net.gini.android.internal.payment.util.setBackgroundTint
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
+import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.setBackListener
+import net.gini.android.internal.payment.utils.setBackgroundTint
 import org.slf4j.LoggerFactory
 
 /**

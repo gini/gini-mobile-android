@@ -17,7 +17,7 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
 import net.gini.android.internal.payment.databinding.GpsViewPaymentComponentBinding
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.util.extensions.setBackgroundTint
 import net.gini.android.internal.payment.util.extensions.wrappedWithGiniPaymentTheme
@@ -269,8 +269,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun show() {
         LOG.debug("Showing payment component")
-        binding.gpsPoweredByGini.isVisible =
-            paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true
+        binding.gpsPoweredByGini.visibility =
+            if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else GONE
         changeLabelsVisibilityIfNeeded()
     }
 

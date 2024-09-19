@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.paymentprovider
+package net.gini.android.internal.payment.paymentProvider
 
 import android.content.ComponentName
 import android.content.Context

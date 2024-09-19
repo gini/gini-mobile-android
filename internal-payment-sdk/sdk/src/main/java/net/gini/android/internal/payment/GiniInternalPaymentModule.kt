@@ -13,7 +13,7 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.internal.payment.util.DisplayedScreen
 import net.gini.android.internal.payment.util.GiniLocalization
@@ -35,10 +35,31 @@ class GiniInternalPaymentModule(private val context: Context,
         context: Context,
         giniHealthAPI: GiniHealthAPI,
     ) : this(context) {
-        this._giniHealthAPI = giniHealthAPI
+        _giniHealthAPI = giniHealthAPI
     }
 
-    private var _giniHealthAPI: GiniHealthAPI? = null
+    internal val giniPaymentManager: GiniPaymentManager
+        get() {
+            _giniPaymentManager?.let { return it }
+                ?: return GiniPaymentManager(this.giniHealthAPI, object: PaymentEventListener {
+                override fun onError(e: Exception) {
+                    _eventsFlow.tryEmit(InternalPaymentEvents.OnErrorOccurred(e))
+                }
+
+                override fun onLoading() {
+                    _eventsFlow.tryEmit(InternalPaymentEvents.OnLoading)
+                }
+
+                override fun onPaymentRequestCreated(
+                    paymentRequest: PaymentRequest,
+                    paymentProviderName: String
+                ) {
+                    _eventsFlow.tryEmit(InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(paymentRequest.id, paymentProviderName))
+                }
+
+            })
+        }
+
     val giniHealthAPI: GiniHealthAPI
         get() {
             _giniHealthAPI?.let { return it }
@@ -68,29 +89,13 @@ class GiniInternalPaymentModule(private val context: Context,
     var paymentComponent = PaymentComponent(context, this)
     private val openWithPreferences = OpenWithPreferences(context)
 
-    internal val giniPaymentManager = GiniPaymentManager(giniHealthAPI, object: PaymentEventListener {
-        override fun onError(e: Exception) {
-            _eventsFlow.tryEmit(InternalPaymentEvents.OnErrorOccurred(e))
-        }
-
-        override fun onLoading() {
-            _eventsFlow.tryEmit(InternalPaymentEvents.OnLoading)
-        }
-
-        override fun onPaymentRequestCreated(
-            paymentRequest: PaymentRequest,
-            paymentProviderName: String
-        ) {
-            _eventsFlow.tryEmit(InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(paymentRequest.id, paymentProviderName))
-        }
-
-    })
-
     suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
     suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
 
     private val _paymentFlow =
         MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
+    private var _giniHealthAPI: GiniHealthAPI? = null
+    private var _giniPaymentManager: GiniPaymentManager? = null
 
     /**
      * A flow for getting extracted [PaymentDetails] for the document set for review (see [setDocumentForReview]).

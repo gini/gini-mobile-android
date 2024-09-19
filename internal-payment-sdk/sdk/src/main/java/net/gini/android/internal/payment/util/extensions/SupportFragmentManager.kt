@@ -4,7 +4,7 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.installApp.InstallAppBottomSheet
 import net.gini.android.internal.payment.review.installApp.InstallAppForwardListener
 import net.gini.android.internal.payment.review.openWith.OpenWithBottomSheet

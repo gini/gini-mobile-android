@@ -16,8 +16,8 @@ import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderAppColors
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

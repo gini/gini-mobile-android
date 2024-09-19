@@ -26,7 +26,7 @@ import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsFragmentPaymentMoreInformationBinding
 import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.util.BackListener
 import net.gini.android.internal.payment.util.autoCleared
 import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
@@ -226,7 +226,8 @@ class MoreInformationFragment private constructor(
          * @param paymentComponent the [PaymentComponent] instance which contains the list of payment provider apps
          * @param backListener a listener for back events
          */
-        fun newInstance(paymentComponent: PaymentComponent?, backListener: BackListener? = null) =
+        fun newInstance(paymentComponent: PaymentComponent?,
+                        backListener: BackListener? = null): MoreInformationFragment =
             MoreInformationFragment(paymentComponent = paymentComponent, backListener = backListener)
     }
 

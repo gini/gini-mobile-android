@@ -13,10 +13,10 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentComponent.BankPickerRows
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.internal.payment.util.BackListener
-import net.gini.android.internal.payment.util.FlowBottomSheetsManager
-import net.gini.android.internal.payment.util.PaymentNextStep
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.utils.FlowBottomSheetsManager
+import net.gini.android.internal.payment.utils.PaymentNextStep
 import net.gini.android.merchant.sdk.GiniMerchant
 import net.gini.android.merchant.sdk.util.DisplayedScreen
 import java.io.File

@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.paymentprovider
+package net.gini.android.internal.payment.paymentProvider
 
 import android.content.ComponentName
 import android.content.Intent
@@ -119,9 +119,7 @@ class PaymentProviderAppTest {
         val installedPaymentProviderApps = packageManager!!.getInstalledPaymentProviderApps()
 
         // Then
-        assertThat(installedPaymentProviderApps).containsExactlyElementsIn(
-            installedPaymentProviderAppsFixture
-        )
+        assertThat(installedPaymentProviderApps).containsExactlyElementsIn(installedPaymentProviderAppsFixture)
     }
 
     @Test

@@ -23,12 +23,12 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetOpenWithBinding
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.internal.payment.util.BackListener
-import net.gini.android.internal.payment.util.GpsBottomSheetDialogFragment
-import net.gini.android.internal.payment.util.autoCleared
-import net.gini.android.internal.payment.util.extensions.setBackListener
-import net.gini.android.internal.payment.util.setBackgroundTint
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
+import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.setBackListener
+import net.gini.android.internal.payment.utils.setBackgroundTint
 
 /**
  * Interface for forwarding the request to share a PDF document

@@ -13,7 +13,7 @@ import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.api.model.overwriteEmptyFields
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.review.validate
