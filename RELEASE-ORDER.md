@@ -31,10 +31,10 @@ Release order for :capture-sdk:default-network 3.11.3:
  3. :capture-sdk:sdk 3.11.3
  4. :capture-sdk:default-network 3.11.3
 
-Release order for :bank-sdk:sdk 3.13.0:
+Release order for :bank-sdk:sdk 3.13.1:
  1. :core-api-library:library 2.2.2
  2. :bank-api-library:library 3.2.2
  3. :capture-sdk:sdk 3.11.3
  4. :capture-sdk:default-network 3.11.3
- 5. :bank-sdk:sdk 3.13.0
+ 5. :bank-sdk:sdk 3.13.1
 
