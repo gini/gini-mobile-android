@@ -1,4 +1,4 @@
-package net.gini.android.capture.ui.components.menu.context.colors
+package net.gini.android.capture.ui.components.menu.context
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable

@@ -168,8 +168,8 @@ private fun Document(
 
 @Composable
 private fun DocumentMenuItem(
-    onClick: () -> Unit,
     title: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors.DocumentItemColors =
         TransactionDocsWidgetColors.DocumentItemColors.colors(),

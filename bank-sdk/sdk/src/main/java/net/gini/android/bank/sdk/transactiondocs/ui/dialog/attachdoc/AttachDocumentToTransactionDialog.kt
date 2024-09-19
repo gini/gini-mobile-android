@@ -35,9 +35,9 @@ import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
 fun AttachDocumentToTransactionDialog(
-    modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     onConfirm: (alwaysAttach: Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     colors: AttachDocumentToTransactionDialogColors = AttachDocumentToTransactionDialogColors.colors()
 ) {
 
