@@ -1,15 +1,12 @@
 package net.gini.android.merchant.sdk.util.extensions
 
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.util.TypedValue
 import androidx.annotation.VisibleForTesting
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.util.ShareWithBroadcastReceiver
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 
 // In a future refactoring we can split extensions into files according to what component they extend
 @VisibleForTesting
@@ -36,9 +33,3 @@ internal fun Context.generateBitmapDrawableIcon(icon: ByteArray, iconSize: Int):
 }
 
 internal fun Context.getFontScale() = resources.configuration.fontScale
-
-internal fun Context.createShareWithPendingIntent() = PendingIntent.getBroadcast(
-    this, 123,
-    Intent(this, ShareWithBroadcastReceiver::class.java),
-    PendingIntent.FLAG_IMMUTABLE
-)

@@ -1,0 +1,108 @@
+name: Check Internal Payment SDK
+
+on:
+  push:
+    paths:
+      - 'internal-payment-sdk/**'
+      - 'health-api-library/**'
+      - 'core-api-library/**'
+      - 'gradle/**'
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  pull_request:
+    types: [opened, edited, reopened]
+    paths:
+      - 'internal-payment-sdk/**'
+      - 'health-api-library/**'
+      - 'core-api-library/**'
+      - 'gradle/**'
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: run unit tests
+        run: ./gradlew internal-payment-sdk:sdk:testDebugUnitTest
+
+      - name: archive unit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: internal-payment-sdk-unit-test-results
+          path: internal-payment-sdk/sdk/build/reports/tests
+
+  android-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: run android lint
+        run: ./gradlew internal-payment-sdk:sdk:lint
+
+      - name: archive android lint report
+        uses: actions/upload-artifact@v4
+        with:
+          name: internal-payment-sdk-android-lint-report
+          path: internal-payment-sdk/sdk/build/reports/lint-results*.html
+
+  detekt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: run detekt
+        run: ./gradlew internal-payment-sdk:sdk:detekt
+
+      - name: archive detekt report
+        uses: actions/upload-artifact@v4
+        with:
+          name: internal-payment-sdk-detekt-report
+          path: internal-payment-sdk/sdk/build/reports/detekt/*.html
+
+  ktlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: run ktlint
+        run: ./gradlew internal-payment-sdk:sdk:ktlintCheck
+
+      - name: archive ktlint report
+        uses: actions/upload-artifact@v4
+        with:
+          name: internal-payment-sdk-ktlint-report
+          path: internal-payment-sdk/sdk/build/reports/ktlint/**/*.html

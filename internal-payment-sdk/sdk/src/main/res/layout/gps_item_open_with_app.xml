@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingHorizontal="@dimen/gps_small">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="@dimen/gps_large_36"
+        android:layout_height="@dimen/gps_large_36"
+        android:id="@+id/gps_app_icon"
+        android:background="@color/gps_open_with_app_placeholder"
+        android:elevation="1dp"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="fitCenter"
+        android:outlineSpotShadowColor="#66000000"
+        app:shapeAppearanceOverlay="@style/GiniPaymentTheme.Widget.RoundShapeableImageView.Corners"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_app_name"
+        android:layout_marginTop="@dimen/gps_medium_10"
+        android:maxLines="2"
+        android:text="@string/gps_open_with_app"
+        style="@style/GiniPaymentTheme.Typography.Caption2"
+        android:textColor="@color/gps_open_with_details"
+        android:gravity="center_horizontal"
+        android:paddingHorizontal="@dimen/gps_small_1"/>
+    
+</LinearLayout>

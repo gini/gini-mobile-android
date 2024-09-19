@@ -51,7 +51,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 >
-                <include layout="@layout/gms_payment_provider_selector_button"
+                <include layout="@layout/gps_payment_provider_selector_button"
                     android:id="@+id/gms_select_bank_picker"
                     tools:visibility="visible"/>
             </FrameLayout>

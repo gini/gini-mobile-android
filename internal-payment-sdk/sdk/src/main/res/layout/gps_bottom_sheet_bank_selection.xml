@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
+        android:id="@+id/drag_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gps_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gps_header_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/gps_subtitle_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <ImageView
+            android:id="@+id/gps_close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/gps_small"
+            android:layout_marginTop="@dimen/gps_large_32"
+            android:paddingVertical="@dimen/gps_medium_12"
+            android:paddingHorizontal="@dimen/gps_medium_12"
+            android:contentDescription="@string/gps_close_content_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/gps_close_icon"
+            app:tint="?attr/colorOnBackground" />
+
+        <TextView
+            android:id="@+id/gps_title_label"
+            style="@style/GiniPaymentTheme.Typography.Subtitle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/gps_large_24"
+            android:text="@string/gps_select_bank"
+            android:textColor="@color/gps_bank_selection_bottom_sheet_title"
+            app:layout_constraintBottom_toBottomOf="@+id/gps_close_button"
+            app:layout_constraintStart_toEndOf="@+id/gps_close_button"
+            app:layout_constraintTop_toTopOf="@+id/gps_close_button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/gps_subtitle_label"
+        style="@style/GiniPaymentTheme.Typography.Caption1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gps_large"
+        android:layout_marginEnd="@dimen/gps_large"
+        android:text="@string/gps_payment_provider_apps_list_description"
+        android:textColor="@color/gps_bank_selection_bottom_sheet_caption"
+        app:layout_constraintBottom_toTopOf="@id/gps_payment_provider_apps_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gps_header_container" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gps_payment_provider_apps_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fadingEdgeLength="@dimen/gps_large_32"
+        android:requiresFadingEdge="vertical"
+        android:layout_marginHorizontal="@dimen/gps_large"
+        android:layout_marginTop="@dimen/gps_large"
+        app:layout_constraintBottom_toTopOf="@id/gps_powered_by_gini_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gps_subtitle_label"
+        tools:itemCount="13"
+        tools:listitem="@layout/gps_item_payment_provider_app" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_more_information_label"
+        style="@style/GiniPaymentTheme.Typography.Caption2"
+        android:layout_marginStart="@dimen/gps_large"
+        android:drawableStart="@drawable/gps_info_circle_icon"
+        android:drawableTint="@color/gps_more_information_color"
+        android:drawablePadding="@dimen/gps_medium"
+        android:text="@string/gps_more_information_underlined_part"
+        android:textColor="@color/gps_payment_component_caption"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="@id/gps_powered_by_gini_layout"
+        app:layout_constraintBottom_toBottomOf="@id/gps_powered_by_gini_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <include layout="@layout/gps_powered_by_gini"
+        android:id="@+id/gps_powered_by_gini_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gps_payment_provider_apps_list"
+        android:layout_marginVertical="@dimen/gps_large"
+        android:layout_marginEnd="@dimen/gps_large"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

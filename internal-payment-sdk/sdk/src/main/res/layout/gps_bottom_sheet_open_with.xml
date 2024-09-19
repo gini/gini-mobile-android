@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
+        android:id="@+id/drag_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gps_medium"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_open_with_title"
+        android:text="@string/gps_open_with_title"
+        style="@style/GiniPaymentTheme.Typography.Subtitle1"
+        android:textColor="@color/gps_open_with_title"
+        android:layout_marginHorizontal="@dimen/gps_large"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_open_with_details"
+        android:text="@string/gps_open_with_details"
+        style="@style/GiniPaymentTheme.Typography.Caption1"
+        android:textColor="@color/gps_open_with_details"
+        android:layout_marginHorizontal="@dimen/gps_large"
+        android:layout_marginTop="@dimen/gps_large"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/gps_large"
+        android:background="@color/gps_open_with_apps_background"
+        android:paddingHorizontal="@dimen/gps_large"
+        android:paddingVertical="@dimen/gps_large"
+        android:weightSum="5">
+            <include layout="@layout/gps_item_open_with_app"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <include layout="@layout/gps_item_open_with_app"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <include layout="@layout/gps_item_open_with_app"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <include layout="@layout/gps_item_open_with_app"
+                android:id="@+id/gps_app_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <include layout="@layout/gps_item_open_with_app"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_open_with_info"
+        android:layout_marginHorizontal="@dimen/gps_large"
+        android:text="@string/gps_open_with_info"
+        android:textColor="@color/gps_open_with_details"
+        android:layout_marginTop="@dimen/gps_large_20"
+        android:drawableStart="@drawable/gps_info_circle_icon"
+        android:drawablePadding="@dimen/gps_large"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_forward_button"
+        android:layout_marginHorizontal="@dimen/gps_large"
+        android:layout_marginTop="@dimen/gps_large_20"
+        style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"
+        android:text="@string/gps_forward"/>
+
+    <include layout="@layout/gps_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/gps_large_20"
+        android:layout_gravity="end"
+        android:layout_marginEnd="@dimen/gps_large"
+        android:layout_marginTop="@dimen/gps_small"/>
+
+</LinearLayout>
