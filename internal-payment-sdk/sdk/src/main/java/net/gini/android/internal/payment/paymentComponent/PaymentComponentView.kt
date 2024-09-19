@@ -20,6 +20,7 @@ import net.gini.android.internal.payment.databinding.GpsViewPaymentComponentBind
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.setBackgroundTint
+import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
@@ -56,6 +57,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         set(value) {
             field = value
             initViews()
+            addButtonInputHandlers()
         }
 
     /**
@@ -90,6 +92,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     var documentId: String? = null
 
     var reviewFragmentWillBeShown: Boolean = false
+
+    var dismissListener: ButtonClickListener? = null
 
     private val binding = GpsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()), this)
     private lateinit var selectBankButton: Button
@@ -301,13 +305,43 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         payInvoiceButton.text = if (reviewFragmentWillBeShown) resources.getString(R.string.gps_continue_to_overview) else resources.getString(R.string.gps_pay_button)
     }
 
-    fun getMoreInformationLabel() = binding.gpsMoreInformation
-
-    fun getPayInvoiceButton() = payInvoiceButton
-
-    fun getBankPickerButton() = selectBankButton
+    private fun addButtonInputHandlers() {
+        selectBankButton.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            paymentComponent?.listener?.onBankPickerClicked()
+            dismissListener?.onButtonClick(Buttons.SELECT_BANK)
+        }
+        payInvoiceButton.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            coroutineScope?.launch {
+                paymentComponent?.onPayInvoiceClicked(documentId)
+            }
+            dismissListener?.onButtonClick(Buttons.PAY_INVOICE)
+        }
+        binding.gpsMoreInformation.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            paymentComponent?.listener?.onMoreInformationClicked()
+            dismissListener?.onButtonClick(Buttons.MORE_INFORMATION)
+        }
+    }
 
     private companion object {
         private val LOG = LoggerFactory.getLogger(PaymentComponentView::class.java)
+    }
+
+    interface ButtonClickListener {
+        fun onButtonClick(button: Buttons)
+    }
+
+    enum class Buttons {
+        MORE_INFORMATION,
+        PAY_INVOICE,
+        SELECT_BANK
     }
 }

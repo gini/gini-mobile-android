@@ -11,7 +11,6 @@ import androidx.fragment.app.activityViewModels
 import net.gini.android.health.sdk.exampleapp.MainViewModel
 import net.gini.android.health.sdk.exampleapp.databinding.FragmentConfigurationBinding
 import net.gini.android.health.sdk.exampleapp.review.ReviewViewModel
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
 import net.gini.android.health.sdk.util.GiniLocalization
 import org.koin.android.ext.android.bind
 

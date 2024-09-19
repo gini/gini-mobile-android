@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
-import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
-import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import org.slf4j.LoggerFactory
 
 internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?) : ViewModel() {
@@ -93,9 +93,9 @@ internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?) :
     }
 
     fun setSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
-        viewModelScope.launch {
-            paymentComponent?.setSelectedPaymentProviderApp(paymentProviderApp)
-        }
+//        viewModelScope.launch {
+//            paymentComponent?.setSelectedPaymentProviderApp(paymentProviderApp)
+//        }
     }
 
     class Factory(private val paymentComponent: PaymentComponent?) : ViewModelProvider.Factory {

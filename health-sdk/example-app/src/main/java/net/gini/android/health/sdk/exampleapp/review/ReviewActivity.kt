@@ -28,7 +28,6 @@ import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_COM
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment

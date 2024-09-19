@@ -47,23 +47,15 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
-import net.gini.android.health.sdk.review.installApp.InstallAppBottomSheet
-import net.gini.android.health.sdk.review.installApp.InstallAppForwardListener
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
-import net.gini.android.health.sdk.review.openWith.OpenWithForwardListener
-import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.amountWatcher
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.clearErrorMessage
 import net.gini.android.health.sdk.util.extensions.getFontScale
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
-import net.gini.android.health.sdk.util.getLocaleStringResource
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.health.sdk.util.setBackgroundTint
@@ -71,6 +63,11 @@ import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthThemeAndLocale
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.review.installApp.InstallAppForwardListener
+import net.gini.android.internal.payment.review.openWith.OpenWithForwardListener
 import java.io.File
 import java.util.Locale
 
@@ -141,7 +138,7 @@ class ReviewFragment private constructor(
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, viewModel.paymentComponent.giniHealthLanguage)
+        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, viewModel.paymentComponent.giniPaymentLanguage)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -160,7 +157,6 @@ class ReviewFragment private constructor(
         val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
 
         viewModel.userPreferences = UserPreferences(requireContext())
-        viewModel.openWithPreferences = OpenWithPreferences(requireContext())
         viewModel.startObservingOpenWithCount()
         viewModel.loadPaymentDetails()
 
@@ -289,6 +285,8 @@ class ReviewFragment private constructor(
         purpose.setTextIfDifferent(paymentDetails.purpose)
     }
 
+    //TODO this should be refactored to use [ReviewView] in the layout,
+    // instead of the current layout. And it should use the [PaymentDetailsValidation] and [GiniPaymentManager] classes to handle validation and payments.
     private fun GhsFragmentReviewBinding.setInputListeners() {
         recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> viewModel.setRecipient(text.toString()) })
         iban.addTextChangedListener(onTextChanged = { text, _, _, _ -> viewModel.setIban(text.toString()) })
@@ -393,7 +391,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        val context = requireContext().wrappedWithGiniHealthThemeAndLocale(viewModel.paymentComponent.giniHealthLanguage)
+        val context = requireContext().wrappedWithGiniHealthThemeAndLocale(viewModel.paymentComponent.giniPaymentLanguage)
         errorSnackbar?.dismiss()
         errorSnackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             if (context.getFontScale() < 1.5) {
@@ -560,32 +558,34 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun showInstallAppDialog(paymentProviderApp: PaymentProviderApp) {
-        errorSnackbar?.dismiss()
-        val dialog = InstallAppBottomSheet.newInstance(viewModel.paymentComponent, object : InstallAppForwardListener {
-            override fun onForwardToBankSelected() {
-                redirectToBankApp(paymentProviderApp)
-            }
-        }, binding.paymentDetailsScrollview.height)
-        dialog.show(requireActivity().supportFragmentManager, InstallAppBottomSheet::class.simpleName)
-    }
+//    private fun showInstallAppDialog(paymentProviderApp: PaymentProviderApp) {
+//        errorSnackbar?.dismiss()
+//        val dialog = InstallAppBottomSheet.newInstance(viewModel.paymentComponent, object :
+//            InstallAppForwardListener {
+//            override fun onForwardToBankSelected() {
+//                redirectToBankApp(paymentProviderApp)
+//            }
+//        }, binding.paymentDetailsScrollview.height)
+//        dialog.show(requireActivity().supportFragmentManager, InstallAppBottomSheet::class.simpleName)
+//    }
 
     private fun redirectToBankApp(paymentProviderApp: PaymentProviderApp) {
         listener?.onToTheBankButtonClicked(paymentProviderApp.name ?: "")
         viewModel.onPayment()
     }
 
-    private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
-        errorSnackbar?.dismiss()
-        OpenWithBottomSheet.newInstance(paymentProviderApp, viewModel.paymentComponent, object: OpenWithForwardListener {
-            override fun onForwardSelected() {
-                viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
-            }
-        }).also {
-            it.show(requireActivity().supportFragmentManager, it::class.java.name)
-        }
-        viewModel.incrementOpenWithCounter()
-    }
+//    private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
+//        errorSnackbar?.dismiss()
+//        OpenWithBottomSheet.newInstance(paymentProviderApp, viewModel.paymentComponent, object:
+//            OpenWithForwardListener {
+//            override fun onForwardSelected() {
+//                viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
+//            }
+//        }).also {
+//            it.show(requireActivity().supportFragmentManager, it::class.java.name)
+//        }
+//        viewModel.incrementOpenWithCounter()
+//    }
 
     private fun startSharePdfIntent(paymentRequestFile: File) {
         errorSnackbar?.dismiss()
@@ -602,6 +602,7 @@ class ReviewFragment private constructor(
         startActivity(Intent.createChooser(shareIntent, uriForFile.lastPathSegment, createSharePendingIntent().intentSender))
     }
 
+    //TODO this should be handled via [FlowBottomSheetsManager]
     private fun handlePaymentNextStep(paymentNextStep: ReviewViewModel.PaymentNextStep) {
         when (paymentNextStep) {
             is ReviewViewModel.PaymentNextStep.SetLoadingVisibility -> {

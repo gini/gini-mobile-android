@@ -25,11 +25,11 @@ import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentPaymentMoreInformationBinding
 import net.gini.android.health.sdk.databinding.GhsPaymentProviderIconHolderBinding
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.health.sdk.util.getLocaleStringResource
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
 import java.util.Locale
 
 /**
@@ -111,7 +111,7 @@ class MoreInformationFragment private constructor(private val paymentComponent: 
                         is MoreInformationViewModel.PaymentProviderAppsListState.Error -> {}
                         MoreInformationViewModel.PaymentProviderAppsListState.Loading -> {}
                         is MoreInformationViewModel.PaymentProviderAppsListState.Success -> updatePaymentProviderIconsAdapter(
-                            paymentProviderAppsListState.paymentProviderAppsList
+//                            paymentProviderAppsListState.paymentProviderAppsList
                         )
                     }
                 }

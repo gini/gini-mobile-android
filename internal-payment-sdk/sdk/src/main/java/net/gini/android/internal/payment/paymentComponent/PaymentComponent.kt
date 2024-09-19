@@ -49,7 +49,7 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
-    internal val giniPaymentLanguage = GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()
+     val giniPaymentLanguage = GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()
 
     /**
      * A listener for the payment component. It exposes the user interactions with all of the [PaymentComponentView]s.
@@ -199,9 +199,9 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
         }
     }
 
-    suspend fun onPayInvoiceClicked(documentId: String = "") {
+    suspend fun onPayInvoiceClicked(documentId: String? = "") {
         paymentComponentPreferences.saveReturningUser()
-        listener?.onPayInvoiceClicked(documentId)
+        listener?.onPayInvoiceClicked(documentId ?: "")
         delay(500)
         checkReturningUser()
     }

@@ -26,9 +26,7 @@ import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.GiniHealth.GiniHealthPreferences
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentPreferences
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
@@ -38,14 +36,12 @@ import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
-import net.gini.android.health.sdk.util.GiniLocalization
 import net.gini.android.health.sdk.util.extensions.generateBitmapDrawableIcon
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Locale
 
 
 @ExperimentalCoroutinesApi

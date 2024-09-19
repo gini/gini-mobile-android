@@ -9,7 +9,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentPreferences
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import org.junit.After
 import org.junit.Before

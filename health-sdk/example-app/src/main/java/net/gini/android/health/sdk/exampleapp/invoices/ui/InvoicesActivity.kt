@@ -29,7 +29,6 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoi
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.moreinformation.MoreInformationFragment
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState.Error
 import net.gini.android.health.sdk.review.ReviewFragment

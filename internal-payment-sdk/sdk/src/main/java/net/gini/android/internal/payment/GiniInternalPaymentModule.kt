@@ -162,7 +162,7 @@ class GiniInternalPaymentModule(private val context: Context,
         }
     }
 
-    internal var localizedContext: Context? = null
+    var localizedContext: Context? = null
 
     companion object {
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"

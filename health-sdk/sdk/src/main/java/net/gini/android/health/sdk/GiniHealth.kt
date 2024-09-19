@@ -47,7 +47,7 @@ class GiniHealth(
     )
 
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
-
+    val localizedContext = giniInternalPaymentModule.localizedContext
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
     private var savedStateObserver: LifecycleEventObserver? = null
@@ -254,23 +254,6 @@ class GiniHealth(
         class Error(val throwable: Throwable) : PaymentState()
     }
 
-    internal class GiniHealthPreferences(context: Context) {
-        private val sharedPreferences = context.getSharedPreferences("GiniHealthPreferences", Context.MODE_PRIVATE)
-
-        fun saveSDKLanguage(value: GiniLocalization?) {
-            val editor: SharedPreferences.Editor = sharedPreferences.edit()
-            editor.putString(SDK_LANGUAGE_PREFS_KEY, value?.readableName?.uppercase())
-            editor.apply()
-        }
-
-        fun getSDKLanguage(): GiniLocalization? {
-            val enumValue = sharedPreferences.getString(SDK_LANGUAGE_PREFS_KEY, null)
-            return if (enumValue.isNullOrEmpty()) null else GiniLocalization.valueOf(enumValue)
-        }
-    }
-
-    internal var localizedContext: Context? = null
-
     companion object {
         private val LOG = LoggerFactory.getLogger(GiniHealth::class.java)
 
@@ -282,9 +265,5 @@ class GiniHealth(
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
         private const val PAYABLE = "Payable"
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
-
-        fun getSDKLanguage(context: Context): GiniLocalization? {
-            return GiniHealthPreferences(context).getSDKLanguage()
-        }
     }
 }

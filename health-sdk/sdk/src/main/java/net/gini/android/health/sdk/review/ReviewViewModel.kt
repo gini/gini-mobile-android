@@ -22,20 +22,20 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
-import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
-import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.withFeedback
-import net.gini.android.health.sdk.review.openWith.OpenWithPreferences
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.extensions.createTempPdfFile
 import net.gini.android.health.sdk.util.toBackendFormat
 import net.gini.android.health.sdk.util.withPrev
+import net.gini.android.internal.payment.api.model.PaymentRequest
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.FlowBottomSheetsManager
 import org.slf4j.LoggerFactory
 import java.io.File
 
@@ -45,10 +45,9 @@ internal class ReviewViewModel(
     val configuration: ReviewConfiguration,
     val paymentComponent: PaymentComponent,
     val documentId: String
-) : ViewModel() {
+) : ViewModel(), FlowBottomSheetsManager {
 
     internal var userPreferences: UserPreferences? = null
-    internal var openWithPreferences: OpenWithPreferences? = null
     internal var context: Context? = null
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
@@ -69,8 +68,14 @@ internal class ReviewViewModel(
         extraBufferCapacity = 1,
     )
     val paymentNextStep: SharedFlow<PaymentNextStep> = _paymentNextStep
+    override val giniInternalPaymentModule = giniHealth.giniInternalPaymentModule
 
-    private var openWithCounter: Int = 0
+    override var openWithCounter: Int = 0
+    override val paymentNextStepFlow= MutableSharedFlow<net.gini.android.internal.payment.utils.PaymentNextStep>(
+        extraBufferCapacity = 1,
+    )
+    override val paymentRequestFlow = MutableStateFlow<PaymentRequest?>(null)
+    override val shareWithFlowStarted: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     private val _paymentRequestFlow = MutableStateFlow<PaymentRequest?>(null)
 
@@ -145,13 +150,7 @@ internal class ReviewViewModel(
     }
 
     fun startObservingOpenWithCount() {
-        paymentProviderApp.value?.paymentProvider?.id?.let { paymentProviderAppId ->
-            viewModelScope.launch {
-                openWithPreferences?.getLiveCountForPaymentProviderId(paymentProviderAppId)?.collectLatest {
-                    openWithCounter = it ?: 0
-                }
-            }
-        }
+        startObservingOpenWithCount(viewModelScope, paymentProviderApp.value?.paymentProvider?.id ?: "")
     }
 
     fun getPages(document: Document): List<DocumentPageAdapter.Page> {
@@ -185,7 +184,7 @@ internal class ReviewViewModel(
         return items.isEmpty()
     }
 
-    private suspend fun getPaymentRequest(): PaymentRequest {
+    override suspend fun getPaymentRequest(): PaymentRequest {
         val paymentProviderApp = paymentProviderApp.value
         if (paymentProviderApp == null) {
             LOG.error("Cannot create PaymentRequest: No selected payment provider app")
@@ -204,8 +203,12 @@ internal class ReviewViewModel(
         )) {
             is Resource.Cancelled -> throw Exception("Cancelled")
             is Resource.Error -> throw Exception(createPaymentRequestResource.exception)
-            is Resource.Success -> PaymentRequest(id = createPaymentRequestResource.data, paymentProviderApp)
+            is Resource.Success -> PaymentRequest(id = createPaymentRequestResource.data, paymentProviderApp.name)
         }
+    }
+
+    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> {
+        TODO("Not yet implemented")
     }
 
     fun onPayment() {
@@ -270,12 +273,6 @@ internal class ReviewViewModel(
     fun retryDocumentReview() {
         viewModelScope.launch {
             giniHealth.retryDocumentReview()
-        }
-    }
-
-    fun incrementOpenWithCounter() = viewModelScope.launch {
-        paymentProviderApp.value?.paymentProvider?.id?.let {  paymentProviderAppId ->
-            openWithPreferences?.incrementCountForPaymentProviderId(paymentProviderAppId)
         }
     }
 

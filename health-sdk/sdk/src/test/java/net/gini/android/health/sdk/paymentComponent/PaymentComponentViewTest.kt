@@ -21,7 +21,6 @@ import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
 import net.gini.android.health.sdk.util.GiniLocalization
 import org.junit.After

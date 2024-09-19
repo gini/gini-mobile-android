@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import net.gini.android.health.sdk.databinding.GhsItemFaqAnswerBinding
 import net.gini.android.health.sdk.databinding.GhsItemFaqLabelBinding
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import java.util.Locale
 

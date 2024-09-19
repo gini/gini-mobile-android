@@ -15,7 +15,6 @@ import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityUploadBinding
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadViewModel.UploadState
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class UploadActivity : AppCompatActivity() {

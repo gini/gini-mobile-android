@@ -18,13 +18,13 @@ import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsBottomSheetBankSelectionBinding
 import net.gini.android.health.sdk.databinding.GhsItemPaymentProviderAppBinding
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.health.sdk.util.setIntervalClickListener
 import net.gini.android.health.sdk.util.wrappedWithGiniHealthThemeAndLocale
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import org.slf4j.LoggerFactory
 import java.util.Locale
 
