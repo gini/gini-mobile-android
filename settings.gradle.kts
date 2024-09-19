@@ -1,4 +1,3 @@
-include(":gini-internal-payment-sdk:library")
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -33,3 +32,5 @@ include("bank-sdk:example-app")
 
 include("merchant-sdk:sdk")
 include("merchant-sdk:example-app")
+
+include("internal-payment-sdk:sdk")

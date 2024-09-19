@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import net.gini.android.internal.payment.utils.IntervalClickListener
 import net.gini.android.merchant.sdk.R
 import java.math.BigDecimal
 import java.text.DecimalFormat

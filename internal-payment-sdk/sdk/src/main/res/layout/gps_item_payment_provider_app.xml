@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/gps_medium"
+    android:background="@drawable/gps_selectable_payment_provider_background"
+    >
+
+    <include layout="@layout/gps_payment_provider_picker_button"
+        android:id="@+id/gps_selector_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        />
+
+</FrameLayout>

@@ -153,16 +153,16 @@
     <ID>NewLineAtEndOfFile:Extensions.kt$net.gini.android.merchant.sdk.util.Extensions.kt</ID>
     <ID>NewLineAtEndOfFile:FaqExpandableListAdapter.kt$net.gini.android.merchant.sdk.moreinformation.FaqExpandableListAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:File.kt$net.gini.android.merchant.sdk.util.extensions.File.kt</ID>
-    <ID>NewLineAtEndOfFile:FlowBottomSheetsManager.kt$net.gini.android.merchant.sdk.util.FlowBottomSheetsManager.kt</ID>
+    <ID>NewLineAtEndOfFile:FlowBottomSheetsManager.kt$net.gini.android.internal.payment.utils.FlowBottomSheetsManager.kt</ID>
     <ID>NewLineAtEndOfFile:Fragment.kt$net.gini.android.merchant.sdk.util.extensions.Fragment.kt</ID>
     <ID>NewLineAtEndOfFile:GiniPaymentManager.kt$net.gini.android.merchant.sdk.util.GiniPaymentManager.kt</ID>
-    <ID>NewLineAtEndOfFile:GmsBottomSheetDialogFragment.kt$net.gini.android.merchant.sdk.util.GmsBottomSheetDialogFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:GmsBottomSheetDialogFragment.kt$net.gini.android.internal.payment.utils.GmsBottomSheetDialogFragment.kt</ID>
     <ID>NewLineAtEndOfFile:IbanValidator.kt$net.gini.android.merchant.sdk.util.IbanValidator.kt</ID>
     <ID>NewLineAtEndOfFile:InstallAppBottomSheet.kt$net.gini.android.merchant.sdk.review.installApp.InstallAppBottomSheet.kt</ID>
     <ID>NewLineAtEndOfFile:InstallAppViewModel.kt$net.gini.android.merchant.sdk.review.installApp.InstallAppViewModel.kt</ID>
-    <ID>NewLineAtEndOfFile:IntervalClickListener.kt$net.gini.android.merchant.sdk.util.IntervalClickListener.kt</ID>
-    <ID>NewLineAtEndOfFile:IntervalClickListenerHelper.kt$net.gini.android.merchant.sdk.util.IntervalClickListenerHelper.kt</ID>
-    <ID>NewLineAtEndOfFile:MerchantSDKFileProvider.kt$net.gini.android.merchant.sdk.util.MerchantSDKFileProvider.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListener.kt$net.gini.android.internal.payment.utils.IntervalClickListener.kt</ID>
+    <ID>NewLineAtEndOfFile:IntervalClickListenerHelper.kt$net.gini.android.internal.payment.utils.IntervalClickListenerHelper.kt</ID>
+    <ID>NewLineAtEndOfFile:MerchantSDKFileProvider.kt$net.gini.android.internal.payment.utils.MerchantSDKFileProvider.kt</ID>
     <ID>NewLineAtEndOfFile:MoreInformationFragment.kt$net.gini.android.merchant.sdk.moreinformation.MoreInformationFragment.kt</ID>
     <ID>NewLineAtEndOfFile:MoreInformationViewModel.kt$net.gini.android.merchant.sdk.moreinformation.MoreInformationViewModel.kt</ID>
     <ID>NewLineAtEndOfFile:OpenWithBottomSheet.kt$net.gini.android.merchant.sdk.review.openWith.OpenWithBottomSheet.kt</ID>
@@ -175,18 +175,18 @@
     <ID>NewLineAtEndOfFile:PaymentComponentView.kt$net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView.kt</ID>
     <ID>NewLineAtEndOfFile:PaymentDetails.kt$net.gini.android.merchant.sdk.api.payment.model.PaymentDetails.kt</ID>
     <ID>NewLineAtEndOfFile:PaymentFlowViewModel.kt$net.gini.android.merchant.sdk.integratedFlow.PaymentFlowViewModel.kt</ID>
-    <ID>NewLineAtEndOfFile:PaymentNextStep.kt$net.gini.android.merchant.sdk.util.PaymentNextStep.kt</ID>
-    <ID>NewLineAtEndOfFile:PaymentRequest.kt$net.gini.android.merchant.sdk.api.payment.model.PaymentRequest.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentNextStep.kt$net.gini.android.internal.payment.utils.PaymentNextStep.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentRequest.kt$net.gini.android.core.api.models.PaymentRequest.kt</ID>
     <ID>NewLineAtEndOfFile:Resource.kt$net.gini.android.merchant.sdk.util.extensions.Resource.kt</ID>
     <ID>NewLineAtEndOfFile:ResultWrapper.kt$net.gini.android.merchant.sdk.api.ResultWrapper.kt</ID>
     <ID>NewLineAtEndOfFile:ReviewBottomSheet.kt$net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheet.kt</ID>
     <ID>NewLineAtEndOfFile:ReviewBottomSheetViewModel.kt$net.gini.android.merchant.sdk.review.reviewBottomSheet.ReviewBottomSheetViewModel.kt</ID>
-    <ID>NewLineAtEndOfFile:ReviewComponent.kt$net.gini.android.merchant.sdk.review.reviewComponent.ReviewComponent.kt</ID>
-    <ID>NewLineAtEndOfFile:ReviewConfiguration.kt$net.gini.android.merchant.sdk.review.ReviewConfiguration.kt</ID>
-    <ID>NewLineAtEndOfFile:ReviewView.kt$net.gini.android.merchant.sdk.review.reviewComponent.ReviewView.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewComponent.kt$net.gini.android.internal.payment.review.reviewComponent.ReviewComponent.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewConfiguration.kt$net.gini.android.internal.payment.review.ReviewConfiguration.kt</ID>
+    <ID>NewLineAtEndOfFile:ReviewView.kt$net.gini.android.internal.payment.review.reviewComponent.ReviewView.kt</ID>
     <ID>NewLineAtEndOfFile:Session.kt$net.gini.android.merchant.sdk.api.authorization.model.Session.kt</ID>
     <ID>NewLineAtEndOfFile:SessionManager.kt$net.gini.android.merchant.sdk.api.authorization.SessionManager.kt</ID>
-    <ID>NewLineAtEndOfFile:ShareWithBroadcastReceiver.kt$net.gini.android.merchant.sdk.util.ShareWithBroadcastReceiver.kt</ID>
+    <ID>NewLineAtEndOfFile:ShareWithBroadcastReceiver.kt$net.gini.android.internal.payment.utils.ShareWithBroadcastReceiver.kt</ID>
     <ID>NewLineAtEndOfFile:SupportFragmentManager.kt$net.gini.android.merchant.sdk.util.extensions.SupportFragmentManager.kt</ID>
     <ID>NewLineAtEndOfFile:UserPreferences.kt$net.gini.android.merchant.sdk.preferences.UserPreferences.kt</ID>
     <ID>ReturnCount:IbanValidator.kt$internal fun isValidIban(iban: String): Boolean</ID>
