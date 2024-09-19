@@ -18,6 +18,7 @@ import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
+import net.gini.android.bank.sdk.capture.di.skonto.captureSdkDiBridge
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoNavigationBarBottomAdapter
@@ -28,6 +29,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboa
 import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.skonto.help.SkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
+import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.invoice.InvoicePreviewFragment
 import net.gini.android.bank.sdk.invoice.InvoicePreviewFragmentArgs
@@ -43,6 +45,7 @@ import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ImportedFileValidationException
+import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.requirements.GiniCaptureRequirements
@@ -578,10 +581,10 @@ object GiniBank {
         transactionDocsConfiguration: TransactionDocsConfiguration
     ) {
         releaseTransactionDocsFeature(context)
-        val transactionDocsSettings = GiniTransactionDocsSettings(context)
+        BankSdkIsolatedKoinContext.init(context)
+        getGiniCaptureKoin().loadModules(listOf(captureSdkDiBridge))
         this.giniBankTransactionDocs = GiniBankTransactionDocs(
             configuration = transactionDocsConfiguration,
-            transactionDocsSettings = transactionDocsSettings,
         )
     }
 

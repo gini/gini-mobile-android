@@ -1,24 +1,26 @@
 package net.gini.android.bank.sdk.transactiondocs.internal
 
 import kotlinx.coroutines.flow.map
+import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
-import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
-import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 
 internal class GiniBankTransactionDocs internal constructor(
     override val configuration: TransactionDocsConfiguration,
-    override val transactionDocsSettings: GiniTransactionDocsSettings,
-    private val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider = getGiniCaptureKoin().get(),
+    override val transactionDocsSettings: GiniTransactionDocsSettings =
+        getGiniBankKoin().get(),
+    private val attachedToTransactionDocumentProvider: AttachedToTransactionDocumentProvider =
+        getGiniBankKoin().get()
 ) : TransactionDocs {
 
     @Suppress("UnusedParameter")
     fun deleteDocument(document: TransactionDoc) {
-        lastAnalyzedDocumentProvider.clear()
+        attachedToTransactionDocumentProvider.clear()
     }
 
-    override val extractionDocumentsFlow = lastAnalyzedDocumentProvider
+    override val extractionDocumentsFlow = attachedToTransactionDocumentProvider
         .data
         .map {
             listOfNotNull(it?.let {

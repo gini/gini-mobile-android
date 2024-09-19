@@ -59,7 +59,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @VisibleForTesting
     static final String PARCELABLE_MEMORY_CACHE_TAG = "ANALYSIS_FRAGMENT";
     private static final Logger LOG = LoggerFactory.getLogger(AnalysisScreenPresenter.class);
-    private final AnalysisScreenPresenterExtension analysisScreenPresenterExtension;
+    private final AnalysisScreenPresenterExtension extension;
 
     private static final AnalysisFragmentListener NO_OP_LISTENER = new AnalysisFragmentListener() {
         @Override
@@ -117,7 +117,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         mDocumentAnalysisErrorMessage = documentAnalysisErrorMessage;
         mAnalysisInteractor = analysisInteractor;
         mHints = generateRandomHintsList();
-        analysisScreenPresenterExtension = new AnalysisScreenPresenterExtension();
+        extension = new AnalysisScreenPresenterExtension();
     }
 
     private List<AnalysisHint> generateRandomHintsList() {
@@ -289,6 +289,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                     @Override
                     public Void apply(final AnalysisInteractor.ResultHolder resultHolder,
                                       final Throwable throwable) {
+                        RemoteAnalyzedDocument remoteAnalyzedDocument =
+                                new RemoteAnalyzedDocument(
+                                        resultHolder.getDocumentId(),
+                                        resultHolder.getDocumentFileName()
+                                );
                         stopScanAnimation();
                         if (isStopped()) {
                             return null;
@@ -301,36 +306,45 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         switch (result) {
                             case SUCCESS_NO_EXTRACTIONS:
                                 mAnalysisCompleted = true;
-                                analysisScreenPresenterExtension.getLastAnalyzedDocumentProvider()
-                                        .update(new RemoteAnalyzedDocument(
-                                                        resultHolder.getDocumentId(),
-                                                        resultHolder.getDocumentFileName()
-                                                )
-                                        );
-                                trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
-                                getAnalysisFragmentListenerOrNoOp()
-                                        .onProceedToNoExtractionsScreen(mMultiPageDocument);
+                                extension.getLastAnalyzedDocumentProvider()
+                                        .update(remoteAnalyzedDocument);
+                                getView().showAttachDocToTransactionDialog(
+                                        () -> {
+                                            proceedSuccessNoExtractions();
+                                            return null;
+                                        }, alwaysAttach -> {
+                                            extension.getAttachDocToTransactionDialogProvider()
+                                                    .update(remoteAnalyzedDocument);
+                                            proceedSuccessNoExtractions();
+                                            return null;
+                                        }
+
+                                );
+
                                 break;
                             case SUCCESS_WITH_EXTRACTIONS:
                                 mAnalysisCompleted = true;
-                                analysisScreenPresenterExtension.getLastAnalyzedDocumentProvider()
-                                        .update(new RemoteAnalyzedDocument(
-                                                        resultHolder.getDocumentId(),
-                                                        resultHolder.getDocumentFileName()
-                                                )
-                                        );
-                                if (resultHolder.getExtractions().isEmpty()) {
-                                    trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
-                                    getAnalysisFragmentListenerOrNoOp()
-                                            .onProceedToNoExtractionsScreen(mMultiPageDocument);
-                                    return null;
-                                }
+                                extension.getLastAnalyzedDocumentProvider()
+                                        .update(remoteAnalyzedDocument);
+                                getView().showAttachDocToTransactionDialog(
+                                        () -> {
+                                            if (resultHolder.getExtractions().isEmpty()) {
+                                                proceedSuccessNoExtractions();
+                                            } else {
+                                                proceedWithExtractions(resultHolder);
+                                            }
 
-                                getAnalysisFragmentListenerOrNoOp()
-                                        .onExtractionsAvailable(getMapOrEmpty(resultHolder.getExtractions()),
-                                                getMapOrEmpty(resultHolder.getCompoundExtractions()),
-                                                getListOrEmpty(resultHolder.getReturnReasons()));
+                                            return null;
+                                        }, alwaysAttach -> {
+                                            extension
+                                                    .getAttachDocToTransactionDialogProvider()
+                                                    .update(remoteAnalyzedDocument);
+                                            proceedWithExtractions(resultHolder);
+                                            return null;
+                                        }
 
+                                );
+                                break;
                             case NO_NETWORK_SERVICE:
                                 break;
                             default:
@@ -343,6 +357,19 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         return null;
                     }
                 });
+    }
+
+    private void proceedSuccessNoExtractions() {
+        trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
+        getAnalysisFragmentListenerOrNoOp()
+                .onProceedToNoExtractionsScreen(mMultiPageDocument);
+    }
+
+    private void proceedWithExtractions(AnalysisInteractor.ResultHolder resultHolder) {
+        getAnalysisFragmentListenerOrNoOp()
+                .onExtractionsAvailable(getMapOrEmpty(resultHolder.getExtractions()),
+                        getMapOrEmpty(resultHolder.getCompoundExtractions()),
+                        getListOrEmpty(resultHolder.getReturnReasons()));
     }
 
     private void loadDocumentData() {

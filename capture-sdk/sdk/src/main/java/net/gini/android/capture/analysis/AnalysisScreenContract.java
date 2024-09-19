@@ -16,6 +16,9 @@ import net.gini.android.capture.internal.util.Size;
 import java.util.List;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.
@@ -63,6 +66,9 @@ interface AnalysisScreenContract {
 
         abstract void showError(String errorMessage, Document document);
         abstract void showError(ErrorType errorType, Document document);
+        abstract void showAttachDocToTransactionDialog(
+                Function0<Unit> onDismissed, Function1<Boolean, Unit> onAttach
+        );
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements

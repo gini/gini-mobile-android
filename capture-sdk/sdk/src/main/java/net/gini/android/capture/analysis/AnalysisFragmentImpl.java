@@ -4,6 +4,7 @@ import static net.gini.android.capture.internal.util.ActivityHelper.forcePortrai
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
@@ -54,6 +56,8 @@ import java.util.List;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
@@ -73,6 +77,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
+    private final AnalysisFragmentExtension extension;
+    private ComposeView composeView;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
@@ -84,6 +90,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         }
         mCancelListener = cancelListener;
         createPresenter(mFragment.getActivity(), document, documentAnalysisErrorMessage); // NOPMD - overridable for testing
+        extension = new AnalysisFragmentExtension();
+
     }
 
     @VisibleForTesting
@@ -212,6 +220,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         );
     }
 
+    @Override
+    void showAttachDocToTransactionDialog(Function0<Unit> onDismissed, Function1<Boolean, Unit> onAttach) {
+        extension.showAttachDocToTransactionDialog(composeView,
+                onDismissed, onAttach);
+    }
+
     private void rotateDocumentImageView(final int rotationForDisplay) {
         if (rotationForDisplay == 0) {
             return;
@@ -256,6 +270,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mAnalysisOverlay = view.findViewById(R.id.gc_analysis_overlay);
         topAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
+        composeView = view.findViewById(R.id.compose_view);
     }
 
     private void createHintsAnimator(@NonNull final View view) {

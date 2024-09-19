@@ -16,11 +16,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipChildren="false"
-        android:background="@color/gc_dark_01"
         android:alpha="@dimen/gc_analysis_preview_alpha"
+        android:background="@color/gc_dark_01"
+        android:clipChildren="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/gc_analysis_overlay"
         app:layout_constraintHorizontal_bias="0.5"
@@ -45,8 +46,8 @@
         android:layout_height="0dp"
         android:background="?attr/backgroundColor"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar">
 
         <Space
             android:layout_width="match_parent"
@@ -64,9 +65,9 @@
             style="@style/GiniCaptureTheme.Typography.Body2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_marginStart="@dimen/gc_large"
             android:layout_marginEnd="@dimen/gc_large"
+            android:gravity="center"
             android:text="@string/gc_analysis_activity_indicator_message"
             android:visibility="gone"
             tools:visibility="visible" />
@@ -84,9 +85,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/gc_large_32"
         android:layout_marginStart="@dimen/gc_large"
         android:layout_marginEnd="@dimen/gc_large"
+        android:layout_marginBottom="@dimen/gc_large_32"
         android:background="@drawable/gc_analysis_tips_background"
         android:minHeight="@dimen/gc_analysis_hint_container_min_height"
         android:paddingTop="@dimen/gc_medium"
@@ -131,4 +132,13 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/compose_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

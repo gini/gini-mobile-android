@@ -7,6 +7,7 @@ import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -251,6 +252,8 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.switchTransactionDocsFeature.isChecked =
             configuration.isTransactionDocsEnabled
 
+        binding.layoutTransactionDocsToggles.switchAlwaysAttachDocs.isChecked =
+            configurationViewModel.getAlwaysAttachSetting(this)
 
         binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.hint = configuration.clientId
 
@@ -707,6 +710,11 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+
+        // 44 Transaction docs always attach checked
+        binding.layoutTransactionDocsToggles.switchAlwaysAttachDocs.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setAlwaysAttachSetting(this, isChecked)
+        }
     }
 
     private fun applyClientSecretAndClientId() {
@@ -716,5 +724,4 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationFlow.clientSecret
         )
     }
-
 }

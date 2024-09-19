@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.exampleapp.ui
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
@@ -10,6 +11,9 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.exampleapp.R
@@ -51,10 +55,36 @@ class ConfigurationViewModel @Inject constructor(
     internal val defaultNetworkServicesProvider: DefaultNetworkServicesProvider
 ) : ViewModel() {
 
-    private val _disableCameraPermissionFlow = MutableStateFlow<Boolean>(false)
+    private val _disableCameraPermissionFlow = MutableStateFlow(false)
     val disableCameraPermissionFlow: StateFlow<Boolean> = _disableCameraPermissionFlow
 
     private val _configurationFlow = MutableStateFlow(Configuration())
+
+    fun getAlwaysAttachSetting(context: Context): Boolean {
+        GiniBank.initializeTransactionDocsFeature(
+            context,
+            TransactionDocsConfiguration(_configurationFlow.value.isTransactionDocsEnabled)
+        )
+
+        return runBlocking {
+            GiniBank.transactionDocs.transactionDocsSettings.getAlwaysAttachSetting().first()
+        }.also {
+            GiniBank.releaseTransactionDocsFeature(context)
+        }
+    }
+
+    fun setAlwaysAttachSetting(context: Context, isChecked: Boolean) {
+        GiniBank.initializeTransactionDocsFeature(
+            context,
+            TransactionDocsConfiguration(_configurationFlow.value.isTransactionDocsEnabled)
+        )
+        viewModelScope.launch {
+            GiniBank.transactionDocs.transactionDocsSettings.setAlwaysAttachSetting(
+                isChecked
+            )
+        }
+    }
+
     val configurationFlow: StateFlow<Configuration> = _configurationFlow
 
     fun disableCameraPermission(cameraPermission: Boolean) {
@@ -325,9 +355,12 @@ class ConfigurationViewModel @Inject constructor(
             configureLogging()
         }
 
-        GiniBank
-            .initializeTransactionDocsFeature(context, TransactionDocsConfiguration(true))
-
+        GiniBank.initializeTransactionDocsFeature(
+            context,
+            TransactionDocsConfiguration(
+                configuration.isTransactionDocsEnabled
+            )
+        )
     }
 
     private class GiniCaptureEventTracker : EventTracker {
