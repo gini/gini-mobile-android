@@ -7,7 +7,7 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewComponent
-import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.util.BackListener
 
 
 internal class ReviewBottomSheetViewModel private constructor(private val paymentComponent: PaymentComponent, private val reviewConfiguration: ReviewConfiguration, private val giniPaymentModule: GiniInternalPaymentModule, val backListener: BackListener?): ViewModel() {

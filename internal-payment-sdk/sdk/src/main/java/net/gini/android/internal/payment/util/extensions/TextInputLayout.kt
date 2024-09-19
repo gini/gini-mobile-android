@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.utils.extensions
+package net.gini.android.internal.payment.util.extensions
 
 import androidx.annotation.StringRes
 import com.google.android.material.textfield.TextInputLayout

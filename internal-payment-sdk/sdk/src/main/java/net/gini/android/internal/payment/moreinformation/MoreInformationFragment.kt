@@ -27,20 +27,19 @@ import net.gini.android.internal.payment.databinding.GpsFragmentPaymentMoreInfor
 import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.util.BackListener
 import net.gini.android.internal.payment.util.autoCleared
 import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.util.extensions.getLocaleStringResource
-import net.gini.android.internal.payment.utils.BackListener
 import java.util.Locale
 
 /**
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
  * [PaymentComponent] instance to show the icons of the available payment provider apps.
  */
-class MoreInformationFragment private constructor(private val paymentComponent: PaymentComponent?,
-                                                  private val backListener: BackListener? = null
-): Fragment() {
-
+class MoreInformationFragment private constructor(
+    private val paymentComponent: PaymentComponent?,
+    private val backListener: BackListener? = null) : Fragment() {
     constructor() : this(paymentComponent = null)
 
     private var binding: GpsFragmentPaymentMoreInformationBinding by autoCleared()

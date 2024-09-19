@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.utils
+package net.gini.android.internal.payment.util
 
 import android.app.Dialog
 import android.graphics.drawable.ColorDrawable
@@ -9,8 +9,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.internal.payment.R
-import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
-import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
+import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentTheme
+import net.gini.android.internal.payment.util.extensions.wrappedWithGiniPaymentTheme
 
 open class GpsBottomSheetDialogFragment: BottomSheetDialogFragment() {
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {

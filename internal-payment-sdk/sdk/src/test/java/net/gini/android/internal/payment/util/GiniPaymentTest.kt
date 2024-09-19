@@ -21,7 +21,6 @@ import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
 import net.gini.android.internal.payment.review.ValidationMessage
-import net.gini.android.internal.payment.utils.GiniPaymentManager
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
 import org.junit.Before
 import org.junit.Rule

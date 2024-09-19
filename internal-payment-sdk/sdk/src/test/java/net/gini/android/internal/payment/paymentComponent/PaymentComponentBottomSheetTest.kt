@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.paymentComponent
+package net.gini.android.internal.payment.paymentComponent
 
 import android.widget.Button
 import androidx.fragment.app.testing.launchFragmentInContainer
@@ -8,11 +8,11 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import net.gini.android.internal.payment.paymentComponentBottomSheet.PaymentComponentBottomSheet
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
-import net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheet
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

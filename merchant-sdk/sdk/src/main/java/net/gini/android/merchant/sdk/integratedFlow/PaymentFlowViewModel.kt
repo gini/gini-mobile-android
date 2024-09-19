@@ -138,7 +138,10 @@ internal class PaymentFlowViewModel(
     class Factory(val paymentDetails: PaymentDetails, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentFlowViewModel(paymentDetails = paymentDetails,paymentFlowConfiguration = paymentFlowConfiguration, giniMerchant = giniMerchant) as T
+            return PaymentFlowViewModel(
+                paymentDetails = paymentDetails,
+                paymentFlowConfiguration = paymentFlowConfiguration,
+                giniMerchant = giniMerchant) as T
         }
     }
 

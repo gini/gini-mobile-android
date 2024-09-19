@@ -18,7 +18,7 @@ import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.utils.GiniPaymentManager
+import net.gini.android.internal.payment.util.GiniPaymentManager
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

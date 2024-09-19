@@ -7,7 +7,8 @@
     <ID>EmptyClassBlock:PaymentFileProvider.kt$PaymentFileProvider${ }</ID>
     <ID>EmptyElseBlock:IntervalClickListener.kt$IntervalClickListener$if (view == null) return</ID>
     <ID>EmptyFunctionBlock:Extensions.kt$&lt;no name provided>${ }</ID>
-    <ID>InvalidPackageDeclaration:PaymentProviderApp.kt$package net.gini.android.internal.payment.paymentprovider</ID>
+    <ID>InvalidPackageDeclaration:PaymentProviderApp.kt$package
+        net.gini.android.internal.payment.paymentProvider</ID>
     <ID>LongMethod:PaymentComponentView.kt$PaymentComponentView$override fun onAttachedToWindow()</ID>
     <ID>MagicNumber:Context.kt$123</ID>
     <ID>MagicNumber:Extensions.kt$&lt;no name provided>$100</ID>

@@ -1,4 +1,4 @@
-package net.gini.android.internal.payment.utils
+package net.gini.android.internal.payment.util
 
 /**
  * Represents the currently visible screen presented in [PaymentFragment]
@@ -38,4 +38,10 @@ sealed class DisplayedScreen {
      * Payment details review screen.
      */
     object ReviewScreen: DisplayedScreen()
+
+    /**
+     * Entrypoint to the payment flow - shows which bank is selected
+     * (or prompts the user to choose a payment provider if there is no previous selection) for making the payment.
+     */
+    object PaymentComponentBottomSheet: DisplayedScreen()
 }
