@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import net.gini.android.internal.payment.databinding.GpsItemFaqAnswerBinding
 import net.gini.android.internal.payment.databinding.GpsItemFaqLabelBinding
-import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import java.util.Locale
 
 internal class FaqExpandableListAdapter(

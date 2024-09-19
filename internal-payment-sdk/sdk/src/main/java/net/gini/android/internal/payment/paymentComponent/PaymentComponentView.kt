@@ -17,10 +17,10 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
 import net.gini.android.internal.payment.databinding.GpsViewPaymentComponentBinding
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.internal.payment.util.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
-import net.gini.android.internal.payment.util.extensions.setBackgroundTint
-import net.gini.android.internal.payment.util.extensions.wrappedWithGiniPaymentTheme
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.setBackgroundTint
+import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 
@@ -59,7 +59,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         }
 
     /**
-     * Sets the payable state of the [PaymentComponentView]. If `true`, the view will be shown, otherwise it will be hidden.
+     * Sets the payable state of the [PaymentComponentView].
+     * If `true`, the view will be shown, otherwise it will be hidden.
      */
 
     var isPayable: Boolean = false
@@ -163,7 +164,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     /**
-     * Resets the internal state of the [PaymentComponentView] to its default state. This should be called before the view is reused.
+     * Resets the internal state of the [PaymentComponentView] to its default state.
+     * This should be called before the view is reused.
      */
     fun prepareForReuse() {
         isPayable = false
@@ -267,7 +269,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun show() {
         LOG.debug("Showing payment component")
-        binding.gpsPoweredByGini.visibility = if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else GONE
+        binding.gpsPoweredByGini.visibility =
+            if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else GONE
         changeLabelsVisibilityIfNeeded()
     }
 

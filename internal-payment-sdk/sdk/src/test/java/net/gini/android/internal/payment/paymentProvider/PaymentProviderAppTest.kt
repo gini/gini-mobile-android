@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.paymentprovider
+package net.gini.android.internal.payment.paymentProvider
 
 import android.content.ComponentName
 import android.content.Intent

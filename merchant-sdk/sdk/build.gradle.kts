@@ -24,6 +24,8 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
 
+        testOptions.targetSdk = libs.versions.android.targetSdk.get().toInt()
+
         // Use the test runner with JUnit4 support
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")

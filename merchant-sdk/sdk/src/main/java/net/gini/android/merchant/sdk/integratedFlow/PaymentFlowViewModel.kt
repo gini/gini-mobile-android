@@ -13,7 +13,7 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentComponent.BankPickerRows
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.FlowBottomSheetsManager
 import net.gini.android.internal.payment.utils.PaymentNextStep
@@ -138,7 +138,10 @@ internal class PaymentFlowViewModel(
     class Factory(val paymentDetails: PaymentDetails, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentFlowViewModel(paymentDetails = paymentDetails,paymentFlowConfiguration = paymentFlowConfiguration, giniMerchant = giniMerchant) as T
+            return PaymentFlowViewModel(
+                paymentDetails = paymentDetails,
+                paymentFlowConfiguration = paymentFlowConfiguration,
+                giniMerchant = giniMerchant) as T
         }
     }
 

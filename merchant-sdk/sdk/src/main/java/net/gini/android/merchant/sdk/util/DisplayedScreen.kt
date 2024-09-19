@@ -1,5 +1,7 @@
 package net.gini.android.merchant.sdk.util
 
+import net.gini.android.internal.payment.utils.DisplayedScreen as InternalDisplayedScreen
+
 /**
  * Represents the currently visible screen presented in [PaymentFragment]
  */
@@ -46,14 +48,16 @@ sealed class DisplayedScreen {
     object ReviewBottomSheet: DisplayedScreen()
 
     companion object {
-        fun toDisplayedScreen(screen: net.gini.android.internal.payment.utils.DisplayedScreen): DisplayedScreen = when (screen) {
-            net.gini.android.internal.payment.utils.DisplayedScreen.Nothing -> Nothing
-            net.gini.android.internal.payment.utils.DisplayedScreen.BankSelectionBottomSheet -> BankSelectionBottomSheet
-            net.gini.android.internal.payment.utils.DisplayedScreen.InstallAppBottomSheet -> InstallAppBottomSheet
-            net.gini.android.internal.payment.utils.DisplayedScreen.MoreInformationFragment -> MoreInformationFragment
-            net.gini.android.internal.payment.utils.DisplayedScreen.OpenWithBottomSheet -> OpenWithBottomSheet
-            net.gini.android.internal.payment.utils.DisplayedScreen.ReviewScreen -> ReviewBottomSheet
-            net.gini.android.internal.payment.utils.DisplayedScreen.ShareSheet -> ShareSheet
-        }
+        fun toDisplayedScreen(screen: InternalDisplayedScreen): DisplayedScreen =
+            when (screen) {
+                InternalDisplayedScreen.Nothing -> Nothing
+                InternalDisplayedScreen.BankSelectionBottomSheet -> BankSelectionBottomSheet
+                InternalDisplayedScreen.InstallAppBottomSheet -> InstallAppBottomSheet
+                InternalDisplayedScreen.MoreInformationFragment -> MoreInformationFragment
+                InternalDisplayedScreen.OpenWithBottomSheet -> OpenWithBottomSheet
+                InternalDisplayedScreen.ReviewScreen -> ReviewBottomSheet
+                InternalDisplayedScreen.ShareSheet -> ShareSheet
+                InternalDisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet
+            }
     }
 }

@@ -10,12 +10,23 @@ import android.util.TypedValue
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.view.ContextThemeWrapper
 import net.gini.android.internal.payment.R
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.CustomLocaleContextWrapper
 import net.gini.android.internal.payment.utils.ShareWithBroadcastReceiver
-
+import java.util.Locale
 
 internal fun Context.wrappedWithGiniPaymentTheme(): Context = ContextThemeWrapper(this, R.style.GiniPaymentTheme)
 
+internal fun Context.wrappedWithGiniPaymentThemeAndLocale(locale: Locale? = null): Context =
+    if (locale == null || locale.language.isEmpty()) {
+        this.wrappedWithGiniPaymentTheme()
+    } else {
+        this.wrappedWithCustomLocale(locale).wrappedWithGiniPaymentTheme()
+    }
+
+internal fun Context.wrappedWithCustomLocale(locale: Locale): Context = CustomLocaleContextWrapper.wrap(this, locale)
+
+// In a future refactoring we can split extensions into files according to what component they extend
 @VisibleForTesting
 internal fun Context.generateBitmapDrawableIcon(icon: ByteArray, iconSize: Int): BitmapDrawable? {
     return BitmapFactory.decodeByteArray(icon, 0, iconSize)

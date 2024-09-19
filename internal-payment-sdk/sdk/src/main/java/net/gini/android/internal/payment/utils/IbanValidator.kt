@@ -1,6 +1,6 @@
 package net.gini.android.internal.payment.utils
 
-import java.util.*
+import java.util.Locale
 
 private val countryIbanLength = mapOf(
     "AL" to 28, "AD" to 24, "AT" to 20, "AZ" to 28, "BH" to 22, "BE" to 16,

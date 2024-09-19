@@ -8,7 +8,7 @@ import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.toPaymentRequest
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.review.validate
 import net.gini.android.internal.payment.utils.extensions.toBackendFormat
@@ -42,30 +42,23 @@ internal class GiniPaymentManager(
         if (paymentProviderApp == null) {
             LOG.error("No selected payment provider app")
             paymentEventListener?.onError(Exception("No selected payment provider app"))
-//            giniInternalPaymentModule.emitSDKEvent(GiniInternalPaymentModule.PaymentState.Error(Exception("No selected payment provider app")))
             return
         }
 
         if (paymentProviderApp.installedPaymentProviderApp == null) {
             LOG.error("Payment provider app not installed")
             paymentEventListener?.onError(Exception("Payment provider app not installed"))
-//            giniInternalPaymentModule.emitSDKEvent(GiniInternalPaymentModule.PaymentState.Error(Exception("Payment provider app not installed")))
             return
         }
 
         val valid = validatePaymentDetails(paymentDetails)
         if (valid) {
             paymentEventListener?.onLoading()
-//            giniInternalPaymentModule.emitSDKEvent(GiniInternalPaymentModule.PaymentState.Loading)
-//            giniInternalPaymentModule.emitSDKEvent(
                 try {
                     paymentEventListener?.onPaymentRequestCreated(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)
-//                    GiniInternalPaymentModule.PaymentState.Success(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)
                 } catch (throwable: Throwable) {
                     paymentEventListener?.onError(Exception(throwable))
-//                    GiniInternalPaymentModule.PaymentState.Error(throwable)
                 }
-//            )
         }
     }
 
