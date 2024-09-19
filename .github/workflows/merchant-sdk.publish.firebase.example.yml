@@ -1,0 +1,53 @@
+name: Publish Merchant SDK Example App QA Build to Firebase App Distribution
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  check:
+    uses: ./.github/workflows/merchant-sdk.check.yml
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
+        
+  publish_to_app_center:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2.0'
+          bundler-cache: true
+
+      - name: build release example app for QA
+        run: >
+          ./gradlew merchant-sdk:example-app:assembleQaRelease
+          -PclientId="gini-mobile-test" 
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+          -PreleaseKeystoreFile="merchant_sdk_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="merchant_sdk_example"
+          -PreleaseKeyPassword='${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'      
+
+      - name: Distribute Merchant sdk example apk to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.GINI_MERCHANT_SDK_EXAMPLE_APP_FIREBASE_ID}}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIAL_FILE_CONTENT }}
+          groups: testers
+          file: merchant-sdk/example-app/build/outputs/apk/qa/release/example-app-qa-release.apk
+          releaseNotes: |
+            ${{ format('{{ {0} {1} }}', github.ref, github.sha) }}
+            ${{ github.event.head_commit.message }}
