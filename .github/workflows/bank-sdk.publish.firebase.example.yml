@@ -3,6 +3,12 @@ name: Publish Bank SDK Example App QA Build to Firebase distribution
 on:
   workflow_dispatch:
   push:
+    paths:
+      - 'bank-sdk/**'
+      - 'capture-sdk/**'
+      - 'bank-api-library/**'
+      - 'core-api-library/**'
+      - 'gradle/**'
 
 jobs:
   check:
