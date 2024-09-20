@@ -44,7 +44,13 @@ jobs:
           -PreleaseKeystoreFile="merchant_sdk_example.jks"
           -PreleaseKeystorePassword='${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
           -PreleaseKeyAlias="merchant_sdk_example"
-          -PreleaseKeyPassword='${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'      
+          -PreleaseKeyPassword='${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+
+      - name: Check file existence
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "./merchant-sdk/example-app/build/outputs/apk/qa/release/example-app-qa-release.apk"
+          fail: true
 
       - name: Distribute Merchant sdk example apk to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
