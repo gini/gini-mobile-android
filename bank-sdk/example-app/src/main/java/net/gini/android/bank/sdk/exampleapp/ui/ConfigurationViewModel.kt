@@ -18,6 +18,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomCameraNavigationBa
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomLottiLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter
@@ -77,7 +78,10 @@ class ConfigurationViewModel @Inject constructor(
 
         var captureConfiguration = CaptureConfiguration(
             // 37 Debug mode
-            networkService = if (configuration.isDebugModeEnabled) defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled else defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled,
+            networkService = if (configuration.isDebugModeEnabled)
+                defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled
+            else
+                defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled,
             // 1 file import
             fileImportEnabled = configuration.isFileImportEnabled,
             // 2 QR code scanning
@@ -281,6 +285,13 @@ class ConfigurationViewModel @Inject constructor(
             GiniBank.skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter()
         } else {
             GiniBank.skontoNavigationBarBottomAdapter = null
+        }
+
+        if (configuration.isDigitalInvoiceSkontoCustomNavBarEnabled) {
+            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter =
+                CustomDigitalInvoiceSkontoNavigationBarBottomAdapter()
+        } else {
+            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter = null
         }
 
         if (configuration.isSkontoHelpCustomNavBarEnabled) {

@@ -394,7 +394,8 @@ class AnalysisScreenPresenterTest {
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
-                AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS
+                AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
+                "dummy_doc_id",
             )
         )
         val presenter =
@@ -431,7 +432,8 @@ class AnalysisScreenPresenterTest {
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
-                AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS
+                AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
+                "dummy_doc_id"
             )
         )
         val presenter =
@@ -465,7 +467,7 @@ class AnalysisScreenPresenterTest {
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
-                extractions, compoundExtraction, returnReasons
+                extractions, compoundExtraction, returnReasons, "dummy_doc_id"
             )
         )
         val presenter =
@@ -490,7 +492,8 @@ class AnalysisScreenPresenterTest {
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
-                AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS
+                AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
+                "dummy_doc_id"
             )
         )
         val presenter = spy(
@@ -637,7 +640,8 @@ class AnalysisScreenPresenterTest {
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
-                AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS
+                AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
+                "dummy_doc_id"
             )
         )
         val memoryStore = mock<ImageMultiPageDocumentMemoryStore>()

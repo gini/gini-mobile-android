@@ -13,6 +13,8 @@ import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.bank.api.requests.ResolvePaymentBody
 import net.gini.android.bank.api.response.ConfigurationResponse
 import net.gini.android.bank.api.response.ResolvePaymentResponse
+import net.gini.android.core.api.response.DocumentLayoutResponse
+import net.gini.android.core.api.response.DocumentPageResponse
 import net.gini.android.core.api.response.PaymentRequestResponse
 import net.gini.android.core.api.response.PaymentResponse
 import okhttp3.RequestBody
@@ -166,6 +168,20 @@ class BankApiDocumentRemoteSourceTest {
             id: String
         ): Response<PaymentRequestResponse> {
             // Is tested in core api library
+            return Response.success(null)
+        }
+
+        override suspend fun getDocumentLayout(
+            bearer: Map<String, String>,
+            documentId: String
+        ): Response<DocumentLayoutResponse> {
+            return Response.success(null)
+        }
+
+        override suspend fun getDocumentPages(
+            bearer: Map<String, String>,
+            documentId: String
+        ): Response<List<DocumentPageResponse>> {
             return Response.success(null)
         }
 

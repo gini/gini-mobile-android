@@ -44,14 +44,15 @@
     <string name="gbs_skonto_screen_title">Skonto</string>
     <!--   region Section Invoice Scan -->
     <string name="gbs_skonto_section_invoice_preview_title">Rechnung</string>
-    <string name="gbs_skonto_invoice_section_preview_subtitle">Tippen Sie hier zur Ansicht</string>
+    <string name="gbs_skonto_invoice_section_preview_subtitle">Zur Ansicht hier tippen</string>
     <!--   endregion  -->
     <!--   region Section Discount -->
     <string name="gbs_skonto_section_discount_title">Mit Skonto</string>
     <string name="gbs_skonto_section_discount_hint_label_enabled">  •  Aktiviert</string>
     <string name="gbs_skonto_section_discount_info_banner_normal_message">Zahlung in %1$s: %2$s Skonto</string>
     <string name="gbs_skonto_section_discount_info_banner_pay_today_message">Zahlung heute: %1$s Skonto</string>
-    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">%1$s Skonto sind bei Barzahlung innerhalb von %2$s möglich</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_message">Zahlen Sie diese Rechnung innerhalb von %2$s in bar und Sie erhalten %1$s Skonto</string>
+    <string name="gbs_skonto_section_discount_info_banner_pay_cash_today_message">Zahlen Sie heute bar und erhalten Sie %1$s Skonto</string>
     <string name="gbs_skonto_section_discount_info_banner_date_expired_message">Die %1$s Skonto sind abgelaufen</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Betrag nach Abzug</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Ablaufdatum Skonto</string>
@@ -68,8 +69,8 @@
     <string name="gbs_skonto_section_footer_continue_button_text">Zahlung fortsetzen</string>
     <!--   endregion -->
     <!--   region InfoDialog -->
-    <string name="gbs_skonto_section_info_dialog_pay_today_message">In dieser Rechnung ist ein Skonto enthalten – die Frist läuft heute ab.</string>
-    <string name="gbs_skonto_section_info_dialog_pay_cash_message">Von dieser Rechnung können Sie einen Skontobetrag abziehen, wenn Sie die Rechnung an einem Bankterminal mit Bareinzahlung bezahlen.</string>
+    <string name="gbs_skonto_section_info_dialog_pay_today_message">Von dieser Rechnung kann ein Skontobetrag abgezogen werden – die Frist läuft heute ab.</string>
+    <string name="gbs_skonto_section_info_dialog_pay_cash_message">Von dieser Rechnung können Sie einen Skontobetrag abziehen, wenn Sie diese in bar bezahlen.</string>
     <string name="gbs_skonto_section_info_dialog_date_expired_message">Diese Rechnung hätten Sie mit %1$s Skonto bezahlen können, die Skontofrist ist jedoch bereits abgelaufen.</string>
     <string name="gbs_skonto_section_info_dialog_ok_button_text">Verstanden</string>
     <!--   endregion -->
@@ -82,6 +83,12 @@
     <string name="gbs_skonto_help_item_adjust_payment_details">Zahlungsdetails genehmigen oder anpassen</string>
     <string name="gbs_skonto_help_item_pay_promptly">Geld sparen durch schnelles Bezahlen</string>
     <string name="gbs_skonto_help_footer_text">Machen Sie einfach ein Foto der Rechnung und die App erkennt automatisch die Rabatte. Überprüfen Sie die Details, bestätigen Sie und sparen Sie mit den Rabatten!</string>
+    <!--   endregion -->
+    <!--   region Skonto Invoice Preview -->
+    <string name="gbs_skonto_invoice_preview_title">Skonto-Details</string>
+    <string name="gbs_skonto_invoice_preview_expire_date">Ablaufdatum Skonto: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_final_amount">Betrag nach Abzug: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_full_amount">Betrag ohne Abzug: %1$s</string>
     <!--   endregion -->
     <!-- endregion -->
 </resources>

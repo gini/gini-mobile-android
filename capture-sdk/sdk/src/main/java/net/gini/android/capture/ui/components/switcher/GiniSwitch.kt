@@ -1,8 +1,13 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package net.gini.android.capture.ui.components.switcher
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,19 +25,22 @@ fun GiniSwitch(
     onCheckedChange: (Boolean) -> Unit,
     giniSwitchColors: GiniSwitchColors = GiniSwitchColors.colors(),
 ) {
-    Switch(modifier = modifier.scale(0.7f),
-        checked = checked,
-        onCheckedChange = onCheckedChange,
-        colors = with(giniSwitchColors) {
-            SwitchDefaults.colors(
-                uncheckedTrackColor = uncheckedTrackColor,
-                checkedTrackColor = checkedTrackColor,
-                uncheckedThumbColor = uncheckedThumbColor,
-                checkedThumbColor = checkedThumbColor,
-                checkedBorderColor = Color.Transparent,
-                uncheckedBorderColor = Color.Transparent,
-            )
-        })
+    CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+
+        Switch(modifier = modifier.scale(0.7f),
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = with(giniSwitchColors) {
+                SwitchDefaults.colors(
+                    uncheckedTrackColor = uncheckedTrackColor,
+                    checkedTrackColor = checkedTrackColor,
+                    uncheckedThumbColor = uncheckedThumbColor,
+                    checkedThumbColor = checkedThumbColor,
+                    checkedBorderColor = Color.Transparent,
+                    uncheckedBorderColor = Color.Transparent,
+                )
+            })
+    }
 }
 
 @Preview(showBackground = true)
