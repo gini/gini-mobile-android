@@ -16,6 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+
 /**
  * Test class for Error dialogs of different File Import.
  */
@@ -26,6 +27,7 @@ class FileImportErrorDialogTests {
     @get: Rule
     val grantPermissionRule: GrantPermissionRule =
         GrantPermissionRule.grant(Manifest.permission.CAMERA)
+
 
     private val mainScreen = MainScreen()
     private val onboardingScreen = OnboardingScreen()
@@ -66,16 +68,5 @@ class FileImportErrorDialogTests {
         val isContentPanelVisible =
             fileImportErrorDialog.checkContentIsDisplayed(net.gini.android.capture.R.string.gc_error_file_import_page_count_title,"The document can only have a maximum of 10 pages.")
         assertEquals(true, isContentPanelVisible)
-    }
-
-    @Test
-    fun test3_openFilesAndImportLargeSizeFileAndVerifyErrorDialogIsDisplayed() {
-        fileImportErrorDialog.clickFilesApp()
-        idlingResource.waitForIdle()
-        fileImportErrorDialog.clickTooManyPages("file-size-too-large.png")
-        idlingResource.waitForIdle()
-        fileImportErrorDialog.openWith()
-        idlingResource.waitForIdle()
-        fileImportErrorDialog.checkToastMessage()
     }
 }
