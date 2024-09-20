@@ -3,6 +3,11 @@ name: Publish Merchant SDK Example App QA Build to Firebase App Distribution
 on:
   workflow_dispatch:
   push:
+    paths:
+      - 'merchant-sdk/**'
+      - 'health-api-library/**'
+      - 'core-api-library/**'
+      - 'gradle/**'
 
 jobs:
   check:
