@@ -45,15 +45,18 @@ class DigitalInvoiceEditButtonTests {
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
-    @Test
-    fun test1_verifyNameIsUpdatedAfterEditing() {
+    private fun clickPhotoPaymentAndUploadFile() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
+    }
 
+    @Test
+    fun test1_verifyNameIsUpdatedAfterEditing() {
+        clickPhotoPaymentAndUploadFile()
         val isOnboardingScreenTextVisible = digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenTextVisible)
         val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
@@ -84,12 +87,7 @@ class DigitalInvoiceEditButtonTests {
 
     @Test
     fun test2_verifyUnitPriceIsUpdatedAfterEditing() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        clickPhotoPaymentAndUploadFile()
         val isOnboardingScreenTextVisible = digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenTextVisible)
         val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
@@ -117,12 +115,7 @@ class DigitalInvoiceEditButtonTests {
 
     @Test
     fun test3_verifyQuantityIsUpdatedAfterEditing() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        clickPhotoPaymentAndUploadFile()
         val isOnboardingScreenTextVisible = digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenTextVisible)
         val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
@@ -150,12 +143,7 @@ class DigitalInvoiceEditButtonTests {
 
     @Test
     fun test4_increaseQuantityByTappingPlus() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        clickPhotoPaymentAndUploadFile()
         val isOnboardingScreenTextVisible = digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenTextVisible)
         val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
@@ -183,12 +171,7 @@ class DigitalInvoiceEditButtonTests {
 
     @Test
     fun test5_decreaseQuantityByTappingMinus() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        clickPhotoPaymentAndUploadFile()
         val isOnboardingScreenTextVisible = digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenTextVisible)
         val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
@@ -221,12 +204,7 @@ class DigitalInvoiceEditButtonTests {
 
     @Test
     fun test6_verifyThatMinimumQuantityIs1() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        clickPhotoPaymentAndUploadFile()
         val isOnboardingScreenTextVisible = digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenTextVisible)
         val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
@@ -254,12 +232,7 @@ class DigitalInvoiceEditButtonTests {
 
     @Test
     fun test7_checkCurrencyForUnitPrice() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        clickPhotoPaymentAndUploadFile()
 
         val isOnboardingScreenTextVisible = digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenTextVisible)
@@ -283,12 +256,7 @@ class DigitalInvoiceEditButtonTests {
 
     @Test
     fun test8_clickCancelButtonAndVerifyItemDetailsRemainUnchanged() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        clickPhotoPaymentAndUploadFile()
 
         val isOnboardingScreenTextVisible =
             digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
@@ -326,12 +294,7 @@ class DigitalInvoiceEditButtonTests {
 
     @Test
     fun test9_verifyInlineErrorWhenNameFieldIsEmpty() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        clickPhotoPaymentAndUploadFile()
 
         val isOnboardingScreenTextVisible =
             digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
@@ -363,12 +326,7 @@ class DigitalInvoiceEditButtonTests {
 
     @Test
     fun test10_verifyInlineErrorWhenUnitPriceFieldIsEmpty() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        clickPhotoPaymentAndUploadFile()
 
         val isOnboardingScreenTextVisible =
             digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
