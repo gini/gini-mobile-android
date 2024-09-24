@@ -14,6 +14,7 @@ import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
+import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.error.ErrorFragment
 import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.util.CancelListener
@@ -25,6 +26,7 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.noresults.NoResultsFragment
+import net.gini.android.capture.provider.LastExtractionsProvider
 import net.gini.android.capture.review.multipage.MultiPageReviewFragment
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
@@ -54,6 +56,7 @@ class GiniCaptureFragment(
     private var didFinishWithResult = false
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+    private val lastExtractionsProvider : LastExtractionsProvider by getGiniCaptureKoin().inject()
 
 
     fun setListener(listener: GiniCaptureFragmentListener) {
@@ -209,6 +212,7 @@ class GiniCaptureFragment(
         returnReasons: MutableList<GiniCaptureReturnReason>
     ) {
         didFinishWithResult = true
+        lastExtractionsProvider.update(extractions)
         giniCaptureFragmentListener.onFinishedWithResult(
             CaptureSDKResult.Success(
                 extractions,
@@ -231,6 +235,7 @@ class GiniCaptureFragment(
 
     override fun onExtractionsAvailable(extractions: MutableMap<String, GiniCaptureSpecificExtraction>) {
         didFinishWithResult = true
+        lastExtractionsProvider.update(extractions)
         giniCaptureFragmentListener.onFinishedWithResult(
             CaptureSDKResult.Success(
                 extractions,

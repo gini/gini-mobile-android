@@ -20,6 +20,7 @@ import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.Transacti
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.TransactionDocInvoicePreviewInfoLinesFactory
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
+import net.gini.android.capture.provider.LastExtractionsProvider
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
@@ -31,6 +32,10 @@ fun TransactionDocs(
     val transactionDocs: GiniBankTransactionDocs? = remember { GiniBank.giniBankTransactionDocs }
     val transactionDocInvoicePreviewInfoLinesFactory: TransactionDocInvoicePreviewInfoLinesFactory =
         remember { getGiniBankKoin().get() }
+
+    val lastExtractionsProvider : LastExtractionsProvider = remember { getGiniBankKoin().get() }
+    val iban = lastExtractionsProvider.provide()["iban"]?.value
+    val amount = lastExtractionsProvider.provide()["amountToPay"]?.value
 
     Card(
         modifier = modifier,
@@ -55,9 +60,8 @@ fun TransactionDocs(
                     onDocumentClick(
                         it,
                         transactionDocInvoicePreviewInfoLinesFactory.create(
-                            "AAAAAAAAAAAAAAA",
-                            "11.11.1111",
-                            "123.23"
+                            iban ?: "Unknown IBAN",
+                            amount ?: "Unknown amount"
                         )
                     )
                 }

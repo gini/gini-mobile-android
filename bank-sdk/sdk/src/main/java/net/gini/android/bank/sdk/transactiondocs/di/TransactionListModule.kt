@@ -6,6 +6,7 @@ import net.gini.android.bank.sdk.transactiondocs.internal.GiniTransactionDocsSet
 import net.gini.android.bank.sdk.transactiondocs.internal.TransactionDocInvoicePreviewInfoLinesFactory
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.provider.LastExtractionsProvider
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -27,4 +28,7 @@ internal val transactionListModule = module {
 
     // Bridge between GiniCapture and GiniBank
     factory<AttachedToTransactionDocumentProvider> { getGiniCaptureKoin().get() }
+
+    // Bridge between GiniCapture and GiniBank
+    factory<LastExtractionsProvider> { getGiniCaptureKoin().get() }
 }

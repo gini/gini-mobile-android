@@ -32,6 +32,6 @@ class GiniTransactionDocsSettings(
         private const val DATA_STORE_NAME = "gini_transaction_docs_settings"
 
         private const val PARAM_NAME_ALWAYS_ATTACH = "always_attach"
-        private const val DEFAULT_ALWAYS_ATTACH = true
+        private const val DEFAULT_ALWAYS_ATTACH = false
     }
 }

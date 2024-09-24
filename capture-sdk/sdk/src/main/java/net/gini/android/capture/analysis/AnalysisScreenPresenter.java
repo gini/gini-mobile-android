@@ -289,11 +289,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                     @Override
                     public Void apply(final AnalysisInteractor.ResultHolder resultHolder,
                                       final Throwable throwable) {
-                        RemoteAnalyzedDocument remoteAnalyzedDocument =
-                                new RemoteAnalyzedDocument(
-                                        resultHolder.getDocumentId(),
-                                        resultHolder.getDocumentFileName()
-                                );
+
                         stopScanAnimation();
                         if (isStopped()) {
                             return null;
@@ -302,6 +298,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                             handleAnalysisError(throwable);
                             return null;
                         }
+                        RemoteAnalyzedDocument remoteAnalyzedDocument =
+                                new RemoteAnalyzedDocument(
+                                        resultHolder.getDocumentId(),
+                                        resultHolder.getDocumentFileName()
+                                );
                         final AnalysisInteractor.Result result = resultHolder.getResult();
                         switch (result) {
                             case SUCCESS_NO_EXTRACTIONS:
@@ -344,7 +345,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                         }
 
                                 );
-                                break;
                             case NO_NETWORK_SERVICE:
                                 break;
                             default:

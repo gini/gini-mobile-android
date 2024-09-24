@@ -15,6 +15,7 @@ import net.gini.android.capture.util.compose.collectFlow
 
 internal class AttachDocToTransactionDialogProviderImpl(
     private val giniTransactionDocsSettings: GiniTransactionDocsSettings,
+    private val giniBankTransactionDocsSettings: GiniTransactionDocsSettings,
 ) : AttachDocToTransactionDialogProvider {
 
     // TODO Refactor shortcut for hiding dialog later
@@ -35,7 +36,8 @@ internal class AttachDocToTransactionDialogProviderImpl(
             AnimatedVisibility(visible = dialogVisible) {
                 AttachDocumentToTransactionDialog(
                     onConfirm = onConfirm,
-                    onDismiss = onDismiss
+                    onDismiss = onDismiss,
+                    giniTransactionDocsSettings = giniBankTransactionDocsSettings,
                 )
             }
         }

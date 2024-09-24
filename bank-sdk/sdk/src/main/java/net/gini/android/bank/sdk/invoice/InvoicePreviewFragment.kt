@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -49,7 +50,7 @@ class InvoicePreviewFragment : Fragment() {
             setContent {
                 GiniTheme {
                     InvoicePreviewScreen(
-                        modifier = Modifier,
+                        modifier = Modifier.fillMaxSize(),
                         viewModel = viewModel,
                         navigateBack = navigateBack
                     )

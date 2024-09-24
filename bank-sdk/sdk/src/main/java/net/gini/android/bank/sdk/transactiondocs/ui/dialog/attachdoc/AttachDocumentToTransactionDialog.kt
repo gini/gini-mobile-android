@@ -18,12 +18,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.di.getGiniBankKoin
@@ -35,13 +37,12 @@ import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
 fun AttachDocumentToTransactionDialog(
+    giniTransactionDocsSettings: GiniTransactionDocsSettings,
     onDismiss: () -> Unit,
     onConfirm: (alwaysAttach: Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    colors: AttachDocumentToTransactionDialogColors = AttachDocumentToTransactionDialogColors.colors()
+    colors: AttachDocumentToTransactionDialogColors = AttachDocumentToTransactionDialogColors.colors(),
 ) {
-
-    val giniTransactionDocsSettings by remember { getGiniBankKoin().inject<GiniTransactionDocsSettings>() }
 
     var alwaysAttachChecked by remember { mutableStateOf(true) }
 
@@ -50,7 +51,11 @@ fun AttachDocumentToTransactionDialog(
     }
 
     Dialog(
-        onDismissRequest = onDismiss
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false
+        )
     ) {
         Card(
             modifier = modifier.fillMaxWidth(),
@@ -70,6 +75,7 @@ fun AttachDocumentToTransactionDialog(
                     tint = colors.headerIconColor,
                 )
                 Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     text = stringResource(id = R.string.gbs_td_attach_document_dialog_title),
                     style = GiniTheme.typography.headline5,
                     color = colors.titleColor,
@@ -92,9 +98,10 @@ fun AttachDocumentToTransactionDialog(
                     modifier = Modifier
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     TextButton(
+                        modifier = Modifier.padding(start = 52.dp),
                         onClick = { onDismiss() }) {
                         Text(
                             text = stringResource(id = R.string.gbs_td_attach_document_dialog_cancel_button_text),
@@ -145,21 +152,23 @@ private fun AlwaysAttachCheckableText(
 @Preview
 @Composable
 fun AttachDocumentToTransactionDialogPreview() {
-    GiniTheme {
-        AttachDocumentToTransactionDialog(
-            onDismiss = {},
-            onConfirm = {}
-        )
-    }
+    PreviewContent()
 }
 
 @Preview(uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun AttachDocumentToTransactionDialogPreviewDark() {
+    PreviewContent()
+}
+
+@Composable
+private fun PreviewContent() {
     GiniTheme {
+        val ctx = LocalContext.current
         AttachDocumentToTransactionDialog(
             onDismiss = {},
-            onConfirm = {}
+            onConfirm = {},
+            giniTransactionDocsSettings = GiniTransactionDocsSettings(ctx)
         )
     }
 }

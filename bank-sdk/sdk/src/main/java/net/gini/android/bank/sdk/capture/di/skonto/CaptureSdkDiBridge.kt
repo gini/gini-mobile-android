@@ -12,7 +12,8 @@ val captureSdkDiBridge = module {
 
     factory<AttachDocToTransactionDialogProvider> {
         AttachDocToTransactionDialogProviderImpl(
-            giniTransactionDocsSettings = getGiniBankKoin().get()
+            giniTransactionDocsSettings = getGiniBankKoin().get(),
+            giniBankTransactionDocsSettings = getGiniBankKoin().get()
         )
     }
 
