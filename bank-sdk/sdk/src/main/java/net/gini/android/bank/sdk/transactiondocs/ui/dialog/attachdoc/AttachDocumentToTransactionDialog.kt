@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.di.getGiniBankKoin
@@ -45,10 +46,6 @@ fun AttachDocumentToTransactionDialog(
 ) {
 
     var alwaysAttachChecked by remember { mutableStateOf(true) }
-
-    LaunchedEffect(alwaysAttachChecked) {
-        giniTransactionDocsSettings.setAlwaysAttachSetting(alwaysAttachChecked)
-    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -110,6 +107,9 @@ fun AttachDocumentToTransactionDialog(
                     }
                     TextButton(
                         onClick = {
+                            runBlocking {
+                                giniTransactionDocsSettings.setAlwaysAttachSetting(alwaysAttachChecked)
+                            }
                             onConfirm(alwaysAttachChecked)
                         }) {
                         Text(

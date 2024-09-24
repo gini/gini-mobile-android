@@ -173,7 +173,6 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                         tryShowingSkontoScreen(result)
                         return
                     }
-
                     else -> {
                         finishWithResult(interceptSuccessResult(result).toCaptureResult())
                     }

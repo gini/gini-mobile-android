@@ -36,7 +36,6 @@ import net.gini.android.bank.sdk.invoice.InvoicePreviewFragmentArgs
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
-import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniTransactionDocsSettings
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
@@ -191,6 +190,11 @@ object GiniBank {
         GiniBank.captureConfiguration = captureConfiguration
         GiniCapture.newInstance(context).applyConfiguration(captureConfiguration).build()
         giniCapture = GiniCapture.getInstance()
+
+        releaseTransactionDocsFeature(context)
+        BankSdkIsolatedKoinContext.init(context)
+        getGiniCaptureKoin().loadModules(listOf(captureSdkDiBridge))
+        this.giniBankTransactionDocs = GiniBankTransactionDocs()
     }
 
 
@@ -262,6 +266,7 @@ object GiniBank {
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
         )
         releaseCapture(context)
+        releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }
 
@@ -292,6 +297,7 @@ object GiniBank {
         )
 
         digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
+        releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }
 
@@ -576,20 +582,8 @@ object GiniBank {
         )
     }
 
-    fun initializeTransactionDocsFeature(
-        context: Context,
-        transactionDocsConfiguration: TransactionDocsConfiguration
-    ) {
-        releaseTransactionDocsFeature(context)
-        BankSdkIsolatedKoinContext.init(context)
-        getGiniCaptureKoin().loadModules(listOf(captureSdkDiBridge))
-        this.giniBankTransactionDocs = GiniBankTransactionDocs(
-            configuration = transactionDocsConfiguration,
-        )
-    }
-
     @Suppress("UnusedParameter")
-    fun releaseTransactionDocsFeature(context: Context) {
+    private fun releaseTransactionDocsFeature(context: Context) {
         giniBankTransactionDocs = null
     }
 }

@@ -33,7 +33,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBa
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
-import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator

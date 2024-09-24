@@ -5,8 +5,6 @@ import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDo
 
 interface TransactionDocs {
 
-    val configuration: TransactionDocsConfiguration
-
     val transactionDocsSettings: TransactionDocsSettings
 
     val extractionDocumentsFlow: Flow<List<TransactionDoc>>

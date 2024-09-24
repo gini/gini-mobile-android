@@ -1,14 +1,13 @@
 package net.gini.android.bank.sdk.transactiondocs.internal
 
 import kotlinx.coroutines.flow.map
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
-import net.gini.android.bank.sdk.transactiondocs.TransactionDocsConfiguration
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 
 internal class GiniBankTransactionDocs internal constructor(
-    override val configuration: TransactionDocsConfiguration,
     override val transactionDocsSettings: GiniTransactionDocsSettings =
         getGiniBankKoin().get(),
     private val attachedToTransactionDocumentProvider: AttachedToTransactionDocumentProvider =

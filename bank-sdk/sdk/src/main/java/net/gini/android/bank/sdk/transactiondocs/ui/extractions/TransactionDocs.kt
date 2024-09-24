@@ -11,14 +11,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.TransactionDocsWidgetColors
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
-import net.gini.android.bank.sdk.transactiondocs.internal.TransactionDocInvoicePreviewInfoLinesFactory
+import net.gini.android.bank.sdk.transactiondocs.internal.factory.TransactionDocInvoicePreviewInfoLinesFactory
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
 import net.gini.android.capture.provider.LastExtractionsProvider
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -32,10 +31,6 @@ fun TransactionDocs(
     val transactionDocs: GiniBankTransactionDocs? = remember { GiniBank.giniBankTransactionDocs }
     val transactionDocInvoicePreviewInfoLinesFactory: TransactionDocInvoicePreviewInfoLinesFactory =
         remember { getGiniBankKoin().get() }
-
-    val lastExtractionsProvider : LastExtractionsProvider = remember { getGiniBankKoin().get() }
-    val iban = lastExtractionsProvider.provide()["iban"]?.value
-    val amount = lastExtractionsProvider.provide()["amountToPay"]?.value
 
     Card(
         modifier = modifier,
@@ -59,10 +54,7 @@ fun TransactionDocs(
                 onDocumentClick = {
                     onDocumentClick(
                         it,
-                        transactionDocInvoicePreviewInfoLinesFactory.create(
-                            iban ?: "Unknown IBAN",
-                            amount ?: "Unknown amount"
-                        )
+                        transactionDocInvoicePreviewInfoLinesFactory.create()
                     )
                 }
             )

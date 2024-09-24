@@ -3,7 +3,7 @@ package net.gini.android.bank.sdk.transactiondocs.di
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniTransactionDocsSettings
-import net.gini.android.bank.sdk.transactiondocs.internal.TransactionDocInvoicePreviewInfoLinesFactory
+import net.gini.android.bank.sdk.transactiondocs.internal.factory.TransactionDocInvoicePreviewInfoLinesFactory
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.provider.LastExtractionsProvider
@@ -22,7 +22,9 @@ internal val transactionListModule = module {
 
     factory {
         TransactionDocInvoicePreviewInfoLinesFactory(
-            resources = androidContext().resources
+            resources = androidContext().resources,
+            lastExtractionsProvider = get<LastExtractionsProvider>(),
+            amountFormatter = get(),
         )
     }
 
