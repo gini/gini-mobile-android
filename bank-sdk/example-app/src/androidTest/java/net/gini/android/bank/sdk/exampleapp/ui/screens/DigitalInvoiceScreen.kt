@@ -21,6 +21,15 @@ class DigitalInvoiceScreen {
     private var initialValue: String? = null
     private var updatedValue: String? = null
 
+    fun checkDigitalInvoiceTitleIsDisplayed(): Boolean {
+        val uiCollection =
+            UiCollection(UiSelector().className("android.view.ViewGroup"))
+
+        val digitalInvoiceText = uiCollection.getChildByInstance(
+            UiSelector().className("android.widget.TextView").text("Digital invoice"), 0)
+
+        return digitalInvoiceText.isEnabled
+    }
 
     fun checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed(): Boolean {
         val onboardingScreenText = device.findObject(
