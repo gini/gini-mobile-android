@@ -1,5 +1,9 @@
 package net.gini.android.capture.analysis;
 
+import static net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty;
+import static net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+
 import android.app.Activity;
 
 import androidx.annotation.NonNull;
@@ -40,10 +44,6 @@ import java.util.Map;
 import java.util.Random;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
-
-import static net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty;
-import static net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.
@@ -309,42 +309,21 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 mAnalysisCompleted = true;
                                 extension.getLastAnalyzedDocumentProvider()
                                         .update(remoteAnalyzedDocument);
-                                getView().showAttachDocToTransactionDialog(
-                                        () -> {
-                                            proceedSuccessNoExtractions();
-                                            return null;
-                                        }, alwaysAttach -> {
-                                            extension.getAttachDocToTransactionDialogProvider()
-                                                    .update(remoteAnalyzedDocument);
-                                            proceedSuccessNoExtractions();
-                                            return null;
-                                        }
-
-                                );
-
+                                extension.getAttachDocToTransactionDialogProvider()
+                                        .update(remoteAnalyzedDocument);
+                                proceedSuccessNoExtractions();
                                 break;
                             case SUCCESS_WITH_EXTRACTIONS:
                                 mAnalysisCompleted = true;
                                 extension.getLastAnalyzedDocumentProvider()
                                         .update(remoteAnalyzedDocument);
-                                getView().showAttachDocToTransactionDialog(
-                                        () -> {
-                                            if (resultHolder.getExtractions().isEmpty()) {
-                                                proceedSuccessNoExtractions();
-                                            } else {
-                                                proceedWithExtractions(resultHolder);
-                                            }
-
-                                            return null;
-                                        }, alwaysAttach -> {
-                                            extension
-                                                    .getAttachDocToTransactionDialogProvider()
-                                                    .update(remoteAnalyzedDocument);
-                                            proceedWithExtractions(resultHolder);
-                                            return null;
-                                        }
-
-                                );
+                                extension.getAttachDocToTransactionDialogProvider()
+                                        .update(remoteAnalyzedDocument);
+                                if (resultHolder.getExtractions().isEmpty()) {
+                                    proceedSuccessNoExtractions();
+                                } else {
+                                    proceedWithExtractions(resultHolder);
+                                }
                             case NO_NETWORK_SERVICE:
                                 break;
                             default:

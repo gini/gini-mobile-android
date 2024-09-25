@@ -21,6 +21,7 @@ internal object SkontoFragmentContract {
             val paymentMethod: SkontoData.SkontoPaymentMethod,
             val skontoEdgeCase: SkontoEdgeCase?,
             val edgeCaseInfoDialogVisible: Boolean,
+            val transactionDialogVisible: Boolean,
         ) : State()
     }
 

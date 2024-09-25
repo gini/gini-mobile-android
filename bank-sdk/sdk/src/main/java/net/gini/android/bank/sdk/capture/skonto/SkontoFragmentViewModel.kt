@@ -14,8 +14,12 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercent
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoRemainingDaysUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
 import net.gini.android.capture.Amount
 import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
+import net.gini.android.capture.provider.LastExtractionsProvider
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -30,6 +34,10 @@ internal class SkontoFragmentViewModel(
     private val skontoExtractionsHandler: SkontoExtractionsHandler,
     private val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider,
     private val skontoInvoicePreviewTextLinesFactory: SkontoInvoicePreviewTextLinesFactory,
+    private val lastExtractionsProvider: LastExtractionsProvider,
+    private val transactionDocDialogConfirmAttachUseCase: TransactionDocDialogConfirmAttachUseCase,
+    private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase,
+    private val getTransactionDocShouldBeAutoAttachedUseCase: GetTransactionDocShouldBeAutoAttachedUseCase,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<SkontoFragmentContract.State> =
@@ -43,7 +51,26 @@ internal class SkontoFragmentViewModel(
         this.listener = listener
     }
 
-    fun onProceedClicked() {
+    fun onProceedClicked() = viewModelScope.launch {
+        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        if (getTransactionDocShouldBeAutoAttachedUseCase()) {
+            onConfirmAttachTransactionDocClicked(true)
+        } else {
+            stateFlow.emit(currentState.copy(transactionDialogVisible = true))
+        }
+    }
+
+    fun onConfirmAttachTransactionDocClicked(alwaysAttach: Boolean) = viewModelScope.launch {
+        transactionDocDialogConfirmAttachUseCase(alwaysAttach)
+        openExtractionsScreen()
+    }
+
+    fun onCancelAttachTransactionDocClicked() = viewModelScope.launch {
+        transactionDocDialogCancelAttachUseCase()
+        openExtractionsScreen()
+    }
+
+    private fun openExtractionsScreen() {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return
         skontoExtractionsHandler.updateExtractions(
             totalAmount = currentState.totalAmount,
@@ -52,6 +79,7 @@ internal class SkontoFragmentViewModel(
             paymentInDays = currentState.paymentInDays,
             discountDueDate = currentState.discountDueDate.toString(),
         )
+        lastExtractionsProvider.update(skontoExtractionsHandler.getExtractions().toMutableMap())
         listener?.onPayInvoiceWithSkonto(
             skontoExtractionsHandler.getExtractions(),
             skontoExtractionsHandler.getCompoundExtractions()
@@ -89,7 +117,8 @@ internal class SkontoFragmentViewModel(
             paymentMethod = paymentMethod,
             skontoEdgeCase = edgeCase,
             edgeCaseInfoDialogVisible = edgeCase != null,
-            savedAmount = savedAmount
+            savedAmount = savedAmount,
+            transactionDialogVisible = false,
         )
     }
 

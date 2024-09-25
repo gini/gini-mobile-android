@@ -11,7 +11,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,19 +25,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import kotlinx.coroutines.runBlocking
-import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.di.getGiniBankKoin
-import net.gini.android.bank.sdk.transactiondocs.TransactionDocsSettings
-import net.gini.android.bank.sdk.transactiondocs.internal.GiniTransactionDocsSettings
 import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.colors.AttachDocumentToTransactionDialogColors
 import net.gini.android.capture.ui.components.checkbox.GiniCheckbox
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
 fun AttachDocumentToTransactionDialog(
-    giniTransactionDocsSettings: GiniTransactionDocsSettings,
     onDismiss: () -> Unit,
     onConfirm: (alwaysAttach: Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -107,9 +100,6 @@ fun AttachDocumentToTransactionDialog(
                     }
                     TextButton(
                         onClick = {
-                            runBlocking {
-                                giniTransactionDocsSettings.setAlwaysAttachSetting(alwaysAttachChecked)
-                            }
                             onConfirm(alwaysAttachChecked)
                         }) {
                         Text(
@@ -164,11 +154,9 @@ fun AttachDocumentToTransactionDialogPreviewDark() {
 @Composable
 private fun PreviewContent() {
     GiniTheme {
-        val ctx = LocalContext.current
         AttachDocumentToTransactionDialog(
             onDismiss = {},
             onConfirm = {},
-            giniTransactionDocsSettings = GiniTransactionDocsSettings(ctx)
         )
     }
 }

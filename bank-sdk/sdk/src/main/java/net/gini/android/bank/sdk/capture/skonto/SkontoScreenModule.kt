@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.capture.skonto
 
 import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
+import net.gini.android.capture.di.getGiniCaptureKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -18,7 +19,11 @@ val skontoScreenModule = module {
             getSkontoDefaultSelectionStateUseCase = get(),
             skontoExtractionsHandler = get(),
             lastAnalyzedDocumentProvider = get(),
-            skontoInvoicePreviewTextLinesFactory = get()
+            skontoInvoicePreviewTextLinesFactory = get(),
+            lastExtractionsProvider = get(),
+            transactionDocDialogConfirmAttachUseCase = get(),
+            transactionDocDialogCancelAttachUseCase = get(),
+            getTransactionDocShouldBeAutoAttachedUseCase = get(),
         )
     }
     factory {

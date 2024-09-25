@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocsSettings
 
-class GiniTransactionDocsSettings(
+internal class GiniTransactionDocsSettings(
     private val context: Context,
 ) : TransactionDocsSettings {
 

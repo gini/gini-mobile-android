@@ -88,6 +88,7 @@ import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
@@ -178,7 +179,7 @@ class SkontoFragment : Fragment() {
                         },
                         navigateToHelp = {
                             findNavController().navigate(SkontoFragmentDirections.toSkontoHelpFragment())
-                        }
+                        },
                     )
                 }
             }
@@ -241,7 +242,9 @@ private fun ScreenContent(
         onProceedClicked = viewModel::onProceedClicked,
         onInfoBannerClicked = viewModel::onInfoBannerClicked,
         onInfoDialogDismissed = viewModel::onInfoDialogDismissed,
-        onInvoiceClicked = viewModel::onInvoiceClicked
+        onInvoiceClicked = viewModel::onInvoiceClicked,
+        onConfirmAttachTransactionDocClicked = viewModel::onConfirmAttachTransactionDocClicked,
+        onCancelAttachTransactionDocClicked = viewModel::onCancelAttachTransactionDocClicked,
     )
 }
 
@@ -260,6 +263,8 @@ private fun ScreenStateContent(
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
     onInvoiceClicked: () -> Unit,
+    onConfirmAttachTransactionDocClicked: (alwaysAttach: Boolean) -> Unit,
+    onCancelAttachTransactionDocClicked: () -> Unit,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors()
 ) {
@@ -280,6 +285,8 @@ private fun ScreenStateContent(
             onInfoBannerClicked = onInfoBannerClicked,
             onInfoDialogDismissed = onInfoDialogDismissed,
             onInvoiceClicked = onInvoiceClicked,
+            onConfirmAttachTransactionDocClicked = onConfirmAttachTransactionDocClicked,
+            onCancelAttachTransactionDocClicked = onCancelAttachTransactionDocClicked,
         )
     }
 
@@ -287,6 +294,8 @@ private fun ScreenStateContent(
 
 @Composable
 private fun ScreenReadyState(
+    onConfirmAttachTransactionDocClicked: (alwaysAttach: Boolean) -> Unit,
+    onCancelAttachTransactionDocClicked: () -> Unit,
     onBackClicked: () -> Unit,
     onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
@@ -299,10 +308,10 @@ private fun ScreenReadyState(
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
-    screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
-    discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter()
+    discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
+    screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
 ) {
 
     val scrollState = rememberScrollState()
@@ -406,6 +415,13 @@ private fun ScreenReadyState(
                 text = text,
                 colors = screenColorScheme.infoDialogColors,
                 onDismissRequest = onInfoDialogDismissed
+            )
+        }
+
+        if (state.transactionDialogVisible) {
+            AttachDocumentToTransactionDialog(
+                onDismiss = onCancelAttachTransactionDocClicked,
+                onConfirm = onConfirmAttachTransactionDocClicked
             )
         }
     }
@@ -1051,8 +1067,9 @@ private fun ScreenReadyStatePreviewDark() {
 @Composable
 private fun ScreenReadyStatePreview() {
     GiniTheme {
-        var state by remember { mutableStateOf(previewState) }
+        val context = LocalContext.current
 
+        var state by remember { mutableStateOf(previewState()) }
         ScreenReadyState(
             state = state,
             onDiscountSectionActiveChange = {
@@ -1068,12 +1085,18 @@ private fun ScreenReadyStatePreview() {
             customBottomNavBarAdapter = null,
             onInfoDialogDismissed = {},
             onInfoBannerClicked = {},
-            onInvoiceClicked = {}
+            onInvoiceClicked = {},
+            onCancelAttachTransactionDocClicked = {
+
+            },
+            onConfirmAttachTransactionDocClicked = {
+
+            }
         )
     }
 }
 
-private val previewState = SkontoFragmentContract.State.Ready(
+private fun previewState() = SkontoFragmentContract.State.Ready(
     isSkontoSectionActive = true,
     paymentInDays = 14,
     skontoPercentage = BigDecimal("3"),
@@ -1084,5 +1107,6 @@ private val previewState = SkontoFragmentContract.State.Ready(
     paymentMethod = SkontoData.SkontoPaymentMethod.PayPal,
     skontoEdgeCase = SkontoEdgeCase.PayByCashOnly,
     edgeCaseInfoDialogVisible = false,
-    savedAmount = Amount.parse("3:EUR")
+    savedAmount = Amount.parse("3:EUR"),
+    transactionDialogVisible = true,
 )

@@ -3,7 +3,11 @@ package net.gini.android.bank.sdk.transactiondocs.di
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniTransactionDocsSettings
+import net.gini.android.bank.sdk.transactiondocs.internal.repository.GiniAttachTransactionDocDialogDecisionRepository
 import net.gini.android.bank.sdk.transactiondocs.internal.factory.TransactionDocInvoicePreviewInfoLinesFactory
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.provider.LastExtractionsProvider
@@ -27,6 +31,27 @@ internal val transactionListModule = module {
             amountFormatter = get(),
         )
     }
+
+    factory {
+        TransactionDocDialogCancelAttachUseCase(
+            attachTransactionDocDialogDecisionRepository = get()
+        )
+    }
+
+    factory {
+        TransactionDocDialogConfirmAttachUseCase(
+            giniTransactionDocsSettings = get(),
+            attachTransactionDocDialogDecisionRepository = get()
+        )
+    }
+
+    factory {
+        GetTransactionDocShouldBeAutoAttachedUseCase(
+            giniTransactionDocsSettings = get(),
+        )
+    }
+
+    single { GiniAttachTransactionDocDialogDecisionRepository() }
 
     // Bridge between GiniCapture and GiniBank
     factory<AttachedToTransactionDocumentProvider> { getGiniCaptureKoin().get() }

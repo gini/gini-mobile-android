@@ -60,23 +60,14 @@ class ConfigurationViewModel @Inject constructor(
     private val _configurationFlow = MutableStateFlow(Configuration())
 
     fun getAlwaysAttachSetting(context: Context): Boolean {
-        GiniBank.initializeTransactionDocsFeature(
-            context,
-            TransactionDocsConfiguration(_configurationFlow.value.isTransactionDocsEnabled)
-        )
-
+        configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
         return runBlocking {
             GiniBank.transactionDocs.transactionDocsSettings.getAlwaysAttachSetting().first()
-        }.also {
-            GiniBank.releaseTransactionDocsFeature(context)
         }
     }
 
     fun setAlwaysAttachSetting(context: Context, isChecked: Boolean) {
-        GiniBank.initializeTransactionDocsFeature(
-            context,
-            TransactionDocsConfiguration(_configurationFlow.value.isTransactionDocsEnabled)
-        )
+        configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
         viewModelScope.launch {
             GiniBank.transactionDocs.transactionDocsSettings.setAlwaysAttachSetting(
                 isChecked
@@ -353,13 +344,6 @@ class ConfigurationViewModel @Inject constructor(
             GiniCaptureDebug.enable()
             configureLogging()
         }
-
-        GiniBank.initializeTransactionDocsFeature(
-            context,
-            TransactionDocsConfiguration(
-                configuration.isTransactionDocsEnabled
-            )
-        )
     }
 
     private class GiniCaptureEventTracker : EventTracker {

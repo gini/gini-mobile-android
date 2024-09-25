@@ -66,9 +66,6 @@ interface AnalysisScreenContract {
 
         abstract void showError(String errorMessage, Document document);
         abstract void showError(ErrorType errorType, Document document);
-        abstract void showAttachDocToTransactionDialog(
-                Function0<Unit> onDismissed, Function1<Boolean, Unit> onAttach
-        );
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements
