@@ -189,7 +189,6 @@ dependencies {
     implementation(libs.hilt.library)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
-    implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     kapt(libs.hilt.compiler)
