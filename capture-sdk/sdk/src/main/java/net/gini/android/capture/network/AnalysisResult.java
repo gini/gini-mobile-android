@@ -33,6 +33,21 @@ public class AnalysisResult extends Result {
      */
     public AnalysisResult(
             @NonNull final String giniApiDocumentId,
+            @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
+        super(giniApiDocumentId, "");
+        this.extractions = extractions;
+        this.compoundExtractions = Collections.emptyMap();
+        this.returnReasons = Collections.emptyList();
+    }
+
+    /**
+     * Create a new analysis result for a Gini API document id.
+     *
+     * @param giniApiDocumentId the id of a document in the Gini API
+     * @param extractions       the extractions from the Gini API
+     */
+    public AnalysisResult(
+            @NonNull final String giniApiDocumentId,
             @NonNull final String giniApiDocumentFilename,
             @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
         super(giniApiDocumentId, giniApiDocumentFilename);

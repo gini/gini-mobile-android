@@ -19,6 +19,16 @@ public class Result {
      *
      * @param giniApiDocumentId the id of a document in the Gini API
      */
+    public Result(final String giniApiDocumentId) {
+        this.giniApiDocumentId = giniApiDocumentId;
+        this.giniApiDocumentFilename = "";
+    }
+
+    /**
+     * Create a new result with a Gini API document id.
+     *
+     * @param giniApiDocumentId the id of a document in the Gini API
+     */
     public Result(final String giniApiDocumentId, final String giniApiDocumentFilename) {
         this.giniApiDocumentId = giniApiDocumentId;
         this.giniApiDocumentFilename = giniApiDocumentFilename;
