@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
-import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.merchant.sdk.R
 import net.gini.android.merchant.sdk.databinding.GmsBottomSheetBankSelectionBinding
 import net.gini.android.merchant.sdk.databinding.GmsItemPaymentProviderAppBinding

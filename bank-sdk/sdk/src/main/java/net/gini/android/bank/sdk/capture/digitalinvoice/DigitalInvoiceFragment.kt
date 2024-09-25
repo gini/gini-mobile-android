@@ -35,6 +35,7 @@ import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
 import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
@@ -102,6 +103,8 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase
             by getGiniBankKoin().inject()
     private val transactionDocDialogConfirmAttachUseCase: TransactionDocDialogConfirmAttachUseCase
+            by getGiniBankKoin().inject()
+    private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase
             by getGiniBankKoin().inject()
 
     private val skontoAdapterListener = object : SkontoListItemAdapterListener {
@@ -357,6 +360,10 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
     private fun tryShowAttachDocToTransactionDialog(continueFlow: () -> Unit) {
         val autoAttachDoc = runBlocking { transactionDocShouldBeAutoAttachedUseCase() }
+        if (!getTransactionDocsFeatureEnabledUseCase()) {
+            continueFlow()
+            return
+        }
         binding.composeView.setContent {
             GiniTheme {
                 if (!autoAttachDoc) {

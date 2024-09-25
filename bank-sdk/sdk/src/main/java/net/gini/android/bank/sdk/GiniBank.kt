@@ -29,7 +29,6 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceOnboa
 import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.skonto.help.SkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
-import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.error.AmountParsingException
 import net.gini.android.bank.sdk.invoice.InvoicePreviewFragment
 import net.gini.android.bank.sdk.invoice.InvoicePreviewFragmentArgs
@@ -37,7 +36,6 @@ import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
-import net.gini.android.bank.sdk.transactiondocs.internal.GiniTransactionDocsSettings
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AsyncCallback

@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoRemainingDaysUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
 import net.gini.android.capture.Amount
@@ -38,6 +39,7 @@ internal class SkontoFragmentViewModel(
     private val transactionDocDialogConfirmAttachUseCase: TransactionDocDialogConfirmAttachUseCase,
     private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase,
     private val getTransactionDocShouldBeAutoAttachedUseCase: GetTransactionDocShouldBeAutoAttachedUseCase,
+    private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<SkontoFragmentContract.State> =
@@ -53,6 +55,10 @@ internal class SkontoFragmentViewModel(
 
     fun onProceedClicked() = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        if (!getTransactionDocsFeatureEnabledUseCase()) {
+            openExtractionsScreen()
+            return@launch
+        }
         if (getTransactionDocShouldBeAutoAttachedUseCase()) {
             onConfirmAttachTransactionDocClicked(true)
         } else {

@@ -17,7 +17,6 @@ import net.gini.android.bank.sdk.capture.util.OncePerInstallEvent
 import net.gini.android.bank.sdk.capture.util.OncePerInstallEventStore
 import net.gini.android.bank.sdk.capture.util.SimpleBusEventStore
 import net.gini.android.bank.sdk.di.getGiniBankKoin
-import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason

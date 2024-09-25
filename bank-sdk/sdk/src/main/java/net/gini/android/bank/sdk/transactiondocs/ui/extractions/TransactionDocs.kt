@@ -15,11 +15,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.di.getGiniBankKoin
-import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.TransactionDocsWidgetColors
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.factory.TransactionDocInvoicePreviewInfoLinesFactory
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
-import net.gini.android.capture.provider.LastExtractionsProvider
+import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.TransactionDocsWidgetColors
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable

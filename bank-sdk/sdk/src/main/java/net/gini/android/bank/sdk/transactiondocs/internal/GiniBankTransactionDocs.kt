@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.map
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.repository.GiniAttachTransactionDocDialogDecisionRepository
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 
@@ -18,6 +19,8 @@ internal class GiniBankTransactionDocs internal constructor(
     private val attachedToTransactionDocumentProvider: AttachedToTransactionDocumentProvider =
         getGiniBankKoin().get(),
     private val attachTransactionDocDialogDecisionRepository: GiniAttachTransactionDocDialogDecisionRepository =
+        getGiniBankKoin().get(),
+    private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase =
         getGiniBankKoin().get()
 ) : TransactionDocs {
 
@@ -30,8 +33,8 @@ internal class GiniBankTransactionDocs internal constructor(
     override val extractionDocumentsFlow: Flow<List<TransactionDoc>>
         get() = flowOf(attachTransactionDocDialogDecisionRepository.getAttachDocToTransaction())
             .flatMapLatest { docShouldBeAttached ->
-                if (docShouldBeAttached
-                    || transactionDocsSettings.getAlwaysAttachSetting().first()
+                if ((docShouldBeAttached || transactionDocsSettings.getAlwaysAttachSetting()
+                        .first()) && getTransactionDocsFeatureEnabledUseCase()
                 ) {
                     attachedToTransactionDocumentProvider.data
                 } else {

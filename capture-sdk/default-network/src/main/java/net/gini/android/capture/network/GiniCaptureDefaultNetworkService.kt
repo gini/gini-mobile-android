@@ -61,7 +61,6 @@ import net.gini.android.bank.api.models.Configuration as BankConfiguration
  * [GiniCapture] instance.
  */
 class GiniCaptureDefaultNetworkService
-
 @VisibleForTesting
 internal constructor(
     internal val giniBankApi: GiniBankAPI,
@@ -185,13 +184,14 @@ internal constructor(
 
     private fun mapBankConfigurationToConfiguration(configuration: BankConfiguration) =
         Configuration(
-            UUID.randomUUID(),
-            configuration.clientID,
-            configuration.isUserJourneyAnalyticsEnabled,
-            configuration.isSkontoEnabled,
-            configuration.isReturnAssistantEnabled,
-            configuration.mixpanelToken ?: "",
-            configuration.amplitudeApiKey ?: "",
+            id = UUID.randomUUID(),
+            clientID = configuration.clientID,
+            isUserJourneyAnalyticsEnabled = configuration.isUserJourneyAnalyticsEnabled,
+            isSkontoEnabled = configuration.isSkontoEnabled,
+            isReturnAssistantEnabled = configuration.isReturnAssistantEnabled,
+            isTransactionDocsEnabled = configuration.transactionDocsEnabled,
+            mixpanelToken = configuration.mixpanelToken ?: "",
+            amplitudeApiKey = configuration.amplitudeApiKey ?: "",
         )
 
     override fun upload(

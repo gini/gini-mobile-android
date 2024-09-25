@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
@@ -23,19 +22,19 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
 import net.gini.android.bank.sdk.capture.digitalinvoice.args.ExtractionsResultData
-import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoInvoiceHighlightsExtractor
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
+import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoInvoiceHighlightsExtractor
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragment
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
 import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
 import net.gini.android.bank.sdk.util.disallowScreenshots
-
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
@@ -75,6 +74,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase
             by getGiniBankKoin().inject()
     private val transactionDocDialogConfirmAttachUseCase: TransactionDocDialogConfirmAttachUseCase
+            by getGiniBankKoin().inject()
+    private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase
             by getGiniBankKoin().inject()
 
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
@@ -216,6 +217,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private fun tryShowAttachDocToTransactionDialog(continueFlow: () -> Unit) {
         val autoAttachDoc = runBlocking { transactionDocShouldBeAutoAttachedUseCase() }
+        if (!getTransactionDocsFeatureEnabledUseCase()) {
+            continueFlow()
+            return
+        }
         composeView.setContent {
             GiniTheme {
                 if (!autoAttachDoc) {

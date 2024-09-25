@@ -6,14 +6,13 @@ import android.util.Log
 import net.gini.android.bank.sdk.capture.captureFlowFragmentModule
 import net.gini.android.bank.sdk.capture.di.skonto.skontoCommonModule
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.digitalInvoiceSkontoScreenModule
-import net.gini.android.bank.sdk.invoice.invoicePreviewScreenModule
 import net.gini.android.bank.sdk.capture.skonto.skontoScreenModule
 import net.gini.android.bank.sdk.capture.skonto.usecase.di.skontoUseCaseModule
+import net.gini.android.bank.sdk.invoice.invoicePreviewScreenModule
 import net.gini.android.bank.sdk.transactiondocs.di.transactionListModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.Koin
 import org.koin.dsl.koinApplication
-import java.util.logging.Logger
 
 @SuppressLint("StaticFieldLeak")
 object BankSdkIsolatedKoinContext {

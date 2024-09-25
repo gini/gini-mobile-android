@@ -14,5 +14,4 @@ internal class TransactionDocDialogConfirmAttachUseCase(
         giniTransactionDocsSettings.setAlwaysAttachSetting(alwaysAttach)
         attachTransactionDocDialogDecisionRepository.setAttachDocToTransaction(true)
     }
-
 }

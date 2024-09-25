@@ -17,6 +17,7 @@ import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.error.ErrorFragment
 import net.gini.android.capture.internal.network.Configuration
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
@@ -57,6 +58,8 @@ class GiniCaptureFragment(
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private val lastExtractionsProvider : LastExtractionsProvider by getGiniCaptureKoin().inject()
+    private val giniBankConfigurationProvider: GiniBankConfigurationProvider by
+            getGiniCaptureKoin().inject()
 
 
     fun setListener(listener: GiniCaptureFragmentListener) {
@@ -86,6 +89,7 @@ class GiniCaptureFragment(
             val response = networkRequestsManager
                 ?.getConfigurations(UUID.randomUUID())
             response?.thenAcceptAsync { res ->
+                giniBankConfigurationProvider.update(res.configuration)
                 UserAnalytics.setPlatformTokens(
                     AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(
                         res.configuration.amplitudeApiKey
