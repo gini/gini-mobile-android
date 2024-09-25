@@ -59,7 +59,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @VisibleForTesting
     static final String PARCELABLE_MEMORY_CACHE_TAG = "ANALYSIS_FRAGMENT";
     private static final Logger LOG = LoggerFactory.getLogger(AnalysisScreenPresenter.class);
-    private final AnalysisScreenPresenterExtension extension;
+
+    @VisibleForTesting
+    final AnalysisScreenPresenterExtension extension;
 
     private static final AnalysisFragmentListener NO_OP_LISTENER = new AnalysisFragmentListener() {
         @Override
@@ -309,16 +311,24 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 mAnalysisCompleted = true;
                                 extension.getLastAnalyzedDocumentProvider()
                                         .update(remoteAnalyzedDocument);
-                                extension.getAttachDocToTransactionDialogProvider()
-                                        .update(remoteAnalyzedDocument);
+                                try {
+                                    extension.getAttachDocToTransactionDialogProvider()
+                                            .update(remoteAnalyzedDocument);
+                                } catch (Exception ignored) {
+
+                                }
                                 proceedSuccessNoExtractions();
                                 break;
                             case SUCCESS_WITH_EXTRACTIONS:
                                 mAnalysisCompleted = true;
                                 extension.getLastAnalyzedDocumentProvider()
                                         .update(remoteAnalyzedDocument);
-                                extension.getAttachDocToTransactionDialogProvider()
-                                        .update(remoteAnalyzedDocument);
+                                try {
+                                    extension.getAttachDocToTransactionDialogProvider()
+                                            .update(remoteAnalyzedDocument);
+                                } catch (Exception ignored) {
+
+                                }
                                 if (resultHolder.getExtractions().isEmpty()) {
                                     proceedSuccessNoExtractions();
                                 } else {

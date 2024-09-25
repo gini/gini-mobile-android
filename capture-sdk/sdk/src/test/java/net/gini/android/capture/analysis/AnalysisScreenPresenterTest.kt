@@ -13,6 +13,7 @@ import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.*
+import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.document.*
 import net.gini.android.capture.internal.document.DocumentRenderer
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
@@ -427,8 +428,7 @@ class AnalysisScreenPresenterTest {
     @Test
     @Throws(Exception::class)
     fun should_requestProceedingToNoExtractionsScreen_whenAnalysisSucceeded_withoutExtractions() {
-        // TODO Test disabled because flow changed
-        /*// Given
+        // Given
         whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
@@ -448,14 +448,13 @@ class AnalysisScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(listener).onProceedToNoExtractionsScreen(any())*/
+        verify(listener).onProceedToNoExtractionsScreen(any())
     }
 
     @Test
     @Throws(Exception::class)
     fun should_returnExtractions_whenAnalysisSucceeded_withExtractions() {
-        // TODO Test disabled because flow changed
-        /*// Given
+        // Given
         whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val extractions = Collections.singletonMap(
@@ -481,6 +480,7 @@ class AnalysisScreenPresenterTest {
         val presenter =
             createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
         val listener = mock<AnalysisFragmentListener>()
+
         presenter.setListener(listener)
 
         // When
@@ -488,7 +488,7 @@ class AnalysisScreenPresenterTest {
 
         // Then
         verify(listener)
-            .onExtractionsAvailable(extractions, compoundExtraction, returnReasons)*/
+            .onExtractionsAvailable(extractions, compoundExtraction, returnReasons)
     }
 
     @Test
