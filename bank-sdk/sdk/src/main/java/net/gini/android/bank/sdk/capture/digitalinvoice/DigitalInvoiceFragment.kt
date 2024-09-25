@@ -19,6 +19,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoFragment
@@ -32,6 +34,10 @@ import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
+import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
@@ -45,6 +51,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
+import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -89,6 +96,13 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
     private val skontoSavedAmountTextFactory: SkontoSavedAmountTextFactory by getGiniBankKoin().inject()
     private val skontoDiscountLabelTextFactory: SkontoDiscountLabelTextFactory by getGiniBankKoin().inject()
+
+    private val transactionDocShouldBeAutoAttachedUseCase: GetTransactionDocShouldBeAutoAttachedUseCase
+            by getGiniBankKoin().inject()
+    private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase
+            by getGiniBankKoin().inject()
+    private val transactionDocDialogConfirmAttachUseCase: TransactionDocDialogConfirmAttachUseCase
+            by getGiniBankKoin().inject()
 
     private val skontoAdapterListener = object : SkontoListItemAdapterListener {
 
@@ -278,9 +292,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
                     }
 
                     injectedViewAdapter.setOnProceedClickListener {
-                        presenter?.pay()
-                        trackProceedTapped()
-                        trackSdkClosedEvent()
+                        payButtonClicked()
                     }
 
                     footerDetails?.let {
@@ -336,9 +348,30 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     }
 
     override fun payButtonClicked() {
-        presenter?.pay()
-        trackProceedTapped()
-        trackSdkClosedEvent()
+        tryShowAttachDocToTransactionDialog {
+            presenter?.pay()
+            trackProceedTapped()
+            trackSdkClosedEvent()
+        }
+    }
+
+    private fun tryShowAttachDocToTransactionDialog(continueFlow: () -> Unit) {
+        val autoAttachDoc = runBlocking { transactionDocShouldBeAutoAttachedUseCase() }
+        binding.composeView.setContent {
+            GiniTheme {
+                if (!autoAttachDoc) {
+                    AttachDocumentToTransactionDialog(onDismiss = {
+                        lifecycleScope.launch { transactionDocDialogCancelAttachUseCase() }
+                        continueFlow()
+                    }, onConfirm = {
+                        lifecycleScope.launch { transactionDocDialogConfirmAttachUseCase(it) }
+                        continueFlow()
+                    })
+                } else {
+                    continueFlow()
+                }
+            }
+        }
     }
 
     /**
