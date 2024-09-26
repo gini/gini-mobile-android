@@ -10,7 +10,7 @@ import net.gini.android.health.sdk.util.toBackendFormat
 
 /**
  * Represents the payment details of an invoice as extracted from a document.
- * The extractions property contains additional values extracted alongside the four main values (ex: doctor's name)
+ * The extractions.getSpecificExtractions contains additional values extracted alongside the four main values (ex: medical_service_provider)
  */
 @Parcelize
 data class PaymentDetails(
