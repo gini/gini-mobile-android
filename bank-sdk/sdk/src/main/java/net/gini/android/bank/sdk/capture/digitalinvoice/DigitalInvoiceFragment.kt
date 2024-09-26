@@ -364,7 +364,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
             continueFlow()
             return
         }
-        binding.composeView.setContent {
+        binding.gbComposeView.setContent {
             GiniTheme {
                 if (!autoAttachDoc) {
                     AttachDocumentToTransactionDialog(onDismiss = {

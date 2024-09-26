@@ -120,7 +120,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        composeView = view.findViewById(R.id.compose_view)
+        composeView = view.findViewById(R.id.gb_compose_view)
         setReturnReasonsEventProperty()
         userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
