@@ -1,10 +1,14 @@
 package net.gini.android.capture.analysis
 
+import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.di.getGiniCaptureKoin
 
-open class AnalysisScreenPresenterExtension {
+internal open class AnalysisScreenPresenterExtension {
 
-    val lastAnalyzedDocumentIdProvider: LastAnalyzedDocumentIdProvider by
-    getGiniCaptureKoin().inject()
+    val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
+            by getGiniCaptureKoin().inject()
+
+    val attachDocToTransactionDialogProvider: AttachedToTransactionDocumentProvider
+            by getGiniCaptureKoin().inject()
 
 }

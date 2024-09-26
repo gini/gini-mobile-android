@@ -9,7 +9,6 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
-import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.capture.Document
 import net.gini.android.capture.internal.util.FileImportValidator
 

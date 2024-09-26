@@ -6,10 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.BuildConfig
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
@@ -18,15 +22,19 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment
 import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragmentListener
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItemsValidator
 import net.gini.android.bank.sdk.capture.digitalinvoice.args.ExtractionsResultData
-import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoInvoiceHighlightsExtractor
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoDataExtractor
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
+import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoInvoiceHighlightsExtractor
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragment
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
+import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
 import net.gini.android.bank.sdk.util.disallowScreenshots
-
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
@@ -43,6 +51,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
+import net.gini.android.capture.ui.theme.GiniTheme
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -56,9 +65,17 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private val skontoInvoiceHighlightsExtractor: SkontoInvoiceHighlightsExtractor
             by getGiniBankKoin().inject()
-    private val skontoDataExtractor : SkontoDataExtractor
+    private val skontoDataExtractor: SkontoDataExtractor
             by getGiniBankKoin().inject()
-    private val skontoExtractionsHandler : SkontoExtractionsHandler
+    private val skontoExtractionsHandler: SkontoExtractionsHandler
+            by getGiniBankKoin().inject()
+    private val transactionDocShouldBeAutoAttachedUseCase: GetTransactionDocShouldBeAutoAttachedUseCase
+            by getGiniBankKoin().inject()
+    private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase
+            by getGiniBankKoin().inject()
+    private val transactionDocDialogConfirmAttachUseCase: TransactionDocDialogConfirmAttachUseCase
+            by getGiniBankKoin().inject()
+    private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase
             by getGiniBankKoin().inject()
 
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
@@ -68,6 +85,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     private var didFinishWithResult = false
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+
+    private lateinit var composeView: ComposeView
 
     private fun setReturnReasonsEventProperty() {
         userAnalyticsEventTracker.setUserProperty(
@@ -101,6 +120,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        composeView = view.findViewById(R.id.gb_compose_view)
         setReturnReasonsEventProperty()
         userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
@@ -162,24 +182,58 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
                             tryShowingReturnAssistant(result)
                             return
                         } catch (notUsed: DigitalInvoiceException) {
-                            tryShowingSkontoScreen(result)
+                            tryShowingSkontoScreen(result) {
+                                tryShowAttachDocToTransactionDialog {
+                                    finishWithResult(interceptSuccessResult(result).toCaptureResult())
+                                }
+                            }
                             return
                         }
                     }
 
                     GiniBank.getCaptureConfiguration()?.skontoEnabled == true -> {
-                        tryShowingSkontoScreen(result)
+                        tryShowingSkontoScreen(result) {
+                            tryShowAttachDocToTransactionDialog {
+                                finishWithResult(interceptSuccessResult(result).toCaptureResult())
+                            }
+                        }
                         return
                     }
 
                     else -> {
-                        finishWithResult(interceptSuccessResult(result).toCaptureResult())
+                        tryShowAttachDocToTransactionDialog {
+                            finishWithResult(interceptSuccessResult(result).toCaptureResult())
+                        }
+
                     }
                 }
             }
 
             else -> {
                 finishWithResult(result.toCaptureResult())
+            }
+        }
+    }
+
+    private fun tryShowAttachDocToTransactionDialog(continueFlow: () -> Unit) {
+        val autoAttachDoc = runBlocking { transactionDocShouldBeAutoAttachedUseCase() }
+        if (!getTransactionDocsFeatureEnabledUseCase()) {
+            continueFlow()
+            return
+        }
+        composeView.setContent {
+            GiniTheme {
+                if (!autoAttachDoc) {
+                    AttachDocumentToTransactionDialog(onDismiss = {
+                        lifecycleScope.launch { transactionDocDialogCancelAttachUseCase() }
+                        continueFlow()
+                    }, onConfirm = {
+                        lifecycleScope.launch { transactionDocDialogConfirmAttachUseCase(it) }
+                        continueFlow()
+                    })
+                } else {
+                    continueFlow()
+                }
             }
         }
     }
@@ -224,34 +278,33 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         )
     }
 
-    private fun tryShowingSkontoScreen(result: CaptureSDKResult.Success) {
-        if (GiniBank.getCaptureConfiguration()?.skontoEnabled == true) {
-            try {
-                skontoExtractionsHandler.initialize(
-                    result.specificExtractions,
-                    result.compoundExtractions
-                )
+    private fun tryShowingSkontoScreen(
+        result: CaptureSDKResult.Success,
+        fallback: () -> Unit
+    ) {
+        try {
+            skontoExtractionsHandler.initialize(
+                result.specificExtractions,
+                result.compoundExtractions
+            )
 
-                val skontoData = skontoDataExtractor.extractSkontoData(
-                    result.specificExtractions,
-                    result.compoundExtractions
-                )
+            val skontoData = skontoDataExtractor.extractSkontoData(
+                result.specificExtractions,
+                result.compoundExtractions
+            )
 
-                val highlightBoxes = skontoInvoiceHighlightsExtractor.extract(
-                    result.compoundExtractions
-                )
+            val highlightBoxes = skontoInvoiceHighlightsExtractor.extract(
+                result.compoundExtractions
+            )
 
-                navController.navigate(
-                    GiniCaptureFragmentDirections.toSkontoFragment(
-                        data = skontoData,
-                        invoiceHighlights = highlightBoxes.toTypedArray(),
-                    )
+            navController.navigate(
+                GiniCaptureFragmentDirections.toSkontoFragment(
+                    data = skontoData,
+                    invoiceHighlights = highlightBoxes.toTypedArray(),
                 )
-            } catch (e: Exception) {
-                finishWithResult(interceptSuccessResult(result).toCaptureResult())
-            }
-        } else {
-            finishWithResult(result.toCaptureResult())
+            )
+        } catch (e: Exception) {
+            fallback()
         }
     }
 
@@ -293,11 +346,13 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
-        finishWithResult(CaptureResult.Success(
-            specificExtractions,
-            compoundExtractions,
-            emptyList()
-        ))
+        finishWithResult(
+            CaptureResult.Success(
+                specificExtractions,
+                compoundExtractions,
+                emptyList()
+            )
+        )
     }
 
 
@@ -305,11 +360,13 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>
     ) {
-        finishWithResult(CaptureResult.Success(
-            specificExtractions,
-            compoundExtractions,
-            emptyList()
-        ))
+        finishWithResult(
+            CaptureResult.Success(
+                specificExtractions,
+                compoundExtractions,
+                emptyList()
+            )
+        )
     }
 
 

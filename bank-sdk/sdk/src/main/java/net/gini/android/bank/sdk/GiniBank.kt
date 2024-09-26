@@ -18,6 +18,7 @@ import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureImportInput
 import net.gini.android.bank.sdk.capture.applyConfiguration
+import net.gini.android.bank.sdk.capture.di.skonto.captureSdkDiBridge
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DefaultDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.help.view.DigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoNavigationBarBottomAdapter
@@ -29,14 +30,19 @@ import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.capture.skonto.help.SkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.bank.sdk.error.AmountParsingException
+import net.gini.android.bank.sdk.invoice.InvoicePreviewFragment
+import net.gini.android.bank.sdk.invoice.InvoicePreviewFragmentArgs
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
+import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ImportedFileValidationException
+import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.requirements.GiniCaptureRequirements
@@ -68,6 +74,13 @@ object GiniBank {
     private var giniApi: GiniBankAPI? = null
 
     internal const val USER_COMMENT_GINI_BANK_VERSION = "GiniBankVer"
+
+    internal var giniBankTransactionDocs: GiniBankTransactionDocs? = null
+        private set
+
+    val transactionDocs: TransactionDocs
+        get() = giniBankTransactionDocs
+            ?: error("Transaction list not initialized. Call `initializeTransactionListFeature(...)` first.")
 
     /**
      * Bottom navigation bar adapters. Could be changed to custom ones.
@@ -175,6 +188,11 @@ object GiniBank {
         GiniBank.captureConfiguration = captureConfiguration
         GiniCapture.newInstance(context).applyConfiguration(captureConfiguration).build()
         giniCapture = GiniCapture.getInstance()
+
+        releaseTransactionDocsFeature(context)
+        BankSdkIsolatedKoinContext.init(context)
+        getGiniCaptureKoin().loadModules(listOf(captureSdkDiBridge))
+        this.giniBankTransactionDocs = GiniBankTransactionDocs()
     }
 
 
@@ -246,6 +264,7 @@ object GiniBank {
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
         )
         releaseCapture(context)
+        releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }
 
@@ -276,6 +295,7 @@ object GiniBank {
         )
 
         digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
+        releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }
 
@@ -532,5 +552,36 @@ object GiniBank {
     fun createCaptureFlowFragmentForDocument(document: Document): CaptureFlowFragment {
         check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
         return CaptureFlowFragment.createInstance(document)
+    }
+
+    fun createInvoicePreviewFragment(
+        screenTitle: String,
+        giniApiDocumentId: String,
+        infoTextLines: List<String> = emptyList()
+    ): InvoicePreviewFragment {
+        return InvoicePreviewFragment.createInstance(
+            createInvoicePreviewFragmentArgs(screenTitle, giniApiDocumentId, infoTextLines)
+        )
+    }
+
+    fun createInvoicePreviewFragmentArgs(
+        screenTitle: String,
+        giniApiDocumentId: String,
+        infoTextLines: List<String> = emptyList()
+    ): InvoicePreviewFragmentArgs {
+        check(giniApiDocumentId.isNotBlank() && giniApiDocumentId.isNotEmpty()) {
+            "Gini Api Document Id should not be empty or blank"
+        }
+        return InvoicePreviewFragmentArgs(
+            screenTitle,
+            giniApiDocumentId,
+            infoTextLines.toTypedArray(),
+            arrayOf()
+        )
+    }
+
+    @Suppress("UnusedParameter")
+    private fun releaseTransactionDocsFeature(context: Context) {
+        giniBankTransactionDocs = null
     }
 }

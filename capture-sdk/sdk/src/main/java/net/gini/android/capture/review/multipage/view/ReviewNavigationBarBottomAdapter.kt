@@ -7,7 +7,6 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.databinding.GcReviewNavigationBarBottomBinding
 import net.gini.android.capture.view.InjectedViewAdapter
 import net.gini.android.capture.view.InjectedViewAdapterHolder
-import net.gini.android.capture.view.InjectedViewAdapterInstance
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
 
 /**

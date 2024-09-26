@@ -61,7 +61,6 @@ import net.gini.android.bank.api.models.Configuration as BankConfiguration
  * [GiniCapture] instance.
  */
 class GiniCaptureDefaultNetworkService
-
 @VisibleForTesting
 internal constructor(
     internal val giniBankApi: GiniBankAPI,
@@ -185,13 +184,14 @@ internal constructor(
 
     private fun mapBankConfigurationToConfiguration(configuration: BankConfiguration) =
         Configuration(
-            UUID.randomUUID(),
-            configuration.clientID,
-            configuration.isUserJourneyAnalyticsEnabled,
-            configuration.isSkontoEnabled,
-            configuration.isReturnAssistantEnabled,
-            configuration.mixpanelToken ?: "",
-            configuration.amplitudeApiKey ?: "",
+            id = UUID.randomUUID(),
+            clientID = configuration.clientID,
+            isUserJourneyAnalyticsEnabled = configuration.isUserJourneyAnalyticsEnabled,
+            isSkontoEnabled = configuration.isSkontoEnabled,
+            isReturnAssistantEnabled = configuration.isReturnAssistantEnabled,
+            isTransactionDocsEnabled = configuration.transactionDocsEnabled,
+            mixpanelToken = configuration.mixpanelToken ?: "",
+            amplitudeApiKey = configuration.amplitudeApiKey ?: "",
         )
 
     override fun upload(
@@ -241,7 +241,7 @@ internal constructor(
                     apiDocument
                 )
                 giniApiDocuments[apiDocument.id] = apiDocument
-                callback.success(Result(apiDocument.id))
+                callback.success(Result(apiDocument.id, apiDocument.filename))
             }
 
             is Resource.Error -> {
@@ -284,7 +284,7 @@ internal constructor(
         when (deleteResource) {
             is Resource.Success -> {
                 LOG.debug("Document deletion success for api id {}", giniApiDocumentId)
-                callback.success(Result(giniApiDocumentId))
+                callback.success(Result(giniApiDocumentId, null))
             }
 
             is Resource.Error -> {
@@ -373,6 +373,7 @@ internal constructor(
                 callback.success(
                     AnalysisResult(
                         compositeDocument.id,
+                        compositeDocument.filename,
                         extractions,
                         compoundExtractions,
                         returnReasons

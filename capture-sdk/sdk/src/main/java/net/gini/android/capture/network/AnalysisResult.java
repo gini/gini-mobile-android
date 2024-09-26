@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 /**
  * Created by Alpar Szotyori on 29.01.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -31,9 +31,10 @@ public class AnalysisResult extends Result {
      * @param giniApiDocumentId the id of a document in the Gini API
      * @param extractions       the extractions from the Gini API
      */
-    public AnalysisResult(@NonNull final String giniApiDocumentId,
+    public AnalysisResult(
+            @NonNull final String giniApiDocumentId,
             @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
-        super(giniApiDocumentId);
+        super(giniApiDocumentId, "");
         this.extractions = extractions;
         this.compoundExtractions = Collections.emptyMap();
         this.returnReasons = Collections.emptyList();
@@ -44,12 +45,29 @@ public class AnalysisResult extends Result {
      *
      * @param giniApiDocumentId the id of a document in the Gini API
      * @param extractions       the extractions from the Gini API
+     */
+    public AnalysisResult(
+            @NonNull final String giniApiDocumentId,
+            @NonNull final String giniApiDocumentFilename,
+            @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
+        super(giniApiDocumentId, giniApiDocumentFilename);
+        this.extractions = extractions;
+        this.compoundExtractions = Collections.emptyMap();
+        this.returnReasons = Collections.emptyList();
+    }
+
+    /**
+     * Create a new analysis result for a Gini API document id.
+     *
+     * @param giniApiDocumentId   the id of a document in the Gini API
+     * @param extractions         the extractions from the Gini API
      * @param compoundExtractions the compound extractions from the Gini API
      */
     public AnalysisResult(@NonNull final String giniApiDocumentId,
+                          @NonNull final String giniApiDocumentFilename,
                           @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
                           @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions) {
-        super(giniApiDocumentId);
+        super(giniApiDocumentId, giniApiDocumentFilename);
         this.extractions = extractions;
         this.compoundExtractions = compoundExtractions;
         this.returnReasons = Collections.emptyList();
@@ -58,15 +76,16 @@ public class AnalysisResult extends Result {
     /**
      * Create a new analysis result for a Gini API document id.
      *
-     * @param giniApiDocumentId the id of a document in the Gini API
-     * @param extractions       the extractions from the Gini API
+     * @param giniApiDocumentId   the id of a document in the Gini API
+     * @param extractions         the extractions from the Gini API
      * @param compoundExtractions the compound extractions from the Gini API
      */
     public AnalysisResult(@NonNull final String giniApiDocumentId,
+                          @NonNull final String giniApiDocumentFilename,
                           @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
                           @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions,
                           @NonNull final List<GiniCaptureReturnReason> returnReasons) {
-        super(giniApiDocumentId);
+        super(giniApiDocumentId, giniApiDocumentFilename);
         this.extractions = extractions;
         this.compoundExtractions = compoundExtractions;
         this.returnReasons = returnReasons;

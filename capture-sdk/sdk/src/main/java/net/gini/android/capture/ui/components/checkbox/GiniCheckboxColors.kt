@@ -3,7 +3,6 @@ package net.gini.android.capture.ui.components.checkbox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import net.gini.android.capture.ui.theme.GiniTheme
-import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 
 data class GiniCheckboxColors(
     val checkedCheckmarkColor: Color,

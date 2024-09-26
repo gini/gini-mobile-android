@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
+import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
@@ -13,7 +14,13 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercent
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoRemainingDaysUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
 import net.gini.android.capture.Amount
+import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
+import net.gini.android.capture.provider.LastExtractionsProvider
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -26,6 +33,13 @@ internal class SkontoFragmentViewModel(
     private val getSkontoRemainingDaysUseCase: GetSkontoRemainingDaysUseCase,
     private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase,
     private val skontoExtractionsHandler: SkontoExtractionsHandler,
+    private val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider,
+    private val skontoInvoicePreviewTextLinesFactory: SkontoInvoicePreviewTextLinesFactory,
+    private val lastExtractionsProvider: LastExtractionsProvider,
+    private val transactionDocDialogConfirmAttachUseCase: TransactionDocDialogConfirmAttachUseCase,
+    private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase,
+    private val getTransactionDocShouldBeAutoAttachedUseCase: GetTransactionDocShouldBeAutoAttachedUseCase,
+    private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<SkontoFragmentContract.State> =
@@ -39,7 +53,30 @@ internal class SkontoFragmentViewModel(
         this.listener = listener
     }
 
-    fun onProceedClicked() {
+    fun onProceedClicked() = viewModelScope.launch {
+        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        if (!getTransactionDocsFeatureEnabledUseCase()) {
+            openExtractionsScreen()
+            return@launch
+        }
+        if (getTransactionDocShouldBeAutoAttachedUseCase()) {
+            onConfirmAttachTransactionDocClicked(true)
+        } else {
+            stateFlow.emit(currentState.copy(transactionDialogVisible = true))
+        }
+    }
+
+    fun onConfirmAttachTransactionDocClicked(alwaysAttach: Boolean) = viewModelScope.launch {
+        transactionDocDialogConfirmAttachUseCase(alwaysAttach)
+        openExtractionsScreen()
+    }
+
+    fun onCancelAttachTransactionDocClicked() = viewModelScope.launch {
+        transactionDocDialogCancelAttachUseCase()
+        openExtractionsScreen()
+    }
+
+    private fun openExtractionsScreen() {
         val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return
         skontoExtractionsHandler.updateExtractions(
             totalAmount = currentState.totalAmount,
@@ -48,6 +85,7 @@ internal class SkontoFragmentViewModel(
             paymentInDays = currentState.paymentInDays,
             discountDueDate = currentState.discountDueDate.toString(),
         )
+        lastExtractionsProvider.update(skontoExtractionsHandler.getExtractions().toMutableMap())
         listener?.onPayInvoiceWithSkonto(
             skontoExtractionsHandler.getExtractions(),
             skontoExtractionsHandler.getCompoundExtractions()
@@ -85,7 +123,8 @@ internal class SkontoFragmentViewModel(
             paymentMethod = paymentMethod,
             skontoEdgeCase = edgeCase,
             edgeCaseInfoDialogVisible = edgeCase != null,
-            savedAmount = savedAmount
+            savedAmount = savedAmount,
+            transactionDialogVisible = false,
         )
     }
 
@@ -207,16 +246,19 @@ internal class SkontoFragmentViewModel(
     fun onInvoiceClicked() = viewModelScope.launch {
         val currentState =
             stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        val skontoData = SkontoData(
+            skontoAmountToPay = currentState.skontoAmount,
+            skontoDueDate = currentState.discountDueDate,
+            skontoPercentageDiscounted = currentState.skontoPercentage,
+            skontoRemainingDays = currentState.paymentInDays,
+            fullAmountToPay = currentState.fullAmount,
+            skontoPaymentMethod = currentState.paymentMethod,
+        )
+        val documentId = lastAnalyzedDocumentProvider.provide()?.giniApiDocumentId ?: return@launch
         sideEffectFlow.emit(
             SkontoFragmentContract.SideEffect.OpenInvoiceScreen(
-                SkontoData(
-                    skontoAmountToPay = currentState.skontoAmount,
-                    skontoDueDate = currentState.discountDueDate,
-                    skontoPercentageDiscounted = currentState.skontoPercentage,
-                    skontoRemainingDays = currentState.paymentInDays,
-                    fullAmountToPay = currentState.fullAmount,
-                    skontoPaymentMethod = currentState.paymentMethod,
-                )
+                documentId,
+                skontoInvoicePreviewTextLinesFactory.create(skontoData)
             )
         )
     }

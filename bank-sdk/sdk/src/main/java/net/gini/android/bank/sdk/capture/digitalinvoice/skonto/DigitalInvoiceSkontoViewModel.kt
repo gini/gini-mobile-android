@@ -7,18 +7,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoResultArgs
+import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercentageUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoRemainingDaysUseCase
+import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
 import java.math.BigDecimal
 import java.time.LocalDate
 
 internal class DigitalInvoiceSkontoViewModel(
     args: DigitalInvoiceSkontoArgs,
+    private val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider,
     private val getSkontoDiscountPercentageUseCase: GetSkontoDiscountPercentageUseCase,
     private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase,
     private val getSkontoRemainingDaysUseCase: GetSkontoRemainingDaysUseCase,
+    private val skontoInvoicePreviewTextLinesFactory: SkontoInvoicePreviewTextLinesFactory,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<DigitalInvoiceSkontoScreenState> =
@@ -134,16 +138,26 @@ internal class DigitalInvoiceSkontoViewModel(
     fun onInvoiceClicked() = viewModelScope.launch {
         val currentState =
             stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch
-        sideEffectFlow.emit(DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen(
-            SkontoData(
-                skontoAmountToPay = currentState.skontoAmount,
-                skontoDueDate = currentState.discountDueDate,
-                skontoPercentageDiscounted = currentState.skontoPercentage,
-                skontoRemainingDays = currentState.paymentInDays,
-                fullAmountToPay = currentState.fullAmount,
-                skontoPaymentMethod = currentState.paymentMethod,
+        val documentId = lastAnalyzedDocumentProvider.provide()?.giniApiDocumentId ?: return@launch
+
+        val skontoData = SkontoData(
+            skontoAmountToPay = currentState.skontoAmount,
+            skontoDueDate = currentState.discountDueDate,
+            skontoPercentageDiscounted = currentState.skontoPercentage,
+            skontoRemainingDays = currentState.paymentInDays,
+            fullAmountToPay = currentState.fullAmount,
+            skontoPaymentMethod = currentState.paymentMethod,
+        )
+        val infoTextLines = skontoInvoicePreviewTextLinesFactory.create(
+            skontoData
+        )
+
+        sideEffectFlow.emit(
+            DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen(
+                documentId,
+                infoTextLines
             )
-        ))
+        )
     }
 
     fun onHelpClicked() = viewModelScope.launch {

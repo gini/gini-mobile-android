@@ -3,11 +3,8 @@ package net.gini.android.bank.sdk.exampleapp.ui.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.databinding.CustomDigitalInvoiceSkontoNavigationBarBinding
-import net.gini.android.bank.sdk.exampleapp.databinding.CustomSkontoNavigationBarBinding
 
 class CustomDigitalInvoiceSkontoNavigationBarBottomAdapter : DigitalInvoiceSkontoNavigationBarBottomAdapter {
 

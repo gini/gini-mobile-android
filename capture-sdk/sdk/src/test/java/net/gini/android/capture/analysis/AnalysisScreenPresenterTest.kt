@@ -13,6 +13,7 @@ import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.*
+import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.document.*
 import net.gini.android.capture.internal.document.DocumentRenderer
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
@@ -396,6 +397,7 @@ class AnalysisScreenPresenterTest {
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
                 "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val presenter =
@@ -433,7 +435,8 @@ class AnalysisScreenPresenterTest {
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
-                "dummy_doc_id"
+                "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val presenter =
@@ -467,12 +470,17 @@ class AnalysisScreenPresenterTest {
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
-                extractions, compoundExtraction, returnReasons, "dummy_doc_id"
+                extractions,
+                compoundExtraction,
+                returnReasons,
+                "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val presenter =
             createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
         val listener = mock<AnalysisFragmentListener>()
+
         presenter.setListener(listener)
 
         // When
@@ -493,7 +501,8 @@ class AnalysisScreenPresenterTest {
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
-                "dummy_doc_id"
+                "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val presenter = spy(
@@ -641,7 +650,8 @@ class AnalysisScreenPresenterTest {
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
-                "dummy_doc_id"
+                "dummy_doc_id",
+                "dummy_doc_filename",
             )
         )
         val memoryStore = mock<ImageMultiPageDocumentMemoryStore>()
@@ -759,6 +769,7 @@ class AnalysisScreenPresenterTest {
     @Test
     @Throws(Exception::class)
     fun should_triggerErrorEvent_forAnalysisError() {
+
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()

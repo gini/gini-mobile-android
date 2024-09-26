@@ -118,6 +118,8 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.material)
 
+    implementation(libs.datastore.preferences)
+
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
 

@@ -9,7 +9,6 @@ import net.gini.android.bank.sdk.capture.skonto.formatter.SkontoDiscountPercenta
 import net.gini.android.bank.sdk.capture.skonto.formatter.SkontoRemainingDaysFormatter
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
 val skontoCommonModule = module {

@@ -114,7 +114,15 @@ class BankApiDocumentRemoteSourceTest {
         }
 
         override suspend fun getConfigurations(bearer: Map<String, String>): Response<ConfigurationResponse> {
-            return Response.success(ConfigurationResponse(null, null, null, null, null, null))
+            return Response.success(ConfigurationResponse(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+            ))
         }
 
         override suspend fun uploadDocument(

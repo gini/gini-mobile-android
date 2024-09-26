@@ -132,8 +132,8 @@
                 app:popUpTo="@id/gbs_destination_skonto_fragment"
                 app:popUpToInclusive="true" />
             <action
-                android:id="@+id/to_skonto_invoice_fragment"
-                app:destination="@id/gbs_destination_skonto_invoice_fragment" />
+                android:id="@+id/to_invoice_preview_fragment"
+                app:destination="@id/gbs_destination_invoice_preview_fragment" />
 
             <action
                 android:id="@+id/to_skonto_help_fragment"
@@ -147,18 +147,26 @@
     </navigation>
 
     <fragment
-        android:id="@+id/gbs_destination_skonto_invoice_fragment"
-        android:name="net.gini.android.bank.sdk.capture.skonto.invoice.SkontoInvoiceFragment"
+        android:id="@+id/gbs_destination_invoice_preview_fragment"
+        android:name="net.gini.android.bank.sdk.invoice.InvoicePreviewFragment"
         android:label="SkontoInvoiceFragment">
 
         <argument
-            android:name="skonto_data"
-            app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoData"
+            android:name="screen_title"
+            app:argType="string" />
+
+        <argument
+            android:name="document_id"
+            app:argType="string" />
+
+        <argument
+            android:name="info_text_lines"
+            app:argType="string[]"
             app:nullable="true" />
 
         <argument
-            android:name="invoiceHighlights"
-            app:argType="net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes[]" />
+            android:name="highlight_boxes"
+            app:argType="net.gini.android.capture.network.model.GiniCaptureBox[]" />
 
     </fragment>
 
@@ -178,8 +186,8 @@
             app:argType="net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoArgs" />
 
         <action
-            android:id="@+id/to_skonto_invoice_fragment"
-            app:destination="@id/gbs_destination_skonto_invoice_fragment" />
+            android:id="@+id/to_invoice_preview_fragment"
+            app:destination="@id/gbs_destination_invoice_preview_fragment" />
 
         <action
             android:id="@+id/to_skonto_help_fragment"

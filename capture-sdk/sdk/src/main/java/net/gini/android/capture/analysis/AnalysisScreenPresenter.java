@@ -1,7 +1,10 @@
 package net.gini.android.capture.analysis;
 
+import static net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty;
+import static net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+
 import android.app.Activity;
-import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,7 +14,6 @@ import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
-import net.gini.android.capture.di.CaptureSdkIsolatedKoinContextKt;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
@@ -31,7 +33,6 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY;
-import net.gini.android.capture.util.UriHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,12 +44,6 @@ import java.util.Map;
 import java.util.Random;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
-import kotlin.Lazy;
-
-import static net.gini.android.capture.GiniCaptureError.ErrorCode.MISSING_GINI_CAPTURE_INSTANCE;
-import static net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty;
-import static net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.
@@ -64,7 +59,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @VisibleForTesting
     static final String PARCELABLE_MEMORY_CACHE_TAG = "ANALYSIS_FRAGMENT";
     private static final Logger LOG = LoggerFactory.getLogger(AnalysisScreenPresenter.class);
-    private final AnalysisScreenPresenterExtension analysisScreenPresenterExtension;
+
+    @VisibleForTesting
+    final AnalysisScreenPresenterExtension extension;
 
     private static final AnalysisFragmentListener NO_OP_LISTENER = new AnalysisFragmentListener() {
         @Override
@@ -122,7 +119,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         mDocumentAnalysisErrorMessage = documentAnalysisErrorMessage;
         mAnalysisInteractor = analysisInteractor;
         mHints = generateRandomHintsList();
-        analysisScreenPresenterExtension = new AnalysisScreenPresenterExtension();
+        extension = new AnalysisScreenPresenterExtension();
     }
 
     private List<AnalysisHint> generateRandomHintsList() {
@@ -294,6 +291,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                     @Override
                     public Void apply(final AnalysisInteractor.ResultHolder resultHolder,
                                       final Throwable throwable) {
+
                         stopScanAnimation();
                         if (isStopped()) {
                             return null;
@@ -302,32 +300,40 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                             handleAnalysisError(throwable);
                             return null;
                         }
+                        RemoteAnalyzedDocument remoteAnalyzedDocument =
+                                new RemoteAnalyzedDocument(
+                                        resultHolder.getDocumentId(),
+                                        resultHolder.getDocumentFileName()
+                                );
                         final AnalysisInteractor.Result result = resultHolder.getResult();
                         switch (result) {
                             case SUCCESS_NO_EXTRACTIONS:
                                 mAnalysisCompleted = true;
-                                analysisScreenPresenterExtension.getLastAnalyzedDocumentIdProvider()
-                                        .update(resultHolder.getDocumentId());
-                                trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
-                                getAnalysisFragmentListenerOrNoOp()
-                                        .onProceedToNoExtractionsScreen(mMultiPageDocument);
+                                extension.getLastAnalyzedDocumentProvider()
+                                        .update(remoteAnalyzedDocument);
+                                try {
+                                    extension.getAttachDocToTransactionDialogProvider()
+                                            .update(remoteAnalyzedDocument);
+                                } catch (Exception ignored) {
+
+                                }
+                                proceedSuccessNoExtractions();
                                 break;
                             case SUCCESS_WITH_EXTRACTIONS:
                                 mAnalysisCompleted = true;
-                                analysisScreenPresenterExtension.getLastAnalyzedDocumentIdProvider()
-                                        .update(resultHolder.getDocumentId());
-                                if (resultHolder.getExtractions().isEmpty()) {
-                                    trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
-                                    getAnalysisFragmentListenerOrNoOp()
-                                            .onProceedToNoExtractionsScreen(mMultiPageDocument);
-                                    return null;
+                                extension.getLastAnalyzedDocumentProvider()
+                                        .update(remoteAnalyzedDocument);
+                                try {
+                                    extension.getAttachDocToTransactionDialogProvider()
+                                            .update(remoteAnalyzedDocument);
+                                } catch (Exception ignored) {
+
                                 }
-
-                                getAnalysisFragmentListenerOrNoOp()
-                                        .onExtractionsAvailable(getMapOrEmpty(resultHolder.getExtractions()),
-                                                getMapOrEmpty(resultHolder.getCompoundExtractions()),
-                                                getListOrEmpty(resultHolder.getReturnReasons()));
-
+                                if (resultHolder.getExtractions().isEmpty()) {
+                                    proceedSuccessNoExtractions();
+                                } else {
+                                    proceedWithExtractions(resultHolder);
+                                }
                             case NO_NETWORK_SERVICE:
                                 break;
                             default:
@@ -340,6 +346,19 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         return null;
                     }
                 });
+    }
+
+    private void proceedSuccessNoExtractions() {
+        trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
+        getAnalysisFragmentListenerOrNoOp()
+                .onProceedToNoExtractionsScreen(mMultiPageDocument);
+    }
+
+    private void proceedWithExtractions(AnalysisInteractor.ResultHolder resultHolder) {
+        getAnalysisFragmentListenerOrNoOp()
+                .onExtractionsAvailable(getMapOrEmpty(resultHolder.getExtractions()),
+                        getMapOrEmpty(resultHolder.getCompoundExtractions()),
+                        getListOrEmpty(resultHolder.getReturnReasons()));
     }
 
     private void loadDocumentData() {

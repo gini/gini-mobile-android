@@ -12,6 +12,7 @@ data class ConfigurationResponse(
     @Json(name = "returnAssistantEnabled") val returnAssistantEnabled: Boolean?,
     @Json(name = "mixpanelToken") val mixpanelToken: String?,
     @Json(name = "amplitudeApiKey") val amplitudeApiKey: String?,
+    @Json(name = "transactionDocsEnabled") val transactionDocsEnabled: Boolean?,
 )
 
 internal fun ConfigurationResponse.toConfiguration() = Configuration(
@@ -20,6 +21,7 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     isSkontoEnabled = skontoEnabled ?: false,
     isReturnAssistantEnabled = returnAssistantEnabled ?: false,
     mixpanelToken = mixpanelToken,
-    amplitudeApiKey = amplitudeApiKey
+    amplitudeApiKey = amplitudeApiKey,
+    transactionDocsEnabled = transactionDocsEnabled ?: false,
 )
 

@@ -2,10 +2,11 @@ package net.gini.android.bank.sdk.util
 
 import android.os.Handler
 import android.os.Looper
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Created by Alpár Szotyori on 22.11.21.
