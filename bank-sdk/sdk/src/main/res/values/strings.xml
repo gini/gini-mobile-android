@@ -92,7 +92,7 @@
     <!--   endregion -->
 
     <!--   region Transaction Docs. Attach Document Dialog -->
-    <string name="gbs_td_attach_document_dialog_title">Fügen Sie der Transaktion ein Anhang hinzu</string>
+    <string name="gbs_td_attach_document_dialog_title">Fügen Sie der Transaktion ein Anhang hinzu?</string>
     <string name="gbs_td_attach_document_dialog_content">Sie können dieser Transaktion einen Anhang hinzufügen. Das erleichert es Ihnen, Ausgaben effizient zu verwalten und Einkäufe einfacher zurückzurufen.</string>
     <string name="gbs_td_attach_document_dialog_always_attach_text">Immer anhängen und nicht erneut fragen</string>
     <string name="gbs_td_attach_document_dialog_confirm_button_text">Anhängen</string>

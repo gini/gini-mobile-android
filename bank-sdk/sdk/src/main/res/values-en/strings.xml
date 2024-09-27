@@ -92,7 +92,7 @@
     <!--   endregion -->
     <!-- endregion -->
     <!--   region Transaction Docs. Attach Document Dialog TODO-->
-    <string name="gbs_td_attach_document_dialog_title">Add an attachment to this transaction</string>
+    <string name="gbs_td_attach_document_dialog_title">Add an attachment to this transaction?</string>
     <string name="gbs_td_attach_document_dialog_content">We recommend adding attachments to transactions to manage expenses efficiently and easily recall purchases.</string>
     <string name="gbs_td_attach_document_dialog_always_attach_text">Always attach and don\'t ask again</string>
     <string name="gbs_td_attach_document_dialog_confirm_button_text">Attach</string>

@@ -14,15 +14,15 @@ internal class TransactionDocInvoicePreviewInfoLinesFactory(
 
     fun create(
     ) = listOfNotNull(
+        lastExtractionsProvider.provide()["amountToPay"]?.value?.let { Amount.parse(it) }?.let {
+            resources.getString(
+                R.string.gbs_td_invoice_preview_info_text_amount, amountFormatter.format(it)
+            )
+        },
         lastExtractionsProvider.provide()["iban"]?.value?.let {
             resources.getString(
                 R.string.gbs_td_invoice_preview_info_text_iban,
                 it
-            )
-        },
-        lastExtractionsProvider.provide()["amountToPay"]?.value?.let { Amount.parse(it) }?.let {
-            resources.getString(
-                R.string.gbs_td_invoice_preview_info_text_amount, amountFormatter.format(it)
             )
         })
 }
