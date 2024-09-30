@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>GiniCheckboxColors</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+            <a href="../../../index.html">
+                    <span>Gini Bank SDK for Android</span>
+            </a>
+    </div>
+    <div>
+    </div>
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
+        <div id="sideMenu"></div>
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageIds="Gini Bank SDK for Android::net.gini.android.capture.ui.components.checkbox/GiniCheckboxColors///PointingToDeclaration//-1647097541">
+  <div class="breadcrumbs"><a href="../../../index.html">Gini Bank SDK for Android</a><span class="delimiter">/</span><a href="../index.html">net.gini.android.capture.ui.components.checkbox</a><span class="delimiter">/</span><span class="current">GiniCheckboxColors</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Gini</span><wbr></wbr><span>Checkbox</span><wbr></wbr><span><span>Colors</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span class="token keyword">class </span><a href="index.html">GiniCheckboxColors</a></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button><button class="section-tab" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+    <div class="tabs-section-body">
+      <h2 class="tabbedcontent">Constructors</h2>
+      <div class="table" data-togglable="Constructors"><a data-name="797897098%2FConstructors%2F-1647097541" anchor-label="GiniCheckboxColors" id="797897098%2FConstructors%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-gini-checkbox-colors.html"><span>Gini</span><wbr></wbr><span>Checkbox</span><wbr></wbr><span><span>Colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="797897098%2FConstructors%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">GiniCheckboxColors</a> <a href="-gini-checkbox-colors.html"><span class="token function">GiniCheckboxColors</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> checkedCheckmarkColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> uncheckedCheckmarkColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> checkedBoxColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> uncheckedBoxColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> disabledCheckedBoxColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> disabledUncheckedBoxColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> disabledIndeterminateBoxColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> checkedBorderColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> uncheckedBorderColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> disabledBorderColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> disabledUncheckedBorderColor<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> disabledIndeterminateBorderColor</span></span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Types</h2>
+      <div class="table" data-togglable="Types"><a data-name="-1333155748%2FClasslikes%2F-1647097541" anchor-label="Companion" id="-1333155748%2FClasslikes%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1333155748%2FClasslikes%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">class </span><a href="-companion/index.html">Companion</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Functions</h2>
+      <div class="table" data-togglable="Functions"><a data-name="644853615%2FFunctions%2F-1647097541" anchor-label="getCheckedBorderColor" id="644853615%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-checked-border-color.html"><span>get</span><wbr></wbr><span>Checked</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="644853615%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-checked-border-color.html"><span class="token function">getCheckedBorderColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1770718364%2FFunctions%2F-1647097541" anchor-label="getCheckedBoxColor" id="1770718364%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-checked-box-color.html"><span>get</span><wbr></wbr><span>Checked</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1770718364%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-checked-box-color.html"><span class="token function">getCheckedBoxColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="225393638%2FFunctions%2F-1647097541" anchor-label="getCheckedCheckmarkColor" id="225393638%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-checked-checkmark-color.html"><span>get</span><wbr></wbr><span>Checked</span><wbr></wbr><span>Checkmark</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="225393638%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-checked-checkmark-color.html"><span class="token function">getCheckedCheckmarkColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1752677312%2FFunctions%2F-1647097541" anchor-label="getDisabledBorderColor" id="1752677312%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-disabled-border-color.html"><span>get</span><wbr></wbr><span>Disabled</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1752677312%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-disabled-border-color.html"><span class="token function">getDisabledBorderColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-460981960%2FFunctions%2F-1647097541" anchor-label="getDisabledCheckedBoxColor" id="-460981960%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-disabled-checked-box-color.html"><span>get</span><wbr></wbr><span>Disabled</span><wbr></wbr><span>Checked</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-460981960%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-disabled-checked-box-color.html"><span class="token function">getDisabledCheckedBoxColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1391875097%2FFunctions%2F-1647097541" anchor-label="getDisabledIndeterminateBorderColor" id="-1391875097%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-disabled-indeterminate-border-color.html"><span>get</span><wbr></wbr><span>Disabled</span><wbr></wbr><span>Indeterminate</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1391875097%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-disabled-indeterminate-border-color.html"><span class="token function">getDisabledIndeterminateBorderColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1431364828%2FFunctions%2F-1647097541" anchor-label="getDisabledIndeterminateBoxColor" id="-1431364828%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-disabled-indeterminate-box-color.html"><span>get</span><wbr></wbr><span>Disabled</span><wbr></wbr><span>Indeterminate</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1431364828%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-disabled-indeterminate-box-color.html"><span class="token function">getDisabledIndeterminateBoxColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-87791718%2FFunctions%2F-1647097541" anchor-label="getDisabledUncheckedBorderColor" id="-87791718%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-disabled-unchecked-border-color.html"><span>get</span><wbr></wbr><span>Disabled</span><wbr></wbr><span>Unchecked</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-87791718%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-disabled-unchecked-border-color.html"><span class="token function">getDisabledUncheckedBorderColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1257884591%2FFunctions%2F-1647097541" anchor-label="getDisabledUncheckedBoxColor" id="-1257884591%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-disabled-unchecked-box-color.html"><span>get</span><wbr></wbr><span>Disabled</span><wbr></wbr><span>Unchecked</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1257884591%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-disabled-unchecked-box-color.html"><span class="token function">getDisabledUncheckedBoxColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1087560374%2FFunctions%2F-1647097541" anchor-label="getUncheckedBorderColor" id="1087560374%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-unchecked-border-color.html"><span>get</span><wbr></wbr><span>Unchecked</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1087560374%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-unchecked-border-color.html"><span class="token function">getUncheckedBorderColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="217446069%2FFunctions%2F-1647097541" anchor-label="getUncheckedBoxColor" id="217446069%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-unchecked-box-color.html"><span>get</span><wbr></wbr><span>Unchecked</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="217446069%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-unchecked-box-color.html"><span class="token function">getUncheckedBoxColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-942115009%2FFunctions%2F-1647097541" anchor-label="getUncheckedCheckmarkColor" id="-942115009%2FFunctions%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="get-unchecked-checkmark-color.html"><span>get</span><wbr></wbr><span>Unchecked</span><wbr></wbr><span>Checkmark</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-942115009%2FFunctions%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="get-unchecked-checkmark-color.html"><span class="token function">getUncheckedCheckmarkColor</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h2 class="">Properties</h2>
+      <div class="table" data-togglable="Properties"><a data-name="-1524682507%2FProperties%2F-1647097541" anchor-label="checkedBorderColor" id="-1524682507%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1524682507%2FProperties%2F-1647097541"><span>checked</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1524682507%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1524682507%2FProperties%2F-1647097541" anchor-label="checkedBorderColor" id="-1524682507%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#-1524682507%2FProperties%2F-1647097541">checkedBorderColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="61366486%2FProperties%2F-1647097541" anchor-label="checkedBoxColor" id="61366486%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#61366486%2FProperties%2F-1647097541"><span>checked</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="61366486%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="61366486%2FProperties%2F-1647097541" anchor-label="checkedBoxColor" id="61366486%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#61366486%2FProperties%2F-1647097541">checkedBoxColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1757346656%2FProperties%2F-1647097541" anchor-label="checkedCheckmarkColor" id="-1757346656%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1757346656%2FProperties%2F-1647097541"><span>checked</span><wbr></wbr><span>Checkmark</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1757346656%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1757346656%2FProperties%2F-1647097541" anchor-label="checkedCheckmarkColor" id="-1757346656%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#-1757346656%2FProperties%2F-1647097541">checkedCheckmarkColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1078433030%2FProperties%2F-1647097541" anchor-label="disabledBorderColor" id="-1078433030%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1078433030%2FProperties%2F-1647097541"><span>disabled</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1078433030%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1078433030%2FProperties%2F-1647097541" anchor-label="disabledBorderColor" id="-1078433030%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#-1078433030%2FProperties%2F-1647097541">disabledBorderColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1091074930%2FProperties%2F-1647097541" anchor-label="disabledCheckedBoxColor" id="1091074930%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1091074930%2FProperties%2F-1647097541"><span>disabled</span><wbr></wbr><span>Checked</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1091074930%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="1091074930%2FProperties%2F-1647097541" anchor-label="disabledCheckedBoxColor" id="1091074930%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#1091074930%2FProperties%2F-1647097541">disabledCheckedBoxColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-421721363%2FProperties%2F-1647097541" anchor-label="disabledIndeterminateBorderColor" id="-421721363%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-421721363%2FProperties%2F-1647097541"><span>disabled</span><wbr></wbr><span>Indeterminate</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-421721363%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-421721363%2FProperties%2F-1647097541" anchor-label="disabledIndeterminateBorderColor" id="-421721363%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#-421721363%2FProperties%2F-1647097541">disabledIndeterminateBorderColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="66161118%2FProperties%2F-1647097541" anchor-label="disabledIndeterminateBoxColor" id="66161118%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#66161118%2FProperties%2F-1647097541"><span>disabled</span><wbr></wbr><span>Indeterminate</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="66161118%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="66161118%2FProperties%2F-1647097541" anchor-label="disabledIndeterminateBoxColor" id="66161118%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#66161118%2FProperties%2F-1647097541">disabledIndeterminateBoxColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1484536224%2FProperties%2F-1647097541" anchor-label="disabledUncheckedBorderColor" id="1484536224%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#1484536224%2FProperties%2F-1647097541"><span>disabled</span><wbr></wbr><span>Unchecked</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1484536224%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="1484536224%2FProperties%2F-1647097541" anchor-label="disabledUncheckedBorderColor" id="1484536224%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#1484536224%2FProperties%2F-1647097541">disabledUncheckedBorderColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-84865013%2FProperties%2F-1647097541" anchor-label="disabledUncheckedBoxColor" id="-84865013%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-84865013%2FProperties%2F-1647097541"><span>disabled</span><wbr></wbr><span>Unchecked</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-84865013%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-84865013%2FProperties%2F-1647097541" anchor-label="disabledUncheckedBoxColor" id="-84865013%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#-84865013%2FProperties%2F-1647097541">disabledUncheckedBoxColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-777514308%2FProperties%2F-1647097541" anchor-label="uncheckedBorderColor" id="-777514308%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-777514308%2FProperties%2F-1647097541"><span>unchecked</span><wbr></wbr><span>Border</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-777514308%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-777514308%2FProperties%2F-1647097541" anchor-label="uncheckedBorderColor" id="-777514308%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#-777514308%2FProperties%2F-1647097541">uncheckedBorderColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1792201617%2FProperties%2F-1647097541" anchor-label="uncheckedBoxColor" id="-1792201617%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#-1792201617%2FProperties%2F-1647097541"><span>unchecked</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1792201617%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="-1792201617%2FProperties%2F-1647097541" anchor-label="uncheckedBoxColor" id="-1792201617%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#-1792201617%2FProperties%2F-1647097541">uncheckedBoxColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="609941881%2FProperties%2F-1647097541" anchor-label="uncheckedCheckmarkColor" id="609941881%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a>
+        <div class="table-row" data-filterable-current=":capture-sdk:default-network:dokkaHtml/release" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="index.html#609941881%2FProperties%2F-1647097541"><span>unchecked</span><wbr></wbr><span>Checkmark</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="609941881%2FProperties%2F-1647097541"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-dependent-content" data-active="" data-togglable=":capture-sdk:default-network:dokkaHtml/release"><a data-name="609941881%2FProperties%2F-1647097541" anchor-label="uncheckedCheckmarkColor" id="609941881%2FProperties%2F-1647097541" data-filterable-set=":capture-sdk:default-network:dokkaHtml/release"></a><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a> <a href="index.html#609941881%2FProperties%2F-1647097541">uncheckedCheckmarkColor</a></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+    </div>
+</div>
+</body>
+</html>
