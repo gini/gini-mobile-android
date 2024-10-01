@@ -6,16 +6,15 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseCase
-import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import java.util.*
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import java.util.Currency
 
 /**
  * Created by Alpar Szotyori on 11.03.2020.

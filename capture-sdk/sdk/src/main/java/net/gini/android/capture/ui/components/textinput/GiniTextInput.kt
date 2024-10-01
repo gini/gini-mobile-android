@@ -1,7 +1,6 @@
 package net.gini.android.capture.ui.components.textinput
 
 import android.content.res.Configuration
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions

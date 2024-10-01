@@ -4,7 +4,6 @@ import android.app.Activity
 import android.os.Bundle
 import kotlinx.coroutines.CoroutineScope
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
-import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCaptureBasePresenter
 import net.gini.android.capture.GiniCaptureBaseView

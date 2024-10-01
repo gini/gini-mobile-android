@@ -10,7 +10,9 @@ val digitalInvoiceSkontoScreenModule = module {
             args = data,
             getSkontoDiscountPercentageUseCase = get(),
             getSkontoEdgeCaseUseCase = get(),
-            getSkontoRemainingDaysUseCase = get()
+            getSkontoRemainingDaysUseCase = get(),
+            lastAnalyzedDocumentProvider = get(),
+            skontoInvoicePreviewTextLinesFactory = get()
         )
     }
 }

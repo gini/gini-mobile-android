@@ -161,12 +161,15 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                             )
                             findNavController().popBackStack()
                         },
-                        navigateToInvoiceScreen = { data ->
+                        navigateToInvoiceScreen = { documentId, infoTextLines ->
                             findNavController()
                                 .navigate(
-                                    DigitalInvoiceSkontoFragmentDirections.toSkontoInvoiceFragment(
-                                        skontoData = data,
-                                        invoiceHighlights = args.data.invoiceHighlights.toTypedArray(),
+                                    DigitalInvoiceSkontoFragmentDirections.toInvoicePreviewFragment(
+                                        screenTitle = context.getString(R.string.gbs_skonto_invoice_preview_title),
+                                        documentId = documentId,
+                                        highlightBoxes = args.data.invoiceHighlights.flatMap { it.getExistBoxes() }
+                                            .toTypedArray(),
+                                        infoTextLines = infoTextLines.toTypedArray()
                                     )
                                 )
                         },
@@ -204,7 +207,7 @@ private fun ScreenContent(
     isBottomNavigationBarEnabled: Boolean,
     navigateBack: () -> Unit,
     navigateToHelpScreen: () -> Unit,
-    navigateToInvoiceScreen: (skontoData: SkontoData) -> Unit,
+    navigateToInvoiceScreen: (documentId: String, infoTextLines: List<String>) -> Unit,
     viewModel: DigitalInvoiceSkontoViewModel,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
@@ -217,8 +220,11 @@ private fun ScreenContent(
 
     viewModel.collectSideEffect {
         when (it) {
-            is DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen -> navigateToInvoiceScreen(it.skontoData)
-            DigitalInvoiceSkontoSideEffect.OpenHelpScreen -> navigateToHelpScreen()
+            is DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen ->
+                navigateToInvoiceScreen(it.documentId, it.infoTextLines)
+
+            DigitalInvoiceSkontoSideEffect.OpenHelpScreen ->
+                navigateToHelpScreen()
         }
     }
 

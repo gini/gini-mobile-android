@@ -173,10 +173,16 @@ data class Configuration(
     // 42 Digital Invoice Skonto Custom bottom navigation
     val isDigitalInvoiceSkontoCustomNavBarEnabled: Boolean = false,
 
-    ) : Parcelable {
+    // 43 enable transaction docs
+    val isTransactionDocsEnabled: Boolean = true,
+
+) : Parcelable {
 
     companion object {
-        fun setupSDKWithDefaultConfiguration(currentConfiguration: Configuration, defaultCaptureConfiguration: CaptureConfiguration) : Configuration{
+        fun setupSDKWithDefaultConfiguration(
+            currentConfiguration: Configuration,
+            defaultCaptureConfiguration: CaptureConfiguration,
+        ): Configuration {
             return currentConfiguration.copy(
                 isFileImportEnabled = defaultCaptureConfiguration.fileImportEnabled,
                 isQrCodeEnabled = defaultCaptureConfiguration.qrCodeScanningEnabled,
@@ -192,10 +198,9 @@ data class Configuration(
                 isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
                 isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
                 isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
-                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled
+                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled,
+                isTransactionDocsEnabled = defaultCaptureConfiguration.transactionDocsEnabled,
             )
-
-
         }
     }
 }

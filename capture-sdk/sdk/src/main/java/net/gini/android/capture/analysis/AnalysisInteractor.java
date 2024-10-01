@@ -78,13 +78,16 @@ public class AnalysisInteractor {
                                     final Map<String, GiniCaptureCompoundExtraction> compoundExtractions =
                                             requestResult.getAnalysisResult().getCompoundExtractions();
                                     if (extractions.isEmpty() && compoundExtractions.isEmpty()) {
-                                        return new ResultHolder(Result.SUCCESS_NO_EXTRACTIONS, requestResult.getApiDocumentId());
+                                        return new ResultHolder(Result.SUCCESS_NO_EXTRACTIONS,
+                                                requestResult.getApiDocumentId(),
+                                                requestResult.getApiDocumentFilename());
                                     } else {
                                         return new ResultHolder(Result.SUCCESS_WITH_EXTRACTIONS,
                                                 extractions,
                                                 compoundExtractions,
                                                 requestResult.getAnalysisResult().getReturnReasons(),
-                                                requestResult.getApiDocumentId());
+                                                requestResult.getApiDocumentId(),
+                                                requestResult.getApiDocumentFilename());
                                     }
                                 }
                                 return null;
@@ -92,10 +95,10 @@ public class AnalysisInteractor {
                         });
             } else {
                 return CompletableFuture.completedFuture(
-                        new ResultHolder(Result.NO_NETWORK_SERVICE, null));
+                        new ResultHolder(Result.NO_NETWORK_SERVICE, null, null));
             }
         } else {
-            return CompletableFuture.completedFuture(new ResultHolder(Result.NO_NETWORK_SERVICE, null));
+            return CompletableFuture.completedFuture(new ResultHolder(Result.NO_NETWORK_SERVICE, null, null));
         }
     }
 
@@ -172,13 +175,17 @@ public class AnalysisInteractor {
         private final Map<String, GiniCaptureSpecificExtraction> mExtractions;
         private final Map<String, GiniCaptureCompoundExtraction> mCompoundExtractions;
         private final List<GiniCaptureReturnReason> mReturnReasons;
-        private final String mDocumentId;
+        private final String mGiniApiDocumentId;
+        private final String mGiniApiDocumentFileName;
 
-        ResultHolder(@NonNull final Result result, final String documentId) {
+        ResultHolder(@NonNull final Result result,
+                     final String giniApiDocumentId,
+                     final String giniApiDocumentFilename) {
             this(result, Collections.emptyMap(),
                     Collections.emptyMap(),
                     Collections.emptyList(),
-                    documentId);
+                    giniApiDocumentId,
+                    giniApiDocumentFilename);
         }
 
         ResultHolder(
@@ -186,12 +193,14 @@ public class AnalysisInteractor {
                 @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
                 @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions,
                 @NonNull final List<GiniCaptureReturnReason> returnReasons,
-                final String documentId) {
+                final String giniApiDocumentId,
+                final String giniApiDocumentFilename) {
             mResult = result;
             mExtractions = extractions;
             mCompoundExtractions = compoundExtractions;
             mReturnReasons = returnReasons;
-            mDocumentId = documentId;
+            mGiniApiDocumentId = giniApiDocumentId;
+            mGiniApiDocumentFileName = giniApiDocumentFilename;
         }
 
         @NonNull
@@ -215,7 +224,11 @@ public class AnalysisInteractor {
         }
 
         public String getDocumentId() {
-            return mDocumentId;
+            return mGiniApiDocumentId;
+        }
+
+        public String getDocumentFileName() {
+            return mGiniApiDocumentFileName;
         }
     }
 }

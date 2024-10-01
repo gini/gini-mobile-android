@@ -215,6 +215,11 @@ data class CaptureConfiguration(
      * Enable/disable the skonto feature.
      */
     val skontoEnabled: Boolean = true,
+
+    /**
+     * Enable/disable the transaction docs feature.
+     */
+    val transactionDocsEnabled: Boolean = true,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {

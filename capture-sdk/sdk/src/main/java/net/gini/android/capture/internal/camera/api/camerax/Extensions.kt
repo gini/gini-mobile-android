@@ -4,11 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.BitmapRegionDecoder
 import android.graphics.Rect
-import android.util.Rational
 import android.util.Size
-import android.view.Surface
 import androidx.camera.core.ImageProxy
-import androidx.camera.core.impl.ImageOutputConfig
 import net.gini.android.capture.internal.camera.api.CameraException
 import java.io.ByteArrayOutputStream
 import java.io.IOException

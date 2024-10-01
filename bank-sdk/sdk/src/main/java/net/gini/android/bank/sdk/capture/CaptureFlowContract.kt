@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.content.IntentCompat
-import androidx.core.os.BundleCompat
 
 /**
  * Activity Result Api custom contract for starting the capture flow.

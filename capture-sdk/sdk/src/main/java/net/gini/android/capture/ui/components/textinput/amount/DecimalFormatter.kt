@@ -1,6 +1,5 @@
 package net.gini.android.capture.ui.components.textinput.amount
 
-import net.gini.android.capture.Amount
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat

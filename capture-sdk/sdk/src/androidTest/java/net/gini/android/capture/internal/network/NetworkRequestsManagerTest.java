@@ -265,7 +265,7 @@ public class NetworkRequestsManagerTest {
                             uploadCompletionRunnables.add(new Runnable() {
                                 @Override
                                 public void run() {
-                                    callback.success(new Result(DEFAULT_DOCUMENT_ID));
+                                    callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
                                 }
                             });
                         } catch (final InterruptedException e) {
@@ -384,7 +384,7 @@ public class NetworkRequestsManagerTest {
                             uploadCompletionRunnables.add(new Runnable() {
                                 @Override
                                 public void run() {
-                                    callback.success(new Result(DEFAULT_DOCUMENT_ID));
+                                    callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
                                 }
                             });
                         } catch (final InterruptedException e) {

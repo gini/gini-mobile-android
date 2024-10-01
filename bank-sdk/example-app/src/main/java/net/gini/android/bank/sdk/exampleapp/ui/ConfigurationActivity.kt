@@ -27,6 +27,7 @@ import javax.inject.Inject
 class ConfigurationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityConfigurationBinding
+
     @Inject
     lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
 
@@ -115,14 +116,17 @@ class ConfigurationActivity : AppCompatActivity() {
         // 2 QR code scanning
         binding.layoutFeatureToggle.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
         // 3 only QR code scanning
-        binding.layoutFeatureToggle.switchOnlyQRCodeScanning.isChecked = configuration.isOnlyQrCodeEnabled
+        binding.layoutFeatureToggle.switchOnlyQRCodeScanning.isChecked =
+            configuration.isOnlyQrCodeEnabled
 
         // 4 enable multi page
         binding.layoutFeatureToggle.switchMultiPage.isChecked = configuration.isMultiPageEnabled
         // 5 enable flash toggle
-        binding.layoutCameraToggles.switchDisplayFlashButton.isChecked = configuration.isFlashButtonDisplayed
+        binding.layoutCameraToggles.switchDisplayFlashButton.isChecked =
+            configuration.isFlashButtonDisplayed
         // 6 enable flash on by default
-        binding.layoutCameraToggles.switchFlashOnByDefault.isChecked = configuration.isFlashDefaultStateEnabled
+        binding.layoutCameraToggles.switchFlashOnByDefault.isChecked =
+            configuration.isFlashDefaultStateEnabled
         // 7 set import document type support
         val checkButtonId = when (configuration.documentImportEnabledFileTypes) {
             DocumentImportEnabledFileTypes.NONE -> R.id.btn_fileImportDisabled
@@ -132,7 +136,8 @@ class ConfigurationActivity : AppCompatActivity() {
         }
         binding.layoutFeatureToggle.toggleBtnFileImportSetup.check(checkButtonId)
         // 8 enable bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowBottomNavbar.isChecked = configuration.isBottomNavigationBarEnabled
+        binding.layoutBottomNavigationToggles.switchShowBottomNavbar.isChecked =
+            configuration.isBottomNavigationBarEnabled
         // 9 enable Help screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchShowHelpScreenCustomBottomNavbar.isChecked =
             configuration.isHelpScreensCustomBottomNavBarEnabled
@@ -143,14 +148,14 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.isChecked =
             configuration.isReviewScreenCustomBottomNavBarEnabled
         // 39 enable skonto screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.isChecked  =
-                configuration.isSkontoCustomNavBarEnabled
+        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.isChecked =
+            configuration.isSkontoCustomNavBarEnabled
         // 41 enable skonto help screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar.isChecked  =
+        binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar.isChecked =
             configuration.isSkontoHelpCustomNavBarEnabled
 
         // 42 enable digital invoice skonto screen custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar.isChecked  =
+        binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar.isChecked =
             configuration.isDigitalInvoiceSkontoCustomNavBarEnabled
 
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
@@ -162,7 +167,8 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutOnboardingToggles.switchOnboardingScreensAtEveryLaunch.isChecked =
             configuration.isOnboardingAtEveryLaunchEnabled
         // 15 enable custom onboarding pages
-        binding.layoutOnboardingToggles.switchCustomOnboardingPages.isChecked = configuration.isCustomOnboardingPagesEnabled
+        binding.layoutOnboardingToggles.switchCustomOnboardingPages.isChecked =
+            configuration.isCustomOnboardingPagesEnabled
         // 16 enable align corners onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingAlignCornersPage.isChecked =
             configuration.isAlignCornersInCustomOnboardingEnabled
@@ -188,24 +194,31 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutHelpToggles.switchSupportedFormatsScreen.isChecked =
             configuration.isSupportedFormatsHelpScreenEnabled
         // 24 enable custom help items
-        binding.layoutHelpToggles.switchCustomHelpMenuItems.isChecked = configuration.isCustomHelpItemsEnabled
+        binding.layoutHelpToggles.switchCustomHelpMenuItems.isChecked =
+            configuration.isCustomHelpItemsEnabled
         // 25 enable custom navigation bar
-        binding.layoutGeneralUiCustomizationToggles.switchCustomNavigationController.isChecked = configuration.isCustomNavBarEnabled
+        binding.layoutGeneralUiCustomizationToggles.switchCustomNavigationController.isChecked =
+            configuration.isCustomNavBarEnabled
         // 26 enable event tracker
-        binding.layoutFeatureToggle.switchEventTracker.isChecked = configuration.isEventTrackerEnabled
+        binding.layoutFeatureToggle.switchEventTracker.isChecked =
+            configuration.isEventTrackerEnabled
         // 27 enable Gini error logger
-        binding.layoutDebugDevelopmentOptionsToggles.switchGiniErrorLogger.isChecked = configuration.isGiniErrorLoggerEnabled
+        binding.layoutDebugDevelopmentOptionsToggles.switchGiniErrorLogger.isChecked =
+            configuration.isGiniErrorLoggerEnabled
         // 28 enable custom error logger
-        binding.layoutDebugDevelopmentOptionsToggles.switchCustomErrorLogger.isChecked = configuration.isCustomErrorLoggerEnabled
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomErrorLogger.isChecked =
+            configuration.isCustomErrorLoggerEnabled
         // 29 set imported file size bytes limit
         binding.layoutDebugDevelopmentOptionsToggles.editTextImportedFileSizeBytesLimit.hint =
             configuration.importedFileSizeBytesLimit.toString()
 
         // 31 enable return assistant
-        binding.layoutFeatureToggle.switchReturnAssistantFeature.isChecked = configuration.isReturnAssistantEnabled
+        binding.layoutFeatureToggle.switchReturnAssistantFeature.isChecked =
+            configuration.isReturnAssistantEnabled
 
         // 32 enable return reasons dialog
-        binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked = configuration.isReturnReasonsEnabled
+        binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked =
+            configuration.isReturnReasonsEnabled
 
         // 33 Digital invoice onboarding custom illustration
         binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration.isChecked =
@@ -234,9 +247,17 @@ class ConfigurationActivity : AppCompatActivity() {
         // 40 enable skonto
         binding.layoutFeatureToggle.switchSkontoFeature.isChecked = configuration.isSkontoEnabled
 
+        // 43 enable transaction docs
+        binding.layoutFeatureToggle.switchTransactionDocsFeature.isChecked =
+            configuration.isTransactionDocsEnabled
+
+        binding.layoutTransactionDocsToggles.switchAlwaysAttachDocs.isChecked =
+            configurationViewModel.getAlwaysAttachSetting(this)
+
         binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.hint = configuration.clientId
 
-        binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.hint = configuration.clientSecret
+        binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.hint =
+            configuration.clientSecret
     }
 
     @Suppress("CyclomaticComplexMethod", "LongMethod")
@@ -403,21 +424,21 @@ class ConfigurationActivity : AppCompatActivity() {
         // 41 enable skonto screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar
             .setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isSkontoHelpCustomNavBarEnabled = isChecked
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isSkontoHelpCustomNavBarEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // 42 enable digital invoice skonto screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar
             .setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isDigitalInvoiceSkontoCustomNavBarEnabled = isChecked
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isDigitalInvoiceSkontoCustomNavBarEnabled = isChecked
+                    )
                 )
-            )
             }
 
         // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
@@ -671,6 +692,7 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
+        // 40 enable Skonto
         binding.layoutFeatureToggle.switchSkontoFeature.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
@@ -678,11 +700,27 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+
+        // 43 enable transaction docs
+        binding.layoutFeatureToggle.switchTransactionDocsFeature.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isTransactionDocsEnabled = isChecked
+                )
+            )
+        }
+
+        // 44 Transaction docs always attach checked
+        binding.layoutTransactionDocsToggles.switchAlwaysAttachDocs.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setAlwaysAttachSetting(this, isChecked)
+        }
     }
 
     private fun applyClientSecretAndClientId() {
         val configurationFlow = configurationViewModel.configurationFlow.value
-        defaultNetworkServicesProvider.reinitNetworkServices(configurationFlow.clientId, configurationFlow.clientSecret)
+        defaultNetworkServicesProvider.reinitNetworkServices(
+            configurationFlow.clientId,
+            configurationFlow.clientSecret
+        )
     }
-
 }

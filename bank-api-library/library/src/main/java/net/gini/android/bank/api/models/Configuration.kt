@@ -7,5 +7,5 @@ data class Configuration(
     val isReturnAssistantEnabled: Boolean,
     val mixpanelToken: String?,
     val amplitudeApiKey: String?,
-
+    val transactionDocsEnabled: Boolean,
     )

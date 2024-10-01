@@ -26,6 +26,8 @@ data class GiniColorScheme(
     val dialogs: Dialogs = Dialogs(),
     val icons: Icons = Icons(),
     val datePicker: DatePicker = DatePicker(),
+    val checkbox: Checkbox = Checkbox(),
+    val contextMenu: ContextMenu = ContextMenu(),
 ) {
 
     @Immutable
@@ -82,6 +84,26 @@ data class GiniColorScheme(
         val container: Color = Color.Unspecified,
         val content: Color = Color.Unspecified,
     )
+
+    @Immutable
+    data class Checkbox(
+        val checkmark: Checkmark = Checkmark(),
+        val box: Box = Box(),
+    ) {
+        @Immutable
+        data class Checkmark(
+            val checked: Color = Color.Unspecified,
+            val unchecked: Color = Color.Unspecified,
+            val disabled: Color = Color.Unspecified,
+        )
+
+        @Immutable
+        data class Box(
+            val checked: Color = Color.Unspecified,
+            val unchecked: Color = Color.Unspecified,
+            val disabled: Color = Color.Unspecified,
+        )
+    }
 
     @Immutable
     data class Button(
@@ -169,6 +191,12 @@ data class GiniColorScheme(
     @Immutable
     data class Icons(
         val secondary: Color = Color.Unspecified,
+    )
+
+    @Immutable
+    data class ContextMenu(
+        val container: Color = Color.Unspecified,
+        val borderColor: Color = Color.Unspecified,
     )
 
     @Immutable
@@ -303,8 +331,23 @@ internal fun giniLightColorScheme(
                 contentFocused = light01,
                 contentOutlined = accent01
             )
+        ),
+        checkbox = GiniColorScheme.Checkbox(
+            checkmark = GiniColorScheme.Checkbox.Checkmark(
+                checked = light01,
+                unchecked = light01,
+                disabled = light04
+            ),
+            box = GiniColorScheme.Checkbox.Box(
+                checked = accent01,
+                unchecked = dark03,
+                disabled = dark06
+            )
+        ),
+        contextMenu = GiniColorScheme.ContextMenu(
+            container = light01,
+            borderColor = light03
         )
-
     )
 }
 
@@ -418,6 +461,22 @@ internal fun giniDarkColorScheme(
                 contentFocused = light01,
                 contentOutlined = accent01
             )
+        ),
+        checkbox = GiniColorScheme.Checkbox(
+            checkmark = GiniColorScheme.Checkbox.Checkmark(
+                checked = light01,
+                unchecked = light01,
+                disabled = light04
+            ),
+            box = GiniColorScheme.Checkbox.Box(
+                checked = accent01,
+                unchecked = light06,
+                disabled = dark06
+            )
+        ),
+        contextMenu = GiniColorScheme.ContextMenu(
+            container = dark02,
+            borderColor = dark03
         )
     )
 }

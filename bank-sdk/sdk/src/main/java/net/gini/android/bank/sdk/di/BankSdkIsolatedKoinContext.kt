@@ -2,12 +2,14 @@ package net.gini.android.bank.sdk.di
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import net.gini.android.bank.sdk.capture.captureFlowFragmentModule
 import net.gini.android.bank.sdk.capture.di.skonto.skontoCommonModule
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.digitalInvoiceSkontoScreenModule
-import net.gini.android.bank.sdk.capture.skonto.invoice.skontoInvoiceScreenModule
 import net.gini.android.bank.sdk.capture.skonto.skontoScreenModule
 import net.gini.android.bank.sdk.capture.skonto.usecase.di.skontoUseCaseModule
+import net.gini.android.bank.sdk.invoice.invoicePreviewScreenModule
+import net.gini.android.bank.sdk.transactiondocs.di.transactionListModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.Koin
 import org.koin.dsl.koinApplication
@@ -31,13 +33,18 @@ object BankSdkIsolatedKoinContext {
                     .plus(useCaseModules)
                     .plus(commonModules)
                     .plus(handlerModule)
+                    .plus(transactionListModule)
             )
         }.koin
     }
 
     @Synchronized
     fun init(context: Context) {
-        this.context = context
+        if (this.context == null) {
+            this.context = context
+        } else {
+            Log.d("BankIsolatedKoinContext", "Koin already initialized")
+        }
     }
 
     fun clean() {
@@ -55,7 +62,7 @@ private val useCaseModules = listOf(
 
 private val screenModules = listOf(
     skontoScreenModule,
-    skontoInvoiceScreenModule,
+    invoicePreviewScreenModule,
     captureFlowFragmentModule,
     digitalInvoiceSkontoScreenModule
 )

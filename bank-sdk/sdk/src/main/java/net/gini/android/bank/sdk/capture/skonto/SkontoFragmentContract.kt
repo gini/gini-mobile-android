@@ -21,12 +21,14 @@ internal object SkontoFragmentContract {
             val paymentMethod: SkontoData.SkontoPaymentMethod,
             val skontoEdgeCase: SkontoEdgeCase?,
             val edgeCaseInfoDialogVisible: Boolean,
+            val transactionDialogVisible: Boolean,
         ) : State()
     }
 
     sealed interface SideEffect {
         data class OpenInvoiceScreen(
-            val skontoData: SkontoData
+            val documentId: String,
+            val infoTextLines: List<String>,
         ) : SideEffect
     }
 }

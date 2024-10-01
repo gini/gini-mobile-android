@@ -91,4 +91,21 @@
     <string name="gbs_skonto_invoice_preview_full_amount">Full amount: %1$s</string>
     <!--   endregion -->
     <!-- endregion -->
+    <!--   region Transaction Docs. Attach Document Dialog TODO-->
+    <string name="gbs_td_attach_document_dialog_title">Add an attachment to this transaction?</string>
+    <string name="gbs_td_attach_document_dialog_content">We recommend adding attachments to transactions to manage expenses efficiently and easily recall purchases.</string>
+    <string name="gbs_td_attach_document_dialog_always_attach_text">Always attach and don\'t ask again</string>
+    <string name="gbs_td_attach_document_dialog_confirm_button_text">Attach</string>
+    <string name="gbs_td_attach_document_dialog_cancel_button_text">Don’t attach</string>
+    <string name="gbs_td_attach_document_dialog_check_box_text">Immer anhängen und nicht erneut fragen</string>
+    <!--   endregion -->
+    <!--   region Transaction Docs. Extraction Result Documents Section -->
+    <string name="gbs_td_extraction_result_documents_section_title">Attachments</string>
+    <string name="gbs_td_extraction_result_documents_section_menu_delete">Delete</string>
+    <!--   endregion -->
+    <!--   region Transaction Docs. Invoice Preview -->
+    <string name="gbs_td_invoice_preview_info_text_amount">Amount to Pay: %1$s</string>
+    <string name="gbs_td_invoice_preview_info_text_iban">IBAN: %1$s</string>
+    <string name="gbs_td_invoice_preview_info_text_due_date">Invoice Due Date: %1$s</string>
+    <!--   endregion -->
 </resources>
