@@ -59,7 +59,6 @@ class ErrorScreenTests {
     }
 
     @Test
-    @Ignore("Unable to disconnect the internet activity")
     fun test2_verifyNetworkErrorScreen() {
         errorScreen.disconnectTheInternetConnection()
         clickPhotoPaymentButtonAndSkipOnboarding()

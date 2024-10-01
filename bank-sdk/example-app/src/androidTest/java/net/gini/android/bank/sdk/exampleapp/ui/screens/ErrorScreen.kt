@@ -15,38 +15,29 @@ class ErrorScreen {
 
     fun checkErrorTextDisplayed(): Boolean {
         val errorText = device.findObject(
-            UiSelector()
-                .className("android.widget.TextView")
-                .text("Error")
-                .index(1)
+            UiSelector().className("android.widget.TextView").text("Error").index(1)
         )
         return errorText.waitForExists(5000)
     }
 
     fun checkErrorHeaderTextDisplayed(content: String): Boolean {
         val errorHeaderText = device.findObject(
-            UiSelector()
-                .className("android.widget.TextView")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gc_error_header")
-                .index(1)
+            UiSelector().className("android.widget.TextView")
+                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gc_error_header").index(1)
         )
         if (errorHeaderText.waitForExists(5000)) {
-           if(errorHeaderText.text == content)
-            return true
+            if (errorHeaderText.text == content) return true
         }
         return false
     }
 
     fun checkErrorTextViewDisplayed(content: String): Boolean {
         val errorTextViewText = device.findObject(
-            UiSelector()
-                .className("android.widget.TextView")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gc_error_textview")
-                .index(3)
+            UiSelector().className("android.widget.TextView")
+                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gc_error_textview").index(3)
         )
         if (errorTextViewText.waitForExists(5000)) {
-            if(errorTextViewText.text == content)
-                return true
+            if (errorTextViewText.text == content) return true
         }
         return false
     }
@@ -86,30 +77,37 @@ class ErrorScreen {
     fun disconnectTheInternetConnection() {
         device.openQuickSettings()
         Thread.sleep(3000)
+        if (UiObject(UiSelector().text("AndroidWifi")).exists()) {
+            device.findObject(By.text("AndroidWifi")).click()
+            device.wait(Until.hasObject(By.text("Internet")), 3000)
+            //Mobile Networks - LTE, 3G, 4G
+            val mobileNetworkSwitch = device.findObject(
+                UiSelector().className("android.widget.Switch")
+                    .resourceId("com.android.systemui:id/mobile_toggle").index(0)
+            )
+            mobileNetworkSwitch.click()
+            //Wifi
+            val wifiText = device.findObject(
+                UiSelector().className("android.widget.TextView")
+                    .resourceId("com.android.systemui:id/wifi_toggle_title").text("Wi‑Fi")
+            )
+            wifiText.waitForExists(5000)
 
-            if (UiObject(UiSelector().text("AndroidWifi")).exists()) {
-                device.findObject(By.text("AndroidWifi")).click()
-                device.wait(Until.hasObject(By.text("Internet")), 3000)
-
-                val wifiText = device.findObject(
-                    UiSelector()
-                        .className("android.widget.TextView")
-                        .resourceId("com.android.systemui:id/wifi_toggle_title")
-                        .text("Wi‑Fi")
-                )
-                wifiText.waitForExists(5000)
-
-                val wifiSwitch = device.findObject(
-                    UiSelector()
-                        .className("android.widget.Switch")
-                        .resourceId("com.android.systemui:id/wifi_toggle")
-                        .descriptionContains("Wi‑Fi")
-                        .index(0)
-                )
-                if(wifiSwitch.waitForExists(5000) && wifiSwitch.isChecked) {
-                    wifiSwitch.click()
-                }
-                device.pressBack()
+            val wifiSwitch = device.findObject(
+                UiSelector().className("android.widget.Switch")
+                    .resourceId("com.android.systemui:id/wifi_toggle").descriptionContains("Wi‑Fi")
+                    .index(0)
+            )
+            if (wifiSwitch.waitForExists(5000) && wifiSwitch.isChecked) {
+                wifiSwitch.click()
+            }
         }
+        device.pressBack()
+        val centerOfDevice = (device.displayWidth) / 2
+        val bottomOfDevice = (device.displayHeight * 1.5).toInt()
+        val steps = 40
+        device.swipe(centerOfDevice, bottomOfDevice, centerOfDevice, 500, steps)
+        Thread.sleep(3000)
+        device.swipe(centerOfDevice, bottomOfDevice, centerOfDevice, 500, steps)
     }
 }
