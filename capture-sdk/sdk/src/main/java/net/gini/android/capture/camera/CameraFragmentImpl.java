@@ -1856,9 +1856,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             public void onPreviewFrame(@NonNull Image image, @NonNull Size imageSize, int rotation, @NonNull CameraInterface.PreviewFrameCallback previewFrameCallback) {
                 AtomicInteger previewFrameReferenceCount = new AtomicInteger();
                 if (ibanRecognizerFilter != null) {
-                    try {
-                        previewFrameReferenceCount.getAndIncrement();
+                    previewFrameReferenceCount.getAndIncrement();
+                }
+                if (mPaymentQRCodeReader != null) {
+                    previewFrameReferenceCount.getAndIncrement();
+                }
 
+                if (ibanRecognizerFilter != null) {
+                    try {
                         if (cropToCameraFrameTextRecognizer != null) {
                             cropToCameraFrameTextRecognizer.setCameraPreviewSize(new Size(mCameraPreview.getWidth(), mCameraPreview.getHeight()));
                             cropToCameraFrameTextRecognizer.setImageSizeAndRotation(imageSize, rotation);
@@ -1881,8 +1886,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 }
 
                 if (mPaymentQRCodeReader != null) {
-                    previewFrameReferenceCount.getAndIncrement();
-
                     mPaymentQRCodeReader.readFromImage(image, imageSize, rotation, () -> {
                         previewFrameReferenceCount.getAndDecrement();
                         if (previewFrameReferenceCount.get() == 0) {
