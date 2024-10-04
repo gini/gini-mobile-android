@@ -382,6 +382,7 @@ class PaymentFragment private constructor(
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         childFragmentManager.showOpenWithBottomSheet(
             paymentProviderApp = paymentProviderApp,
+            paymentComponent = viewModel.paymentComponent,
             backListener = viewModel
         ) {
             viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
