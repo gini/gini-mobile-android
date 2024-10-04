@@ -28,7 +28,6 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.withFeedback
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
-import net.gini.android.health.sdk.util.extensions.createTempPdfFile
 import net.gini.android.health.sdk.util.toBackendFormat
 import net.gini.android.health.sdk.util.withPrev
 import net.gini.android.internal.payment.api.model.PaymentRequest

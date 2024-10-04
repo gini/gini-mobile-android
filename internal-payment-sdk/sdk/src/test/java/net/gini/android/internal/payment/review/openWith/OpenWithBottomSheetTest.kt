@@ -24,7 +24,8 @@ class OpenWithBottomSheetTest {
         launchFragmentInContainer(themeResId = R.style.GiniPaymentTheme) {
             OpenWithBottomSheet.newInstance(
                 mockk(relaxed = true),
-                listener
+                paymentComponent = mockk(relaxed = true),
+                listener = listener
             )
         }
 

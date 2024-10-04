@@ -26,17 +26,17 @@ import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
-import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
-import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.health.sdk.paymentprovider.PaymentProviderAppColors
-import net.gini.android.health.sdk.paymentprovider.getInstalledPaymentProviderApps
-import net.gini.android.health.sdk.paymentprovider.getPaymentProviderApps
 import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
-import net.gini.android.health.sdk.util.extensions.generateBitmapDrawableIcon
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentPreferences
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
+import net.gini.android.internal.payment.paymentProvider.getInstalledPaymentProviderApps
+import net.gini.android.internal.payment.paymentProvider.getPaymentProviderApps
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -376,7 +376,8 @@ class PaymentComponentTest {
         paymentComponent.selectedPaymentProviderAppFlow.test {
             val noPaymentProviderSelectedValidation = awaitItem()
 
-            assertThat(noPaymentProviderSelectedValidation).isInstanceOf(SelectedPaymentProviderAppState.NothingSelected::class.java)
+            assertThat(noPaymentProviderSelectedValidation).isInstanceOf(
+                SelectedPaymentProviderAppState.NothingSelected::class.java)
             assertThat(paymentComponent.paymentProviderAppsFlow.value).isInstanceOf(PaymentProviderAppsState.Success::class.java)
 
             //When

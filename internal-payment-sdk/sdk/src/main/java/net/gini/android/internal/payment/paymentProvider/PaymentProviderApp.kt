@@ -17,14 +17,14 @@ internal const val Scheme = "ginipay" // It has to match the scheme in query tag
 private const val PaymentPath = "payment"
 internal const val QueryUri = "$Scheme://$PaymentPath/id"
 
-internal fun getPaymentProviderAppUri(requestId: String) = "$Scheme://$PaymentPath/$requestId"
+fun getPaymentProviderAppUri(requestId: String) = "$Scheme://$PaymentPath/$requestId"
 
-internal fun PackageManager.getInstalledPaymentProviderApps(): List<InstalledPaymentProviderApp> =
+fun PackageManager.getInstalledPaymentProviderApps(): List<InstalledPaymentProviderApp> =
     queryIntentActivities(getPaymentProviderAppQueryIntent(), 0)
         .map { InstalledPaymentProviderApp.fromResolveInfo(it, this) }
 
 
-internal fun PackageManager.getPaymentProviderApps(
+fun PackageManager.getPaymentProviderApps(
     paymentProviders: List<PaymentProvider>,
     context: Context
 ): List<PaymentProviderApp> =

@@ -15,6 +15,7 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesLocalDataSource
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
 import net.gini.android.health.sdk.exampleapp.util.getBytes
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 
 class UploadViewModel(
     private val giniHealthAPI: GiniHealthAPI,
