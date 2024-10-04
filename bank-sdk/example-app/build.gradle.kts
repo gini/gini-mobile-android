@@ -72,6 +72,7 @@ android {
 
         // Use the test runner with JUnit4 support
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
 
         multiDexEnabled = true
     }
@@ -191,6 +192,7 @@ dependencies {
     implementation(libs.navigation.ui.ktx)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.test.junit.ktx)
     kapt(libs.hilt.compiler)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -203,6 +205,10 @@ dependencies {
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)

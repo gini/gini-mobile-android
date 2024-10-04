@@ -51,6 +51,7 @@ androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", versi
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "androidx-camera" }
 androidx-annotation = "androidx.annotation:annotation:1.7.1"
 androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-test" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
 androidx-test-orchestrator = "androidx.test:orchestrator:1.4.2"
