@@ -128,7 +128,7 @@ jobs:
 
       - name: run example app instrumented tests2
         timeout-minutes: 20
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@v3
         with:
           api-level: 33
           arch: x86_64
