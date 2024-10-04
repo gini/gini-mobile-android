@@ -7,7 +7,7 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesViewModel
 import net.gini.android.health.sdk.exampleapp.review.ReviewViewModel
 import net.gini.android.health.sdk.exampleapp.upload.UploadViewModel
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

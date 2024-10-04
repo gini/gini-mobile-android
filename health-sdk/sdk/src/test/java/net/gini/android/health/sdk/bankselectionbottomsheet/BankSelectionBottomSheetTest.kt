@@ -26,7 +26,6 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
 import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderAppColors
-import net.gini.android.health.sdk.util.GiniLocalization
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

@@ -24,7 +24,6 @@ import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsBottomSheetOpenWithBinding
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.health.sdk.util.GhsBottomSheetDialogFragment
 import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.health.sdk.util.getLocaleStringResource

@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
-import net.gini.android.health.sdk.util.GiniLocalization
+import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
+import net.gini.android.internal.payment.utils.GiniLocalization
 import java.io.File
 
 class MainViewModel(
@@ -56,5 +58,5 @@ class MainViewModel(
         giniHealth.setSDKLanguage(localization, context)
     }
 
-    fun getGiniHealthLanguage(context: Context) = GiniHealth.getSDKLanguage(context)
+    fun getGiniHealthLanguage(context: Context) = giniHealth.getSDKLanguage(context)
 }

@@ -22,7 +22,6 @@ import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.health.sdk.util.GiniLocalization
 import org.junit.Before
 
 @RunWith(AndroidJUnit4::class)

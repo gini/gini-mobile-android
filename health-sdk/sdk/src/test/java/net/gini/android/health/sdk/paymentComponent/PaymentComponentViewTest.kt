@@ -22,7 +22,6 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
-import net.gini.android.health.sdk.util.GiniLocalization
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before

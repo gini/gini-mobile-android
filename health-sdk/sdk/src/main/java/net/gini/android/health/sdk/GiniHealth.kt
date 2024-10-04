@@ -10,6 +10,7 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,8 +26,8 @@ import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
-import net.gini.android.health.sdk.util.GiniLocalization
 import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.utils.GiniLocalization
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
@@ -41,13 +42,12 @@ class GiniHealth(
     context: Context
 ) {
 
-    val giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
+    internal val giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
         context = context,
         giniHealthAPI = giniHealthAPI
     )
 
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
-    val localizedContext = giniInternalPaymentModule.localizedContext
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
     private var savedStateObserver: LifecycleEventObserver? = null
@@ -87,15 +87,24 @@ class GiniHealth(
      */
     val openBankState: StateFlow<PaymentState> = _openBankState
 
+
     /**
      * Sets the app language to the desired one from the languages the SDK is supporting. If not set then defaults to the system's language locale.
      *
      * @param language enum value for the desired language or null for default system language
      * @param context Context object to save the configuration.
      */
-    fun setSDKLanguage(language: GiniLocalization?, context: Context) {
-        localizedContext = null
-        GiniHealthPreferences(context).saveSDKLanguage(language)
+    fun setSDKLanguage(localization: GiniLocalization, context: Context) {
+        giniInternalPaymentModule.setSDKLanguage(localization, context)
+    }
+
+    /**
+     * Returns the localization set for the app.
+     *
+     * @param context Context object to retrieve the value from.
+     */
+    fun getSDKLanguage(context: Context): GiniLocalization? {
+        return GiniInternalPaymentModule.getSDKLanguage(context)
     }
 
     /**

@@ -27,10 +27,13 @@ import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import org.slf4j.LoggerFactory
+import java.util.Locale
 
 /**
  * The [BankSelectionBottomSheet] displays a list of available banks for the user to choose from. If a banking app is not
@@ -49,12 +52,17 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         )
     }
 
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, viewModel.paymentComponent?.giniPaymentLanguage)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = GpsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
 
         binding.gpsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
         binding.gpsPaymentProviderAppsList.adapter =
-            PaymentProviderAppsAdapter(emptyList(), object : PaymentProviderAppsAdapter.OnItemClickListener {
+            PaymentProviderAppsAdapter(emptyList(), viewModel.paymentComponent?.giniPaymentLanguage, object : PaymentProviderAppsAdapter.OnItemClickListener {
                 override fun onItemClick(paymentProviderApp: PaymentProviderApp) {
                     LOG.debug("Selected payment provider app: {}", paymentProviderApp.name)
 
@@ -141,6 +149,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
 internal class PaymentProviderAppsAdapter(
     var dataSet: List<PaymentProviderAppListItem>,
+    val locale: Locale?,
     val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<PaymentProviderAppsAdapter.ViewHolder>() {
 
@@ -160,7 +169,7 @@ internal class PaymentProviderAppsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = GpsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniPaymentTheme(), parent, false)
+        val view = GpsItemPaymentProviderAppBinding.inflate(parent.getLayoutInflaterWithGiniPaymentThemeAndLocale(locale), parent, false)
         val viewHolder = ViewHolder(view, object : ViewHolder.OnClickListener {
             override fun onClick(adapterPosition: Int) {
                 onItemClickListener.onItemClick(dataSet[adapterPosition].paymentProviderApp)
@@ -171,7 +180,7 @@ internal class PaymentProviderAppsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val paymentProviderAppListItem = dataSet[position]
-        holder.itemView.context.wrappedWithGiniPaymentTheme().let { context ->
+        holder.itemView.context.wrappedWithGiniPaymentThemeAndLocale(locale).let { context ->
             holder.button.text = paymentProviderAppListItem.paymentProviderApp.name
             holder.iconView.setImageDrawable(paymentProviderAppListItem.paymentProviderApp.icon)
             holder.itemView.isSelected = paymentProviderAppListItem.isSelected

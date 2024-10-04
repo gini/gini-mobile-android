@@ -35,10 +35,10 @@ import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.FlowBottomSheetsManager
 import org.slf4j.LoggerFactory
 import java.io.File
-
 
 internal class ReviewViewModel(
     val giniHealth: GiniHealth,

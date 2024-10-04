@@ -24,7 +24,6 @@ import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
 import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
 import net.gini.android.health.sdk.review.openWith.OpenWithBottomSheet
-import net.gini.android.health.sdk.util.GiniLocalization
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
