@@ -6,6 +6,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withResourceName
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
@@ -75,7 +76,7 @@ class CaptureScreen {
     fun clickFilesButton(): CaptureScreen {
 //        onView(withId(net.gini.android.capture.R.id.gc_button_import_document)).perform(click())
 //        onView(withContentDescription("Files")).perform(click())
-        onView(withId(net.gini.android.capture.R.id.gc_button_import)).perform(click())
+        onView(withResourceName("gc_button_import")).perform(click())
         return this
     }
 
