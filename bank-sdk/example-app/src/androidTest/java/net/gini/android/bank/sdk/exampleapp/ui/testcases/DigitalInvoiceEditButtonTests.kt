@@ -1,7 +1,7 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
-import androidx.test.espresso.Espresso
+import android.view.View
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.rule.GrantPermissionRule
@@ -47,14 +47,20 @@ class DigitalInvoiceEditButtonTests {
     }
 
     private fun clickPhotoPaymentAndUploadFile() {
+        var rootView: View? = null
+        activityRule.scenario.onActivity { activity1 ->
+            rootView = activity1.window.decorView.rootView
+        } ?: kotlin.run { null }
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
 //        Espresso.onIdle()
+
         Thread.sleep(3000)
-        captureScreen.clickFilesButton()
+        captureScreen.clickFilesButton(rootView!!)
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
+
     }
 
     @Test

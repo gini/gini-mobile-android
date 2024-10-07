@@ -1,11 +1,15 @@
 package net.gini.android.bank.sdk.exampleapp.ui.screens
 
+import android.content.res.Resources
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withResourceName
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
@@ -73,11 +77,30 @@ class CaptureScreen {
         return this
     }
 
-    fun clickFilesButton(): CaptureScreen {
+    fun clickFilesButton(rootView: View): CaptureScreen {
 //        onView(withId(net.gini.android.capture.R.id.gc_button_import_document)).perform(click())
 //        onView(withContentDescription("Files")).perform(click())
+
+        printViewHierarchy(rootView)
         onView(withResourceName("net.gini.android.capture:id/gc_button_import")).perform(click())
         return this
+    }
+
+    private fun printViewHierarchy(view: View, indent: String = "") {
+        val idString = try {
+            // Attempt to get the resource name if it exists
+            view.resources.getResourceEntryName(view.id)
+        } catch (e: Resources.NotFoundException) {
+            // If no resource name exists, use a placeholder
+            "No ID"
+        }
+
+        Log.e("ViewHierarchy", "$indent${view.javaClass.simpleName} - $idString")
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                printViewHierarchy(view.getChildAt(i), "$indent  ")
+            }
+        }
     }
 
     fun clickPhotos(): CaptureScreen {
