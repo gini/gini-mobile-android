@@ -896,7 +896,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 //        if (!mInterfaceHidden && isDocumentImportEnabled(activity)) {
             mImportDocumentButtonEnabled = true;
             mImportButtonGroup.setVisibility(View.VISIBLE);
-            showImportDocumentButtonAnimated();
+//            showImportDocumentButtonAnimated();
 //        }
     }
 
