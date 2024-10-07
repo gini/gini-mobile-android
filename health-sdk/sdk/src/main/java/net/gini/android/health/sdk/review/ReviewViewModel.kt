@@ -24,18 +24,19 @@ import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
+import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.withFeedback
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.health.sdk.util.toBackendFormat
 import net.gini.android.health.sdk.util.withPrev
-import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.FlowBottomSheetsManager
+import net.gini.android.internal.payment.utils.createTempPdfFile
 import org.slf4j.LoggerFactory
 import java.io.File
 

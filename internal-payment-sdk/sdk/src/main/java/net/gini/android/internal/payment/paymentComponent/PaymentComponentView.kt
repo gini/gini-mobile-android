@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -96,9 +97,9 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     var dismissListener: ButtonClickListener? = null
 
     private val binding = GpsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()), this)
-    private lateinit var selectBankButton: Button
     private lateinit var payInvoiceButton: Button
     private lateinit var paymentProviderAppIconHolder: GpsPaymentProviderIconHolderBinding
+    private lateinit var selectBankButton: Button
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -304,6 +305,10 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
         payInvoiceButton.text = if (reviewFragmentWillBeShown) resources.getString(R.string.gps_continue_to_overview) else resources.getString(R.string.gps_pay_button)
     }
+
+    fun getMoreInformationLabel() = binding.gpsMoreInformation
+
+    fun getBankPickerButton() = selectBankButton
 
     private fun addButtonInputHandlers() {
         selectBankButton.setIntervalClickListener {

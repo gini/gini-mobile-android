@@ -45,31 +45,28 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
-import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.amountWatcher
-import net.gini.android.health.sdk.util.autoCleared
 import net.gini.android.health.sdk.util.clearErrorMessage
-import net.gini.android.health.sdk.util.extensions.getFontScale
-import net.gini.android.health.sdk.util.getLayoutInflaterWithGiniHealthThemeAndLocale
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.health.sdk.util.setBackgroundTint
 import net.gini.android.health.sdk.util.setErrorMessage
 import net.gini.android.health.sdk.util.setTextIfDifferent
 import net.gini.android.health.sdk.util.showErrorMessage
-import net.gini.android.health.sdk.util.wrappedWithGiniHealthThemeAndLocale
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.paymentprovider.PaymentProviderApp
-import net.gini.android.internal.payment.review.installApp.InstallAppForwardListener
-import net.gini.android.internal.payment.review.openWith.OpenWithForwardListener
+import net.gini.android.internal.payment.review.PaymentField
+import net.gini.android.internal.payment.review.ValidationMessage
+import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.getFontScale
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import java.io.File
-import java.util.Locale
 
 /**
  * Configuration for the [ReviewFragment].
@@ -138,7 +135,7 @@ class ReviewFragment private constructor(
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater, viewModel.paymentComponent.giniPaymentLanguage)
+        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, viewModel.paymentComponent.giniPaymentLanguage)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -391,7 +388,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        val context = requireContext().wrappedWithGiniHealthThemeAndLocale(viewModel.paymentComponent.giniPaymentLanguage)
+        val context = requireContext().wrappedWithGiniPaymentThemeAndLocale(viewModel.paymentComponent.giniPaymentLanguage)
         errorSnackbar?.dismiss()
         errorSnackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             if (context.getFontScale() < 1.5) {
