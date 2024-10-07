@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,22 +42,29 @@ internal fun InvoicePreviewScreen(
 ) {
     val state by viewModel.stateFlow.collectAsState()
 
-    SkontoInvoiceScreenContent(
+    InvoiceScreenContent(
         modifier = modifier,
-        state = state,
         onCloseClicked = navigateBack,
         colors = colors,
+        isLoading = state.isLoading,
+        screenTitle = state.screenTitle,
+        infoTextLines = state.infoTextLines,
+        images = state.images
     )
 }
 
 private const val DEFAULT_ZOOM = 1f
 
 @Composable
-private fun SkontoInvoiceScreenContent(
-    state: InvoicePreviewFragmentState,
+internal fun InvoiceScreenContent(
+    isLoading: Boolean,
+    screenTitle: String,
+    infoTextLines: List<String>,
+    images: List<Bitmap>,
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
+    topBarActions: @Composable RowScope.() -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -69,7 +77,7 @@ private fun SkontoInvoiceScreenContent(
         ) {
 
             AnimatedVisibility(
-                modifier = Modifier.align(Alignment.Center), visible = state.isLoading
+                modifier = Modifier.align(Alignment.Center), visible = isLoading
             ) {
                 CircularProgressIndicator()
             }
@@ -78,16 +86,16 @@ private fun SkontoInvoiceScreenContent(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(top = 64.dp),
-                visible = !state.isLoading
+                visible = !isLoading
             ) {
                 ImagesList(
                     modifier = Modifier,
-                    pages = state.images
+                    pages = images
                 )
             }
 
             GiniTopBar(
-                title = state.screenTitle,
+                title = screenTitle,
                 colors = colors.topBarColors,
                 navigationIcon = {
                     Icon(
@@ -98,12 +106,13 @@ private fun SkontoInvoiceScreenContent(
                         contentDescription = null,
                         tint = colors.topBarColors.navigationContentColor
                     )
-                }
+                },
+                actions = topBarActions,
             )
 
             Footer(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                infoTextLines = state.infoTextLines,
+                infoTextLines = infoTextLines,
                 colors = colors.footerColors,
             )
         }
@@ -163,32 +172,14 @@ private fun ImagesList(
 
 @Preview(showBackground = true)
 @Composable
-private fun SkontoInvoiceScreenContentPreviewZoomOut() {
+private fun InvoiceScreenContentPreview() {
     GiniTheme {
-        SkontoInvoiceScreenContent(
-            state = InvoicePreviewFragmentState(
-                screenTitle = "Screen Title",
-                isLoading = true,
-                images = emptyList(),
-                infoTextLines = listOf("Line 1", "Line 2"),
-            ),
+        InvoiceScreenContent(
             onCloseClicked = {},
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SkontoInvoiceScreenContentPreviewZoomIn() {
-    GiniTheme {
-        SkontoInvoiceScreenContent(
-            state = InvoicePreviewFragmentState(
-                screenTitle = "Screen Title",
-                isLoading = true,
-                images = emptyList(),
-                infoTextLines = listOf("Line 1", "Line 2"),
-            ),
-            onCloseClicked = {},
+            screenTitle = "Screen Title",
+            isLoading = true,
+            images = emptyList(),
+            infoTextLines = listOf("Line 1", "Line 2"),
         )
     }
 }
