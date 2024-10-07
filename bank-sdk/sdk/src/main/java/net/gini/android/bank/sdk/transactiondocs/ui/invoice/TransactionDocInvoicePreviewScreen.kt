@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.invoice
+package net.gini.android.bank.sdk.transactiondocs.ui.invoice
 
 import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
@@ -19,48 +19,61 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.invoice.colors.InvoicePreviewScreenColors
 import net.gini.android.bank.sdk.invoice.colors.section.InvoicePreviewScreenFooterColors
 import net.gini.android.capture.ui.components.list.ZoomableLazyColumn
+import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenu
+import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenuItem
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
-internal fun InvoicePreviewScreen(
+internal fun TransactionDocInvoicePreviewScreen(
     navigateBack: () -> Unit,
-    viewModel: InvoicePreviewViewModel,
+    viewModel: TransactionDocInvoicePreviewViewModel,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors()
 ) {
     val state by viewModel.stateFlow.collectAsState()
 
-    SkontoInvoiceScreenContent(
+    InvoiceScreenContent(
         modifier = modifier,
         state = state,
         onCloseClicked = navigateBack,
         colors = colors,
+        onDeleteClicked = {
+            viewModel.onDeleteClicked()
+            navigateBack()
+        }
     )
 }
 
 private const val DEFAULT_ZOOM = 1f
 
 @Composable
-private fun SkontoInvoiceScreenContent(
-    state: InvoicePreviewFragmentState,
+private fun InvoiceScreenContent(
+    state: TransactionDocInvoicePreviewFragmentState,
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
+    onDeleteClicked: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
     ) { paddings ->
+        var menuVisible by remember { mutableStateOf(false) }
         Box(
             modifier = modifier
                 .padding(paddings)
@@ -98,6 +111,47 @@ private fun SkontoInvoiceScreenContent(
                         contentDescription = null,
                         tint = colors.topBarColors.navigationContentColor
                     )
+                },
+                actions = {
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .clickable {
+                                menuVisible = true
+                            },
+                        painter = painterResource(id = R.drawable.gbs_more_horizontal),
+                        tint = colors.topBarColors.actionContentColor,
+                        contentDescription = null
+                    )
+                    if (menuVisible) {
+                        GiniDropdownMenu(
+                            colors = colors.topBarOverflowMenuColors,
+                            expanded = true,
+                            onDismissRequest = { menuVisible = false },
+                        ) {
+                            GiniDropdownMenuItem(
+                                modifier = modifier,
+                                text = {
+                                    Text(
+                                        text = stringResource(
+                                            id =
+                                            R.string.gbs_td_extraction_result_documents_section_menu_delete
+                                        ),
+                                        style = GiniTheme.typography.body1,
+                                        color = colors.topBarOverflowMenuColors.itemColors.textColor
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.gbs_delete),
+                                        contentDescription = null,
+                                        tint = colors.topBarOverflowMenuColors.itemColors.textColor
+                                    )
+                                },
+                                onClick = onDeleteClicked
+                            )
+                        }
+                    }
                 }
             )
 
@@ -165,14 +219,15 @@ private fun ImagesList(
 @Composable
 private fun SkontoInvoiceScreenContentPreviewZoomOut() {
     GiniTheme {
-        SkontoInvoiceScreenContent(
-            state = InvoicePreviewFragmentState(
+        InvoiceScreenContent(
+            state = TransactionDocInvoicePreviewFragmentState(
                 screenTitle = "Screen Title",
                 isLoading = true,
                 images = emptyList(),
                 infoTextLines = listOf("Line 1", "Line 2"),
             ),
             onCloseClicked = {},
+            onDeleteClicked = {}
         )
     }
 }
@@ -181,14 +236,15 @@ private fun SkontoInvoiceScreenContentPreviewZoomOut() {
 @Composable
 private fun SkontoInvoiceScreenContentPreviewZoomIn() {
     GiniTheme {
-        SkontoInvoiceScreenContent(
-            state = InvoicePreviewFragmentState(
+        InvoiceScreenContent(
+            state = TransactionDocInvoicePreviewFragmentState(
                 screenTitle = "Screen Title",
                 isLoading = true,
                 images = emptyList(),
                 infoTextLines = listOf("Line 1", "Line 2"),
             ),
             onCloseClicked = {},
+            onDeleteClicked = {}
         )
     }
 }

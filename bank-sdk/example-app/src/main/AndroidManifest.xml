@@ -44,6 +44,10 @@
             android:exported="false"
             android:theme="@style/Root.GiniCaptureTheme.Internal" />
         <activity
+            android:name=".ui.TransactionDocInvoicePreviewActivity"
+            android:exported="false"
+            android:theme="@style/Root.GiniCaptureTheme.Internal" />
+        <activity
             android:name=".ui.MainActivity"
             android:exported="true"
             android:launchMode="singleTask">

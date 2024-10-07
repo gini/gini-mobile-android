@@ -36,6 +36,7 @@ import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
 import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.ui.invoice.TransactionDocInvoicePreviewFragmentArgs
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AsyncCallback
@@ -573,6 +574,22 @@ object GiniBank {
             "Gini Api Document Id should not be empty or blank"
         }
         return InvoicePreviewFragmentArgs(
+            screenTitle,
+            giniApiDocumentId,
+            infoTextLines.toTypedArray(),
+            arrayOf()
+        )
+    }
+
+    fun createTransactionDocInvoicePreviewFragmentArgs(
+        screenTitle: String,
+        giniApiDocumentId: String,
+        infoTextLines: List<String> = emptyList()
+    ): TransactionDocInvoicePreviewFragmentArgs {
+        check(giniApiDocumentId.isNotBlank() && giniApiDocumentId.isNotEmpty()) {
+            "Gini Api Document Id should not be empty or blank"
+        }
+        return TransactionDocInvoicePreviewFragmentArgs(
             screenTitle,
             giniApiDocumentId,
             infoTextLines.toTypedArray(),
