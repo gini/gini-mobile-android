@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.Button
-import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -325,7 +324,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             coroutineScope?.launch {
                 paymentComponent?.onPayInvoiceClicked(documentId)
             }
-            dismissListener?.onButtonClick(Buttons.PAY_INVOICE)
         }
         binding.gpsMoreInformation.setIntervalClickListener {
             if (paymentComponent == null) {

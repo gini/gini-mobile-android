@@ -7,15 +7,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
+import net.gini.android.internal.payment.review.ReviewConfiguration
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
     private val invoicesRepository: InvoicesRepository,
-    val paymentComponent: PaymentComponent
+    val giniPaymentModule: GiniInternalPaymentModule
 ) : ViewModel() {
 
     val uploadHardcodedInvoicesStateFlow = invoicesRepository.uploadHardcodedInvoicesStateFlow
@@ -24,7 +25,7 @@ class InvoicesViewModel(
             InvoiceItem.fromInvoice(invoice)
         }
     }
-    val paymentProviderAppsFlow = paymentComponent.paymentProviderAppsFlow
+    val paymentProviderAppsFlow = giniPaymentModule.paymentComponent.paymentProviderAppsFlow
 
     val openBankState = invoicesRepository.giniHealth.openBankState
 
@@ -51,18 +52,19 @@ class InvoicesViewModel(
 
     fun loadPaymentProviderApps() {
         viewModelScope.launch {
-            paymentComponent.loadPaymentProviderApps()
+            giniPaymentModule.paymentComponent.loadPaymentProviderApps()
         }
     }
 
-    fun getPaymentReviewFragment(documentId: String): Result<ReviewFragment> {
+    fun getPaymentReviewFragment(documentId: String?): Result<ReviewFragment> {
         val documentWithExtractions =
             invoicesRepository.invoicesFlow.value.find { it.documentId == documentId }
 
         return if (documentWithExtractions != null) {
             return try {
-                val paymentReviewFragment = paymentComponent.getPaymentReviewFragment(
+                val paymentReviewFragment = invoicesRepository.giniHealth.getPaymentReviewFragment(
                     documentWithExtractions.documentId,
+                    giniPaymentModule.paymentComponent,
                     ReviewConfiguration(showCloseButton = true)
                 )
                 Result.success(paymentReviewFragment)
@@ -77,7 +79,7 @@ class InvoicesViewModel(
     }
 
     fun setPaymentComponentConfig(paymentComponentConfiguration: PaymentComponentConfiguration) {
-        paymentComponent.paymentComponentConfiguration = paymentComponentConfiguration
+        giniPaymentModule.paymentComponent.paymentComponentConfiguration = paymentComponentConfiguration
     }
 
     companion object {

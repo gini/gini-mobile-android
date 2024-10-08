@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory
  *
  * It requires a [GiniMerchant] instance and a [Context] (application or activity) to be created.
  */
-class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val paymentModule: GiniInternalPaymentModule, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
+class PaymentComponent(@get:VisibleForTesting internal val context: Context, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -45,6 +45,9 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
      * A [StateFlow] which emits whether the user is a returning one or not.
      */
     val returningUserFlow: StateFlow<Boolean> = _returningUserFlow
+
+
+    lateinit var paymentModule: GiniInternalPaymentModule
 
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
@@ -239,7 +242,7 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
          *
          * @param documentId The value in the clicked PaymentComponentView's [PaymentComponentView.documentId] property
          */
-        fun onPayInvoiceClicked(documentId: String)
+        fun onPayInvoiceClicked(documentId: String?)
     }
 
 }

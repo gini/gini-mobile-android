@@ -33,6 +33,7 @@ import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -69,7 +70,7 @@ open class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.uploadHardcodedInvoicesStateFlow.combine(viewModel.paymentProviderAppsFlow) { a, b -> a to b }
                         .collect { (uploadState, bankAppsState) ->
-                            if (uploadState == Loading || bankAppsState == LoadingBankApp) {
+                            if (uploadState == Loading || bankAppsState == PaymentProviderAppsState.Loading) {
                                 showLoadingIndicator(binding)
                             } else {
                                 hideLoadingIndicator(binding)
@@ -90,7 +91,7 @@ open class InvoicesActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
-                        if (paymentProviderAppsState is Error) {
+                        if (paymentProviderAppsState is PaymentProviderAppsState.Error) {
                             AlertDialog.Builder(this@InvoicesActivity)
                                 .setTitle(R.string.failed_to_load_bank_apps)
                                 .setMessage(paymentProviderAppsState.throwable.message)
@@ -124,12 +125,12 @@ open class InvoicesActivity : AppCompatActivity() {
         viewModel.loadPaymentProviderApps()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.paymentComponent)
+        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.giniPaymentModule.paymentComponent)
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
 
-        viewModel.paymentComponent.listener = object: PaymentComponent.Listener {
+        viewModel.giniPaymentModule.paymentComponent.listener = object: PaymentComponent.Listener {
             override fun onMoreInformationClicked() {
-                MoreInformationFragment.newInstance(viewModel.paymentComponent).apply {
+                MoreInformationFragment.newInstance(viewModel.giniPaymentModule.paymentComponent).apply {
                     supportFragmentManager.beginTransaction()
                         .add(R.id.fragment_container,this, this::class.java.simpleName)
                         .addToBackStack(this::class.java.simpleName)
@@ -138,12 +139,12 @@ open class InvoicesActivity : AppCompatActivity() {
             }
 
             override fun onBankPickerClicked() {
-                BankSelectionBottomSheet.newInstance(viewModel.paymentComponent).apply {
+                BankSelectionBottomSheet.newInstance(viewModel.giniPaymentModule.paymentComponent).apply {
                     show(supportFragmentManager, BankSelectionBottomSheet::class.simpleName)
                 }
             }
 
-            override fun onPayInvoiceClicked(documentId: String) {
+            override fun onPayInvoiceClicked(documentId: String?) {
                 LOG.debug("Pay invoice clicked")
 
                 viewModel.getPaymentReviewFragment(documentId)

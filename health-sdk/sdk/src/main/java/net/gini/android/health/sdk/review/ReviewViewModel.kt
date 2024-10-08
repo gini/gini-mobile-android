@@ -8,32 +8,27 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
-import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.model.withFeedback
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
-import net.gini.android.health.sdk.util.toBackendFormat
-import net.gini.android.health.sdk.util.withPrev
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.FlowBottomSheetsManager
 import net.gini.android.internal.payment.utils.createTempPdfFile
@@ -74,18 +69,18 @@ internal class ReviewViewModel(
     override val paymentNextStepFlow= MutableSharedFlow<net.gini.android.internal.payment.utils.PaymentNextStep>(
         extraBufferCapacity = 1,
     )
-    override val paymentRequestFlow = MutableStateFlow<PaymentRequest?>(null)
+    override val paymentRequestFlow = MutableStateFlow<net.gini.android.internal.payment.api.model.PaymentRequest?>(null)
     override val shareWithFlowStarted: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     private val _paymentRequestFlow = MutableStateFlow<PaymentRequest?>(null)
 
-    val isPaymentButtonEnabled: Flow<Boolean> =
-        combine(giniHealth.openBankState, paymentDetails) { paymentState, paymentDetails ->
-            val noEmptyFields = paymentDetails.recipient.isNotEmpty() && paymentDetails.iban.isNotEmpty() &&
-                    paymentDetails.amount.isNotEmpty() && paymentDetails.purpose.isNotEmpty()
-            val isLoading = (paymentState is GiniHealth.PaymentState.Loading)
-            !isLoading && noEmptyFields
-        }
+//    val isPaymentButtonEnabled: Flow<Boolean> =
+//        combine(giniHealth.openBankState, paymentDetails) { paymentState, paymentDetails ->
+//            val noEmptyFields = paymentDetails.recipient.isNotEmpty() && paymentDetails.iban.isNotEmpty() &&
+//                    paymentDetails.amount.isNotEmpty() && paymentDetails.purpose.isNotEmpty()
+//            val isLoading = (paymentState is GiniHealth.PaymentState.Loading)
+//            !isLoading && noEmptyFields
+//        }
 
     init {
         viewModelScope.launch {
@@ -104,36 +99,36 @@ internal class ReviewViewModel(
             delay(SHOW_INFO_BAR_MS)
             _isInfoBarVisible.value = false
         }
-        viewModelScope.launch {
-            // Validate payment details only if extracted payment details are not being loaded
-            _paymentDetails
-                .combine(giniHealth.paymentFlow.filter { it !is ResultWrapper.Loading }) { paymentDetails, _ -> paymentDetails }
-                .withPrev()
-                .collect { (prevPaymentDetails, paymentDetails) ->
-                    // Get all validation messages except emptiness validations
-                    val nonEmptyValidationMessages = _paymentValidation.value
-                        .filter { it !is ValidationMessage.Empty }
-                        .toMutableList()
-
-                    // Check payment details for emptiness
-                    val newEmptyValidationMessages =
-                        paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
-
-                    // Clear IBAN error, if IBAN changed
-                    if (prevPaymentDetails != null && prevPaymentDetails.iban != paymentDetails.iban) {
-                        nonEmptyValidationMessages.remove(ValidationMessage.InvalidIban)
-                    }
-
-                    // If the IBAN is the same as the last validated one, then revalidate it to restore the validation
-                    // message if needed
-                    if (_lastFullyValidatedPaymentDetails.value?.iban == paymentDetails.iban) {
-                        nonEmptyValidationMessages.addAll(validateIban(paymentDetails.iban).filterIsInstance<ValidationMessage.InvalidIban>())
-                    }
-
-                    // Emit all new empty validation messages along with other existing validation messages
-                    _paymentValidation.tryEmit(newEmptyValidationMessages + nonEmptyValidationMessages)
-                }
-        }
+//        viewModelScope.launch {
+//            // Validate payment details only if extracted payment details are not being loaded
+//            _paymentDetails
+//                .combine(giniHealth.paymentFlow.filter { it !is ResultWrapper.Loading }) { paymentDetails, _ -> paymentDetails }
+//                .withPrev()
+//                .collect { (prevPaymentDetails, paymentDetails) ->
+//                    // Get all validation messages except emptiness validations
+//                    val nonEmptyValidationMessages = _paymentValidation.value
+//                        .filter { it !is ValidationMessage.Empty }
+//                        .toMutableList()
+//
+//                    // Check payment details for emptiness
+//                    val newEmptyValidationMessages =
+//                        paymentDetails.validate().filterIsInstance<ValidationMessage.Empty>()
+//
+//                    // Clear IBAN error, if IBAN changed
+//                    if (prevPaymentDetails != null && prevPaymentDetails.iban != paymentDetails.iban) {
+//                        nonEmptyValidationMessages.remove(ValidationMessage.InvalidIban)
+//                    }
+//
+//                    // If the IBAN is the same as the last validated one, then revalidate it to restore the validation
+//                    // message if needed
+//                    if (_lastFullyValidatedPaymentDetails.value?.iban == paymentDetails.iban) {
+//                        nonEmptyValidationMessages.addAll(validateIban(paymentDetails.iban).filterIsInstance<ValidationMessage.InvalidIban>())
+//                    }
+//
+//                    // Emit all new empty validation messages along with other existing validation messages
+//                    _paymentValidation.tryEmit(newEmptyValidationMessages + nonEmptyValidationMessages)
+//                }
+//        }
         viewModelScope.launch {
             paymentComponent.selectedPaymentProviderAppFlow.collect { selectedPaymentProviderAppState ->
                 when (selectedPaymentProviderAppState) {
@@ -175,41 +170,45 @@ internal class ReviewViewModel(
         _paymentDetails.value = paymentDetails.value.copy(purpose = purpose)
     }
 
-    fun validatePaymentDetails(): Boolean = validatePaymentDetails(paymentDetails.value)
+//    fun validatePaymentDetails(): Boolean = validatePaymentDetails(paymentDetails.value)
 
-    private fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
-        val items = paymentDetails.validate()
-        _paymentValidation.tryEmit(items)
-        _lastFullyValidatedPaymentDetails.tryEmit(paymentDetails)
-        return items.isEmpty()
-    }
+//    private fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
+//        val items = paymentDetails.validate()
+//        _paymentValidation.tryEmit(items)
+//        _lastFullyValidatedPaymentDetails.tryEmit(paymentDetails)
+//        return items.isEmpty()
+//    }
 
-    override suspend fun getPaymentRequest(): PaymentRequest {
-        val paymentProviderApp = paymentProviderApp.value
-        if (paymentProviderApp == null) {
-            LOG.error("Cannot create PaymentRequest: No selected payment provider app")
-            throw Exception("Cannot create PaymentRequest: No selected payment provider app")
-        }
-
-        return when (val createPaymentRequestResource = giniHealth.documentManager.createPaymentRequest(
-            PaymentRequestInput(
-                paymentProvider = paymentProviderApp.paymentProvider.id,
-                recipient = paymentDetails.value.recipient,
-                iban = paymentDetails.value.iban,
-                amount = "${paymentDetails.value.amount.toBackendFormat()}:EUR",
-                bic = null,
-                purpose = paymentDetails.value.purpose,
-            )
-        )) {
-            is Resource.Cancelled -> throw Exception("Cancelled")
-            is Resource.Error -> throw Exception(createPaymentRequestResource.exception)
-            is Resource.Success -> PaymentRequest(id = createPaymentRequestResource.data, paymentProviderApp.name)
-        }
-    }
-
-    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> {
+    override suspend fun getPaymentRequest(): net.gini.android.internal.payment.api.model.PaymentRequest = paymentComponent.paymentModule.getPaymentRequest(paymentProviderApp.value, paymentDetails.value.toCommonPaymentDetails())
+    override suspend fun getPaymentRequestDocument(paymentRequest: net.gini.android.internal.payment.api.model.PaymentRequest): Resource<ByteArray> {
         TODO("Not yet implemented")
     }
+//    override suspend fun getPaymentRequest(): PaymentRequest {
+//        val paymentProviderApp = paymentProviderApp.value
+//        if (paymentProviderApp == null) {
+//            LOG.error("Cannot create PaymentRequest: No selected payment provider app")
+//            throw Exception("Cannot create PaymentRequest: No selected payment provider app")
+//        }
+//
+//        return when (val createPaymentRequestResource = giniHealth.documentManager.createPaymentRequest(
+//            PaymentRequestInput(
+//                paymentProvider = paymentProviderApp.paymentProvider.id,
+//                recipient = paymentDetails.value.recipient,
+//                iban = paymentDetails.value.iban,
+//                amount = "${paymentDetails.value.amount.toBackendFormat()}:EUR",
+//                bic = null,
+//                purpose = paymentDetails.value.purpose,
+//            )
+//        )) {
+//            is Resource.Cancelled -> throw Exception("Cancelled")
+//            is Resource.Error -> throw Exception(createPaymentRequestResource.exception)
+//            is Resource.Success -> PaymentRequest(id = createPaymentRequestResource.data, paymentProviderApp.name)
+//        }
+//    }
+//
+//    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> {
+//        TODO("Not yet implemented")
+//    }
 
     fun onPayment() {
         val paymentProviderApp = paymentProviderApp.value
@@ -226,18 +225,18 @@ internal class ReviewViewModel(
         }
 
         viewModelScope.launch {
-            val valid = validatePaymentDetails(paymentDetails.value)
-            if (valid) {
-                sendFeedbackAndStartLoading()
-                giniHealth.setOpenBankState(
-                    try {
-                        GiniHealth.PaymentState.Success(getPaymentRequest())
-                    } catch (throwable: Throwable) {
-                        GiniHealth.PaymentState.Error(throwable)
-                    },
-                    viewModelScope
-                )
-            }
+//            val valid = validatePaymentDetails(paymentDetails.value)
+//            if (valid) {
+//                sendFeedbackAndStartLoading()
+//                giniHealth.setOpenBankState(
+//                    try {
+//                        GiniHealth.PaymentState.Success(getPaymentRequest())
+//                    } catch (throwable: Throwable) {
+//                        GiniHealth.PaymentState.Error(throwable)
+//                    },
+//                    viewModelScope
+//                )
+//            }
         }
     }
 
@@ -306,7 +305,7 @@ internal class ReviewViewModel(
                     giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(throwable), viewModelScope)
                     return@withContext
                 }
-                _paymentRequestFlow.value = paymentRequest
+//                _paymentRequestFlow.value = paymentRequest
                 val byteArrayResource = async {  giniHealth.documentManager.getPaymentRequestDocument(paymentRequest.id) }.await()
                 when (byteArrayResource) {
                     is Resource.Cancelled -> {

@@ -86,7 +86,7 @@ class GiniInternalPaymentModule(private val context: Context,
                 }
         }
 
-    var paymentComponent = PaymentComponent(context, this)
+    var paymentComponent = PaymentComponent(context).also { it.paymentModule = this }
     private val openWithPreferences = OpenWithPreferences(context)
 
     suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)

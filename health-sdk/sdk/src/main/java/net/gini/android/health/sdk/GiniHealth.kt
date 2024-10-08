@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.lifecycle.Lifecycle
@@ -10,7 +9,6 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +25,9 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
@@ -231,6 +232,42 @@ class GiniHealth(
             registryOwner.lifecycle.addObserver(observer)
         }
     }
+
+    /**
+     * Loads the extractions for the given document id and creates an instance of the [ReviewFragment] with the given
+     * configuration.
+     *
+     * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
+     *
+     * @param documentId The document id for which the extractions should be loaded
+     * @param configuration The configuration for the [ReviewFragment]
+     * @throws IllegalStateException If no payment provider app has been selected
+     */
+    fun getPaymentReviewFragment(documentId: String, paymentComponent: PaymentComponent, configuration: ReviewConfiguration): ReviewFragment {
+        LOG.debug("Getting payment review fragment for id: {}", documentId)
+
+        when (val selectedPaymentProviderAppState = paymentComponent.selectedPaymentProviderAppFlow.value) {
+            is SelectedPaymentProviderAppState.AppSelected -> {
+                LOG.debug("Creating ReviewFragment for selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)
+
+                return ReviewFragment.newInstance(
+                    this,
+                    configuration = configuration,
+                    paymentComponent = paymentComponent,
+                    documentId = documentId
+                )
+            }
+
+            SelectedPaymentProviderAppState.NothingSelected -> {
+                LOG.error("Cannot create ReviewFragment: No selected payment provider app")
+
+                val exception =
+                    IllegalStateException("Cannot create ReviewFragment: No selected payment provider app")
+                throw exception
+            }
+        }
+    }
+
 
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
         Bundle().apply {
