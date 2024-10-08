@@ -94,7 +94,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             launch {
                 reviewComponent?.loadingFlow?.collect { isLoading ->
                     binding.paymentProgress.isVisible = isLoading
-                    binding.amountLayout.isEnabled = !isLoading && reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.AMOUNT) ?: false
+                    binding.amountLayout.isEnabled = !isLoading && (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.AMOUNT) ?: false)
                 }
             }
         }

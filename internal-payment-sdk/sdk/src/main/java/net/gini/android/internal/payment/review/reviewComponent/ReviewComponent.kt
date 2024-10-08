@@ -1,5 +1,6 @@
 package net.gini.android.internal.payment.review.reviewComponent
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,6 +89,7 @@ class ReviewComponent(
                             amount = extractedPaymentDetails.value.amount.adjustToLocalDecimalSeparation()
                         )
                     )
+                    _loadingFlow.tryEmit(false)
                     _paymentDetails.value = paymentDetails
                 }
             }

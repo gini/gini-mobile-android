@@ -48,7 +48,6 @@ import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.hideErrorMessage
 import net.gini.android.health.sdk.util.hideKeyboard
@@ -136,7 +135,7 @@ class ReviewFragment private constructor(
         with(binding) {
             ghsPaymentDetails.reviewComponent = ReviewComponent(
                 viewModel.paymentComponent,
-                net.gini.android.internal.payment.review.ReviewConfiguration(
+                ReviewConfiguration(
                     handleErrorsInternally = true,
                     showCloseButton = true,
                     editableFields = listOf(ReviewFields.RECIPIENT, ReviewFields.IBAN, ReviewFields.AMOUNT, ReviewFields.PURPOSE)
@@ -169,9 +168,6 @@ class ReviewFragment private constructor(
                 }
                 launch {
                     viewModel.giniHealth.paymentFlow.collect { handlePaymentResult(it) }
-                }
-                launch {
-                    viewModel.paymentDetails.collect { setPaymentDetails(it) }
                 }
 //                launch {
 //                    viewModel.paymentValidation.collect { handleValidationResult(it) }
@@ -241,14 +237,6 @@ class ReviewFragment private constructor(
         pager.isVisible = true
         pager.adapter = documentPageAdapter
         TabLayoutMediator(indicator, pager) { tab, _ -> tab.view.isClickable = false }.attach()
-    }
-
-    private fun GhsFragmentReviewBinding.setPaymentDetails(paymentDetails: PaymentDetails) {
-        binding.ghsPaymentDetails.paymentDetails = paymentDetails.toCommonPaymentDetails()
-//        recipient.setTextIfDifferent(paymentDetails.recipient)
-//        iban.setTextIfDifferent(paymentDetails.iban)
-//        amount.setTextIfDifferent(paymentDetails.amount)
-//        purpose.setTextIfDifferent(paymentDetails.purpose)
     }
 
     //TODO this should be refactored to use [ReviewView] in the layout,
@@ -340,14 +328,8 @@ class ReviewFragment private constructor(
         }
     }
 
-    //TODO
     private fun GhsFragmentReviewBinding.handleLoading(isLoading: Boolean) {
         paymentProgress.isVisible = isLoading
-//        recipientLayout.isEnabled = !isLoading
-//        ibanLayout.isEnabled = !isLoading
-//        amountLayout.isEnabled = !isLoading
-//        purposeLayout.isEnabled = !isLoading
-//        payment.text = if (isLoading) "" else getLocaleStringResource(R.string.ghs_pay_button)
     }
 
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {

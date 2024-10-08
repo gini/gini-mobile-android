@@ -43,7 +43,7 @@ class GiniHealth(
     context: Context
 ) {
 
-    internal val giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
+    val giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
         context = context,
         giniHealthAPI = giniHealthAPI
     )
@@ -114,6 +114,7 @@ class GiniHealth(
      * @param document document received from Gini API.
      */
     suspend fun setDocumentForReview(document: Document) {
+        giniInternalPaymentModule.setPaymentDetails(null)
         capturedArguments = CapturedArguments.DocumentInstance(document)
         _documentFlow.value = ResultWrapper.Success(document)
         _paymentFlow.value = ResultWrapper.Loading()
@@ -133,7 +134,7 @@ class GiniHealth(
      */
     suspend fun setDocumentForReview(documentId: String, paymentDetails: PaymentDetails? = null) {
         LOG.debug("Setting document for review with id: $documentId")
-
+        giniInternalPaymentModule.setPaymentDetails(null)
         capturedArguments = CapturedArguments.DocumentId(documentId, paymentDetails)
         _paymentFlow.value = ResultWrapper.Loading()
         _documentFlow.value = ResultWrapper.Loading()
@@ -245,7 +246,8 @@ class GiniHealth(
      */
     fun getPaymentReviewFragment(documentId: String, paymentComponent: PaymentComponent, configuration: ReviewConfiguration): ReviewFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
-
+        giniInternalPaymentModule.setPaymentDetails(null)
+        _paymentFlow.value = ResultWrapper.Loading()
         when (val selectedPaymentProviderAppState = paymentComponent.selectedPaymentProviderAppFlow.value) {
             is SelectedPaymentProviderAppState.AppSelected -> {
                 LOG.debug("Creating ReviewFragment for selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)

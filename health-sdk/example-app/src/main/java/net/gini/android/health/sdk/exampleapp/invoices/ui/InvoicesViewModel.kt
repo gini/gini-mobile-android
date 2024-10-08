@@ -5,18 +5,18 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
     private val invoicesRepository: InvoicesRepository,
-    val giniPaymentModule: GiniInternalPaymentModule
+    private val giniHealth: GiniHealth
 ) : ViewModel() {
 
     val uploadHardcodedInvoicesStateFlow = invoicesRepository.uploadHardcodedInvoicesStateFlow
@@ -25,6 +25,7 @@ class InvoicesViewModel(
             InvoiceItem.fromInvoice(invoice)
         }
     }
+    val giniPaymentModule = giniHealth.giniInternalPaymentModule
     val paymentProviderAppsFlow = giniPaymentModule.paymentComponent.paymentProviderAppsFlow
 
     val openBankState = invoicesRepository.giniHealth.openBankState

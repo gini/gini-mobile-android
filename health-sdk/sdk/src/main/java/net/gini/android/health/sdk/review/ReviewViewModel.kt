@@ -92,6 +92,7 @@ internal class ReviewViewModel(
                         )
                     )
                     _paymentDetails.value = paymentDetails
+                    giniInternalPaymentModule.setPaymentDetails(paymentDetails.toCommonPaymentDetails())
                 }
             }
         }

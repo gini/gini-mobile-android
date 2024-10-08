@@ -120,8 +120,8 @@ class GiniInternalPaymentModule(private val context: Context,
 
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
-    fun setPaymentDetails(paymentDetails: PaymentDetails) {
-        _paymentFlow.tryEmit(ResultWrapper.Success(paymentDetails))
+    fun setPaymentDetails(paymentDetails: PaymentDetails?) {
+        _paymentFlow.value = if (paymentDetails != null) ResultWrapper.Success(paymentDetails) else ResultWrapper.Loading()
     }
 
     suspend fun incrementCountForPaymentProviderId(paymentProviderAppId: String) {
