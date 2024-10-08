@@ -67,6 +67,39 @@ class PaymentComponentViewTest {
         scenario!!.close()
     }
 
+
+    @Test
+    fun `calls onMoreInformation method of listener when clicking on info button`() = runTest {
+        // Given
+        scenario?.onActivity { activity ->
+            val paymentComponentView = PaymentComponentView(activity, null)
+            paymentComponentView.paymentComponent = paymentComponent
+
+            // When
+            (paymentComponentView.findViewById<TextView>(R.id.gps_more_information)!!).performClick()
+            // Then
+            verify {
+                paymentComponentListener.onMoreInformationClicked()
+            }
+        }
+    }
+    @Test
+    fun `calls onBankPickerClicked method of listener when clicking on select bank button`() = runTest {
+        // Given
+        scenario?.onActivity { activity ->
+            val paymentComponentView = PaymentComponentView(activity, null)
+            paymentComponentView.paymentComponent = paymentComponent
+
+            // When
+            (paymentComponentView.findViewById<Button>(R.id.gps_select_bank_button)!!).performClick()
+
+            // Then
+            verify {
+                paymentComponentListener.onBankPickerClicked()
+            }
+        }
+    }
+
     @Test
     fun `does not call onPayInvoiceClicked method of listener if no document id is set`() = runTest {
         // Given
@@ -103,6 +136,31 @@ class PaymentComponentViewTest {
 //    }
 
     @Test
+    fun `disables buttons and deletes document id to reuse`() = runTest {
+        // Given
+        scenario?.onActivity { activity ->
+            val paymentComponentView = PaymentComponentView(activity, null)
+            paymentComponentView.paymentComponent = paymentComponent
+            paymentComponentView.documentId = "123"
+            paymentComponentView.isPayable = true
+
+            Truth.assertThat(paymentComponentView.documentId).isEqualTo("123")
+            Truth.assertThat(paymentComponentView.isPayable).isEqualTo(true)
+            Truth.assertThat((paymentComponentView.findViewById(R.id.gps_pay_invoice_button) as Button).isEnabled).isEqualTo(true)
+            Truth.assertThat((paymentComponentView.findViewById(R.id.gps_select_bank_button) as Button).isEnabled).isEqualTo(true)
+
+            // When
+            paymentComponentView.prepareForReuse()
+
+            // Then
+            Truth.assertThat(paymentComponentView.documentId).isNull()
+            Truth.assertThat(paymentComponentView.isPayable).isEqualTo(false)
+            Truth.assertThat((paymentComponentView.findViewById(R.id.gps_pay_invoice_button) as Button).isEnabled).isEqualTo(false)
+            Truth.assertThat((paymentComponentView.findViewById(R.id.gps_select_bank_button) as Button).isEnabled).isEqualTo(false)
+        }
+    }
+
+    @Test
     fun `hides powered by Gini`() = runTest {
         // Given
         scenario?.onActivity { activity ->
@@ -116,7 +174,7 @@ class PaymentComponentViewTest {
     }
 
     @Test
-    fun `shows text values in english if that is set to GiniHealth`() = runTest {
+    fun `shows text values in english if that is set to module`() = runTest {
         // Given
         giniPaymentModule.setSDKLanguage(GiniLocalization.ENGLISH, context!!)
 
@@ -132,7 +190,7 @@ class PaymentComponentViewTest {
     }
 
     @Test
-    fun `shows text values in german if that is set to GiniHealth`() = runTest {
+    fun `shows text values in german if that is set to module`() = runTest {
         // Given
         giniPaymentModule.setSDKLanguage(GiniLocalization.GERMAN, context!!)
 
