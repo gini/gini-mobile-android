@@ -1,25 +1,27 @@
-package net.gini.android.bank.sdk.invoice
+package net.gini.android.bank.sdk.transactiondocs.ui.invoice
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.invoice.usecase.LoadInvoiceBitmapsUseCase
+import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.network.model.GiniCaptureBox
 
-internal class InvoicePreviewViewModel(
+internal class TransactionDocInvoicePreviewViewModel(
     private val screenTitle: String,
     private val documentId: String,
     private val highlightBoxes: List<GiniCaptureBox>,
     private val infoTextLines: List<String>,
     private val loadInvoiceBitmapsUseCase: LoadInvoiceBitmapsUseCase,
+    private val attachedToTransactionDocumentProvider: AttachedToTransactionDocumentProvider,
 ) : ViewModel() {
 
-    val stateFlow: MutableStateFlow<InvoicePreviewFragmentState> =
+    val stateFlow: MutableStateFlow<TransactionDocInvoicePreviewFragmentState> =
         MutableStateFlow(createInitalState())
 
     private fun createInitalState() =
-        InvoicePreviewFragmentState(
+        TransactionDocInvoicePreviewFragmentState(
             screenTitle = screenTitle,
             isLoading = true,
             images = emptyList(),
@@ -42,5 +44,9 @@ internal class InvoicePreviewViewModel(
                 )
             )
         }
+    }
+
+    fun onDeleteClicked() {
+        attachedToTransactionDocumentProvider.clear()
     }
 }

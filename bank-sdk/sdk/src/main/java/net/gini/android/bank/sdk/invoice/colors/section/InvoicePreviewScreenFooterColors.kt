@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 
-data class SkontoInvoicePreviewScreenFooterColors(
+data class InvoicePreviewScreenFooterColors(
     val contentColor: Color,
     val backgroundColor: Color,
 ) {
@@ -17,7 +17,7 @@ data class SkontoInvoicePreviewScreenFooterColors(
             // IMPORTANT! Use GiniColorPrimitives carefully!
             // Using of this class skips adaptation to light/dark modes!
             backgroundColor: Color = GiniColorPrimitives().dark01.copy(alpha = 0.5f),
-        ) = SkontoInvoicePreviewScreenFooterColors(
+        ) = InvoicePreviewScreenFooterColors(
             contentColor = contentColor,
             backgroundColor = backgroundColor,
         )
