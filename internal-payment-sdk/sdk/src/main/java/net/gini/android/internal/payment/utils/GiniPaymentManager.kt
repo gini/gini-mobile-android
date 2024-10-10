@@ -27,7 +27,7 @@ internal class GiniPaymentManager(
     private val _lastFullyValidatedPaymentDetails = MutableStateFlow<PaymentDetails?>(null)
     val lastFullyValidatedPaymentDetails: MutableStateFlow<PaymentDetails?> = _lastFullyValidatedPaymentDetails
 
-    private fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
+    fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
         val items = paymentDetails.validate()
         _paymentValidation.tryEmit(items)
         _lastFullyValidatedPaymentDetails.tryEmit(paymentDetails)

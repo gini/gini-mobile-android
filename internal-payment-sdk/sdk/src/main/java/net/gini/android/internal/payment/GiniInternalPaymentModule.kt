@@ -56,8 +56,9 @@ class GiniInternalPaymentModule(private val context: Context,
                 ) {
                     _eventsFlow.tryEmit(InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(paymentRequest.id, paymentProviderName))
                 }
-
-            })
+            }).also {
+                _giniPaymentManager = it
+            }
         }
 
     val giniHealthAPI: GiniHealthAPI
@@ -106,7 +107,7 @@ class GiniInternalPaymentModule(private val context: Context,
      *
      * It never completes.
      */
-    internal val paymentFlow: StateFlow<ResultWrapper<PaymentDetails>> = _paymentFlow
+    val paymentFlow: StateFlow<ResultWrapper<PaymentDetails>> = _paymentFlow
 
     /**
      * A flow that exposes events from the Merchant SDK. You can collect this flow to be informed about events such as errors,
@@ -139,6 +140,8 @@ class GiniInternalPaymentModule(private val context: Context,
         localizedContext = null
         GiniPaymentPreferences(context).saveSDKLanguage(language)
     }
+
+    fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean = giniPaymentManager.validatePaymentDetails(paymentDetails)
 
     internal class GiniPaymentPreferences(context: Context) {
         private val sharedPreferences = context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)
