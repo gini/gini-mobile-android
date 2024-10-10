@@ -461,7 +461,7 @@ class ReviewFragment private constructor(
     }
 
     private fun getLocaleStringResource(resourceId: Int): String {
-        return getLocaleStringResource(resourceId, viewModel.paymentComponent.paymentModule)
+        return getLocaleStringResource(resourceId, viewModel.giniInternalPaymentModule)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -87,7 +87,7 @@ class GiniInternalPaymentModule(private val context: Context,
                 }
         }
 
-    var paymentComponent = PaymentComponent(context).also { it.paymentModule = this }
+    var paymentComponent = PaymentComponent(context, this)
     private val openWithPreferences = OpenWithPreferences(context)
 
     suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
@@ -141,7 +141,7 @@ class GiniInternalPaymentModule(private val context: Context,
         GiniPaymentPreferences(context).saveSDKLanguage(language)
     }
 
-    fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean = giniPaymentManager.validatePaymentDetails(paymentDetails)
+//    fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean = giniPaymentManager.validatePaymentDetails(paymentDetails)
 
     internal class GiniPaymentPreferences(context: Context) {
         private val sharedPreferences = context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)

@@ -111,7 +111,10 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         binding.payment.setOnClickListener {
             it.hideKeyboard()
             reviewComponent?.paymentDetails?.value?.let { paymentDetails ->
-                listener?.onPaymentButtonTapped(paymentDetails)
+                val areFieldsValid = reviewComponent?.validatePaymentDetails(paymentDetails)
+                if (areFieldsValid == true) {
+                    listener?.onPaymentButtonTapped(paymentDetails)
+                }
             }
         }
     }

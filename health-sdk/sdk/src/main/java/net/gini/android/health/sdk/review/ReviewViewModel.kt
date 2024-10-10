@@ -159,10 +159,7 @@ internal class ReviewViewModel(
     }
 
     fun onPaymentButtonTapped(externalCacheDir: File?) {
-        val areFieldsValid = giniInternalPaymentModule.validatePaymentDetails(paymentDetails.value.toCommonPaymentDetails())
-        if (areFieldsValid) {
-            checkNextStep(paymentProviderApp.value, externalCacheDir, viewModelScope)
-        }
+        checkNextStep(paymentProviderApp.value, externalCacheDir, viewModelScope)
     }
 
     fun onForwardToSharePdfTapped(externalCacheDir: File?) {
