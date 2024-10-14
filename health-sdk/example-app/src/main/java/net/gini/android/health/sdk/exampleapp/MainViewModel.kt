@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
-import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 import java.io.File

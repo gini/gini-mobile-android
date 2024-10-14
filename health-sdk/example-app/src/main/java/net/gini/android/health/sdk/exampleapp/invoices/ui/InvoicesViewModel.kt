@@ -25,6 +25,7 @@ class InvoicesViewModel(
             InvoiceItem.fromInvoice(invoice)
         }
     }
+
     val giniPaymentModule = giniHealth.giniInternalPaymentModule
     val paymentProviderAppsFlow = giniPaymentModule.paymentComponent.paymentProviderAppsFlow
 
