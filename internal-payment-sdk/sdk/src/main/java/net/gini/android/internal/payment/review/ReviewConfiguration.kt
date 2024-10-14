@@ -29,5 +29,6 @@ data class ReviewConfiguration(
      *
      * Default value is `true`
      */
-    internal val editableFields: List<ReviewFields> = listOf(ReviewFields.IBAN, ReviewFields.AMOUNT, ReviewFields.RECIPIENT, ReviewFields.PURPOSE)
+    internal val editableFields: List<ReviewFields> =
+        listOf(ReviewFields.IBAN, ReviewFields.AMOUNT, ReviewFields.RECIPIENT, ReviewFields.PURPOSE)
 )

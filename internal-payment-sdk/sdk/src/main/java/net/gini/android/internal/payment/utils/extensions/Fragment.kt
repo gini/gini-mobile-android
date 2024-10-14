@@ -9,7 +9,8 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import java.io.File
 import java.util.Locale
 
-fun Fragment.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater: LayoutInflater, locale: Locale? = null): LayoutInflater {
+fun Fragment.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater: LayoutInflater,
+                                                            locale: Locale? = null): LayoutInflater {
     return inflater.cloneInContext(requireContext().wrappedWithGiniPaymentThemeAndLocale(locale))
 }
 

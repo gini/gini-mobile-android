@@ -54,7 +54,10 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale())
+        return getLayoutInflaterWithGiniPaymentThemeAndLocale(
+            inflater,
+            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
+        )
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -83,9 +86,19 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
                 setTextColor(paymentProviderApp.colors.textColor)
             }
             binding.gpsAppLayout.gpsAppName.text = paymentProviderApp.name
-            binding.gpsOpenWithTitle.text = String.format(getLocaleStringResource(R.string.gps_open_with_title), paymentProviderApp.name)
-            binding.gpsOpenWithDetails.text = String.format(getLocaleStringResource(R.string.gps_open_with_details), paymentProviderApp.name)
-            binding.gpsOpenWithInfo.text = createSpannableString(String.format(getLocaleStringResource(R.string.gps_open_with_info), paymentProviderApp.name, paymentProviderApp.name), paymentProviderApp.paymentProvider.playStoreUrl)
+            binding.gpsOpenWithTitle.text =
+                String.format(getLocaleStringResource(R.string.gps_open_with_title), paymentProviderApp.name)
+            binding.gpsOpenWithDetails.text =
+                String.format(getLocaleStringResource(R.string.gps_open_with_details), paymentProviderApp.name)
+            binding.gpsOpenWithInfo.text =
+                createSpannableString(
+                    String.format(
+                        getLocaleStringResource(R.string.gps_open_with_info),
+                        paymentProviderApp.name,
+                        paymentProviderApp.name
+                    ),
+                    paymentProviderApp.paymentProvider.playStoreUrl
+                )
             binding.gpsOpenWithInfo.movementMethod = LinkMovementMethod.getInstance()
         }
         return binding.root

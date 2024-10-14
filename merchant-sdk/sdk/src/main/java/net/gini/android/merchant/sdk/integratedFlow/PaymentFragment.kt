@@ -308,7 +308,11 @@ class PaymentFragment private constructor(
             configuration = ReviewConfiguration(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
                 showCloseButton = true,
-                editableFields = if (viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true) listOf(ReviewFields.AMOUNT) else listOf(),
+                editableFields = if (viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true) {
+                    listOf(ReviewFields.AMOUNT)
+                } else {
+                    listOf()
+                },
             ),
             listener = reviewViewListener,
             giniInternalPaymentModule = viewModel.giniInternalPaymentModule,

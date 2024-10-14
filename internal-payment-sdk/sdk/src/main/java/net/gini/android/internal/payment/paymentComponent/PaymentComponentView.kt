@@ -314,14 +314,16 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun addButtonInputHandlers() {
         selectBankButton.setIntervalClickListener {
             if (paymentComponent == null) {
-                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+                LOG.warn("Cannot call PaymentComponent's listener: " +
+                        "PaymentComponent must be set before showing the PaymentComponentView")
             }
             paymentComponent?.listener?.onBankPickerClicked()
             dismissListener?.onButtonClick(Buttons.SELECT_BANK)
         }
         payInvoiceButton.setIntervalClickListener {
             if (paymentComponent == null) {
-                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+                LOG.warn("Cannot call PaymentComponent's listener: " +
+                        "PaymentComponent must be set before showing the PaymentComponentView")
             }
             coroutineScope?.launch {
                 paymentComponent?.onPayInvoiceClicked(documentId)
@@ -329,7 +331,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         }
         binding.gpsMoreInformation.setIntervalClickListener {
             if (paymentComponent == null) {
-                LOG.warn("Cannot call PaymentComponent's listener: PaymentComponent must be set before showing the PaymentComponentView")
+                LOG.warn("Cannot call PaymentComponent's listener: " +
+                        "PaymentComponent must be set before showing the PaymentComponentView")
             }
             paymentComponent?.listener?.onMoreInformationClicked()
             dismissListener?.onButtonClick(Buttons.MORE_INFORMATION)

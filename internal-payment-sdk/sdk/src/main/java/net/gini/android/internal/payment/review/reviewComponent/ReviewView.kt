@@ -94,7 +94,8 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             launch {
                 reviewComponent?.loadingFlow?.collect { isLoading ->
                     binding.paymentProgress.isVisible = isLoading
-                    binding.amountLayout.isEnabled = !isLoading && (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.AMOUNT) ?: false)
+                    binding.amountLayout.isEnabled = !isLoading &&
+                            (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.AMOUNT) ?: false)
                 }
             }
         }
@@ -205,10 +206,27 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     private fun setEditableFields() {
-        binding.iban.focusable = if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.IBAN) == true) View.FOCUSABLE else View.NOT_FOCUSABLE
-        binding.recipient.focusable = if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.RECIPIENT) == true) View.FOCUSABLE else View.NOT_FOCUSABLE
-        binding.purpose.focusable = if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.PURPOSE) == true) View.FOCUSABLE else View.NOT_FOCUSABLE
-        binding.amount.focusable = if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.AMOUNT) == true) View.FOCUSABLE else View.NOT_FOCUSABLE
+        val editableFields = reviewComponent?.reviewConfig?.editableFields
+        binding.iban.focusable = if (editableFields?.contains(ReviewFields.IBAN) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
+        binding.recipient.focusable = if (editableFields?.contains(ReviewFields.RECIPIENT) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
+        binding.purpose.focusable = if (editableFields?.contains(ReviewFields.PURPOSE) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
+        binding.amount.focusable = if (editableFields?.contains(ReviewFields.AMOUNT) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
     }
 
     private fun setDisabledIcon(text: String, textView:TextInputLayout) {

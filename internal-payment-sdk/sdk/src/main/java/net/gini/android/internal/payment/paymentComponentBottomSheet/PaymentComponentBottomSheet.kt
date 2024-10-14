@@ -54,7 +54,8 @@ class PaymentComponentBottomSheet private constructor(
 
         binding.gmsPaymentComponent.dismissListener = object : PaymentComponentView.ButtonClickListener {
             override fun onButtonClick(button: PaymentComponentView.Buttons) {
-                if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false && !viewModel.reviewFragmentShown) return
+                if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false
+                    && !viewModel.reviewFragmentShown) return
                 dismiss()
             }
 

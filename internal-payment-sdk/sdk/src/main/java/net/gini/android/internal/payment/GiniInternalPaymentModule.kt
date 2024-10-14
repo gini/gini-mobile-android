@@ -122,7 +122,11 @@ class GiniInternalPaymentModule(private val context: Context,
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
     fun setPaymentDetails(paymentDetails: PaymentDetails?) {
-        _paymentFlow.value = if (paymentDetails != null) ResultWrapper.Success(paymentDetails) else ResultWrapper.Loading()
+        _paymentFlow.value = if (paymentDetails != null) {
+            ResultWrapper.Success(paymentDetails)
+        } else {
+            ResultWrapper.Loading()
+        }
     }
 
     suspend fun incrementCountForPaymentProviderId(paymentProviderAppId: String) {
@@ -140,8 +144,6 @@ class GiniInternalPaymentModule(private val context: Context,
         localizedContext = null
         GiniPaymentPreferences(context).saveSDKLanguage(language)
     }
-
-//    fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean = giniPaymentManager.validatePaymentDetails(paymentDetails)
 
     internal class GiniPaymentPreferences(context: Context) {
         private val sharedPreferences = context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)

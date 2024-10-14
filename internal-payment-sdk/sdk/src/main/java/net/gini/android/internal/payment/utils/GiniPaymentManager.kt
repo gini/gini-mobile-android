@@ -20,7 +20,7 @@ internal class GiniPaymentManager(
     suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) {
         if (giniHealthAPI == null) {
             LOG.error("GiniHealthApi instance must be set")
-            throw Exception("Cannot initiate payment: No GiniHealthApi instance set")
+            throw NullPointerException("Cannot initiate payment: No GiniHealthApi instance set")
         }
         if (paymentProviderApp == null) {
             LOG.error("No selected payment provider app")
@@ -30,7 +30,7 @@ internal class GiniPaymentManager(
 
         if (paymentProviderApp.installedPaymentProviderApp == null) {
             LOG.error("Payment provider app not installed")
-            paymentEventListener?.onError(Exception("Payment provider app not installed"))
+            paymentEventListener?.onError(NullPointerException("Payment provider app not installed"))
             return
         }
 
@@ -45,7 +45,7 @@ internal class GiniPaymentManager(
     suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails): PaymentRequest {
         if (giniHealthAPI == null) {
             LOG.error("Cannot create PaymentRequest: No GiniHealthApi instance set")
-            throw Exception("Cannot create PaymentRequest: No GiniHealthApi instance set")
+            throw NullPointerException("Cannot create PaymentRequest: No GiniHealthApi instance set")
         }
         if (paymentProviderApp == null) {
             LOG.error("Cannot create PaymentRequest: No selected payment provider app")
