@@ -462,7 +462,7 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
             )
-            
+
             viewModel.stateFlow.test {
                 skipItems(1) // skip initial state
                 val futureDueDate = LocalDate.now().plusDays(5)
