@@ -23,11 +23,11 @@ import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsSta
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
-import net.gini.android.internal.payment.utils.GiniLocalization
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Locale
 
 
 @ExperimentalCoroutinesApi
@@ -123,13 +123,13 @@ class BankSelectionBottomSheetTest {
     @Test
     fun `shows text values in english if that is set to GiniHealth`() = runTest {
         // Given
-        giniPaymentModule = GiniInternalPaymentModule(context!!)
-        giniPaymentModule.setSDKLanguage(GiniLocalization.ENGLISH, context!!)
-        paymentComponentWithLocale = PaymentComponent(context!!, giniPaymentModule)
+        giniPaymentModule = mockk(relaxed = true)
+        paymentComponentWithLocale = mockk(relaxed = true)
+        every { paymentComponentWithLocale.giniPaymentLanguage } returns Locale.ENGLISH
 
         // When
         launchFragmentInContainer {
-            BankSelectionBottomSheet.newInstance(paymentComponentWithLocale!!)
+            BankSelectionBottomSheet.newInstance(paymentComponentWithLocale)
         }
 
         // Then
@@ -145,13 +145,13 @@ class BankSelectionBottomSheetTest {
     @Test
     fun `shows text values in german if that is set to GiniHealth`() = runTest {
         // Given
-        giniPaymentModule = GiniInternalPaymentModule(context!!)
-        giniPaymentModule.setSDKLanguage(GiniLocalization.GERMAN, context!!)
-        paymentComponentWithLocale = PaymentComponent(context!!, giniPaymentModule)
+        giniPaymentModule = mockk(relaxed = true)
+        paymentComponentWithLocale = mockk(relaxed = true)
+        every { paymentComponentWithLocale.giniPaymentLanguage } returns Locale.GERMAN
 
         // When
         launchFragmentInContainer {
-            BankSelectionBottomSheet.newInstance(paymentComponentWithLocale!!)
+            BankSelectionBottomSheet.newInstance(paymentComponentWithLocale)
         }
 
         // Then

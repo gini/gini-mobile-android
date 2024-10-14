@@ -7,6 +7,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -21,21 +22,26 @@ import com.google.common.truth.Truth
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.SelectedPaymentProviderAppState
-import net.gini.android.health.sdk.paymentprovider.PaymentProviderApp
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.PaymentNextStep
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,15 +66,21 @@ class ReviewFragmentTest {
     private lateinit var viewModel: ReviewViewModel
     private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var context: Context
-    private lateinit var paymentNextStepSharedFlow: MutableSharedFlow<ReviewViewModel.PaymentNextStep>
+    private lateinit var paymentNextStepFlow: MutableSharedFlow<PaymentNextStep>
 
     @Before
     fun setup() {
         viewModel = mockk(relaxed = true)
         context = ApplicationProvider.getApplicationContext()
         context.setTheme(R.style.GiniHealthTheme)
-        paymentNextStepSharedFlow = MutableSharedFlow<ReviewViewModel.PaymentNextStep>(extraBufferCapacity = 1)
+        paymentNextStepFlow = MutableStateFlow(mockk())
         configureMockViewModel(viewModel)
+        Dispatchers.setMain(Dispatchers.Unconfined)
+    }
+
+    @After
+    fun tearDown(){
+        Dispatchers.resetMain()
     }
 
     private fun configureMockViewModel(viewModel: ReviewViewModel) {
@@ -79,9 +91,8 @@ class ReviewFragmentTest {
 
         every { viewModel.giniHealth } returns giniHealth
         every { viewModel.paymentDetails } returns MutableStateFlow(mockk(relaxed = true))
-        every { viewModel.paymentValidation } returns MutableStateFlow(mockk(relaxed = true))
-        every { viewModel.isPaymentButtonEnabled } returns MutableStateFlow(mockk(relaxed = true))
         every { viewModel.isInfoBarVisible } returns MutableStateFlow(mockk(relaxed = true))
+        every { viewModel.paymentNextStepFlow } returns paymentNextStepFlow
 
         viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -116,8 +127,6 @@ class ReviewFragmentTest {
     @Test
     fun `calls onNextClicked() listener when 'Next' ('Pay') button is clicked`() {
         // Given
-        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
-
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns mockk(relaxed = true)
 
@@ -126,7 +135,6 @@ class ReviewFragmentTest {
         every { paymentProvider.gpcSupported() } returns true
         every { paymentProviderApp.paymentProvider } returns paymentProvider
         every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
-        every { viewModel.paymentNextStep } returns paymentNextStepSharedFlow
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
         launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
@@ -140,9 +148,9 @@ class ReviewFragmentTest {
         }
 
         // When
-        onView(withId(R.id.payment)).perform(click())
+        onView(withId(net.gini.android.internal.payment.R.id.payment)).perform(click())
 
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.RedirectToBank)
+        paymentNextStepFlow.tryEmit(PaymentNextStep.RedirectToBank)
 
         // Then
         verify {
@@ -160,15 +168,16 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
-        every { paymentComponent.giniHealth.localizedContext } returns ApplicationProvider.getApplicationContext()
-        every { paymentComponent.giniHealthLanguage } returns null
+        every { paymentComponent.giniPaymentLanguage } returns null
+        every { paymentComponent.paymentModule } returns mockk(relaxed = true)
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
+        )
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)
         every { viewModel.paymentComponent } returns paymentComponent
-        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
         every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
-        every { viewModel.paymentNextStep } returns paymentNextStepSharedFlow
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
 
@@ -183,9 +192,9 @@ class ReviewFragmentTest {
         }
 
         // When
-        onView(withId(R.id.payment)).perform(click())
+        onView(withId(net.gini.android.internal.payment.R.id.payment)).perform(click())
 
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.RedirectToBank)
+        paymentNextStepFlow.tryEmit(PaymentNextStep.RedirectToBank)
 
         // Then
         verify {
@@ -194,7 +203,7 @@ class ReviewFragmentTest {
     }
 
     @Test
-    fun `shows install app dialog if payment provider app is not installed`() = runTest {
+    fun `shows 'install app' dialog if payment provider app is not installed`() {
         // Given
         val paymentProviderName = "Test Bank App"
         val paymentProviderApp: PaymentProviderApp = mockk(relaxed = true)
@@ -203,19 +212,16 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
+        every { paymentComponent.giniPaymentLanguage } returns null
+        every { paymentComponent.paymentModule } returns mockk(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
         )
-        every { paymentComponent.giniHealth.localizedContext } returns ApplicationProvider.getApplicationContext()
-        every { paymentComponent.giniHealthLanguage } returns null
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)
         every { viewModel.paymentComponent } returns paymentComponent
-        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
         every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
-        every { viewModel.paymentNextStep } returns paymentNextStepSharedFlow
-        every { viewModel.validatePaymentDetails() } returns true
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
 
@@ -230,18 +236,19 @@ class ReviewFragmentTest {
         }
 
         // When
-        onView(withId(R.id.payment)).perform(click())
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.ShowInstallApp)
+        onView(withId(net.gini.android.internal.payment.R.id.payment)).perform(click())
+
+        paymentNextStepFlow.tryEmit(PaymentNextStep.ShowInstallApp)
 
         ShadowLooper.runUiThreadTasks()
 
         // Then
         val dialog = ShadowDialog.getLatestDialog()
-        Truth.assertThat(dialog.isShowing)
+        Truth.assertThat(dialog.isShowing).isTrue()
     }
 
     @Test
-    fun `displays 'Open With' dialog when 'Pay' button is clicked and payment provider does not support 'GPC'`() = runTest {
+    fun `shows 'Open With' app dialog if payment provider app does not support gpc`() {
         // Given
         val paymentProviderName = "Test Bank App"
         val paymentProviderApp: PaymentProviderApp = mockk(relaxed = true)
@@ -250,24 +257,23 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
+        every { paymentComponent.giniPaymentLanguage } returns null
+        every { paymentComponent.paymentModule } returns mockk(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
         )
-        every { paymentComponent.giniHealth.localizedContext } returns ApplicationProvider.getApplicationContext()
-        every { paymentComponent.giniHealthLanguage } returns null
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)
         every { viewModel.paymentComponent } returns paymentComponent
         every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
-        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
-        every { viewModel.paymentNextStep } returns paymentNextStepSharedFlow
-        every { viewModel.validatePaymentDetails() } returns true
+
+        val listener = mockk<ReviewFragmentListener>(relaxed = true)
 
         launchFragmentInContainer(themeResId = R.style.GiniHealthTheme) {
             ReviewFragment.newInstance(
                 giniHealth = mockk(relaxed = true),
-                listener = mockk(relaxed = true),
+                listener = listener,
                 viewModelFactory = viewModelFactory,
                 paymentComponent = paymentComponent,
                 documentId = ""
@@ -275,15 +281,15 @@ class ReviewFragmentTest {
         }
 
         // When
-        onView(withId(R.id.payment)).perform(click())
+        onView(withId(net.gini.android.internal.payment.R.id.payment)).perform(click())
 
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.ShowOpenWithSheet)
+        paymentNextStepFlow.tryEmit(PaymentNextStep.ShowOpenWithSheet)
 
         ShadowLooper.runUiThreadTasks()
 
         // Then
         val dialog = ShadowDialog.getLatestDialog()
-        Truth.assertThat(dialog.isShowing)
+        Truth.assertThat(dialog.isShowing).isTrue()
     }
 
     @Test
@@ -297,15 +303,13 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
-        every { paymentComponent.giniHealth.localizedContext } returns ApplicationProvider.getApplicationContext()
-        every { paymentComponent.giniHealthLanguage } returns null
+        every { paymentComponent.giniPaymentLanguage } returns null
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)
         every { viewModel.paymentComponent } returns paymentComponent
-        every { viewModel.isPaymentButtonEnabled } returns flowOf(true)
         every { viewModel.paymentProviderApp } returns MutableStateFlow(paymentProviderApp)
-        every { viewModel.paymentNextStep } returns paymentNextStepSharedFlow
+        every { viewModel.viewModelScope } returns CoroutineScope(Dispatchers.Unconfined)
 
         val listener = mockk<ReviewFragmentListener>(relaxed = true)
         val fragment = ReviewFragment.newInstance(
@@ -319,7 +323,9 @@ class ReviewFragmentTest {
             fragment
         }
 
-        paymentNextStepSharedFlow.tryEmit(ReviewViewModel.PaymentNextStep.OpenSharePdf(mockk()))
+        paymentNextStepFlow.tryEmit(PaymentNextStep.OpenSharePdf(mockk()))
+
+        ShadowLooper.runUiThreadTasks()
 
         val expectedIntent = Matchers.allOf(
             hasAction(Intent.ACTION_SEND),

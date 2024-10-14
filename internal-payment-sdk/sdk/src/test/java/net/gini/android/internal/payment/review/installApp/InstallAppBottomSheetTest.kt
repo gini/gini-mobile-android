@@ -52,6 +52,7 @@ class InstallAppBottomSheetTest {
         every { paymentProviderApp.isInstalled() } returns false
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+        every { paymentComponent.paymentModule } returns mockk(relaxed = true)
 
         // Given
         val bottomSheet = InstallAppBottomSheet.newInstance(
@@ -76,6 +77,7 @@ class InstallAppBottomSheetTest {
         every { paymentProviderApp.isInstalled() } returns true
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+        every { paymentComponent.paymentModule } returns mockk(relaxed = true)
 
         val bottomSheet = InstallAppBottomSheet.newInstance(
             paymentComponent,
@@ -99,6 +101,7 @@ class InstallAppBottomSheetTest {
         every { paymentProviderApp.isInstalled() } returns true
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+        every { paymentComponent.paymentModule } returns mockk(relaxed = true)
 
         val listener: InstallAppForwardListener = mockk()
         every { listener.onForwardToBankSelected() } returns mockk()

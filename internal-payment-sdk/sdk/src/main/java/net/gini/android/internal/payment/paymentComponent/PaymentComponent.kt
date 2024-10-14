@@ -46,9 +46,6 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, val
      */
     val returningUserFlow: StateFlow<Boolean> = _returningUserFlow
 
-
-//    lateinit var paymentModule: GiniInternalPaymentModule
-
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
