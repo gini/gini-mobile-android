@@ -2,7 +2,6 @@ name: Publish GPC Example App QA Build to Firebase distribution
 
 on:
   workflow_dispatch:
-  push:
 jobs:
   check:
     uses: ./.github/workflows/bank-sdk.check.yml
