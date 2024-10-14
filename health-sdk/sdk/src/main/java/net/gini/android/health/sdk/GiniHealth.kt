@@ -25,6 +25,7 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.paymentComponent.BankPickerRows
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.review.ReviewConfiguration
@@ -46,7 +47,9 @@ class GiniHealth(
     val giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
         context = context,
         giniHealthAPI = giniHealthAPI
-    )
+    ).also {
+        it.paymentComponent.bankPickerRows = BankPickerRows.SINGLE
+    }
 
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
 
