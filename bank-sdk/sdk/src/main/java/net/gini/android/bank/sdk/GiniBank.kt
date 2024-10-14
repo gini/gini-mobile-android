@@ -276,7 +276,23 @@ object GiniBank {
      * @param context Android context
      *
      */
+    @Deprecated(
+        "Please use cleanCapture(context). This method will be removed in a future release.",
+        ReplaceWith("cleanCapture(context)")
+    )
     fun releaseCapture(
+        context: Context
+    ) {
+        cleanCapture(context)
+    }
+
+    /**
+     * Frees up resources used by the capture flow.
+     *
+     * @param context Android context
+     *
+     */
+    fun cleanCapture(
         context: Context
     ) {
         GiniCapture.cleanup(
