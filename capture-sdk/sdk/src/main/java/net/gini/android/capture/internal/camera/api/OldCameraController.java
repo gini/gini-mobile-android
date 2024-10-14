@@ -444,33 +444,18 @@ public class OldCameraController implements CameraInterface {
         // as being stopped before it is really stopped
         mPreviewRunning = false;
 
-        CompletableFuture<Boolean> focusFuture = new CompletableFuture<>();
-        if (isUsingFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE, mCamera)) {
-            // When continuous focus mode is used no auto-focus run is needed
-            focusFuture.complete(true);
-        } else {
-            // Continuous focus mode is not used and we need to do an auto-focus run
-            focusFuture = focus();
-        }
-
-        focusFuture.handle(new CompletableFuture.BiFun<Boolean, Throwable, Void>() {
-            @Override
-            public Void apply(final Boolean aBoolean, final Throwable throwable) {
-                takePicture(new Camera.PictureCallback() {
-                    @Override
-                    public void onPictureTaken(final byte[] bytes, final Camera camera) {
-                        mTakingPictureFuture.set(null);
-                        final Photo photo = PhotoFactory.newPhotoFromJpeg(bytes,
-                                getDisplayOrientationForCamera(mActivity),
-                                getDeviceOrientation(mActivity),
-                                getDeviceType(mActivity),
-                                Document.Source.newCameraSource());
-                        LOG.info("Picture taken");
-                        pictureTaken.complete(photo);
-                    }
-                });
-                return null;
-            }
+        focus().handle((CompletableFuture.BiFun<Boolean, Throwable, Void>) (aBoolean, throwable) -> {
+            takePicture((bytes, camera) -> {
+                mTakingPictureFuture.set(null);
+                final Photo photo = PhotoFactory.newPhotoFromJpeg(bytes,
+                        getDisplayOrientationForCamera(mActivity),
+                        getDeviceOrientation(mActivity),
+                        getDeviceType(mActivity),
+                        Document.Source.newCameraSource());
+                LOG.info("Picture taken");
+                pictureTaken.complete(photo);
+            });
+            return null;
         });
 
         return pictureTaken;
