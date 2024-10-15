@@ -2,7 +2,8 @@ name: Publish Health SDK Example App QA Build to App Center
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'health-sdk/**'
       - 'health-api-library/**'

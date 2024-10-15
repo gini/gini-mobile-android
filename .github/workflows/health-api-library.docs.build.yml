@@ -1,15 +1,8 @@
 name: Build docs for Health API Library
 
 on:
-  push:
-    paths:
-      - 'health-api-library/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'health-api-library/**'
 
