@@ -2,7 +2,8 @@ name: Publish Merchant SDK Example App QA Build to Firebase App Distribution
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'merchant-sdk/**'
       - 'health-api-library/**'

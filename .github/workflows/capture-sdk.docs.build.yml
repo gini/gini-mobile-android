@@ -1,15 +1,8 @@
 name: Build docs for Capture SDK
 
 on:
-  push:
-    paths:
-      - 'capture-sdk/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'capture-sdk/**'
 
