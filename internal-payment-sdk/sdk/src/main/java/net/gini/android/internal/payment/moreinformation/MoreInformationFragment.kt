@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsFragmentPaymentMoreInformationBinding
 import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
@@ -67,7 +68,7 @@ class MoreInformationFragment private constructor(
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, viewModel.getLocale())
+        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale())
     }
 
     override fun onCreateView(
@@ -82,7 +83,6 @@ class MoreInformationFragment private constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        resources.configuration.setLocale(viewModel.getLocale())
         binding.gpsMoreInformationDetails.text = buildSpannedString {
             append(getLocaleStringResource(R.string.gps_more_information_details))
             append(" ")

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetBankSelectionBinding
 import net.gini.android.internal.payment.databinding.GpsItemPaymentProviderAppBinding
@@ -52,7 +53,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, viewModel.paymentComponent?.giniPaymentLanguage)
+        return getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -61,7 +62,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
         binding.gpsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
         binding.gpsPaymentProviderAppsList.adapter =
             PaymentProviderAppsAdapter(emptyList(),
-                viewModel.paymentComponent?.giniPaymentLanguage,
+                viewModel.paymentComponent?.getGiniPaymentLanguage(requireContext()),
                 object : PaymentProviderAppsAdapter.OnItemClickListener {
                     override fun onItemClick(paymentProviderApp: PaymentProviderApp) {
                         LOG.debug("Selected payment provider app: {}", paymentProviderApp.name)

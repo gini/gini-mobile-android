@@ -22,6 +22,7 @@ import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithG
 import net.gini.android.internal.payment.utils.extensions.setBackgroundTint
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 
@@ -190,7 +191,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
-        context?.wrappedWithGiniPaymentTheme()?.let { context ->
+        context?.wrappedWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale())?.let { context ->
             payInvoiceButton.visibility = View.GONE
             paymentProviderAppIconHolder.root.visibility = View.GONE
             selectBankButton.text = context.getString(R.string.gps_select_bank)
@@ -205,7 +206,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
         LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
-        context?.wrappedWithGiniPaymentTheme()?.let { context ->
+        context?.wrappedWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale())?.let { context ->
             selectBankButton.apply {
                 text = if (paymentComponent?.bankPickerRows == BankPickerRows.SINGLE) "" else paymentProviderApp.name
                 setCompoundDrawablesWithIntrinsicBounds(
@@ -255,7 +256,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun restorePayInvoiceButtonDefaultState() {
         LOG.debug("Restoring pay invoice button default state")
-        context?.wrappedWithGiniPaymentTheme()?.let { context ->
+        context?.wrappedWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale())?.let { context ->
             payInvoiceButton.apply {
                 setBackgroundTint(
                     ContextCompat.getColor(

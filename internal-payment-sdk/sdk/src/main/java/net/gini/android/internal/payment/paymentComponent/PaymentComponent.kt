@@ -12,6 +12,7 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.getPaymentProviderApps
 import org.slf4j.LoggerFactory
+import java.util.Locale
 
 /**
  * The [PaymentComponent] manages the data and state used by every [PaymentComponentView], the [MoreInformationFragment],
@@ -49,7 +50,10 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, val
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
-     val giniPaymentLanguage = GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()
+    fun getGiniPaymentLanguage(context: Context? = null) =
+        context?.let {
+            GiniInternalPaymentModule.getSDKLanguage(it)?.languageLocale()
+        } ?: GiniInternalPaymentModule.getSDKLanguage(this.context)?.languageLocale()
 
     /**
      * A listener for the payment component. It exposes the user interactions with all of the [PaymentComponentView]s.
