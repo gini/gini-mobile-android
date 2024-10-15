@@ -168,7 +168,7 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
-        every { paymentComponent.giniPaymentLanguage } returns null
+        every { paymentComponent.getGiniPaymentLanguage() } returns null
         every { paymentComponent.paymentModule } returns mockk(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
@@ -212,7 +212,7 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
-        every { paymentComponent.giniPaymentLanguage } returns null
+        every { paymentComponent.getGiniPaymentLanguage() } returns null
         every { paymentComponent.paymentModule } returns mockk(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
@@ -257,7 +257,7 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
-        every { paymentComponent.giniPaymentLanguage } returns null
+        every { paymentComponent.getGiniPaymentLanguage() } returns null
         every { paymentComponent.paymentModule } returns mockk(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
@@ -303,7 +303,7 @@ class ReviewFragmentTest {
 
         val paymentComponent = mockk<PaymentComponent>()
         every { paymentComponent.recheckWhichPaymentProviderAppsAreInstalled() } returns Unit
-        every { paymentComponent.giniPaymentLanguage } returns null
+        every { paymentComponent.getGiniPaymentLanguage() } returns null
 
         viewModel = mockk(relaxed = true)
         configureMockViewModel(viewModel)

@@ -49,10 +49,10 @@ class PaymentComponentBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetPaymentComponentBinding.inflate(inflater, container, false)
-        binding.gmsPaymentComponent.reviewFragmentWillBeShown = viewModel.reviewFragmentShown
-        binding.gmsPaymentComponent.paymentComponent = viewModel.paymentComponent
+        binding.gpsPaymentComponent.reviewFragmentWillBeShown = viewModel.reviewFragmentShown
+        binding.gpsPaymentComponent.paymentComponent = viewModel.paymentComponent
 
-        binding.gmsPaymentComponent.dismissListener = object : PaymentComponentView.ButtonClickListener {
+        binding.gpsPaymentComponent.dismissListener = object : PaymentComponentView.ButtonClickListener {
             override fun onButtonClick(button: PaymentComponentView.Buttons) {
                 if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false
                     && !viewModel.reviewFragmentShown) return
@@ -60,7 +60,7 @@ class PaymentComponentBottomSheet private constructor(
             }
 
         }
-        paymentComponentView = binding.gmsPaymentComponent
+        paymentComponentView = binding.gpsPaymentComponent
         return binding.root
     }
 
