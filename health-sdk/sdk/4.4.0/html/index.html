@@ -1,0 +1,263 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Gini Health SDK for Android &mdash; Gini Health SDK for Android  documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Health SDK for Android  documentation" href="#"/>
+        <link rel="next" title="Getting started" href="setup.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="#" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-deep-link-for-your-app">Gini Pay Deep Link For Your App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-health-api-client-credentials">Gini Health API Client Credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-ginihealth-instance">Create the GiniHealth instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#upload-documents">Upload documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#check-which-documents-invoices-are-payable">Check which documents/invoices are payable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-paymentcomponent-instance">Create the PaymentComponent instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#add-a-listener-to-the-paymentcomponent">Add a listener to the PaymentComponent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#load-payment-providers">Load payment providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#show-the-paymentcomponentviews">Show the PaymentComponentViews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#show-the-moreinformationfragment">Show the MoreInformationFragment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#show-the-bankselectionbottomsheet">Show the BankSelectionBottomSheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#show-the-reviewfragment">Show the ReviewFragment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="event-tracking.html">Event Tracking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#ginihealth">GiniHealth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#paymentcomponent">PaymentComponent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#reviewfragment">ReviewFragment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#example-banking-app">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#development-gini-health-api-client-credentials">Development Gini Health API client credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#end-to-end-testing">End to end testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#id1">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-component">Payment component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#bank-picker">Bank picker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#more-information-and-faq">More information and FAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-review">Payment review</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#execute-payment">Execute payment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#return-to-your-app">Return to your app</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#testing-in-production">Testing in production</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">UI Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#overview-of-ui-customization-options">Overview of UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#ui-customization-options">UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-component">Payment Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#bank-selection-bottom-sheet">Bank Selection Bottom Sheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-feature-info-screen">Payment Feature Info Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-review-screen">Payment Review Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data-safety.html">Google Play Data Safety Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data-safety.html#data-collection-and-security">Data collection and security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data-safety.html#data-types">Data types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data-safety.html#data-usage-and-handling">Data usage and handling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data-safety.html#financial-info-purchase-history">Financial info - Purchase history</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data-safety.html#photos-and-videos">Photos and videos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data-safety.html#files-and-docs">Files and docs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data-safety.html#device-or-other-ids">Device or other IDs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#photoview">PhotoView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#insetter">Insetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">Gini Health SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Gini Health SDK for Android</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="gini-health-sdk-for-android">
+<h1>Gini Health SDK for Android<a class="headerlink" href="#gini-health-sdk-for-android" title="Permalink to this headline">¶</a></h1>
+<p>The Gini Health SDK for Android provides all the UI and functionality needed to use the Gini Health API in your app to
+extract payment and health information from invoices. The payment information can be reviewed and then the invoice can
+be paid using any available payment provider app (e.g., banking app).</p>
+<p>The Gini Health API provides an information extraction service for analyzing health invoices. Specifically, it extracts
+information such as the document sender or the payment relevant information (amount to pay, IBAN, etc.). In addition it
+also provides a secure channel for sharing payment related information between clients.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The documentation for the 2.x.x version can be found <a class="reference external" href="https://developer.gini.net/gini-mobile-android/health-sdk/sdk/2.1.4/html/index.html">here</a>.</p>
+</div>
+<div class="section" id="table-of-contents">
+<h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="event-tracking.html">Event Tracking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">UI Customization Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-safety.html">Google Play Data Safety Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="setup.html" class="btn btn-neutral float-right" title="Getting started">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
