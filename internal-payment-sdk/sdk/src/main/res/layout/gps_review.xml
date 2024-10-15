@@ -118,6 +118,49 @@
             android:paddingEnd="@dimen/gps_zero" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_select_bank_layout"
+        android:paddingEnd="@dimen/gps_medium"
+        app:layout_constraintTop_toTopOf="@id/payment"
+        >
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/gps_background_view"
+            android:background="@drawable/gps_bordered_background"
+            app:layout_constraintStart_toStartOf="@id/gps_select_bank_button"
+            app:layout_constraintEnd_toEndOf="@id/gps_select_bank_button"
+            app:layout_constraintTop_toTopOf="@id/gps_select_bank_button"
+            app:layout_constraintBottom_toBottomOf="@id/gps_select_bank_button"/>
+
+        <include android:id="@+id/gps_payment_provider_app_icon_holder"
+            layout="@layout/gps_payment_provider_icon_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/gps_medium"
+            app:layout_constraintStart_toStartOf="@id/gps_select_bank_button"
+            app:layout_constraintTop_toTopOf="@id/gps_select_bank_button"
+            app:layout_constraintBottom_toBottomOf="@id/gps_select_bank_button"
+            />
+
+        <Button
+            android:id="@+id/gps_select_bank_button"
+            style="@style/GiniPaymentTheme.Widget.Button.PaymentProviderSelector"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:drawableRight="@drawable/gps_chevron_down_icon"
+            android:clickable="false"
+            android:gravity="start|center_vertical"
+            android:paddingHorizontal="@dimen/gps_large"
+            android:contentDescription="@string/gps_select_bank_content_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/gps_pay_invoice_button"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/payment"
         style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"
@@ -127,9 +170,10 @@
         android:enabled="false"
         android:text="@string/gps_pay_button"
         android:gravity="center"
+        app:layout_constraintHorizontal_weight="2.8"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/purpose_layout" />
+        app:layout_constraintTop_toBottomOf="@id/purpose_layout"
+        app:layout_constraintStart_toEndOf="@id/gps_select_bank_layout" />
 
     <ProgressBar
         android:id="@+id/payment_progress"

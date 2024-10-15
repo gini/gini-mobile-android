@@ -124,6 +124,10 @@ class PaymentFragment private constructor(
             viewModel.updatePaymentDetails(paymentDetails)
             viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
         }
+
+        override fun onSelectBankButtonTapped() {
+            //Nothing
+        }
     }
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
@@ -313,6 +317,7 @@ class PaymentFragment private constructor(
                 } else {
                     listOf()
                 },
+                selectBankButtonVisible = false
             ),
             listener = reviewViewListener,
             giniInternalPaymentModule = viewModel.giniInternalPaymentModule,

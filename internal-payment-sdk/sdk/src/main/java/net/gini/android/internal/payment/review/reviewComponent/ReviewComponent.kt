@@ -127,6 +127,9 @@ class ReviewComponent(
         _paymentDetails.value = paymentDetails.value.copy(purpose = purpose)
     }
 
+
+    fun shouldShowBankSelectionButton() = reviewConfig.selectBankButtonVisible
+
     fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
         val items = paymentDetails.validate()
         _paymentValidation.tryEmit(items)

@@ -278,6 +278,10 @@ class ReviewFragment private constructor(
                 ghsPaymentDetails.hideKeyboard()
                 viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
             }
+
+            override fun onSelectBankButtonTapped() {
+                viewModel.paymentComponent.listener?.onBankPickerClicked()
+            }
         }
         close.setOnClickListener { view ->
             if (isKeyboardShown) {

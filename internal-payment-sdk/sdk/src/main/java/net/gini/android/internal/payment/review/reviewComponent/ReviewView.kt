@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory
 
 interface ReviewViewListener {
     fun onPaymentButtonTapped(paymentDetails: PaymentDetails)
+
+    fun onSelectBankButtonTapped()
 }
 class ReviewView(private val context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
@@ -48,6 +50,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         set(value) {
             field = value
             setEditableFields()
+            binding.gpsSelectBankLayout.isVisible = reviewComponent?.shouldShowBankSelectionButton() == true
         }
     var paymentDetails: PaymentDetails? = null
         set(value) {
@@ -127,15 +130,20 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                     cornerRadius = resources.getDimension(R.dimen.gps_small_2)
                 }
 
-            binding.payment.setCompoundDrawablesWithIntrinsicBounds(
-                roundedDrawable,
-                null,
-                null,
-                null
-            )
+            if (reviewComponent?.shouldShowBankSelectionButton() == true) {
+                binding.gpsPaymentProviderAppIconHolder.gpsPaymentProviderIcon.setImageDrawable(roundedDrawable)
+                binding.gpsSelectBankButton.setOnClickListener { listener?.onSelectBankButtonTapped() }
+            } else {
+                binding.payment.setCompoundDrawablesWithIntrinsicBounds(
+                    roundedDrawable,
+                    null,
+                    null,
+                    null
+                )
 
-            // Adding negative icon padding in order to center the text on the button.
-            binding.payment.iconPadding = -roundedDrawable.intrinsicWidth
+                // Adding negative icon padding in order to center the text on the button.
+                binding.payment.iconPadding = -roundedDrawable.intrinsicWidth
+            }
         }
         binding.payment.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
         binding.payment.setTextColor(paymentProviderApp.colors.textColor)
