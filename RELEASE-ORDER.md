@@ -15,10 +15,10 @@ Release order for :health-api-library:library 4.4.0:
  1. :core-api-library:library 2.2.2
  2. :health-api-library:library 4.4.0
 
-Release order for :health-sdk:sdk 4.3.0:
+Release order for :health-sdk:sdk 4.4.0:
  1. :core-api-library:library 2.2.2
  2. :health-api-library:library 4.4.0
- 3. :health-sdk:sdk 4.3.0
+ 3. :health-sdk:sdk 4.4.0
 
 Release order for :merchant-sdk:sdk 1.0.0:
  1. :core-api-library:library 2.2.2
