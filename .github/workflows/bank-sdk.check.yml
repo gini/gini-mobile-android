@@ -108,7 +108,7 @@ jobs:
           name: bank-sdk-instrumented-test-results
           path: bank-sdk/sdk/build/outputs/androidTest-results/connected
 
-      - name: run example app instrumented tests5
+      - name: run example app instrumented tests6
         timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2
         with:
