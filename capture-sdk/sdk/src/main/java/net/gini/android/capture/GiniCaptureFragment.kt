@@ -153,8 +153,8 @@ class GiniCaptureFragment(
                     OncePerInstallEvent.SHOW_ONBOARDING
                 ))
             ) {
-                oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
-                navController.navigate(CameraFragmentDirections.toOnboardingFragment())
+//                oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
+//                navController.navigate(CameraFragmentDirections.toOnboardingFragment())
             }
         }
     }

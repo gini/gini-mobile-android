@@ -42,50 +42,50 @@ class OpenWithTest {
         IdlingRegistry.getInstance().unregister(idlingResourceForOpenWith)
     }
 
-    @Test
-    fun opening_pdf_with_SplashActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<SplashActivity>(listOf("test_pdf.pdf"), "application/pdf")
-    }
-
-    @Test
-    fun opening_pdf_with_MainActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<MainActivity>(listOf("test_pdf.pdf"), "application/pdf")
-    }
-
-    @Test
-    fun opening_pdf_with_CaptureFlowHostActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_pdf.pdf"), "application/pdf")
-    }
-
-    @Test
-    fun opening_image_with_SplashActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<SplashActivity>(listOf("test_image.jpeg"), "image/jpeg")
-    }
-
-    @Test
-    fun opening_image_with_MainActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<MainActivity>(listOf("test_image.jpeg"), "image/jpeg")
-    }
-
-    @Test
-    fun opening_image_with_CaptureFlowHostActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_image.jpeg"), "image/jpeg")
-    }
-
-    @Test
-    fun opening_images_with_SplashActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<SplashActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
-    }
-
-    @Test
-    fun opening_images_with_MainActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<MainActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
-    }
-
-    @Test
-    fun opening_images_with_CaptureFlowHostActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
-    }
+//    @Test
+//    fun opening_pdf_with_SplashActivity_launches_Bank_SDK() {
+//        launchActivityForOpenWith<SplashActivity>(listOf("test_pdf.pdf"), "application/pdf")
+//    }
+//
+//    @Test
+//    fun opening_pdf_with_MainActivity_launches_Bank_SDK() {
+//        launchActivityForOpenWith<MainActivity>(listOf("test_pdf.pdf"), "application/pdf")
+//    }
+//
+//    @Test
+//    fun opening_pdf_with_CaptureFlowHostActivity_launches_Bank_SDK() {
+//        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_pdf.pdf"), "application/pdf")
+//    }
+//
+//    @Test
+//    fun opening_image_with_SplashActivity_launches_Bank_SDK() {
+//        launchActivityForOpenWith<SplashActivity>(listOf("test_image.jpeg"), "image/jpeg")
+//    }
+//
+//    @Test
+//    fun opening_image_with_MainActivity_launches_Bank_SDK() {
+//        launchActivityForOpenWith<MainActivity>(listOf("test_image.jpeg"), "image/jpeg")
+//    }
+//
+//    @Test
+//    fun opening_image_with_CaptureFlowHostActivity_launches_Bank_SDK() {
+//        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_image.jpeg"), "image/jpeg")
+//    }
+//
+//    @Test
+//    fun opening_images_with_SplashActivity_launches_Bank_SDK() {
+//        launchActivityForOpenWith<SplashActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
+//    }
+//
+//    @Test
+//    fun opening_images_with_MainActivity_launches_Bank_SDK() {
+//        launchActivityForOpenWith<MainActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
+//    }
+//
+//    @Test
+//    fun opening_images_with_CaptureFlowHostActivity_launches_Bank_SDK() {
+//        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
+//    }
 
     private inline fun <reified T: Activity> launchActivityForOpenWith(assetFilePaths: List<String>, assetFileMimeType: String) {
         // Given

@@ -52,12 +52,12 @@ class DigitalInvoiceEditButtonTests {
             rootView = activity1.window.decorView.rootView
         } ?: kotlin.run { null }
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+//        onboardingScreen.clickSkipButton()
 //        Espresso.onIdle()
 
-        Thread.sleep(3000)
+//        Thread.sleep(3000)
         captureScreen.clickFilesButton(rootView!!)
-//        captureScreen.clickFiles()
+        captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
 
