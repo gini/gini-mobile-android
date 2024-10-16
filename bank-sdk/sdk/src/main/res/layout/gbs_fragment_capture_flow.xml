@@ -21,7 +21,7 @@
     <!--    It's safe to do this because this NavHostFragment is the only one in the CaptureFlowFragment's childFragmentManager: https://stackoverflow.com/a/60550809 -->
 
     <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/gb_compose_view"
+        android:id="@+id/gbs_compose_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
