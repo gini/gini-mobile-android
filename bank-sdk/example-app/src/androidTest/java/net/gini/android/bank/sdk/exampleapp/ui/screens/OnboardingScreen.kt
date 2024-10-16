@@ -36,7 +36,8 @@ class OnboardingScreen {
     }
 
     fun clickSkipButton(): OnboardingScreen {
-        onView(withId(net.gini.android.capture.R.id.gc_skip)).perform(click())
+//        onView(withId(net.gini.android.capture.R.id.gc_skip)).perform(click())
+        onView(withText("Skip")).perform(click())
         return this
     }
 
