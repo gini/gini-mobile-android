@@ -55,7 +55,7 @@ class DigitalInvoiceEditButtonTests {
 //        onboardingScreen.clickSkipButton()
 //        Espresso.onIdle()
 
-//        Thread.sleep(3000)
+        Thread.sleep(12000)
         captureScreen.clickFilesButton(rootView!!)
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
