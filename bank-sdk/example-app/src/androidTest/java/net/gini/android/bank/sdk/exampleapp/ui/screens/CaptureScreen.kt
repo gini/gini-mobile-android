@@ -13,6 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withResourceName
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiCollection
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
@@ -78,7 +79,16 @@ class CaptureScreen {
     }
 
     fun clickFilesButton(rootView: View): CaptureScreen {
-        onView(withId(net.gini.android.capture.R.id.gc_button_import_document)).perform(click())
+//        onView(withId(net.gini.android.capture.R.id.gc_button_import_document)).perform(click())
+        val uiCollection =
+            UiCollection(UiSelector().className("android.view.ViewGroup"))
+        val editButton = uiCollection.getChildByInstance(
+            UiSelector().className("android.widget.ImageButton")
+//                .text("Edit")
+                .resourceId("net.gini.android.capture.R.id.gc_button_import_document"), 0)
+//        if(editButton.exists() && editButton.isEnabled) {
+            editButton.click()
+//        }
 //        onView(withContentDescription("Files")).perform(click())
 
 //        printViewHierarchy(rootView)
