@@ -188,6 +188,7 @@
                 android:src="@drawable/gc_document_import_icon" />
 
             <TextView
+                android:id="@+id/gc_ff"
                 style="@style/GiniCaptureTheme.Typography.Subtitle2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
