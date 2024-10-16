@@ -57,7 +57,7 @@ class DigitalInvoiceEditButtonTests {
 
         Thread.sleep(3000)
         captureScreen.clickFilesButton(rootView!!)
-        captureScreen.clickFiles()
+//        captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
 

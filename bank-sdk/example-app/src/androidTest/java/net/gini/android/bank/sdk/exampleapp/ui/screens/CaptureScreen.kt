@@ -78,11 +78,11 @@ class CaptureScreen {
     }
 
     fun clickFilesButton(rootView: View): CaptureScreen {
-//        onView(withId(net.gini.android.capture.R.id.gc_button_import_document)).perform(click())
+        onView(withId(net.gini.android.capture.R.id.gc_button_import_document)).perform(click())
 //        onView(withContentDescription("Files")).perform(click())
 
-        printViewHierarchy(rootView)
-        onView(withResourceName("net.gini.android.capture:id/gc_button_import")).perform(click())
+//        printViewHierarchy(rootView)
+//        onView(withResourceName("net.gini.android.capture:id/gc_button_import")).perform(click())
         return this
     }
 
