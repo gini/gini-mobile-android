@@ -733,6 +733,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mButtonImportDocumentWrapper = view.findViewById(R.id.gc_button_import_wrapper);
         mButtonImportDocument = view.findViewById(R.id.gc_button_import);
         view.findViewById(R.id.gc_document_import_button_subtitle).setOnClickListener(v -> showFileChooser());
+        view.findViewById(R.id.fff).setOnClickListener(v -> showFileChooser());
         mImportButtonGroup = view.findViewById(R.id.gc_document_import_button_group);
         mActivityIndicatorBackground =
                 view.findViewById(R.id.gc_activity_indicator_background);
