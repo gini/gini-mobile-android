@@ -315,6 +315,7 @@ class PaymentFlowViewModelTest {
         every { paymentProviderApp.paymentProvider.id } returns "123"
 
         coEvery { giniInternalPaymentModule!!.getLiveCountForPaymentProviderId(any()) } returns flowOf(3)
+        coEvery { giniInternalPaymentModule!!.giniHealthAPI.documentManager.getPaymentRequestDocument(any()) } coAnswers { mockk(relaxed = true) }
 
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))

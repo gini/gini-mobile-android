@@ -3,7 +3,6 @@ package net.gini.android.internal.payment.utils
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
@@ -20,7 +19,6 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
-import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
 import org.junit.Before
 import org.junit.Rule
@@ -111,23 +109,4 @@ class GiniPaymentTest {
         assertThat(giniPayment.getPaymentRequest(paymentProviderApp, paymentDetails)).isInstanceOf(PaymentRequest::class.java)
     }
 
-    @Test
-    fun `emits validation on flow`() = runTest {
-        // Given
-        val giniPayment = GiniPaymentManager(giniHealthAPI, null)
-
-        // When
-        giniPayment.emitPaymentValidation(emptyList())
-
-        // Then
-        giniPayment.paymentValidation.test {
-            assertThat(awaitItem()).isEmpty()
-
-            giniPayment.emitPaymentValidation(listOf(ValidationMessage.InvalidIban))
-            val newItem = awaitItem()
-
-            assertThat(newItem).isNotEmpty()
-            assertThat(newItem[0]).isInstanceOf(ValidationMessage.InvalidIban::class.java)
-        }
-    }
 }

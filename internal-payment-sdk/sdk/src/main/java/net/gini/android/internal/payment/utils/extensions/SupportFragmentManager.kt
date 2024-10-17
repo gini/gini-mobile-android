@@ -29,6 +29,7 @@ fun FragmentManager.showInstallAppBottomSheet(
 fun FragmentManager.showOpenWithBottomSheet(
     paymentProviderApp: PaymentProviderApp,
     backListener: BackListener? = null,
+    paymentComponent: PaymentComponent,
     buttonClickListener: () -> Unit
 ) {
     val dialog = OpenWithBottomSheet.newInstance(paymentProviderApp, object :
@@ -36,7 +37,7 @@ fun FragmentManager.showOpenWithBottomSheet(
         override fun onForwardSelected() {
             buttonClickListener()
         }
-    }, backListener)
+    }, paymentComponent, backListener)
     dialog.show(this, OpenWithBottomSheet::class.java.name)
 }
 

@@ -45,7 +45,7 @@
             tools:ignore="ContentDescription" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <net.gini.android.health.sdk.paymentcomponent.PaymentComponentView
+    <net.gini.android.internal.payment.paymentComponent.PaymentComponentView
         android:id="@+id/payment_component_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package net.gini.android.merchant.sdk.util
+package net.gini.android.internal.payment.utils
 
 import org.junit.Test
 

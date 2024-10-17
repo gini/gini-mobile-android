@@ -17,6 +17,7 @@ import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -29,6 +30,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
 import net.gini.android.internal.payment.paymentProvider.getInstalledPaymentProviderApps
 import net.gini.android.internal.payment.paymentProvider.getPaymentProviderApps
+import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.utils.extensions.generateBitmapDrawableIcon
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
 import org.junit.After

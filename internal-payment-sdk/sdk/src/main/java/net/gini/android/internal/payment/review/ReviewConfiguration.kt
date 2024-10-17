@@ -1,5 +1,7 @@
 package net.gini.android.internal.payment.review
 
+import net.gini.android.internal.payment.review.reviewComponent.ReviewFields
+
 
 /**
  * Configuration for the [ReviewBottomSheet].
@@ -13,7 +15,6 @@ data class ReviewConfiguration(
      */
     val handleErrorsInternally: Boolean = true,
 
-    //todo take this out - only applicable in health
     /**
      * Set to `true` to show a close button. Set a [ReviewFragmentListener] to be informed when the
      * button is pressed.
@@ -22,12 +23,12 @@ data class ReviewConfiguration(
      */
     val showCloseButton: Boolean = false,
 
-    //todo refactor to include other fields
     /**
      * If set to `true`, the [Amount] field will be editable.
      * If set to `false` the [Amount] field will be read-only.
      *
      * Default value is `true`
      */
-    internal val isAmountFieldEditable: Boolean = true
+    internal val editableFields: List<ReviewFields> =
+        listOf(ReviewFields.IBAN, ReviewFields.AMOUNT, ReviewFields.RECIPIENT, ReviewFields.PURPOSE)
 )

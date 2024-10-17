@@ -33,6 +33,7 @@ import net.gini.android.internal.payment.paymentComponentBottomSheet.PaymentComp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewBottomSheet.ReviewBottomSheet
+import net.gini.android.internal.payment.review.reviewComponent.ReviewFields
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.internal.payment.utils.PaymentNextStep
 import net.gini.android.internal.payment.utils.autoCleared
@@ -142,7 +143,7 @@ class PaymentFragment private constructor(
             }
         }
 
-        override fun onPayInvoiceClicked(documentId: String) {
+        override fun onPayInvoiceClicked(documentId: String?) {
             handlePayFlow()
         }
     }
@@ -307,7 +308,11 @@ class PaymentFragment private constructor(
             configuration = ReviewConfiguration(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
                 showCloseButton = true,
-                isAmountFieldEditable = viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true
+                editableFields = if (viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true) {
+                    listOf(ReviewFields.AMOUNT)
+                } else {
+                    listOf()
+                },
             ),
             listener = reviewViewListener,
             giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
@@ -382,6 +387,7 @@ class PaymentFragment private constructor(
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         childFragmentManager.showOpenWithBottomSheet(
             paymentProviderApp = paymentProviderApp,
+            paymentComponent = viewModel.paymentComponent,
             backListener = viewModel
         ) {
             viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)

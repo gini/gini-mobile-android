@@ -45,7 +45,7 @@ class MoreInformationTest {
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
         every { paymentComponent!!.paymentModule.localizedContext } returns context
-        every { paymentComponent!!.giniPaymentLanguage } returns null
+        every { paymentComponent!!.getGiniPaymentLanguage(context) } returns null
     }
 
     @Test
