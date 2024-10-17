@@ -21,7 +21,6 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.setBackgroundTint
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
-import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext

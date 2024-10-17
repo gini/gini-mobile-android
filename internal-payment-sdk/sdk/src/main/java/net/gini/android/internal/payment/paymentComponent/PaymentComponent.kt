@@ -12,7 +12,6 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.getPaymentProviderApps
 import org.slf4j.LoggerFactory
-import java.util.Locale
 
 /**
  * The [PaymentComponent] manages the data and state used by every [PaymentComponentView], the [MoreInformationFragment],
