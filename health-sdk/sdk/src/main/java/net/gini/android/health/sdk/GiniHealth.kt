@@ -1,7 +1,6 @@
 package net.gini.android.health.sdk
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.lifecycle.Lifecycle
@@ -25,8 +24,12 @@ import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
-import net.gini.android.health.sdk.util.GiniLocalization
 import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.paymentComponent.BankPickerRows
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.utils.GiniLocalization
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
@@ -44,10 +47,11 @@ class GiniHealth(
     val giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
         context = context,
         giniHealthAPI = giniHealthAPI
-    )
+    ).also {
+        it.paymentComponent.bankPickerRows = BankPickerRows.SINGLE
+    }
 
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
-
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
     private var savedStateObserver: LifecycleEventObserver? = null
@@ -87,15 +91,24 @@ class GiniHealth(
      */
     val openBankState: StateFlow<PaymentState> = _openBankState
 
+
     /**
      * Sets the app language to the desired one from the languages the SDK is supporting. If not set then defaults to the system's language locale.
      *
      * @param language enum value for the desired language or null for default system language
      * @param context Context object to save the configuration.
      */
-    fun setSDKLanguage(language: GiniLocalization?, context: Context) {
-        localizedContext = null
-        GiniHealthPreferences(context).saveSDKLanguage(language)
+    fun setSDKLanguage(localization: GiniLocalization, context: Context) {
+        giniInternalPaymentModule.setSDKLanguage(localization, context)
+    }
+
+    /**
+     * Returns the localization set for the app.
+     *
+     * @param context Context object to retrieve the value from.
+     */
+    fun getSDKLanguage(context: Context): GiniLocalization? {
+        return GiniInternalPaymentModule.getSDKLanguage(context)
     }
 
     /**
@@ -104,6 +117,7 @@ class GiniHealth(
      * @param document document received from Gini API.
      */
     suspend fun setDocumentForReview(document: Document) {
+        giniInternalPaymentModule.setPaymentDetails(null)
         capturedArguments = CapturedArguments.DocumentInstance(document)
         _documentFlow.value = ResultWrapper.Success(document)
         _paymentFlow.value = ResultWrapper.Loading()
@@ -123,7 +137,7 @@ class GiniHealth(
      */
     suspend fun setDocumentForReview(documentId: String, paymentDetails: PaymentDetails? = null) {
         LOG.debug("Setting document for review with id: $documentId")
-
+        giniInternalPaymentModule.setPaymentDetails(null)
         capturedArguments = CapturedArguments.DocumentId(documentId, paymentDetails)
         _paymentFlow.value = ResultWrapper.Loading()
         _documentFlow.value = ResultWrapper.Loading()
@@ -223,6 +237,43 @@ class GiniHealth(
         }
     }
 
+    /**
+     * Loads the extractions for the given document id and creates an instance of the [ReviewFragment] with the given
+     * configuration.
+     *
+     * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
+     *
+     * @param documentId The document id for which the extractions should be loaded
+     * @param configuration The configuration for the [ReviewFragment]
+     * @throws IllegalStateException If no payment provider app has been selected
+     */
+    fun getPaymentReviewFragment(documentId: String, paymentComponent: PaymentComponent, configuration: ReviewConfiguration): ReviewFragment {
+        LOG.debug("Getting payment review fragment for id: {}", documentId)
+        giniInternalPaymentModule.setPaymentDetails(null)
+        _paymentFlow.value = ResultWrapper.Loading()
+        when (val selectedPaymentProviderAppState = paymentComponent.selectedPaymentProviderAppFlow.value) {
+            is SelectedPaymentProviderAppState.AppSelected -> {
+                LOG.debug("Creating ReviewFragment for selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)
+
+                return ReviewFragment.newInstance(
+                    this,
+                    configuration = configuration,
+                    paymentComponent = paymentComponent,
+                    documentId = documentId
+                )
+            }
+
+            SelectedPaymentProviderAppState.NothingSelected -> {
+                LOG.error("Cannot create ReviewFragment: No selected payment provider app")
+
+                val exception =
+                    IllegalStateException("Cannot create ReviewFragment: No selected payment provider app")
+                throw exception
+            }
+        }
+    }
+
+
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
         Bundle().apply {
             when (capturedArguments) {
@@ -254,23 +305,6 @@ class GiniHealth(
         class Error(val throwable: Throwable) : PaymentState()
     }
 
-    internal class GiniHealthPreferences(context: Context) {
-        private val sharedPreferences = context.getSharedPreferences("GiniHealthPreferences", Context.MODE_PRIVATE)
-
-        fun saveSDKLanguage(value: GiniLocalization?) {
-            val editor: SharedPreferences.Editor = sharedPreferences.edit()
-            editor.putString(SDK_LANGUAGE_PREFS_KEY, value?.readableName?.uppercase())
-            editor.apply()
-        }
-
-        fun getSDKLanguage(): GiniLocalization? {
-            val enumValue = sharedPreferences.getString(SDK_LANGUAGE_PREFS_KEY, null)
-            return if (enumValue.isNullOrEmpty()) null else GiniLocalization.valueOf(enumValue)
-        }
-    }
-
-    internal var localizedContext: Context? = null
-
     companion object {
         private val LOG = LoggerFactory.getLogger(GiniHealth::class.java)
 
@@ -282,9 +316,5 @@ class GiniHealth(
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
         private const val PAYABLE = "Payable"
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
-
-        fun getSDKLanguage(context: Context): GiniLocalization? {
-            return GiniHealthPreferences(context).getSDKLanguage()
-        }
     }
 }

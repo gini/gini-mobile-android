@@ -21,12 +21,16 @@ import android.widget.Toast
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetOpenWithBinding
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
 
@@ -36,9 +40,9 @@ import net.gini.android.internal.payment.utils.setBackgroundTint
 interface OpenWithForwardListener {
     fun onForwardSelected()
 }
-class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?) : GpsBottomSheetDialogFragment() {
+class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?, private val paymentComponent: PaymentComponent?) : GpsBottomSheetDialogFragment() {
 
-    constructor(): this(null, null, null)
+    constructor(): this(null, null, null, null)
 
     private val viewModel by viewModels<OpenWithViewModel> {
         OpenWithViewModel.Factory(
@@ -47,6 +51,14 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
         )
     }
     private var binding: GpsBottomSheetOpenWithBinding by autoCleared()
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return getLayoutInflaterWithGiniPaymentThemeAndLocale(
+            inflater,
+            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
+        )
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -74,16 +86,26 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
                 setTextColor(paymentProviderApp.colors.textColor)
             }
             binding.gpsAppLayout.gpsAppName.text = paymentProviderApp.name
-            binding.gpsOpenWithTitle.text = String.format(getString(R.string.gps_open_with_title), paymentProviderApp.name)
-            binding.gpsOpenWithDetails.text = String.format(getString(R.string.gps_open_with_details), paymentProviderApp.name)
-            binding.gpsOpenWithInfo.text = createSpannableString(String.format(getString(R.string.gps_open_with_info), paymentProviderApp.name, paymentProviderApp.name), paymentProviderApp.paymentProvider.playStoreUrl)
+            binding.gpsOpenWithTitle.text =
+                String.format(getLocaleStringResource(R.string.gps_open_with_title), paymentProviderApp.name)
+            binding.gpsOpenWithDetails.text =
+                String.format(getLocaleStringResource(R.string.gps_open_with_details), paymentProviderApp.name)
+            binding.gpsOpenWithInfo.text =
+                createSpannableString(
+                    String.format(
+                        getLocaleStringResource(R.string.gps_open_with_info),
+                        paymentProviderApp.name,
+                        paymentProviderApp.name
+                    ),
+                    paymentProviderApp.paymentProvider.playStoreUrl
+                )
             binding.gpsOpenWithInfo.movementMethod = LinkMovementMethod.getInstance()
         }
         return binding.root
     }
 
     private fun createSpannableString(text: String, playStoreUrl: String?): SpannedString {
-        val linkSpan = SpannableString(getString(R.string.gps_open_with_download_app))
+        val linkSpan = SpannableString(getLocaleStringResource(R.string.gps_open_with_download_app))
         val playStoreLauncher = object: ClickableSpan() {
             override fun onClick(p0: View) {
                 playStoreUrl?.let {
@@ -114,6 +136,10 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
         super.onCancel(dialog)
     }
 
+    private fun getLocaleStringResource(resourceId: Int): String {
+        return getLocaleStringResource(resourceId, paymentComponent?.paymentModule)
+    }
+
     companion object {
         /**
          * Create a new instance of the [OpenWithBottomSheet].
@@ -122,6 +148,6 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
          * @param listener the [OpenWithForwardListener] which will forward requests
          * @param backListener the [BackListener] which will forward back events
          */
-        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener, backListener: BackListener? = null) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener, backListener = backListener)
+        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener, paymentComponent: PaymentComponent?, backListener: BackListener? = null) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener, backListener = backListener, paymentComponent = paymentComponent)
     }
 }

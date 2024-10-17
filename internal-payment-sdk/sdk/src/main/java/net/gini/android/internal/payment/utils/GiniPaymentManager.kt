@@ -1,7 +1,5 @@
 package net.gini.android.internal.payment.utils
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.models.PaymentRequestInput
@@ -9,8 +7,6 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.toPaymentRequest
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.review.ValidationMessage
-import net.gini.android.internal.payment.review.validate
 import net.gini.android.internal.payment.utils.extensions.toBackendFormat
 import org.slf4j.LoggerFactory
 
@@ -21,23 +17,10 @@ internal class GiniPaymentManager(
     val giniHealthAPI: GiniHealthAPI?,
     val paymentEventListener: PaymentEventListener?
 ) {
-    private val _paymentValidation = MutableStateFlow<List<ValidationMessage>>(emptyList())
-    val paymentValidation: StateFlow<List<ValidationMessage>> = _paymentValidation
-
-    private val _lastFullyValidatedPaymentDetails = MutableStateFlow<PaymentDetails?>(null)
-    val lastFullyValidatedPaymentDetails: MutableStateFlow<PaymentDetails?> = _lastFullyValidatedPaymentDetails
-
-    private fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
-        val items = paymentDetails.validate()
-        _paymentValidation.tryEmit(items)
-        _lastFullyValidatedPaymentDetails.tryEmit(paymentDetails)
-        return items.isEmpty()
-    }
-
     suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) {
         if (giniHealthAPI == null) {
-            LOG.error("GiniMerchant instance must be set")
-            throw Exception("Cannot initiate payment: No GiniMerchant instance set")
+            LOG.error("GiniHealthApi instance must be set")
+            throw NullPointerException("Cannot initiate payment: No GiniHealthApi instance set")
         }
         if (paymentProviderApp == null) {
             LOG.error("No selected payment provider app")
@@ -47,25 +30,22 @@ internal class GiniPaymentManager(
 
         if (paymentProviderApp.installedPaymentProviderApp == null) {
             LOG.error("Payment provider app not installed")
-            paymentEventListener?.onError(Exception("Payment provider app not installed"))
+            paymentEventListener?.onError(NullPointerException("Payment provider app not installed"))
             return
         }
 
-        val valid = validatePaymentDetails(paymentDetails)
-        if (valid) {
-            paymentEventListener?.onLoading()
-                try {
-                    paymentEventListener?.onPaymentRequestCreated(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)
-                } catch (throwable: Throwable) {
-                    paymentEventListener?.onError(Exception(throwable))
-                }
+        paymentEventListener?.onLoading()
+        try {
+            paymentEventListener?.onPaymentRequestCreated(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)
+        } catch (throwable: Throwable) {
+            paymentEventListener?.onError(Exception(throwable))
         }
     }
 
     suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails): PaymentRequest {
         if (giniHealthAPI == null) {
-            LOG.error("Cannot create PaymentRequest: No GiniMerchant instance set")
-            throw Exception("Cannot create PaymentRequest: No GiniMerchant instance set")
+            LOG.error("Cannot create PaymentRequest: No GiniHealthApi instance set")
+            throw NullPointerException("Cannot create PaymentRequest: No GiniHealthApi instance set")
         }
         if (paymentProviderApp == null) {
             LOG.error("Cannot create PaymentRequest: No selected payment provider app")
@@ -93,10 +73,6 @@ internal class GiniPaymentManager(
                 createPaymentRequestResource.data.toPaymentRequest(it)
             } ?: throw Exception("Payment request ID is null")
         }
-    }
-
-    fun emitPaymentValidation(paymentValidationList: List<ValidationMessage>) {
-        _paymentValidation.tryEmit(paymentValidationList)
     }
 
     companion object {

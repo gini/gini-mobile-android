@@ -32,8 +32,10 @@ class ReviewComponent(
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
 
-    val paymentValidation: StateFlow<List<ValidationMessage>> = giniInternalPaymentModule.giniPaymentManager.paymentValidation
-    private val lastFullyValidatedPaymentDetails = giniInternalPaymentModule.giniPaymentManager.lastFullyValidatedPaymentDetails
+    private val _paymentValidation = MutableStateFlow<List<ValidationMessage>>(emptyList())
+    val paymentValidation: StateFlow<List<ValidationMessage>> = _paymentValidation
+
+    private val _lastFullyValidatedPaymentDetails = MutableStateFlow<PaymentDetails?>(null)
 
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
@@ -70,12 +72,12 @@ class ReviewComponent(
 
                     // If the IBAN is the same as the last validated one, then revalidate it to restore the validation
                     // message if needed
-                    if (lastFullyValidatedPaymentDetails.value?.iban == paymentDetails.iban) {
+                    if (_lastFullyValidatedPaymentDetails.value?.iban == paymentDetails.iban) {
                         nonEmptyValidationMessages.addAll(validateIban(paymentDetails.iban).filterIsInstance<ValidationMessage.InvalidIban>())
                     }
 
                     // Emit all new empty validation messages along with other existing validation messages
-                    giniInternalPaymentModule.giniPaymentManager.emitPaymentValidation(newEmptyValidationMessages + nonEmptyValidationMessages)
+                    _paymentValidation.value = (newEmptyValidationMessages + nonEmptyValidationMessages)
                 }
         }
 
@@ -88,6 +90,7 @@ class ReviewComponent(
                             amount = extractedPaymentDetails.value.amount.adjustToLocalDecimalSeparation()
                         )
                     )
+                    _loadingFlow.tryEmit(false)
                     _paymentDetails.value = paymentDetails
                 }
             }
@@ -122,6 +125,13 @@ class ReviewComponent(
 
     fun setPurpose(purpose: String) {
         _paymentDetails.value = paymentDetails.value.copy(purpose = purpose)
+    }
+
+    fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
+        val items = paymentDetails.validate()
+        _paymentValidation.tryEmit(items)
+        _lastFullyValidatedPaymentDetails.tryEmit(paymentDetails)
+        return items.isEmpty()
     }
 
     companion object {

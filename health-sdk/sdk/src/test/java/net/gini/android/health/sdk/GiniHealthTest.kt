@@ -5,8 +5,8 @@ import com.google.common.truth.Truth
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.util.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.CompoundExtraction
@@ -15,12 +15,23 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
+import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import org.junit.Assert.*
+import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.review.ReviewConfiguration
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import java.util.Date
 
 val document =
     Document("1234", Document.ProcessingState.COMPLETED, "", 1, Date(124), Date(100), Document.SourceClassification.COMPOSITE, Uri.EMPTY, emptyList(), emptyList())
@@ -70,6 +81,9 @@ fun copyExtractions(extractions: ExtractionsContainer) = ExtractionsContainer(
 @ExperimentalCoroutinesApi
 class GiniHealthTest {
 
+    @get:Rule
+    val rule = ViewModelTestCoroutineRule()
+
     private lateinit var giniHealth: GiniHealth
     private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
     private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
@@ -77,7 +91,7 @@ class GiniHealthTest {
     @Before
     fun setUp() {
         every { giniHealthAPI.documentManager } returns documentManager
-        giniHealth = GiniHealth(giniHealthAPI)
+        giniHealth = GiniHealth(giniHealthAPI, mockk(relaxed = true))
     }
 
     @Test
@@ -217,5 +231,35 @@ class GiniHealthTest {
 
         assertNotNull(exception)
         Truth.assertThat(exception!!.message).contains("Failed to get extractions")
+    }
+
+    @Test
+    fun `instantiates review fragment if payment provider app is set`() {
+        // Given
+        val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
+        val paymentComponent: PaymentComponent = mockk(relaxed = true)
+        val paymentProviderApp: PaymentProviderApp = mockk(relaxed = true)
+        val giniHealth: GiniHealth = mockk(relaxed = true)
+
+        // When
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+        // Then
+        Truth.assertThat(giniHealth.getPaymentReviewFragment("", paymentComponent, reviewConfiguration)).isInstanceOf(
+            ReviewFragment::class.java)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `throws exception when trying to create ReviewFragment if no payment provider app is set`() {
+        // Given
+        val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
+        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
+
+        // When
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+            SelectedPaymentProviderAppState.NothingSelected)
+
+        // When trying to instantiate fragment, then exception should be thrown
+        giniHealth.getPaymentReviewFragment("", paymentComponent, reviewConfiguration)
     }
 }

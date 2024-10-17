@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/gps_medium"
         android:nextFocusForward="@id/iban_layout"
+        android:hint="@string/gps_recipient_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +27,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/recipient"
-            style="@style/GiniPaymentTheme.DisabledPaymentInputEditTextStyle"
+            style="@style/GiniPaymentTheme.PaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="@dimen/gps_large_28"
@@ -43,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/gps_medium"
         android:paddingTop="@dimen/gps_medium"
+        android:hint="@string/gps_iban_hint"
         app:layout_constraintEnd_toStartOf="@id/amount_layout"
         app:layout_constraintHorizontal_weight="@dimen/gps_float_0.7"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +52,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/iban"
-            style="@style/GiniPaymentTheme.DisabledPaymentInputEditTextStyle"
+            style="@style/GiniPaymentTheme.PaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="@dimen/gps_large_28"
@@ -99,6 +101,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/gps_medium"
+        android:hint="@string/gps_purpose_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iban_amount_barrier_bottom"
@@ -106,7 +109,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/purpose"
-            style="@style/GiniPaymentTheme.DisabledPaymentInputEditTextStyle"
+            style="@style/GiniPaymentTheme.PaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="@dimen/gps_large_28"
