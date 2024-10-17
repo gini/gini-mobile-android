@@ -130,7 +130,7 @@ jobs:
         timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 31
+          api-level: 33
           arch: x86_64
           force-avd-creation: false
           script: >
