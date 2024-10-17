@@ -12,7 +12,7 @@
     <string name="start_gini_photo_payment">Fotoüberweisung</string>
     <string name="example_of_photo_payment">Beispiel für die Integration von Fotoüberweisung in der Banking-App</string>
     <string name="enter_your_iban_code">Geben Sie Ihre IBAN ein</string>
-    <string name="menu_item_feedback">Send Feedback and Close</string>
+    <string name="menu_item_feedback">Submit feedback &amp; close</string>
     <string name="menu_item_view_picture">View Picture</string>
     <string name="document_size_too_large">Diese Datei ist leider größer als 5MB.</string>
     <string name="unsupported_document_type">Nur Dateien vom Format jpg oder PDF können analysiert werden.</string>
