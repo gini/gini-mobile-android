@@ -306,7 +306,9 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
             paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
 
-            payInvoiceButton.text = if (reviewFragmentWillBeShown) context.getString(R.string.gps_continue_to_overview) else context.getString(R.string.gps_pay_button)
+            payInvoiceButton.text =
+                if (reviewFragmentWillBeShown) context.getString(R.string.gps_continue_to_overview)
+                else context.getString(R.string.gps_pay_button)
         }
     }
 

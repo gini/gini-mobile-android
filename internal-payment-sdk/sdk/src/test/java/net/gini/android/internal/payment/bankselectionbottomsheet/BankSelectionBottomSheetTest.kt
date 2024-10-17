@@ -130,7 +130,7 @@ class BankSelectionBottomSheetTest {
     fun `shows text values in english if that is set to GiniHealth`() = runTest {
         // Given
         giniPaymentModule = GiniInternalPaymentModule(context!!)
-        giniPaymentModule.setSDKLanguage(GiniLocalization.GERMAN, context!!)
+        giniPaymentModule.setSDKLanguage(GiniLocalization.ENGLISH, context!!)
         paymentComponentWithLocale = PaymentComponent(context!!, giniPaymentModule)
 
         // When

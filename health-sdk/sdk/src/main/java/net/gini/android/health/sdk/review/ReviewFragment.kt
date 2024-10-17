@@ -108,7 +108,10 @@ class ReviewFragment private constructor(
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, viewModel.paymentComponent.getGiniPaymentLanguage(requireContext()))
+        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(
+            inflater,
+            viewModel.paymentComponent.getGiniPaymentLanguage(requireContext())
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

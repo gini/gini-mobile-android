@@ -68,7 +68,10 @@ class MoreInformationFragment private constructor(
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale())
+        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(
+            inflater,
+            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
+        )
     }
 
     override fun onCreateView(

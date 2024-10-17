@@ -53,7 +53,10 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale())
+        return getLayoutInflaterWithGiniPaymentThemeAndLocale(
+            inflater,
+            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
