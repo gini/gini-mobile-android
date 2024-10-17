@@ -1,5 +1,7 @@
 package net.gini.android.merchant.sdk.util
 
+import net.gini.android.internal.payment.utils.DisplayedScreen as InternalDisplayedScreen
+
 /**
  * Represents the currently visible screen presented in [PaymentFragment]
  */
@@ -7,7 +9,7 @@ sealed class DisplayedScreen {
     /**
      * Default state - nothing visible
      */
-    object Nothing : DisplayedScreen()
+    object Nothing: DisplayedScreen()
 
     /**
      * Entrypoint to the payment flow - shows which bank is selected
@@ -44,4 +46,18 @@ sealed class DisplayedScreen {
      * Payment details review screen.
      */
     object ReviewBottomSheet: DisplayedScreen()
+
+    companion object {
+        fun toDisplayedScreen(screen: InternalDisplayedScreen): DisplayedScreen =
+            when (screen) {
+                InternalDisplayedScreen.Nothing -> Nothing
+                InternalDisplayedScreen.BankSelectionBottomSheet -> BankSelectionBottomSheet
+                InternalDisplayedScreen.InstallAppBottomSheet -> InstallAppBottomSheet
+                InternalDisplayedScreen.MoreInformationFragment -> MoreInformationFragment
+                InternalDisplayedScreen.OpenWithBottomSheet -> OpenWithBottomSheet
+                InternalDisplayedScreen.ReviewScreen -> ReviewBottomSheet
+                InternalDisplayedScreen.ShareSheet -> ShareSheet
+                InternalDisplayedScreen.PaymentComponentBottomSheet -> PaymentComponentBottomSheet
+            }
+    }
 }

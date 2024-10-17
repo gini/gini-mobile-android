@@ -32,3 +32,5 @@ include("bank-sdk:example-app")
 
 include("merchant-sdk:sdk")
 include("merchant-sdk:example-app")
+
+include("internal-payment-sdk:sdk")

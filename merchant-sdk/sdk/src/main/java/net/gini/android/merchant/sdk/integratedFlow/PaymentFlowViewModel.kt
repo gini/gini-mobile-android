@@ -9,39 +9,36 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
+import net.gini.android.internal.payment.api.model.PaymentDetails
+import net.gini.android.internal.payment.api.model.PaymentRequest
+import net.gini.android.internal.payment.paymentComponent.BankPickerRows
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.utils.FlowBottomSheetsManager
+import net.gini.android.internal.payment.utils.PaymentNextStep
 import net.gini.android.merchant.sdk.GiniMerchant
-import net.gini.android.merchant.sdk.api.payment.model.PaymentDetails
-import net.gini.android.merchant.sdk.api.payment.model.PaymentRequest
-import net.gini.android.merchant.sdk.paymentcomponent.BankPickerRows
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.merchant.sdk.paymentcomponent.PaymentProviderAppsState
-import net.gini.android.merchant.sdk.paymentprovider.PaymentProviderApp
-import net.gini.android.merchant.sdk.review.openWith.OpenWithPreferences
-import net.gini.android.merchant.sdk.util.BackListener
 import net.gini.android.merchant.sdk.util.DisplayedScreen
-import net.gini.android.merchant.sdk.util.FlowBottomSheetsManager
-import net.gini.android.merchant.sdk.util.GiniPaymentManager
-import net.gini.android.merchant.sdk.util.PaymentNextStep
 import java.io.File
 import java.util.Stack
 
 internal class PaymentFlowViewModel(
-    val paymentComponent: PaymentComponent,
     internal var paymentDetails: PaymentDetails,
     val paymentFlowConfiguration: PaymentFlowConfiguration?,
-    val giniPaymentManager: GiniPaymentManager,
-    val giniMerchant: GiniMerchant
+    val giniMerchant: GiniMerchant,
 ) : ViewModel(), FlowBottomSheetsManager, BackListener {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
 
-    override var openWithPreferences: OpenWithPreferences? = null
     override var openWithCounter: Int = 0
     override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
         extraBufferCapacity = 1,
     )
     override val paymentRequestFlow: MutableStateFlow<PaymentRequest?> = MutableStateFlow(null)
+    override val giniInternalPaymentModule = giniMerchant.giniInternalPaymentModule
+
+    val paymentComponent = giniInternalPaymentModule.paymentComponent
 
     val paymentNextStep: SharedFlow<PaymentNextStep> = paymentNextStepFlow
 
@@ -110,7 +107,7 @@ internal class PaymentFlowViewModel(
     }
 
     fun onPayment() = viewModelScope.launch {
-        giniPaymentManager.onPayment(initialSelectedPaymentProvider, paymentDetails)
+        giniMerchant.giniInternalPaymentModule.onPayment(initialSelectedPaymentProvider, paymentDetails)
     }
 
     fun getPaymentProviderApp() = initialSelectedPaymentProvider
@@ -134,18 +131,17 @@ internal class PaymentFlowViewModel(
         sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
     }
 
-    override fun emitSDKEvent(sdkEvent: GiniMerchant.PaymentState) {
-        giniMerchant.emitSDKEvent(sdkEvent)
-    }
+    override suspend fun getPaymentRequest(): PaymentRequest = giniMerchant.giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails)
 
-    override suspend fun getPaymentRequest(): PaymentRequest = giniPaymentManager.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails)
+    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniMerchant.giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 
-    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniMerchant.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
-
-    class Factory(val paymentComponent: PaymentComponent, val paymentDetails: PaymentDetails, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
+    class Factory(val paymentDetails: PaymentDetails, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentFlowViewModel(paymentComponent = paymentComponent, paymentDetails = paymentDetails,paymentFlowConfiguration = paymentFlowConfiguration, giniPaymentManager = GiniPaymentManager(giniMerchant), giniMerchant = giniMerchant) as T
+            return PaymentFlowViewModel(
+                paymentDetails = paymentDetails,
+                paymentFlowConfiguration = paymentFlowConfiguration,
+                giniMerchant = giniMerchant) as T
         }
     }
 
