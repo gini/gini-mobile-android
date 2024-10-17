@@ -47,7 +47,7 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         readArguments();
-        mFragmentImpl = createFragmentImpl();
+        mFragmentImpl = createFragmentImpl(mCancelListener, addPages);
         setListener(mFragmentImpl, mListener);
         mFragmentImpl.onCreate(savedInstanceState);
     }
@@ -70,8 +70,8 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
         }
     }
 
-    protected CameraFragmentImpl createFragmentImpl() {
-        return new CameraFragmentImpl(this, mCancelListener, addPages);
+    protected CameraFragmentImpl createFragmentImpl(CancelListener cancelListener, boolean addPages) {
+        return new CameraFragmentImpl(this, cancelListener, addPages);
     }
 
     @NonNull

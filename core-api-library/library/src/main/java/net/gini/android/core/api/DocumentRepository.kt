@@ -9,6 +9,8 @@ import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.DocumentLayout
+import net.gini.android.core.api.models.DocumentPage
 import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.Payment
@@ -230,11 +232,29 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         }
     }
 
+    @Deprecated( "This method is deprecated and can be deleted in future. Use another one, please.",
+        replaceWith = ReplaceWith("getLayoutModel(documentId)"))
     suspend fun getLayout(document: Document): Resource<JSONObject> {
         return withAccessToken { accessToken ->
             wrapInResource {
                 val layoutJsonString = documentRemoteSource.getLayout(accessToken, document.id)
                 JSONObject(layoutJsonString)
+            }
+        }
+    }
+
+    suspend fun getDocumentLayout(documentId: String) : Resource<DocumentLayout> {
+        return withAccessToken { accessToken ->
+            wrapInResource {
+                 documentRemoteSource.getDocumentLayout(accessToken, documentId)
+            }
+        }
+    }
+
+    suspend fun getDocumentPages(documentId: String) : Resource<List<DocumentPage>> {
+        return withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.getDocumentPages(accessToken, documentId)
             }
         }
     }

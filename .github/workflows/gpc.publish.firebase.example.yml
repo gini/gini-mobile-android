@@ -1,0 +1,58 @@
+name: Publish GPC Example App QA Build to Firebase distribution
+
+on:
+  workflow_dispatch:
+jobs:
+  check:
+    uses: ./.github/workflows/bank-sdk.check.yml
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
+        
+  publish_to_firebase_distribution:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2.0'
+          bundler-cache: true
+
+      - name: build release example app for QA
+        run: >
+          ./gradlew bank-sdk:example-app:assembleQaPaymentProvider3Release
+          -PclientId="gini-mobile-test" 
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+          -PreleaseKeystoreFile="screen_api_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="screen_api_example"
+          -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'      
+
+      - name: Check file existence
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "./bank-sdk/example-app/build/outputs/apk/qaPaymentProvider3/release/example-app-qa-paymentProvider3-release.apk"
+          fail: true
+
+      - name: Distribute GPC example apk to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.GINI_PAYMENT_PROVIDER_EXAMPLE_APP_FIREBASE_ID}}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIAL_FILE_CONTENT }}
+          groups: testers
+          file: bank-sdk/example-app/build/outputs/apk/qaPaymentProvider3/release/example-app-qa-paymentProvider3-release.apk
+          releaseNotes: |
+              ${{ format('{{ {0} {1} }}', github.ref, github.sha) }}
+              ${{ github.event.head_commit.message }}
+

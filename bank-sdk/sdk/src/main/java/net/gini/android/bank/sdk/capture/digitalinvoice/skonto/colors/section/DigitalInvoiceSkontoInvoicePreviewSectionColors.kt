@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.capture.skonto.colors.section
+package net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Immutable
-data class SkontoInvoiceScanSectionColors(
+data class DigitalInvoiceSkontoInvoicePreviewSectionColors(
     val cardBackgroundColor: Color,
     val titleTextColor: Color,
     val subtitleTextColor: Color,
@@ -24,7 +24,7 @@ data class SkontoInvoiceScanSectionColors(
             iconBackgroundColor: Color = GiniTheme.colorScheme.placeholder.background,
             iconTint: Color = GiniTheme.colorScheme.placeholder.tint,
             arrowTint: Color = GiniTheme.colorScheme.icons.secondary,
-        ) = SkontoInvoiceScanSectionColors(
+        ) = DigitalInvoiceSkontoInvoicePreviewSectionColors(
             cardBackgroundColor = cardBackgroundColor,
             titleTextColor = titleTextColor,
             subtitleTextColor = subtitleTextColor,

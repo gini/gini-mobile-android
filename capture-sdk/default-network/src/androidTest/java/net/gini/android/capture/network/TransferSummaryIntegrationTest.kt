@@ -262,5 +262,7 @@ class TransferSummaryIntegrationTest {
         override fun getSource(): Document.Source = Document.Source.newSource("androidTest")
 
         override fun isReviewable(): Boolean = false
+
+        override fun generateUploadMetadata(context: Context?): String = ""
     }
 }

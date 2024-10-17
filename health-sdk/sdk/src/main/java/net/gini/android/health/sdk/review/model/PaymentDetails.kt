@@ -10,6 +10,7 @@ import net.gini.android.health.sdk.util.toBackendFormat
 
 /**
  * Represents the payment details of an invoice as extracted from a document.
+ * The extractions.getSpecificExtractions contains additional values extracted alongside the four main values (ex: medical_service_provider)
  */
 @Parcelize
 data class PaymentDetails(
@@ -17,7 +18,7 @@ data class PaymentDetails(
     val iban: String,
     val amount: String,
     val purpose: String,
-    internal val extractions: ExtractionsContainer? = null
+    val extractions: ExtractionsContainer? = null
 ): Parcelable
 
 internal fun ExtractionsContainer.toPaymentDetails(): PaymentDetails {

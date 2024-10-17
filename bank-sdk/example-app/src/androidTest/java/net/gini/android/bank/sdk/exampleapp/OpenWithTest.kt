@@ -12,6 +12,8 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.runBlocking
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.test.getAssetFileStorageUri
 import net.gini.android.bank.sdk.exampleapp.ui.CaptureFlowHostActivity
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
@@ -104,6 +106,7 @@ class OpenWithTest {
         // Simulate PermissionDenied scenario by deleting the file before the Bank SDK is launched (revoke permission)
         Thread.sleep(200)
         storageUris.forEach { it.toFile().delete() }
+        runBlocking { GiniBank.transactionDocs.transactionDocsSettings.setAlwaysAttachSetting(true) }
 
         // Then
         onView(withId(R.id.recyclerview_extractions)).check(matches(isDisplayed()))

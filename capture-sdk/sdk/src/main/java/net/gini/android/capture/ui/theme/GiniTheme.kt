@@ -1,12 +1,14 @@
 package net.gini.android.capture.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 import net.gini.android.capture.ui.theme.colors.GiniColorScheme
 import net.gini.android.capture.ui.theme.colors.giniDarkColorScheme
@@ -45,7 +47,8 @@ fun GiniTheme(
             /* colors = ... */
             content = content,
             colorScheme = giniColorSchemeBridge(giniPrimitives),
-            typography = MaterialTheme.typography.copy()
+            typography = MaterialTheme.typography.copy(),
+            shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(12.dp))
         )
     }
 }

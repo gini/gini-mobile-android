@@ -130,6 +130,10 @@ data class Configuration(
 //    net.gini.android.capture.GiniCapture.Builder#setImportedFileSizeBytesLimit → numeric text field
     val importedFileSizeBytesLimit: Int = FileImportValidator.FILE_SIZE_LIMIT,
 
+    val clientId: String = "",
+
+    val clientSecret: String = "",
+
     // 30 entry point
     val entryPoint: EntryPoint = EntryPoint.BUTTON,
 
@@ -166,10 +170,19 @@ data class Configuration(
     // 41 Skonto help Custom bottom navigation
     val isSkontoHelpCustomNavBarEnabled: Boolean = false,
 
-    ) : Parcelable {
+    // 42 Digital Invoice Skonto Custom bottom navigation
+    val isDigitalInvoiceSkontoCustomNavBarEnabled: Boolean = false,
+
+    // 43 enable transaction docs
+    val isTransactionDocsEnabled: Boolean = true,
+
+) : Parcelable {
 
     companion object {
-        fun setupSDKWithDefaultConfiguration(currentConfiguration: Configuration, defaultCaptureConfiguration: CaptureConfiguration) : Configuration{
+        fun setupSDKWithDefaultConfiguration(
+            currentConfiguration: Configuration,
+            defaultCaptureConfiguration: CaptureConfiguration,
+        ): Configuration {
             return currentConfiguration.copy(
                 isFileImportEnabled = defaultCaptureConfiguration.fileImportEnabled,
                 isQrCodeEnabled = defaultCaptureConfiguration.qrCodeScanningEnabled,
@@ -185,10 +198,9 @@ data class Configuration(
                 isGiniErrorLoggerEnabled = defaultCaptureConfiguration.giniErrorLoggerIsOn,
                 isReturnAssistantEnabled = defaultCaptureConfiguration.returnAssistantEnabled,
                 isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
-                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled
+                isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled,
+                isTransactionDocsEnabled = defaultCaptureConfiguration.transactionDocsEnabled,
             )
-
-
         }
     }
 }

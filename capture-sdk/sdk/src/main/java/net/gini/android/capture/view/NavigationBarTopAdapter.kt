@@ -1,19 +1,18 @@
 package net.gini.android.capture.view
 
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.MenuRes
-import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.widget.ThemeUtils
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import com.google.android.material.appbar.MaterialToolbar
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcNavigationBarTopBinding
-import net.gini.android.capture.view.NavButtonType.*
+import net.gini.android.capture.view.NavButtonType.BACK
+import net.gini.android.capture.view.NavButtonType.CLOSE
+import net.gini.android.capture.view.NavButtonType.NONE
 
 /**
  * Created by Alpár Szotyori on 13.05.22.

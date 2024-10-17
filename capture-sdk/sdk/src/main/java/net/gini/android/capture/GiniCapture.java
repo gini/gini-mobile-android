@@ -125,6 +125,8 @@ public class GiniCapture {
     private final EntryPoint entryPoint;
     private final boolean allowScreenshots;
 
+    private final Map<String, String> mCustomUploadMetadata;
+
 
     /**
      * Retrieve the current instance.
@@ -345,6 +347,7 @@ public class GiniCapture {
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
         entryPoint = builder.getEntryPoint();
         allowScreenshots = builder.getAllowScreenshots();
+        mCustomUploadMetadata = builder.getCustomUploadMetadata();
     }
 
     /**
@@ -695,6 +698,14 @@ public class GiniCapture {
         return allowScreenshots;
     }
 
+    /**
+     * Get upload metadata to be added to the HTTP headers
+     *
+     * @return the map of custom metadata
+     */
+    @Nullable
+    public Map<String, String> getCustomUploadMetadata() { return mCustomUploadMetadata; }
+
     public static GiniCaptureFragment createGiniCaptureFragment() {
         if (!GiniCapture.hasInstance()) {
             throw new IllegalStateException("GiniCapture instance was created. Call GiniCapture.newInstance() before creating the GiniCaptureFragment.");
@@ -807,6 +818,8 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
         private boolean allowScreenshots = true;
+
+        private Map<String, String> customUploadMetadata;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1343,6 +1356,18 @@ public class GiniCapture {
 
         private boolean getAllowScreenshots() {
             return allowScreenshots;
+        }
+
+        public Builder addCustomUploadMetadata(String key, String value) {
+            if (customUploadMetadata == null) {
+                customUploadMetadata = new HashMap<>();
+            }
+            customUploadMetadata.put(key, value);
+            return this;
+        }
+
+        private Map<String, String> getCustomUploadMetadata() {
+            return customUploadMetadata;
         }
     }
 

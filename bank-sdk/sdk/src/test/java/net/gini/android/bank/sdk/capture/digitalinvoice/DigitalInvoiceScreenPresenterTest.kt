@@ -1,5 +1,7 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
 import io.mockk.confirmVerified
@@ -9,24 +11,29 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import junitparams.JUnitParamsRunner
-import junitparams.Parameters
 import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 
-@RunWith(JUnitParamsRunner::class)
+@RunWith(AndroidJUnit4::class)
 class DigitalInvoiceScreenPresenterTest {
 
     private val returnReasonsFixture = listOf(
         GiniCaptureReturnReason("1", mapOf("de" to "Foo", "en" to "Foo")),
         GiniCaptureReturnReason("2", mapOf("de" to "Bar", "en" to "Bar"))
     )
+
+    @Before
+    fun setUp() {
+        BankSdkIsolatedKoinContext.init(InstrumentationRegistry.getInstrumentation().context)
+    }
 
     @Test
     fun `shows return reasons dialog when enabled and has a return reasons list`() {
@@ -54,71 +61,73 @@ class DigitalInvoiceScreenPresenterTest {
     }
 
     @Test
-    @Parameters(method = "skipsReturnReasonDialogValues")
-    fun `skips return reasons dialog - (isReturnReasonsEnabled, listOfReturnReasons)`(
-        isReturnReasonsEnabled: Boolean,
-        listOfReturnReasons: List<GiniCaptureReturnReason>
-    ) {
-        // Given
-        GiniBank.enableReturnReasons = isReturnReasonsEnabled
+    fun `skips return reasons dialog - (isReturnReasonsEnabled, listOfReturnReasons)`() {
 
-        val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
+        skipsReturnReasonDialogValues().forEach { (isReturnReasonsEnabled, listOfReturnReasons) ->
+            // Given
+            GiniBank.enableReturnReasons = isReturnReasonsEnabled
 
-        val presenter = DigitalInvoiceScreenPresenter(
-            activity = mockk(),
-            view = view,
-            returnReasons = listOfReturnReasons,
-            savedInstanceBundle = null,
-            oncePerInstallEventStore = mockk(relaxed = true),
-            simpleBusEventStore = mockk()
-        )
+            val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
 
-        // When
-        presenter.deselectLineItem(mockk<SelectableLineItem>())
+            val presenter = DigitalInvoiceScreenPresenter(
+                activity = mockk(),
+                view = view,
+                returnReasons = listOfReturnReasons,
+                savedInstanceBundle = null,
+                oncePerInstallEventStore = mockk(relaxed = true),
+                simpleBusEventStore = mockk()
+            )
 
-        // Then
-        excludeRecords {
-            view.setPresenter(any())
-            view.showLineItems(any(), any())
-            view.updateFooterDetails(any())
-            view.showAddons(any())
+            // When
+            presenter.deselectLineItem(mockk<SelectableLineItem>())
+
+            // Then
+            excludeRecords {
+                view.setPresenter(any())
+                view.showLineItems(any(), any())
+                view.updateFooterDetails(any())
+                view.showAddons(any())
+            }
+            verify(exactly = 0) { view.showReturnReasonDialog(any(), any()) }
+            confirmVerified(view)
         }
-        verify(exactly = 0) { view.showReturnReasonDialog(any(), any()) }
-        confirmVerified(view)
     }
 
-    private fun skipsReturnReasonDialogValues(): Array<Any> = arrayOf(
-        // isReturnReasonsEnabled, listOfReturnReasons
-        arrayOf(true, emptyList<GiniCaptureReturnReason>()),
-        arrayOf(false, returnReasonsFixture),
-        arrayOf(false, emptyList<GiniCaptureReturnReason>())
-    )
+    private fun skipsReturnReasonDialogValues(): Array<Pair<Boolean, List<GiniCaptureReturnReason>>> =
+        arrayOf(
+            // isReturnReasonsEnabled, listOfReturnReasons
+            true to emptyList(),
+            false to returnReasonsFixture,
+            false to emptyList()
+        )
 
-    private val extractionsWithOtherChargesFixture: Map<String, GiniCaptureSpecificExtraction> = mapOf(
-        "amountToPay" to GiniCaptureSpecificExtraction(
-            "amountToPay",
-            "30.27:EUR",
-            "amount",
-            null,
-            emptyList<GiniCaptureExtraction>()
-        ),
-        "other-charges-addon" to GiniCaptureSpecificExtraction(
-            "other-charges-addon",
-            "15.00:EUR",
-            "amount",
-            null,
-            emptyList<GiniCaptureExtraction>()
+    private val extractionsWithOtherChargesFixture: Map<String, GiniCaptureSpecificExtraction> =
+        mapOf(
+            "amountToPay" to GiniCaptureSpecificExtraction(
+                "amountToPay",
+                "30.27:EUR",
+                "amount",
+                null,
+                emptyList<GiniCaptureExtraction>()
+            ),
+            "other-charges-addon" to GiniCaptureSpecificExtraction(
+                "other-charges-addon",
+                "15.00:EUR",
+                "amount",
+                null,
+                emptyList<GiniCaptureExtraction>()
+            )
         )
-    )
-    private val extractionsWithoutOtherChargesFixture: Map<String, GiniCaptureSpecificExtraction> = mapOf(
-        "amountToPay" to GiniCaptureSpecificExtraction(
-            "amountToPay",
-            "15.27:EUR",
-            "amount",
-            null,
-            emptyList<GiniCaptureExtraction>()
+    private val extractionsWithoutOtherChargesFixture: Map<String, GiniCaptureSpecificExtraction> =
+        mapOf(
+            "amountToPay" to GiniCaptureSpecificExtraction(
+                "amountToPay",
+                "15.27:EUR",
+                "amount",
+                null,
+                emptyList<GiniCaptureExtraction>()
+            )
         )
-    )
     private val compoundExtractionsFixture: Map<String, GiniCaptureCompoundExtraction> = mapOf(
         "lineItems" to GiniCaptureCompoundExtraction(
             "lineItems",
@@ -218,57 +227,71 @@ class DigitalInvoiceScreenPresenterTest {
     )
 
     @Test
-    @Parameters(method = "enablesPayButtonValues")
-    fun `enables pay button - (extractions, compoundExtractions, deselectedLineItems)`(
-        extractions: Map<String, GiniCaptureSpecificExtraction>,
-        compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
-        deselectedLineItemIndexes: List<Int>
-    ) {
-        GiniBank.enableReturnReasons = false
+    fun `enables pay button - (extractions, compoundExtractions, deselectedLineItems)`() {
+        enablesPayButtonValues().forEach { (extractions, compoundExtractions, deselectedLineItemIndexes) ->
 
-        val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
-        val footerDetailsSlot = slot<DigitalInvoiceScreenContract.FooterDetails>()
-        every { view.updateFooterDetails(capture(footerDetailsSlot)) } just Runs
+            GiniBank.enableReturnReasons = false
 
-        val presenter = DigitalInvoiceScreenPresenter(
-            activity = mockk(),
-            view = view,
-            extractions = extractions,
-            compoundExtractions = compoundExtractions,
-            savedInstanceBundle = null,
-            oncePerInstallEventStore = mockk(relaxed = true),
-            simpleBusEventStore = mockk(relaxed = true)
-        )
+            val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
+            val footerDetailsSlot = slot<DigitalInvoiceScreenContract.FooterDetails>()
+            every { view.updateFooterDetails(capture(footerDetailsSlot)) } just Runs
 
-        // When
-        presenter.start()
-        deselectedLineItemIndexes.forEach { index ->
-            presenter.deselectLineItem(index)
+            val presenter = DigitalInvoiceScreenPresenter(
+                activity = mockk(),
+                view = view,
+                extractions = extractions,
+                compoundExtractions = compoundExtractions,
+                savedInstanceBundle = null,
+                oncePerInstallEventStore = mockk(relaxed = true),
+                simpleBusEventStore = mockk(relaxed = true)
+            )
+
+            // When
+            presenter.start()
+            deselectedLineItemIndexes.forEach { index ->
+                presenter.deselectLineItem(index)
+            }
+
+            // Then
+            excludeRecords {
+                view.setPresenter(any())
+                view.showLineItems(any(), any())
+                view.showAddons(any())
+                view.animateListScroll()
+                view.showOnboarding()
+            }
+            verify { view.updateFooterDetails(any()) }
+            confirmVerified(view)
+
+            assertThat(footerDetailsSlot.captured.buttonEnabled).isTrue()
         }
-
-        // Then
-        excludeRecords {
-            view.setPresenter(any())
-            view.showLineItems(any(), any())
-            view.showAddons(any())
-            view.animateListScroll()
-            view.showOnboarding()
-        }
-        verify { view.updateFooterDetails(any()) }
-        confirmVerified(view)
-
-        assertThat(footerDetailsSlot.captured.buttonEnabled).isTrue()
     }
 
-    private fun enablesPayButtonValues(): Array<Any> {
+    private fun enablesPayButtonValues(): Array<Triple<
+            Map<String, GiniCaptureSpecificExtraction>,
+            Map<String, GiniCaptureCompoundExtraction>,
+            List<Int>>
+            > {
         // extractions, compoundExtractions, deselectedLineItems
         return arrayOf(
             // with other charges and no selected line items
-            arrayOf(extractionsWithOtherChargesFixture, compoundExtractionsFixture, listOf(0, 1, 2)),
+            Triple(
+                extractionsWithOtherChargesFixture,
+                compoundExtractionsFixture,
+                listOf(0, 1, 2)
+            ),
             // with other charges and one selected line item
-            arrayOf(extractionsWithOtherChargesFixture, compoundExtractionsFixture, listOf(1, 2)),
+            Triple(
+                extractionsWithOtherChargesFixture,
+                compoundExtractionsFixture,
+                listOf(1, 2)
+            ),
             // without other charges and one selected line item
-            arrayOf(extractionsWithoutOtherChargesFixture, compoundExtractionsFixture, listOf(1, 2)),
+            Triple(
+                extractionsWithoutOtherChargesFixture,
+                compoundExtractionsFixture,
+                listOf(1, 2)
+            ),
         )
     }
 

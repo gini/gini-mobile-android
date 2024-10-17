@@ -5,6 +5,8 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 
+import net.gini.android.capture.internal.util.FeatureConfiguration;
+
 /**
  * Created by Alpar Szotyori on 08.12.2017.
  *
@@ -25,10 +27,13 @@ class PaymentQRCodeParser implements QRCodeParser<PaymentQRCodeData> {
     private final List<QRCodeParser<PaymentQRCodeData>> mParsers;
 
     PaymentQRCodeParser() {
-        mParsers = new ArrayList<>(3);
-        mParsers.add(new BezahlCodeParser());
-        mParsers.add(new EPC069_12Parser());
-        mParsers.add(new EPSPaymentParser());
+        mParsers = new ArrayList<>();
+        if (FeatureConfiguration.isQRCodeScanningEnabled()) {
+            mParsers.add(new BezahlCodeParser());
+            mParsers.add(new EPC069_12Parser());
+            mParsers.add(new EPSPaymentParser());
+        }
+        mParsers.add(new GiniPaymentParser());
     }
 
     /**

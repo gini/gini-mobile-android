@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/invoicePreviewFragment">
+
+
+    <fragment
+        android:id="@+id/invoicePreviewFragment"
+        android:name="net.gini.android.bank.sdk.invoice.InvoicePreviewFragment"
+        android:label="InvoicePreviewFragment" />
+</navigation>
