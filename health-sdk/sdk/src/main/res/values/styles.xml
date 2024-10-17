@@ -196,13 +196,6 @@
     <!-- Style for the Payment Details card in ReviewFragment-->
     <style name="GiniHealthTheme.PaymentDetailsCard" parent="Root.GiniHealthTheme.PaymentDetailsCard" />
 
-    <style name="Root.GiniHealthTheme.PaymentButtonProgressStyle">
-        <item name="android:translationZ" tools:targetApi="lollipop">@dimen/ghs_large_100</item>
-    </style>
-
-    <!-- Style for the progress indicator that is displayed on top of the Pay button in ReviewFragment -->
-    <style name="GiniHealth.PaymentButtonProgressStyle" parent="Root.GiniHealthTheme.PaymentButtonProgressStyle" />
-
     <style name="Root.GiniHealthTheme.CloseButtonStyle" parent="Widget.AppCompat.ImageButton">
         <item name="android:minWidth">@dimen/ghs_large_50</item>
         <item name="android:minHeight">@dimen/ghs_large_50</item>

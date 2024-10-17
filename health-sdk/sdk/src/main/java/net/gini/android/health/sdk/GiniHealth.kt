@@ -32,6 +32,7 @@ import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
+import net.gini.android.internal.payment.utils.isValidIban
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
@@ -273,8 +274,14 @@ class GiniHealth(
         }
     }
 
-    fun getPaymentFragment(paymentDetails: PaymentDetails, configuration: PaymentFlowConfiguration): PaymentFragment {
+    fun getPaymentFragmentWithoutDocument(paymentDetails: PaymentDetails, configuration: PaymentFlowConfiguration): PaymentFragment {
         LOG.debug("Getting payment fragment for payment details: {}", paymentDetails.toString())
+        if (paymentDetails.iban.isEmpty() || paymentDetails.amount.isEmpty() || paymentDetails.purpose.isEmpty() || paymentDetails.recipient.isEmpty()) {
+            throw IllegalStateException("Payment details are incomplete")
+        }
+        if (!isValidIban(paymentDetails.iban)) {
+            throw IllegalStateException("Iban is invalid")
+        }
         giniInternalPaymentModule.setPaymentDetails(paymentDetails.toCommonPaymentDetails())
         _paymentFlow.value = ResultWrapper.Loading()
         val paymentFragment = PaymentFragment.newInstance(
@@ -313,6 +320,7 @@ class GiniHealth(
     sealed class PaymentState {
         object NoAction : PaymentState()
         object Loading : PaymentState()
+        object Cancel : PaymentState()
         class Success(val paymentRequest: PaymentRequest) : PaymentState()
         class Error(val throwable: Throwable) : PaymentState()
     }

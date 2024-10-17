@@ -19,13 +19,14 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.preferences.UserPreferences
-import net.gini.android.health.sdk.review.model.PaymentDetails
-import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.internal.payment.review.reviewFragment.model.PaymentDetails
+import net.gini.android.internal.payment.review.reviewFragment.model.ResultWrapper
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.review.reviewFragment.ReviewViewModel
 import net.gini.android.internal.payment.utils.PaymentNextStep
 import org.junit.After
 import org.junit.Before

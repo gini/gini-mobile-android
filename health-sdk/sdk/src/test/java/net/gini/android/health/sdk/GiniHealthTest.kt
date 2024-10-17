@@ -15,10 +15,10 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
-import net.gini.android.health.sdk.review.ReviewFragment
-import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
-import net.gini.android.health.sdk.review.model.PaymentDetails
-import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.internal.payment.review.reviewFragment.ReviewFragment
+import net.gini.android.internal.payment.review.reviewFragment.error.NoPaymentDataExtracted
+import net.gini.android.internal.payment.review.reviewFragment.model.PaymentDetails
+import net.gini.android.internal.payment.review.reviewFragment.model.ResultWrapper
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState

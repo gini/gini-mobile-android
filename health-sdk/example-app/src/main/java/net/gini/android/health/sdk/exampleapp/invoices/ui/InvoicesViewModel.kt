@@ -3,12 +3,16 @@ package net.gini.android.health.sdk.exampleapp.invoices.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.ReviewFragment
+import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.review.ReviewConfiguration
@@ -29,6 +33,10 @@ class InvoicesViewModel(
     val paymentProviderAppsFlow = giniPaymentModule.paymentComponent.paymentProviderAppsFlow
 
     val openBankState = invoicesRepository.giniHealth.openBankState
+    private val _startIntegratedPaymentFlow = MutableSharedFlow<PaymentDetails>(
+        extraBufferCapacity = 1
+    )
+    val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
 
     fun updateDocument() {
         viewModelScope.launch {
@@ -76,6 +84,20 @@ class InvoicesViewModel(
         } else {
             LOG.error("Document with id {} not found", documentId)
             Result.failure(IllegalStateException("Document with id $documentId not found"))
+        }
+    }
+
+    fun startPaymentFlowWithoutDocument(paymentDetails: PaymentDetails){
+        _startIntegratedPaymentFlow.tryEmit(paymentDetails)
+    }
+
+    fun getPaymentFragmentForPaymentDetails(paymentDetails: PaymentDetails): Result<PaymentFragment> {
+        try {
+            val paymentFragment = invoicesRepository.giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewFragment = false, shouldHandleErrorsInternally = true))
+            return Result.success(paymentFragment)
+        } catch (e: Exception) {
+            LOG.error("Error getting payment fragment without document", e)
+            return Result.failure(e)
         }
     }
 

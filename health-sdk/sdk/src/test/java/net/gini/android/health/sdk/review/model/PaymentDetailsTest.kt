@@ -3,6 +3,10 @@ package net.gini.android.health.sdk.review.model
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
+import net.gini.android.internal.payment.review.reviewFragment.model.PaymentDetails
+import net.gini.android.internal.payment.review.reviewFragment.model.getPaymentExtraction
+import net.gini.android.internal.payment.review.reviewFragment.model.toPaymentDetails
+import net.gini.android.internal.payment.review.reviewFragment.model.withFeedback
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

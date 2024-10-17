@@ -232,7 +232,7 @@
                 android:layout_height="wrap_content">
                 <ProgressBar
                     android:id="@+id/payment_progress"
-                    style="@style/GiniHealth.PaymentButtonProgressStyle"
+                    style="@style/GiniPaymentTheme.PaymentButtonProgressStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:padding="@dimen/ghs_medium"

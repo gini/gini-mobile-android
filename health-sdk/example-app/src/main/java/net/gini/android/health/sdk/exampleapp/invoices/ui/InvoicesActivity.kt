@@ -26,6 +26,7 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBindin
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsFragment
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
@@ -110,6 +111,25 @@ open class InvoicesActivity : AppCompatActivity() {
                             }
                             else -> {}
                         }
+                    }
+                }
+                launch {
+                    viewModel.startIntegratedPaymentFlow.collect { result ->
+                        viewModel.getPaymentFragmentForPaymentDetails(result)
+                            .onSuccess { paymentFragment ->
+                                supportFragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container, paymentFragment, REVIEW_FRAGMENT_TAG)
+                                    .addToBackStack(null)
+                                    .commit()
+                            }
+                            .onFailure { error ->
+                                LOG.error("Error getting payment review fragment", )
+                                AlertDialog.Builder(this@InvoicesActivity)
+                                    .setTitle(getString(R.string.could_not_start_payment_review))
+                                    .setMessage(error.message)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .show()
+                            }
                     }
                 }
             }
@@ -209,6 +229,13 @@ open class InvoicesActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.upload_test_invoices -> {
                 viewModel.uploadHardcodedInvoices()
+                true
+            }
+            R.id.create_payment_order -> {
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.fragment_container, OrderDetailsFragment.newInstance(), REVIEW_FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit()
                 true
             }
             android.R.id.home -> {

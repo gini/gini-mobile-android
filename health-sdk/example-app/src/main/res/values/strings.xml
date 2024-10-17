@@ -13,6 +13,7 @@
     <string name="title_activity_invoices">Invoices list</string>
     <string name="no_invoices">No invoices</string>
     <string name="upload_test_invoices">Upload Invoices</string>
+    <string name="create_payment_order">Create payment order</string>
     <string name="welcome_to_gini">Welcome to Gini</string>
     <string name="example_of_health_sdk">Example of Gini Pay Connect integration in the insurance app</string>
     <string name="could_not_start_payment_review">Could not start payment review</string>
@@ -22,6 +23,11 @@
     <string name="hide_powered_by_gini">Hide powered by Gini on payment component</string>
     <string name="gini_health_version">Gini Health SDK v: </string>
     <string name="sdk_language">SDK language: </string>
+    <string name="recipient">Recipient</string>
+    <string name="iban">IBAN</string>
+    <string name="amount">Amount</string>
+    <string name="purpose">Purpose</string>
+    <string name="pay_now">Pay</string>
 
     <string name="ghs_privacy_policy_link_url">https://www.google.com</string>
     <!-- TODO: Remove or change this placeholder text -->

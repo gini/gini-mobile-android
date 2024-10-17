@@ -5,6 +5,7 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.HardcodedInvoicesLoc
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesLocalDataSource
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesViewModel
+import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsViewModel
 import net.gini.android.health.sdk.exampleapp.review.ReviewViewModel
 import net.gini.android.health.sdk.exampleapp.upload.UploadViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -15,6 +16,7 @@ val viewModelModule = module {
     viewModel { UploadViewModel(get(), get(), get()) }
     viewModel { ReviewViewModel(get(), get()) }
     viewModel { InvoicesViewModel(get(), get()) }
+    viewModel { OrderDetailsViewModel() }
     factory { InvoicesRepository(get(), get(), get(), get()) }
     factory { InvoicesLocalDataSource(get()) }
     factory { HardcodedInvoicesLocalDataSource(get()) }
