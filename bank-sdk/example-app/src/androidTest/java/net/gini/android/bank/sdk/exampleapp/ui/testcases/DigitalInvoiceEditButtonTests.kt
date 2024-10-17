@@ -54,7 +54,7 @@ class DigitalInvoiceEditButtonTests {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
 
-        Thread.sleep(12000)
+        Thread.sleep(6000)
         captureScreen.clickFilesButton(rootView!!)
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")

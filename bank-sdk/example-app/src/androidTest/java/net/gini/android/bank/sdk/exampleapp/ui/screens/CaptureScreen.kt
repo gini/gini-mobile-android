@@ -79,22 +79,7 @@ class CaptureScreen {
     }
 
     fun clickFilesButton(rootView: View): CaptureScreen {
-
-//        onView(withText("FF_TEST")).perform(click())
-//        onView(withText("Files")).perform(click())
         onView(withId(net.gini.android.capture.R.id.gc_button_import_document)).perform(click())
-//        val uiCollection =
-//            UiCollection(UiSelector().className("android.view.ViewGroup"))
-//        val editButton = uiCollection.getChildByInstance(
-//            UiSelector().className("android.widget.ImageButton")
-//                .resourceId("net.gini.android.capture.R.id.gc_button_import_document"), 0)
-//        if(editButton.exists() && editButton.isEnabled) {
-//            editButton.click()
-//        }
-//        onView(withContentDescription("Files")).perform(click())
-
-//        printViewHierarchy(rootView)
-//        onView(withResourceName("net.gini.android.capture:id/gc_button_import")).perform(click())
         return this
     }
 
