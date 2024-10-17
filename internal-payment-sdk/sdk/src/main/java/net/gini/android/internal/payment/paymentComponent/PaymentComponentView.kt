@@ -117,6 +117,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             binding.gpsTwoRowsBankSelection.visibility = View.GONE
         }
         checkPaymentComponentHeight()
+        checkReturningUser()
         coroutineScope?.launch {
             if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
@@ -159,12 +160,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                         }
                     }
                 }
-                launch {
-                    pc.returningUserFlow.collect { isReturning ->
-                        binding.gpsMoreInformation.visibility = if (isReturning) View.GONE else View.VISIBLE
-                        binding.gpsSelectBankLabel.visibility = if (isReturning) View.GONE else View.VISIBLE
-                    }
-                }
             }
         }
     }
@@ -185,6 +180,14 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun checkPaymentComponentHeight() {
         if (resources.getDimension(R.dimen.gps_payment_component_height) >= resources.getDimension(R.dimen.gps_accessibility_min_height)) {
             binding.gpsSelectBankPickerLayout.layoutParams.height = resources.getDimension(R.dimen.gps_payment_component_height).toInt()
+        }
+    }
+
+    private fun checkReturningUser() {
+        if (paymentComponent?.shouldCheckReturningUser == true) {
+            val isReturning = paymentComponent?.checkReturningUser() == true
+            binding.gpsMoreInformation.visibility = if (isReturning) View.GONE else View.VISIBLE
+            binding.gpsSelectBankLabel.visibility = if (isReturning) View.GONE else View.VISIBLE
         }
     }
 

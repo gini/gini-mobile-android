@@ -18,10 +18,13 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.internal.payment.GiniInternalPaymentModule
@@ -268,6 +271,18 @@ class GiniHealth(
                 throw exception
             }
         }
+    }
+
+    fun getPaymentFragment(paymentDetails: PaymentDetails, configuration: PaymentFlowConfiguration): PaymentFragment {
+        LOG.debug("Getting payment fragment for payment details: {}", paymentDetails.toString())
+        giniInternalPaymentModule.setPaymentDetails(paymentDetails.toCommonPaymentDetails())
+        _paymentFlow.value = ResultWrapper.Loading()
+        val paymentFragment = PaymentFragment.newInstance(
+            giniInternalPaymentModule = giniInternalPaymentModule,
+            paymentDetails = paymentDetails.toCommonPaymentDetails(),
+            paymentFlowConfiguration = configuration
+        )
+        return paymentFragment
     }
 
 
