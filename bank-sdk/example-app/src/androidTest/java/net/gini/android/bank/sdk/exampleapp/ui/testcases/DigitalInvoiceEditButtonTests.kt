@@ -52,8 +52,7 @@ class DigitalInvoiceEditButtonTests {
             rootView = activity1.window.decorView.rootView
         } ?: kotlin.run { null }
         mainScreen.clickPhotoPaymentButton()
-//        onboardingScreen.clickSkipButton()
-//        Espresso.onIdle()
+        onboardingScreen.clickSkipButton()
 
         Thread.sleep(12000)
         captureScreen.clickFilesButton(rootView!!)
