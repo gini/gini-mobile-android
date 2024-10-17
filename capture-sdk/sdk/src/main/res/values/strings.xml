@@ -105,6 +105,7 @@
     <string name="gc_supported_format_qr_type_eps" translatable="false">eps Überweisung</string>
     <string name="gc_supported_format_qr_type_stuzza" translatable="false">Stuzza (AT)</string>
     <string name="gc_supported_format_qr_type_girocode" translatable="false">Girocode (DE)</string>
+    <string name="gc_supported_format_qr_type_gini_payment" translatable="false">QR by Gini</string>
     <string name="gc_unsupported_format_handwriting">Handschrift</string>
     <string name="gc_unsupported_format_photos_of_screens">Fotos von Bildschirmen</string>
     <string name="gc_supported_format_section_header">Unterstützte Formate:</string>
@@ -169,7 +170,7 @@
     <string name="gc_delete_page">Seite löschen</string>
     <string name="gc_document_page">Dokumentenseite</string>
     <string name="gc_useful_tips">Nützliche Tipps</string>
-    <string name="gc_menu_item_help_button_content_description">Hilfe, Schaltfläche</string>
+    <string name="gc_menu_item_help_button_content_description">Hilfe</string>
     <string name="gc_menu_item_close_button_content_description">Schließen, Schaltfläche</string>
     <string name="gc_iban_detected_please_take_picture">\n\nMachen Sie ein Foto</string>
     <string name="gc_iban_detected">IBAN erkannt</string>
@@ -177,4 +178,5 @@
     <string name="gc_date_picker_select">Auswählen</string>
     <string name="gc_date_picker_cancel">Abbrechen</string>
     <!--   endregion -->
+    <string name="gc_detection_error_layout_description">QR-Code scannen ist derzeit nicht verfügbar. Bitte fotografieren Sie stattdessen Ihre Rechnung.</string>
 </resources>

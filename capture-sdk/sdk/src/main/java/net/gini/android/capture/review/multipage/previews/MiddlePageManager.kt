@@ -1,14 +1,11 @@
 package net.gini.android.capture.review.multipage.previews
 
 import android.content.Context
-import android.content.res.Configuration
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.updatePaddingRelative
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import net.gini.android.capture.internal.util.AndroidHelper
-import net.gini.android.capture.internal.util.ContextHelper
 
 class MiddlePageManager : LinearLayoutManager {
 

@@ -146,6 +146,12 @@ dependencies {
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
 
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.android.compat)
+
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.compose.tools.uiToolingPreview)
@@ -156,7 +162,6 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin2)
-    testImplementation(libs.mockito.inline)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core.ktx)
     testImplementation(libs.androidx.test.junit.ktx)

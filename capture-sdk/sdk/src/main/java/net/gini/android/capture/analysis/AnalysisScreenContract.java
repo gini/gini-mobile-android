@@ -16,6 +16,9 @@ import net.gini.android.capture.internal.util.Size;
 import java.util.List;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.

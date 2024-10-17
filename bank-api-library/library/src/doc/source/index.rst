@@ -22,6 +22,7 @@ Table of contents
 
    guides/getting-started
    guides/using-the-library
+   guides/data-safety
    guides/migrate-to-2-0-0
    see_also
    license

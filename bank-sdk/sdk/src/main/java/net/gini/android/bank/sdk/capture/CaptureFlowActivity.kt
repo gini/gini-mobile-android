@@ -8,6 +8,7 @@ import androidx.core.content.IntentCompat
 import kotlinx.parcelize.Parcelize
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
 import net.gini.android.capture.Document
 import net.gini.android.capture.internal.util.FileImportValidator
 
@@ -18,6 +19,7 @@ import net.gini.android.capture.internal.util.FileImportValidator
 internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        BankSdkIsolatedKoinContext.init(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.gbs_activity_capture_flow)
         if (savedInstanceState == null) {

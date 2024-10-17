@@ -1,5 +1,6 @@
 package net.gini.android.health.sdk.exampleapp.invoices.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -236,12 +237,14 @@ class InvoicesAdapter(
         val recipient: TextView
         val dueDate: TextView
         val amount: TextView
+        val medProvider: TextView
         val paymentComponentView: PaymentComponentView
 
         init {
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
+            medProvider = view.findViewById(R.id.medicalServiceProvider)
             this.paymentComponentView = view.findViewById(R.id.payment_component)
             this.paymentComponentView.paymentComponent = paymentComponent
         }
@@ -253,12 +256,19 @@ class InvoicesAdapter(
         return ViewHolder(view, paymentComponent)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val invoiceItem = dataSet[position]
 
         viewHolder.recipient.text = invoiceItem.recipient ?: ""
         viewHolder.dueDate.text = invoiceItem.dueDate ?: ""
         viewHolder.amount.text = invoiceItem.amount ?: ""
+        invoiceItem.medicalProvider?.let {
+            viewHolder.medProvider.visibility = View.VISIBLE
+            viewHolder.medProvider.text = "Med. provider: $it"
+        }?: {
+            viewHolder.medProvider.visibility = View.GONE
+        }
 
         viewHolder.paymentComponentView.prepareForReuse()
         viewHolder.paymentComponentView.isPayable = invoiceItem.isPayable

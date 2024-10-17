@@ -15,7 +15,8 @@ class CustomSkontoHelpNavigationBarBottomAdapter:
     }
 
     override fun onCreateView(container: ViewGroup): View {
-        val binding = CustomSkontoHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)
+        val binding = CustomSkontoHelpNavigationBarBottomBinding
+            .inflate(LayoutInflater.from(container.context), container, false)
         viewBinding = binding
 
         return viewBinding!!.root

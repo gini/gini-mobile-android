@@ -26,7 +26,8 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModel()
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture(), ::photoResult)
-    private val importLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument(), ::importResult)
+    private val importLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments(), ::importResult)
     private lateinit var binding: ActivityMainBinding
 
     private val useTestDocument = false
@@ -110,10 +111,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun importResult(uri: Uri?) {
-        uri?.let {
-            startActivity(UploadActivity.getStartIntent(this, listOf(it), viewModel.getPaymentComponentConfiguration()))
-        } ?: run {
+    private fun importResult(uris: List<Uri>) {
+        if (uris.isNotEmpty()) {
+            startActivity(UploadActivity.getStartIntent(this, uris, viewModel.getPaymentComponentConfiguration()))
+        } else {
             Toast.makeText(this, "No document received", Toast.LENGTH_LONG).show()
         }
     }

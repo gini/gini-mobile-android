@@ -31,7 +31,9 @@ fun GiniButton(
         modifier = modifier,
         giniButtonColors = giniButtonColors,
     ) {
-        Text(text = text)
+        Text(
+            text = text,
+        )
     }
 }
 

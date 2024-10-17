@@ -1,0 +1,42 @@
+version: 2
+updates:
+
+  - package-ecosystem: "gradle"
+    directory: "/bank-api-library/library"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gradle"
+    directory: "/bank-sdk/sdk"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gradle"
+    directory: "/capture-sdk/sdk"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gradle"
+    directory: "/capture-sdk/default-network"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gradle"
+    directory: "/core-api-library/library"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gradle"
+    directory: "/health-api-library/library"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gradle"
+    directory: "/health-sdk/sdk"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gradle"
+    directory: "/merchant-sdk/sdk"
+    schedule:
+      interval: "daily"

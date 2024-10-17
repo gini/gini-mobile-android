@@ -221,7 +221,9 @@ public class AnalysisInteractorTest {
         final GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
                 multiPageDocument = mock(GiniCaptureMultiPageDocument.class);
 
-        final AnalysisResult analysisResult = new AnalysisResult("apiDocumentId",
+        final AnalysisResult analysisResult = new AnalysisResult(
+                "apiDocumentId",
+                "apiDocumentFilename",
                 Collections.<String, GiniCaptureSpecificExtraction>emptyMap());
 
         final NetworkRequestsManager networkRequestsManager = createtNetworkRequestsManager(
@@ -272,6 +274,7 @@ public class AnalysisInteractorTest {
         extractions.put("paymentReference", mock(GiniCaptureSpecificExtraction.class));
 
         final AnalysisResult analysisResult = new AnalysisResult("apiDocumentId",
+                "apiDocumentFilename",
                 extractions);
 
         final NetworkRequestsManager networkRequestsManager = createtNetworkRequestsManager(

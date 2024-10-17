@@ -11,31 +11,48 @@ import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.core.os.BundleCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoFragment
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoArgs
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoResultArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoDiscountLabelTextFactory
+import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoSavedAmountTextFactory
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
+import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
+import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
+import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
-import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
+import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
 
@@ -46,19 +63,16 @@ import net.gini.android.capture.view.NavButtonType
  * Copyright (c) 2019 Gini GmbH.
  */
 
-private const val ARGS_EXTRACTIONS = "GBS_ARGS_EXTRACTIONS"
-private const val ARGS_COMPOUND_EXTRACTIONS = "GBS_ARGS_COMPOUND_EXTRACTIONS"
-private const val ARGS_RETURN_REASONS = "GBS_ARGS_RETURN_REASONS"
-private const val ARGS_INACCURATE_EXTRACTION = "GBS_ARGS_INACCURATE_EXTRACTION"
 
 private const val TAG_RETURN_REASON_DIALOG = "TAG_RETURN_REASON_DIALOG"
-private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"
 
 /**
  * Internal use only.
  */
-open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
+internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
     LineItemsAdapterListener {
+
+    private val args: DigitalInvoiceFragmentArgs by navArgs<DigitalInvoiceFragmentArgs>()
 
     private var binding by autoCleared<GbsFragmentDigitalInvoiceBinding>()
     private var lineItemsAdapter by autoCleared<LineItemsAdapter>()
@@ -77,31 +91,50 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
 
     private var presenter: DigitalInvoiceScreenContract.Presenter? = null
 
-    private var extractions: Map<String, GiniCaptureSpecificExtraction> = emptyMap()
-    private var compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap()
-    private var returnReasons: List<GiniCaptureReturnReason> = emptyList()
-    private var isInaccurateExtraction: Boolean = false
     private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private var onBackPressedCallback: OnBackPressedCallback? = null
 
-    companion object {
-        internal fun getExtractionsBundle(extractions: Map<String, GiniCaptureSpecificExtraction>): Bundle =
-            Bundle().apply {
-                extractions.forEach { putParcelable(it.key, it.value) }
-            }
+    private val skontoSavedAmountTextFactory: SkontoSavedAmountTextFactory by getGiniBankKoin().inject()
+    private val skontoDiscountLabelTextFactory: SkontoDiscountLabelTextFactory by getGiniBankKoin().inject()
 
-        internal fun getCompoundExtractionsBundle(compoundExtractions: Map<String, GiniCaptureCompoundExtraction>): Bundle =
-            Bundle().apply {
-                compoundExtractions.forEach { putParcelable(it.key, it.value) }
-            }
+    private val transactionDocShouldBeAutoAttachedUseCase: GetTransactionDocShouldBeAutoAttachedUseCase
+            by getGiniBankKoin().inject()
+    private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase
+            by getGiniBankKoin().inject()
+    private val transactionDocDialogConfirmAttachUseCase: TransactionDocDialogConfirmAttachUseCase
+            by getGiniBankKoin().inject()
+    private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase
+            by getGiniBankKoin().inject()
 
-        internal fun getAmountsAreConsistentExtraction(extractions: Map<String, GiniCaptureSpecificExtraction>): Boolean {
-            val isInaccurateExtraction = extractions["amountsAreConsistent"]?.let {
-                it.value == "false"
-            } ?: true
-            return isInaccurateExtraction
+    private val skontoAdapterListener = object : SkontoListItemAdapterListener {
+
+        override fun onSkontoEditClicked(listItem: DigitalInvoiceSkontoListItem) {
+            presenter?.editSkontoDataListItem(listItem)
         }
+
+        override fun onSkontoEnabled(listItem: DigitalInvoiceSkontoListItem) {
+            presenter?.enableSkonto()
+        }
+
+        override fun onSkontoDisabled(listItem: DigitalInvoiceSkontoListItem) {
+            presenter?.disableSkonto()
+        }
+    }
+
+    override fun showSkontoEditScreen(
+        data: SkontoData,
+        isSkontoSectionActive: Boolean,
+    ) {
+        findNavController().navigate(
+            DigitalInvoiceFragmentDirections.toDigitalInvoiceSkontoFragment(
+                DigitalInvoiceSkontoArgs(
+                    data = data,
+                    invoiceHighlights = args.skontoInvoiceHighlights.toList(),
+                    isSkontoSectionActive = isSkontoSectionActive
+                )
+            )
+        )
     }
 
     /**
@@ -119,7 +152,6 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
             requireActivity().window.disallowScreenshots()
         }
         forcePortraitOrientationOnPhones(activity)
-        readArguments()
         initListener()
         createPresenter(activity, savedInstanceState)
 
@@ -128,27 +160,22 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         }
     }
 
-    private fun readArguments() {
-        arguments?.run {
-            getBundle(ARGS_EXTRACTIONS)?.run {
-                extractions =
-                    keySet().map { it to getParcelable<GiniCaptureSpecificExtraction>(it)!! }
-                        .toMap()
+    private fun changeMarginAccordingToFontOversize() {
+        if (!ContextHelper.isTablet(requireContext()) && resources.configuration.fontScale > 1.0F) {
+            (binding.gbsArticleTxt.layoutParams as ViewGroup.MarginLayoutParams).run {
+                this.topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
             }
-            getBundle(ARGS_COMPOUND_EXTRACTIONS)?.run {
-                compoundExtractions =
-                    keySet().map { it to getParcelable<GiniCaptureCompoundExtraction>(it)!! }
-                        .toMap()
+            (binding.totalLabel.layoutParams as ViewGroup.MarginLayoutParams).run {
+                topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
             }
-            returnReasons =
-                (BundleCompat.getParcelableArray(
-                    this,
-                    ARGS_RETURN_REASONS,
-                    GiniCaptureReturnReason::class.java
-                )
-                    ?.toList() as? List<GiniCaptureReturnReason>) ?: emptyList()
-
-            isInaccurateExtraction = getBoolean(ARGS_INACCURATE_EXTRACTION, false)
+            (binding.gbsPay.layoutParams as ViewGroup.MarginLayoutParams).run {
+                bottomMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+                topMargin =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_small).toInt()
+            }
         }
     }
 
@@ -156,10 +183,11 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         DigitalInvoiceScreenPresenter(
             activity,
             this,
-            extractions,
-            compoundExtractions,
-            returnReasons,
-            isInaccurateExtraction,
+            args.extractionsResult.specificExtractions,
+            args.extractionsResult.compoundExtractions,
+            args.extractionsResult.returnReasons,
+            args.skontoData,
+            getAmountsAreConsistentExtraction(args.extractionsResult.specificExtractions),
             savedInstanceState,
         ).apply {
             listener = this@DigitalInvoiceFragment.listener
@@ -200,6 +228,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         setInputHandlers()
         initTopNavigationBar()
         initBottomBar()
+        changeMarginAccordingToFontOversize()
         presenter?.onViewCreated()
     }
 
@@ -266,15 +295,29 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     }
 
                     injectedViewAdapter.setOnProceedClickListener {
-                        presenter?.pay()
-                        trackProceedTapped()
-                        trackSdkClosedEvent()
+                        payButtonClicked()
                     }
 
                     footerDetails?.let {
                         val (integral, fractional) = it.totalGrossPriceIntegralAndFractionalParts
                         injectedViewAdapter.setTotalPrice(integral + fractional)
                         injectedViewAdapter.setProceedButtonEnabled(it.buttonEnabled)
+                        injectedViewAdapter.onSkontoPercentageBadgeVisibilityUpdate(
+                            it.skontoDiscountPercentage != null
+                        )
+                        injectedViewAdapter.onSkontoSavingsAmountVisibilityUpdated(
+                            it.skontoSavedAmount != null
+                        )
+                        it.skontoDiscountPercentage?.let { percentage ->
+                            injectedViewAdapter.onSkontoPercentageBadgeUpdated(
+                                skontoDiscountLabelTextFactory.create(percentage)
+                            )
+                        }
+                        it.skontoSavedAmount?.let { amount ->
+                            injectedViewAdapter.onSkontoSavingsAmountUpdated(
+                                skontoSavedAmountTextFactory.create(amount)
+                            )
+                        }
                     }
                 }
         }
@@ -291,7 +334,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     private fun initRecyclerView() {
-        lineItemsAdapter = LineItemsAdapter(this, requireContext())
+        lineItemsAdapter = LineItemsAdapter(this, skontoAdapterListener, requireContext())
         activity?.let {
             binding.lineItems.apply {
                 layoutManager = LinearLayoutManager(it)
@@ -308,9 +351,34 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
     }
 
     override fun payButtonClicked() {
-        presenter?.pay()
-        trackProceedTapped()
-        trackSdkClosedEvent()
+        tryShowAttachDocToTransactionDialog {
+            presenter?.pay()
+            trackProceedTapped()
+            trackSdkClosedEvent()
+        }
+    }
+
+    private fun tryShowAttachDocToTransactionDialog(continueFlow: () -> Unit) {
+        val autoAttachDoc = runBlocking { transactionDocShouldBeAutoAttachedUseCase() }
+        if (!getTransactionDocsFeatureEnabledUseCase()) {
+            continueFlow()
+            return
+        }
+        binding.gbComposeView.setContent {
+            GiniTheme {
+                if (!autoAttachDoc) {
+                    AttachDocumentToTransactionDialog(onDismiss = {
+                        lifecycleScope.launch { transactionDocDialogCancelAttachUseCase() }
+                        continueFlow()
+                    }, onConfirm = {
+                        lifecycleScope.launch { transactionDocDialogConfirmAttachUseCase(it) }
+                        continueFlow()
+                    })
+                } else {
+                    continueFlow()
+                }
+            }
+        }
     }
 
     /**
@@ -404,11 +472,39 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         binding.grossPriceTotalFractionalPart.text = fractional
         binding.gbsPay.isEnabled = data.buttonEnabled
 
+        val isSkontoSavedAmountVisible = data.skontoSavedAmount != null
+        val isSkontoDiscountVisible = data.skontoDiscountPercentage != null
+
+        binding.skontoSavedAmount.isVisible = isSkontoSavedAmountVisible
+        if (data.skontoSavedAmount != null) {
+            binding.skontoSavedAmount.text =
+                skontoSavedAmountTextFactory.create(data.skontoSavedAmount)
+        }
+
+        binding.skontoDiscountLabel.isVisible = isSkontoDiscountVisible
+        if (data.skontoDiscountPercentage != null) {
+            binding.skontoDiscountLabel.text =
+                skontoDiscountLabelTextFactory.create(data.skontoDiscountPercentage)
+        }
+
+
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
             binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
                 (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
                     setTotalPrice(integral + fractional)
                     setProceedButtonEnabled(data.buttonEnabled)
+                    onSkontoSavingsAmountVisibilityUpdated(isSkontoSavedAmountVisible)
+                    onSkontoPercentageBadgeVisibilityUpdate(isSkontoDiscountVisible)
+                    data.skontoDiscountPercentage?.let { percentage ->
+                        onSkontoPercentageBadgeUpdated(
+                            skontoDiscountLabelTextFactory.create(
+                                percentage
+                            )
+                        )
+                    }
+                    data.skontoSavedAmount?.let { amount ->
+                        onSkontoSavingsAmountUpdated(skontoSavedAmountTextFactory.create(amount))
+                    }
                 }
             }
         }
@@ -425,6 +521,9 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         lineItemsAdapter.addons = addons
     }
 
+    override fun showSkonto(data: DigitalInvoiceSkontoListItem) {
+        lineItemsAdapter.skontoDiscount = listOf(data)
+    }
 
     /**
      * Internal use only.
@@ -461,6 +560,7 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
         super.onStart()
         presenter?.start()
         setBottomSheetResultListener()
+        setSkontoResultListener()
     }
 
     private fun setBottomSheetResultListener() {
@@ -477,6 +577,27 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                     ?.let { selectableLineItem ->
                         presenter?.updateLineItem(selectableLineItem)
                     }
+            }
+    }
+
+    private fun setSkontoResultListener() {
+        parentFragmentManager
+            .setFragmentResultListener(
+                DigitalInvoiceSkontoFragment.REQUEST_KEY,
+                viewLifecycleOwner
+            ) { _: String?, result: Bundle ->
+                BundleCompat.getParcelable(
+                    result,
+                    DigitalInvoiceSkontoFragment.RESULT_KEY,
+                    DigitalInvoiceSkontoResultArgs::class.java
+                )?.let { skontoResult ->
+                    presenter?.updateSkontoData(skontoResult.skontoData)
+                    if (skontoResult.isSkontoEnabled) {
+                        presenter?.enableSkonto()
+                    } else {
+                        presenter?.disableSkonto()
+                    }
+                }
             }
     }
 
@@ -568,6 +689,13 @@ open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.Vie
                 UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful)
             )
         )
+    }
+
+    private fun getAmountsAreConsistentExtraction(extractions: Map<String, GiniCaptureSpecificExtraction>): Boolean {
+        val isInaccurateExtraction = extractions["amountsAreConsistent"]?.let {
+            it.value == "false"
+        } ?: true
+        return isInaccurateExtraction
     }
 }
 // endregion

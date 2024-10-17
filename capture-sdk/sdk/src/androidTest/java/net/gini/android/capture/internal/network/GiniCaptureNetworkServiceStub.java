@@ -26,18 +26,19 @@ import androidx.annotation.NonNull;
 public class GiniCaptureNetworkServiceStub implements GiniCaptureNetworkService {
 
     public static final String DEFAULT_DOCUMENT_ID = "ABCD-EFGH";
+    public static final String DEFAULT_DOCUMENT_FILENAME = "Doc";
 
     @Override
     public CancellationToken upload(@NonNull final Document document,
             @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-        callback.success(new Result(DEFAULT_DOCUMENT_ID));
+        callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
         return new CallbackCancellationToken(callback);
     }
 
     @Override
     public CancellationToken delete(@NonNull final String giniApiDocumentId,
             @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
-        callback.success(new Result(DEFAULT_DOCUMENT_ID));
+        callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
         return new CallbackCancellationToken(callback);
     }
 
@@ -66,6 +67,7 @@ public class GiniCaptureNetworkServiceStub implements GiniCaptureNetworkService 
     @NonNull
     protected AnalysisResult createAnalysisResult() {
         return new AnalysisResult(DEFAULT_DOCUMENT_ID,
+                DEFAULT_DOCUMENT_FILENAME,
                 Collections.singletonMap("amountToPay",
                         new GiniCaptureSpecificExtraction("amountToPay",
                                 "1:00EUR", "amountToPay",

@@ -1,12 +1,12 @@
 package net.gini.android.health.sdk.exampleapp.review
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
@@ -21,6 +21,7 @@ import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.MainActivity
 import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_COMPONENT_CONFIG
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory
 class ReviewActivity : AppCompatActivity() {
 
     private val viewModel: ReviewViewModel by viewModel()
+    private var doctorName: SpecificExtraction? = null
 
     private val reviewFragmentListener = object : ReviewFragmentListener {
         override fun onCloseReview() {
@@ -150,6 +152,10 @@ class ReviewActivity : AppCompatActivity() {
                         supportFragmentManager.commit {
                             replace(R.id.review_fragment, reviewFragment, REVIEW_FRAGMENT_TAG)
                         }
+
+                        doctorName?.value.let {
+                            Toast.makeText(this@ReviewActivity, "Extracted doctor's name: $it", Toast.LENGTH_LONG).show()
+                        }
                     } catch (e: Exception) {
                         AlertDialog.Builder(this@ReviewActivity)
                             .setTitle(getString(R.string.could_not_start_payment_review))
@@ -170,16 +176,29 @@ class ReviewActivity : AppCompatActivity() {
             val documentId = (viewModel.giniHealth.documentFlow.value as ResultWrapper.Success<Document>).value.id
 
             val isDocumentPayable = viewModel.giniHealth.checkIfDocumentIsPayable(documentId)
+            val containsMultipleDocuments = viewModel.giniHealth.checkIfDocumentContainsMultipleDocuments(documentId)
 
-            if (!isDocumentPayable) {
+            if (!isDocumentPayable || containsMultipleDocuments) {
+                val alertTitle = when {
+                    !isDocumentPayable && containsMultipleDocuments -> {
+                        getString(R.string.multiple_documents) + " & " + getString(R.string.document_not_payable_title)
+                    }
+                    !isDocumentPayable -> {
+                        getString(R.string.document_not_payable_title)
+                    }
+                    else -> {
+                        getString(R.string.multiple_documents)
+                    }
+                }
+
                 AlertDialog.Builder(this@ReviewActivity)
-                    .setTitle(R.string.document_not_payable_title)
+                    .setTitle(alertTitle)
                     .setMessage(R.string.document_not_payable_message)
-                    .setPositiveButton(android.R.string.ok, object : DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface, which: Int) {
-                            finish()
-                        }
-                    })
+                    .setPositiveButton(android.R.string.ok
+                    ) { _, _ -> finish() }
+                    .setOnDismissListener {
+                        finish()
+                    }
                     .show()
                 return@launch
             }
@@ -192,27 +211,37 @@ class ReviewActivity : AppCompatActivity() {
             viewModel.loadPaymentProviderApps()
 
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
-                    when (paymentProviderAppsState) {
-                        is PaymentProviderAppsState.Error -> {
-                            binding.progress.visibility = View.INVISIBLE
+                launch {
+                    viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
+                        when (paymentProviderAppsState) {
+                            is PaymentProviderAppsState.Error -> {
+                                binding.progress.visibility = View.INVISIBLE
 
-                            AlertDialog.Builder(this@ReviewActivity)
-                                .setTitle(R.string.failed_to_load_bank_apps)
-                                .setMessage(paymentProviderAppsState.throwable.message)
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
+                                AlertDialog.Builder(this@ReviewActivity)
+                                    .setTitle(R.string.failed_to_load_bank_apps)
+                                    .setMessage(paymentProviderAppsState.throwable.message)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .show()
+                            }
+
+                            PaymentProviderAppsState.Loading -> {
+                                binding.progress.visibility = View.VISIBLE
+                            }
+
+                            is PaymentProviderAppsState.Success -> {
+                                binding.progress.visibility = View.INVISIBLE
+                            }
+
+                            PaymentProviderAppsState.Nothing -> return@collect
                         }
+                    }
+                }
 
-                        PaymentProviderAppsState.Loading -> {
-                            binding.progress.visibility = View.VISIBLE
+                launch {
+                    viewModel.giniHealth.paymentFlow.collect { extractedPaymentDetails ->
+                        if (extractedPaymentDetails is ResultWrapper.Success) {
+                            doctorName = extractedPaymentDetails.value.extractions?.specificExtractions?.get(MED_PROVIDER)
                         }
-
-                        is PaymentProviderAppsState.Success -> {
-                            binding.progress.visibility = View.INVISIBLE
-                        }
-
-                        PaymentProviderAppsState.Nothing -> return@collect
                     }
                 }
             }
@@ -230,6 +259,7 @@ class ReviewActivity : AppCompatActivity() {
         private val LOG = LoggerFactory.getLogger(ReviewActivity::class.java)
 
         private const val EXTRA_URIS = "EXTRA_URIS"
+        private const val MED_PROVIDER = "medical_service_provider"
 
         fun getStartIntent(context: Context, pages: List<Uri> = emptyList(), paymentComponentConfiguration: PaymentComponentConfiguration?): Intent =
             Intent(context, ReviewActivity::class.java).apply {

@@ -81,4 +81,56 @@
         android:layout_marginTop="@dimen/gc_medium_12"
         android:text="@string/allow_screenshots_label" />
 
+    <TextView
+        android:id="@+id/textView_customClientIdTitle"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/gini_client_id_label"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_ClientId"
+        style="?attr/textInputOutlinedStyle"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editText_clientId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textColor="@drawable/edittext_selector"
+            android:textSize="18sp"
+            tools:text="ClientId" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/textView_customClientSecretTitle"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/client_secret_label"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_clientSecret"
+        style="?attr/textInputOutlinedStyle"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editText_clientSecret"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textColor="@drawable/edittext_selector"
+            android:textSize="18sp"
+            tools:text="CloentSecret" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 </LinearLayout>

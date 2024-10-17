@@ -31,14 +31,14 @@ import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
-import net.gini.android.capture.internal.util.CancelListener;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -48,7 +48,6 @@ import net.gini.android.capture.view.NavigationBarTopAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 

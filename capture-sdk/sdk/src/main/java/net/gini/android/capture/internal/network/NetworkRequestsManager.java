@@ -233,7 +233,8 @@ public class NetworkRequestsManager {
                                         mApiDocumentIds.put(document.getId(),
                                                 result.getGiniApiDocumentId());
                                         future.complete(new NetworkRequestResult<>(document,
-                                                result.getGiniApiDocumentId()));
+                                                result.getGiniApiDocumentId(),
+                                                result.getGiniApiDocumentFilename()));
                                     }
 
                                     @Override
@@ -404,7 +405,8 @@ public class NetworkRequestsManager {
                                         document.getId());
                                 future.complete(
                                         new NetworkRequestResult<>(document,
-                                                result.getGiniApiDocumentId()));
+                                                result.getGiniApiDocumentId(),
+                                                result.getGiniApiDocumentFilename()));
                             }
 
                             @Override
@@ -519,8 +521,12 @@ public class NetworkRequestsManager {
                                 mApiDocumentIds.put(multiPageDocument.getId(),
                                         result.getGiniApiDocumentId());
                                 future.complete(
-                                        new AnalysisNetworkRequestResult<>(multiPageDocument,
-                                                result.getGiniApiDocumentId(), result));
+                                        new AnalysisNetworkRequestResult<>(
+                                                multiPageDocument,
+                                                result.getGiniApiDocumentId(),
+                                                result.getGiniApiDocumentFilename(),
+                                                result)
+                                );
                             }
 
                             @Override
