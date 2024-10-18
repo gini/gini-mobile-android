@@ -6,6 +6,10 @@ on:
       - 'bank-sdk;[0-9]+.[0-9]+.[0-9]+'
       - 'bank-sdk;[0-9]+.[0-9]+.[0-9]+-beta[0-9][0-9]'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
+
 jobs:
   check:
     uses: ./.github/workflows/bank-sdk.check.yml

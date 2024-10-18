@@ -27,6 +27,10 @@ on:
       MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
         required: true
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
+
 jobs:
   test:
     runs-on: ubuntu-latest

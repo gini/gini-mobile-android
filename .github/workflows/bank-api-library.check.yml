@@ -21,6 +21,10 @@ on:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
+
 jobs:
   test:
     runs-on: ubuntu-latest

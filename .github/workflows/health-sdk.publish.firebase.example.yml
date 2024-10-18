@@ -9,6 +9,10 @@ on:
       - 'core-api-library/**'
       - 'gradle/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
+
 jobs:
   check:
     uses: ./.github/workflows/health-sdk.check.yml

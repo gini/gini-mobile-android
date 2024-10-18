@@ -16,6 +16,10 @@ on:
       - 'gradle/**'
   workflow_call:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
+
 jobs:
   test:
     runs-on: ubuntu-latest
