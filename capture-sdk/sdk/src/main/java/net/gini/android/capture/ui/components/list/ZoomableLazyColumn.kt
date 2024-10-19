@@ -1,7 +1,6 @@
 package net.gini.android.capture.ui.components.list
 
 import android.util.Log
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -19,9 +18,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -86,9 +83,6 @@ fun ZoomableLazyColumn(
                     },
                     onGestureStart = {
 
-                    },
-                    onDoubleClick = {
-                        scale += 1f
                     }
                 )
             }
@@ -124,7 +118,6 @@ private suspend fun PointerInputScope.detectTransformGestures(
         changes: List<PointerInputChange>
     ) -> Unit,
     onGestureEnd: (PointerInputChange) -> Unit = {},
-    onDoubleClick: () -> Unit = {},
 ) {
     var lastTouchTime = 0L
 
