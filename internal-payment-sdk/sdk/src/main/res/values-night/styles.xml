@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- region Theme -->
+
+    <style name="GiniPaymentTheme" parent="Root.GiniPaymentTheme">
+        <item name="colorPrimary">@color/gps_accent_01</item>
+        <item name="colorPrimaryDark">@color/gps_dark_01</item>
+        <item name="colorOnPrimary">@color/gps_light_01</item>
+        <item name="colorSurface">@color/gps_light_07</item>
+        <item name="backgroundColor">@color/gps_dark_01</item>
+        <item name="colorOnBackground">@color/gps_light_01</item>
+        <item name="dividerColor">@color/gps_dark_02</item>
+        <item name="colorSurfaceInverse">@color/gps_light_04</item>
+        <item name="colorOnSurfaceInverse">@color/gps_dark_02</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- endregion -->
+
+    <!-- region Widgets -->
+
+    <style name="GiniPaymentTheme.Widget.Button.OutlinedButton" parent="Root.GiniPaymentTheme.Widget.Button.OutlinedButton">
+        <item name="strokeColor">@color/gps_light_05</item>
+    </style>
+
+    <style name="GiniPaymentTheme.Widget.Button.IconButton" parent="Root.GiniPaymentTheme.Widget.Button.IconButton">
+        <item name="iconTint">@color/gps_light_02</item>
+    </style>
+
+    <style name="GiniPaymentTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniPaymentTheme.ThemeOverlay.BottomSheetDialog">
+        <item name="colorPrimary">@color/gps_light_07</item>
+        <item name="bottomSheetStyle">@style/GiniPaymentTheme.Widget.BottomSheet</item>
+    </style>
+
+    <style name="GiniPaymentTheme.Widget.BottomSheet" parent="Root.GiniPaymentTheme.Widget.BottomSheet">
+        <item name="backgroundTint">@color/gps_light_07</item>
+    </style>
+
+    <style name="GiniPaymentTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniPaymentTheme.Widget.BottomSheet.DragHandle">
+        <item name="tint">@color/gps_light_05</item>
+    </style>
+    <!-- endregion -->
+    
+</resources>

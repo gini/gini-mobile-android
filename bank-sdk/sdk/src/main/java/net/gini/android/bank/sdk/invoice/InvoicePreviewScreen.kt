@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,8 +27,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import net.gini.android.bank.sdk.invoice.colors.SkontoInvoicePreviewScreenColors
-import net.gini.android.bank.sdk.invoice.colors.section.SkontoInvoicePreviewScreenFooterColors
+import net.gini.android.bank.sdk.invoice.colors.InvoicePreviewScreenColors
+import net.gini.android.bank.sdk.invoice.colors.section.InvoicePreviewScreenFooterColors
 import net.gini.android.capture.ui.components.list.ZoomableLazyColumn
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -37,26 +38,33 @@ internal fun InvoicePreviewScreen(
     navigateBack: () -> Unit,
     viewModel: InvoicePreviewViewModel,
     modifier: Modifier = Modifier,
-    colors: SkontoInvoicePreviewScreenColors = SkontoInvoicePreviewScreenColors.colors()
+    colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors()
 ) {
     val state by viewModel.stateFlow.collectAsState()
 
-    SkontoInvoiceScreenContent(
+    InvoiceScreenContent(
         modifier = modifier,
-        state = state,
         onCloseClicked = navigateBack,
         colors = colors,
+        isLoading = state.isLoading,
+        screenTitle = state.screenTitle,
+        infoTextLines = state.infoTextLines,
+        images = state.images
     )
 }
 
 private const val DEFAULT_ZOOM = 1f
 
 @Composable
-private fun SkontoInvoiceScreenContent(
-    state: InvoicePreviewFragmentState,
+internal fun InvoiceScreenContent(
+    isLoading: Boolean,
+    screenTitle: String,
+    infoTextLines: List<String>,
+    images: List<Bitmap>,
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    colors: SkontoInvoicePreviewScreenColors = SkontoInvoicePreviewScreenColors.colors(),
+    colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
+    topBarActions: @Composable RowScope.() -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -69,7 +77,7 @@ private fun SkontoInvoiceScreenContent(
         ) {
 
             AnimatedVisibility(
-                modifier = Modifier.align(Alignment.Center), visible = state.isLoading
+                modifier = Modifier.align(Alignment.Center), visible = isLoading
             ) {
                 CircularProgressIndicator()
             }
@@ -78,16 +86,16 @@ private fun SkontoInvoiceScreenContent(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(top = 64.dp),
-                visible = !state.isLoading
+                visible = !isLoading
             ) {
                 ImagesList(
                     modifier = Modifier,
-                    pages = state.images
+                    pages = images
                 )
             }
 
             GiniTopBar(
-                title = state.screenTitle,
+                title = screenTitle,
                 colors = colors.topBarColors,
                 navigationIcon = {
                     Icon(
@@ -98,12 +106,13 @@ private fun SkontoInvoiceScreenContent(
                         contentDescription = null,
                         tint = colors.topBarColors.navigationContentColor
                     )
-                }
+                },
+                actions = topBarActions,
             )
 
             Footer(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                infoTextLines = state.infoTextLines,
+                infoTextLines = infoTextLines,
                 colors = colors.footerColors,
             )
         }
@@ -115,7 +124,7 @@ private fun SkontoInvoiceScreenContent(
 private fun Footer(
     infoTextLines: List<String>,
     modifier: Modifier = Modifier,
-    colors: SkontoInvoicePreviewScreenFooterColors,
+    colors: InvoicePreviewScreenFooterColors,
 ) {
 
     Column(
@@ -163,32 +172,14 @@ private fun ImagesList(
 
 @Preview(showBackground = true)
 @Composable
-private fun SkontoInvoiceScreenContentPreviewZoomOut() {
+private fun InvoiceScreenContentPreview() {
     GiniTheme {
-        SkontoInvoiceScreenContent(
-            state = InvoicePreviewFragmentState(
-                screenTitle = "Screen Title",
-                isLoading = true,
-                images = emptyList(),
-                infoTextLines = listOf("Line 1", "Line 2"),
-            ),
+        InvoiceScreenContent(
             onCloseClicked = {},
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SkontoInvoiceScreenContentPreviewZoomIn() {
-    GiniTheme {
-        SkontoInvoiceScreenContent(
-            state = InvoicePreviewFragmentState(
-                screenTitle = "Screen Title",
-                isLoading = true,
-                images = emptyList(),
-                infoTextLines = listOf("Line 1", "Line 2"),
-            ),
-            onCloseClicked = {},
+            screenTitle = "Screen Title",
+            isLoading = true,
+            images = emptyList(),
+            infoTextLines = listOf("Line 1", "Line 2"),
         )
     }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gps_faq_label"
+    style="@style/GiniPaymentTheme.Typography.Body1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/gps_large_24"
+    android:paddingVertical="@dimen/gps_large_24"/>

@@ -23,7 +23,8 @@ android {
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+
+        testOptions.targetSdk = libs.versions.android.targetSdk.get().toInt()
 
         // Use the test runner with JUnit4 support
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -102,11 +103,11 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 }
 
 dependencies {
-    val healthApiLibrary = project(":health-api-library:library")
+    val internalPaymentLibrary = project(":internal-payment-sdk:sdk")
     if (properties["createSBOM"] == "true") {
-        implementationProjectDependencyForSBOM(healthApiLibrary)
+        implementationProjectDependencyForSBOM(internalPaymentLibrary)
     } else {
-        implementation(healthApiLibrary)
+        implementation(internalPaymentLibrary)
     }
 
     api(libs.slf4j.api)

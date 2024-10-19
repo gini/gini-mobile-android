@@ -219,7 +219,7 @@ private class ExtractionsAdapter(
                 ).apply {
                     this.transactionDocView.onDocumentClick { doc, infoTextLines ->
                         this.itemView.context.startActivity(
-                            InvoicePreviewActivity.newIntent(
+                            TransactionDocInvoicePreviewActivity.newIntent(
                                 screenTitle = doc.documentFileName,
                                 context = this.itemView.context,
                                 documentId = doc.giniApiDocumentId,

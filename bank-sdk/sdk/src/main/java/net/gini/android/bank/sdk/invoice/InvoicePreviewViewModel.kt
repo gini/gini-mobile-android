@@ -1,14 +1,10 @@
 package net.gini.android.bank.sdk.invoice
 
-import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import net.gini.android.bank.sdk.invoice.image.InvoicePreviewPageImageProcessor
-import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentLayoutNetworkService
-import net.gini.android.bank.sdk.invoice.network.InvoicePreviewDocumentPagesNetworkService
-import net.gini.android.bank.sdk.invoice.network.InvoicePreviewFileNetworkService
+import net.gini.android.bank.sdk.invoice.usecase.LoadInvoiceBitmapsUseCase
 import net.gini.android.capture.network.model.GiniCaptureBox
 
 internal class InvoicePreviewViewModel(
@@ -16,10 +12,7 @@ internal class InvoicePreviewViewModel(
     private val documentId: String,
     private val highlightBoxes: List<GiniCaptureBox>,
     private val infoTextLines: List<String>,
-    private val invoicePreviewDocumentLayoutNetworkService: InvoicePreviewDocumentLayoutNetworkService,
-    private val invoicePreviewDocumentPagesNetworkService: InvoicePreviewDocumentPagesNetworkService,
-    private val invoicePreviewFileNetworkService: InvoicePreviewFileNetworkService,
-    private val invoicePreviewPageImageProcessor: InvoicePreviewPageImageProcessor,
+    private val loadInvoiceBitmapsUseCase: LoadInvoiceBitmapsUseCase,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<InvoicePreviewFragmentState> =
@@ -38,32 +31,7 @@ internal class InvoicePreviewViewModel(
     }
 
     private fun init() = viewModelScope.launch {
-
-        val layout = runCatching {
-            invoicePreviewDocumentLayoutNetworkService.getLayout(documentId)
-        }.getOrNull()
-        val pages = kotlin.runCatching {
-            invoicePreviewDocumentPagesNetworkService.getDocumentPages(documentId)
-        }.getOrNull()
-
-        val bitmaps = pages?.map { documentPage ->
-            val bitmapBytes =
-                invoicePreviewFileNetworkService.getFile(documentPage.getSmallestImage()!!)
-            val bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.size)
-            val pageHighlights = highlightBoxes.filter { it.pageNumber == documentPage.pageNumber }
-
-            val skontoPageLayout = layout?.pages?.find { documentPage.pageNumber == it.number }
-
-
-            pageHighlights.let {
-                invoicePreviewPageImageProcessor.processImage(
-                    image = bitmap,
-                    highlightBoxes = pageHighlights,
-                    skontoPageLayout = skontoPageLayout
-                        ?: error("Layout for page #$${documentPage.pageNumber} not found")
-                )
-            }
-        }
+        val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
 
         val currentState = stateFlow.value
         if (bitmaps != null) {

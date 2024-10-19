@@ -10,6 +10,7 @@ import net.gini.android.bank.sdk.capture.skonto.skontoScreenModule
 import net.gini.android.bank.sdk.capture.skonto.usecase.di.skontoUseCaseModule
 import net.gini.android.bank.sdk.invoice.invoicePreviewScreenModule
 import net.gini.android.bank.sdk.transactiondocs.di.transactionListModule
+import net.gini.android.bank.sdk.transactiondocs.ui.invoice.transactionDocInvoicePreviewScreenModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.Koin
 import org.koin.dsl.koinApplication
@@ -63,6 +64,7 @@ private val useCaseModules = listOf(
 private val screenModules = listOf(
     skontoScreenModule,
     invoicePreviewScreenModule,
+    transactionDocInvoicePreviewScreenModule,
     captureFlowFragmentModule,
     digitalInvoiceSkontoScreenModule
 )
