@@ -245,7 +245,7 @@ class GiniHealthTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
         // Then
-        Truth.assertThat(giniHealth.getPaymentReviewFragment("", paymentComponent, reviewConfiguration)).isInstanceOf(
+        Truth.assertThat(giniHealth.getPaymentFragmentWithDocument("", paymentComponent, reviewConfiguration)).isInstanceOf(
             ReviewFragment::class.java)
     }
 
@@ -260,6 +260,6 @@ class GiniHealthTest {
             SelectedPaymentProviderAppState.NothingSelected)
 
         // When trying to instantiate fragment, then exception should be thrown
-        giniHealth.getPaymentReviewFragment("", paymentComponent, reviewConfiguration)
+        giniHealth.getPaymentFragmentWithDocument("", paymentComponent, reviewConfiguration)
     }
 }

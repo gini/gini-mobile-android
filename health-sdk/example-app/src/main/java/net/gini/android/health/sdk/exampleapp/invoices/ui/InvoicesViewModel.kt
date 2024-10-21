@@ -11,7 +11,6 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
-import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
@@ -65,15 +64,14 @@ class InvoicesViewModel(
         }
     }
 
-    fun getPaymentReviewFragment(documentId: String?): Result<ReviewFragment> {
+    fun getPaymentReviewFragment(documentId: String?): Result<PaymentFragment> {
         val documentWithExtractions =
             invoicesRepository.invoicesFlow.value.find { it.documentId == documentId }
 
         return if (documentWithExtractions != null) {
             return try {
-                val paymentReviewFragment = invoicesRepository.giniHealth.getPaymentReviewFragment(
+                val paymentReviewFragment = invoicesRepository.giniHealth.getPaymentFragmentWithDocument(
                     documentWithExtractions.documentId,
-                    giniPaymentModule.paymentComponent,
                     ReviewConfiguration(showCloseButton = true)
                 )
                 Result.success(paymentReviewFragment)

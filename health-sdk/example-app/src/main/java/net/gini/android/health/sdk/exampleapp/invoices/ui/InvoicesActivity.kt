@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -29,11 +30,8 @@ import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsFragment
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
-import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
 import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
-import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
@@ -118,8 +116,8 @@ open class InvoicesActivity : AppCompatActivity() {
                         viewModel.getPaymentFragmentForPaymentDetails(result)
                             .onSuccess { paymentFragment ->
                                 supportFragmentManager.beginTransaction()
-                                    .replace(R.id.fragment_container, paymentFragment, REVIEW_FRAGMENT_TAG)
-                                    .addToBackStack(null)
+                                    .add(R.id.fragment_container, paymentFragment, REVIEW_FRAGMENT_TAG)
+                                    .addToBackStack(paymentFragment::class.java.name)
                                     .commit()
                             }
                             .onFailure { error ->
@@ -145,47 +143,10 @@ open class InvoicesActivity : AppCompatActivity() {
         viewModel.loadPaymentProviderApps()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), viewModel.giniPaymentModule.paymentComponent)
-        binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
-
-        viewModel.giniPaymentModule.paymentComponent.listener = object: PaymentComponent.Listener {
-            override fun onMoreInformationClicked() {
-                MoreInformationFragment.newInstance(viewModel.giniPaymentModule.paymentComponent).apply {
-                    supportFragmentManager.beginTransaction()
-                        .add(R.id.fragment_container,this, this::class.java.simpleName)
-                        .addToBackStack(this::class.java.simpleName)
-                        .commit()
-                }
-            }
-
-            override fun onBankPickerClicked() {
-                BankSelectionBottomSheet.newInstance(viewModel.giniPaymentModule.paymentComponent).apply {
-                    show(supportFragmentManager, BankSelectionBottomSheet::class.simpleName)
-                }
-            }
-
-            override fun onPayInvoiceClicked(documentId: String?) {
-                LOG.debug("Pay invoice clicked")
-
-                viewModel.getPaymentReviewFragment(documentId)
-                    .onSuccess { reviewFragment ->
-                        reviewFragment.listener = reviewFragmentListener
-
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, reviewFragment, REVIEW_FRAGMENT_TAG)
-                            .addToBackStack(null)
-                            .commit()
-                    }
-                    .onFailure { throwable ->
-                        LOG.error("Error getting payment review fragment", throwable)
-                        AlertDialog.Builder(this@InvoicesActivity)
-                            .setTitle(getString(R.string.could_not_start_payment_review))
-                            .setMessage(throwable.message)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show()
-                    }
-            }
+        binding.invoicesList.adapter = InvoicesAdapter(emptyList()) { documentId ->
+            startPaymentFlowForDocumentId(documentId)
         }
+        binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
 
         // Reattach the listener to the ReviewFragment if it is being shown (in case of configuration changes)
         supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)?.let {
@@ -216,6 +177,27 @@ open class InvoicesActivity : AppCompatActivity() {
     private fun showLoadingIndicator(binding: ActivityInvoicesBinding) {
         binding.loadingIndicatorContainer.visibility = View.VISIBLE
         binding.loadingIndicator.visibility = View.VISIBLE
+    }
+
+    private fun startPaymentFlowForDocumentId(documentId: String) {
+        viewModel.loadPaymentProviderApps()
+        viewModel.getPaymentReviewFragment(documentId)
+            .onSuccess { reviewFragment ->
+//                        reviewFragment.listener = reviewFragmentListener
+
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, reviewFragment, REVIEW_FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit()
+            }
+            .onFailure { throwable ->
+                LOG.error("Error getting payment review fragment", throwable)
+                AlertDialog.Builder(this@InvoicesActivity)
+                    .setTitle(getString(R.string.could_not_start_payment_review))
+                    .setMessage(throwable.message)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
+            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -254,30 +236,32 @@ open class InvoicesActivity : AppCompatActivity() {
 
 class InvoicesAdapter(
     var dataSet: List<InvoiceItem>,
-    private val paymentComponent: PaymentComponent
+    var listener: (String) -> Unit
 ) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View, paymentComponent: PaymentComponent) :
+    class ViewHolder(view: View) :
         RecyclerView.ViewHolder(view) {
         val recipient: TextView
         val dueDate: TextView
         val amount: TextView
-        val paymentComponentView: PaymentComponentView
-
+        val payInvoiceButton: Button
         init {
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
-            this.paymentComponentView = view.findViewById(R.id.payment_component)
-            this.paymentComponentView.paymentComponent = paymentComponent
+            payInvoiceButton = view.findViewById(R.id.pay_invoice_button)
         }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_invoice, viewGroup, false)
-        return ViewHolder(view, paymentComponent)
+        val viewHolder =  ViewHolder(view)
+        viewHolder.payInvoiceButton.setOnClickListener {
+            listener.invoke(dataSet[viewHolder.adapterPosition].documentId)
+        }
+        return viewHolder
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
@@ -286,10 +270,6 @@ class InvoicesAdapter(
         viewHolder.recipient.text = invoiceItem.recipient ?: ""
         viewHolder.dueDate.text = invoiceItem.dueDate ?: ""
         viewHolder.amount.text = invoiceItem.amount ?: ""
-
-        viewHolder.paymentComponentView.prepareForReuse()
-        viewHolder.paymentComponentView.isPayable = invoiceItem.isPayable
-        viewHolder.paymentComponentView.documentId = invoiceItem.documentId
     }
 
     override fun getItemCount() = dataSet.size

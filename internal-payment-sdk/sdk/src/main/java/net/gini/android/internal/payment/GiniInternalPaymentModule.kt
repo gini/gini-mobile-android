@@ -90,7 +90,7 @@ class GiniInternalPaymentModule(private val context: Context,
 
     var paymentComponent = PaymentComponent(context, this)
     private val openWithPreferences = OpenWithPreferences(context)
-    private val paymentComponentPreferences = PaymentComponentPreferences(context)
+    val paymentComponentPreferences = PaymentComponentPreferences(context)
 
     private val _paymentFlow =
         MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
@@ -118,7 +118,7 @@ class GiniInternalPaymentModule(private val context: Context,
 
     val eventsFlow: SharedFlow<InternalPaymentEvents> = _eventsFlow
 
-    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
+    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?) = giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
     suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
 
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()

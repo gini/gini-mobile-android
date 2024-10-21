@@ -23,8 +23,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentHealthBinding
+import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentDetails
@@ -181,7 +183,6 @@ class PaymentFragment private constructor(
         binding.setStateListeners()
 
         viewModel.paymentComponent.listener = paymentComponentListener
-
         viewModel.loadPaymentProviderApps()
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -212,7 +213,15 @@ class PaymentFragment private constructor(
                 }
             }
         }
-        if (viewModel.getLastBackstackEntry() is DisplayedScreen.Nothing) {
+
+        // if is returning user
+        if (viewModel.giniInternalPaymentModule.getReturningUser()) {
+            if (viewModel.documentId != null) {
+                showReviewFragment()
+            } else {
+                showReviewBottomDialog()
+            }
+        } else {
             showPaymentComponentBottomSheet()
         }
         return binding.root
@@ -266,9 +275,11 @@ class PaymentFragment private constructor(
     }
 
     internal fun handleBackFlow() {
-        childFragmentManager.popBackStackImmediate()
         viewModel.popBackStack()
 
+        if (childFragmentManager.backStackEntryCount > 0) {
+            childFragmentManager.popBackStackImmediate()
+        }
         if (childFragmentManager.backStackEntryCount == 0) {
             when (viewModel.getLastBackstackEntry()) {
                 DisplayedScreen.BankSelectionBottomSheet -> {
@@ -287,6 +298,13 @@ class PaymentFragment private constructor(
                     ).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
                 }
                 DisplayedScreen.Nothing -> viewModel.setFlowCancelled()
+                DisplayedScreen.ReviewFragment -> if (viewModel.giniInternalPaymentModule.getReturningUser()) viewModel.setFlowCancelled() else {
+                    PaymentComponentBottomSheet.newInstance(
+                        viewModel.paymentComponent,
+                        viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
+                        viewModel
+                    ).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
+                }
                 else -> {
 
                 }
@@ -297,7 +315,11 @@ class PaymentFragment private constructor(
     @VisibleForTesting
     internal fun handlePayFlow() {
         if (viewModel.paymentFlowConfiguration?.shouldShowReviewFragment == true) {
-            showReviewBottomDialog()
+            if (viewModel.documentId == null) {
+                showReviewBottomDialog()
+            } else {
+                showReviewFragment()
+            }
             return
         }
 
@@ -323,6 +345,19 @@ class PaymentFragment private constructor(
             paymentComponent = viewModel.paymentComponent,
         )
         reviewBottomSheet.show(childFragmentManager, ReviewBottomSheet::class.java.name)
+    }
+
+    private fun showReviewFragment() {
+        viewModel.addToBackStack(DisplayedScreen.ReviewFragment)
+        val reviewFragment = ReviewFragment.newInstance(
+            giniHealth = viewModel.giniHealth,
+            paymentComponent = viewModel.giniInternalPaymentModule.paymentComponent,
+            documentId = viewModel.documentId!!
+        )
+        childFragmentManager.beginTransaction()
+            .add(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
+            .addToBackStack(reviewFragment::class.java.name)
+            .commit()
     }
 
     @VisibleForTesting
@@ -406,24 +441,25 @@ class PaymentFragment private constructor(
     }
 
     companion object {
-        fun newInstance(giniInternalPaymentModule: GiniInternalPaymentModule, paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration,
+        fun newInstance(giniHealth: GiniHealth, paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration,
                         viewModelFactory : ViewModelProvider.Factory =
                             PaymentFlowViewModel.Factory(
                                 paymentDetails,
                                 null,
                                 paymentFlowConfiguration,
-                                giniInternalPaymentModule
+                                giniHealth
                             )
         ) = PaymentFragment(viewModelFactory)
 
-//        fun newInstance(giniInternalPaymentModule: GiniInternalPaymentModule, documentId: String, paymentFlowConfiguration: PaymentFlowConfiguration,
-//                        viewModelFactory : ViewModelProvider.Factory =
-//                            PaymentFlowViewModel.Factory(
-//                                documentId,
-//                                paymentFlowConfiguration,
-//                                giniInternalPaymentModule
-//                            )
-//        ) = PaymentFragment(viewModelFactory)
+        fun newInstance(giniHealth: GiniHealth, documentId: String, paymentFlowConfiguration: PaymentFlowConfiguration,
+                        viewModelFactory : ViewModelProvider.Factory =
+                            PaymentFlowViewModel.Factory(
+                                null,
+                                documentId,
+                                paymentFlowConfiguration,
+                                giniHealth
+                            )
+        ) = PaymentFragment(viewModelFactory)
     }
 }
 

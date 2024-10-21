@@ -28,8 +28,6 @@ import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.isValidIban
@@ -248,30 +246,15 @@ class GiniHealth(
      * @param configuration The configuration for the [ReviewFragment]
      * @throws IllegalStateException If no payment provider app has been selected
      */
-    fun getPaymentReviewFragment(documentId: String, paymentComponent: PaymentComponent, configuration: ReviewConfiguration): ReviewFragment {
+    fun getPaymentFragmentWithDocument(documentId: String, configuration: ReviewConfiguration): PaymentFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
         giniInternalPaymentModule.setPaymentDetails(null)
         _paymentFlow.value = ResultWrapper.Loading()
-        when (val selectedPaymentProviderAppState = paymentComponent.selectedPaymentProviderAppFlow.value) {
-            is SelectedPaymentProviderAppState.AppSelected -> {
-                LOG.debug("Creating ReviewFragment for selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)
-
-                return ReviewFragment.newInstance(
-                    this,
-                    configuration = configuration,
-                    paymentComponent = paymentComponent,
-                    documentId = documentId
-                )
-            }
-
-            SelectedPaymentProviderAppState.NothingSelected -> {
-                LOG.error("Cannot create ReviewFragment: No selected payment provider app")
-
-                val exception =
-                    IllegalStateException("Cannot create ReviewFragment: No selected payment provider app")
-                throw exception
-            }
-        }
+        return PaymentFragment.newInstance(
+            giniHealth = this,
+            documentId = documentId,
+            paymentFlowConfiguration = PaymentFlowConfiguration(shouldHandleErrorsInternally = configuration.handleErrorsInternally, shouldShowReviewFragment = true)
+        )
     }
 
     fun getPaymentFragmentWithoutDocument(paymentDetails: PaymentDetails, configuration: PaymentFlowConfiguration): PaymentFragment {
@@ -285,7 +268,7 @@ class GiniHealth(
         giniInternalPaymentModule.setPaymentDetails(paymentDetails.toCommonPaymentDetails())
         _paymentFlow.value = ResultWrapper.Loading()
         val paymentFragment = PaymentFragment.newInstance(
-            giniInternalPaymentModule = giniInternalPaymentModule,
+            giniHealth = this,
             paymentDetails = paymentDetails.toCommonPaymentDetails(),
             paymentFlowConfiguration = configuration
         )

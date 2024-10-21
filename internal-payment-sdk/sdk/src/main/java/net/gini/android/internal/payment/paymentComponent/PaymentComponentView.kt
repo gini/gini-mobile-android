@@ -330,6 +330,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             }
             coroutineScope?.launch {
                 paymentComponent?.onPayInvoiceClicked(documentId)
+                dismissListener?.onButtonClick(Buttons.PAY_INVOICE)
             }
         }
         binding.gpsMoreInformation.setIntervalClickListener {

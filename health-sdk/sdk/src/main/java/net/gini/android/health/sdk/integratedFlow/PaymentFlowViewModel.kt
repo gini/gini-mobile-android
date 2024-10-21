@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
+import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.health.sdk.util.DisplayedScreen.Companion.toInternalDisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
@@ -24,10 +25,10 @@ import java.io.File
 import java.util.Stack
 
 internal class PaymentFlowViewModel(
-    internal var paymentDetails: PaymentDetails,
+    internal var paymentDetails: PaymentDetails?,
     internal var documentId: String?,
     val paymentFlowConfiguration: PaymentFlowConfiguration?,
-    override val giniInternalPaymentModule: GiniInternalPaymentModule
+    val giniHealth: GiniHealth
 ) : ViewModel(), FlowBottomSheetsManager, BackListener {
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
@@ -38,6 +39,7 @@ internal class PaymentFlowViewModel(
         extraBufferCapacity = 1,
     )
     override val paymentRequestFlow: MutableStateFlow<PaymentRequest?> = MutableStateFlow(null)
+    override val giniInternalPaymentModule: GiniInternalPaymentModule = giniHealth.giniInternalPaymentModule
 
     val paymentComponent = giniInternalPaymentModule.paymentComponent
 
@@ -61,6 +63,9 @@ internal class PaymentFlowViewModel(
         paymentFlowConfiguration?.let {
             paymentComponent.shouldCheckReturningUser = it.checkForReturningUser
             paymentComponent.bankPickerRows = if (it.paymentComponentOnTwoRows) BankPickerRows.TWO else BankPickerRows.SINGLE
+        }
+        documentId?.let {
+            viewModelScope.launch { giniHealth.setDocumentForReview(it) }
         }
     }
 
@@ -108,7 +113,9 @@ internal class PaymentFlowViewModel(
     }
 
     fun onPayment() = viewModelScope.launch {
-        giniInternalPaymentModule.onPayment(initialSelectedPaymentProvider, paymentDetails)
+        paymentDetails?.let {
+            giniInternalPaymentModule.onPayment(initialSelectedPaymentProvider, it)
+        }
     }
 
     fun getPaymentProviderApp() = initialSelectedPaymentProvider
@@ -140,14 +147,14 @@ internal class PaymentFlowViewModel(
         giniInternalPaymentModule.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled)
     }
 
-    class Factory(private val paymentDetails: PaymentDetails, private val documentId: String?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, private val giniInternalPaymentModule: GiniInternalPaymentModule): ViewModelProvider.Factory {
+    class Factory(private val paymentDetails: PaymentDetails?, private val documentId: String?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, private val giniHealth: GiniHealth): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return PaymentFlowViewModel(
                 paymentDetails = paymentDetails,
                 documentId = documentId,
                 paymentFlowConfiguration = paymentFlowConfiguration,
-                giniInternalPaymentModule = giniInternalPaymentModule) as T
+                giniHealth = giniHealth) as T
         }
     }
 
