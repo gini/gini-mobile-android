@@ -1,15 +1,8 @@
 name: Build docs for Health SDK
 
 on:
-  push:
-    paths:
-      - 'health-sdk/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'health-sdk/**'
 
