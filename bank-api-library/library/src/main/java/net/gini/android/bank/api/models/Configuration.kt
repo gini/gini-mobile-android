@@ -5,7 +5,6 @@ data class Configuration(
     val isUserJourneyAnalyticsEnabled: Boolean,
     val isSkontoEnabled: Boolean,
     val isReturnAssistantEnabled: Boolean,
-    val mixpanelToken: String?,
     val amplitudeApiKey: String?,
     val transactionDocsEnabled: Boolean,
-    )
+)

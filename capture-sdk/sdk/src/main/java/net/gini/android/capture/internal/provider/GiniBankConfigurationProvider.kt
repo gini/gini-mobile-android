@@ -9,7 +9,6 @@ class GiniBankConfigurationProvider {
         isUserJourneyAnalyticsEnabled = false,
         isSkontoEnabled = false,
         isReturnAssistantEnabled = false,
-        mixpanelToken = "",
         amplitudeApiKey = "",
         isTransactionDocsEnabled = false,
     )

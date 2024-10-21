@@ -9,6 +9,5 @@ data class Configuration(
     val isSkontoEnabled: Boolean,
     val isReturnAssistantEnabled: Boolean,
     val isTransactionDocsEnabled: Boolean,
-    val mixpanelToken: String,
     val amplitudeApiKey: String
 )
