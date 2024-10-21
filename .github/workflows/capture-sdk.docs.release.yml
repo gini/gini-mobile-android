@@ -12,6 +12,10 @@ on:
       RELEASE_GITHUB_PASSWORD:
         required: true
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
+
 jobs:
   release-docs:
     runs-on: ubuntu-latest

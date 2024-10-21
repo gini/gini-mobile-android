@@ -6,6 +6,10 @@ on:
     paths:
       - 'capture-sdk/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
+
 jobs:
   build-docs:
     runs-on: ubuntu-latest
