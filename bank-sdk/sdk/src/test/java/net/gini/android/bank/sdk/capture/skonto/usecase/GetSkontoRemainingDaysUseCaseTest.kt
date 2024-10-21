@@ -9,9 +9,10 @@ class GetSkontoRemainingDaysUseCaseTest {
     @Test
     fun `Skonto remaining days should be calculated correctly`() {
         val useCase = GetSkontoRemainingDaysUseCase()
-        val dueDate = LocalDate.now().plusDays(10)
-        val remainingDays = useCase.execute(dueDate)
-        assert(remainingDays == 10)
+        assert(useCase.execute(LocalDate.now().plusDays(10)) == 10)
+        assert(useCase.execute(LocalDate.now().plusDays(0)) == 0)
+        // Past date should be as absolute value
+        assert(useCase.execute(LocalDate.now().minusDays(10)) == 10)
     }
 
 }

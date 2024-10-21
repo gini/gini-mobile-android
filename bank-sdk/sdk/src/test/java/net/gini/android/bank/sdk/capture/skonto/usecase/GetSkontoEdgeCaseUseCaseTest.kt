@@ -38,7 +38,7 @@ class GetSkontoEdgeCaseUseCaseTest {
     @Test
     fun `skonto last day edge case should be detected in case of due date tomorrow`() {
         val useCase = GetSkontoEdgeCaseUseCase()
-        val dueDate = LocalDate.now().plusDays(0)
+        val dueDate = LocalDate.now()
         val paymentMethod = SkontoData.SkontoPaymentMethod.Unspecified
         val result = useCase.execute(dueDate, paymentMethod)
         assert(result == SkontoEdgeCase.SkontoLastDay)
