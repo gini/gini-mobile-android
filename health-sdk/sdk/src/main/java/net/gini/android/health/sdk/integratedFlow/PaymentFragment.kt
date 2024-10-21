@@ -27,9 +27,10 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentHealthBinding
 import net.gini.android.health.sdk.review.ReviewFragment
+import net.gini.android.health.sdk.review.ReviewFragmentListener
+import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
 import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
@@ -121,8 +122,8 @@ class PaymentFragment private constructor(
 
     @VisibleForTesting
     internal var reviewViewListener: ReviewViewListener = object: ReviewViewListener {
-        override fun onPaymentButtonTapped(paymentDetails: PaymentDetails) {
-            viewModel.updatePaymentDetails(paymentDetails)
+        override fun onPaymentButtonTapped(paymentDetails: net.gini.android.internal.payment.api.model.PaymentDetails) {
+            viewModel.updatePaymentDetails(PaymentDetails(recipient = paymentDetails.recipient, iban = paymentDetails.iban, amount = paymentDetails.amount, purpose = paymentDetails.purpose))
             viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
         }
 
@@ -352,6 +353,17 @@ class PaymentFragment private constructor(
         val reviewFragment = ReviewFragment.newInstance(
             giniHealth = viewModel.giniHealth,
             paymentComponent = viewModel.giniInternalPaymentModule.paymentComponent,
+            listener = object: ReviewFragmentListener {
+                override fun onCloseReview() {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onToTheBankButtonClicked(paymentProviderName: String, paymentDetails: PaymentDetails) {
+                    viewModel.paymentDetails = paymentDetails
+                    viewModel.onPaymentButtonTapped(context?.externalCacheDir)
+                }
+
+            },
             documentId = viewModel.documentId!!
         )
         childFragmentManager.beginTransaction()

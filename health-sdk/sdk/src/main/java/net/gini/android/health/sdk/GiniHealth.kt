@@ -269,7 +269,7 @@ class GiniHealth(
         _paymentFlow.value = ResultWrapper.Loading()
         val paymentFragment = PaymentFragment.newInstance(
             giniHealth = this,
-            paymentDetails = paymentDetails.toCommonPaymentDetails(),
+            paymentDetails = paymentDetails,
             paymentFlowConfiguration = configuration
         )
         return paymentFragment

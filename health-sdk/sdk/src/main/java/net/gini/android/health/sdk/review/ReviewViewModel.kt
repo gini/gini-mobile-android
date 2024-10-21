@@ -3,9 +3,7 @@ package net.gini.android.health.sdk.review
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +14,6 @@ import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
-import net.gini.android.health.sdk.review.model.withFeedback
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.internal.payment.GiniInternalPaymentModule
@@ -25,17 +22,14 @@ import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProvide
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewComponent
-import net.gini.android.internal.payment.utils.FlowBottomSheetsManager
-import net.gini.android.internal.payment.utils.PaymentNextStep
 import org.slf4j.LoggerFactory
-import java.io.File
 
 internal class ReviewViewModel(
     val giniHealth: GiniHealth,
     val configuration: ReviewConfiguration,
     val paymentComponent: PaymentComponent,
     val documentId: String,
-) : ViewModel(), FlowBottomSheetsManager {
+) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
 
@@ -55,16 +49,7 @@ internal class ReviewViewModel(
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
 
-    override val giniInternalPaymentModule = giniHealth.giniInternalPaymentModule
-
-    override var openWithCounter: Int = 0
-    override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
-        extraBufferCapacity = 1,
-    )
-    override val paymentRequestFlow = MutableStateFlow<net.gini.android.internal.payment.api.model.PaymentRequest?>(null)
-    override val shareWithFlowStarted: MutableStateFlow<Boolean> = MutableStateFlow(false)
-
-    private val _paymentRequestFlow = MutableStateFlow<PaymentRequest?>(null)
+    val giniInternalPaymentModule = giniHealth.giniInternalPaymentModule
 
     init {
         viewModelScope.launch {
@@ -109,80 +94,16 @@ internal class ReviewViewModel(
         }
     }
 
-    fun startObservingOpenWithCount() {
-        startObservingOpenWithCount(viewModelScope, paymentProviderApp.value?.paymentProvider?.id ?: "")
-    }
-
     fun getPages(document: Document): List<DocumentPageAdapter.Page> {
         return (1..document.pageCount).map { pageNumber ->
             DocumentPageAdapter.Page(document.id, pageNumber)
         }
     }
 
-    override suspend fun getPaymentRequest(): net.gini.android.internal.payment.api.model.PaymentRequest = paymentComponent.paymentModule.getPaymentRequest(paymentProviderApp.value, paymentDetails.value.toCommonPaymentDetails())
-    override suspend fun getPaymentRequestDocument(paymentRequest: net.gini.android.internal.payment.api.model.PaymentRequest) = giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
-
-    fun onPayment() = viewModelScope.launch {
-        giniHealth.giniInternalPaymentModule.onPayment(
-            paymentProviderApp.value,
-            paymentDetails.value.toCommonPaymentDetails()
-        )
-    }
-
-    fun onBankOpened() {
-        // Schedule on the main dispatcher to allow all collectors to receive the current state before
-        // the state is overridden
-        viewModelScope.launch(Dispatchers.Main) {
-            giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction, viewModelScope)
-        }
-    }
-
-    private fun sendFeedback() {
-        viewModelScope.launch {
-            try {
-                when (val documentResult = giniHealth.documentFlow.value) {
-                    is ResultWrapper.Success -> paymentDetails.value.extractions?.let { extractionsContainer ->
-                        giniHealth.documentManager.sendFeedbackForExtractions(
-                            documentResult.value,
-                            extractionsContainer.specificExtractions,
-                            extractionsContainer.compoundExtractions.withFeedback(paymentDetails.value)
-                        )
-                    }
-
-                    is ResultWrapper.Error -> {}
-                    is ResultWrapper.Loading -> {}
-                }
-            } catch (ignored: Throwable) {
-                // Ignored since we don't want to interrupt the flow because of feedback failure
-            }
-        }
-    }
-
-    fun onPaymentButtonTapped(externalCacheDir: File?) {
-        checkNextStep(paymentProviderApp.value, externalCacheDir, viewModelScope)
-    }
-
-    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
-        sendFeedbackAndStartLoading()
-        sharePdf(paymentProviderApp.value, externalCacheDir, viewModelScope)
-    }
-
     fun retryDocumentReview() {
         viewModelScope.launch {
             giniHealth.retryDocumentReview()
         }
-    }
-
-    internal fun setOpenBankStateAfterShareWith() {
-        _paymentRequestFlow.value?.let {
-            giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(it), viewModelScope)
-        }
-    }
-
-    private fun sendFeedbackAndStartLoading() {
-        giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading, viewModelScope)
-        // TODO: first get the payment request and handle error before proceeding
-        sendFeedback()
     }
 
     fun loadPaymentDetails() {

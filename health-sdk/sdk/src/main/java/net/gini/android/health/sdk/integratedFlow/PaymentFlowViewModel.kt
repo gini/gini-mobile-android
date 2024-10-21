@@ -10,10 +10,13 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.review.model.PaymentDetails
+import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
+import net.gini.android.health.sdk.review.model.withFeedback
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.health.sdk.util.DisplayedScreen.Companion.toInternalDisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentComponent.BankPickerRows
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
@@ -113,8 +116,11 @@ internal class PaymentFlowViewModel(
     }
 
     fun onPayment() = viewModelScope.launch {
+        documentId?.let {
+            sendFeedback()
+        }
         paymentDetails?.let {
-            giniInternalPaymentModule.onPayment(initialSelectedPaymentProvider, it)
+            giniInternalPaymentModule.onPayment(initialSelectedPaymentProvider, it.toCommonPaymentDetails())
         }
     }
 
@@ -136,15 +142,39 @@ internal class PaymentFlowViewModel(
     }
 
     fun onForwardToSharePdfTapped(externalCacheDir: File?) {
+        documentId?.let {
+            sendFeedback()
+        }
         sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
     }
 
-    override suspend fun getPaymentRequest(): PaymentRequest = giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails)
+    override suspend fun getPaymentRequest(): PaymentRequest = giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails?.toCommonPaymentDetails())
 
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 
     fun setFlowCancelled() {
         giniInternalPaymentModule.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled)
+    }
+
+    private fun sendFeedback() {
+        viewModelScope.launch {
+            try {
+                when (val documentResult = giniHealth.documentFlow.value) {
+                    is ResultWrapper.Success -> paymentDetails?.extractions?.let { extractionsContainer ->
+                        giniHealth.documentManager.sendFeedbackForExtractions(
+                            documentResult.value,
+                            extractionsContainer.specificExtractions,
+                            extractionsContainer.compoundExtractions.withFeedback(paymentDetails!!)
+                        )
+                    }
+
+                    is ResultWrapper.Error -> {}
+                    is ResultWrapper.Loading -> {}
+                }
+            } catch (ignored: Throwable) {
+                // Ignored since we don't want to interrupt the flow because of feedback failure
+            }
+        }
     }
 
     class Factory(private val paymentDetails: PaymentDetails?, private val documentId: String?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, private val giniHealth: GiniHealth): ViewModelProvider.Factory {
