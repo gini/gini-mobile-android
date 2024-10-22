@@ -48,6 +48,7 @@ class DigitalInvoiceEditButtonTests {
     private fun clickPhotoPaymentAndUploadFile() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
+        Thread.sleep(6000)
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
