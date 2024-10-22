@@ -2,10 +2,13 @@ package net.gini.android.bank.sdk.exampleapp.ui.screens
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import net.gini.android.bank.sdk.exampleapp.R
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 
@@ -26,10 +29,7 @@ class MainScreen {
     }
 
     fun clickSettingButton() {
-        val fileList = UiScrollable(UiSelector().scrollable(true))
-//        val selectPdfFile = fileList.getChild(UiSelector().resourceId(R.id.text_giniBankVersion))
-        val item = fileList.getChild(UiSelector().resourceId("net.gini.android.bank.sdk.exampleapp:id/text_giniBankVersion"))
-        item.click()
-//        onView(withId(R.id.text_giniBankVersion)).perform(click())
+        onView(withId(R.id.text_giniBankVersion))
+            .perform(scrollTo(), click())
     }
 }
