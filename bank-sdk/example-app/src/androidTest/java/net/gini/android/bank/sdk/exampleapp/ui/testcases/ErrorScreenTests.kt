@@ -62,7 +62,7 @@ class ErrorScreenTests {
     fun test2_verifyNetworkErrorScreen() {
         errorScreen.disconnectTheInternetConnection()
         clickPhotoPaymentButtonAndSkipOnboarding()
-
+        idlingResource.waitForIdle()
         val errorTextVisible = errorScreen.checkErrorTextDisplayed()
         assertEquals(true, errorTextVisible)
         val errorHeaderVisible = errorScreen.checkErrorHeaderTextDisplayed( "There was a problem connecting to the internet")
