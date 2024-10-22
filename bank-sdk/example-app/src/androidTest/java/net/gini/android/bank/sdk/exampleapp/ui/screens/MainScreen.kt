@@ -2,10 +2,9 @@ package net.gini.android.bank.sdk.exampleapp.ui.screens
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import net.gini.android.bank.sdk.exampleapp.R
-import androidx.test.espresso.assertion.ViewAssertions.matches
 
 class MainScreen {
     fun assertDescriptionTitle(): Boolean {
@@ -24,6 +23,6 @@ class MainScreen {
     }
 
     fun clickSettingButton() {
-        onView(withId(R.id.text_giniBankVersion)).perform(click())
+        onView(withId(R.id.text_giniBankVersion)).perform(scrollTo(), click())
     }
 }
