@@ -37,6 +37,13 @@
         android:checked="false"
         android:text="@string/hide_powered_by_gini"/>
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/ghs_show_review_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/show_review_bottom_dialog"/>
+
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider3"
         android:layout_width="match_parent"

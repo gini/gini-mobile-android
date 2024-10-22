@@ -1,19 +1,18 @@
 package net.gini.android.health.sdk.exampleapp.configuration
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import net.gini.android.health.sdk.exampleapp.MainViewModel
 import net.gini.android.health.sdk.exampleapp.databinding.FragmentConfigurationBinding
-import net.gini.android.health.sdk.exampleapp.review.ReviewViewModel
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
-import org.koin.android.ext.android.bind
 
 class ConfigurationFragment: Fragment() {
 
@@ -57,6 +56,11 @@ class ConfigurationFragment: Fragment() {
 
         ghsHidePoweredBy.setOnCheckedChangeListener { _, newValue ->
             viewModel.setPaymentComponentConfiguration(PaymentComponentConfiguration(isPaymentComponentBranded = !newValue))
+        }
+
+        ghsShowReviewDialog.isChecked = viewModel.getPaymentFlowConfiguration()?.shouldShowReviewBottomDialog ?: false
+        ghsShowReviewDialog.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setPaymentFlowConfiguration(PaymentFlowConfiguration(shouldShowReviewBottomDialog = isChecked))
         }
     }
 

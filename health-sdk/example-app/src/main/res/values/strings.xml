@@ -21,6 +21,7 @@
     <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default values.</string>
     <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
     <string name="hide_powered_by_gini">Hide powered by Gini on payment component</string>
+    <string name="show_review_bottom_dialog">Show the review bottom dialog</string>
     <string name="gini_health_version">Gini Health SDK v: </string>
     <string name="sdk_language">SDK language: </string>
     <string name="recipient">Recipient</string>

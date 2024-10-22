@@ -37,6 +37,7 @@ class InvoicesViewModel(
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
 
+
     fun updateDocument() {
         viewModelScope.launch {
             with(invoicesRepository) {
@@ -89,9 +90,9 @@ class InvoicesViewModel(
         _startIntegratedPaymentFlow.tryEmit(paymentDetails)
     }
 
-    fun getPaymentFragmentForPaymentDetails(paymentDetails: PaymentDetails): Result<PaymentFragment> {
+    fun getPaymentFragmentForPaymentDetails(paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration?): Result<PaymentFragment> {
         try {
-            val paymentFragment = invoicesRepository.giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewFragment = false, shouldHandleErrorsInternally = true))
+            val paymentFragment = invoicesRepository.giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewBottomDialog = paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false, shouldHandleErrorsInternally = true))
             return Result.success(paymentFragment)
         } catch (e: Exception) {
             LOG.error("Error getting payment fragment without document", e)

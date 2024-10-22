@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
-import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 import java.io.File
@@ -24,6 +24,7 @@ class MainViewModel(
     private var currentIndex = 0
     private var currentFileUri: Uri? = null
     private var paymentComponentConfiguration : PaymentComponentConfiguration? = null
+    private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
 
     fun getNextPageUri(context: Context): Uri {
         val uriForFile = FileProvider.getUriForFile(
@@ -59,4 +60,10 @@ class MainViewModel(
     }
 
     fun getGiniHealthLanguage(context: Context) = giniHealth.getSDKLanguage(context)
+
+    fun getPaymentFlowConfiguration() = paymentFlowConfiguration
+
+    fun setPaymentFlowConfiguration(paymentFlowConfiguration: PaymentFlowConfiguration) {
+        this.paymentFlowConfiguration = paymentFlowConfiguration
+    }
 }

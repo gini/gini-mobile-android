@@ -18,6 +18,7 @@ import net.gini.android.health.sdk.exampleapp.databinding.FragmentOrderDetailsBi
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesViewModel
 import net.gini.android.health.sdk.exampleapp.orders.model.Order
 import net.gini.android.health.sdk.exampleapp.orders.model.getPaymentDetails
+import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 
 class OrderDetailsFragment : Fragment() {
@@ -57,6 +58,7 @@ class OrderDetailsFragment : Fragment() {
             amount.setTextIfDifferent(order.amount)
             purpose.setTextIfDifferent(order.purpose)
             payNowBtn.setIntervalClickListener {
+                this.root.hideKeyboard()
                 invoicesViewModel.startPaymentFlowWithoutDocument(orderDetailsViewModel.getOrder().getPaymentDetails())
             }
         }

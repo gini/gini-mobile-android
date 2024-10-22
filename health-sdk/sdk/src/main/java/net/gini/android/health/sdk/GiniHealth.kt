@@ -253,7 +253,7 @@ class GiniHealth(
         return PaymentFragment.newInstance(
             giniHealth = this,
             documentId = documentId,
-            paymentFlowConfiguration = PaymentFlowConfiguration(shouldHandleErrorsInternally = configuration.handleErrorsInternally, shouldShowReviewFragment = true)
+            paymentFlowConfiguration = PaymentFlowConfiguration(shouldHandleErrorsInternally = configuration.handleErrorsInternally, shouldShowReviewBottomDialog = true)
         )
     }
 

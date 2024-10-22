@@ -64,7 +64,9 @@ class MainActivity : AppCompatActivity() {
                 UploadActivity.getStartIntent(
                     this@MainActivity,
                     viewModel.pages.value.map { it.uri },
-                    viewModel.getPaymentComponentConfiguration())
+                    viewModel.getPaymentComponentConfiguration(),
+                    viewModel.getPaymentFlowConfiguration()
+                )
             )
         }
 
@@ -73,6 +75,9 @@ class MainActivity : AppCompatActivity() {
                 viewModel.getPaymentComponentConfiguration()?.let {
                     putExtra(PAYMENT_COMPONENT_CONFIG, it)
                 }
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                }
             })
         }
 
@@ -80,6 +85,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, AppCompatThemeInvoicesActivity::class.java).apply {
                 viewModel.getPaymentComponentConfiguration()?.let {
                     putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
                 }
             })
         }
@@ -111,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun importResult(uri: Uri?) {
         uri?.let {
-            startActivity(UploadActivity.getStartIntent(this, listOf(it), viewModel.getPaymentComponentConfiguration()))
+            startActivity(UploadActivity.getStartIntent(this, listOf(it), viewModel.getPaymentComponentConfiguration(), viewModel.getPaymentFlowConfiguration()))
         } ?: run {
             Toast.makeText(this, "No document received", Toast.LENGTH_LONG).show()
         }
@@ -142,5 +150,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
         val PAYMENT_COMPONENT_CONFIG = "payment_component_config"
+        const val PAYMENT_FLOW_CONFIGURATION = "payment_flow_config"
     }
 }

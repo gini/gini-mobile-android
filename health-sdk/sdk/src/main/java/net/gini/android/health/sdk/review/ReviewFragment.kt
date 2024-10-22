@@ -1,10 +1,5 @@
 package net.gini.android.health.sdk.review
 
-import android.content.ActivityNotFoundException
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -192,12 +187,7 @@ class ReviewFragment private constructor(
         TabLayoutMediator(indicator, pager) { tab, _ -> tab.view.isClickable = false }.attach()
     }
 
-    private fun GhsFragmentReviewBinding.handleLoading(isLoading: Boolean) {
-        paymentProgress.isVisible = isLoading
-    }
-
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
-        handleLoading(false)
         if (viewModel.configuration.handleErrorsInternally) {
             showSnackbar(text, onRetry)
         }

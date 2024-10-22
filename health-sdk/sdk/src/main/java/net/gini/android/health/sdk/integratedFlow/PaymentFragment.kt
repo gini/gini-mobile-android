@@ -63,7 +63,7 @@ data class PaymentFlowConfiguration(
      *
      * Default value is `false`
      */
-    val shouldShowReviewFragment: Boolean = false,
+    val shouldShowReviewBottomDialog: Boolean = false,
 
     /**
      * If set to `true`, the errors will be handled internally and snackbars will be shown for errors.
@@ -72,30 +72,6 @@ data class PaymentFlowConfiguration(
      * Default value is `true`.
      */
     val shouldHandleErrorsInternally: Boolean = true,
-
-    /**
-     * If set to `true`, the [Amount] field of shown as part of the [ReviewBottomSheet] will be editable.
-     * If set to `false`, the [Amount] field will be read-only.
-     *
-     * Default value is `false`
-     */
-    internal val isAmountFieldEditable: Boolean = true,
-
-    /**
-     * If set to `true` and the user is a returning one, the `Select your bank to pay` and `More Information` labels will be hidden
-     * If set to `false`, the labels will always be displayed
-     *
-     * Default value is `false`
-     */
-    internal val checkForReturningUser: Boolean = false,
-
-    /**
-     * If set to `true`, the [PaymentComponent] will be displayed on 2 rows
-     * If set to `false`, the [PaymentComponent] will be displayed in a single row
-     *
-     * Default value is `true`
-     */
-    internal val paymentComponentOnTwoRows: Boolean = true
 
 ): Parcelable
 
@@ -128,7 +104,7 @@ class PaymentFragment private constructor(
         }
 
         override fun onSelectBankButtonTapped() {
-            //Nothing
+            viewModel.paymentComponent.listener?.onBankPickerClicked()
         }
     }
 
@@ -279,9 +255,15 @@ class PaymentFragment private constructor(
         viewModel.popBackStack()
 
         if (childFragmentManager.backStackEntryCount > 0) {
-            childFragmentManager.popBackStackImmediate()
+            if (viewModel.getLastBackstackEntry() == DisplayedScreen.Nothing) {
+                viewModel.setFlowCancelled()
+                return
+            } else if (viewModel.getLastBackstackEntry() != DisplayedScreen.ReviewFragment) {
+                childFragmentManager.popBackStackImmediate()
+            }
         }
-        if (childFragmentManager.backStackEntryCount == 0) {
+
+        if (childFragmentManager.backStackEntryCount == 0 || childFragmentManager.fragments.last() is ReviewFragment) {
             when (viewModel.getLastBackstackEntry()) {
                 DisplayedScreen.BankSelectionBottomSheet -> {
                     viewModel.paymentComponent.let {
@@ -294,7 +276,7 @@ class PaymentFragment private constructor(
                     }
                     PaymentComponentBottomSheet.newInstance(
                         viewModel.paymentComponent,
-                        viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
+                        if (viewModel.documentId != null) true else viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false,
                         viewModel
                     ).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
                 }
@@ -302,7 +284,7 @@ class PaymentFragment private constructor(
                 DisplayedScreen.ReviewFragment -> if (viewModel.giniInternalPaymentModule.getReturningUser()) viewModel.setFlowCancelled() else {
                     PaymentComponentBottomSheet.newInstance(
                         viewModel.paymentComponent,
-                        viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
+                        false,
                         viewModel
                     ).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
                 }
@@ -315,12 +297,13 @@ class PaymentFragment private constructor(
 
     @VisibleForTesting
     internal fun handlePayFlow() {
-        if (viewModel.paymentFlowConfiguration?.shouldShowReviewFragment == true) {
-            if (viewModel.documentId == null) {
-                showReviewBottomDialog()
-            } else {
-                showReviewFragment()
-            }
+        if (viewModel.documentId != null) {
+            showReviewFragment()
+            return
+        }
+
+        if (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true) {
+            showReviewBottomDialog()
             return
         }
 
@@ -334,12 +317,8 @@ class PaymentFragment private constructor(
             configuration = ReviewConfiguration(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
                 showCloseButton = true,
-                editableFields = if (viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true) {
-                    listOf(ReviewFields.AMOUNT)
-                } else {
-                    listOf()
-                },
-                selectBankButtonVisible = false
+                editableFields = listOf(ReviewFields.AMOUNT),
+                selectBankButtonVisible = true
             ),
             listener = reviewViewListener,
             giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
@@ -376,7 +355,7 @@ class PaymentFragment private constructor(
     internal fun showPaymentComponentBottomSheet() {
         val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
             viewModel.paymentComponent,
-            reviewFragmentShown = viewModel.paymentFlowConfiguration?.shouldShowReviewFragment ?: false,
+            reviewFragmentShown = if (viewModel.documentId != null) true else viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false,
             backListener = viewModel
         )
         paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)

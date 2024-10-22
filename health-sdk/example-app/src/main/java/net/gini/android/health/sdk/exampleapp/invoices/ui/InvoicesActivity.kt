@@ -28,8 +28,10 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoi
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsFragment
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
+import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
@@ -45,7 +47,7 @@ open class InvoicesActivity : AppCompatActivity() {
             supportFragmentManager.popBackStack()
         }
 
-        override fun onToTheBankButtonClicked(paymentProviderName: String) {}
+        override fun onToTheBankButtonClicked(paymentProviderName: String, paymentDetails: PaymentDetails) {}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,7 +115,7 @@ open class InvoicesActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.startIntegratedPaymentFlow.collect { result ->
-                        viewModel.getPaymentFragmentForPaymentDetails(result)
+                        viewModel.getPaymentFragmentForPaymentDetails(result, IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java))
                             .onSuccess { paymentFragment ->
                                 supportFragmentManager.beginTransaction()
                                     .add(R.id.fragment_container, paymentFragment, REVIEW_FRAGMENT_TAG)

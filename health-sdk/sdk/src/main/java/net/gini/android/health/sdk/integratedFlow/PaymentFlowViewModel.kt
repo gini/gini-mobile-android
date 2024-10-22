@@ -64,8 +64,8 @@ internal class PaymentFlowViewModel(
             }
         }
         paymentFlowConfiguration?.let {
-            paymentComponent.shouldCheckReturningUser = it.checkForReturningUser
-            paymentComponent.bankPickerRows = if (it.paymentComponentOnTwoRows) BankPickerRows.TWO else BankPickerRows.SINGLE
+            paymentComponent.shouldCheckReturningUser = true
+            paymentComponent.bankPickerRows = BankPickerRows.TWO
         }
         documentId?.let {
             viewModelScope.launch { giniHealth.setDocumentForReview(it) }
