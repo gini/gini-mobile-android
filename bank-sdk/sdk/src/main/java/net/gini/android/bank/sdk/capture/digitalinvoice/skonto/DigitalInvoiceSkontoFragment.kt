@@ -496,7 +496,7 @@ private fun YourInvoiceScanSection(
             }
 
             Icon(
-                painter = painterResource(id = net.gini.android.capture.R.drawable.gc_action_bar_back),
+                painter = painterResource(id = R.drawable.gbs_arrow_right),
                 contentDescription = null,
                 tint = colorScheme.arrowTint
             )
