@@ -4,6 +4,7 @@ import android.Manifest
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.rule.GrantPermissionRule
+import kotlinx.coroutines.delay
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
@@ -63,6 +64,7 @@ class ErrorScreenTests {
         errorScreen.disconnectTheInternetConnection()
         clickPhotoPaymentButtonAndSkipOnboarding()
 
+        Thread.sleep(3000)
         val errorTextVisible = errorScreen.checkErrorTextDisplayed()
         assertEquals(true, errorTextVisible)
         val errorHeaderVisible = errorScreen.checkErrorHeaderTextDisplayed( "There was a problem connecting to the internet")
