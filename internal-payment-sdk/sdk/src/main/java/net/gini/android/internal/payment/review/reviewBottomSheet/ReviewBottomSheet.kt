@@ -17,6 +17,7 @@ import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListen
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 
 class ReviewBottomSheet private constructor(
@@ -28,6 +29,14 @@ class ReviewBottomSheet private constructor(
 
     private val viewModel: ReviewBottomSheetViewModel by viewModels { viewModelFactory ?: object : ViewModelProvider.Factory {} }
     private var binding: GpsBottomSheetReviewBinding by autoCleared()
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return getLayoutInflaterWithGiniPaymentThemeAndLocale(
+            inflater,
+            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
+        )
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)

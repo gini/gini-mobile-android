@@ -56,7 +56,7 @@
                     tools:visibility="visible"/>
             </FrameLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/gps_pay_invoice_button_two_rows"
                 style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"
                 android:layout_width="0dp"

@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
+import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetInstallAppBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
@@ -21,6 +22,8 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import org.slf4j.LoggerFactory
@@ -46,6 +49,14 @@ class InstallAppBottomSheet private constructor(
         InstallAppViewModel.Factory(
             paymentComponent,
             backListener
+        )
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        val inflater = super.onGetLayoutInflater(savedInstanceState)
+        return getLayoutInflaterWithGiniPaymentThemeAndLocale(
+            inflater,
+            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
         )
     }
 
@@ -80,11 +91,11 @@ class InstallAppBottomSheet private constructor(
                         binding.gpsPaymentProviderIcon.gpsPaymentProviderIcon.contentDescription =
                             "${paymentProviderApp.name} ${getString(R.string.gps_payment_provider_logo_content_description)}"
                         binding.gpsInstallAppTitle.text = String.format(
-                            getString(R.string.gps_install_app_title),
+                            getLocaleStringResource(R.string.gps_install_app_title),
                             paymentProviderApp.paymentProvider.name
                         )
                         binding.gpsInstallAppDetails.text = String.format(
-                            getString(R.string.gps_install_app_detail),
+                            getLocaleStringResource(R.string.gps_install_app_detail),
                             paymentProviderApp.paymentProvider.name
                         )
                         binding.gpsPlayStoreLogo.setOnClickListener {
@@ -105,7 +116,7 @@ class InstallAppBottomSheet private constructor(
 
     private fun updateUI(paymentProviderApp: PaymentProviderApp) {
         binding.gpsInstallAppDetails.text = String.format(
-            getString(R.string.gps_install_app_tap_to_continue),
+            getLocaleStringResource(R.string.gps_install_app_tap_to_continue),
             paymentProviderApp.paymentProvider.name
         )
         binding.gpsPlayStoreLogo.visibility = View.GONE
@@ -139,6 +150,10 @@ class InstallAppBottomSheet private constructor(
         super.onCancel(dialog)
     }
 
+    private fun getLocaleStringResource(resourceId: Int): String {
+        return getLocaleStringResource(resourceId, viewModel.paymentComponent?.paymentModule)
+    }
+
     companion object {
         private val LOG = LoggerFactory.getLogger(InstallAppBottomSheet::class.java)
 
@@ -157,5 +172,4 @@ class InstallAppBottomSheet private constructor(
             return InstallAppBottomSheet(paymentComponent, listener, backListener, minHeight)
         }
     }
-
 }
