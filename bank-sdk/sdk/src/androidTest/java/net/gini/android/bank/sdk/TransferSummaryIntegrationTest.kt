@@ -117,7 +117,7 @@ class TransferSummaryIntegrationTest {
         )
 
         // Now we can release capture
-        GiniBank.cleanCapture(getApplicationContext()
+        GiniBank.cleanupCapture(getApplicationContext()
         )
 
         //    Wait a little for the feedback sending to complete

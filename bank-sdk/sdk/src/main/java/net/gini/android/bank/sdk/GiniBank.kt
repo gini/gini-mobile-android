@@ -166,7 +166,7 @@ object GiniBank {
 
     /**
      * Sets configuration for Capture feature.
-     * Note that configuration is immutable. [cleanCapture] needs to be called before passing a new configuration.
+     * Note that configuration is immutable. [cleanupCapture] needs to be called before passing a new configuration.
      *
      * @throws IllegalStateException if capture is already configured.
      */
@@ -202,7 +202,7 @@ object GiniBank {
      * Please provide the required transfer summary to improve the future extraction accuracy.
      *
      * Follow the recommendations below:
-     * - Make sure to call this method before calling [cleanCapture] if the user has completed TAN verification.
+     * - Make sure to call this method before calling [cleanupCapture] if the user has completed TAN verification.
      * - Provide values for all necessary fields, including those that were not extracted.
      * - Provide the final data approved by the user (and not the initially extracted only).
      * - Send the transfer summary after TAN verification and provide the extraction values the user has used.
@@ -245,7 +245,7 @@ object GiniBank {
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
      *
-     * @deprecated Use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [cleanCapture] to let the SDK free up used resources.
+     * @deprecated Use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [cleanupCapture] to let the SDK free up used resources.
      */
     @Deprecated(
         "Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources.",
@@ -263,7 +263,7 @@ object GiniBank {
         sendTransferSummary(
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
         )
-        cleanCapture(context)
+        cleanupCapture(context)
         releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }
@@ -276,13 +276,13 @@ object GiniBank {
      *
      */
     @Deprecated(
-        "Please use cleanCapture(context). This method will be removed in a future release.",
-        ReplaceWith("cleanCapture(context)")
+        "Please use cleanupCapture(context). This method will be removed in a future release.",
+        ReplaceWith("cleanupCapture(context)")
     )
     fun releaseCapture(
         context: Context
     ) {
-        cleanCapture(context)
+        cleanupCapture(context)
     }
 
     /**
@@ -291,7 +291,7 @@ object GiniBank {
      * @param context Android context
      *
      */
-    fun cleanCapture(
+    fun cleanupCapture(
         context: Context
     ) {
         GiniCapture.cleanup(
