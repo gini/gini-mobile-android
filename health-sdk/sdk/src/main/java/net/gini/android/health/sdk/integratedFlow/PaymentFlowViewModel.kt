@@ -66,7 +66,7 @@ internal class PaymentFlowViewModel(
             }
         }
         paymentFlowConfiguration?.let {
-            paymentComponent.shouldCheckReturningUser = true
+            paymentComponent.shouldCheckReturningUser = false
             paymentComponent.bankPickerRows = BankPickerRows.TWO
         }
         documentId?.let {

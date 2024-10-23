@@ -14,7 +14,6 @@
         android:layout_marginStart="@dimen/gps_large"
         android:text="@string/gps_select_bank_label"
         android:textColor="@color/gps_select_bank_and_pay_color"
-        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
