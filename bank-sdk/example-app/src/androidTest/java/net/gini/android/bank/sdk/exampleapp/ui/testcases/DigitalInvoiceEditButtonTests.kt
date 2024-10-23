@@ -48,7 +48,6 @@ class DigitalInvoiceEditButtonTests {
     private fun clickPhotoPaymentAndUploadFile() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
-        Thread.sleep(6000)
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
@@ -296,7 +295,7 @@ class DigitalInvoiceEditButtonTests {
     @Test
     fun test9_verifyInlineErrorWhenNameFieldIsEmpty() {
         clickPhotoPaymentAndUploadFile()
-
+        idlingResource.waitForIdle()
         val isOnboardingScreenTextVisible =
             digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenTextVisible)
