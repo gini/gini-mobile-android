@@ -2,13 +2,17 @@ package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
 import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
+import androidx.test.filters.FlakyTest
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
+import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ConfigurationScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,6 +31,14 @@ class CaptureScreenTests {
     private val mainScreen = MainScreen()
     private val onboardingScreen = OnboardingScreen()
     private val captureScreen = CaptureScreen()
+    private lateinit var idlingResource: SimpleIdlingResource
+
+    @Before
+    fun setup() {
+        idlingResource = SimpleIdlingResource(10000)
+        IdlingRegistry.getInstance().register(idlingResource)
+    }
+
 
     @Test
     fun test1_flashIsOnByDefault() {
@@ -50,7 +62,6 @@ class CaptureScreenTests {
         onboardingScreen.clickSkipButton()
         captureScreen.assertFlashIconIsDisplayed()
         captureScreen.assertFlashIconIsOn()
-        captureScreen.clickCameraButton()
     }
 
     @Test
