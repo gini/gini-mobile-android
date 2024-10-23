@@ -83,6 +83,10 @@ fun ZoomableLazyColumn(
                     },
                     onGestureStart = {
 
+                    },
+                    onDoubleTap = {
+                        val scaleDelta = if (scale < 2f) 1.5f else -1.5f
+                        scale += scaleDelta
                     }
                 )
             }
@@ -118,6 +122,7 @@ private suspend fun PointerInputScope.detectTransformGestures(
         changes: List<PointerInputChange>
     ) -> Unit,
     onGestureEnd: (PointerInputChange) -> Unit = {},
+    onDoubleTap: () -> Unit = {},
 ) {
     var lastTouchTime = 0L
 
@@ -137,16 +142,12 @@ private suspend fun PointerInputScope.detectTransformGestures(
 
         onGestureStart(down)
 
-        Log.d("GESTURE", "On Gesture Start: $down")
-
         var pointer = down
         // Main pointer is the one that is down initially
         var pointerId = down.id
 
         do {
             val event = awaitPointerEvent(pass = pass)
-
-            Log.d("GESTURE", "On Gesture Event: ${event.changes}")
 
             // If any position change is consumed from another PointerInputChange
             // or pointer count requirement is not fulfilled
@@ -193,11 +194,12 @@ private suspend fun PointerInputScope.detectTransformGestures(
                     onGesture(
                         event.calculateCentroid(useCurrent = false),
                         panChange,
-                        zoom + 1f,
+                        zoom,
                         0f,
                         pointer,
                         event.changes
                     )
+                    onDoubleTap()
                 }
 
                 if (pastTouchSlop) {
