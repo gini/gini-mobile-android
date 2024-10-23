@@ -220,6 +220,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                     ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(requireContext())
                 ) {
                     getPhotoPickerProvider()
+//                    getImageProviderItems(imagePickerResolveInfos, imageProviderResolveInfos)
                 } else {
                     getImageProviderItems(imagePickerResolveInfos, imageProviderResolveInfos)
                 }
