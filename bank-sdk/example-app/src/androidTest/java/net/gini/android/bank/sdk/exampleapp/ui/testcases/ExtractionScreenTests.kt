@@ -53,14 +53,22 @@ class ExtractionScreenTests {
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
-    @Test
-    fun test1_clickTransferSummaryButton() {
+    fun clickPhoto() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
+        idlingResource.waitForIdle()
         captureScreen.clickFilesButton()
+        idlingResource.waitForIdle()
         captureScreen.clickPhotos()
+        idlingResource.waitForIdle()
         imageUploader.uploadImageFromPhotos()
+        idlingResource.waitForIdle()
         imageUploader.clickAddButton()
+    }
+
+    @Test
+    fun test1_clickTransferSummaryButton() {
+        clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -70,12 +78,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test2_editIbanFieldAndCheckTransferSummaryButtonClickable() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -86,12 +89,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test3_editAmountFieldAndCheckTransferSummaryButtonClickable() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -102,12 +100,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test4_editPurposeFieldAndCheckTransferSummaryButtonClickable() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -118,12 +111,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test5_editRecipientFieldAndCheckTransferSummaryButtonClickable() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -134,12 +122,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test6_pressBackOnTransferSummaryAndShowsMainScreenOnSubsequentLaunches() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
