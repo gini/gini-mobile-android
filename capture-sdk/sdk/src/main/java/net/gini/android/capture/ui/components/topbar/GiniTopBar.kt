@@ -5,8 +5,6 @@ package net.gini.android.capture.ui.components.topbar
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -14,10 +12,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import net.gini.android.capture.R
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
@@ -77,13 +75,13 @@ private fun GiniTopBarPreview() {
         GiniTopBar(title = "Title", navigationIcon = {
             Icon(
                 modifier = Modifier.padding(16.dp),
-                painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.ArrowBack),
+                painter = painterResource(id = R.drawable.gc_action_bar_back),
                 contentDescription = null,
             )
         }, actions = {
             Icon(
                 modifier = Modifier.padding(16.dp),
-                painter = painterResource(net.gini.android.capture.R.drawable.gc_help_icon),
+                painter = painterResource(R.drawable.gc_help_icon),
                 contentDescription = null,
             )
         })

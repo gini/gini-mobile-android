@@ -29,23 +29,6 @@
             </intent-filter>
             <meta-data android:name="photopicker_activity:0:required" android:value="" />
         </service>
-
-        <!--Routing Mixpanel to EU Servers-->
-        <meta-data
-            android:name="com.mixpanel.android.MPConfig.EventsEndpoint"
-            android:value="https://api-eu.mixpanel.com/track?ip=1" />
-
-        <meta-data
-            android:name="com.mixpanel.android.MPConfig.PeopleEndpoint"
-            android:value="https://api-eu.mixpanel.com/engage?ip=1" />
-
-        <meta-data
-            android:name="com.mixpanel.android.MPConfig.GroupsEndpoint"
-            android:value="https://api-eu.mixpanel.com/groups" />
-
-        <meta-data
-            android:name="com.mixpanel.android.MPConfig.DecideEndpoint"
-            android:value="https://api-eu.mixpanel.com/decide" />
     </application>
 
 </manifest>
