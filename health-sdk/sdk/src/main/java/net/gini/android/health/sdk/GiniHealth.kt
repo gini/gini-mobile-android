@@ -28,7 +28,6 @@ import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.isValidIban
 import org.slf4j.LoggerFactory
@@ -89,7 +88,6 @@ class GiniHealth(
      * A flow that exposes the state of opening the bank. You can collect this flow to get information about the errors of this action.
      */
     val openBankState: StateFlow<PaymentState> = _openBankState
-
 
     /**
      * Sets the app language to the desired one from the languages the SDK is supporting. If not set then defaults to the system's language locale.
@@ -246,14 +244,14 @@ class GiniHealth(
      * @param configuration The configuration for the [ReviewFragment]
      * @throws IllegalStateException If no payment provider app has been selected
      */
-    fun getPaymentFragmentWithDocument(documentId: String, configuration: ReviewConfiguration): PaymentFragment {
+    fun getPaymentFragmentWithDocument(documentId: String, configuration: PaymentFlowConfiguration?): PaymentFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
         giniInternalPaymentModule.setPaymentDetails(null)
         _paymentFlow.value = ResultWrapper.Loading()
         return PaymentFragment.newInstance(
             giniHealth = this,
             documentId = documentId,
-            paymentFlowConfiguration = PaymentFlowConfiguration(shouldHandleErrorsInternally = configuration.handleErrorsInternally, shouldShowReviewBottomDialog = true)
+            paymentFlowConfiguration = configuration ?: PaymentFlowConfiguration()
         )
     }
 
@@ -274,7 +272,6 @@ class GiniHealth(
         )
         return paymentFragment
     }
-
 
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
         Bundle().apply {

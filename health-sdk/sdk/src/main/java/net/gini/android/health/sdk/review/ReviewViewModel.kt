@@ -29,6 +29,8 @@ internal class ReviewViewModel(
     val configuration: ReviewConfiguration,
     val paymentComponent: PaymentComponent,
     val documentId: String,
+    val shouldShowCloseButton: Boolean,
+    val reviewFragmentListener: ReviewFragmentListener
 ) : ViewModel() {
 
     internal var userPreferences: UserPreferences? = null
@@ -126,12 +128,14 @@ internal class ReviewViewModel(
         private val giniHealth: GiniHealth,
         private val configuration: ReviewConfiguration,
         private val paymentComponent: PaymentComponent,
-        private val documentId: String
+        private val documentId: String,
+        private val shouldShowCloseButton: Boolean,
+        private val reviewFragmentListener: ReviewFragmentListener
     ) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId) as T
+            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, reviewFragmentListener) as T
         }
     }
 

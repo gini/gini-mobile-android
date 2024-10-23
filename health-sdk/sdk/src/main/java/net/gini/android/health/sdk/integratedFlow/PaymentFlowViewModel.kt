@@ -53,6 +53,8 @@ internal class PaymentFlowViewModel(
 
     override val shareWithFlowStarted: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
+    private var externalCacheDir: File? = null
+
     init {
         viewModelScope.launch {
             paymentComponent.paymentProviderAppsFlow.collect {
@@ -137,11 +139,11 @@ internal class PaymentFlowViewModel(
         shareWithFlowStarted.tryEmit(true)
     }
 
-    fun onPaymentButtonTapped(externalCacheDir: File?) {
+    fun onPaymentButtonTapped() {
         checkNextStep(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
     }
 
-    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
+    fun onForwardToSharePdfTapped() {
         documentId?.let {
             sendFeedback()
         }
@@ -175,6 +177,10 @@ internal class PaymentFlowViewModel(
                 // Ignored since we don't want to interrupt the flow because of feedback failure
             }
         }
+    }
+
+    fun setExternalCacheDir(directory: File?) {
+        externalCacheDir = directory
     }
 
     class Factory(private val paymentDetails: PaymentDetails?, private val documentId: String?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, private val giniHealth: GiniHealth): ViewModelProvider.Factory {

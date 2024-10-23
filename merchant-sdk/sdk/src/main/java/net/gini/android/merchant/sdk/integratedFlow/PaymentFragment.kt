@@ -311,7 +311,6 @@ class PaymentFragment private constructor(
             backListener = viewModel,
             configuration = ReviewConfiguration(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
-                showCloseButton = true,
                 editableFields = if (viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true) {
                     listOf(ReviewFields.AMOUNT)
                 } else {
@@ -321,7 +320,6 @@ class PaymentFragment private constructor(
             ),
             listener = reviewViewListener,
             giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
-            paymentComponent = viewModel.paymentComponent,
         )
         reviewBottomSheet.show(childFragmentManager, ReviewBottomSheet::class.java.name)
     }

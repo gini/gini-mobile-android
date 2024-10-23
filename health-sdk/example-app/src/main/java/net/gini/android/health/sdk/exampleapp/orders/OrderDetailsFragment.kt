@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.databinding.FragmentOrderDetailsBinding
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesViewModel
 import net.gini.android.health.sdk.exampleapp.orders.model.Order
@@ -44,6 +45,13 @@ class OrderDetailsFragment : Fragment() {
                 launch {
                     orderDetailsViewModel.orderFlow.collectLatest { order ->
                         showOrder(order)
+                    }
+                }
+                launch {
+                    invoicesViewModel.openBankState.collect { openBankState ->
+                        if (openBankState is GiniHealth.PaymentState.Success) {
+                            requireActivity().supportFragmentManager.popBackStack()
+                        }
                     }
                 }
             }

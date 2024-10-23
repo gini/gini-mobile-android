@@ -14,7 +14,6 @@ import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
-import net.gini.android.internal.payment.review.ReviewConfiguration
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
@@ -41,6 +40,7 @@ class InvoicesViewModel(
     fun updateDocument() {
         viewModelScope.launch {
             with(invoicesRepository) {
+                if (giniHealth.documentFlow.value !is ResultWrapper.Success) return@launch
                 requestDocumentExtractionAndSaveToLocal((giniHealth.documentFlow.value as ResultWrapper.Success).value)
             }
         }
@@ -73,7 +73,11 @@ class InvoicesViewModel(
             return try {
                 val paymentReviewFragment = invoicesRepository.giniHealth.getPaymentFragmentWithDocument(
                     documentWithExtractions.documentId,
-                    ReviewConfiguration(showCloseButton = true)
+                    PaymentFlowConfiguration(
+                        shouldHandleErrorsInternally = true,
+                        shouldShowReviewBottomDialog = false,
+                        showCloseButtonOnReviewFragment = true
+                    )
                 )
                 Result.success(paymentReviewFragment)
             } catch (e: Exception) {

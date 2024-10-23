@@ -40,13 +40,15 @@ import net.gini.android.internal.payment.utils.setBackgroundTint
 interface OpenWithForwardListener {
     fun onForwardSelected()
 }
-class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?, private val paymentComponent: PaymentComponent?) : GpsBottomSheetDialogFragment() {
+class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?, paymentComponent: PaymentComponent?) : GpsBottomSheetDialogFragment() {
 
     constructor(): this(null, null, null, null)
 
     private val viewModel by viewModels<OpenWithViewModel> {
         OpenWithViewModel.Factory(
+            paymentComponent,
             paymentProviderApp,
+            listener,
             backListener
         )
     }
@@ -79,7 +81,7 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
         viewModel.paymentProviderApp?.let { paymentProviderApp ->
             with(binding.gpsForwardButton) {
                 setOnClickListener {
-                    listener?.onForwardSelected()
+                    viewModel.openWithForwardListener?.onForwardSelected()
                     dismiss()
                 }
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
@@ -137,7 +139,7 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
     }
 
     private fun getLocaleStringResource(resourceId: Int): String {
-        return getLocaleStringResource(resourceId, paymentComponent?.paymentModule)
+        return getLocaleStringResource(resourceId, viewModel.paymentComponent?.paymentModule)
     }
 
     companion object {

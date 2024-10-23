@@ -16,14 +16,6 @@ data class ReviewConfiguration(
     val handleErrorsInternally: Boolean = true,
 
     /**
-     * Set to `true` to show a close button. Set a [ReviewFragmentListener] to be informed when the
-     * button is pressed.
-     *
-     * Default value is `false`.
-     */
-    val showCloseButton: Boolean = false,
-
-    /**
      * If set to `true`, the [Amount] field will be editable.
      * If set to `false` the [Amount] field will be read-only.
      *

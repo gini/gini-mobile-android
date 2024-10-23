@@ -10,8 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.databinding.GpsBottomSheetReviewBinding
-import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.internal.payment.utils.BackListener
@@ -20,14 +20,23 @@ import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 
 class ReviewBottomSheet private constructor(
-    val paymentButtonListener: ReviewViewListener?,
     private val viewModelFactory: ViewModelProvider.Factory?
 ) : GpsBottomSheetDialogFragment() {
 
-    constructor(): this(null, null)
+    constructor(): this(null)
 
     private val viewModel: ReviewBottomSheetViewModel by viewModels { viewModelFactory ?: object : ViewModelProvider.Factory {} }
     private var binding: GpsBottomSheetReviewBinding by autoCleared()
+    private val listener = object: ReviewViewListener {
+        override fun onPaymentButtonTapped(paymentDetails: PaymentDetails) {
+            viewModel.reviewViewListener?.onPaymentButtonTapped(paymentDetails)
+        }
+
+        override fun onSelectBankButtonTapped() {
+            dismiss()
+            viewModel.reviewViewListener?.onSelectBankButtonTapped()
+        }
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -41,10 +50,10 @@ class ReviewBottomSheet private constructor(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = GpsBottomSheetReviewBinding.inflate(inflater, container, false)
         binding.gpsReviewLayout.reviewComponent = viewModel.reviewComponent
-        binding.gpsReviewLayout.listener = paymentButtonListener
+        binding.gpsReviewLayout.listener = listener
         return binding.root
     }
 
@@ -57,15 +66,15 @@ class ReviewBottomSheet private constructor(
         fun newInstance(
             configuration: ReviewConfiguration = ReviewConfiguration(),
             listener: ReviewViewListener,
-            paymentComponent: PaymentComponent,
             giniInternalPaymentModule: GiniInternalPaymentModule,
             backListener: BackListener,
             viewModelFactory: ViewModelProvider.Factory = ReviewBottomSheetViewModel.Factory(
-                paymentComponent = paymentComponent,
+                paymentComponent = giniInternalPaymentModule.paymentComponent,
                 reviewConfiguration = configuration,
                 giniPaymentModule = giniInternalPaymentModule,
-                backListener = backListener
+                backListener = backListener,
+                reviewViewListener = listener
             ),
-        ): ReviewBottomSheet = ReviewBottomSheet(listener, viewModelFactory)
+        ): ReviewBottomSheet = ReviewBottomSheet(viewModelFactory)
     }
 }

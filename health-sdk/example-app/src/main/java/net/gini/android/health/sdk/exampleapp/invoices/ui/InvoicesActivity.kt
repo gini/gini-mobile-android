@@ -30,8 +30,6 @@ import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsFragment
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
-import net.gini.android.health.sdk.review.ReviewFragmentListener
-import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
@@ -41,14 +39,6 @@ import org.slf4j.LoggerFactory
 open class InvoicesActivity : AppCompatActivity() {
 
     private val viewModel: InvoicesViewModel by viewModel()
-
-    private val reviewFragmentListener = object : ReviewFragmentListener {
-        override fun onCloseReview() {
-            supportFragmentManager.popBackStack()
-        }
-
-        override fun onToTheBankButtonClicked(paymentProviderName: String, paymentDetails: PaymentDetails) {}
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +99,9 @@ open class InvoicesActivity : AppCompatActivity() {
                                 viewModel.updateDocument()
                                 supportFragmentManager.popBackStack()
                             }
+                            is GiniHealth.PaymentState.Cancel -> {
+                                supportFragmentManager.popBackStack()
+                            }
                             else -> {}
                         }
                     }
@@ -150,11 +143,6 @@ open class InvoicesActivity : AppCompatActivity() {
         }
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
 
-        // Reattach the listener to the ReviewFragment if it is being shown (in case of configuration changes)
-        supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)?.let {
-            (it as? ReviewFragment)?.listener = reviewFragmentListener
-        }
-
         supportFragmentManager.addOnBackStackChangedListener {
             setActivityTitle()
             invalidateOptionsMenu()
@@ -162,7 +150,7 @@ open class InvoicesActivity : AppCompatActivity() {
     }
 
     private fun setActivityTitle() {
-        if (supportFragmentManager.backStackEntryCount == 0) {
+        if (supportFragmentManager.fragments.isEmpty()) {
             title = getString(R.string.title_activity_invoices)
         } else if (supportFragmentManager.fragments.last() is MoreInformationFragment) {
             title =
@@ -185,8 +173,6 @@ open class InvoicesActivity : AppCompatActivity() {
         viewModel.loadPaymentProviderApps()
         viewModel.getPaymentReviewFragment(documentId)
             .onSuccess { reviewFragment ->
-//                        reviewFragment.listener = reviewFragmentListener
-
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, reviewFragment, REVIEW_FRAGMENT_TAG)
                     .addToBackStack(null)

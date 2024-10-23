@@ -49,11 +49,12 @@ import net.gini.android.internal.payment.utils.extensions.getFontScale
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
+import org.jetbrains.annotations.VisibleForTesting
 
 /**
  * Listener for [ReviewFragment] events.
  */
-interface ReviewFragmentListener {
+internal interface ReviewFragmentListener {
     /**
      * Called when the close button was pressed.
      */
@@ -77,7 +78,6 @@ interface ReviewFragmentListener {
  * Instances can be created using the [PaymentComponent.getPaymentReviewFragment] method.
  */
 class ReviewFragment private constructor(
-    var listener: ReviewFragmentListener? = null,
     private val viewModelFactory: ViewModelProvider.Factory? = null,
 ) : Fragment() {
 
@@ -88,6 +88,19 @@ class ReviewFragment private constructor(
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
     private var errorSnackbar: Snackbar? = null
+
+    @VisibleForTesting
+    internal val reviewViewListener = object: ReviewViewListener {
+        override fun onPaymentButtonTapped(paymentDetails: net.gini.android.internal.payment.api.model.PaymentDetails) {
+            requireActivity().currentFocus?.clearFocus()
+            binding.ghsPaymentDetails.hideKeyboard()
+            viewModel.reviewFragmentListener.onToTheBankButtonClicked(viewModel.paymentProviderApp.value?.name ?: "", viewModel.paymentDetails.value)
+        }
+
+        override fun onSelectBankButtonTapped() {
+            viewModel.paymentComponent.listener?.onBankPickerClicked()
+        }
+    }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -178,7 +191,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.configureViews() {
-        close.isGone = !viewModel.configuration.showCloseButton
+        close.isGone = !viewModel.shouldShowCloseButton
     }
 
     private fun GhsFragmentReviewBinding.configureOrientation() {
@@ -209,22 +222,12 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.setActionListeners() {
-        ghsPaymentDetails.listener = object: ReviewViewListener {
-            override fun onPaymentButtonTapped(paymentDetails: net.gini.android.internal.payment.api.model.PaymentDetails) {
-                requireActivity().currentFocus?.clearFocus()
-                ghsPaymentDetails.hideKeyboard()
-                listener?.onToTheBankButtonClicked(viewModel.paymentProviderApp.value?.name ?: "", viewModel.paymentDetails.value)
-            }
-
-            override fun onSelectBankButtonTapped() {
-                viewModel.paymentComponent.listener?.onBankPickerClicked()
-            }
-        }
+        ghsPaymentDetails.listener = reviewViewListener
         close.setOnClickListener { view ->
             if (isKeyboardShown) {
                 view.hideKeyboard()
             } else {
-                listener?.onCloseReview()
+                viewModel.reviewFragmentListener.onCloseReview()
             }
         }
     }
@@ -372,7 +375,8 @@ class ReviewFragment private constructor(
             listener: ReviewFragmentListener,
             paymentComponent: PaymentComponent,
             documentId: String,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId),
-        ): ReviewFragment = ReviewFragment(listener, viewModelFactory)
+            shouldShowCloseButton: Boolean,
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, listener),
+        ): ReviewFragment = ReviewFragment(viewModelFactory)
     }
 }

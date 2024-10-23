@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -29,6 +28,7 @@ import net.gini.android.health.sdk.databinding.GhsFragmentHealthBinding
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.health.sdk.review.model.PaymentDetails
+import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
@@ -73,6 +73,14 @@ data class PaymentFlowConfiguration(
      */
     val shouldHandleErrorsInternally: Boolean = true,
 
+    /**
+     * Set to `true` to show a close button. Set a [ReviewFragmentListener] to be informed when the
+     * button is pressed.
+     *
+     * Default value is `false`.
+     */
+    val showCloseButtonOnReviewFragment: Boolean = false
+
 ): Parcelable
 
 /**
@@ -100,12 +108,28 @@ class PaymentFragment private constructor(
     internal var reviewViewListener: ReviewViewListener = object: ReviewViewListener {
         override fun onPaymentButtonTapped(paymentDetails: net.gini.android.internal.payment.api.model.PaymentDetails) {
             viewModel.updatePaymentDetails(PaymentDetails(recipient = paymentDetails.recipient, iban = paymentDetails.iban, amount = paymentDetails.amount, purpose = paymentDetails.purpose))
-            viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
+            viewModel.onPaymentButtonTapped()
         }
 
         override fun onSelectBankButtonTapped() {
             viewModel.paymentComponent.listener?.onBankPickerClicked()
         }
+    }
+
+    @VisibleForTesting
+    internal var reviewFragmentListener: ReviewFragmentListener = object: ReviewFragmentListener {
+        override fun onCloseReview() {
+            viewModel.setFlowCancelled()
+        }
+
+        override fun onToTheBankButtonClicked(
+            paymentProviderName: String,
+            paymentDetails: PaymentDetails,
+        ) {
+            viewModel.paymentDetails = paymentDetails
+            viewModel.onPaymentButtonTapped()
+        }
+
     }
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
@@ -135,19 +159,6 @@ class PaymentFragment private constructor(
         return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, viewModel.paymentComponent.giniPaymentLanguage)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (viewModelFactory == null) {
-            // When the viewModelFactory is not available we are in an unrecoverable state
-            // (most likely after an activity restart) and we should remove this fragment which is the container (root)
-            // for all our other fragments. This returns the user to the client app's previous screen.
-            parentFragmentManager.commit {
-                remove(this@PaymentFragment)
-            }
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -161,6 +172,7 @@ class PaymentFragment private constructor(
 
         viewModel.paymentComponent.listener = paymentComponentListener
         viewModel.loadPaymentProviderApps()
+        viewModel.setExternalCacheDir(requireContext().externalCacheDir)
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
@@ -188,19 +200,30 @@ class PaymentFragment private constructor(
                         handleBackFlow()
                     }
                 }
+                launch {
+                    viewModel.giniInternalPaymentModule.eventsFlow.collect { internalEvent ->
+                        when (internalEvent) {
+                            GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> viewModel.giniHealth.setOpenBankState(GiniHealth.PaymentState.Cancel, viewModel.viewModelScope)
+                            is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated ->
+                                viewModel.getPaymentProviderApp()?.let { selectedPaymentProvider ->
+                                    viewModel.giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(
+                                        PaymentRequest(
+                                            internalEvent.paymentRequestId,
+                                            selectedPaymentProvider
+                                        )
+                                    ), viewModel.viewModelScope)
+                                }
+                            else -> {}
+                        }
+                    }
+                }
             }
         }
 
-        // if is returning user
-        if (viewModel.giniInternalPaymentModule.getReturningUser()) {
-            if (viewModel.documentId != null) {
-                showReviewFragment()
-            } else {
-                showReviewBottomDialog()
-            }
-        } else {
-            showPaymentComponentBottomSheet()
+        if (viewModel.getLastBackstackEntry() == DisplayedScreen.Nothing) {
+            setupStartingScreen()
         }
+
         return binding.root
     }
 
@@ -216,6 +239,21 @@ class PaymentFragment private constructor(
     override fun onDetach() {
         snackbar?.dismiss()
         super.onDetach()
+    }
+
+    private fun setupStartingScreen() {
+        // if is returning user
+        if (viewModel.giniInternalPaymentModule.getReturningUser()) {
+            if (viewModel.documentId != null) {
+                showReviewFragment()
+            } else if (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true){
+                showReviewBottomDialog()
+            } else {
+                showPaymentComponentBottomSheet()
+            }
+        } else {
+            showPaymentComponentBottomSheet()
+        }
     }
 
     private fun GhsFragmentHealthBinding.setStateListeners() {
@@ -265,6 +303,9 @@ class PaymentFragment private constructor(
 
         if (childFragmentManager.backStackEntryCount == 0 || childFragmentManager.fragments.last() is ReviewFragment) {
             when (viewModel.getLastBackstackEntry()) {
+                DisplayedScreen.ReviewBottomSheet -> {
+                    createReviewBottomSheet().also { it.show(childFragmentManager, ReviewBottomSheet::class.java.name) }
+                }
                 DisplayedScreen.BankSelectionBottomSheet -> {
                     viewModel.paymentComponent.let {
                         BankSelectionBottomSheet.newInstance(it, viewModel).show(childFragmentManager, BankSelectionBottomSheet::class.java.name)
@@ -307,24 +348,13 @@ class PaymentFragment private constructor(
             return
         }
 
-        viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
+        viewModel.onPaymentButtonTapped()
     }
 
     private fun showReviewBottomDialog() {
+        Thread.dumpStack()
         viewModel.addToBackStack(DisplayedScreen.ReviewBottomSheet)
-        val reviewBottomSheet = ReviewBottomSheet.newInstance(
-            backListener = viewModel,
-            configuration = ReviewConfiguration(
-                handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
-                showCloseButton = true,
-                editableFields = listOf(ReviewFields.AMOUNT),
-                selectBankButtonVisible = true
-            ),
-            listener = reviewViewListener,
-            giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
-            paymentComponent = viewModel.paymentComponent,
-        )
-        reviewBottomSheet.show(childFragmentManager, ReviewBottomSheet::class.java.name)
+        createReviewBottomSheet().also { it.show(childFragmentManager, ReviewBottomSheet::class.java.name) }
     }
 
     private fun showReviewFragment() {
@@ -332,18 +362,13 @@ class PaymentFragment private constructor(
         val reviewFragment = ReviewFragment.newInstance(
             giniHealth = viewModel.giniHealth,
             paymentComponent = viewModel.giniInternalPaymentModule.paymentComponent,
-            listener = object: ReviewFragmentListener {
-                override fun onCloseReview() {
-                    TODO("Not yet implemented")
-                }
-
-                override fun onToTheBankButtonClicked(paymentProviderName: String, paymentDetails: PaymentDetails) {
-                    viewModel.paymentDetails = paymentDetails
-                    viewModel.onPaymentButtonTapped(context?.externalCacheDir)
-                }
-
-            },
-            documentId = viewModel.documentId!!
+            listener = reviewFragmentListener,
+            documentId = viewModel.documentId ?: "",
+            configuration = ReviewConfiguration(
+                handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
+                selectBankButtonVisible = true,
+            ),
+            shouldShowCloseButton = viewModel.paymentFlowConfiguration?.showCloseButtonOnReviewFragment ?: false
         )
         childFragmentManager.beginTransaction()
             .add(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
@@ -362,6 +387,17 @@ class PaymentFragment private constructor(
         viewModel.addToBackStack(DisplayedScreen.PaymentComponentBottomSheet)
     }
 
+    private fun createReviewBottomSheet() = ReviewBottomSheet.newInstance(
+            backListener = viewModel,
+            configuration = ReviewConfiguration(
+                handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
+                editableFields = listOf(ReviewFields.AMOUNT),
+                selectBankButtonVisible = true
+            ),
+            listener = reviewViewListener,
+            giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
+        )
+
     private fun GhsFragmentHealthBinding.handleSDKEvent(sdkEvent: GiniInternalPaymentModule.InternalPaymentEvents) {
         when (sdkEvent) {
             is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> {
@@ -371,15 +407,15 @@ class PaymentFragment private constructor(
                     if (intent != null) {
                         startActivity(intent)
                     } else {
-                        handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
+                        handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
                     }
                 } catch (exception: ActivityNotFoundException) {
-                    handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
+                    handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
                 }
             }
             is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> {
                 binding.loading.isVisible = false
-                handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
+                handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
             }
             else -> {
             }
@@ -420,7 +456,7 @@ class PaymentFragment private constructor(
             paymentComponent = viewModel.paymentComponent,
             backListener = viewModel
         ) {
-            viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
+            viewModel.onForwardToSharePdfTapped()
         }
         viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
