@@ -82,6 +82,10 @@ fun ZoomableLazyColumn(
                     },
                     onGestureStart = {
 
+                    },
+                    onDoubleTap = {
+                        val scaleDelta = if (scale < 2f) 1.5f else -1.5f
+                        scale += scaleDelta
                     }
                 )
             }
@@ -116,8 +120,11 @@ private suspend fun PointerInputScope.detectTransformGestures(
         mainPointer: PointerInputChange,
         changes: List<PointerInputChange>
     ) -> Unit,
-    onGestureEnd: (PointerInputChange) -> Unit = {}
+    onGestureEnd: (PointerInputChange) -> Unit = {},
+    onDoubleTap: () -> Unit = {},
 ) {
+    var lastTouchTime = 0L
+
     awaitEachGesture {
         var rotation = 0f
         var zoom = 1f
@@ -131,6 +138,7 @@ private suspend fun PointerInputScope.detectTransformGestures(
             requireUnconsumed = false,
             pass = pass
         )
+
         onGestureStart(down)
 
         var pointer = down
@@ -146,7 +154,6 @@ private suspend fun PointerInputScope.detectTransformGestures(
                 event.changes.any { it.isConsumed }
 
             if (!canceled) {
-
                 // Get pointer that is down, if first pointer is up
                 // get another and use it if other pointers are also down
                 // event.changes.first() doesn't return same order
@@ -182,9 +189,22 @@ private suspend fun PointerInputScope.detectTransformGestures(
                     }
                 }
 
+                if (down.uptimeMillis - lastTouchTime < 300) {
+                    onGesture(
+                        event.calculateCentroid(useCurrent = false),
+                        panChange,
+                        zoom,
+                        0f,
+                        pointer,
+                        event.changes
+                    )
+                    onDoubleTap()
+                }
+
                 if (pastTouchSlop) {
                     val centroid = event.calculateCentroid(useCurrent = false)
                     val effectiveRotation = if (lockedToPanZoom) 0f else rotationChange
+
                     if (effectiveRotation != 0f ||
                         zoomChange != 1f ||
                         panChange != Offset.Zero
@@ -209,6 +229,7 @@ private suspend fun PointerInputScope.detectTransformGestures(
                 }
             }
         } while (!canceled && event.changes.any { it.pressed })
+        lastTouchTime = down.uptimeMillis
         onGestureEnd(pointer)
     }
 }
