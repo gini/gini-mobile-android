@@ -1,6 +1,5 @@
 package net.gini.android.capture.ui.components.list
 
-import android.util.Log
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.awaitEachGesture
