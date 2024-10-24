@@ -8,6 +8,8 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import net.gini.android.core.api.response.DocumentLayoutResponse
+import net.gini.android.core.api.response.DocumentPageResponse
 import net.gini.android.core.api.response.PaymentRequestResponse
 import net.gini.android.core.api.response.PaymentResponse
 import net.gini.android.health.api.models.PaymentRequestInput
@@ -222,6 +224,20 @@ class HealthApiDocumentRemoteSourceTest {
             bearer: Map<String, String>,
             paymentRequestId: String
         ): Response<ResponseBody> {
+            return Response.success(null)
+        }
+
+        override suspend fun getDocumentLayout(
+            bearer: Map<String, String>,
+            documentId: String
+        ): Response<DocumentLayoutResponse> {
+            return Response.success(null)
+        }
+
+        override suspend fun getDocumentPages(
+            bearer: Map<String, String>,
+            documentId: String
+        ): Response<List<DocumentPageResponse>> {
             return Response.success(null)
         }
 

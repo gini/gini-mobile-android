@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 
 /**
  * Created by Alpar Szotyori on 16.04.2018.
- *
+ * <p>
  * Copyright (c) 2018 Gini GmbH.
  */
 
@@ -19,11 +19,14 @@ public class NetworkRequestResult<T extends GiniCaptureDocument> {
 
     private final T mGiniCaptureDocument;
     private final String mApiDocumentId;
+    private final String mApiDocumentFilename;
 
     public NetworkRequestResult(@NonNull final T giniCaptureDocument,
-            @NonNull final String apiDocumentId) {
+                                @NonNull final String apiDocumentId,
+                                @NonNull final String apiDocumentFilename) {
         mGiniCaptureDocument = giniCaptureDocument;
         mApiDocumentId = apiDocumentId;
+        mApiDocumentFilename = apiDocumentFilename;
     }
 
     @NonNull
@@ -34,5 +37,10 @@ public class NetworkRequestResult<T extends GiniCaptureDocument> {
     @NonNull
     public String getApiDocumentId() {
         return mApiDocumentId;
+    }
+
+    @NonNull
+    public String getApiDocumentFilename() {
+        return mApiDocumentFilename;
     }
 }

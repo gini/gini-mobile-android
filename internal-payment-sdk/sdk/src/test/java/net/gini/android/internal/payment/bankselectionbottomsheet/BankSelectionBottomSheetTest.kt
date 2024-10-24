@@ -3,6 +3,7 @@ package net.gini.android.internal.payment.bankselectionbottomsheet
 import android.content.Context
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
@@ -13,6 +14,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
@@ -23,6 +25,7 @@ import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsSta
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
+import net.gini.android.internal.payment.utils.GiniLocalization
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -89,8 +92,11 @@ class BankSelectionBottomSheetTest {
     @Before
     fun setup() {
         paymentComponent = mockk(relaxed = true)
+        context = ApplicationProvider.getApplicationContext()
         every { paymentComponent!!.paymentModule.localizedContext } returns context
-        every { paymentComponent!!.giniPaymentLanguage } returns null
+        every { paymentComponent!!.getGiniPaymentLanguage() } returns null
+        every { paymentComponent!!.paymentModule.localizedContext } returns context
+        every { paymentComponent!!.getGiniPaymentLanguage(context) } returns null
     }
 
     @After
@@ -123,9 +129,9 @@ class BankSelectionBottomSheetTest {
     @Test
     fun `shows text values in english if that is set to GiniHealth`() = runTest {
         // Given
-        giniPaymentModule = mockk(relaxed = true)
-        paymentComponentWithLocale = mockk(relaxed = true)
-        every { paymentComponentWithLocale.giniPaymentLanguage } returns Locale.ENGLISH
+        giniPaymentModule = GiniInternalPaymentModule(context!!)
+        giniPaymentModule.setSDKLanguage(GiniLocalization.ENGLISH, context!!)
+        paymentComponentWithLocale = PaymentComponent(context!!, giniPaymentModule)
 
         // When
         launchFragmentInContainer {
@@ -145,9 +151,9 @@ class BankSelectionBottomSheetTest {
     @Test
     fun `shows text values in german if that is set to GiniHealth`() = runTest {
         // Given
-        giniPaymentModule = mockk(relaxed = true)
-        paymentComponentWithLocale = mockk(relaxed = true)
-        every { paymentComponentWithLocale.giniPaymentLanguage } returns Locale.GERMAN
+        giniPaymentModule = GiniInternalPaymentModule(context!!)
+        giniPaymentModule.setSDKLanguage(GiniLocalization.GERMAN, context!!)
+        paymentComponentWithLocale = PaymentComponent(context!!, giniPaymentModule)
 
         // When
         launchFragmentInContainer {

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInfoDialogColors
-import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoiceScanSectionColors
+import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoicePreviewSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialogColors
@@ -16,7 +16,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
 data class SkontoScreenColors(
     val backgroundColor: Color,
     val topAppBarColors: GiniTopBarColors,
-    val invoiceScanSectionColors: SkontoInvoiceScanSectionColors,
+    val invoiceScanSectionColors: SkontoInvoicePreviewSectionColors,
     val skontoSectionColors: SkontoSectionColors,
     val withoutSkontoSectionColors: WithoutSkontoSectionColors,
     val footerSectionColors: SkontoFooterSectionColors,
@@ -27,18 +27,26 @@ data class SkontoScreenColors(
     companion object {
         @Composable
         fun colors(
-            backgroundColor: Color = GiniTheme.colorScheme.background.primary,
-            topAppBarColors: GiniTopBarColors = GiniTopBarColors.colors(),
-            skontoInvoiceScanSectionColors: SkontoInvoiceScanSectionColors = SkontoInvoiceScanSectionColors.colors(),
-            discountSectionColors: SkontoSectionColors = SkontoSectionColors.colors(),
-            withoutSkontoSectionColors: WithoutSkontoSectionColors = WithoutSkontoSectionColors.colors(),
-            skontoFooterSectionColors: SkontoFooterSectionColors = SkontoFooterSectionColors.colors(),
-            datePickerColor: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors(),
-            infoDialogColors: SkontoInfoDialogColors = SkontoInfoDialogColors.colors(),
+            backgroundColor: Color =
+                GiniTheme.colorScheme.background.primary,
+            topAppBarColors: GiniTopBarColors =
+                GiniTopBarColors.colors(),
+            skontoInvoicePreviewSectionColors: SkontoInvoicePreviewSectionColors =
+                SkontoInvoicePreviewSectionColors.colors(),
+            discountSectionColors: SkontoSectionColors =
+                SkontoSectionColors.colors(),
+            withoutSkontoSectionColors: WithoutSkontoSectionColors =
+                WithoutSkontoSectionColors.colors(),
+            skontoFooterSectionColors: SkontoFooterSectionColors =
+                SkontoFooterSectionColors.colors(),
+            datePickerColor: GiniDatePickerDialogColors =
+                GiniDatePickerDialogColors.colors(),
+            infoDialogColors: SkontoInfoDialogColors =
+                SkontoInfoDialogColors.colors(),
         ) = SkontoScreenColors(
             backgroundColor = backgroundColor,
             topAppBarColors = topAppBarColors,
-            invoiceScanSectionColors = skontoInvoiceScanSectionColors,
+            invoiceScanSectionColors = skontoInvoicePreviewSectionColors,
             skontoSectionColors = discountSectionColors,
             withoutSkontoSectionColors = withoutSkontoSectionColors,
             footerSectionColors = skontoFooterSectionColors,

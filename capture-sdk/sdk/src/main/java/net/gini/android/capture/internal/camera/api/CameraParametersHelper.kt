@@ -2,8 +2,6 @@ package net.gini.android.capture.internal.camera.api
 
 import android.hardware.Camera
 import net.gini.android.capture.internal.util.Size
-import java.util.function.Function
-import java.util.stream.Collectors
 
 /**
  * Internal use only.

@@ -42,7 +42,10 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, val
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
-     val giniPaymentLanguage = GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()
+    fun getGiniPaymentLanguage(context: Context? = null) =
+        context?.let {
+            GiniInternalPaymentModule.getSDKLanguage(it)?.languageLocale()
+        } ?: GiniInternalPaymentModule.getSDKLanguage(this.context)?.languageLocale()
 
     /**
      * A listener for the payment component. It exposes the user interactions with all of the [PaymentComponentView]s.

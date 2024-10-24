@@ -1,6 +1,7 @@
 package net.gini.android.core.api.test.shared
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import androidx.annotation.XmlRes
 import androidx.test.core.app.ApplicationProvider
@@ -203,12 +204,14 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(Exception::class)
     fun publicKeyPinningWithMatchingPublicKey() = runTest(timeout = 30.seconds) {
         TrustKitHelper.resetTrustKit()
-        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
-            .setNetworkSecurityConfigResId(getNetworkSecurityConfigResId())
-            .setApiBaseUrl(apiUri)
-            .setUserCenterApiBaseUrl(userCenterUri)
-            .setConnectionTimeoutInMs(60000)
-            .build()
+        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").apply {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                setNetworkSecurityConfigResId(getNetworkSecurityConfigResId())
+            }
+            setApiBaseUrl(apiUri)
+            setUserCenterApiBaseUrl(userCenterUri)
+            setConnectionTimeoutInMs(60000)
+        }.build()
 
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")
@@ -222,13 +225,15 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(Exception::class)
     fun publicKeyPinningWithCustomCache() = runTest(timeout = 30.seconds) {
         TrustKitHelper.resetTrustKit()
-        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
-            .setNetworkSecurityConfigResId(getNetworkSecurityConfigResId())
-            .setApiBaseUrl(apiUri)
-            .setUserCenterApiBaseUrl(userCenterUri)
-            .setConnectionTimeoutInMs(60000)
-            .setCache(Cache(File(ApplicationProvider.getApplicationContext<Context>().cacheDir, "no_cache"), 1))
-            .build()
+        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").apply {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                setNetworkSecurityConfigResId(getNetworkSecurityConfigResId())
+            }
+            setApiBaseUrl(apiUri)
+            setUserCenterApiBaseUrl(userCenterUri)
+            setConnectionTimeoutInMs(60000)
+            setCache(Cache(File(ApplicationProvider.getApplicationContext<Context>().cacheDir, "no_cache"), 1))
+        }.build()
 
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open("test.jpg")

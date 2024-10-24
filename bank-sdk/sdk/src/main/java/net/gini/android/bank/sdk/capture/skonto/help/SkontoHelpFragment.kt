@@ -171,7 +171,11 @@ private fun ScreenStateContent(
                 onBackClicked = onBackClicked,
             )
         }, bottomBar = {
-            HelpCustomNavBarSection(isBottomNavigationBarEnabled, customBottomNavBarAdapter, onBackClicked)
+            HelpCustomNavBarSection(
+                isBottomNavigationBarEnabled,
+                customBottomNavBarAdapter,
+                onBackClicked
+            )
         }) {
         Column(
             modifier = Modifier
@@ -386,7 +390,10 @@ private fun TopAppBar(
         title = stringResource(id = R.string.gbs_skonto_help_title),
         navigationIcon = {
             AnimatedVisibility(visible = !isBottomNavigationBarEnabled) {
-                NavigationActionBack(onClick = onBackClicked)
+                NavigationActionBack(
+                    modifier = Modifier.padding(start = 16.dp, end = 32.dp),
+                    onClick = onBackClicked
+                )
             }
         })
 }
@@ -398,7 +405,9 @@ private fun NavigationActionBack(
     modifier: Modifier = Modifier,
 ) {
     IconButton(
-        modifier = modifier,
+        modifier = modifier
+            .width(24.dp)
+            .height(24.dp),
         onClick = onClick
     ) {
         Icon(

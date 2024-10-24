@@ -51,6 +51,7 @@
     <string name="configuration_analysis_label">Analysis</string>
     <string name="configuration_help_label">Help</string>
     <string name="configuration_return_assistant_label">Return assistant</string>
+    <string name="configuration_transaction_docs_label">Transaction Docs</string>
     <string name="configuration_ui_customization_label">UI customization</string>
     <string name="configuration_debug_development_label">Debug and development</string>
     <string name="close_gini_sdk_configuration">Close</string>
@@ -78,6 +79,7 @@
     <string name="review_screen_custom_bottom_navbar_switch_label">Review screen custom bottom navigation bar</string>
     <string name="skonto_screen_custom_bottom_navbar_switch_label">Skonto screen custom bottom navigation bar</string>
     <string name="skonto_help_screen_custom_bottom_navbar_switch_label">Skonto help screen custom bottom navigation bar</string>
+    <string name="digital_invoice_skonto_screen_custom_bottom_navbar_switch_label">Return Assistant Skonto screen custom bottom navigation bar</string>
     <string name="onboarding_screens_at_every_launch_switch_label">Onboarding screens at every launch</string>
     <string name="onboarding_screens_at_first_launch_switch_label">Onboarding screens at first launch</string>
     <string name="onboarding_screens_at_every_launch_switch_description">Overwrites \'Onboarding screens at first launch\'.</string>
@@ -107,6 +109,7 @@
     <string name="return_assistant_feature_switch_label">Return assistant feature</string>
     <string name="return_assistant_feature_switch_description">Present a digital representation of the invoice</string>
     <string name="skonto_feature_switch_label">Skonto feature</string>
+    <string name="transaction_docs_feature_switch_label">Transaction Docs feature</string>
     <string name="return_assistant_onboarding_custom_illustration_switch_label">Return assistant onboarding custom illustration</string>
     <string name="return_assistant_help_bottom_navigation_bar_switch_label">Return assistant help bottom navigation bar</string>
     <string name="return_assistant_bottom_navigation_bar_switch_description">The custom bottom navigation bar is shown if both \`Bottom navigation bar\` and \`Return assistant feature\` are enabled.</string>
@@ -133,4 +136,10 @@
 
     <string name="splash_activity">Splash Activity</string>
     <string name="single_activity">Single Activity</string>
+    <string name="use_custom_credentials_label">Use custom credentials</string>
+    <string name="gini_client_id_label">Client Id</string>
+    <string name="client_secret_label">Client Secret</string>
+
+    <string name="configuration_transaction_docs_enabled">Transaction Docs enabled</string>
+    <string name="configuration_transaction_docs_always_attach_docs">Always attach invoices</string>
 </resources>

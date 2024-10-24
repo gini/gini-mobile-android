@@ -1,5 +1,6 @@
 package net.gini.android.health.sdk.exampleapp.invoices.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -233,11 +234,13 @@ class InvoicesAdapter(
         val recipient: TextView
         val dueDate: TextView
         val amount: TextView
+        val medProvider: TextView
         val payInvoiceButton: Button
         init {
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
+            medProvider = view.findViewById(R.id.medicalServiceProvider)
             payInvoiceButton = view.findViewById(R.id.pay_invoice_button)
         }
     }
@@ -252,12 +255,19 @@ class InvoicesAdapter(
         return viewHolder
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val invoiceItem = dataSet[position]
 
         viewHolder.recipient.text = invoiceItem.recipient ?: ""
         viewHolder.dueDate.text = invoiceItem.dueDate ?: ""
         viewHolder.amount.text = invoiceItem.amount ?: ""
+        invoiceItem.medicalProvider?.let {
+            viewHolder.medProvider.visibility = View.VISIBLE
+            viewHolder.medProvider.text = "Med. provider: $it"
+        }?: {
+            viewHolder.medProvider.visibility = View.GONE
+        }
     }
 
     override fun getItemCount() = dataSet.size

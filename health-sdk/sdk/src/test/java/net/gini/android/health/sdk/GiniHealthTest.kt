@@ -38,7 +38,8 @@ val document =
 
 val extractions = ExtractionsContainer(
     mapOf(
-        "payment_state" to SpecificExtraction("payment_state", "Payable", "", null, listOf())
+        "payment_state" to SpecificExtraction("payment_state", "Payable", "", null, listOf()),
+        "medical_service_provider" to SpecificExtraction("medical_service_provider", "Dr. Test", "", null, listOf())
     ),
     mapOf(
         "payment" to CompoundExtraction("payment", listOf(mutableMapOf(
@@ -261,5 +262,15 @@ class GiniHealthTest {
 
         // When trying to instantiate fragment, then exception should be thrown
         giniHealth.getPaymentFragmentWithDocument("", paymentComponent, reviewConfiguration)
+    }
+
+    fun `When setting document id for review with medical provider details then that value can be reached from payment details`() = runTest {
+        val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
+
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Loading<PaymentDetails>) { "Expected Loading" }
+        giniHealth.setDocumentForReview("", paymentDetails)
+        assert(giniHealth.paymentFlow.value is ResultWrapper.Success<PaymentDetails>) { "Expected Success" }
+        val result = (giniHealth.paymentFlow.value as ResultWrapper.Success<PaymentDetails>).value.extractions?.specificExtractions?.get("medical_service_provider")
+        assertEquals(extractions.specificExtractions["medical_service_provider"], result)
     }
 }

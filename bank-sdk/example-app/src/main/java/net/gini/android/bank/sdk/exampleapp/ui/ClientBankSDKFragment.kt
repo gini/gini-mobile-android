@@ -99,7 +99,6 @@ class ClientBankSDKFragment :
             multiPageEnabled = true,
         )
         GiniBank.setCaptureConfiguration(requireContext(), captureConfiguration)
-
     }
 
 
@@ -188,7 +187,6 @@ class ClientBankSDKFragment :
             }
         }
     }
-
 
 
 }

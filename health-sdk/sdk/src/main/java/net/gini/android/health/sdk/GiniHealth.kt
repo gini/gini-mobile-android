@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
@@ -28,6 +29,10 @@ import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.paymentComponent.BankPickerRows
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.isValidIban
 import org.slf4j.LoggerFactory
@@ -167,14 +172,35 @@ class GiniHealth(
      * @throws Exception if there was an error while retrieving the document or the extractions
      */
     suspend fun checkIfDocumentIsPayable(documentId: String): Boolean {
+        return when (val extractions = getExtractionsForDocument(documentId)) {
+            null -> false
+            else -> (extractions.specificExtractions["payment_state"]?.value ?: "") == PAYABLE
+        }
+    }
+
+    /**
+     * Checks whether the invoice contains multiple documents by fetching the invoice and its extractions from the
+     * Gini Pay API and verifying whether it has multiple documents or not.
+     *
+     * @return `true` if the document contains multiple documents and `false` otherwise
+     * @throws Exception if there was an error while retrieving the document or the extractions
+     */
+    suspend fun checkIfDocumentContainsMultipleDocuments(documentId: String): Boolean {
+        return when (val extractions = getExtractionsForDocument(documentId)) {
+            null -> false
+            else -> (extractions.specificExtractions["contains_multiple_docs"]?.value ?: "" ) == HAS_MULTIPLE_DOCUMENTS
+        }
+    }
+
+    private suspend fun getExtractionsForDocument(documentId: String): ExtractionsContainer? {
         val extractionsResource = documentManager.getDocument(documentId)
             .mapSuccess { documentResource ->
                 documentManager.getAllExtractionsWithPolling(documentResource.data)
             }
         return when (extractionsResource) {
-            is Resource.Cancelled -> false
+            is Resource.Cancelled -> null
             is Resource.Error -> throw Exception(extractionsResource.exception)
-            is Resource.Success -> (extractionsResource.data.specificExtractions["payment_state"]?.value ?: "") == PAYABLE
+            is Resource.Success -> extractionsResource.data
         }
     }
 
@@ -315,6 +341,7 @@ class GiniHealth(
         private const val PROVIDER = "net.gini.android.health.sdk.GiniHealth"
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
         private const val PAYABLE = "Payable"
+        private const val HAS_MULTIPLE_DOCUMENTS = "true"
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
     }
 }

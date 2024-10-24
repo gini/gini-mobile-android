@@ -1,13 +1,13 @@
 package net.gini.android.core.api;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 
 /**
  * Created by Alpar Szotyori on 25.10.2018.
@@ -26,6 +26,8 @@ public class DocumentMetadata {
     public static final String HEADER_FIELD_NAME_PREFIX = "X-Document-Metadata-";
     @VisibleForTesting
     public static final String BRANCH_ID_HEADER_FIELD_NAME = HEADER_FIELD_NAME_PREFIX + "BranchId";
+    @VisibleForTesting
+    public static final String UPLOAD_METADATA_HEADER_FIELD_NAME = HEADER_FIELD_NAME_PREFIX + "Upload";
 
 
     private final Map<String, String> mMetadataMap = new HashMap<>();
@@ -63,6 +65,19 @@ public class DocumentMetadata {
         }
     }
 
+    /**
+     * Set upload metadata to be sent to backend
+     *
+     * @param uploadMetadata containing info related to the device, file import type etc...
+     */
+    public void setUploadMetadata(@NonNull final String uploadMetadata) {
+        if (isASCIIEncodable(uploadMetadata)) {
+            mMetadataMap.put(UPLOAD_METADATA_HEADER_FIELD_NAME, uploadMetadata);
+        } else {
+            throw new IllegalArgumentException("Metadata is not encodable as ASCII: " + uploadMetadata);
+        }
+    }
+
     @VisibleForTesting
     public boolean isASCIIEncodable(@NonNull final String string) {
         if (mAsciiCharsetEncoder != null) {
@@ -96,6 +111,17 @@ public class DocumentMetadata {
             completeName = HEADER_FIELD_NAME_PREFIX + name;
         }
         mMetadataMap.put(completeName, value);
+    }
+
+    /**
+     * Provides a copy of the [DocumentMetadata] object
+     *
+     * @return the copy of the metadata object
+     */
+    public DocumentMetadata copy() {
+        DocumentMetadata copy = new DocumentMetadata();
+        mMetadataMap.forEach((key, value) -> copy.add(key, value));
+        return copy;
     }
 
     @NonNull

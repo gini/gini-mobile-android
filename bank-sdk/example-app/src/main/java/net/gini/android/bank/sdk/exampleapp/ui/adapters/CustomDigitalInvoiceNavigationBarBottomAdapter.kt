@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.exampleapp.ui.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import net.gini.android.bank.sdk.capture.digitalinvoice.view.DigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.databinding.CustomDigitalInvoiceNavigationBarBinding
 
@@ -33,6 +34,24 @@ class CustomDigitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBa
 
     override fun onDestroy() {
         binding = null
+    }
+
+
+    override fun onSkontoPercentageBadgeUpdated(text: String) {
+        super.onSkontoPercentageBadgeUpdated(text)
+        binding?.skontoDiscountLabel?.text = text
+    }
+
+    override fun onSkontoPercentageBadgeVisibilityUpdate(isVisible: Boolean) {
+        binding?.skontoDiscountLabel?.isVisible = isVisible
+    }
+
+    override fun onSkontoSavingsAmountUpdated(text: String) {
+        binding?.skontoSavedAmount?.text = text
+    }
+
+    override fun onSkontoSavingsAmountVisibilityUpdated(isVisible: Boolean) {
+        binding?.skontoSavedAmount?.isVisible = isVisible
     }
 
 }

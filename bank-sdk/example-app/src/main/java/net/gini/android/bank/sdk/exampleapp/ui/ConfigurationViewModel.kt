@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.exampleapp.ui
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
@@ -10,15 +11,18 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.exampleapp.R
-import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugDisabled
-import net.gini.android.bank.sdk.exampleapp.core.di.GiniCaptureNetworkServiceDebugEnabled
+import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomCameraNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomLottiLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter
@@ -34,7 +38,6 @@ import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.logging.ErrorLoggerListener
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.capture.onboarding.DefaultPages
 import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.tracking.AnalysisScreenEvent
@@ -48,14 +51,30 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConfigurationViewModel @Inject constructor(
-    @GiniCaptureNetworkServiceDebugDisabled private val giniCaptureDefaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService,
-    @GiniCaptureNetworkServiceDebugEnabled private val giniCaptureDefaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService
+    internal val defaultNetworkServicesProvider: DefaultNetworkServicesProvider
 ) : ViewModel() {
 
-    private val _disableCameraPermissionFlow = MutableStateFlow<Boolean>(false)
+    private val _disableCameraPermissionFlow = MutableStateFlow(false)
     val disableCameraPermissionFlow: StateFlow<Boolean> = _disableCameraPermissionFlow
 
     private val _configurationFlow = MutableStateFlow(Configuration())
+
+    fun getAlwaysAttachSetting(context: Context): Boolean {
+        configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
+        return runBlocking {
+            GiniBank.transactionDocs.transactionDocsSettings.getAlwaysAttachSetting().first()
+        }
+    }
+
+    fun setAlwaysAttachSetting(context: Context, isChecked: Boolean) {
+        configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
+        viewModelScope.launch {
+            GiniBank.transactionDocs.transactionDocsSettings.setAlwaysAttachSetting(
+                isChecked
+            )
+        }
+    }
+
     val configurationFlow: StateFlow<Configuration> = _configurationFlow
 
     fun disableCameraPermission(cameraPermission: Boolean) {
@@ -69,7 +88,7 @@ class ConfigurationViewModel @Inject constructor(
     fun setupSDKWithDefaultConfigurations() {
         _configurationFlow.value = Configuration.setupSDKWithDefaultConfiguration(
             configurationFlow.value,
-            CaptureConfiguration(giniCaptureDefaultNetworkServiceDebugDisabled)
+            CaptureConfiguration(defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled)
         )
     }
 
@@ -80,7 +99,10 @@ class ConfigurationViewModel @Inject constructor(
 
         var captureConfiguration = CaptureConfiguration(
             // 37 Debug mode
-            networkService = if (configuration.isDebugModeEnabled) giniCaptureDefaultNetworkServiceDebugEnabled else giniCaptureDefaultNetworkServiceDebugDisabled,
+            networkService = if (configuration.isDebugModeEnabled)
+                defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled
+            else
+                defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled,
             // 1 file import
             fileImportEnabled = configuration.isFileImportEnabled,
             // 2 QR code scanning
@@ -128,6 +150,9 @@ class ConfigurationViewModel @Inject constructor(
 
             // 40 enable skonto
             skontoEnabled = configuration.isSkontoEnabled,
+
+            // 43 enable transaction docs
+            transactionDocsEnabled = configuration.isTransactionDocsEnabled,
         )
 
         // 9 enable Help screens custom bottom navigation bar
@@ -286,8 +311,16 @@ class ConfigurationViewModel @Inject constructor(
             GiniBank.skontoNavigationBarBottomAdapter = null
         }
 
+        if (configuration.isDigitalInvoiceSkontoCustomNavBarEnabled) {
+            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter =
+                CustomDigitalInvoiceSkontoNavigationBarBottomAdapter()
+        } else {
+            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter = null
+        }
+
         if (configuration.isSkontoHelpCustomNavBarEnabled) {
-            GiniBank.skontoHelpNavigationBarBottomAdapter = CustomSkontoHelpNavigationBarBottomAdapter()
+            GiniBank.skontoHelpNavigationBarBottomAdapter =
+                CustomSkontoHelpNavigationBarBottomAdapter()
         } else {
             GiniBank.skontoHelpNavigationBarBottomAdapter = null
         }
@@ -311,7 +344,6 @@ class ConfigurationViewModel @Inject constructor(
             GiniCaptureDebug.enable()
             configureLogging()
         }
-
     }
 
     private class GiniCaptureEventTracker : EventTracker {
@@ -388,8 +420,8 @@ class ConfigurationViewModel @Inject constructor(
 
 
     fun clearGiniCaptureNetworkInstances() {
-        giniCaptureDefaultNetworkServiceDebugDisabled.cleanup()
-        giniCaptureDefaultNetworkServiceDebugEnabled.cleanup()
+        defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled.cleanup()
+        defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled.cleanup()
     }
 
     companion object {

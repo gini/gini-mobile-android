@@ -19,5 +19,6 @@ Table of contents
     event-tracking
     testing
     customization
+    data-safety
     reference
     license

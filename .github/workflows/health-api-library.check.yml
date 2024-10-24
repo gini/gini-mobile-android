@@ -22,32 +22,14 @@ on:
         required: true
   workflow_dispatch:
     inputs:
-      clientId:
-        description: 'Client ID'
+      healthApiEnvironment:
+        description: 'Health API Environment'
         required: true
-        type: string
-        default: ''
-      clientSecret:
-        description: 'Client Secret'
-        required: true
-        type: string
-        default: ''
-      healthApiBaseUrl:
-        description: 'Health API Base URL'
-        required: true
-        type: string
-        default: ''
-      userCenterBaseUrl:
-        description: 'User Center Base URL'
-        required: true
-        type: string
-        default: ''
-      payApiBaseUrl:
-        description: 'Pay API Base URL'
-        required: true
-        type: string
-        default: ''
-      
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
 
 jobs:
   test:
@@ -81,7 +63,7 @@ jobs:
 #
 #      - name: archive unit test coverage report
 #        if: always()
-#        uses: actions/upload-artifact@v3
+#        uses: actions/upload-artifact@v4
 #        with:
 #          name: health-api-library-unit-test-coverage
 #          path: health-api-library/library/build/jacoco/jacocoHtml
@@ -128,9 +110,10 @@ jobs:
           disable-animations: true
           script: echo "Generated AVD snapshot for caching."
 
-      - name: run instrumented tests
+      - name: "run instrumented tests using Health API environment: ${{ inputs.healthApiEnvironment }}"
         timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2
+        if: ${{ inputs.healthApiEnvironment != 'staging' || matrix.api-level != 22 }}
         with:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
@@ -139,12 +122,12 @@ jobs:
           disable-animations: true
           script: >
             adb uninstall net.gini.android.health.api.test ;
-            ./gradlew health-api-library:library:connectedCheck
-            -PtestClientId="${{ inputs.clientId != '' && inputs.clientId || 'gini-mobile-test'}}"
-            -PtestClientSecret="${{ inputs.clientSecret != '' && inputs.clientSecret || secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-            -PtestApiUri="${{ inputs.healthApiBaseUrl != '' && inputs.healthApiBaseUrl || 'https://health-api.gini.net' }}"
-            -PtestUserCenterUri="${{ inputs.userCenterBaseUrl != '' && inputs.userCenterBaseUrl || 'https://user.gini.net' }}"
-            -PtestBankApiUri="${{ inputs.payApiBaseUrl != '' && inputs.payApiBaseUrl || 'https://pay-api.gini.net' }}"
+            ./gradlew -Pandroid.testInstrumentationRunnerArguments.apiEnv=${{ inputs.healthApiEnvironment }} health-api-library:library:connectedCheck
+            -PtestClientId='gini-mobile-test'
+            -PtestClientSecret='${{ inputs.healthApiEnvironment == 'staging' && secrets.STAGING_GINI_MOBILE_TEST_CLIENT_SECRET || secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}'
+            -PtestApiUri='${{ inputs.healthApiEnvironment == 'staging' && 'https://health-api.stage.gini.net' || 'https://health-api.gini.net' }}'
+            -PtestUserCenterUri='${{ inputs.healthApiEnvironment == 'staging' && 'https://user.stage.gini.net' || 'https://user.gini.net' }}'
+            -PtestBankApiUri='${{ inputs.healthApiEnvironment == 'staging' && 'https://pay-api.pia.stage.gini.net' || 'https://pay-api.gini.net' }}'
 
       - name: archive instrumented test results
         if: always()
@@ -211,7 +194,7 @@ jobs:
         run: ./gradlew health-api-library:library:lint
 
       - name: archive android lint report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: health-api-library-android-lint-report
           path: health-api-library/library/build/reports/lint-results*.html
