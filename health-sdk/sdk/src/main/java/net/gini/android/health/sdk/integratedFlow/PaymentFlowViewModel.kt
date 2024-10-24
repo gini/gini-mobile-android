@@ -65,6 +65,11 @@ internal class PaymentFlowViewModel(
                 }
             }
         }
+        viewModelScope.launch {
+            giniInternalPaymentModule.eventsFlow.collect { event ->
+                handleInternalEvents(event)
+            }
+        }
         paymentFlowConfiguration?.let {
             paymentComponent.shouldCheckReturningUser = false
             paymentComponent.bankPickerRows = BankPickerRows.TWO
@@ -181,6 +186,19 @@ internal class PaymentFlowViewModel(
 
     fun setExternalCacheDir(directory: File?) {
         externalCacheDir = directory
+    }
+
+    private fun handleInternalEvents(event: GiniInternalPaymentModule.InternalPaymentEvents) {
+        when (event) {
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(event.throwable), viewModelScope)
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> getPaymentProviderApp()?.let { giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(
+                net.gini.android.health.sdk.review.model.PaymentRequest(event.paymentRequestId, it)
+            ), viewModelScope) }
+            is GiniInternalPaymentModule.InternalPaymentEvents.NoAction -> giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction, viewModelScope)
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnLoading -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading, viewModelScope)
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Cancel, viewModelScope)
+            else -> {}
+        }
     }
 
     class Factory(private val paymentDetails: PaymentDetails?, private val documentId: String?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, private val giniHealth: GiniHealth): ViewModelProvider.Factory {

@@ -11,12 +11,10 @@ import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
-import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
-import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
@@ -85,11 +83,6 @@ internal class ReviewViewModel(
             }
         }
         viewModelScope.launch {
-            giniInternalPaymentModule.eventsFlow.collect { event ->
-                handleInternalEvents(event)
-            }
-        }
-        viewModelScope.launch {
             reviewComponent.paymentDetails.collect { paymentDetails ->
                 _paymentDetails.value = _paymentDetails.value.copy(recipient = paymentDetails.recipient, iban = paymentDetails.iban, amount = paymentDetails.amount, purpose = paymentDetails.purpose)
             }
@@ -111,16 +104,6 @@ internal class ReviewViewModel(
     fun loadPaymentDetails() {
         viewModelScope.launch {
             giniHealth.setDocumentForReview(documentId)
-        }
-    }
-
-    private fun handleInternalEvents(event: GiniInternalPaymentModule.InternalPaymentEvents) {
-        when (event) {
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(event.throwable), viewModelScope)
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> paymentProviderApp.value?.let { giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(PaymentRequest(event.paymentRequestId, it)), viewModelScope) }
-            is GiniInternalPaymentModule.InternalPaymentEvents.NoAction -> giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction, viewModelScope)
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnLoading -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading, viewModelScope)
-            else -> {}
         }
     }
 

@@ -28,7 +28,6 @@ import net.gini.android.health.sdk.databinding.GhsFragmentHealthBinding
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.health.sdk.review.model.PaymentDetails
-import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
@@ -198,23 +197,6 @@ class PaymentFragment private constructor(
                 launch {
                     viewModel.backButtonEvent.collect {
                         handleBackFlow()
-                    }
-                }
-                launch {
-                    viewModel.giniInternalPaymentModule.eventsFlow.collect { internalEvent ->
-                        when (internalEvent) {
-                            GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> viewModel.giniHealth.setOpenBankState(GiniHealth.PaymentState.Cancel, viewModel.viewModelScope)
-                            is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated ->
-                                viewModel.getPaymentProviderApp()?.let { selectedPaymentProvider ->
-                                    viewModel.giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(
-                                        PaymentRequest(
-                                            internalEvent.paymentRequestId,
-                                            selectedPaymentProvider
-                                        )
-                                    ), viewModel.viewModelScope)
-                                }
-                            else -> {}
-                        }
                     }
                 }
             }
@@ -398,47 +380,6 @@ class PaymentFragment private constructor(
             giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
         )
 
-    private fun GhsFragmentHealthBinding.handleSDKEvent(sdkEvent: GiniInternalPaymentModule.InternalPaymentEvents) {
-        when (sdkEvent) {
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> {
-                if (viewModel.getLastBackstackEntry() is DisplayedScreen.ShareSheet) return
-                try {
-                    val intent = viewModel.getPaymentProviderApp()?.getIntent(sdkEvent.paymentRequestId)
-                    if (intent != null) {
-                        startActivity(intent)
-                    } else {
-                        handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
-                    }
-                } catch (exception: ActivityNotFoundException) {
-                    handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
-                }
-            }
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> {
-                binding.loading.isVisible = false
-                handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
-            }
-            else -> {
-            }
-        }
-    }
-
-    private fun handlePaymentNextStep(paymentNextStep: PaymentNextStep) {
-        when (paymentNextStep) {
-            is PaymentNextStep.SetLoadingVisibility -> {
-                binding.loading.isVisible = paymentNextStep.isVisible
-            }
-            PaymentNextStep.RedirectToBank -> {
-                viewModel.onPayment()
-            }
-            PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let { showOpenWithDialog(it) }
-            PaymentNextStep.ShowInstallApp -> showInstallAppDialog()
-            is PaymentNextStep.OpenSharePdf -> {
-                binding.loading.isVisible = false
-                startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
-                viewModel.addToBackStack(DisplayedScreen.ShareSheet)
-            }
-        }
-    }
 
     private fun showInstallAppDialog() {
         childFragmentManager.showInstallAppBottomSheet(
@@ -460,6 +401,51 @@ class PaymentFragment private constructor(
         }
         viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
+    }
+
+    private fun GhsFragmentHealthBinding.handleSDKEvent(sdkEvent: GiniInternalPaymentModule.InternalPaymentEvents) {
+        when (sdkEvent) {
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> {
+                if (viewModel.getLastBackstackEntry() is DisplayedScreen.ShareSheet) {
+                        return
+                    }
+                try {
+                    val intent = viewModel.getPaymentProviderApp()?.getIntent(sdkEvent.paymentRequestId)
+                    if (intent != null) {
+                        startActivity(intent)
+                    } else {
+                        handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
+                    }
+                } catch (exception: ActivityNotFoundException) {
+                    handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
+                }
+            }
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> {
+                binding.loading.isVisible = false
+                handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
+            }
+            GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> viewModel.giniHealth.setOpenBankState(GiniHealth.PaymentState.Cancel, viewModel.viewModelScope)
+            else -> {
+            }
+        }
+    }
+
+    private fun handlePaymentNextStep(paymentNextStep: PaymentNextStep) {
+        when (paymentNextStep) {
+            is PaymentNextStep.SetLoadingVisibility -> {
+                binding.loading.isVisible = paymentNextStep.isVisible
+            }
+            PaymentNextStep.RedirectToBank -> {
+                viewModel.onPayment()
+            }
+            PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let { showOpenWithDialog(it) }
+            PaymentNextStep.ShowInstallApp -> showInstallAppDialog()
+            is PaymentNextStep.OpenSharePdf -> {
+                binding.loading.isVisible = false
+                startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
+                viewModel.addToBackStack(DisplayedScreen.ShareSheet)
+            }
+        }
     }
 
     override fun onStop() {
