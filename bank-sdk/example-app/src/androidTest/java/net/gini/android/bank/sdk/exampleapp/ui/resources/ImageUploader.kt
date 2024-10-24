@@ -13,14 +13,15 @@ class ImageUploader {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     fun uploadImageFromPhotos() {
        device.waitForIdle()
-//        val photoList = UiScrollable(UiSelector().scrollable(true))
-//        val firstPhoto: UiObject = photoList.getChildByInstance(UiSelector().className("android.widget.ImageView"), 1)
-//        firstPhoto.click()
+//        Thread.sleep(2000)
+        val photoList = UiScrollable(UiSelector().scrollable(true))
+        val firstPhoto: UiObject = photoList.getChildByInstance(UiSelector().className("android.widget.ImageView"), 3)
+        firstPhoto.click()
 
-        val buttons = device.findObjects(By.clazz("android.widget.ImageView"))
-        buttons[3].click()
+//        val buttons = device.findObjects(By.clazz("android.widget.ImageView"))
+//        buttons[3].click()
 
-        device.waitForIdle()
+//        device.waitForIdle()
     }
 
     fun clickAddButton() {
