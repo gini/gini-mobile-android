@@ -5,6 +5,9 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.uiautomator.UiObject
+import androidx.test.uiautomator.UiScrollable
+import androidx.test.uiautomator.UiSelector
 import net.gini.android.bank.sdk.exampleapp.R
 import org.hamcrest.Matchers.allOf
 
@@ -16,14 +19,23 @@ class ExtractionScreen {
     }
 
     fun editTransferSummaryFields(hint: String, value: String) {
-        onView(allOf(withId(R.id.text_value), withHint(hint)))
-            .perform(click())
+        onView(allOf(withHint(hint)))
+//            .perform(click())
             .perform(replaceText(value))
+//        val photoList = UiScrollable(UiSelector().scrollable(true))
+//        val firstPhoto: UiObject = photoList.getChildByInstance(
+//            UiSelector().className("com.google.android.material.textfield.TextInputLayout"),
+//            3
+//        )
+//        firstPhoto.text = value
+//
+//        val sd =""
+
     }
 
     fun checkTransferSummaryButtonIsClickable(): Boolean {
         var isTransferSummaryButtonClickable = false
-        onView(withId(R.id.transfer_summary))  .check { view, noViewFoundException ->
+        onView(withId(R.id.transfer_summary)).check { view, noViewFoundException ->
             if (noViewFoundException == null || view.isClickable()) {
                 isTransferSummaryButtonClickable = true
             }

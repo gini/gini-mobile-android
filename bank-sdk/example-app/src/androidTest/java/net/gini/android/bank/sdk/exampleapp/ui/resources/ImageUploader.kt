@@ -30,6 +30,5 @@ class ImageUploader {
         val buttonSelector = UiSelector().className("android.widget.Button")
         val buttons = device.findObjects(By.clazz("android.widget.Button"))
         buttons[1].click()
-        val sd = ""
     }
 }
