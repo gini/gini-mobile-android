@@ -13,9 +13,13 @@ class ImageUploader {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     fun uploadImageFromPhotos() {
        device.waitForIdle()
-        val photoList = UiScrollable(UiSelector().scrollable(true))
-        val firstPhoto: UiObject = photoList.getChild(UiSelector().className("android.widget.ImageView").instance(0))
-        firstPhoto.click()
+//        val photoList = UiScrollable(UiSelector().scrollable(true))
+//        val firstPhoto: UiObject = photoList.getChildByInstance(UiSelector().className("android.widget.ImageView"), 1)
+//        firstPhoto.click()
+
+        val buttons = device.findObjects(By.clazz("android.widget.ImageView"))
+        buttons[3].click()
+
         device.waitForIdle()
     }
 
@@ -26,37 +30,5 @@ class ImageUploader {
         val buttons = device.findObjects(By.clazz("android.widget.Button"))
         buttons[1].click()
         val sd = ""
-//        logUiElementsRecursive(rootObject)
-//        val okButton = device.findObject(UiSelector().textContains("Add(1)").className("android.widget.Button"))
-//
-//        okButton.click()
-//        val addButton = device.findObject(
-//            UiSelector()
-//                .className("android.widget.Button")
-//                .resourceId("com.google.android.providers.media.module:id/button_add")
-//        )
-//        if (addButton.exists()) {
-//            addButton.click()
-//        } else {
-//            throw java.lang.Exception("Add button not found")
-//        }
-    }
-
-    private fun logUiElementsRecursive(uiObject: UiObject, depth: Int = 0) {
-        try {
-            // Get child count (if any)
-            val childCount = uiObject.childCount
-
-            // Log the current element's details
-            Log.d("UiElementLog", "${" ".repeat(depth * 2)}Element: ${uiObject.className}, Text: ${uiObject.text}, $uiObject., ContentDesc: ${uiObject.contentDescription}")
-
-            // If there are child elements, recursively log them
-            for (i in 0 until childCount) {
-                val child = uiObject.getChild(UiSelector().index(i))
-                logUiElementsRecursive(child, depth + 1)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 }

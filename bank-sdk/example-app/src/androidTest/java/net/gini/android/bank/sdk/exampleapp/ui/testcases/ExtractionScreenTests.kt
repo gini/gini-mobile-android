@@ -63,6 +63,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         imageUploader.uploadImageFromPhotos()
         idlingResource.waitForIdle()
+        Thread.sleep(1000)
         imageUploader.clickAddButton()
     }
 
@@ -71,6 +72,7 @@ class ExtractionScreenTests {
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
+        idlingResource.waitForIdle()
         reviewScreen.clickProcessButton()
         idlingResource.waitForIdle()
         extractionScreen.clickTransferSummaryButton()
