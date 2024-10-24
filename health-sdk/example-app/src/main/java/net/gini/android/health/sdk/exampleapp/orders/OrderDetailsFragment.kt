@@ -1,6 +1,8 @@
 package net.gini.android.health.sdk.exampleapp.orders
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,12 +23,47 @@ import net.gini.android.health.sdk.exampleapp.orders.model.Order
 import net.gini.android.health.sdk.exampleapp.orders.model.getPaymentDetails
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.NumberFormat
 
 class OrderDetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentOrderDetailsBinding
     private val invoicesViewModel: InvoicesViewModel by activityViewModels()
     private val orderDetailsViewModel: OrderDetailsViewModel by viewModels()
+    private val amountWatcher = object : TextWatcher {
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            s?.let { input ->
+                // Take only the first 7 digits (without leading zeros)
+                val onlyDigits = input.toString().trim()
+                    .filter { it != '.' && it != ',' }
+                    .take(7)
+                    .trimStart('0')
+
+                val newString = try {
+                    // Parse to a decimal with two decimal places
+                    val decimal = BigDecimal(onlyDigits).divide(BigDecimal(100))
+                    // Format to a currency string
+                    currencyFormatterWithoutSymbol().format(decimal).trim()
+                } catch (e: NumberFormatException) {
+                    ""
+                }
+
+                if (newString != input.toString()) {
+                    input.replace(0, input.length, newString)
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,11 +120,21 @@ class OrderDetailsFragment : Fragment() {
             amount.addTextChangedListener { text ->
                 orderDetailsViewModel.updateAmount(text.toString())
             }
+            amount.addTextChangedListener(amountWatcher)
             purpose.addTextChangedListener { text ->
                 orderDetailsViewModel.updatePurpose(text.toString())
             }
         }
     }
+
+    fun currencyFormatterWithoutSymbol(): NumberFormat =
+        NumberFormat.getCurrencyInstance().apply {
+            (this as? DecimalFormat)?.apply {
+                decimalFormatSymbols = decimalFormatSymbols.apply {
+                    currencySymbol = ""
+                }
+            }
+        }
 
     companion object {
         fun newInstance() = OrderDetailsFragment()
