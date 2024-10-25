@@ -12,16 +12,14 @@ import androidx.test.uiautomator.UiSelector
 class ImageUploader {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     fun uploadImageFromPhotos() {
-       device.waitForIdle()
-//        Thread.sleep(2000)
+        Thread.sleep(2000)
+//        val photoList = UiScrollable(UiSelector().scrollable(true))
+//        val firstPhoto: UiObject = photoList.getChildByInstance(UiSelector().className("android.widget.ImageView"), 3)
+//        firstPhoto.click()
+
         val photoList = UiScrollable(UiSelector().scrollable(true))
-        val firstPhoto: UiObject = photoList.getChildByInstance(UiSelector().className("android.widget.ImageView"), 3)
+        val firstPhoto: UiObject = photoList.getChild(UiSelector().className("android.widget.ImageView").instance(0))
         firstPhoto.click()
-
-//        val buttons = device.findObjects(By.clazz("android.widget.ImageView"))
-//        buttons[3].click()
-
-//        device.waitForIdle()
     }
 
     fun clickAddButton() {

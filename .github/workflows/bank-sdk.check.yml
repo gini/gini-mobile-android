@@ -112,7 +112,7 @@ jobs:
           script: >
             adb push .github/test_pdfs/password-protected.pdf /sdcard/Download ;
             adb push .github/test_pdfs/sample.pdf /sdcard/Download ;
-            adb push .github/test_pdfs/test-image-no-results.jpg /sdcard/Download ;
+#            adb push .github/test_pdfs/test-image-no-results.jpg /sdcard/Download ;
             adb push .github/test_pdfs/test-pdf-no-results.pdf /sdcard/Download ;
             adb push .github/test_pdfs/test_image.jpeg /sdcard/Download ;
             adb push .github/test_pdfs/Testrechnung-RA-1.pdf /sdcard/Download ;
