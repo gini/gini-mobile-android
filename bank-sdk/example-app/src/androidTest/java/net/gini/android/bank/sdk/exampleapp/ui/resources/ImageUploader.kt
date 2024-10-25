@@ -26,7 +26,7 @@ class ImageUploader {
 //        device.findObject(UiSelector().className("android.widget.ImageView")).click()
         val buttons = device.findObjects(By.clazz("android.widget.ImageView"))
         Thread.sleep(1000)
-        buttons[3].click()
+        buttons[2].click()
     }
 
     fun clickAddButton() {
