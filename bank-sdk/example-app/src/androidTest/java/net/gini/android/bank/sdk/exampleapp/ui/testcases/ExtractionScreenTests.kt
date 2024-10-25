@@ -100,7 +100,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         reviewScreen.clickProcessButton()
         Thread.sleep(5000)
-//        extractionScreen.editTransferSummaryFields("amountToPay", "200:EUR")
+        extractionScreen.editTransferSummaryFields("amountToPay", "200:EUR")
         Thread.sleep(1000)
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
