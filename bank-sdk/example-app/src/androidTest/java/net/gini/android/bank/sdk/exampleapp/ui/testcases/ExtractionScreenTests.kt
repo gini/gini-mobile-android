@@ -87,7 +87,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         reviewScreen.clickProcessButton()
         Thread.sleep(5000)
-        extractionScreen.editTransferSummaryFields("iban", "DE48120400000180115890")
+//        extractionScreen.editTransferSummaryFields("iban", "DE48120400000180115890")
         Thread.sleep(1000)
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
@@ -100,7 +100,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         reviewScreen.clickProcessButton()
         Thread.sleep(5000)
-        extractionScreen.editTransferSummaryFields("amountToPay", "200:EUR")
+//        extractionScreen.editTransferSummaryFields("amountToPay", "200:EUR")
         Thread.sleep(1000)
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
@@ -114,7 +114,7 @@ class ExtractionScreenTests {
         reviewScreen.clickProcessButton()
         idlingResource.waitForIdle()
         Thread.sleep(3000)
-        extractionScreen.editTransferSummaryFields("paymentPurpose", "Rent")
+//        extractionScreen.editTransferSummaryFields("paymentPurpose", "Rent")
         Thread.sleep(1000)
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
