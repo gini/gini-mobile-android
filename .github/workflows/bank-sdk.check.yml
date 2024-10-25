@@ -102,7 +102,7 @@ jobs:
           disable-animations: true
           script: echo "Generated AVD snapshot for caching."
 
-      - name: run example app instrumented tests5
+      - name: run example app instrumented tests
         timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2
         with:
