@@ -61,7 +61,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         captureScreen.clickPhotos()
         idlingResource.waitForIdle()
-        Thread.sleep(1000)
+        Thread.sleep(3000)
         imageUploader.uploadImageFromPhotos()
         idlingResource.waitForIdle()
         Thread.sleep(1000)
