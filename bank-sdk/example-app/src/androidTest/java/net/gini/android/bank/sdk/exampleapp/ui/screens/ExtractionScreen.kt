@@ -5,6 +5,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
@@ -35,7 +36,7 @@ class ExtractionScreen {
 
     fun checkTransferSummaryButtonIsClickable(): Boolean {
         var isTransferSummaryButtonClickable = false
-        onView(withId(R.id.transfer_summary)).check { view, noViewFoundException ->
+        onView(withText("Send Feedback and Close")).check { view, noViewFoundException ->
             if (noViewFoundException == null || view.isClickable()) {
                 isTransferSummaryButtonClickable = true
             }
