@@ -87,7 +87,8 @@ jobs:
           script: >
             adb push .github/test_pdfs/password-protected.pdf /sdcard/Download ;
             adb push .github/test_pdfs/sample.pdf /sdcard/Download ;
-            adb push .github/test_pdfs/test_image.jpeg /sdcard/Download ;
+            adb push .github/test_pdfs/test_image.png /sdcard/Download ;
+            adb push .github/test_pdfs/test-image-no-result.jpg /sdcard/Download ;
             adb push .github/test_pdfs/Testrechnung-RA-1.pdf /sdcard/Download ;
             adb push .github/test_pdfs/too-many-pages.pdf /sdcard/Download ;
             adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
