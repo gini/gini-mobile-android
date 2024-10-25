@@ -89,7 +89,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         Thread.sleep(1000)
         extractionScreen.editTransferSummaryFields("iban", "DE48120400000180115890")
-        idlingResource.waitForIdle()
+        Thread.sleep(1000)
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
@@ -103,7 +103,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         Thread.sleep(1000)
         extractionScreen.editTransferSummaryFields("amountToPay", "200:EUR")
-        idlingResource.waitForIdle()
+        Thread.sleep(1000)
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
@@ -117,7 +117,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         Thread.sleep(3000)
         extractionScreen.editTransferSummaryFields("paymentPurpose", "Rent")
-        idlingResource.waitForIdle()
+        Thread.sleep(1000)
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
@@ -131,7 +131,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         Thread.sleep(1000)
 //        extractionScreen.editTransferSummaryFields("paymentRecipient", "Zalando Gmbh & Co. KG")
-        idlingResource.waitForIdle()
+        Thread.sleep(1000)
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
