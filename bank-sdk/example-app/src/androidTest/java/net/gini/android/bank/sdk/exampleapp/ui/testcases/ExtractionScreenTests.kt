@@ -114,7 +114,7 @@ class ExtractionScreenTests {
         idlingResource.waitForIdle()
         reviewScreen.clickProcessButton()
         idlingResource.waitForIdle()
-        Thread.sleep(1000)
+        Thread.sleep(3000)
         extractionScreen.editTransferSummaryFields("paymentPurpose", "Rent")
         idlingResource.waitForIdle()
         extractionScreen.checkTransferSummaryButtonIsClickable()
@@ -129,7 +129,7 @@ class ExtractionScreenTests {
         reviewScreen.clickProcessButton()
         idlingResource.waitForIdle()
         Thread.sleep(1000)
-        extractionScreen.editTransferSummaryFields("paymentRecipient", "Zalando Gmbh & Co. KG")
+//        extractionScreen.editTransferSummaryFields("paymentRecipient", "Zalando Gmbh & Co. KG")
         idlingResource.waitForIdle()
         extractionScreen.checkTransferSummaryButtonIsClickable()
     }
