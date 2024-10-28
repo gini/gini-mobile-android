@@ -5,17 +5,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_COMPONENT_CONFIG
-import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_FLOW_CONFIGURATION
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityUploadBinding
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadViewModel.UploadState
-import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class UploadActivity : AppCompatActivity() {
@@ -37,7 +32,7 @@ class UploadActivity : AppCompatActivity() {
         }
 
         binding.payment.setOnClickListener {
-            startActivity(ReviewActivity.getStartIntent(this, intent.pageUris, IntentCompat.getParcelableExtra(intent, PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)))
+            startActivity(ReviewActivity.getStartIntent(this, intent.pageUris))
         }
     }
 
@@ -54,10 +49,8 @@ class UploadActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_URIS = "EXTRA_URIS"
-        fun getStartIntent(context: Context, pages: List<Uri>, paymentComponentConfiguration: PaymentComponentConfiguration?, paymentFlowConfiguration: PaymentFlowConfiguration?): Intent = Intent(context, UploadActivity::class.java).apply {
+        fun getStartIntent(context: Context, pages: List<Uri>): Intent = Intent(context, UploadActivity::class.java).apply {
             putParcelableArrayListExtra(EXTRA_URIS, if (pages is ArrayList<Uri>) pages else ArrayList<Uri>().apply { addAll(pages) })
-            putExtra(PAYMENT_COMPONENT_CONFIG, paymentComponentConfiguration)
-            putExtra(PAYMENT_FLOW_CONFIGURATION, paymentFlowConfiguration)
         }
 
         private val Intent.pageUris: List<Uri>

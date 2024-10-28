@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         binding.importFile.setOnClickListener {
             if (useTestDocument) {
                 viewModel.setDocumentForReview(testDocumentId)
-                startActivity(ReviewActivity.getStartIntent(this, paymentComponentConfiguration = viewModel.getPaymentComponentConfiguration()))
+                startActivity(ReviewActivity.getStartIntent(this))
             } else {
                 importFile()
             }
@@ -66,8 +66,6 @@ class MainActivity : AppCompatActivity() {
                 UploadActivity.getStartIntent(
                     this@MainActivity,
                     viewModel.pages.value.map { it.uri },
-                    viewModel.getPaymentComponentConfiguration(),
-                    viewModel.getPaymentFlowConfiguration()
                 )
             )
         }
@@ -119,10 +117,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun importResult(uri: Uri?) {
-        uri?.let {
-            startActivity(UploadActivity.getStartIntent(this, listOf(it), viewModel.getPaymentComponentConfiguration(), viewModel.getPaymentFlowConfiguration()))
-        } ?: run {
+    private fun importResult(uris: List<Uri>) {
+        if (uris.isNotEmpty()) {
+            startActivity(UploadActivity.getStartIntent(this, uris))
+        } else {
             Toast.makeText(this, "No document received", Toast.LENGTH_LONG).show()
         }
     }

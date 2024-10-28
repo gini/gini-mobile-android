@@ -29,10 +29,6 @@ import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.paymentComponent.BankPickerRows
-import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
-import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.isValidIban
 import org.slf4j.LoggerFactory

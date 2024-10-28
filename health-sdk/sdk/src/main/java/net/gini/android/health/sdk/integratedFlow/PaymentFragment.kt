@@ -155,7 +155,7 @@ class PaymentFragment private constructor(
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
-        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, viewModel.paymentComponent.giniPaymentLanguage)
+        return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(inflater, viewModel.paymentComponent.getGiniPaymentLanguage(requireContext()))
     }
 
     override fun onCreateView(
@@ -263,7 +263,7 @@ class PaymentFragment private constructor(
     }
 
     private fun GhsFragmentHealthBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        val context = requireContext().wrappedWithGiniPaymentThemeAndLocale(viewModel.paymentComponent.giniPaymentLanguage)
+        val context = requireContext().wrappedWithGiniPaymentThemeAndLocale(viewModel.paymentComponent.getGiniPaymentLanguage(requireContext()))
         snackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             setTextMaxLines(2)
             setAction(getString(R.string.ghs_snackbar_retry)) { onRetry() }
@@ -333,13 +333,14 @@ class PaymentFragment private constructor(
         viewModel.onPaymentButtonTapped()
     }
 
-    private fun showReviewBottomDialog() {
-        Thread.dumpStack()
+    @VisibleForTesting
+    internal fun showReviewBottomDialog() {
         viewModel.addToBackStack(DisplayedScreen.ReviewBottomSheet)
         createReviewBottomSheet().also { it.show(childFragmentManager, ReviewBottomSheet::class.java.name) }
     }
 
-    private fun showReviewFragment() {
+    @VisibleForTesting
+    internal fun showReviewFragment() {
         viewModel.addToBackStack(DisplayedScreen.ReviewFragment)
         val reviewFragment = ReviewFragment.newInstance(
             giniHealth = viewModel.giniHealth,
