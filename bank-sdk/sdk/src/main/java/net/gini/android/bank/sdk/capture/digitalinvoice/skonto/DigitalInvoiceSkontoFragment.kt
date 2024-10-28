@@ -32,9 +32,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -56,7 +53,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -431,7 +427,7 @@ private fun NavigationActionBack(
             onClick = onClick
         ) {
             Icon(
-                painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.ArrowBack),
+                painter = painterResource(id = net.gini.android.capture.R.drawable.gc_action_bar_back),
                 contentDescription = stringResource(
                     id = R.string.gbs_skonto_screen_content_description_close
                 ),
@@ -517,7 +513,7 @@ private fun YourInvoiceScanSection(
             }
 
             Icon(
-                painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.KeyboardArrowRight),
+                painter = painterResource(id = R.drawable.gbs_arrow_right),
                 contentDescription = null,
                 tint = colorScheme.arrowTint
             )

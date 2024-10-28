@@ -59,16 +59,14 @@ android {
 
 
     buildTypes {
-        val credentials = readLocalPropertiesToMapSilent(project, listOf("mixpanelApiKey", "amplitudeApiKey"))
+        val credentials = readLocalPropertiesToMapSilent(project, listOf("amplitudeApiKey"))
         debug {
             isTestCoverageEnabled = true
-            resValue("string", "mixpanel_api_key", credentials["mixpanelApiKey"] ?: "")
             resValue("string", "amplitude_api_key", credentials["amplitudeApiKey"] ?: "")
         }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-            resValue("string", "mixpanel_api_key", credentials["mixpanelApiKey"] ?: "")
             resValue("string", "amplitude_api_key", credentials["amplitudeApiKey"] ?: "")
         }
     }
