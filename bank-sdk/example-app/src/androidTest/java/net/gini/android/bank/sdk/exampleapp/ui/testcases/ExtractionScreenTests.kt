@@ -1,6 +1,8 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
@@ -19,15 +21,18 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.After
 import org.junit.Assume
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Properties
 
 
 /**
  * Test class for Extraction screen.
  */
 
+@RunWith(AndroidJUnit4::class)
 class ExtractionScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
@@ -50,12 +55,14 @@ class ExtractionScreenTests {
         device.executeShellCommand("pm grant net.gini.android.bank.sdk.exampleapp android.permission.WRITE_EXTERNAL_STORAGE")
     }
 
+    val testProperties = Properties().apply {
+        getApplicationContext<Context>().resources.assets
+            .open("test.properties").use { load(it) }
+    }
+
     @Before
     fun setup() {
-        // Check if we are running connectedAndroidTest
-        val isConnectedAndroidTest = System.getProperty("connectedTest")
-        // If true, skip the tests in this class
-        Assume.assumeTrue(isConnectedAndroidTest != "true")
+
         grantStoragePermission()
         idlingResource = SimpleIdlingResource(2000)
         IdlingRegistry.getInstance().register(idlingResource)
@@ -78,6 +85,8 @@ class ExtractionScreenTests {
 
     @Test
     fun test1_clickTransferSummaryButton() {
+        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        Assume.assumeTrue(ignoreTests != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
@@ -89,9 +98,8 @@ class ExtractionScreenTests {
 
     @Test
     fun test2_editIbanFieldAndCheckTransferSummaryButtonClickable() {
-        val isConnectedAndroidTest = System.getProperty("connectedTest")
-        // If true, skip the tests in this class
-        Assume.assumeTrue(isConnectedAndroidTest != "true")
+        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        Assume.assumeTrue(ignoreTests != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
@@ -105,9 +113,8 @@ class ExtractionScreenTests {
 
     @Test
     fun test3_editAmountFieldAndCheckTransferSummaryButtonClickable() {
-        val isConnectedAndroidTest = System.getProperty("connectedTest")
-        // If true, skip the tests in this class
-        Assume.assumeTrue(isConnectedAndroidTest != "true")
+        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        Assume.assumeTrue(ignoreTests != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
@@ -121,9 +128,8 @@ class ExtractionScreenTests {
 
     @Test
     fun test4_editPurposeFieldAndCheckTransferSummaryButtonClickable() {
-        val isConnectedAndroidTest = System.getProperty("connectedTest")
-        // If true, skip the tests in this class
-        Assume.assumeTrue(isConnectedAndroidTest != "true")
+        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        Assume.assumeTrue(ignoreTests != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
@@ -138,6 +144,8 @@ class ExtractionScreenTests {
 
     @Test
     fun test5_editRecipientFieldAndCheckTransferSummaryButtonClickable() {
+        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        Assume.assumeTrue(ignoreTests != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
@@ -151,9 +159,6 @@ class ExtractionScreenTests {
 
     @Test
     fun test6_pressBackOnTransferSummaryAndShowsMainScreenOnSubsequentLaunches() {
-        val isConnectedAndroidTest = System.getProperty("connectedTest")
-        // If true, skip the tests in this class
-        Assume.assumeTrue(isConnectedAndroidTest != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()

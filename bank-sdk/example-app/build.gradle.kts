@@ -96,6 +96,7 @@ android {
         debug {
             resValue("string", "gini_api_client_id", credentials["clientId"] ?: "")
             resValue("string", "gini_api_client_secret", credentials["clientSecret"] ?: "")
+            buildConfigField("boolean", "DEBUG", "true")
         }
         release {
             isMinifyEnabled = false
@@ -156,10 +157,32 @@ tasks.withType<Test> {
     // Ensure we are excluding tests for connectedAndroidTest specifically
     if (name == "connectedDevExampleAppDebugAndroidTest") {
         systemProperty("connectedTest", true)
-//        task.systemProperty("isConnectedAndroidTest", "true")
-
+        dependsOn
     }
 }
+
+tasks.register<CreatePropertiesTask>("injectTestProperties") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMapSilent(project,
+            listOf("ignoreLocalTests"))
+        )
+    }
+
+    destinations.put(
+        file("src/androidTest/assets/test.properties"),
+        propertiesMap
+    )
+}
+
+afterEvaluate {
+    tasks.filter { it.name.equals("connectedDevExampleAppDebugAndroidTest", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectTestProperties"))
+    }
+}
+
 
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
 // https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version

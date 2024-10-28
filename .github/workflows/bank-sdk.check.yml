@@ -92,7 +92,8 @@ jobs:
             adb push .github/test_pdfs/Testrechnung-RA-1.pdf /sdcard/Download ;
             adb push .github/test_pdfs/too-many-pages.pdf /sdcard/Download ;
             adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
-            ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest -PconnectedTest=true
+            ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest 
+            -PignoreLocalTests="true"
             -PclientId="gini-mobile-test"
             -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
