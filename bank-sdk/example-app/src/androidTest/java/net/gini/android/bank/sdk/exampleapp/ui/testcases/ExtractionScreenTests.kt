@@ -1,6 +1,8 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
@@ -16,9 +18,11 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.After
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.Properties
 
 
 /**
@@ -46,8 +50,14 @@ class ExtractionScreenTests {
         device.executeShellCommand("pm grant net.gini.android.bank.sdk.exampleapp android.permission.WRITE_EXTERNAL_STORAGE")
     }
 
+    val testProperties = Properties().apply {
+        getApplicationContext<Context>().resources.assets
+            .open("test.properties").use { load(it) }
+    }
+
     @Before
     fun setup() {
+        cancelTestIfRunOnCi()
         grantStoragePermission()
         idlingResource = SimpleIdlingResource(2000)
         IdlingRegistry.getInstance().register(idlingResource)
@@ -55,12 +65,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test1_clickTransferSummaryButton() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        chooseAndUploadImageFromPhotos()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -70,12 +75,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test2_editIbanFieldAndCheckTransferSummaryButtonClickable() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        chooseAndUploadImageFromPhotos()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -86,12 +86,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test3_editAmountFieldAndCheckTransferSummaryButtonClickable() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        chooseAndUploadImageFromPhotos()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -102,12 +97,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test4_editPurposeFieldAndCheckTransferSummaryButtonClickable() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        chooseAndUploadImageFromPhotos()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -118,12 +108,7 @@ class ExtractionScreenTests {
 
     @Test
     fun test5_editRecipientFieldAndCheckTransferSummaryButtonClickable() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickPhotos()
-        imageUploader.uploadImageFromPhotos()
-        imageUploader.clickAddButton()
+        chooseAndUploadImageFromPhotos()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
         reviewScreen.clickProcessButton()
@@ -134,17 +119,26 @@ class ExtractionScreenTests {
 
     @Test
     fun test6_pressBackOnTransferSummaryAndShowsMainScreenOnSubsequentLaunches() {
+        chooseAndUploadImageFromPhotos()
+        idlingResource.waitForIdle()
+        reviewScreen.assertReviewTitleIsDisplayed()
+        reviewScreen.clickProcessButton()
+        pressBack()
+        mainScreen.assertDescriptionTitle()
+    }
+
+    private fun chooseAndUploadImageFromPhotos() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
         captureScreen.clickPhotos()
         imageUploader.uploadImageFromPhotos()
         imageUploader.clickAddButton()
-        idlingResource.waitForIdle()
-        reviewScreen.assertReviewTitleIsDisplayed()
-        reviewScreen.clickProcessButton()
-        pressBack()
-        mainScreen.assertDescriptionTitle()
+    }
+
+    private fun cancelTestIfRunOnCi() {
+        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        Assume.assumeTrue(ignoreTests != "true")
     }
 
     @After
