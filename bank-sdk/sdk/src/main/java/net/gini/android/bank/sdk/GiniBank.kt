@@ -7,7 +7,6 @@ import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
 import net.gini.android.bank.sdk.GiniBank.getPaymentRequest
-import net.gini.android.bank.sdk.GiniBank.releaseCapture
 import net.gini.android.bank.sdk.GiniBank.resolvePaymentRequest
 import net.gini.android.bank.sdk.GiniBank.returnToPaymentInitiatorApp
 import net.gini.android.bank.sdk.GiniBank.setCaptureConfiguration
@@ -167,7 +166,7 @@ object GiniBank {
 
     /**
      * Sets configuration for Capture feature.
-     * Note that configuration is immutable. [releaseCapture] needs to be called before passing a new configuration.
+     * Note that configuration is immutable. [cleanupCapture] needs to be called before passing a new configuration.
      *
      * @throws IllegalStateException if capture is already configured.
      */
@@ -203,7 +202,7 @@ object GiniBank {
      * Please provide the required transfer summary to improve the future extraction accuracy.
      *
      * Follow the recommendations below:
-     * - Make sure to call this method before calling [releaseCapture] if the user has completed TAN verification.
+     * - Make sure to call this method before calling [cleanupCapture] if the user has completed TAN verification.
      * - Provide values for all necessary fields, including those that were not extracted.
      * - Provide the final data approved by the user (and not the initially extracted only).
      * - Send the transfer summary after TAN verification and provide the extraction values the user has used.
@@ -246,7 +245,7 @@ object GiniBank {
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
      *
-     * @deprecated Use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [releaseCapture] to let the SDK free up used resources.
+     * @deprecated Use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [cleanupCapture] to let the SDK free up used resources.
      */
     @Deprecated(
         "Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources.",
@@ -264,7 +263,7 @@ object GiniBank {
         sendTransferSummary(
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
         )
-        releaseCapture(context)
+        cleanupCapture(context)
         releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }
@@ -276,7 +275,23 @@ object GiniBank {
      * @param context Android context
      *
      */
+    @Deprecated(
+        "Please use cleanupCapture(context). This method will be removed in a future release.",
+        ReplaceWith("cleanupCapture(context)")
+    )
     fun releaseCapture(
+        context: Context
+    ) {
+        cleanupCapture(context)
+    }
+
+    /**
+     * Frees up resources used by the capture flow.
+     *
+     * @param context Android context
+     *
+     */
+    fun cleanupCapture(
         context: Context
     ) {
         GiniCapture.cleanup(
