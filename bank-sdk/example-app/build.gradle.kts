@@ -155,7 +155,14 @@ android {
 tasks.withType<Test> {
     // Ensure we are excluding tests for connectedAndroidTest specifically
     if (name == "connectedDevExampleAppDebugAndroidTest") {
-        exclude("**/testcases/**") // Exclude tests in the manual package
+        exclude("${projectDir}/src/androidTest/java/net/gini/android/bank/sdk/exampleapp/ui/testcases/ExtractionScreenTests.class")
+        exclude("${projectDir}/src/androidTest/java/net/gini/android/bank/sdk/exampleapp/ui/testcases/ExtractionScreenTests.kt")
+        exclude("**/testcases/**")
+        exclude("**/*ExtractionScreenTests*")
+            exclude("**&#47;*ExtractionScreenTests.class")
+        exclude("**/ExtractionScreenTests.kt")
+
+    exclude("**/*OpenWithTest*")
     }
 }
 

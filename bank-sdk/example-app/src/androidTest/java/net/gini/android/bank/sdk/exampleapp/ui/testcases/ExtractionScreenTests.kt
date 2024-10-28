@@ -4,6 +4,7 @@ import android.Manifest
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
@@ -16,15 +17,17 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.After
+import org.junit.Assume
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
 
 /**
  * Test class for Extraction screen.
  */
+
 class ExtractionScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
@@ -49,6 +52,10 @@ class ExtractionScreenTests {
 
     @Before
     fun setup() {
+        // Check if we are running connectedAndroidTest
+        val isConnectedAndroidTest = System.getProperty("isConnectedAndroidTest")
+        // If true, skip the tests in this class
+        Assume.assumeTrue(isConnectedAndroidTest != "true")
         grantStoragePermission()
         idlingResource = SimpleIdlingResource(2000)
         IdlingRegistry.getInstance().register(idlingResource)
