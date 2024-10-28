@@ -13,7 +13,6 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentPreferences
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.internal.payment.utils.DisplayedScreen
@@ -90,7 +89,6 @@ class GiniInternalPaymentModule(private val context: Context,
 
     var paymentComponent = PaymentComponent(context, this)
     private val openWithPreferences = OpenWithPreferences(context)
-    val paymentComponentPreferences = PaymentComponentPreferences(context)
 
     private val _paymentFlow =
         MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
@@ -120,7 +118,6 @@ class GiniInternalPaymentModule(private val context: Context,
 
     suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?) = giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
     suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
-
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
     fun setPaymentDetails(paymentDetails: PaymentDetails?) {
@@ -135,8 +132,7 @@ class GiniInternalPaymentModule(private val context: Context,
         openWithPreferences.incrementCountForPaymentProviderId(paymentProviderAppId)
     }
 
-    suspend fun getLiveCountForPaymentProviderId(paymentProviderAppId: String) = openWithPreferences.getLiveCountForPaymentProviderId(paymentProviderAppId)
-
+    fun getLiveCountForPaymentProviderId(paymentProviderAppId: String) = openWithPreferences.getLiveCountForPaymentProviderId(paymentProviderAppId)
 
     fun emitSdkEvent(event: InternalPaymentEvents) {
         _eventsFlow.tryEmit(event)

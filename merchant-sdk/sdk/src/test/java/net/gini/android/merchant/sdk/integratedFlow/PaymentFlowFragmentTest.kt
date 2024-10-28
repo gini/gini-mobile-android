@@ -41,13 +41,12 @@ class PaymentFlowFragmentTest {
         giniInternalPaymentModule = mockk<GiniInternalPaymentModule>(relaxed = true)
 
         giniMerchant = mockk<GiniMerchant>(relaxed = true)
-        every { giniMerchant!!.giniInternalPaymentModule } returns giniInternalPaymentModule!!
         every { giniMerchant!!.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
-//        every { giniMerchant!!.giniInternalPaymentModule.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
-//        every { giniMerchant!!.getPaymentReviewFragment("1234", any()) } returns mockk(relaxed = true)
 
         paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { giniInternalPaymentModule!!.paymentComponent } returns paymentComponent!!
+        every { giniMerchant!!.giniInternalPaymentModule } returns giniInternalPaymentModule!!
 
         paymentFlowViewModel = mockk<PaymentFlowViewModel>(relaxed = true)
         every { paymentFlowViewModel!!.giniMerchant } returns giniMerchant!!
@@ -55,6 +54,7 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.backButtonEvent } returns MutableSharedFlow()
         every { paymentFlowViewModel!!.shareWithFlowStarted } returns MutableStateFlow(false)
         every { paymentFlowViewModel!!.giniInternalPaymentModule } returns giniInternalPaymentModule!!
+        every { paymentFlowViewModel!!.giniInternalPaymentModule.paymentComponent } returns paymentComponent!!
         viewModelFactory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
@@ -95,7 +95,6 @@ class PaymentFlowFragmentTest {
         every { paymentFlowViewModel!!.giniMerchant!!.createFragment("", "", "", "") } returns mockk(relaxed = true)
         every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
         every { paymentFlowViewModel!!.giniMerchant.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
-//        every { paymentFlowViewModel!!.giniMerchant.paymentFlow } returns MutableStateFlow(mockk(relaxed = true))
         every { paymentFlowViewModel!!.paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             mockk(relaxed = true)
         )
