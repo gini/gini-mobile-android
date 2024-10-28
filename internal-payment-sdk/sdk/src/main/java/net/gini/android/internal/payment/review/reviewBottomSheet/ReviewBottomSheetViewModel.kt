@@ -26,7 +26,12 @@ internal class ReviewBottomSheetViewModel private constructor(private val paymen
     class Factory(private val paymentComponent: PaymentComponent, private val giniPaymentModule: GiniInternalPaymentModule, private val reviewConfiguration: ReviewConfiguration, private val backListener: BackListener?, private val reviewViewListener: ReviewViewListener) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewBottomSheetViewModel(paymentComponent, reviewConfiguration, giniPaymentModule, backListener, reviewViewListener) as T
+            return ReviewBottomSheetViewModel(paymentComponent,
+                reviewConfiguration,
+                giniPaymentModule,
+                backListener,
+                reviewViewListener
+            ) as T
         }
     }
 }

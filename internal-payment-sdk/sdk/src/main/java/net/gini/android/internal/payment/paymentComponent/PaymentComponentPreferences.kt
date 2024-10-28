@@ -1,7 +1,6 @@
 package net.gini.android.internal.payment.paymentComponent
 
 import android.content.Context
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.map
 private val Context.dataStore by preferencesDataStore(name = "payment-component-preferences")
 
 private val KEY_SELECTED_PAYMENT_PROVIDER_ID = stringPreferencesKey("selected-payment-provider-id")
-private val KEY_RETURNING_USER = booleanPreferencesKey("returning-user")
 
 class PaymentComponentPreferences(private val context: Context) {
 

@@ -116,7 +116,8 @@ class GiniInternalPaymentModule(private val context: Context,
 
     val eventsFlow: SharedFlow<InternalPaymentEvents> = _eventsFlow
 
-    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?) = giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
+    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?) =
+        giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
     suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
@@ -132,7 +133,8 @@ class GiniInternalPaymentModule(private val context: Context,
         openWithPreferences.incrementCountForPaymentProviderId(paymentProviderAppId)
     }
 
-    fun getLiveCountForPaymentProviderId(paymentProviderAppId: String) = openWithPreferences.getLiveCountForPaymentProviderId(paymentProviderAppId)
+    fun getLiveCountForPaymentProviderId(paymentProviderAppId: String) =
+        openWithPreferences.getLiveCountForPaymentProviderId(paymentProviderAppId)
 
     fun emitSdkEvent(event: InternalPaymentEvents) {
         _eventsFlow.tryEmit(event)
