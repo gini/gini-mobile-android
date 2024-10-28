@@ -197,7 +197,7 @@ internal class PaymentFlowViewModel(
             is GiniInternalPaymentModule.InternalPaymentEvents.NoAction -> giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction, viewModelScope)
             is GiniInternalPaymentModule.InternalPaymentEvents.OnLoading -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading, viewModelScope)
             is GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Cancel, viewModelScope)
-            else -> {}
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> giniHealth.setDisplayedScreen(event.displayedScreen)
         }
     }
 

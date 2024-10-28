@@ -30,10 +30,9 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoi
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsFragment
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
-import net.gini.android.health.sdk.review.ReviewFragment
-import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.utils.DisplayedScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -45,7 +44,7 @@ open class InvoicesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityInvoicesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setActivityTitle()
+        setActivityTitle(DisplayedScreen.Nothing)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -126,6 +125,11 @@ open class InvoicesActivity : AppCompatActivity() {
                             }
                     }
                 }
+                launch {
+                    viewModel.displayedScreen.collect { screen ->
+                        setActivityTitle(screen)
+                    }
+                }
             }
         }
 
@@ -145,20 +149,21 @@ open class InvoicesActivity : AppCompatActivity() {
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
 
         supportFragmentManager.addOnBackStackChangedListener {
-            setActivityTitle()
+            if (supportFragmentManager.backStackEntryCount == 0) {
+                title = resources.getString(R.string.title_activity_invoices)
+            }
             invalidateOptionsMenu()
         }
     }
 
-    private fun setActivityTitle() {
-        if (supportFragmentManager.fragments.isEmpty()) {
-            title = getString(R.string.title_activity_invoices)
-        } else if (supportFragmentManager.fragments.last() is MoreInformationFragment) {
-            title =
-                getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
-        } else if (supportFragmentManager.fragments.last() is ReviewFragment) {
-            title = getString(R.string.title_payment_review)
+    private fun setActivityTitle(screen: DisplayedScreen) {
+        when (screen) {
+            DisplayedScreen.MoreInformationFragment -> title = getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
+            DisplayedScreen.ReviewScreen -> title = getString(R.string.title_payment_review)
+            DisplayedScreen.Nothing -> title = getString(R.string.title_activity_invoices)
+            else -> {}
         }
+        invalidateOptionsMenu()
     }
     private fun hideLoadingIndicator(binding: ActivityInvoicesBinding) {
         binding.loadingIndicatorContainer.visibility = View.INVISIBLE
@@ -204,8 +209,8 @@ open class InvoicesActivity : AppCompatActivity() {
             }
             R.id.create_payment_order -> {
                 supportFragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, OrderDetailsFragment.newInstance(), REVIEW_FRAGMENT_TAG)
-                    .addToBackStack(null)
+                    .add(R.id.fragment_container, OrderDetailsFragment.newInstance(), OrderDetailsFragment::class.java.name)
+                    .addToBackStack(OrderDetailsFragment::class.java.name)
                     .commit()
                 true
             }

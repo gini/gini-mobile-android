@@ -32,6 +32,7 @@ class InvoicesViewModel(
     val paymentProviderAppsFlow = giniPaymentModule.paymentComponent.paymentProviderAppsFlow
 
     val openBankState = invoicesRepository.giniHealth.openBankState
+    val displayedScreen = invoicesRepository.giniHealth.displayedScreen
     private val _startIntegratedPaymentFlow = MutableSharedFlow<PaymentDetails>(
         extraBufferCapacity = 1
     )

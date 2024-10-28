@@ -10,7 +10,9 @@ import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,6 +31,7 @@ import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.internal.payment.GiniInternalPaymentModule
+import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.isValidIban
 import org.slf4j.LoggerFactory
@@ -89,6 +92,10 @@ class GiniHealth(
      * A flow that exposes the state of opening the bank. You can collect this flow to get information about the errors of this action.
      */
     val openBankState: StateFlow<PaymentState> = _openBankState
+
+    private val _displayedScreen: MutableSharedFlow<DisplayedScreen> = MutableSharedFlow(extraBufferCapacity = 1)
+
+    val displayedScreen: SharedFlow<DisplayedScreen> = _displayedScreen
 
     /**
      * Sets the app language to the desired one from the languages the SDK is supporting. If not set then defaults to the system's language locale.
@@ -309,6 +316,10 @@ class GiniHealth(
                 null -> this.putString(CAPTURED_ARGUMENTS_TYPE, CAPTURED_ARGUMENTS_NULL)
             }
         }
+    }
+
+    internal fun setDisplayedScreen(screen: DisplayedScreen) {
+        _displayedScreen.tryEmit(screen)
     }
 
     private sealed class CapturedArguments : Parcelable {

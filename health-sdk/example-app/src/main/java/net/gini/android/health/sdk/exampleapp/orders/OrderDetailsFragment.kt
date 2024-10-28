@@ -17,11 +17,13 @@ import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.FragmentOrderDetailsBinding
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesViewModel
 import net.gini.android.health.sdk.exampleapp.orders.model.Order
 import net.gini.android.health.sdk.exampleapp.orders.model.getPaymentDetails
 import net.gini.android.health.sdk.util.hideKeyboard
+import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import java.math.BigDecimal
 import java.text.DecimalFormat
@@ -77,6 +79,7 @@ class OrderDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = resources.getString(R.string.title_create_order)
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
@@ -87,13 +90,27 @@ class OrderDetailsFragment : Fragment() {
                 launch {
                     invoicesViewModel.openBankState.collect { openBankState ->
                         if (openBankState is GiniHealth.PaymentState.Success) {
+                            requireActivity().title = resources.getString(R.string.title_activity_invoices)
                             requireActivity().supportFragmentManager.popBackStack()
                         }
+                    }
+                }
+                launch {
+                    invoicesViewModel.displayedScreen.collect { screen ->
+                        setTitle(screen)
                     }
                 }
             }
         }
         setupInputListeners()
+    }
+
+    private fun setTitle(screen: DisplayedScreen) {
+        requireActivity().title = if (screen is DisplayedScreen.MoreInformationFragment) {
+            resources.getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
+        } else {
+            resources.getString(R.string.title_create_order)
+        }
     }
 
     private fun showOrder(order: Order) {
