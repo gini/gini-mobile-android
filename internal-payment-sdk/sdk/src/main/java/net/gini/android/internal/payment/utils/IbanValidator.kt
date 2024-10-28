@@ -24,19 +24,17 @@ fun isValidIban(iban: String): Boolean {
 
     if (countryIbanLength[ibanNumber.take(2)] != ibanNumber.length) {
         isValidIban = false
-    }
-
-    if (ibanNumber.contains("[^0-9A-Z]+".toRegex())) {
+    } else if (ibanNumber.contains("[^0-9A-Z]+".toRegex())) {
         isValidIban = false
-    }
+    } else {
+        ibanNumber = ibanNumber.substring(startIndex = 4) + ibanNumber.substring(0, 4)
+        val number = ibanNumber.map { it.toString() }.joinToString(separator = "") { char ->
+            if (char in alphabet) (alphabet.indexOf(char) + 10).toString() else char
+        }.toBigInteger()
 
-    ibanNumber = ibanNumber.substring(startIndex = 4) + ibanNumber.substring(0, 4)
-    val number = ibanNumber.map { it.toString() }.joinToString(separator = "") { char ->
-        if (char in alphabet) (alphabet.indexOf(char) + 10).toString() else char
-    }.toBigInteger()
-
-    if (number.mod(97.toBigInteger()) != 1.toBigInteger()) {
-        isValidIban = false
+        if (number.mod(97.toBigInteger()) != 1.toBigInteger()) {
+            isValidIban = false
+        }
     }
     return isValidIban
 }
