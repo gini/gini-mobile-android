@@ -152,6 +152,13 @@ android {
     }
 }
 
+tasks.withType<Test> {
+    // Ensure we are excluding tests for connectedAndroidTest specifically
+    if (name == "connectedDevExampleAppDebugAndroidTest") {
+        exclude("**/testcases/**") // Exclude tests in the manual package
+    }
+}
+
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
 // https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version
 tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class) {

@@ -41,9 +41,9 @@ class OpenWithTest {
     }
 
     @Test
-//    fun opening_pdf_with_SplashActivity_launches_Bank_SDK() {
-//        launchActivityForOpenWith<SplashActivity>(listOf("test_pdf.pdf"), "application/pdf")
-//    }
+    fun opening_pdf_with_SplashActivity_launches_Bank_SDK() {
+        launchActivityForOpenWith<SplashActivity>(listOf("test_pdf.pdf"), "application/pdf")
+    }
 //
 //    @Test
 //    fun opening_pdf_with_MainActivity_launches_Bank_SDK() {

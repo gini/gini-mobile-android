@@ -106,7 +106,6 @@ class ExtractionScreenTests {
 //        extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
-    @Ignore
     @Test
     fun test4_editPurposeFieldAndCheckTransferSummaryButtonClickable() {
         clickPhoto()
@@ -121,7 +120,6 @@ class ExtractionScreenTests {
 //        extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
-    @Ignore
     @Test
     fun test5_editRecipientFieldAndCheckTransferSummaryButtonClickable() {
         clickPhoto()
