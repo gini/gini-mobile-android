@@ -53,7 +53,7 @@ class ExtractionScreenTests {
     @Before
     fun setup() {
         // Check if we are running connectedAndroidTest
-        val isConnectedAndroidTest = System.getProperty("isConnectedAndroidTest")
+        val isConnectedAndroidTest = System.getProperty("connectedTest")
         // If true, skip the tests in this class
         Assume.assumeTrue(isConnectedAndroidTest != "true")
         grantStoragePermission()
