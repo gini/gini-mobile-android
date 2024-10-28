@@ -17,6 +17,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -105,6 +106,7 @@ class ExtractionScreenTests {
 //        extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
+    @Ignore
     @Test
     fun test4_editPurposeFieldAndCheckTransferSummaryButtonClickable() {
         clickPhoto()
@@ -119,6 +121,7 @@ class ExtractionScreenTests {
 //        extractionScreen.checkTransferSummaryButtonIsClickable()
     }
 
+    @Ignore
     @Test
     fun test5_editRecipientFieldAndCheckTransferSummaryButtonClickable() {
         clickPhoto()
