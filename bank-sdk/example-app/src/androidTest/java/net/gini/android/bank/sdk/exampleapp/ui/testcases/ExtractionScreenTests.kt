@@ -89,6 +89,9 @@ class ExtractionScreenTests {
 
     @Test
     fun test2_editIbanFieldAndCheckTransferSummaryButtonClickable() {
+        val isConnectedAndroidTest = System.getProperty("connectedTest")
+        // If true, skip the tests in this class
+        Assume.assumeTrue(isConnectedAndroidTest != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
@@ -102,6 +105,9 @@ class ExtractionScreenTests {
 
     @Test
     fun test3_editAmountFieldAndCheckTransferSummaryButtonClickable() {
+        val isConnectedAndroidTest = System.getProperty("connectedTest")
+        // If true, skip the tests in this class
+        Assume.assumeTrue(isConnectedAndroidTest != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
@@ -115,6 +121,9 @@ class ExtractionScreenTests {
 
     @Test
     fun test4_editPurposeFieldAndCheckTransferSummaryButtonClickable() {
+        val isConnectedAndroidTest = System.getProperty("connectedTest")
+        // If true, skip the tests in this class
+        Assume.assumeTrue(isConnectedAndroidTest != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
@@ -142,6 +151,9 @@ class ExtractionScreenTests {
 
     @Test
     fun test6_pressBackOnTransferSummaryAndShowsMainScreenOnSubsequentLaunches() {
+        val isConnectedAndroidTest = System.getProperty("connectedTest")
+        // If true, skip the tests in this class
+        Assume.assumeTrue(isConnectedAndroidTest != "true")
         clickPhoto()
         idlingResource.waitForIdle()
         reviewScreen.assertReviewTitleIsDisplayed()
