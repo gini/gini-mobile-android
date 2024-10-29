@@ -23,7 +23,6 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
-import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -40,8 +39,11 @@ import java.lang.ref.WeakReference
 /**
  * [GiniHealth] is one of the main classes for interacting with the Gini Health SDK. It manages interaction with the Gini Health API.
  *
- *  [documentFlow], [paymentFlow], [openBankState] are used by the [ReviewFragment] to observe their state, but they are public
+ *  [documentFlow], [paymentFlow], [openBankState] are used by the [PaymentFragment] to observe their state, but they are public
  *  so that they can be observed anywhere, the main purpose for this is to observe errors.
+ *
+ *  [displayedScreen] is a shared flow which forwards the [DisplayedScreen] that is currently visible in the [PaymentFragment].
+ *  It can be observed to update the activity title if needed.
  */
 class GiniHealth(
     giniHealthAPI: GiniHealthAPI,
@@ -95,6 +97,10 @@ class GiniHealth(
 
     private val _displayedScreen: MutableSharedFlow<DisplayedScreen> = MutableSharedFlow(extraBufferCapacity = 1)
 
+    /**
+     * A flow for exposing the [DisplayedScreen] currently visible. It always starts with [DisplayedScreen.Nothing].
+     * It can be observed to update the UI, such as the toolbar title.
+     */
     val displayedScreen: SharedFlow<DisplayedScreen> = _displayedScreen
 
     /**
@@ -264,14 +270,11 @@ class GiniHealth(
     }
 
     /**
-     * Loads the extractions for the given document id and creates an instance of the [ReviewFragment] with the given
+     * Creates an instance of the [PaymentFragment] with the given documentId and
      * configuration.
      *
-     * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
-     *
      * @param documentId The document id for which the extractions should be loaded
-     * @param configuration The configuration for the [ReviewFragment]
-     * @throws IllegalStateException If no payment provider app has been selected
+     * @param configuration The configuration for the [PaymentFragment]
      */
     fun getPaymentFragmentWithDocument(documentId: String, configuration: PaymentFlowConfiguration?): PaymentFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
@@ -284,7 +287,16 @@ class GiniHealth(
         )
     }
 
-    fun getPaymentFragmentWithoutDocument(paymentDetails: PaymentDetails, configuration: PaymentFlowConfiguration): PaymentFragment {
+    /**
+     * Creates an instance of [PaymentFragment] with the given payment details and
+     * configuration.
+     *
+     * @param paymentDetails The payment details
+     * @param configuration The configuration for the [PaymentFragment]
+     * @throws IllegalStateException if any of the payment details ([recipient], [IBAN], [amount], [purpose]] are empty
+     * or the [IBAN] is invalid.
+     */
+    fun getPaymentFragmentWithoutDocument(paymentDetails: PaymentDetails, configuration: PaymentFlowConfiguration?): PaymentFragment {
         LOG.debug("Getting payment fragment for payment details: {}", paymentDetails.toString())
         if (paymentDetails.iban.isEmpty() || paymentDetails.amount.isEmpty() || paymentDetails.purpose.isEmpty() || paymentDetails.recipient.isEmpty()) {
             throw IllegalStateException("Payment details are incomplete")
@@ -297,7 +309,7 @@ class GiniHealth(
         val paymentFragment = PaymentFragment.newInstance(
             giniHealth = this,
             paymentDetails = paymentDetails,
-            paymentFlowConfiguration = configuration
+            paymentFlowConfiguration = configuration ?: PaymentFlowConfiguration()
         )
         return paymentFragment
     }
@@ -349,6 +361,5 @@ class GiniHealth(
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
         private const val PAYABLE = "Payable"
         private const val HAS_MULTIPLE_DOCUMENTS = "true"
-        private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
     }
 }

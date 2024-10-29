@@ -61,22 +61,25 @@ data class PaymentFlowConfiguration(
      * If set to `false`, the payment request process will be executed under the hood before redirecting to the selected payment provider
      *
      * Default value is `false`
+     *
+     * Note: only taken into consideration for payments initiated without [documentId].
      */
     val shouldShowReviewBottomDialog: Boolean = false,
 
     /**
      * If set to `true`, the errors will be handled internally and snackbars will be shown for errors.
-     * If set to `false`, errors will be ignored by the [PaymentFragment] and the [ReviewBottomSheet]. In this case the flows exposed by [GiniMerchant] should be observed for errors.
+     * If set to `false`, errors will be ignored by the [PaymentFragment] and the [ReviewBottomSheet]. In this case the flows exposed by [GiniHealth] should be observed for errors.
      *
      * Default value is `true`.
      */
     val shouldHandleErrorsInternally: Boolean = true,
 
     /**
-     * Set to `true` to show a close button. Set a [ReviewFragmentListener] to be informed when the
-     * button is pressed.
+     * Set to `true` to show a close button.
      *
      * Default value is `false`.
+     *
+     * Note: Only taken into consideration for payments initiated with [documentId]
      */
     val showCloseButtonOnReviewFragment: Boolean = false
 
@@ -86,7 +89,8 @@ data class PaymentFlowConfiguration(
  * The [PaymentFragment] provides a container for all screens that should be displayed for the user
  * during the payment process (eg. [PaymentComponentBottomSheet], [BankSelectionBottomSheet], [ReviewBottomSheet]).
  *
- * It handles the display logic for all screens. A new instance can be created using the [GiniMerchant.createFragment] method.
+ * It handles the display logic for all screens. A new instance can be created using the [GiniHealth.getPaymentFragmentWithDocument] method for
+ * payments with [documentId] and using the [GiniHealth.getPaymentFragmentWithoutDocument] for payments without a document.
  */
 class PaymentFragment private constructor(
     private val viewModelFactory: ViewModelProvider.Factory? = null) : Fragment() {
@@ -103,6 +107,13 @@ class PaymentFragment private constructor(
         }
     }
 
+    /**
+     * Listener for the [ReviewView] of the [ReviewBottomSheet].
+     * Forwards [Pay] button tap events and
+     * show [BankSelectionBottomSheet] button tap events.
+     *
+     * Internal use only.
+     */
     @VisibleForTesting
     internal var reviewViewListener: ReviewViewListener = object: ReviewViewListener {
         override fun onPaymentButtonTapped(paymentDetails: net.gini.android.internal.payment.api.model.PaymentDetails) {
@@ -115,6 +126,12 @@ class PaymentFragment private constructor(
         }
     }
 
+    /**
+     * Listener for the [ReviewFragment], to get close button tap event
+     * and show [BankSelectionBottomSheet] button tap event.
+     *
+     * Internal use only.
+     */
     @VisibleForTesting
     internal var reviewFragmentListener: ReviewFragmentListener = object: ReviewFragmentListener {
         override fun onCloseReview() {
@@ -128,9 +145,13 @@ class PaymentFragment private constructor(
             viewModel.paymentDetails = paymentDetails
             viewModel.onPaymentButtonTapped()
         }
-
     }
 
+    /**
+     * Listener for the [PaymentComponent].
+     * Forwards show [MoreInformationFragment] tap events, show [BankSelectionBottomSheet] tap events
+     * and [Pay] button tap events.
+     */
     private val paymentComponentListener = object: PaymentComponent.Listener {
         override fun onMoreInformationClicked() {
             viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
@@ -223,8 +244,15 @@ class PaymentFragment private constructor(
         super.onDetach()
     }
 
+    /**
+     * Starting screen logic:
+     * 1. if it`s a new user, show [PaymentComponentBottomSheet]
+     * 2. if the user is a returning one:
+     *  a. if flow was started with a documentId, show [ReviewFragment]
+     *  b. if flow was started without document and review is enabled, show [ReviewBottomSheet]
+     *  c. else show [PaymentComponentBottomSheet]
+     */
     private fun setupStartingScreen() {
-        // if is returning user
         if (viewModel.giniInternalPaymentModule.getReturningUser()) {
             if (viewModel.documentId != null) {
                 showReviewFragment()
@@ -271,7 +299,7 @@ class PaymentFragment private constructor(
         }
     }
 
-    internal fun handleBackFlow() {
+    private fun handleBackFlow() {
         viewModel.popBackStack()
 
         if (childFragmentManager.backStackEntryCount > 0) {
@@ -381,7 +409,6 @@ class PaymentFragment private constructor(
             giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
         )
 
-
     private fun showInstallAppDialog() {
         childFragmentManager.showInstallAppBottomSheet(
             paymentComponent = viewModel.paymentComponent,
@@ -455,6 +482,13 @@ class PaymentFragment private constructor(
     }
 
     companion object {
+        /**
+         * Creates an instance of [PaymentFragment] for the case when payment is initiated with payment details
+         *
+         * @param giniHealth The [GiniHealth] instance
+         * @param paymentDetails the [PaymentDetails] with which the payment will be initiated
+         * @param paymentFlowConfiguration The [PaymentFlowConfiguration]
+         */
         fun newInstance(giniHealth: GiniHealth, paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration,
                         viewModelFactory : ViewModelProvider.Factory =
                             PaymentFlowViewModel.Factory(
@@ -465,6 +499,13 @@ class PaymentFragment private constructor(
                             )
         ) = PaymentFragment(viewModelFactory)
 
+        /**
+         * Creates an instance of [PaymentFragment] for the case when payment is initiated with a documentId
+         *
+         * @param giniHealth The [GiniHealth] instance
+         * @param documentId the id of the document to be paid
+         * @param paymentFlowConfiguration The [PaymentFlowConfiguration]
+         */
         fun newInstance(giniHealth: GiniHealth, documentId: String, paymentFlowConfiguration: PaymentFlowConfiguration,
                         viewModelFactory : ViewModelProvider.Factory =
                             PaymentFlowViewModel.Factory(

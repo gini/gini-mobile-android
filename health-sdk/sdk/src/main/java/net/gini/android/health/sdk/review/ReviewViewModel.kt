@@ -101,12 +101,6 @@ internal class ReviewViewModel(
         }
     }
 
-    fun loadPaymentDetails() {
-        viewModelScope.launch {
-            giniHealth.setDocumentForReview(documentId)
-        }
-    }
-
     class Factory(
         private val giniHealth: GiniHealth,
         private val configuration: ReviewConfiguration,

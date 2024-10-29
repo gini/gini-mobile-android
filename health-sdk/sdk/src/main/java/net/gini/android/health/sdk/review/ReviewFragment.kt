@@ -126,7 +126,6 @@ class ReviewFragment private constructor(
         val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
 
         viewModel.userPreferences = UserPreferences(requireContext())
-        viewModel.loadPaymentDetails()
 
         with(binding) {
             ghsPaymentDetails.reviewComponent = viewModel.reviewComponent
