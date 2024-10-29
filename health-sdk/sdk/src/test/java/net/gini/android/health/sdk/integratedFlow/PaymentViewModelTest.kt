@@ -375,4 +375,18 @@ class PaymentFlowViewModelTest {
         // Then
         assertThat(viewModel.paymentDetails).isEqualTo(updatedPaymentDetails)
     }
+
+    @Test
+    fun `loads payment details for documentId`() {
+        // Given
+        val viewModel = PaymentFlowViewModel(
+            paymentDetails = PaymentDetails("", "", "", ""),
+            paymentFlowConfiguration = null,
+            giniHealth = giniHealth!!,
+            documentId = "123",
+        )
+
+        // Then
+        coVerify { giniHealth!!.setDocumentForReview("123") }
+    }
 }

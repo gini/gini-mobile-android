@@ -117,22 +117,4 @@ class ReviewViewModelTest {
 
         coVerify { giniHealth!!.retryDocumentReview() }
     }
-
-
-    @Test
-    fun `loads payment details for documentId`() {
-        val paymentComponent = mockk<PaymentComponent>(relaxed = true)
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
-
-        val documentId = "1234"
-
-        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent, documentId, true, mockk())
-
-        // When
-        viewModel.loadPaymentDetails()
-
-
-        coVerify { giniHealth!!.setDocumentForReview(documentId) }
-    }
-
 }
