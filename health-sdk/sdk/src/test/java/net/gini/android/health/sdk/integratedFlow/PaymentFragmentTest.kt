@@ -142,38 +142,9 @@ class PaymentFragmentTest {
             fragment
         }
 
-//        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-
         // Then
         verify { fragment.showReviewBottomDialog() }
     }
-
-//    @Test
-//    fun `shows ReviewBottomSheet when PayInvoice btn clicked on PaymentComponent and documentId is null and review is enabled`() = runTest {
-//        // Given
-//        val paymentFlow = MutableSharedFlow<PaymentNextStep>(extraBufferCapacity = 1)
-//        every { paymentFlowViewModel!!.getLastBackstackEntry() } returns mockk(relaxed = true)
-//        every { paymentFlowViewModel!!.paymentNextStep } returns paymentFlow
-//        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
-//        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewBottomDialog } returns true
-//        every { paymentFlowViewModel!!.documentId } returns null
-//        val fragment = PaymentFragment.newInstance(
-//            giniHealth = giniHealth!!,
-//            paymentDetails = mockk(relaxed = true),
-//            paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewBottomDialog = false),
-//            viewModelFactory = viewModelFactory
-//        )
-//
-//        launchFragmentInContainer {
-//            fragment
-//        }
-//
-//        // When
-//        fragment.handlePayFlow()
-//
-//        // Then
-//        verify { fragment.showReviewBottomDialog() }
-//    }
 
     @Test
     fun `shows payment component bottom sheet on startup in case of returning user and review screen disabled`() = runTest {
