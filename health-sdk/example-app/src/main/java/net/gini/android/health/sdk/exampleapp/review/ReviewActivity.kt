@@ -69,7 +69,7 @@ class ReviewActivity : AppCompatActivity() {
             }
         }
 
-        binding.payInvoiceButton.setOnClickListener {
+        binding.payInvoiceButton.root.setOnClickListener {
             startPaymentFlow(binding, documentId)
         }
 
@@ -127,7 +127,7 @@ class ReviewActivity : AppCompatActivity() {
 
                             is PaymentProviderAppsState.Success -> {
                                 binding.progress.visibility = View.INVISIBLE
-                                binding.payInvoiceButton.isEnabled = true
+                                binding.payInvoiceButton.root.isEnabled = true
                             }
 
                             PaymentProviderAppsState.Nothing -> return@collect
@@ -147,7 +147,18 @@ class ReviewActivity : AppCompatActivity() {
                     viewModel.giniHealth.openBankState.collect {
                         if (it is GiniHealth.PaymentState.Success || it is GiniHealth.PaymentState.Cancel) {
                             supportFragmentManager.popBackStack()
-                            binding.payInvoiceButton.visibility = View.VISIBLE
+                            binding.payInvoiceButton.root.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.giniHealth.trustMarkersFlow.collect { trustMarkersResponse ->
+                        if (trustMarkersResponse is ResultWrapper.Success) {
+                            binding.payInvoiceButton.firstPaymentProviderIcon.setImageDrawable(trustMarkersResponse.value.paymentProviderIcon)
+                            binding.payInvoiceButton.secondPaymentProviderIcon.setImageDrawable(trustMarkersResponse.value.secondPaymentProviderIcon)
+                            binding.payInvoiceButton.extraPaymentProvidersLabel.text = "+${trustMarkersResponse.value.extraPaymentProvidersCount}"
+                            binding.payInvoiceButton.extraPaymentProvidersLabel.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -162,7 +173,7 @@ class ReviewActivity : AppCompatActivity() {
         // Get and show the payment ReviewFragment for the document id
         lifecycleScope.launch {
             binding.progress.visibility = View.VISIBLE
-            binding.payInvoiceButton.visibility = View.GONE
+            binding.payInvoiceButton.root.visibility = View.GONE
             try {
                 val reviewFragment = viewModel.giniHealth.getPaymentFragmentWithDocument(documentId, null)
 
