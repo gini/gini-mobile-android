@@ -330,7 +330,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                         "PaymentComponent must be set before showing the PaymentComponentView")
             }
             coroutineScope?.launch {
-                paymentComponent?.onPayInvoiceClicked(documentId)
+                paymentComponent?.onPayInvoiceClicked(documentId ?: "")
             }
         }
         binding.gpsMoreInformation.setIntervalClickListener {
