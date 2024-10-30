@@ -155,7 +155,7 @@ open class InvoicesActivity : AppCompatActivity() {
         viewModel.loadPaymentProviderApps()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList(), null) { documentId ->
+        binding.invoicesList.adapter = InvoicesAdapter(emptyList()) { documentId ->
             startPaymentFlowForDocumentId(documentId)
         }
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
@@ -242,7 +242,7 @@ open class InvoicesActivity : AppCompatActivity() {
 
 class InvoicesAdapter(
     var dataSet: List<InvoiceItem>,
-    var trustMarkerResponse: GiniHealth.TrustMarkerResponse?,
+    var trustMarkerResponse: GiniHealth.TrustMarkerResponse? = null,
     var listener: (String) -> Unit
 ) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
@@ -263,7 +263,7 @@ class InvoicesAdapter(
             amount = view.findViewById(R.id.amount)
             medProvider = view.findViewById(R.id.medicalServiceProvider)
             payInvoiceButton = view.findViewById(R.id.pay_invoice_button)
-            firstPaymentProviderIcon =view.findViewById(R.id.first_payment_provider_icon)
+            firstPaymentProviderIcon = view.findViewById(R.id.first_payment_provider_icon)
             secondPaymentProviderIcon = view.findViewById(R.id.second_payment_provider_icon)
             paymentProvidersCount = view.findViewById(R.id.extra_payment_providers_label)
         }
@@ -272,7 +272,7 @@ class InvoicesAdapter(
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_invoice, viewGroup, false)
-        val viewHolder =  ViewHolder(view)
+        val viewHolder = ViewHolder(view)
         viewHolder.payInvoiceButton.setOnClickListener {
             listener.invoke(dataSet[viewHolder.adapterPosition].documentId)
         }
