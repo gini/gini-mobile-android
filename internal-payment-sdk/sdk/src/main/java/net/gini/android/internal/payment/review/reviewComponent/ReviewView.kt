@@ -256,13 +256,6 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         if (hasFocus) textInputLayout.hideErrorMessage() else textInputLayout.showErrorMessage()
     }
 
-//    fun clearFocus() {
-//        binding.recipient.clearFocus()
-//        binding.iban.clearFocus()
-//        amount.clearFocus()
-//        purpose.clearFocus()
-//    }
-
     companion object {
         private val LOG = LoggerFactory.getLogger(ReviewView::class.java)
     }

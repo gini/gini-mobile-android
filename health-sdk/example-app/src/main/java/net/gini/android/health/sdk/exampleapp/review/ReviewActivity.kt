@@ -23,12 +23,9 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.exampleapp.MainActivity
 import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_COMPONENT_CONFIG
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
-import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity
-import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity.Companion
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -143,7 +140,7 @@ class ReviewActivity : AppCompatActivity() {
                     try {
                         val reviewFragment = viewModel.giniHealth.getPaymentReviewFragment(
                             documentId = documentId,
-                            viewModel.giniPaymentModule.paymentComponent,
+                            paymentComponent = viewModel.giniPaymentModule.paymentComponent,
                             configuration = ReviewConfiguration(showCloseButton = showCloseButton)
                         )
 
