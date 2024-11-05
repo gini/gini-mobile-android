@@ -7,6 +7,8 @@ import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoSavedAmountTe
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
 import net.gini.android.bank.sdk.capture.skonto.formatter.SkontoDiscountPercentageFormatter
 import net.gini.android.bank.sdk.capture.skonto.formatter.SkontoRemainingDaysFormatter
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetFullAmountValidationErrorUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountValidationErrorUseCase
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -44,5 +46,11 @@ val skontoCommonModule = module {
     }
     factory {
         SkontoDataExtractor()
+    }
+    factory {
+        GetSkontoAmountValidationErrorUseCase()
+    }
+    factory {
+        GetFullAmountValidationErrorUseCase()
     }
 }

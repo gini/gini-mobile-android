@@ -8,7 +8,9 @@ import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
 import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetFullAmountValidationErrorUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountValidationErrorUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercentageUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
@@ -40,12 +42,14 @@ internal class SkontoFragmentViewModel(
     private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase,
     private val getTransactionDocShouldBeAutoAttachedUseCase: GetTransactionDocShouldBeAutoAttachedUseCase,
     private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase,
+    private val getSkontoAmountValidationErrorUseCase: GetSkontoAmountValidationErrorUseCase,
+    private val getFullAmountValidationErrorUseCase: GetFullAmountValidationErrorUseCase,
 ) : ViewModel() {
 
-    val stateFlow: MutableStateFlow<SkontoFragmentContract.State> =
+    val stateFlow: MutableStateFlow<SkontoScreenState> =
         MutableStateFlow(createInitalState(data))
 
-    val sideEffectFlow: MutableSharedFlow<SkontoFragmentContract.SideEffect> = MutableSharedFlow()
+    val sideEffectFlow: MutableSharedFlow<SkontoScreenSideEffect> = MutableSharedFlow()
 
     private var listener: SkontoFragmentListener? = null
 
@@ -54,7 +58,7 @@ internal class SkontoFragmentViewModel(
     }
 
     fun onProceedClicked() = viewModelScope.launch {
-        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
         if (!getTransactionDocsFeatureEnabledUseCase()) {
             openExtractionsScreen()
             return@launch
@@ -77,7 +81,7 @@ internal class SkontoFragmentViewModel(
     }
 
     private fun openExtractionsScreen() {
-        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return
+        val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return
         skontoExtractionsHandler.updateExtractions(
             totalAmount = currentState.totalAmount,
             skontoPercentage = currentState.skontoPercentage,
@@ -94,7 +98,7 @@ internal class SkontoFragmentViewModel(
 
     private fun createInitalState(
         data: SkontoData,
-    ): SkontoFragmentContract.State.Ready {
+    ): SkontoScreenState.Ready {
 
         val discount = data.skontoPercentageDiscounted
 
@@ -112,7 +116,7 @@ internal class SkontoFragmentViewModel(
         )
         val savedAmount = Amount(savedAmountValue, data.fullAmountToPay.currency)
 
-        return SkontoFragmentContract.State.Ready(
+        return SkontoScreenState.Ready(
             isSkontoSectionActive = isSkontoSectionActive,
             paymentInDays = data.skontoRemainingDays,
             skontoPercentage = discount,
@@ -125,11 +129,13 @@ internal class SkontoFragmentViewModel(
             edgeCaseInfoDialogVisible = edgeCase != null,
             savedAmount = savedAmount,
             transactionDialogVisible = false,
+            skontoAmountValidationError = null,
+            fullAmountValidationError = null,
         )
     }
 
     fun onSkontoActiveChanged(newValue: Boolean) = viewModelScope.launch {
-        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
         val totalAmount = if (newValue) currentState.skontoAmount else currentState.fullAmount
         val discount = getSkontoDiscountPercentageUseCase.execute(
             currentState.skontoAmount.value,
@@ -146,11 +152,19 @@ internal class SkontoFragmentViewModel(
     }
 
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
-        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
 
-        if (newValue > currentState.fullAmount.value) {
+        val skontoAmountValidationError = getSkontoAmountValidationErrorUseCase.execute(
+            newValue,
+            currentState.fullAmount.value
+        )
+
+        if (skontoAmountValidationError != null) {
             stateFlow.emit(
-                currentState.copy(skontoAmount = currentState.skontoAmount)
+                currentState.copy(
+                    skontoAmount = currentState.skontoAmount,
+                    skontoAmountValidationError = SkontoScreenState.Ready.SkontoAmountValidationError.SkontoAmountMoreThanFullAmount
+                )
             )
             return@launch
         }
@@ -176,6 +190,7 @@ internal class SkontoFragmentViewModel(
 
         stateFlow.emit(
             currentState.copy(
+                skontoAmountValidationError = skontoAmountValidationError,
                 skontoAmount = newSkontoAmount,
                 skontoPercentage = discount,
                 totalAmount = newTotalAmount,
@@ -185,7 +200,7 @@ internal class SkontoFragmentViewModel(
     }
 
     fun onSkontoDueDateChanged(newDate: LocalDate) = viewModelScope.launch {
-        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
         val newPayInDays = getSkontoRemainingDaysUseCase.execute(newDate)
         stateFlow.emit(
             currentState.copy(
@@ -200,7 +215,19 @@ internal class SkontoFragmentViewModel(
     }
 
     fun onFullAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
-        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
+
+        val validationError = getFullAmountValidationErrorUseCase.execute(newValue)
+
+        if (validationError != null) {
+            stateFlow.emit(
+                currentState.copy(
+                    fullAmountValidationError = validationError
+                )
+            )
+            return@launch
+        }
+
         val totalAmount =
             if (currentState.isSkontoSectionActive) currentState.skontoAmount.value else newValue
 
@@ -217,6 +244,7 @@ internal class SkontoFragmentViewModel(
 
         stateFlow.emit(
             currentState.copy(
+                fullAmountValidationError = validationError,
                 skontoAmount = currentState.skontoAmount.copy(value = skontoAmount),
                 fullAmount = currentState.fullAmount.copy(value = newValue),
                 totalAmount = currentState.totalAmount.copy(value = totalAmount),
@@ -226,7 +254,7 @@ internal class SkontoFragmentViewModel(
     }
 
     fun onInfoBannerClicked() = viewModelScope.launch {
-        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
         stateFlow.emit(
             currentState.copy(
                 edgeCaseInfoDialogVisible = true,
@@ -235,7 +263,7 @@ internal class SkontoFragmentViewModel(
     }
 
     fun onInfoDialogDismissed() = viewModelScope.launch {
-        val currentState = stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+        val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
         stateFlow.emit(
             currentState.copy(
                 edgeCaseInfoDialogVisible = false,
@@ -245,7 +273,7 @@ internal class SkontoFragmentViewModel(
 
     fun onInvoiceClicked() = viewModelScope.launch {
         val currentState =
-            stateFlow.value as? SkontoFragmentContract.State.Ready ?: return@launch
+            stateFlow.value as? SkontoScreenState.Ready ?: return@launch
         val skontoData = SkontoData(
             skontoAmountToPay = currentState.skontoAmount,
             skontoDueDate = currentState.discountDueDate,
@@ -256,7 +284,7 @@ internal class SkontoFragmentViewModel(
         )
         val documentId = lastAnalyzedDocumentProvider.provide()?.giniApiDocumentId ?: return@launch
         sideEffectFlow.emit(
-            SkontoFragmentContract.SideEffect.OpenInvoiceScreen(
+            SkontoScreenSideEffect.OpenInvoiceScreen(
                 documentId,
                 skontoInvoicePreviewTextLinesFactory.create(skontoData)
             )

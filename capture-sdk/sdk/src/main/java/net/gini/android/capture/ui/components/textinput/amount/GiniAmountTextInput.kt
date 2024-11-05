@@ -3,6 +3,7 @@ package net.gini.android.capture.ui.components.textinput.amount
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,11 +31,12 @@ fun GiniAmountTextInput(
     isError: Boolean = false,
     decimalFormatter: DecimalFormatter = DecimalFormatter(),
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
+    supportingText: String? = null,
 ) {
     val parsedAmount = decimalFormatter.parseAmount(amount)
 
     var text by remember { mutableStateOf(parsedAmount) }
-    
+
     text = parsedAmount
 
     GiniTextInput(
@@ -58,6 +60,15 @@ fun GiniAmountTextInput(
             currencyCode = currencyCode,
             isCurrencyCodeDisplay = !enabled,
         ),
+        supportingText = supportingText?.let {
+            {
+                Text(
+                    text = supportingText,
+                    color = colors.textError,
+                    style = GiniTheme.typography.caption1,
+                )
+            }
+        }
     )
 }
 
@@ -66,6 +77,7 @@ fun GiniAmountTextInput(
 @Composable
 private fun GiniTextInputPreviewLight() {
     GiniTextInputPreview()
+    GiniTextInputPreviewError()
 }
 
 @Preview(
@@ -75,6 +87,7 @@ private fun GiniTextInputPreviewLight() {
 @Composable
 private fun GiniTextInputPreviewDark() {
     GiniTextInputPreview()
+    GiniTextInputPreviewError()
 }
 
 @Composable
@@ -90,3 +103,20 @@ private fun GiniTextInputPreview() {
         )
     }
 }
+
+@Composable
+private fun GiniTextInputPreviewError() {
+    GiniTheme {
+        GiniAmountTextInput(
+            modifier = Modifier.padding(16.dp),
+            amount = BigDecimal("1234"),
+            label = "Label Text",
+            trailingContent = { },
+            currencyCode = "EUR",
+            onValueChange = {},
+            isError = true,
+            supportingText = "Error text"
+        )
+    }
+}
+

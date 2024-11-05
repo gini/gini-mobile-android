@@ -21,7 +21,7 @@ class DecimalFormatter(
 
     fun textToDigits(text: String): String = text.trim()
         .filter { it != '.' && it != ',' }
-        .take(7)
+        .take(8)
         .trimStart('0')
 
     fun parseDigits(digits: String): BigDecimal =

@@ -24,6 +24,8 @@ val skontoScreenModule = module {
             transactionDocDialogCancelAttachUseCase = get(),
             getTransactionDocShouldBeAutoAttachedUseCase = get(),
             getTransactionDocsFeatureEnabledUseCase = get(),
+            getFullAmountValidationErrorUseCase = get(),
+            getSkontoAmountValidationErrorUseCase = get(),
         )
     }
     factory {
