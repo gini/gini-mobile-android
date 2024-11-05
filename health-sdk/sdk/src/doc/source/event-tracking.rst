@@ -4,7 +4,7 @@ Event Tracking
 GiniHealth
 ----------
 
-The ``GiniHealth`` class exposes kotlin flows which you can collect to track events. The following flows are available:
+The ``GiniHealth`` class exposes kotlin flows which you can collect to track events and receive updates. The following flows are available:
 
 * ``documentFlow`` is a ``StateFlow`` of ``ResultWrapper<Document>`` which emits the Gini Health API's document used by
   the ``ReviewFragment``. It emits the following states:
@@ -23,11 +23,31 @@ The ``GiniHealth`` class exposes kotlin flows which you can collect to track eve
      payment request.
    * ``PaymentState.Success(paymentRequest)`` when the payment request is ready and the banking app will be opened.
    * ``PaymentState.Error(throwable)`` when there was an error creating the payment request or opening the banking app.
+   * ``PaymentState.Cancel()`` when the user cancelled the payment flow.
+* ``displayedScreen`` is a ``SharedFlow`` of ``DisplayedScreen`` which emits the currently displayed screen in the ``PaymentFragment``.
+    It can be collected to update the UI if needed, such as the toolbar title. It emits the following values:
+   * ``DisplayedScreen.Nothing`` is the default state.
+   * ``DisplayedScreen.PaymentComponentBottomSheet`` the ``PaymentComponentBottomSheet`` is displayed, showing either
+     the selected bank, or prompting the user to select one.
+   * ``DisplayedScreen.BankSelectionBottomSheet`` when the ``BankSelectionBottomSheet`` is displayed, with the list of payment providers
+     to choose from.
+   * ``DisplayedScreen.MoreInformationFragment`` when the ``MoreInformationFragment`` is displayed.
+   * ``DisplayedScreen.InstallAppBottomSheet`` when the selected payment provider is not installed.
+   * ``DisplayedScreen.OpenWithBottomSheet`` when the selected payment provider does not support GPC.
+   * ``DisplayedScreen.ShareSheet`` when the native share sheet is displayed.
+   * ``DisplayedScreen.ReviewBottomSheet`` the payment details are shown in a bottom sheet. Emitted if payment flow was started without document id.
+   * ``DisplayedScreen.ReviewFragment`` the payment details are shown in a fragment. Emitted if payment flow was started with a document id.
+* ``trustMarkersFlow`` is a ``Flow`` of ``ResultWrapper<TrustMarkerResponse>`` which emits the icons of two payment providers, along with the
+  additional payment providers count.
+   * ``ResultWrapper.Loading()`` when the payment providers are still being loaded.
+   * ``ResultWrapper.Error(throwable)`` when there was an error loading the payment providers.
+   * ``ResultWrapper.Success(trustMarkerResponse)`` when the payment providers have been loaded.
 
 PaymentComponent
 ----------------
 
-The ``PaymentComponent`` class also exposes kotlin flows which you can collect to track events. The following flows are available:
+The ``PaymentComponent`` class also exposes kotlin flows which you can collect to track events. The payment component flows can be collected
+via ``giniHealth.giniInternalPaymentManager.paymentComponent``. The following flows are available:
 
 * ``paymentProviderAppsFlow`` is a ``StateFlow`` of ``PaymentProviderAppsState`` which emits the available payment provider apps used by
   the ``PaymentComponentView`` and related screens. It emits the following states:
@@ -38,29 +58,3 @@ The ``PaymentComponent`` class also exposes kotlin flows which you can collect t
   the ``PaymentComponentView`` and related screens. It emits the following states:
    * ``SelectedPaymentProviderAppState.NothingSelected()`` when there is no selection.
    * ``SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)`` when a payment provider app has been selected.
-
-ReviewFragment
---------------
-
-To get informed of ``ReviewFragment`` events (like the user clicking the "close" or "next" button) you can implement
-the ``ReviewFragmentListener`` and set it on the fragment.
-
-.. code-block:: kotlin
-
-    val reviewConfiguration = ReviewConfiguration(...)
-
-    val paymentReviewFragment = paymentComponent.getPaymentReviewFragment(
-        documentId, reviewConfiguration
-    )
-
-    paymentReviewFragment.listener = object : ReviewFragmentListener {
-        override fun onCloseReview() {
-            // Called only when the ``ReviewConfiguration.showCloseButton`` was set to ``true``.
-            // Dismiss the ReviewFragment.
-        }
-
-        override fun onToTheBankButtonClicked(paymentProviderName: String) {
-            // Log or track the used payment provider name.
-            // No action required, the payment process is handled by the Gini Health SDK.
-        }
-    }
