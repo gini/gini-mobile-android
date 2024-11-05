@@ -16,12 +16,12 @@ class DecimalFormatter(
 
     fun parseAmount(amount: BigDecimal) =  numberFormat.format(amount).trim()
         .filter { it != '.' && it != ',' }
-        .take(7)
+        .take(MAX_PARSE_LENGTH)
         .trimStart('0')
 
     fun textToDigits(text: String): String = text.trim()
         .filter { it != '.' && it != ',' }
-        .take(8)
+        .take(MAX_FORMAT_LENGTH)
         .trimStart('0')
 
     fun parseDigits(digits: String): BigDecimal =
@@ -33,5 +33,11 @@ class DecimalFormatter(
         val decimal = parseDigits(digits)
         // Format to a currency string
         return numberFormat.format(decimal).trim()
+    }
+
+    companion object {
+        private const val MAX_PARSE_LENGTH = 7
+        private const val MAX_FORMAT_LENGTH = 8
+
     }
 }

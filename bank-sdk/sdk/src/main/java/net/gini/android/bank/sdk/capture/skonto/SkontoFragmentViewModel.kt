@@ -163,7 +163,8 @@ internal class SkontoFragmentViewModel(
             stateFlow.emit(
                 currentState.copy(
                     skontoAmount = currentState.skontoAmount,
-                    skontoAmountValidationError = SkontoScreenState.Ready.SkontoAmountValidationError.SkontoAmountMoreThanFullAmount
+                    skontoAmountValidationError = SkontoScreenState.Ready
+                        .SkontoAmountValidationError.SkontoAmountMoreThanFullAmount
                 )
             )
             return@launch

@@ -78,7 +78,6 @@ import net.gini.android.bank.sdk.capture.skonto.mapper.toErrorMessage
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
-import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
 import net.gini.android.capture.Amount
 import net.gini.android.capture.ui.components.button.filled.GiniButton
@@ -92,7 +91,6 @@ import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.ui.theme.typography.bold
 import net.gini.android.capture.view.InjectedViewAdapterInstance
-import org.koin.compose.koinInject
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -985,8 +983,6 @@ private fun ScreenReadyStatePreviewDark() {
 @Composable
 private fun ScreenReadyStatePreview() {
     GiniTheme {
-        val context = LocalContext.current
-
         var state by remember { mutableStateOf(previewState()) }
         ScreenReadyState(
             state = state,
