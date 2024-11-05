@@ -249,7 +249,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                 allData?.getOrNull(dataIndex ?: -1)?.let {
                     listener?.onLineItemClicked(it)
                 }
-            }.apply { interval = 100 })
+            })
 
             binding.gbsEnableSwitch.setOnCheckedChangeListener { _, isChecked ->
                 allData?.getOrNull(dataIndex ?: -1)?.let {
