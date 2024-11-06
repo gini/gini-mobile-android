@@ -31,7 +31,6 @@ internal class PaymentFlowViewModel(
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
 
-    override var openWithCounter: Int = 0
     override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
         extraBufferCapacity = 1,
     )
@@ -85,12 +84,8 @@ internal class PaymentFlowViewModel(
     }
 
     fun paymentProviderAppChanged(paymentProviderApp: PaymentProviderApp): Boolean {
-        if (initialSelectedPaymentProvider == null) {
-            observeOpenWithCount(paymentProviderApp.paymentProvider.id)
-        }
         if (initialSelectedPaymentProvider?.paymentProvider?.id != paymentProviderApp.paymentProvider.id) {
             initialSelectedPaymentProvider = paymentProviderApp
-            observeOpenWithCount(paymentProviderApp.paymentProvider.id)
             return true
         }
         return false
@@ -111,10 +106,6 @@ internal class PaymentFlowViewModel(
     }
 
     fun getPaymentProviderApp() = initialSelectedPaymentProvider
-
-    private fun observeOpenWithCount(paymentProviderAppId: String) {
-        startObservingOpenWithCount(viewModelScope, paymentProviderAppId)
-    }
 
     fun emitShareWithStartedEvent() {
         paymentRequestFlow.value?.let {

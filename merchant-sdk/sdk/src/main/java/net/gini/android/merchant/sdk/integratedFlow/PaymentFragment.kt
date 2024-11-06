@@ -19,7 +19,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -395,7 +394,6 @@ class PaymentFragment private constructor(
         ) {
             viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
         }
-        viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
     }
 

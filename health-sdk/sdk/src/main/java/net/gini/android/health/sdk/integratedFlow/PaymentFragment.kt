@@ -427,7 +427,6 @@ class PaymentFragment private constructor(
         ) {
             viewModel.onForwardToSharePdfTapped()
         }
-        viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
     }
 

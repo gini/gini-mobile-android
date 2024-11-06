@@ -10,7 +10,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 import com.google.common.truth.Truth.assertThat
-import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
 import org.junit.Test
 

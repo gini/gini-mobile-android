@@ -5,38 +5,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.Resource
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.review.reviewComponent.ReviewComponent.Companion.SHOW_OPEN_WITH_TIMES
 import java.io.File
 
 
 interface FlowBottomSheetsManager {
     val giniInternalPaymentModule: GiniInternalPaymentModule?
-    var openWithCounter: Int
     val paymentNextStepFlow: MutableSharedFlow<PaymentNextStep>
     val paymentRequestFlow: MutableStateFlow<PaymentRequest?>
     val shareWithFlowStarted: MutableStateFlow<Boolean>
-
-    fun startObservingOpenWithCount(coroutineScope: CoroutineScope, paymentProviderAppId: String) {
-        coroutineScope.launch {
-            giniInternalPaymentModule?.getLiveCountForPaymentProviderId(paymentProviderAppId)
-                ?.collectLatest {
-                    openWithCounter = it ?: 0
-                }
-        }
-    }
-
-    fun incrementOpenWithCounter(coroutineScope: CoroutineScope, paymentProviderAppId: String) {
-        coroutineScope.launch {
-            giniInternalPaymentModule?.incrementCountForPaymentProviderId(paymentProviderAppId)
-        }
-    }
 
     private fun getFileAsByteArray(externalCacheDir: File?, coroutineScope: CoroutineScope) {
         coroutineScope.launch {
@@ -79,12 +61,13 @@ interface FlowBottomSheetsManager {
             else emitPaymentNextStep(PaymentNextStep.ShowInstallApp)
             return
         }
-        if (openWithCounter < SHOW_OPEN_WITH_TIMES) {
-            emitPaymentNextStep(PaymentNextStep.ShowOpenWithSheet)
-        } else {
-            emitPaymentNextStep(PaymentNextStep.SetLoadingVisibility(true))
-            getFileAsByteArray(externalCacheDir, coroutineScope)
-        }
+        emitPaymentNextStep(PaymentNextStep.ShowOpenWithSheet)
+//        if (openWithCounter < SHOW_OPEN_WITH_TIMES) {
+//            emitPaymentNextStep(PaymentNextStep.ShowOpenWithSheet)
+//        } else {
+//            emitPaymentNextStep(PaymentNextStep.SetLoadingVisibility(true))
+//            getFileAsByteArray(externalCacheDir, coroutineScope)
+//        }
     }
 
     fun sharePdf(paymentProviderApp: PaymentProviderApp?, externalCacheDir: File?, coroutineScope: CoroutineScope) {
