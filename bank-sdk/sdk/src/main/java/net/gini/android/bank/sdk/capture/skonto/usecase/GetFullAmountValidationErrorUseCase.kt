@@ -3,7 +3,14 @@ package net.gini.android.bank.sdk.capture.skonto.usecase
 import net.gini.android.bank.sdk.capture.skonto.SkontoScreenState
 import java.math.BigDecimal
 
+/**
+ * Use case for validating the full amount to ensure it doesn't exceed the limit.
+ */
 internal class GetFullAmountValidationErrorUseCase {
+
+    /**
+     * Validates the full amount to ensure it doesn't exceed the limit.
+     */
 
     fun execute(
         fullAmount: BigDecimal

@@ -56,10 +56,12 @@ class SkontoFragmentViewModelTest {
             transactionDocDialogConfirmAttachUseCase = mockk(),
             transactionDocDialogCancelAttachUseCase = mockk(),
             getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+            getSkontoAmountValidationErrorUseCase = mockk(),
+            getFullAmountValidationErrorUseCase = mockk(),
         )
 
         val flowData = viewModel.stateFlow.first()
-        assert(flowData is SkontoFragmentContract.State.Ready)
+        assert(flowData is SkontoScreenState.Ready)
     }
 
     @Test
@@ -90,10 +92,12 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             val flowData = viewModel.stateFlow.first()
-            assert(flowData is SkontoFragmentContract.State.Ready)
+            assert(flowData is SkontoScreenState.Ready)
 
             coVerify(exactly = 1) {
                 getSkontoSavedAmountUseCase.execute(any(), any())
@@ -124,18 +128,20 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             with(viewModel.stateFlow.first()) {
-                assert(this is SkontoFragmentContract.State.Ready)
-                require(this is SkontoFragmentContract.State.Ready)
+                assert(this is SkontoScreenState.Ready)
+                require(this is SkontoScreenState.Ready)
             }
 
             viewModel.onInfoBannerClicked()
 
             with(viewModel.stateFlow.first()) {
-                assert(this is SkontoFragmentContract.State.Ready)
-                require(this is SkontoFragmentContract.State.Ready)
+                assert(this is SkontoScreenState.Ready)
+                require(this is SkontoScreenState.Ready)
                 assert(this.edgeCaseInfoDialogVisible)
             }
         }
@@ -161,16 +167,18 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
-            viewModel.stateFlow.value = mockk<SkontoFragmentContract.State.Ready>(relaxed = true)
+            viewModel.stateFlow.value = mockk<SkontoScreenState.Ready>(relaxed = true)
                 .copy(edgeCaseInfoDialogVisible = true)
 
             viewModel.onInfoDialogDismissed()
 
             with(viewModel.stateFlow.first()) {
-                assert(this is SkontoFragmentContract.State.Ready)
-                require(this is SkontoFragmentContract.State.Ready)
+                assert(this is SkontoScreenState.Ready)
+                require(this is SkontoScreenState.Ready)
                 assert(!this.edgeCaseInfoDialogVisible)
             }
         }
@@ -201,11 +209,13 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             viewModel.sideEffectFlow.test {
                 viewModel.onInvoiceClicked()
-                assert(awaitItem() is SkontoFragmentContract.SideEffect.OpenInvoiceScreen)
+                assert(awaitItem() is SkontoScreenSideEffect.OpenInvoiceScreen)
             }
         }
 
@@ -230,14 +240,16 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             viewModel.stateFlow.test {
                 skipItems(1) // skip initial state
                 viewModel.onSkontoActiveChanged(false)
                 with(awaitItem()) {
-                    assert(this is SkontoFragmentContract.State.Ready)
-                    require(this is SkontoFragmentContract.State.Ready)
+                    assert(this is SkontoScreenState.Ready)
+                    require(this is SkontoScreenState.Ready)
                     assert(!this.isSkontoSectionActive)
                     assert(this.totalAmount == this.fullAmount)
                 }
@@ -265,14 +277,16 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             viewModel.stateFlow.test {
                 skipItems(1) // skip initial state
                 viewModel.onSkontoActiveChanged(true)
                 with(awaitItem()) {
-                    assert(this is SkontoFragmentContract.State.Ready)
-                    require(this is SkontoFragmentContract.State.Ready)
+                    assert(this is SkontoScreenState.Ready)
+                    require(this is SkontoScreenState.Ready)
                     assert(this.isSkontoSectionActive)
                     assert(this.totalAmount == this.skontoAmount)
                 }
@@ -308,6 +322,8 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             viewModel.onSkontoAmountFieldChanged(BigDecimal("95"))
@@ -346,6 +362,8 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             viewModel.onSkontoAmountFieldChanged(BigDecimal("110"))
@@ -387,6 +405,8 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             viewModel.onFullAmountFieldChanged(BigDecimal("200"))
@@ -405,7 +425,7 @@ class SkontoFragmentViewModelTest {
                 every { execute(any(), any()) } returns mockk()
             }
 
-            val listener = mockk<SkontoFragmentListener>(relaxed = true){
+            val listener = mockk<SkontoFragmentListener>(relaxed = true) {
                 every { onPayInvoiceWithSkonto(any(), any()) } just Runs
             }
 
@@ -427,6 +447,8 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             viewModel.setListener(listener)
@@ -461,6 +483,8 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(),
+                getFullAmountValidationErrorUseCase = mockk(),
             )
 
             viewModel.stateFlow.test {
@@ -468,15 +492,15 @@ class SkontoFragmentViewModelTest {
                 val futureDueDate = LocalDate.now().plusDays(5)
                 viewModel.onSkontoDueDateChanged(futureDueDate)
                 with(awaitItem()) {
-                    assert(this is SkontoFragmentContract.State.Ready)
-                    require(this is SkontoFragmentContract.State.Ready)
+                    assert(this is SkontoScreenState.Ready)
+                    require(this is SkontoScreenState.Ready)
                     assert(this.discountDueDate == futureDueDate)
                 }
                 val pastDueDate = LocalDate.now().minusDays(5)
                 viewModel.onSkontoDueDateChanged(pastDueDate)
                 with(awaitItem()) {
-                    assert(this is SkontoFragmentContract.State.Ready)
-                    require(this is SkontoFragmentContract.State.Ready)
+                    assert(this is SkontoScreenState.Ready)
+                    require(this is SkontoScreenState.Ready)
                     assert(this.discountDueDate == pastDueDate)
                 }
             }
