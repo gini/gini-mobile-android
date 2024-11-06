@@ -151,6 +151,17 @@ internal class SkontoFragmentViewModel(
         )
     }
 
+    fun onKeyboardStateChanged(isVisible: Boolean) = viewModelScope.launch {
+        if (isVisible) return@launch
+        val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
+        stateFlow.emit(
+            currentState.copy(
+                fullAmountValidationError = null,
+                skontoAmountValidationError = null
+            )
+        )
+    }
+
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
 

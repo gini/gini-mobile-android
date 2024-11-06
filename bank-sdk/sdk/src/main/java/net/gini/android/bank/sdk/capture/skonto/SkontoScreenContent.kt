@@ -79,6 +79,7 @@ import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
+import net.gini.android.bank.sdk.util.ui.keyboardAsState
 import net.gini.android.capture.Amount
 import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
@@ -111,6 +112,11 @@ internal fun SkontoScreenContent(
     BackHandler { navigateBack() }
 
     val state by viewModel.stateFlow.collectAsState()
+    val keyboardState by keyboardAsState()
+
+    LaunchedEffect(keyboardState) {
+        viewModel.onKeyboardStateChanged(keyboardState)
+    }
 
     viewModel.collectSideEffect {
         when (it) {
