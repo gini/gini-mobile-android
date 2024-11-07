@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.capture.skonto
 
 import app.cash.turbine.test
 import io.mockk.Runs
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
@@ -322,8 +323,12 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                getSkontoAmountValidationErrorUseCase = mockk(),
-                getFullAmountValidationErrorUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk {
+                    coEvery { execute(any(), any()) } returns null
+                },
+                getFullAmountValidationErrorUseCase = mockk {
+                    coEvery { execute(any()) } returns null
+                },
             )
 
             viewModel.onSkontoAmountFieldChanged(BigDecimal("95"))
@@ -346,6 +351,7 @@ class SkontoFragmentViewModelTest {
                 every { execute(any(), any()) } returns mockk()
             }
 
+
             val viewModel = SkontoFragmentViewModel(
                 data = skontoData,
                 getTransactionDocsFeatureEnabledUseCase = mockk(),
@@ -362,7 +368,7 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                getSkontoAmountValidationErrorUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk(relaxed = true),
                 getFullAmountValidationErrorUseCase = mockk(),
             )
 
@@ -405,8 +411,12 @@ class SkontoFragmentViewModelTest {
                 transactionDocDialogConfirmAttachUseCase = mockk(),
                 transactionDocDialogCancelAttachUseCase = mockk(),
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                getSkontoAmountValidationErrorUseCase = mockk(),
-                getFullAmountValidationErrorUseCase = mockk(),
+                getSkontoAmountValidationErrorUseCase = mockk {
+                    coEvery { execute(any(), any()) } returns null
+                },
+                getFullAmountValidationErrorUseCase = mockk {
+                    coEvery { execute(any()) } returns null
+                },
             )
 
             viewModel.onFullAmountFieldChanged(BigDecimal("200"))
