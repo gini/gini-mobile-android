@@ -114,9 +114,13 @@ android {
         create("dev") {
             isDefault = true
             dimension = "environment"
+            val v = project(":bank-sdk:sdk").project.version.toString().replace(".", "_")
+            applicationIdSuffix = ".qa$v"
         }
         create("qa") {
             dimension = "environment"
+            val v = project(":bank-sdk:sdk").project.version.toString().replace(".", "_")
+            applicationIdSuffix = ".qa$v"
         }
         create("exampleApp") {
             isDefault = true
