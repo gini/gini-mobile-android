@@ -64,12 +64,12 @@
     <string name="gps_play_store_content_description">Google Play Store</string>
 
     <!--  Open With bottom sheet  -->
-    <string name="gps_open_with_title">Rechnungsdaten bereit zum Teilen mit der %s</string>
-    <string name="gps_open_with_details">Im nächsten Schritt wählen Sie die %s-App auf der Seite aus, um Ihre Zahlung in der Banking-App abzuschließen.</string>
-    <string name="gps_open_with_info">Tipp: Scrollen Sie, bis Sie die %s-App finden. Wenn Sie die DKB-App noch nicht installiert haben,</string>
-    <string name="gps_open_with_download_app">laden Sie sie im Store herunter</string>
+    <string name="gps_open_with_title">Teilen Sie diesen QR-Zahlungscode mit Ihrer Banking-App</string>
+    <string name="gps_open_with_details">Alternativ können Sin ein Screenshot von dieser Seite machen mit der Fotoüberweisung Funktion der %s öffnen.</string>
     <string name="gps_open_with_app">App</string>
+    <string name="gps_open_with_button_text"></string>
     <string name="gps_sharing_file">Sharing 1 file</string>
+    <string name="gps_reference_number">Verwendungszweck</string>
 
     <string name="gps_generic_error_message">Oh da ist was schief gelaufen. Probiere es bitte noch einmal.</string>
 </resources>

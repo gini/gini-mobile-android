@@ -28,6 +28,7 @@ import net.gini.android.health.sdk.databinding.GhsFragmentHealthBinding
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.health.sdk.review.model.PaymentDetails
+import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
@@ -423,7 +424,8 @@ class PaymentFragment private constructor(
         childFragmentManager.showOpenWithBottomSheet(
             paymentProviderApp = paymentProviderApp,
             paymentComponent = viewModel.paymentComponent,
-            backListener = viewModel
+            backListener = viewModel,
+            paymentDetails = viewModel.paymentDetails?.toCommonPaymentDetails()
         ) {
             viewModel.onForwardToSharePdfTapped()
         }
