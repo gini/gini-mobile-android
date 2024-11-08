@@ -177,17 +177,9 @@
         <item name="android:singleLine">true</item>
         <item name="android:background">@drawable/gps_payment_input_edit_text_background</item>
         <item name="android:textAppearance">@style/GiniPaymentTheme.Typography.Body1</item>
-        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:textColor">@color/gps_edit_text_color</item>
     </style>
     <style name="GiniPaymentTheme.PaymentInputEditTextStyle" parent="Root.GiniPaymentTheme.PaymentInputEditTextStyle"/>
-
-    <style name="Root.GiniPaymentTheme.DisabledPaymentInputEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
-        <item name="android:singleLine">true</item>
-        <item name="android:background">@drawable/gps_payment_input_edit_text_background</item>
-        <item name="android:textAppearance">@style/GiniPaymentTheme.Typography.Body1</item>
-        <item name="android:textColor">@color/gps_disabled_field_text_color</item>
-    </style>
-    <style name="GiniPaymentTheme.DisabledPaymentInputEditTextStyle" parent="Root.GiniPaymentTheme.DisabledPaymentInputEditTextStyle"/>
 
     <style name="Root.GiniPaymentTheme.PageErrorText">
         <item name="android:textColor">@color/gps_dark_07</item>

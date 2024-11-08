@@ -1,19 +1,17 @@
 package net.gini.android.health.sdk.exampleapp.configuration
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import net.gini.android.health.sdk.exampleapp.MainViewModel
 import net.gini.android.health.sdk.exampleapp.databinding.FragmentConfigurationBinding
-import net.gini.android.health.sdk.exampleapp.review.ReviewViewModel
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
-import net.gini.android.health.sdk.util.GiniLocalization
-import org.koin.android.ext.android.bind
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
+import net.gini.android.internal.payment.utils.GiniLocalization
 
 class ConfigurationFragment: Fragment() {
 
@@ -31,14 +29,14 @@ class ConfigurationFragment: Fragment() {
         }
 
         val languages = arrayOf(GiniLocalization.GERMAN, GiniLocalization.ENGLISH)
-        context?.let {
-            val languageAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_dropdown_item, languages)
+        context?.let { context ->
+            val languageAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, languages)
             binding.languageSpinner.apply {
                 adapter = languageAdapter
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                        languageAdapter.getItem(p2)?.let {
-                            viewModel.setGiniHealthLanguage(it, context)
+                        languageAdapter.getItem(p2)?.let { language ->
+                            viewModel.setGiniHealthLanguage(language, context)
                         }
                     }
 

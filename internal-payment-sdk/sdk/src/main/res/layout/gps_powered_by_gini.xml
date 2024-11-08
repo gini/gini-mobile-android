@@ -23,5 +23,5 @@
         app:layout_constraintBottom_toBottomOf="@id/gps_powered_by_gini_label"
         app:layout_constraintStart_toEndOf="@id/gps_powered_by_gini_label"
         app:layout_constraintTop_toTopOf="@id/gps_powered_by_gini_label"
-        app:srcCompat="@drawable/gps_gini_logo" />
+        android:src="@drawable/gps_gini_logo"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

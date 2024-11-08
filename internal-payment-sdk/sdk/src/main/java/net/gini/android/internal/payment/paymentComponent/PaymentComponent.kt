@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory
  *
  * It requires a [GiniMerchant] instance and a [Context] (application or activity) to be created.
  */
-class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val paymentModule: GiniInternalPaymentModule, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
+class PaymentComponent(@get:VisibleForTesting internal val context: Context, val paymentModule: GiniInternalPaymentModule, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -49,7 +49,10 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
-    internal val giniPaymentLanguage = GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()
+    fun getGiniPaymentLanguage(context: Context? = null) =
+        context?.let {
+            GiniInternalPaymentModule.getSDKLanguage(it)?.languageLocale()
+        } ?: GiniInternalPaymentModule.getSDKLanguage(this.context)?.languageLocale()
 
     /**
      * A listener for the payment component. It exposes the user interactions with all of the [PaymentComponentView]s.
@@ -239,7 +242,7 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
          *
          * @param documentId The value in the clicked PaymentComponentView's [PaymentComponentView.documentId] property
          */
-        fun onPayInvoiceClicked(documentId: String)
+        fun onPayInvoiceClicked(documentId: String?)
     }
 
 }

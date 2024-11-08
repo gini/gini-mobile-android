@@ -94,7 +94,8 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             launch {
                 reviewComponent?.loadingFlow?.collect { isLoading ->
                     binding.paymentProgress.isVisible = isLoading
-                    binding.amountLayout.isEnabled = !isLoading && reviewComponent?.reviewConfig?.isAmountFieldEditable ?: false
+                    binding.amountLayout.isEnabled = !isLoading &&
+                            (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.AMOUNT) ?: false)
                 }
             }
         }
@@ -111,7 +112,10 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         binding.payment.setOnClickListener {
             it.hideKeyboard()
             reviewComponent?.paymentDetails?.value?.let { paymentDetails ->
-                listener?.onPaymentButtonTapped(paymentDetails)
+                val areFieldsValid = reviewComponent?.validatePaymentDetails(paymentDetails)
+                if (areFieldsValid == true) {
+                    listener?.onPaymentButtonTapped(paymentDetails)
+                }
             }
         }
     }
@@ -202,10 +206,27 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     private fun setEditableFields() {
-        binding.iban.focusable = View.NOT_FOCUSABLE
-        binding.recipient.focusable = View.NOT_FOCUSABLE
-        binding.purpose.focusable = View.NOT_FOCUSABLE
-        binding.amount.focusable = if (reviewComponent?.reviewConfig?.isAmountFieldEditable == true) View.FOCUSABLE else View.NOT_FOCUSABLE
+        val editableFields = reviewComponent?.reviewConfig?.editableFields
+        binding.iban.focusable = if (editableFields?.contains(ReviewFields.IBAN) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
+        binding.recipient.focusable = if (editableFields?.contains(ReviewFields.RECIPIENT) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
+        binding.purpose.focusable = if (editableFields?.contains(ReviewFields.PURPOSE) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
+        binding.amount.focusable = if (editableFields?.contains(ReviewFields.AMOUNT) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
     }
 
     private fun setDisabledIcon(text: String, textView:TextInputLayout) {
@@ -217,9 +238,18 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     private fun setDisabledIcons() {
-        setDisabledIcon(context.getString(R.string.gps_iban_hint), binding.ibanLayout)
-        setDisabledIcon(context.getString(R.string.gps_recipient_hint), binding.recipientLayout)
-        setDisabledIcon(context.getString(R.string.gps_purpose_hint), binding.purposeLayout)
+        if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.IBAN) == false) {
+            setDisabledIcon(context.getString(R.string.gps_iban_hint), binding.ibanLayout)
+            binding.iban.isEnabled = false
+        }
+        if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.RECIPIENT) == false) {
+            setDisabledIcon(context.getString(R.string.gps_recipient_hint), binding.recipientLayout)
+            binding.recipient.isEnabled = false
+        }
+        if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.PURPOSE) == false) {
+            setDisabledIcon(context.getString(R.string.gps_purpose_hint), binding.purposeLayout)
+            binding.purpose.isEnabled = false
+        }
     }
 
     private fun handleInputFocusChange(hasFocus: Boolean, textInputLayout: TextInputLayout) {
@@ -231,3 +261,4 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
 }
+enum class ReviewFields { RECIPIENT, IBAN, AMOUNT, PURPOSE }

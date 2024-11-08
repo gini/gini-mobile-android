@@ -20,7 +20,8 @@ import net.gini.android.internal.payment.databinding.GpsViewPaymentComponentBind
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.setBackgroundTint
-import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
+import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 
@@ -56,6 +57,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         set(value) {
             field = value
             initViews()
+            addButtonInputHandlers()
         }
 
     /**
@@ -91,10 +93,14 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     var reviewFragmentWillBeShown: Boolean = false
 
+    var dismissListener: ButtonClickListener? = null
+
     private val binding = GpsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()), this)
-    private lateinit var selectBankButton: Button
-    private lateinit var payInvoiceButton: Button
+    @VisibleForTesting
+    internal lateinit var payInvoiceButton: Button
     private lateinit var paymentProviderAppIconHolder: GpsPaymentProviderIconHolderBinding
+    @VisibleForTesting
+    internal lateinit var selectBankButton: Button
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -184,7 +190,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
-        context?.wrappedWithGiniPaymentTheme()?.let { context ->
+        context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             payInvoiceButton.visibility = View.GONE
             paymentProviderAppIconHolder.root.visibility = View.GONE
             selectBankButton.text = context.getString(R.string.gps_select_bank)
@@ -199,7 +205,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
         LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
-        context?.wrappedWithGiniPaymentTheme()?.let { context ->
+        context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             selectBankButton.apply {
                 text = if (paymentComponent?.bankPickerRows == BankPickerRows.SINGLE) "" else paymentProviderApp.name
                 setCompoundDrawablesWithIntrinsicBounds(
@@ -249,7 +255,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun restorePayInvoiceButtonDefaultState() {
         LOG.debug("Restoring pay invoice button default state")
-        context?.wrappedWithGiniPaymentTheme()?.let { context ->
+        context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             payInvoiceButton.apply {
                 setBackgroundTint(
                     ContextCompat.getColor(
@@ -294,20 +300,60 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     private fun initViews() {
-        selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsSelectBankButton else binding.gpsSingleRowBankSelection.gpsSelectBankButton
-        payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
-        paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
+        context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
+            selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsSelectBankButton else binding.gpsSingleRowBankSelection.gpsSelectBankButton
+            payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
+            paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
 
-        payInvoiceButton.text = if (reviewFragmentWillBeShown) resources.getString(R.string.gps_continue_to_overview) else resources.getString(R.string.gps_pay_button)
+            payInvoiceButton.text =
+                if (reviewFragmentWillBeShown) context.getString(R.string.gps_continue_to_overview)
+                else context.getString(R.string.gps_pay_button)
+        }
     }
 
     fun getMoreInformationLabel() = binding.gpsMoreInformation
 
-    fun getPayInvoiceButton() = payInvoiceButton
-
     fun getBankPickerButton() = selectBankButton
+
+    private fun addButtonInputHandlers() {
+        selectBankButton.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: " +
+                        "PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            paymentComponent?.listener?.onBankPickerClicked()
+            dismissListener?.onButtonClick(Buttons.SELECT_BANK)
+        }
+        payInvoiceButton.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: " +
+                        "PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            coroutineScope?.launch {
+                paymentComponent?.onPayInvoiceClicked(documentId ?: "")
+            }
+        }
+        binding.gpsMoreInformation.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: " +
+                        "PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            paymentComponent?.listener?.onMoreInformationClicked()
+            dismissListener?.onButtonClick(Buttons.MORE_INFORMATION)
+        }
+    }
 
     private companion object {
         private val LOG = LoggerFactory.getLogger(PaymentComponentView::class.java)
+    }
+
+    interface ButtonClickListener {
+        fun onButtonClick(button: Buttons)
+    }
+
+    enum class Buttons {
+        MORE_INFORMATION,
+        PAY_INVOICE,
+        SELECT_BANK
     }
 }

@@ -1,34 +1,25 @@
 package net.gini.android.health.sdk.util
 
-import android.content.Context
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
 import androidx.annotation.StringRes
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.ColorUtils
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
-import java.util.Locale
 
 internal fun TextInputEditText.setTextIfDifferent(text: String) {
     if (this.text.toString() != text) {
@@ -180,33 +171,4 @@ internal suspend fun <T> Flow<T>.withPrev() = flow {
         emit(prev to it)
         prev = it
     }
-}
-
-internal fun View.getLayoutInflaterWithGiniHealthThemeAndLocale(locale: Locale? = null): LayoutInflater =
-        LayoutInflater.from(context.wrappedWithGiniHealthThemeAndLocale(locale))
-
-private fun Context.wrappedWithCustomLocale(locale: Locale): Context = CustomLocaleContextWrapper.wrap(this, locale)
-private fun Context.wrappedWithGiniHealthTheme(): Context = ContextThemeWrapper(this, R.style.GiniHealthTheme)
-
-internal fun Context.wrappedWithGiniHealthThemeAndLocale(locale: Locale? = null): Context =
-    if (locale == null || locale.language.isEmpty()) {
-        this.wrappedWithGiniHealthTheme()
-    } else {
-        this.wrappedWithCustomLocale(locale).wrappedWithGiniHealthTheme()
-    }
-
-internal fun Fragment.getLayoutInflaterWithGiniHealthThemeAndLocale(inflater: LayoutInflater, locale: Locale? = null): LayoutInflater {
-    return inflater.cloneInContext(requireContext().wrappedWithGiniHealthThemeAndLocale(locale))
-}
-
-internal fun Fragment.getLocaleStringResource(resourceId: Int, giniHealth: GiniHealth?): String {
-    if (giniHealth?.localizedContext == null) {
-        giniHealth?.localizedContext = context?.createConfigurationContext(resources.configuration)
-    }
-
-    return giniHealth?.localizedContext?.getText(resourceId).toString()
-}
-
-internal fun View.setIntervalClickListener(click: View.OnClickListener?) {
-    setOnClickListener(IntervalClickListener(click))
 }

@@ -23,18 +23,18 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.bankselection.BankSelectionBottomSheet
-import net.gini.android.health.sdk.exampleapp.MainActivity
 import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_COMPONENT_CONFIG
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponent
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
-import net.gini.android.health.sdk.paymentcomponent.PaymentProviderAppsState
-import net.gini.android.health.sdk.review.ReviewConfiguration
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
+import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
+import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.review.ReviewConfiguration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -93,7 +93,7 @@ class ReviewActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         val binding = ActivityReviewBinding.inflate(LayoutInflater.from(baseContext))
-        IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)?.let {
+        IntentCompat.getParcelableExtra(intent, PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)?.let {
             viewModel.setPaymentComponentConfig(it)
         }
 
@@ -114,24 +114,33 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         // Set a listener on the PaymentComponent to receive events from the PaymentComponentView
-        viewModel.paymentComponent.listener = object : PaymentComponent.Listener {
-            override fun onMoreInformationClicked() {}
+
+        viewModel.giniPaymentModule.paymentComponent.listener = object: PaymentComponent.Listener {
+            override fun onMoreInformationClicked() {
+                MoreInformationFragment.newInstance(viewModel.giniPaymentModule.paymentComponent).apply {
+                    supportFragmentManager.beginTransaction()
+                        .add(R.id.review_fragment,this, this::class.java.simpleName)
+                        .addToBackStack(this::class.java.simpleName)
+                        .commit()
+                }
+            }
 
             override fun onBankPickerClicked() {
-                // Show the BankSelectionBottomSheet to allow the user to select a bank app
-                BankSelectionBottomSheet.newInstance(viewModel.paymentComponent).apply {
+                BankSelectionBottomSheet.newInstance(viewModel.giniPaymentModule.paymentComponent).apply {
                     show(supportFragmentManager, BankSelectionBottomSheet::class.simpleName)
                 }
             }
 
-            override fun onPayInvoiceClicked(documentId: String) {
+            override fun onPayInvoiceClicked(documentId: String?) {
+                if (documentId == null) return
                 // Get and show the payment ReviewFragment for the document id
                 lifecycleScope.launch {
                     binding.progress.visibility = View.VISIBLE
 
                     try {
-                        val reviewFragment = viewModel.paymentComponent.getPaymentReviewFragment(
+                        val reviewFragment = viewModel.giniHealth.getPaymentReviewFragment(
                             documentId = documentId,
+                            paymentComponent = viewModel.giniPaymentModule.paymentComponent,
                             configuration = ReviewConfiguration(showCloseButton = showCloseButton)
                         )
 
@@ -158,7 +167,7 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         // The PaymentComponentView needs the PaymentComponent to be set before it is shown
-        binding.paymentComponentView.paymentComponent = viewModel.paymentComponent
+        binding.paymentComponentView.paymentComponent = viewModel.giniPaymentModule.paymentComponent
 
         lifecycleScope.launch {
             val documentId = (viewModel.giniHealth.documentFlow.value as ResultWrapper.Success<Document>).value.id
@@ -196,11 +205,11 @@ class ReviewActivity : AppCompatActivity() {
             binding.paymentComponentView.documentId = documentId
 
             // Load the payment provider apps and show an alert dialog for errors
-            viewModel.paymentComponent.loadPaymentProviderApps()
+            viewModel.loadPaymentProviderApps()
 
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.paymentComponent.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
+                    viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
                         when (paymentProviderAppsState) {
                             is PaymentProviderAppsState.Error -> {
                                 binding.progress.visibility = View.INVISIBLE
@@ -219,6 +228,8 @@ class ReviewActivity : AppCompatActivity() {
                             is PaymentProviderAppsState.Success -> {
                                 binding.progress.visibility = View.INVISIBLE
                             }
+
+                            PaymentProviderAppsState.Nothing -> return@collect
                         }
                     }
                 }
