@@ -19,7 +19,6 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.utils.GiniLocalization
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -40,7 +39,8 @@ class OpenWithBottomSheetTest {
             OpenWithBottomSheet.newInstance(
                 mockk(relaxed = true),
                 paymentComponent = mockk(relaxed = true),
-                listener = listener
+                listener = listener,
+                paymentDetails = mockk(relaxed = true),
             )
         }
 
@@ -68,15 +68,15 @@ class OpenWithBottomSheetTest {
                 mockk(relaxed = true),
                 mockk(),
                 paymentComponentWithLocale,
-                mockk()
+                mockk(),
+                mockk(relaxed = true)
             )
         }
 
         // Then
-        onView(withId(R.id.gps_open_with_title)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Invoice")))
-        onView(withId(R.id.gps_open_with_details)).check(ViewAssertions.matches(ViewMatchers.withSubstring("In the")))
-        onView(withId(R.id.gps_open_with_info)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Tip")))
-        onView(withId(R.id.gps_forward_button)).check(ViewAssertions.matches(ViewMatchers.withText("Forward")))
+        onView(withId(R.id.gps_open_with_title)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Share")))
+        onView(withId(R.id.gps_open_with_details)).check(ViewAssertions.matches(ViewMatchers.withSubstring("screenshot")))
+        onView(withId(R.id.gps_forward_button)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Share")))
     }
 
     @Test
@@ -96,14 +96,14 @@ class OpenWithBottomSheetTest {
                 mockk(relaxed = true),
                 mockk(),
                 paymentComponentWithLocale,
-                mockk()
+                mockk(),
+                mockk(relaxed = true)
             )
         }
 
         // Then
-        onView(withId(R.id.gps_open_with_title)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Rechnungsdaten")))
-        onView(withId(R.id.gps_open_with_details)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Im nächsten")))
-        onView(withId(R.id.gps_open_with_info)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Tipp")))
-        onView(withId(R.id.gps_forward_button)).check(ViewAssertions.matches(ViewMatchers.withText("Weiter")))
+        onView(withId(R.id.gps_open_with_title)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Zahlungscode")))
+        onView(withId(R.id.gps_open_with_details)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Fotoüberweisung")))
+        onView(withId(R.id.gps_forward_button)).check(ViewAssertions.matches(ViewMatchers.withSubstring("teilen")))
     }
 }

@@ -67,7 +67,7 @@
     <string name="gps_open_with_title">Teilen Sie diesen QR-Zahlungscode mit Ihrer Banking-App</string>
     <string name="gps_open_with_details">Alternativ können Sin ein Screenshot von dieser Seite machen mit der Fotoüberweisung Funktion der %s öffnen.</string>
     <string name="gps_open_with_app">App</string>
-    <string name="gps_open_with_button_text"></string>
+    <string name="gps_open_with_button_text">Mit der %s-App teilen</string>
     <string name="gps_sharing_file">Sharing 1 file</string>
     <string name="gps_reference_number">Verwendungszweck</string>
 
