@@ -47,7 +47,7 @@ jobs:
 
       - name: Distribute Merchant sdk example apk to Firebase App Distribution
         id: distr
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
         with:
           appId: ${{secrets.GINI_MERCHANT_SDK_EXAMPLE_APP_FIREBASE_ID}}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIAL_FILE_CONTENT }}
