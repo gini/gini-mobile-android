@@ -6,19 +6,25 @@ import net.gini.android.capture.Amount
 import java.math.BigDecimal
 import java.time.LocalDate
 
-internal sealed class DigitalInvoiceSkontoScreenState {
+internal sealed interface DigitalInvoiceSkontoScreenState {
 
     data class Ready(
         val isSkontoSectionActive: Boolean,
         val paymentInDays: Int,
         val skontoPercentage: BigDecimal,
         val skontoAmount: Amount,
+        val skontoAmountValidationError: SkontoAmountValidationError?,
         val fullAmount: Amount,
         val discountDueDate: LocalDate,
         val paymentMethod: SkontoData.SkontoPaymentMethod,
         val edgeCase: SkontoEdgeCase?,
         val edgeCaseInfoDialogVisible: Boolean,
-    ) : DigitalInvoiceSkontoScreenState()
+    ) : DigitalInvoiceSkontoScreenState {
+
+        sealed interface SkontoAmountValidationError {
+            object SkontoAmountMoreThanFullAmount : SkontoAmountValidationError
+        }
+    }
 }
 
 internal sealed interface DigitalInvoiceSkontoSideEffect {

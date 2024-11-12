@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoResultArgs
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.validation.DigitalInvoiceSkontoAmountValidator
 import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercentageUseCase
@@ -23,6 +24,7 @@ internal class DigitalInvoiceSkontoViewModel(
     private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase,
     private val getSkontoRemainingDaysUseCase: GetSkontoRemainingDaysUseCase,
     private val skontoInvoicePreviewTextLinesFactory: SkontoInvoicePreviewTextLinesFactory,
+    private val digitalInvoiceSkontoAmountValidator: DigitalInvoiceSkontoAmountValidator,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<DigitalInvoiceSkontoScreenState> =
@@ -70,6 +72,7 @@ internal class DigitalInvoiceSkontoViewModel(
             paymentMethod = paymentMethod,
             edgeCase = edgeCase,
             edgeCaseInfoDialogVisible = edgeCase != null,
+            skontoAmountValidationError = null,
         )
     }
 
@@ -77,9 +80,18 @@ internal class DigitalInvoiceSkontoViewModel(
         val currentState =
             stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch
 
-        if (newValue > currentState.fullAmount.value) {
+        val skontoAmountValidationError = digitalInvoiceSkontoAmountValidator(
+            newValue,
+            currentState.fullAmount.value
+        )
+
+        if (skontoAmountValidationError != null) {
             stateFlow.emit(
-                currentState.copy(skontoAmount = currentState.skontoAmount)
+                currentState.copy(
+                    skontoAmount = currentState.skontoAmount,
+                    skontoAmountValidationError = DigitalInvoiceSkontoScreenState.Ready
+                        .SkontoAmountValidationError.SkontoAmountMoreThanFullAmount
+                )
             )
             return@launch
         }
@@ -95,9 +107,11 @@ internal class DigitalInvoiceSkontoViewModel(
             currentState.copy(
                 skontoAmount = newSkontoAmount,
                 skontoPercentage = discount,
+                skontoAmountValidationError = null,
             )
         )
     }
+
 
     fun onSkontoDueDateChanged(newDate: LocalDate) = viewModelScope.launch {
         val currentState =
@@ -111,6 +125,17 @@ internal class DigitalInvoiceSkontoViewModel(
                     dueDate = newDate,
                     paymentMethod = currentState.paymentMethod
                 )
+            )
+        )
+    }
+
+    fun onKeyboardStateChanged(isVisible: Boolean) = viewModelScope.launch {
+        if (isVisible) return@launch
+        val currentState =
+            stateFlow.value as? DigitalInvoiceSkontoScreenState.Ready ?: return@launch
+        stateFlow.emit(
+            currentState.copy(
+                skontoAmountValidationError = null
             )
         )
     }

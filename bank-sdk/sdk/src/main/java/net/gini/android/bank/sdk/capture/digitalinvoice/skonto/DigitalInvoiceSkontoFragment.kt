@@ -82,10 +82,13 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.Di
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoInfoDialogColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoInvoicePreviewSectionColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoSectionColors
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.mapper.toErrorMessage
+import net.gini.android.bank.sdk.capture.skonto.mapper.toErrorMessage
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
 import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.disallowScreenshots
+import net.gini.android.bank.sdk.util.ui.keyboardAsState
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.ActivityHelper
@@ -217,6 +220,11 @@ private fun ScreenContent(
     BackHandler { navigateBack() }
 
     val state by viewModel.stateFlow.collectAsState()
+    val keyboardState by keyboardAsState()
+
+    LaunchedEffect(keyboardState) {
+        viewModel.onKeyboardStateChanged(keyboardState)
+    }
 
     viewModel.collectSideEffect {
         when (it) {
@@ -240,7 +248,7 @@ private fun ScreenContent(
         onInfoDialogDismissed = viewModel::onInfoDialogDismissed,
         onInvoiceClicked = viewModel::onInvoiceClicked,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
-        onHelpClicked = viewModel::onHelpClicked
+        onHelpClicked = viewModel::onHelpClicked,
     )
 }
 
@@ -355,6 +363,7 @@ private fun ScreenReadyState(
                     onDueDateChanged = onDueDateChanged,
                     edgeCase = state.edgeCase,
                     onInfoBannerClicked = onInfoBannerClicked,
+                    skontoAmountValidationError = state.skontoAmountValidationError,
                 )
             }
         }
@@ -521,9 +530,11 @@ private fun SkontoSection(
     onInfoBannerClicked: () -> Unit,
     edgeCase: SkontoEdgeCase?,
     colors: DigitalInvoiceSkontoSectionColors,
+    skontoAmountValidationError: DigitalInvoiceSkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+    val resources = LocalContext.current.resources
 
     var isDatePickerVisible by remember { mutableStateOf(false) }
     Card(
@@ -638,6 +649,10 @@ private fun SkontoSection(
                         )
                     }
                 },
+                isError = skontoAmountValidationError != null,
+                supportingText = skontoAmountValidationError?.toErrorMessage(
+                    resources = resources,
+                )
             )
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
@@ -888,4 +903,5 @@ private val previewState = DigitalInvoiceSkontoScreenState.Ready(
     paymentMethod = SkontoData.SkontoPaymentMethod.PayPal,
     edgeCase = SkontoEdgeCase.PayByCashOnly,
     edgeCaseInfoDialogVisible = false,
+    skontoAmountValidationError = null
 )
