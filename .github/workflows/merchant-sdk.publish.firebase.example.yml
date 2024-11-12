@@ -71,4 +71,4 @@ jobs:
 
       - name: Display Outputs
         run: |
-           echo "Binary Download URI: ${{ steps.distr.outputs }}"
+           echo "Binary Download URI: ${{ toJSON(steps.distr.outputs) }}"
