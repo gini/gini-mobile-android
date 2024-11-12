@@ -53,7 +53,7 @@ jobs:
           fail: true
 
       - name: Distribute Health-sdk example apk to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        uses: emertozd/Firebase-Distribution-Github-Action@v2
         with:
           appId: ${{secrets.GINI_HEALTH_SDK_EXAMPLE_APP_FIREBASE_ID}}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIAL_FILE_CONTENT }}
