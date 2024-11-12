@@ -46,7 +46,7 @@ jobs:
           fail: true
 
       - name: Distribute Merchant sdk example apk to Firebase App Distribution
-        id: distribute
+        id: distr
         uses: emertozd/Firebase-Distribution-Github-Action@v2
         with:
           appId: ${{secrets.GINI_MERCHANT_SDK_EXAMPLE_APP_FIREBASE_ID}}
@@ -59,12 +59,16 @@ jobs:
 
       - name: Display Firebase Console URI
         run: |
-            echo "Firebase Console URI: ${{ steps.distribute.outputs.FIREBASE_CONSOLE_URI }}"
+            echo "Firebase Console URI: ${{ steps.distr.outputs.FIREBASE_CONSOLE_URI }}"
 
       - name: Display Testing URI
         run: |
-            echo "Testing URI: ${{ steps.distribute.outputs.TESTING_URI }}"
+            echo "Testing URI ${{ steps.distr.outputs.TESTING_URI }}"
 
       - name: Display Binary Download URI
         run: |
-             echo "Binary Download URI: ${{ steps.distribute.outputs.BINARY_DOWNLOAD_URI }}"
+             echo "Binary Download URI: ${{ steps.distr }}"
+
+      - name: Display Outputs
+        run: |
+           echo "Binary Download URI: ${{ steps.distr.outputs }}"
