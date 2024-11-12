@@ -2,6 +2,8 @@ package net.gini.android.bank.sdk.capture.skonto
 
 import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
+import net.gini.android.bank.sdk.capture.skonto.validation.SkontoAmountValidator
+import net.gini.android.bank.sdk.capture.skonto.validation.SkontoFullAmountValidator
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -24,8 +26,8 @@ val skontoScreenModule = module {
             transactionDocDialogCancelAttachUseCase = get(),
             getTransactionDocShouldBeAutoAttachedUseCase = get(),
             getTransactionDocsFeatureEnabledUseCase = get(),
-            getFullAmountValidationErrorUseCase = get(),
-            getSkontoAmountValidationErrorUseCase = get(),
+            skontoFullAmountValidator = get(),
+            skontoAmountValidator = get(),
         )
     }
     factory {
@@ -33,5 +35,11 @@ val skontoScreenModule = module {
             resources = androidContext().resources,
             amountFormatter = get()
         )
+    }
+    factory {
+        SkontoAmountValidator()
+    }
+    factory {
+        SkontoFullAmountValidator()
     }
 }

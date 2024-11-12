@@ -8,9 +8,9 @@ import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
 import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
-import net.gini.android.bank.sdk.capture.skonto.usecase.GetFullAmountValidationErrorUseCase
+import net.gini.android.bank.sdk.capture.skonto.validation.SkontoFullAmountValidator
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
-import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountValidationErrorUseCase
+import net.gini.android.bank.sdk.capture.skonto.validation.SkontoAmountValidator
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercentageUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
@@ -42,8 +42,8 @@ internal class SkontoFragmentViewModel(
     private val transactionDocDialogCancelAttachUseCase: TransactionDocDialogCancelAttachUseCase,
     private val getTransactionDocShouldBeAutoAttachedUseCase: GetTransactionDocShouldBeAutoAttachedUseCase,
     private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase,
-    private val getSkontoAmountValidationErrorUseCase: GetSkontoAmountValidationErrorUseCase,
-    private val getFullAmountValidationErrorUseCase: GetFullAmountValidationErrorUseCase,
+    private val skontoAmountValidator: SkontoAmountValidator,
+    private val skontoFullAmountValidator: SkontoFullAmountValidator,
 ) : ViewModel() {
 
     val stateFlow: MutableStateFlow<SkontoScreenState> =
@@ -165,7 +165,7 @@ internal class SkontoFragmentViewModel(
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
 
-        val skontoAmountValidationError = getSkontoAmountValidationErrorUseCase.execute(
+        val skontoAmountValidationError = skontoAmountValidator.execute(
             newValue,
             currentState.fullAmount.value
         )
@@ -229,7 +229,7 @@ internal class SkontoFragmentViewModel(
     fun onFullAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
 
-        val validationError = getFullAmountValidationErrorUseCase.execute(newValue)
+        val validationError = skontoFullAmountValidator.execute(newValue)
 
         if (validationError != null) {
             stateFlow.emit(

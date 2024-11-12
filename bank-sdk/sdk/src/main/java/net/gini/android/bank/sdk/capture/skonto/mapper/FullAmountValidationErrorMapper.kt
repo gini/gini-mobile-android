@@ -4,11 +4,11 @@ import android.content.res.Resources
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.SkontoScreenState
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
-import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountValidationErrorUseCase
+import net.gini.android.bank.sdk.capture.skonto.validation.SkontoAmountValidator
 import net.gini.android.capture.Amount
 
 private val maxAmount =
-    Amount.parse("${GetSkontoAmountValidationErrorUseCase.SKONTO_AMOUNT_LIMIT}:EUR")
+    Amount.parse("${SkontoAmountValidator.SKONTO_AMOUNT_LIMIT}:EUR")
 
 internal fun SkontoScreenState.Ready.FullAmountValidationError.toErrorMessage(
     resources: Resources,
