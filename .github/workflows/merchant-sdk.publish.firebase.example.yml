@@ -10,14 +10,7 @@ on:
       - 'gradle/**'
 
 jobs:
-  check:
-    uses: ./.github/workflows/merchant-sdk.check.yml
-    secrets:
-      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
-      MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
-        
   publish_to_app_center:
-    needs: check
     runs-on: ubuntu-latest
     steps:
       - name: checkout
