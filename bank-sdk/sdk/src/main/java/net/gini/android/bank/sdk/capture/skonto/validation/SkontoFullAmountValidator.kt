@@ -1,18 +1,9 @@
-package net.gini.android.bank.sdk.capture.skonto.usecase
+package net.gini.android.bank.sdk.capture.skonto.validation
 
 import net.gini.android.bank.sdk.capture.skonto.SkontoScreenState
 import java.math.BigDecimal
 
-/**
- * Use case for validating the full amount to ensure it doesn't exceed the limit.
- */
-internal class GetFullAmountValidationErrorUseCase {
-
-    /**
-     * Validates the full amount to ensure it doesn't exceed the limit.
-     *
-     * @return [SkontoScreenState.Ready.FullAmountValidationError] if the amount is invalid and null otherwise.
-     */
+internal class SkontoFullAmountValidator {
 
     fun execute(
         fullAmount: BigDecimal
