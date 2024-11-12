@@ -55,3 +55,15 @@ jobs:
           releaseNotes: |
             ${{ format('{{ {0} {1} }}', github.ref, github.sha) }}
             ${{ github.event.head_commit.message }}
+
+      - name: Display Firebase Console URI
+        run: |
+            echo "Firebase Console URI: ${{ steps.distribute.outputs.FIREBASE_CONSOLE_URI }}"
+
+      - name: Display Testing URI
+        run: |
+            echo "Testing URI: ${{ steps.distribute.outputs.TESTING_URI }}"
+
+      - name: Display Binary Download URI
+        run: |
+             echo "Binary Download URI: ${{ steps.distribute.outputs.BINARY_DOWNLOAD_URI }}"
