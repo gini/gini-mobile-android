@@ -7,8 +7,6 @@ import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoSavedAmountTe
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
 import net.gini.android.bank.sdk.capture.skonto.formatter.SkontoDiscountPercentageFormatter
 import net.gini.android.bank.sdk.capture.skonto.formatter.SkontoRemainingDaysFormatter
-import net.gini.android.bank.sdk.capture.skonto.validation.SkontoFullAmountValidator
-import net.gini.android.bank.sdk.capture.skonto.validation.SkontoAmountValidator
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
