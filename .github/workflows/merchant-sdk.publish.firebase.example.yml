@@ -46,6 +46,7 @@ jobs:
           fail: true
 
       - name: Distribute Merchant sdk example apk to Firebase App Distribution
+        id: distribute
         uses: emertozd/Firebase-Distribution-Github-Action@v2
         with:
           appId: ${{secrets.GINI_MERCHANT_SDK_EXAMPLE_APP_FIREBASE_ID}}
