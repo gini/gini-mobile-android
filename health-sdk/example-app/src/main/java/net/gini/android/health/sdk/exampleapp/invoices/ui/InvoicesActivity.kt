@@ -7,11 +7,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
@@ -30,6 +31,7 @@ import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoi
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsFragment
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.utils.DisplayedScreen
@@ -128,6 +130,16 @@ open class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.displayedScreen.collect { screen ->
                         setActivityTitle(screen)
+                    }
+                }
+                launch {
+                    viewModel.trustMarkersFlow.collect { response ->
+                        if (response is ResultWrapper.Success) {
+                            (binding.invoicesList.adapter as InvoicesAdapter).apply {
+                                trustMarkerResponse = response.value
+                                notifyDataSetChanged()
+                            }
+                        }
                     }
                 }
             }
@@ -230,6 +242,7 @@ open class InvoicesActivity : AppCompatActivity() {
 
 class InvoicesAdapter(
     var dataSet: List<InvoiceItem>,
+    var trustMarkerResponse: GiniHealth.TrustMarkerResponse? = null,
     var listener: (String) -> Unit
 ) :
     RecyclerView.Adapter<InvoicesAdapter.ViewHolder>() {
@@ -240,20 +253,26 @@ class InvoicesAdapter(
         val dueDate: TextView
         val amount: TextView
         val medProvider: TextView
-        val payInvoiceButton: Button
+        val payInvoiceButton: ConstraintLayout
+        val firstPaymentProviderIcon: ShapeableImageView
+        val secondPaymentProviderIcon: ShapeableImageView
+        val paymentProvidersCount: TextView
         init {
             recipient = view.findViewById(R.id.recipient)
             dueDate = view.findViewById(R.id.due_date)
             amount = view.findViewById(R.id.amount)
             medProvider = view.findViewById(R.id.medicalServiceProvider)
             payInvoiceButton = view.findViewById(R.id.pay_invoice_button)
+            firstPaymentProviderIcon = view.findViewById(R.id.first_payment_provider_icon)
+            secondPaymentProviderIcon = view.findViewById(R.id.second_payment_provider_icon)
+            paymentProvidersCount = view.findViewById(R.id.extra_payment_providers_label)
         }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.item_invoice, viewGroup, false)
-        val viewHolder =  ViewHolder(view)
+        val viewHolder = ViewHolder(view)
         viewHolder.payInvoiceButton.setOnClickListener {
             listener.invoke(dataSet[viewHolder.adapterPosition].documentId)
         }
@@ -272,6 +291,12 @@ class InvoicesAdapter(
             viewHolder.medProvider.text = "Med. provider: $it"
         }?: {
             viewHolder.medProvider.visibility = View.GONE
+        }
+        trustMarkerResponse?.let {
+            viewHolder.firstPaymentProviderIcon.setImageDrawable(it.paymentProviderIcon)
+            viewHolder.secondPaymentProviderIcon.setImageDrawable(it.secondPaymentProviderIcon)
+            viewHolder.paymentProvidersCount.text = "+${it.extraPaymentProvidersCount}"
+            viewHolder.paymentProvidersCount.visibility = View.VISIBLE
         }
     }
 

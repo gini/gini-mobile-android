@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_pay_button"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingVertical="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ghs_pay_invoice_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/extra_payment_providers_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="10sp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:includeFontPadding="false"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/black"
+        android:background="@drawable/background_rounded_corners"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/second_payment_provider_icon"
+        app:layout_constraintEnd_toStartOf="@id/extra_payment_providers_label"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="5dp"
+        android:scaleType="fitXY"
+        app:shapeAppearanceOverlay="@style/GiniPaymentTheme.Widget.ShapeableImageView.Corners"
+        />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/first_payment_provider_icon"
+        app:layout_constraintEnd_toStartOf="@id/second_payment_provider_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="5dp"
+        android:scaleType="fitXY"
+        app:shapeAppearanceOverlay="@style/GiniPaymentTheme.Widget.ShapeableImageView.Corners"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

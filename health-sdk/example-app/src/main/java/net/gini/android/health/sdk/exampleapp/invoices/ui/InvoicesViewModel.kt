@@ -33,6 +33,7 @@ class InvoicesViewModel(
 
     val openBankState = invoicesRepository.giniHealth.openBankState
     val displayedScreen = invoicesRepository.giniHealth.displayedScreen
+    val trustMarkersFlow = invoicesRepository.giniHealth.trustMarkersFlow
     private val _startIntegratedPaymentFlow = MutableSharedFlow<PaymentDetails>(
         extraBufferCapacity = 1
     )
@@ -63,7 +64,7 @@ class InvoicesViewModel(
 
     fun loadPaymentProviderApps() {
         viewModelScope.launch {
-            giniPaymentModule.paymentComponent.loadPaymentProviderApps()
+            giniPaymentModule.loadPaymentProviderApps()
         }
     }
 
