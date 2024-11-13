@@ -13,6 +13,7 @@ import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture

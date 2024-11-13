@@ -18,6 +18,7 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectio
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercentageUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseCase
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel
 import net.gini.android.capture.Amount
 import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
 import org.junit.Rule

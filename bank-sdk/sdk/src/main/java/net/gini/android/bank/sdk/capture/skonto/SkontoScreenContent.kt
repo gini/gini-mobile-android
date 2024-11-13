@@ -2,7 +2,6 @@
 
 package net.gini.android.bank.sdk.capture.skonto
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.icu.util.Calendar
 import android.widget.FrameLayout
@@ -43,7 +42,6 @@ import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,7 +52,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -63,8 +60,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
@@ -77,6 +72,7 @@ import net.gini.android.bank.sdk.capture.skonto.formatter.SkontoDiscountPercenta
 import net.gini.android.bank.sdk.capture.skonto.mapper.toErrorMessage
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel
 import net.gini.android.bank.sdk.capture.util.currencyFormatterWithoutSymbol
 import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
 import net.gini.android.bank.sdk.util.ui.keyboardAsState
@@ -92,6 +88,8 @@ import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.ui.theme.typography.bold
 import net.gini.android.capture.view.InjectedViewAdapterInstance
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -111,18 +109,18 @@ internal fun SkontoScreenContent(
 
     BackHandler { navigateBack() }
 
-    val state by viewModel.stateFlow.collectAsState()
-    val keyboardState by keyboardAsState()
-
-    LaunchedEffect(keyboardState) {
-        viewModel.onKeyboardStateChanged(keyboardState)
-    }
-
+    val state by viewModel.collectAsState()
     viewModel.collectSideEffect {
         when (it) {
             is SkontoScreenSideEffect.OpenInvoiceScreen ->
                 navigateToInvoiceScreen(it.documentId, it.infoTextLines)
         }
+    }
+
+    val keyboardState by keyboardAsState()
+
+    LaunchedEffect(keyboardState) {
+        viewModel.onKeyboardStateChanged(keyboardState)
     }
 
     ScreenStateContent(
@@ -1033,20 +1031,3 @@ private fun previewState() = SkontoScreenState.Ready(
     skontoAmountValidationError = null,
     fullAmountValidationError = null,
 )
-
-@Composable
-@SuppressLint("ComposableNaming")
-private fun SkontoFragmentViewModel.collectSideEffect(
-    action: (SkontoScreenSideEffect) -> Unit
-) {
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(sideEffectFlow, lifecycleOwner) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            sideEffectFlow.collect {
-                action(it)
-            }
-        }
-    }
-}
