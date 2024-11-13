@@ -8,7 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.api.model.PaymentDetails
@@ -29,9 +33,9 @@ import net.gini.android.internal.payment.utils.setBackgroundTint
 interface OpenWithForwardListener {
     fun onForwardSelected()
 }
-class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?, paymentComponent: PaymentComponent?, paymentDetails: PaymentDetails?) : GpsBottomSheetDialogFragment() {
+class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?, paymentComponent: PaymentComponent?, paymentDetails: PaymentDetails?, paymentRequestId: String?) : GpsBottomSheetDialogFragment() {
 
-    constructor(): this(null, null, null, null, null)
+    constructor(): this(null, null, null, null, null, null)
 
     private val viewModel by viewModels<OpenWithViewModel> {
         OpenWithViewModel.Factory(
@@ -39,7 +43,8 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
             paymentProviderApp,
             listener,
             backListener,
-            paymentDetails
+            paymentDetails,
+            paymentRequestId
         )
     }
     private var binding: GpsBottomSheetOpenWithBinding by autoCleared()
@@ -66,6 +71,12 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetOpenWithBinding.inflate(inflater, container, false)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                val qrCode = viewModel.loadPaymentRequestQrCode()
+                binding.gpsQrImageView.setImageBitmap(qrCode)
+            }
+        }
         viewModel.paymentDetails?.let {
             binding.gpsIbanValue.text = it.iban
             binding.gpsAmountValue.text = it.amount
@@ -123,6 +134,6 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
          * @param listener the [OpenWithForwardListener] which will forward requests
          * @param backListener the [BackListener] which will forward back events
          */
-        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener, paymentComponent: PaymentComponent?, backListener: BackListener? = null, paymentDetails: PaymentDetails?) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener, backListener = backListener, paymentComponent = paymentComponent, paymentDetails = paymentDetails)
+        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener, paymentComponent: PaymentComponent?, backListener: BackListener? = null, paymentDetails: PaymentDetails?, paymentRequestId: String) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener, backListener = backListener, paymentComponent = paymentComponent, paymentDetails = paymentDetails, paymentRequestId = paymentRequestId)
     }
 }

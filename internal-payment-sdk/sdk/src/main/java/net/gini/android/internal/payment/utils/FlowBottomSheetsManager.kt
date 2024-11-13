@@ -20,19 +20,13 @@ interface FlowBottomSheetsManager {
     val paymentRequestFlow: MutableStateFlow<PaymentRequest?>
     val shareWithFlowStarted: MutableStateFlow<Boolean>
 
-    private fun getFileAsByteArray(externalCacheDir: File?, coroutineScope: CoroutineScope) {
+    private fun getFileAsByteArray(externalCacheDir: File?, coroutineScope: CoroutineScope, paymentRequest: PaymentRequest?) {
+        if (paymentRequest == null) {
+            giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(Exception("Payment request is null")))
+            return
+        }
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
-                val paymentRequest = try {
-                    getPaymentRequest()
-                } catch (throwable: Throwable) {
-                    giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(throwable))
-                    return@withContext
-                }
-                if (paymentRequest == null) {
-                    giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(Exception("Payment request is null")))
-                    return@withContext
-                }
                 val byteArrayResource = async {
                     getPaymentRequestDocument(paymentRequest)
                 }.await()
@@ -46,7 +40,6 @@ interface FlowBottomSheetsManager {
                     is Resource.Success -> {
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
                         newFile?.let {
-                            paymentRequestFlow.value = paymentRequest
                             emitPaymentNextStep(PaymentNextStep.OpenSharePdf(file = it))
                         }
                     }
@@ -61,18 +54,33 @@ interface FlowBottomSheetsManager {
             else emitPaymentNextStep(PaymentNextStep.ShowInstallApp)
             return
         }
-        emitPaymentNextStep(PaymentNextStep.ShowOpenWithSheet)
-//        if (openWithCounter < SHOW_OPEN_WITH_TIMES) {
-//            emitPaymentNextStep(PaymentNextStep.ShowOpenWithSheet)
-//        } else {
-//            emitPaymentNextStep(PaymentNextStep.SetLoadingVisibility(true))
-//            getFileAsByteArray(externalCacheDir, coroutineScope)
-//        }
+
+        coroutineScope.launch { getPaymentRequestForOpenWith() }
     }
 
-    fun sharePdf(paymentProviderApp: PaymentProviderApp?, externalCacheDir: File?, coroutineScope: CoroutineScope) {
+    private suspend fun getPaymentRequestForOpenWith() {
+        emitPaymentNextStep(PaymentNextStep.SetLoadingVisibility(true))
+        val paymentRequest = try {
+            getPaymentRequest()
+        } catch (throwable: Throwable) {
+            emitPaymentNextStep(PaymentNextStep.SetLoadingVisibility(false))
+            giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(throwable))
+            return
+        }
+        if (paymentRequest == null) {
+            emitPaymentNextStep(PaymentNextStep.SetLoadingVisibility(false))
+            giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(Exception("Payment request is null")))
+            return
+        }
+
+        emitPaymentNextStep(PaymentNextStep.SetLoadingVisibility(false))
+        paymentRequestFlow.value = paymentRequest
+        emitPaymentNextStep(PaymentNextStep.ShowOpenWithSheet)
+    }
+
+    fun sharePdf(paymentProviderApp: PaymentProviderApp?, externalCacheDir: File?, coroutineScope: CoroutineScope, paymentRequest: PaymentRequest?) {
         paymentNextStepFlow.tryEmit(PaymentNextStep.SetLoadingVisibility(true))
-        getFileAsByteArray(externalCacheDir, coroutineScope)
+        getFileAsByteArray(externalCacheDir, coroutineScope, paymentRequest)
     }
 
 
@@ -82,5 +90,7 @@ interface FlowBottomSheetsManager {
 
     suspend fun getPaymentRequest(): PaymentRequest?
     suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray>
+
+    suspend fun getPaymentRequestImage(paymentRequest: PaymentRequest): Resource<ByteArray>
 
 }

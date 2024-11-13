@@ -115,4 +115,11 @@ class HealthApiDocumentRepository(
                 documentRemoteSource.getPaymentRequestDocument(accessToken, paymentRequestId)
             }
         }
+
+    suspend fun getPaymentRequestImage(paymentRequestId: String): Resource<ByteArray> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.getPaymentRequestImage(accessToken, paymentRequestId)
+            }
+        }
 }

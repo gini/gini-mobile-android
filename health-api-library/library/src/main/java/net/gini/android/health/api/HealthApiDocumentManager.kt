@@ -1,18 +1,11 @@
 package net.gini.android.health.api;
 
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-
-import net.gini.android.core.api.DocumentManager;
+import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.Resource
-import net.gini.android.core.api.models.CompoundExtraction
-import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.PaymentRequest
-import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.api.models.PaymentRequestInput
-import org.json.JSONException
 
 /**
  * Created by Alpár Szotyori on 25.01.22.
@@ -75,4 +68,14 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
     suspend fun getPaymentRequestDocument(
         paymentRequestId: String
     ): Resource<ByteArray> = documentRepository.getPaymentRequestDocument(paymentRequestId)
+
+    /**
+     * Returns a QR code in PNG format
+     *
+     * @param paymentRequestId the generated payment request id for which the QR code should be generated
+     * @return [Resource] with the byte array corresponding to the [PaymentRequest]
+     */
+    suspend fun getPaymentRequestImage(
+        paymentRequestId: String
+    ): Resource<ByteArray> = documentRepository.getPaymentRequestImage(paymentRequestId)
 }

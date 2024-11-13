@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--TODO to be merged with same drawable from branch IPC 160-->
 <shape android:shape="rectangle" xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="@dimen/gps_small"/>
+    <corners android:radius="@dimen/gps_medium_12"/>
     <stroke android:color="@color/gps_open_with_border_color" android:width="@dimen/gps_small_1"/>
 </shape>

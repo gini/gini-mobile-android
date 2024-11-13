@@ -23,6 +23,7 @@ import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -175,7 +176,7 @@ class ReviewActivity : AppCompatActivity() {
             binding.progress.visibility = View.VISIBLE
             binding.payInvoiceButton.root.visibility = View.GONE
             try {
-                val reviewFragment = viewModel.giniHealth.getPaymentFragmentWithDocument(documentId, null)
+                val reviewFragment = viewModel.giniHealth.getPaymentFragmentWithDocument(documentId, PaymentFlowConfiguration(showCloseButtonOnReviewFragment = true))
 
                 supportFragmentManager.commit {
                     add(R.id.review_fragment, reviewFragment, REVIEW_FRAGMENT_TAG)

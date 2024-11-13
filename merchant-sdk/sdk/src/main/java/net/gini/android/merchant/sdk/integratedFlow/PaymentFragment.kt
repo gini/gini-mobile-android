@@ -391,7 +391,8 @@ class PaymentFragment private constructor(
             paymentProviderApp = paymentProviderApp,
             paymentComponent = viewModel.paymentComponent,
             backListener = viewModel,
-            paymentDetails = viewModel.paymentDetails
+            paymentDetails = viewModel.paymentDetails,
+            paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
             viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
         }

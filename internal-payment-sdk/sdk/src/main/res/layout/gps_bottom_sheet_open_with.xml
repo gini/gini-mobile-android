@@ -18,24 +18,29 @@
         android:layout_height="wrap_content"
         android:id="@+id/gps_open_with_title"
         android:text="@string/gps_open_with_title"
-        style="@style/GiniPaymentTheme.Typography.Subtitle1"
+        style="@style/GiniPaymentTheme.Typography.Subtitle2"
         android:textColor="@color/gps_open_with_title"
         android:layout_marginHorizontal="@dimen/gps_large"/>
+
+    <ImageView
+        android:layout_width="@dimen/gps_large_208"
+        android:layout_height="@dimen/gps_large_208"
+        android:id="@+id/gps_qr_image_view"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/gps_large_24"/>
 
     <include layout="@layout/gps_powered_by_gini"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/gps_large_20"
         android:layout_gravity="center"
-        android:layout_marginEnd="@dimen/gps_large"
-        android:layout_marginTop="@dimen/gps_small"/>
+        android:layout_marginTop="@dimen/gps_medium_12"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/gps_forward_button"
         android:layout_marginHorizontal="@dimen/gps_large"
-        android:layout_marginTop="@dimen/gps_large_20"
+        android:layout_marginTop="@dimen/gps_medium_12"
         style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"
         />
 
@@ -44,7 +49,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/gps_open_with_details"
         android:text="@string/gps_open_with_details"
-        style="@style/GiniPaymentTheme.Typography.Body2"
+        style="@style/GiniPaymentTheme.Typography.Caption1"
         android:textColor="@color/gps_open_with_details"
         android:layout_marginHorizontal="@dimen/gps_large"
         android:layout_marginTop="@dimen/gps_large"

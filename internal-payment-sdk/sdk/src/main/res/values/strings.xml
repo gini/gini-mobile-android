@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="gps_amount_hint">Betrag</string>
-    <string name="gps_purpose_hint">Verwendungszweck</string>
+    <string name="gps_reference_number_hint">Verwendungszweck</string>
     <string name="gps_recipient_hint">Empfänger</string>
     <string name="gps_iban_hint">IBAN</string>
     <string name="gps_pay_button">Zur Banking App</string>
@@ -13,7 +13,7 @@
     <string name="gps_error_input_recipient_empty">Empfänger ist notwendig.</string>
     <string name="gps_error_input_iban_empty">IBAN ist notwendig.</string>
     <string name="gps_error_input_amount_empty">Ungültig.</string>
-    <string name="gps_error_input_purpose_empty">Verwendungszweck ist notwendig.</string>
+    <string name="gps_error_input_reference_number_empty">Verwendungszweck ist notwendig.</string>
     <string name="gps_snackbar_retry">Wiederholen</string>
     <string name="gps_payment_details_info_bar_text">Bitte überprüfe die vorausgefüllten Felder</string>
 

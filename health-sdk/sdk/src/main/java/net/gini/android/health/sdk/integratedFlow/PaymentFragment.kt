@@ -425,7 +425,8 @@ class PaymentFragment private constructor(
             paymentProviderApp = paymentProviderApp,
             paymentComponent = viewModel.paymentComponent,
             backListener = viewModel,
-            paymentDetails = viewModel.paymentDetails?.toCommonPaymentDetails()
+            paymentDetails = viewModel.paymentDetails?.toCommonPaymentDetails(),
+            paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
             viewModel.onForwardToSharePdfTapped()
         }
@@ -467,8 +468,8 @@ class PaymentFragment private constructor(
             PaymentNextStep.RedirectToBank -> {
                 viewModel.onPayment()
             }
-            PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let { showOpenWithDialog(it) }
             PaymentNextStep.ShowInstallApp -> showInstallAppDialog()
+            is PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let { showOpenWithDialog(it) }
             is PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())

@@ -184,7 +184,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                                     PaymentField.Recipient -> R.string.gps_error_input_recipient_empty
                                     PaymentField.Iban -> R.string.gps_error_input_iban_empty
                                     PaymentField.Amount -> R.string.gps_error_input_amount_empty
-                                    PaymentField.Purpose -> R.string.gps_error_input_purpose_empty
+                                    PaymentField.Purpose -> R.string.gps_error_input_reference_number_empty
                                 }
 
                                 ValidationMessage.InvalidIban -> R.string.gps_error_input_invalid_iban
@@ -255,7 +255,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             binding.recipient.isEnabled = false
         }
         if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.PURPOSE) == false) {
-            setDisabledIcon(context.getString(R.string.gps_purpose_hint), binding.purposeLayout)
+            setDisabledIcon(context.getString(R.string.gps_reference_number_hint), binding.purposeLayout)
             binding.purpose.isEnabled = false
         }
     }
