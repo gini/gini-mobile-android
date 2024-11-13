@@ -72,3 +72,11 @@ jobs:
       - name: Display Outputs
         run: |
            echo "Binary Download URI: ${{ toJSON(steps.distr.outputs) }}"
+          
+          
+      - name: Login
+        uses: justin-jhg/gajira-login@v1
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_KEY }}
