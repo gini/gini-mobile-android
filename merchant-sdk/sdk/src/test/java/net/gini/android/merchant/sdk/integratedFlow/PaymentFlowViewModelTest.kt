@@ -13,6 +13,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
+import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentDetails
@@ -42,6 +44,8 @@ class PaymentFlowViewModelTest {
     private var giniMerchant: GiniMerchant? = null
     private var paymentComponent: PaymentComponent? = null
     private var giniInternalPaymentModule: GiniInternalPaymentModule? = null
+    private var documentManager: HealthApiDocumentManager? = null
+    private var giniHealthApi: GiniHealthAPI? = null
     private var context: Context? = null
 
     private var initialPaymentProviderApp =  PaymentProviderApp(
@@ -84,9 +88,14 @@ class PaymentFlowViewModelTest {
         paymentComponent = mockk(relaxed = true)
         giniInternalPaymentModule = mockk(relaxed = true)
 
+        documentManager = mockk(relaxed = true)
+        giniHealthApi = mockk(relaxed = true)
+        every { giniHealthApi!!.documentManager } returns documentManager!!
+
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(mockk())
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.AppSelected(initialPaymentProviderApp))
         every { giniInternalPaymentModule!!.paymentComponent } returns paymentComponent!!
+        every { giniInternalPaymentModule!!.giniHealthAPI } returns giniHealthApi!!
         every { giniMerchant!!.giniInternalPaymentModule } returns giniInternalPaymentModule!!
     }
 
@@ -207,12 +216,12 @@ class PaymentFlowViewModelTest {
     @Test
     fun `returns payment request from giniPaymentManager`() = runTest {
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
+            paymentDetails = PaymentDetails("1234", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
         )
 
-        coEvery { giniMerchant!!.giniInternalPaymentModule.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.INVALID) }
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.INVALID) }
 
         val paymentRequest = viewModel.getPaymentRequest()
         assertThat(paymentRequest.id).isEqualTo("1234")
@@ -227,7 +236,7 @@ class PaymentFlowViewModelTest {
         )
         val byteArray = byteArrayOf()
 
-        coEvery { giniMerchant!!.giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument("1234") } coAnswers { Resource.Success(byteArray)}
+        coEvery { documentManager!!.getPaymentRequestDocument("1234") } coAnswers { Resource.Success(byteArray)}
 
         val document = viewModel.getPaymentRequestDocument(PaymentRequest("1234", "", "", "", "", "", "", "", PaymentRequest.Status.OPEN))
         assertThat(document.data).isEqualTo(byteArray)
