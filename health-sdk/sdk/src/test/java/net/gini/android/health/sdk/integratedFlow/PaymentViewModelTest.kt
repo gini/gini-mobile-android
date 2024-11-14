@@ -298,37 +298,6 @@ class PaymentFlowViewModelTest {
         coVerify { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) }
     }
 
-    //TODO rewrite this
-//    @Test
-//    fun `returns 'DownloadPaymentRequestFile' when payment provider app does not support GPC and 'Open With' was shown 3 times`() = runTest {
-//        // Given
-//        val paymentProviderApp = mockk<PaymentProviderApp>()
-//        every { paymentProviderApp.paymentProvider.gpcSupported() } returns false
-//        every { paymentProviderApp.paymentProvider.id } returns "123"
-//
-//        coEvery { giniInternalPaymentModule!!.giniHealthAPI.documentManager.getPaymentRequestDocument(any()) } coAnswers { mockk(relaxed = true) }
-//
-//        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-//            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
-//
-//        val viewModel = PaymentFlowViewModel(
-//            paymentDetails = PaymentDetails("", "", "", ""),
-//            paymentFlowConfiguration = null,
-//            giniHealth = giniHealth!!,
-//            documentId = null,
-//        )
-//
-//        viewModel.paymentNextStep.test {
-//            // When
-//            viewModel.onPaymentButtonTapped()
-//            val nextStep = awaitItem()
-//
-//            // Then
-//            assertThat(nextStep).isEqualTo(PaymentNextStep.SetLoadingVisibility(true))
-//            cancelAndConsumeRemainingEvents()
-//        }
-//    }
-
     @Test
     fun `updates payment details`() {
         // Given
