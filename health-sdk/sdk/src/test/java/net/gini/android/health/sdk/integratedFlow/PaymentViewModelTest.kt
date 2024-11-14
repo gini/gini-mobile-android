@@ -274,13 +274,15 @@ class PaymentFlowViewModelTest {
     }
 
     @Test
-    fun `returns 'ShowOpenWith' when payment provider app does not support GPC`() = runTest {
+    fun `gets payment request when payment provider does not support GPC`() = runTest {
         // Given
         val paymentProviderApp = mockk<PaymentProviderApp>()
         every { paymentProviderApp.paymentProvider.gpcSupported() } returns false
 
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN) }
 
         val viewModel = PaymentFlowViewModel(
             paymentDetails = PaymentDetails("", "", "", ""),
@@ -289,15 +291,11 @@ class PaymentFlowViewModelTest {
             documentId = null,
         )
 
-        viewModel.paymentNextStep.test {
-            // When
-            viewModel.onPaymentButtonTapped()
-            val nextStep = awaitItem()
+        // When
+        viewModel.onPaymentButtonTapped()
 
-            // Then
-            assertThat(nextStep).isEqualTo(PaymentNextStep.ShowOpenWithSheet)
-            cancelAndConsumeRemainingEvents()
-        }
+        // Then
+        coVerify { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) }
     }
 
     //TODO rewrite this

@@ -134,6 +134,6 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
          * @param listener the [OpenWithForwardListener] which will forward requests
          * @param backListener the [BackListener] which will forward back events
          */
-        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener, paymentComponent: PaymentComponent?, backListener: BackListener? = null, paymentDetails: PaymentDetails?, paymentRequestId: String) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener, backListener = backListener, paymentComponent = paymentComponent, paymentDetails = paymentDetails, paymentRequestId = paymentRequestId)
+        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener, paymentComponent: PaymentComponent?, backListener: BackListener? = null, paymentDetails: PaymentDetails?, paymentRequestId: String?) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener, backListener = backListener, paymentComponent = paymentComponent, paymentDetails = paymentDetails, paymentRequestId = paymentRequestId)
     }
 }
