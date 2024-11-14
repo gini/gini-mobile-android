@@ -20,7 +20,11 @@ interface FlowBottomSheetsManager {
     val paymentRequestFlow: MutableStateFlow<PaymentRequest?>
     val shareWithFlowStarted: MutableStateFlow<Boolean>
 
-    private fun getFileAsByteArray(externalCacheDir: File?, coroutineScope: CoroutineScope, paymentRequest: PaymentRequest?) {
+    private fun getFileAsByteArray(
+        externalCacheDir: File?,
+        coroutineScope: CoroutineScope,
+        paymentRequest: PaymentRequest?
+    ) {
         if (paymentRequest == null) {
             giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(Exception("Payment request is null")))
             return

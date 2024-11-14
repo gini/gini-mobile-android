@@ -122,11 +122,14 @@ internal class PaymentFlowViewModel(
         sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope, paymentRequestFlow.value)
     }
 
-    override suspend fun getPaymentRequest(): PaymentRequest = giniMerchant.giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails)
+    override suspend fun getPaymentRequest(): PaymentRequest =
+        giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails)
 
-    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniMerchant.giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
+    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> =
+        giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 
-    override suspend fun getPaymentRequestImage(paymentRequest: PaymentRequest): Resource<ByteArray> = giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestImage(paymentRequest.id)
+    override suspend fun getPaymentRequestImage(paymentRequest: PaymentRequest): Resource<ByteArray> =
+        giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestImage(paymentRequest.id)
 
     class Factory(val paymentDetails: PaymentDetails, private val paymentFlowConfiguration: PaymentFlowConfiguration?, val giniMerchant: GiniMerchant): ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
