@@ -231,6 +231,8 @@ internal class SkontoFragmentViewModel(
     fun onFullAmountFieldChanged(newValue: BigDecimal) = viewModelScope.launch {
         val currentState = stateFlow.value as? SkontoScreenState.Ready ?: return@launch
 
+        if (newValue == currentState.fullAmount.value) return@launch
+
         val validationError = skontoFullAmountValidator.execute(newValue)
 
         if (validationError != null) {
