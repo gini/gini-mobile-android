@@ -22,7 +22,6 @@
         <item name="colorAccent">?attr/colorPrimary</item>
         <item name="alertDialogTheme">@style/GiniHealthTheme.ThemeOverlay.Dialog.Alert</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
-        <item name="bottomSheetDialogTheme">@style/GiniHealthTheme.ThemeOverlay.BottomSheetDialog</item>
         <item name="textAppearanceHeadline1">@style/GiniHealthTheme.Typography.Headline1</item>
         <item name="textAppearanceHeadline2">@style/GiniHealthTheme.Typography.Headline2</item>
         <item name="textAppearanceHeadline3">@style/GiniHealthTheme.Typography.Headline3</item>
@@ -100,29 +99,6 @@
     </style>
     <style name="GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" parent="Root.GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" />
 
-    <style name="Root.GiniHealthTheme.ThemeOverlay.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
-        <item name="colorPrimary">@color/ghs_dark_07</item>
-        <item name="bottomSheetStyle">@style/GiniHealthTheme.Widget.BottomSheet</item>
-    </style>
-    <style name="GiniHealthTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniHealthTheme.ThemeOverlay.BottomSheetDialog" />
-
-    <style name="Root.GiniHealthTheme.Widget.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
-        <item name="backgroundTint">@color/ghs_dark_07</item>
-        <item name="shapeAppearance">@style/GiniHealthTheme.Widget.BottomSheet.ShapeAppearance</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.BottomSheet" parent="Root.GiniHealthTheme.Widget.BottomSheet" />
-
-    <style name="Root.GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" parent="ShapeAppearance.Material3.LargeComponent">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/ghs_medium_12</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" parent="Root.GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" />
-
-    <style name="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
-        <item name="tint">@color/ghs_dark_05</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" />
-
     <style name="Root.GiniHealthTheme.Widget.ShapeableImageView.Corners" parent="">
         <item name="cornerSize">@dimen/ghs_small_2</item>
         <item name="cornerFamily">rounded</item>
@@ -134,7 +110,6 @@
         <item name="cornerFamily">rounded</item>
     </style>
     <style name="GiniHealthTheme.Widget.RoundShapeableImageView.Corners" parent="Root.GiniHealthTheme.Widget.RoundShapeableImageView.Corners"/>
-
 
     <style name="Root.GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.UnelevatedButton">
         <item name="android:background">@android:color/transparent</item>
@@ -227,17 +202,4 @@
         <item name="android:textColor">@color/ghs_dark_07</item>
     </style>
     <style name="GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" />
-
-    <style name="Root.GiniHealthTheme.Widget.Button.PaymentProviderSelector" parent="GiniHealthTheme.Widget.Button.TransparentBackground">
-        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Input</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniHealthTheme.Widget.Button.PaymentProviderSelector">
-        <item name="android:paddingStart">@dimen/ghs_large</item>
-        <item name="android:paddingEnd">@dimen/ghs_large</item>
-    </style>
-    
-    <style name="Root.GiniHealthTheme.Widget.Button.PaymentProviderPicker" parent="GiniHealthTheme.Widget.Button.TransparentBackground">
-        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Body1</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Button.PaymentProviderPicker" parent="Root.GiniHealthTheme.Widget.Button.PaymentProviderPicker"/>
 </resources>
