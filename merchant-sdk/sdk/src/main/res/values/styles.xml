@@ -21,7 +21,6 @@
         <item name="colorAccent">?attr/colorPrimary</item>
         <item name="alertDialogTheme">@style/GiniMerchantTheme.ThemeOverlay.Dialog.Alert</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
-        <item name="bottomSheetDialogTheme">@style/GiniMerchantTheme.ThemeOverlay.BottomSheetDialog</item>
         <item name="textAppearanceHeadline1">@style/GiniMerchantTheme.Typography.Headline1</item>
         <item name="textAppearanceHeadline2">@style/GiniMerchantTheme.Typography.Headline2</item>
         <item name="textAppearanceHeadline3">@style/GiniMerchantTheme.Typography.Headline3</item>
@@ -99,29 +98,6 @@
     </style>
     <style name="GiniMerchantTheme.ThemeOverlay.Button.OutlinedButton.Picker" parent="Root.GiniMerchantTheme.ThemeOverlay.Button.OutlinedButton.Picker" />
 
-    <style name="Root.GiniMerchantTheme.ThemeOverlay.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
-        <item name="colorPrimary">@color/gms_dark_07</item>
-        <item name="bottomSheetStyle">@style/GiniMerchantTheme.Widget.BottomSheet</item>
-    </style>
-    <style name="GiniMerchantTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniMerchantTheme.ThemeOverlay.BottomSheetDialog" />
-
-    <style name="Root.GiniMerchantTheme.Widget.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
-        <item name="backgroundTint">@color/gms_dark_07</item>
-        <item name="shapeAppearance">@style/GiniMerchantTheme.Widget.BottomSheet.ShapeAppearance</item>
-    </style>
-    <style name="GiniMerchantTheme.Widget.BottomSheet" parent="Root.GiniMerchantTheme.Widget.BottomSheet" />
-
-    <style name="Root.GiniMerchantTheme.Widget.BottomSheet.ShapeAppearance" parent="ShapeAppearance.Material3.LargeComponent">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/gms_medium_12</item>
-    </style>
-    <style name="GiniMerchantTheme.Widget.BottomSheet.ShapeAppearance" parent="Root.GiniMerchantTheme.Widget.BottomSheet.ShapeAppearance" />
-
-    <style name="Root.GiniMerchantTheme.Widget.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
-        <item name="tint">@color/gms_dark_05</item>
-    </style>
-    <style name="GiniMerchantTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniMerchantTheme.Widget.BottomSheet.DragHandle" />
-
     <style name="Root.GiniMerchantTheme.Widget.ShapeableImageView.Corners" parent="">
         <item name="cornerSize">@dimen/gms_small_2</item>
         <item name="cornerFamily">rounded</item>
@@ -195,14 +171,6 @@
     <!-- Style for error text that is displayed when loading a page fails -->
     <style name="GiniMerchantTheme.PageErrorText" parent="Root.GiniMerchantTheme.PageErrorText" />
 
-    <style name="Root.GiniMerchantTheme.PaymentDetailsCard">
-        <item name="android:background">@drawable/gms_payment_details_background</item>
-        <item name="android:elevation">@dimen/gms_medium_12</item>
-    </style>
-
-    <!-- Style for the Payment Details card in ReviewFragment-->
-    <style name="GiniMerchantTheme.PaymentDetailsCard" parent="Root.GiniMerchantTheme.PaymentDetailsCard" />
-
     <style name="Root.GiniMerchantTheme.PaymentButtonProgressStyle">
         <item name="android:translationZ" tools:targetApi="lollipop">@dimen/gms_large_100</item>
     </style>
@@ -218,30 +186,4 @@
 
     <!-- Style for close button in ReviewFragment -->
     <style name="GiniMerchantTheme.CloseButtonStyle" parent="Root.GiniMerchantTheme.CloseButtonStyle"/>
-
-    <style name="Root.GiniMerchantTheme.PaymentDetails.InfoBar" parent="">
-        <item name="android:background">@drawable/gms_payment_details_info_bar_background</item>
-    </style>
-    <style name="GiniMerchantTheme.PaymentDetails.InfoBar" parent="Root.GiniMerchantTheme.PaymentDetails.InfoBar" />
-
-    <style name="Root.GiniMerchantTheme.PaymentDetails.InfoBar.TextView" parent="Widget.MaterialComponents.TextView">
-        <item name="android:gravity">center</item>
-        <item name="android:textAppearance">@style/GiniMerchantTheme.PaymentDetails.InfoBar.TextAppearance</item>
-    </style>
-    <style name="GiniMerchantTheme.PaymentDetails.InfoBar.TextView" parent="Root.GiniMerchantTheme.PaymentDetails.InfoBar.TextView" />
-
-    <style name="Root.GiniMerchantTheme.PaymentDetails.InfoBar.TextAppearance" parent="GiniMerchantTheme.Typography.Caption1">
-        <item name="android:textColor">@color/gms_dark_07</item>
-    </style>
-    <style name="GiniMerchantTheme.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniMerchantTheme.PaymentDetails.InfoBar.TextAppearance" />
-
-    <style name="Root.GiniMerchantTheme.Widget.Button.PaymentProviderSelector" parent="GiniMerchantTheme.Widget.Button.TransparentBackground">
-        <item name="android:textAppearance">@style/GiniMerchantTheme.Typography.Input</item>
-    </style>
-    <style name="GiniMerchantTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniMerchantTheme.Widget.Button.PaymentProviderSelector"/>
-    
-    <style name="Root.GiniMerchantTheme.Widget.Button.PaymentProviderPicker" parent="GiniMerchantTheme.Widget.Button.TransparentBackground">
-        <item name="android:textAppearance">@style/GiniMerchantTheme.Typography.Body1</item>
-    </style>
-    <style name="GiniMerchantTheme.Widget.Button.PaymentProviderPicker" parent="Root.GiniMerchantTheme.Widget.Button.PaymentProviderPicker"/>
 </resources>

@@ -27,19 +27,6 @@
     <style name="GiniMerchantTheme.Widget.Button.IconButton" parent="Root.GiniMerchantTheme.Widget.Button.IconButton">
         <item name="iconTint">@color/gms_light_02</item>
     </style>
-
-    <style name="GiniMerchantTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniMerchantTheme.ThemeOverlay.BottomSheetDialog">
-        <item name="colorPrimary">@color/gms_light_07</item>
-        <item name="bottomSheetStyle">@style/GiniMerchantTheme.Widget.BottomSheet</item>
-    </style>
-
-    <style name="GiniMerchantTheme.Widget.BottomSheet" parent="Root.GiniMerchantTheme.Widget.BottomSheet">
-        <item name="backgroundTint">@color/gms_light_07</item>
-    </style>
-
-    <style name="GiniMerchantTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniMerchantTheme.Widget.BottomSheet.DragHandle">
-        <item name="tint">@color/gms_light_05</item>
-    </style>
     <!-- endregion -->
     
 </resources>
