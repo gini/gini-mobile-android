@@ -9,12 +9,12 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/gms_large">
+    android:paddingHorizontal="@dimen/gps_large">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/gms_large"
+        android:layout_marginTop="@dimen/gps_large"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -23,7 +23,7 @@
             style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gms_medium"
+            android:layout_marginBottom="@dimen/gps_medium"
             android:hint="@string/recipient"
             app:boxBackgroundColor="#ffffff">
 
@@ -40,7 +40,7 @@
             style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gms_medium"
+            android:layout_marginBottom="@dimen/gps_medium"
             android:hint="@string/iban"
             app:boxBackgroundColor="#ffffff">
 
@@ -56,7 +56,7 @@
             style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gms_medium"
+            android:layout_marginBottom="@dimen/gps_medium"
             android:hint="@string/amount"
             app:boxBackgroundColor="#ffffff">
 
@@ -72,7 +72,7 @@
             style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gms_medium"
+            android:layout_marginBottom="@dimen/gps_medium"
             android:hint="@string/purpose"
             app:boxBackgroundColor="#ffffff">
 
@@ -87,10 +87,10 @@
 
     <Button
         android:id="@+id/pay_now_btn"
-        style="@style/GiniMerchantTheme.Widget.Button.UnelevatedButton"
+        style="@style/GiniPaymentTheme.Widget.Button.UnelevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/gms_large"
+        android:layout_marginBottom="@dimen/gps_large"
         android:text="@string/pay_now"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
