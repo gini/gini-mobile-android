@@ -158,7 +158,7 @@ Payment Component
 ~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8663-1324&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19152&t=a2nGT46mNSzeqjZ8-4>`_.
 
 .. note::
 
@@ -187,7 +187,7 @@ Bank Selection Bottom Sheet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8794-1437&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19234&t=a2nGT46mNSzeqjZ8-4>`_.
 
 .. note::
 
@@ -205,7 +205,7 @@ Payment Feature Info Screen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8865-1784&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19236&t=a2nGT46mNSzeqjZ8-4>`_.
 
 .. warning::
 
@@ -226,7 +226,7 @@ Payment Review Screen
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8856-2345&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19238&t=a2nGT46mNSzeqjZ8-4>`_.
 
 .. note::
 
