@@ -17,6 +17,8 @@ internal class FullAmountChangeIntent(
     fun SkontoFragmentViewModel.run(newValue: BigDecimal) = intent {
         val state = state as? SkontoScreenState.Ready ?: return@intent
 
+        if (newValue == state.fullAmount.value) return@intent
+
         val validationError = skontoFullAmountValidator.execute(newValue)
 
         if (validationError != null) {

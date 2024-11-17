@@ -96,15 +96,15 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun SkontoScreenContent(
-    amountFormatter: AmountFormatter,
+    isBottomNavigationBarEnabled: Boolean,
     navigateBack: () -> Unit,
     navigateToHelp: () -> Unit,
+    amountFormatter: AmountFormatter,
     viewModel: SkontoFragmentViewModel,
-    modifier: Modifier = Modifier,
-    screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
-    isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     navigateToInvoiceScreen: (documentId: String, infoTextLines: List<String>) -> Unit,
+    modifier: Modifier = Modifier,
+    screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
 ) {
 
     BackHandler { navigateBack() }
@@ -157,12 +157,12 @@ private fun ScreenStateContent(
     onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
     isBottomNavigationBarEnabled: Boolean,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
     onInvoiceClicked: () -> Unit,
     onConfirmAttachTransactionDocClicked: (alwaysAttach: Boolean) -> Unit,
     onCancelAttachTransactionDocClicked: () -> Unit,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors()
 ) {
@@ -193,6 +193,8 @@ private fun ScreenStateContent(
 
 @Composable
 private fun ScreenReadyState(
+    isBottomNavigationBarEnabled: Boolean,
+    state: SkontoScreenState.Ready,
     amountFormatter: AmountFormatter,
     onConfirmAttachTransactionDocClicked: (alwaysAttach: Boolean) -> Unit,
     onCancelAttachTransactionDocClicked: () -> Unit,
@@ -200,16 +202,14 @@ private fun ScreenReadyState(
     onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
     onInvoiceClicked: () -> Unit,
-    state: SkontoScreenState.Ready,
     onDiscountSectionActiveChange: (Boolean) -> Unit,
     onDiscountAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onFullAmountChange: (BigDecimal) -> Unit,
-    isBottomNavigationBarEnabled: Boolean,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
-    modifier: Modifier = Modifier,
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
+    modifier: Modifier = Modifier,
     discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
 ) {
@@ -334,9 +334,9 @@ private fun ScreenReadyState(
 private fun TopAppBar(
     onBackClicked: () -> Unit,
     onHelpClicked: () -> Unit,
-    modifier: Modifier = Modifier,
-    isBottomNavigationBarEnabled: Boolean,
     colors: GiniTopBarColors,
+    isBottomNavigationBarEnabled: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     GiniTopBar(
         modifier = modifier,
@@ -398,9 +398,9 @@ private fun NavigationActionBack(
 
 @Composable
 private fun InvoicePreviewSection(
-    modifier: Modifier = Modifier,
-    colorScheme: SkontoInvoicePreviewSectionColors,
     onClick: () -> Unit,
+    colorScheme: SkontoInvoicePreviewSectionColors,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier
@@ -457,6 +457,7 @@ private fun InvoicePreviewSection(
 
 @Composable
 private fun SkontoSection(
+    isActive: Boolean,
     amountFormatter: AmountFormatter,
     colors: SkontoSectionColors,
     amount: Amount,
@@ -468,9 +469,8 @@ private fun SkontoSection(
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
     edgeCase: SkontoEdgeCase?,
-    modifier: Modifier = Modifier,
-    isActive: Boolean,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
+    modifier: Modifier = Modifier,
     discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -750,13 +750,13 @@ private fun InfoDialog(
 
 @Composable
 private fun WithoutSkontoSection(
+    isActive: Boolean,
+    onFullAmountChange: (BigDecimal) -> Unit,
     colors: WithoutSkontoSectionColors,
     amount: Amount,
     amountFormatter: AmountFormatter,
     fullAmountValidationError: SkontoScreenState.Ready.FullAmountValidationError?,
     modifier: Modifier = Modifier,
-    onFullAmountChange: (BigDecimal) -> Unit,
-    isActive: Boolean,
 ) {
     val resources = LocalContext.current.resources
 
@@ -826,9 +826,9 @@ private fun FooterSection(
     onBackClicked: () -> Unit,
     onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
-    modifier: Modifier = Modifier,
-    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     discountPercentageFormatter: SkontoDiscountPercentageFormatter,
+    customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
+    modifier: Modifier = Modifier,
 ) {
     val animatedTotalAmount by animateFloatAsState(
         targetValue = totalAmount.value.toFloat(), label = "totalAmount"

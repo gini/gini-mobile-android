@@ -17,6 +17,8 @@ internal class SkontoAmountFieldChangeIntent(
     fun SkontoScreenContainerHost.run(newValue: BigDecimal) = intent {
         val state = state as? SkontoScreenState.Ready ?: return@intent
 
+        if (newValue == state.skontoAmount.value) return@intent
+
         val skontoAmountValidationError = skontoAmountValidator.execute(
             newValue,
             state.fullAmount.value
