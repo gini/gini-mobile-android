@@ -20,7 +20,7 @@
     <string name="gps_more_information_label">Bezahldaten an Banking-App übergeben und dort direkt bezahlen.</string>
     <string name="gps_more_information_underlined_part"><u>Mehr Informationen.</u></string>
     <string name="gps_select_bank_label">Bank auswählen und bezahlen</string>
-    <string name="gps_select_bank">Ihre Bank</string>
+    <string name="gps_select_bank">Bank auswählen</string>
     <string name="gps_pay_invoice_button">Rechnung bezahlen</string>
     <string name="gps_payment_powered_by_label">Powered by</string>
     <string name="gps_payment_provider_apps_list_description">Sie können die Rechnung nur bezahlen, wenn Sie ein Konto bei einer der unten aufgeführten Banken haben.</string>
