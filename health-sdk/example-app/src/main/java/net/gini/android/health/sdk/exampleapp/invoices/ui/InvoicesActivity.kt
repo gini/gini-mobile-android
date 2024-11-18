@@ -282,7 +282,7 @@ class InvoicesAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val invoiceItem = dataSet[position]
-
+        viewHolder.payInvoiceButton.visibility = if (invoiceItem.isPayable) View.VISIBLE else View.GONE
         viewHolder.recipient.text = invoiceItem.recipient ?: ""
         viewHolder.dueDate.text = invoiceItem.dueDate ?: ""
         viewHolder.amount.text = invoiceItem.amount ?: ""

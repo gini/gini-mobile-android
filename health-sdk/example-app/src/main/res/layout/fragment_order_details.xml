@@ -94,6 +94,5 @@
         android:layout_marginBottom="@dimen/ghs_large"
         android:text="@string/pay_now"
         android:backgroundTint="@color/ghs_accent_01"
-        android:textColor="dark"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
