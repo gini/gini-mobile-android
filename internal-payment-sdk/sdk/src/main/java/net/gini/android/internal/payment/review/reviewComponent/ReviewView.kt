@@ -114,6 +114,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         binding.gpsPaymentDetails.setOnClickListener { it.hideKeyboard() }
         binding.payment.setOnClickListener {
             it.hideKeyboard()
+            binding.root.clearFocus()
             reviewComponent?.paymentDetails?.value?.let { paymentDetails ->
                 val areFieldsValid = reviewComponent?.validatePaymentDetails(paymentDetails)
                 if (areFieldsValid == true) {
