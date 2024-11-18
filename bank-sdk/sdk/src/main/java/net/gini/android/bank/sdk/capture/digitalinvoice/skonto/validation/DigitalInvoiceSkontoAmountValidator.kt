@@ -1,14 +1,14 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice.skonto.validation
 
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.DigitalInvoiceSkontoScreenState
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.SkontoScreenState
 import java.math.BigDecimal
 
 internal class DigitalInvoiceSkontoAmountValidator {
 
     operator fun invoke(newSkontoAmount: BigDecimal, fullAmount: BigDecimal)
-            : DigitalInvoiceSkontoScreenState.Ready.SkontoAmountValidationError? = when {
+            : SkontoScreenState.Ready.SkontoAmountValidationError? = when {
         newSkontoAmount > fullAmount ->
-            DigitalInvoiceSkontoScreenState.Ready.SkontoAmountValidationError.SkontoAmountMoreThanFullAmount
+            SkontoScreenState.Ready.SkontoAmountValidationError.SkontoAmountMoreThanFullAmount
 
         else -> null
     }

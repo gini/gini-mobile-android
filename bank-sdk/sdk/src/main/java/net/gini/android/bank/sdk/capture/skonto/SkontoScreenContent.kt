@@ -278,7 +278,7 @@ private fun ScreenReadyState(
                     isActive = state.isSkontoSectionActive,
                     onSkontoAmountChange = onDiscountAmountChange,
                     onDueDateChanged = onDueDateChanged,
-                    edgeCase = state.skontoEdgeCase,
+                    edgeCase = state.edgeCase,
                     onInfoBannerClicked = onInfoBannerClicked,
                     discountPercentageFormatter = discountPercentageFormatter,
                     skontoAmountValidationError = state.skontoAmountValidationError,
@@ -296,7 +296,7 @@ private fun ScreenReadyState(
         }
 
         if (state.edgeCaseInfoDialogVisible) {
-            val text = when (state.skontoEdgeCase) {
+            val text = when (state.edgeCase) {
                 SkontoEdgeCase.PayByCashToday,
                 SkontoEdgeCase.PayByCashOnly ->
                     stringResource(id = R.string.gbs_skonto_section_info_dialog_pay_cash_message)
@@ -1024,7 +1024,7 @@ private fun previewState() = SkontoScreenState.Ready(
     fullAmount = Amount.parse("100:EUR"),
     totalAmount = Amount.parse("97:EUR"),
     paymentMethod = SkontoData.SkontoPaymentMethod.PayPal,
-    skontoEdgeCase = SkontoEdgeCase.PayByCashOnly,
+    edgeCase = SkontoEdgeCase.PayByCashOnly,
     edgeCaseInfoDialogVisible = false,
     savedAmount = Amount.parse("3:EUR"),
     transactionDialogVisible = true,

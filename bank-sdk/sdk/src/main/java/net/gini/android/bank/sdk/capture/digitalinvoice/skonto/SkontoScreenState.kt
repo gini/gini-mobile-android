@@ -6,7 +6,7 @@ import net.gini.android.capture.Amount
 import java.math.BigDecimal
 import java.time.LocalDate
 
-internal sealed interface DigitalInvoiceSkontoScreenState {
+internal sealed interface SkontoScreenState {
 
     data class Ready(
         val isSkontoSectionActive: Boolean,
@@ -19,18 +19,11 @@ internal sealed interface DigitalInvoiceSkontoScreenState {
         val paymentMethod: SkontoData.SkontoPaymentMethod,
         val edgeCase: SkontoEdgeCase?,
         val edgeCaseInfoDialogVisible: Boolean,
-    ) : DigitalInvoiceSkontoScreenState {
+    ) : SkontoScreenState {
 
         sealed interface SkontoAmountValidationError {
             object SkontoAmountMoreThanFullAmount : SkontoAmountValidationError
         }
     }
-}
-
-internal sealed interface DigitalInvoiceSkontoSideEffect {
-    data class OpenInvoiceScreen(val documentId: String, val infoTextLines: List<String>) :
-        DigitalInvoiceSkontoSideEffect
-
-    object OpenHelpScreen : DigitalInvoiceSkontoSideEffect
 }
 

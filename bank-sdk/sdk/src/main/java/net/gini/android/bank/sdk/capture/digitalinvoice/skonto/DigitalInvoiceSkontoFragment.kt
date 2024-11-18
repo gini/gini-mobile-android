@@ -2,7 +2,6 @@
 
 package net.gini.android.bank.sdk.capture.digitalinvoice.skonto
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -47,7 +46,6 @@ import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,7 +57,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -69,21 +66,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoResultArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.DigitalInvoiceSkontoScreenColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoInfoDialogColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoInvoicePreviewSectionColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoSectionColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.mapper.toErrorMessage
-import net.gini.android.bank.sdk.capture.skonto.mapper.toErrorMessage
+import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.viewmodel.DigitalInvoiceSkontoViewModel
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
 import net.gini.android.bank.sdk.di.koin.giniBankViewModel
@@ -101,6 +98,8 @@ import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.koin.core.parameter.parametersOf
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
@@ -155,12 +154,9 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                         customBottomNavBarAdapter = customBottomNavBarAdapter,
                         navigateBack = {
-                            setFragmentResult(REQUEST_KEY, Bundle().apply {
-                                putParcelable(
-                                    RESULT_KEY,
-                                    viewModel.provideFragmentResult()
-                                )
-                            }
+                            setFragmentResult(
+                                REQUEST_KEY,
+                                bundleOf(RESULT_KEY to it)
                             )
                             findNavController().popBackStack()
                         },
@@ -188,27 +184,11 @@ class DigitalInvoiceSkontoFragment : Fragment() {
     }
 }
 
-@Composable
-@SuppressLint("ComposableNaming")
-private fun DigitalInvoiceSkontoViewModel.collectSideEffect(
-    action: (DigitalInvoiceSkontoSideEffect) -> Unit
-) {
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(sideEffectFlow, lifecycleOwner) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            sideEffectFlow.collect {
-                action(it)
-            }
-        }
-    }
-}
 
 @Composable
 private fun ScreenContent(
     isBottomNavigationBarEnabled: Boolean,
-    navigateBack: () -> Unit,
+    navigateBack: (DigitalInvoiceSkontoResultArgs) -> Unit,
     navigateToHelpScreen: () -> Unit,
     navigateToInvoiceScreen: (documentId: String, infoTextLines: List<String>) -> Unit,
     viewModel: DigitalInvoiceSkontoViewModel,
@@ -217,9 +197,9 @@ private fun ScreenContent(
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
 ) {
 
-    BackHandler { navigateBack() }
+    BackHandler { viewModel.onBackClicked() }
 
-    val state by viewModel.stateFlow.collectAsState()
+    val state by viewModel.collectAsState()
     val keyboardState by keyboardAsState()
 
     LaunchedEffect(keyboardState) {
@@ -228,10 +208,13 @@ private fun ScreenContent(
 
     viewModel.collectSideEffect {
         when (it) {
-            is DigitalInvoiceSkontoSideEffect.OpenInvoiceScreen ->
+            is SkontoSideEffect.OpenInvoiceScreen ->
                 navigateToInvoiceScreen(it.documentId, it.infoTextLines)
 
-            DigitalInvoiceSkontoSideEffect.OpenHelpScreen ->
+            is SkontoSideEffect.NavigateBack ->
+                navigateBack(it.args)
+
+            SkontoSideEffect.OpenHelpScreen ->
                 navigateToHelpScreen()
         }
     }
@@ -243,7 +226,7 @@ private fun ScreenContent(
         onSkontoAmountChange = viewModel::onSkontoAmountFieldChanged,
         onDueDateChanged = viewModel::onSkontoDueDateChanged,
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-        onBackClicked = navigateBack,
+        onBackClicked = viewModel::onBackClicked,
         onInfoBannerClicked = viewModel::onInfoBannerClicked,
         onInfoDialogDismissed = viewModel::onInfoDialogDismissed,
         onInvoiceClicked = viewModel::onInvoiceClicked,
@@ -254,7 +237,7 @@ private fun ScreenContent(
 
 @Composable
 private fun ScreenStateContent(
-    state: DigitalInvoiceSkontoScreenState,
+    state: SkontoScreenState,
     isBottomNavigationBarEnabled: Boolean,
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
@@ -268,7 +251,7 @@ private fun ScreenStateContent(
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors()
 ) {
     when (state) {
-        is DigitalInvoiceSkontoScreenState.Ready -> ScreenReadyState(
+        is SkontoScreenState.Ready -> ScreenReadyState(
             modifier = modifier,
             state = state,
             screenColorScheme = screenColorScheme,
@@ -288,7 +271,7 @@ private fun ScreenStateContent(
 
 @Composable
 private fun ScreenReadyState(
-    state: DigitalInvoiceSkontoScreenState.Ready,
+    state: SkontoScreenState.Ready,
     onBackClicked: () -> Unit,
     onInvoiceClicked: () -> Unit,
     onHelpClicked: () -> Unit,
@@ -530,7 +513,7 @@ private fun SkontoSection(
     onInfoBannerClicked: () -> Unit,
     edgeCase: SkontoEdgeCase?,
     colors: DigitalInvoiceSkontoSectionColors,
-    skontoAmountValidationError: DigitalInvoiceSkontoScreenState.Ready.SkontoAmountValidationError?,
+    skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -893,7 +876,7 @@ private fun Float.formatAsDiscountPercentage(): String {
     return "${value.toString().trimEnd('0').trimEnd('.')}%"
 }
 
-private val previewState = DigitalInvoiceSkontoScreenState.Ready(
+private val previewState = SkontoScreenState.Ready(
     isSkontoSectionActive = true,
     paymentInDays = 14,
     skontoPercentage = BigDecimal("3"),

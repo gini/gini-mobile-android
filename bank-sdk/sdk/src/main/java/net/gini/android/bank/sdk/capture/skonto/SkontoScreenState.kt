@@ -20,7 +20,7 @@ internal sealed interface SkontoScreenState {
         val totalAmount: Amount,
         val savedAmount: Amount,
         val paymentMethod: SkontoData.SkontoPaymentMethod,
-        val skontoEdgeCase: SkontoEdgeCase?,
+        val edgeCase: SkontoEdgeCase?,
         val edgeCaseInfoDialogVisible: Boolean,
         val transactionDialogVisible: Boolean,
     ) : SkontoScreenState {

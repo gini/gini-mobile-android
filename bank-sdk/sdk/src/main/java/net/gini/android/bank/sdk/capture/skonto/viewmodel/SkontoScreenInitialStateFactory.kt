@@ -40,7 +40,7 @@ internal class SkontoScreenInitialStateFactory(
             fullAmount = data.fullAmountToPay,
             totalAmount = totalAmount,
             paymentMethod = paymentMethod,
-            skontoEdgeCase = edgeCase,
+            edgeCase = edgeCase,
             edgeCaseInfoDialogVisible = edgeCase != null,
             savedAmount = savedAmount,
             transactionDialogVisible = false,
