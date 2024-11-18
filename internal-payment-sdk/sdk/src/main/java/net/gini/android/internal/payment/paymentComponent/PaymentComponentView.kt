@@ -102,7 +102,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                 binding.gpsTwoRowsBankSelection.visibility = View.GONE
             }
             binding.gpsPoweredByGini.visibility =
-                if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else GONE
+                if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true)
+                {
+                    VISIBLE
+                } else {
+                    GONE
+                }
             paymentComponent?.checkReturningUser()
             paymentComponent?.let { pc ->
                 LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
