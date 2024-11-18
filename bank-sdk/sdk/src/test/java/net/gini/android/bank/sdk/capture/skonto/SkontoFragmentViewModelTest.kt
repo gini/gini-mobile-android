@@ -1,14 +1,11 @@
 package net.gini.android.bank.sdk.capture.skonto
 
-import app.cash.turbine.test
 import io.mockk.Runs
-import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import net.gini.android.bank.sdk.MainDispatcherRule
 import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
@@ -17,12 +14,25 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDiscountPercentageUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoRemainingDaysUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseCase
+import net.gini.android.bank.sdk.capture.skonto.validation.SkontoAmountValidator
+import net.gini.android.bank.sdk.capture.skonto.validation.SkontoFullAmountValidator
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoScreenInitialStateFactory
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.FullAmountChangeIntent
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.InfoBannerInteractionIntent
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.InvoiceClickIntent
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.ProceedClickedIntent
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.SkontoActiveChangeIntent
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.SkontoAmountFieldChangeIntent
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.SkontoDueDateChangeIntent
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.subintent.OpenExtractionsScreenSubIntent
 import net.gini.android.capture.Amount
 import net.gini.android.capture.analysis.LastAnalyzedDocumentProvider
 import org.junit.Rule
 import org.junit.Test
+import org.orbitmvi.orbit.test.test
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -42,28 +52,31 @@ class SkontoFragmentViewModelTest {
         val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase =
             mockk(relaxed = true)
 
-        val viewModel = SkontoFragmentViewModel(
-            data = skontoData,
-            getTransactionDocsFeatureEnabledUseCase = mockk(),
-            getSkontoDiscountPercentageUseCase = mockk(),
+        val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
             getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
             getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
-            getSkontoAmountUseCase = mockk(),
-            getSkontoRemainingDaysUseCase = mockk(),
             getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
-            skontoExtractionsHandler = mockk(),
-            lastAnalyzedDocumentProvider = mockk(),
-            skontoInvoicePreviewTextLinesFactory = mockk(),
-            lastExtractionsProvider = mockk(),
-            transactionDocDialogConfirmAttachUseCase = mockk(),
-            transactionDocDialogCancelAttachUseCase = mockk(),
-            getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-            skontoAmountValidator = mockk(),
-            skontoFullAmountValidator = mockk(),
         )
 
-        val flowData = viewModel.stateFlow.first()
-        assert(flowData is SkontoScreenState.Ready)
+        val viewModel = SkontoFragmentViewModel(
+            data = skontoData,
+
+            skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+
+            proceedClickedIntent = mockk(),
+            skontoActiveChangeIntent = mockk(),
+            keyboardStateChangeIntent = mockk(),
+            skontoAmountFieldChangeIntent = mockk(),
+            invoiceClickIntent = mockk(),
+            fullAmountChangeIntent = mockk(),
+            skontoDueDateChangeIntent = mockk(),
+            transactionDocDialogDecisionIntent = mockk(),
+            infoBannerInteractionIntent = mockk(),
+        )
+
+        viewModel.test(this) {
+            expectInitialState()
+        }
     }
 
     @Test
@@ -78,28 +91,32 @@ class SkontoFragmentViewModelTest {
             val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase =
                 mockk(relaxed = true)
 
-            val viewModel = SkontoFragmentViewModel(
-                data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk(),
-                getSkontoDiscountPercentageUseCase = mockk(),
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
                 getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
                 getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
-                getSkontoAmountUseCase = mockk(),
-                getSkontoRemainingDaysUseCase = mockk(),
                 getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
-                skontoExtractionsHandler = mockk(),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk(),
-                skontoFullAmountValidator = mockk(),
             )
 
-            val flowData = viewModel.stateFlow.first()
-            assert(flowData is SkontoScreenState.Ready)
+
+            val viewModel = SkontoFragmentViewModel(
+                data = skontoData,
+
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+
+                proceedClickedIntent = mockk(),
+                skontoActiveChangeIntent = mockk(),
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = mockk(),
+                invoiceClickIntent = mockk(),
+                fullAmountChangeIntent = mockk(),
+                skontoDueDateChangeIntent = mockk(),
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = mockk(),
+            )
+
+            viewModel.test(this) {
+                expectInitialState()
+            }
 
             coVerify(exactly = 1) {
                 getSkontoSavedAmountUseCase.execute(any(), any())
@@ -114,37 +131,41 @@ class SkontoFragmentViewModelTest {
         runTest {
             val skontoData: SkontoData = mockk(relaxed = true)
 
-            val viewModel = SkontoFragmentViewModel(
-                data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk(),
-                getSkontoDiscountPercentageUseCase = mockk(),
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = mockk(),
-                getSkontoRemainingDaysUseCase = mockk(),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
-                skontoExtractionsHandler = mockk(),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk(),
-                skontoFullAmountValidator = mockk(),
+            val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase =
+                mockk(relaxed = true)
+            val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase =
+                mockk(relaxed = true)
+            val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase =
+                mockk(relaxed = true)
+
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
+                getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
+                getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+                getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
             )
 
-            with(viewModel.stateFlow.first()) {
-                assert(this is SkontoScreenState.Ready)
-                require(this is SkontoScreenState.Ready)
-            }
+            val infoBannerInteractionIntent = InfoBannerInteractionIntent()
 
-            viewModel.onInfoBannerClicked()
+            val viewModel = SkontoFragmentViewModel(
+                data = skontoData,
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+                proceedClickedIntent = mockk(),
+                skontoActiveChangeIntent = mockk(),
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = mockk(),
+                invoiceClickIntent = mockk(),
+                fullAmountChangeIntent = mockk(),
+                skontoDueDateChangeIntent = mockk(),
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = infoBannerInteractionIntent,
+            )
 
-            with(viewModel.stateFlow.first()) {
-                assert(this is SkontoScreenState.Ready)
-                require(this is SkontoScreenState.Ready)
-                assert(this.edgeCaseInfoDialogVisible)
+            viewModel.test(this) {
+                runOnCreate()
+                containerHost.onInfoBannerClicked()
+                expectState {
+                    (this as SkontoScreenState.Ready).copy(edgeCaseInfoDialogVisible = true)
+                }
             }
         }
 
@@ -153,35 +174,42 @@ class SkontoFragmentViewModelTest {
         runTest {
             val skontoData: SkontoData = mockk(relaxed = true)
 
-            val viewModel = SkontoFragmentViewModel(
-                data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk(),
-                getSkontoDiscountPercentageUseCase = mockk(),
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = mockk(),
-                getSkontoRemainingDaysUseCase = mockk(),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
-                skontoExtractionsHandler = mockk(),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk(),
-                skontoFullAmountValidator = mockk(),
+            val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase =
+                mockk(relaxed = true)
+            val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase =
+                mockk(relaxed = true)
+            val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase =
+                mockk(relaxed = true)
+
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
+                getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
+                getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+                getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
             )
 
-            viewModel.stateFlow.value = mockk<SkontoScreenState.Ready>(relaxed = true)
-                .copy(edgeCaseInfoDialogVisible = true)
+            val infoBannerInteractionIntent = InfoBannerInteractionIntent()
 
-            viewModel.onInfoDialogDismissed()
+            val viewModel = SkontoFragmentViewModel(
+                data = skontoData,
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+                proceedClickedIntent = mockk(),
+                skontoActiveChangeIntent = mockk(),
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = mockk(),
+                invoiceClickIntent = mockk(),
+                fullAmountChangeIntent = mockk(),
+                skontoDueDateChangeIntent = mockk(),
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = infoBannerInteractionIntent,
+            )
 
-            with(viewModel.stateFlow.first()) {
-                assert(this is SkontoScreenState.Ready)
-                require(this is SkontoScreenState.Ready)
-                assert(!this.edgeCaseInfoDialogVisible)
+            viewModel.test(this) {
+                runOnCreate()
+                expectInitialState()
+                containerHost.onInfoDialogDismissed()
+                expectState {
+                    (this as SkontoScreenState.Ready).copy(edgeCaseInfoDialogVisible = false)
+                }
             }
         }
 
@@ -189,108 +217,112 @@ class SkontoFragmentViewModelTest {
     fun `when user clicks on invoice preview the VM should fire the navigation side effect`() =
         runTest {
             val skontoData: SkontoData = mockk(relaxed = true)
+
+
             val lastAnalyzedDocumentProvider = mockk<LastAnalyzedDocumentProvider> {
                 every { provide() } returns mockk(relaxed = true)
             }
             val skontoInvoicePreviewTextLinesFactory = mockk<SkontoInvoicePreviewTextLinesFactory> {
                 every { create(any()) } returns mockk(relaxed = true)
             }
-            val viewModel = SkontoFragmentViewModel(
-                data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk(),
-                getSkontoDiscountPercentageUseCase = mockk(),
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = mockk(),
-                getSkontoRemainingDaysUseCase = mockk(),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
-                skontoExtractionsHandler = mockk(),
+
+            val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase =
+                mockk(relaxed = true)
+            val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase =
+                mockk(relaxed = true)
+            val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase =
+                mockk(relaxed = true)
+
+            val invoiceClickIntent = InvoiceClickIntent(
                 lastAnalyzedDocumentProvider = lastAnalyzedDocumentProvider,
                 skontoInvoicePreviewTextLinesFactory = skontoInvoicePreviewTextLinesFactory,
-                lastExtractionsProvider = mockk(),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk(),
-                skontoFullAmountValidator = mockk(),
             )
 
-            viewModel.sideEffectFlow.test {
-                viewModel.onInvoiceClicked()
-                assert(awaitItem() is SkontoScreenSideEffect.OpenInvoiceScreen)
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
+                getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
+                getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+                getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
+            )
+
+            val viewModel = SkontoFragmentViewModel(
+                data = skontoData,
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+                proceedClickedIntent = mockk(),
+                skontoActiveChangeIntent = mockk(),
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = mockk(),
+                invoiceClickIntent = invoiceClickIntent,
+                fullAmountChangeIntent = mockk(),
+                skontoDueDateChangeIntent = mockk(),
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = mockk(),
+            )
+
+            viewModel.test(this) {
+                expectInitialState()
+                containerHost.onInvoiceClicked()
+                assert(awaitSideEffect() is SkontoScreenSideEffect.OpenInvoiceScreen)
             }
         }
 
     @Test
-    fun `when user disables skonto the final amount should be changed to full price`() =
+    fun `when user swith skonto the final amount should be changed`() =
         runTest {
             val skontoData: SkontoData = mockk(relaxed = true)
 
-            val viewModel = SkontoFragmentViewModel(
-                data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk(),
-                getSkontoDiscountPercentageUseCase = mockk(relaxed = true),
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = mockk(),
-                getSkontoRemainingDaysUseCase = mockk(),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
-                skontoExtractionsHandler = mockk(),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk(),
-                skontoFullAmountValidator = mockk(),
+            val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase =
+                mockk(relaxed = true)
+            val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase =
+                mockk(relaxed = true)
+            val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase =
+                mockk(relaxed = true)
+
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
+                getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
+                getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+                getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
             )
 
-            viewModel.stateFlow.test {
-                skipItems(1) // skip initial state
+            val getSkontoDiscountPercentageUseCase: GetSkontoDiscountPercentageUseCase = mockk() {
+                every { execute(any(), any()) } returns BigDecimal.ZERO
+            }
+
+            val skontoActiveChangeIntent = SkontoActiveChangeIntent(
+                getSkontoDiscountPercentageUseCase = getSkontoDiscountPercentageUseCase,
+            )
+
+            val viewModel = SkontoFragmentViewModel(
+                data = skontoData,
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+                proceedClickedIntent = mockk(),
+                skontoActiveChangeIntent = skontoActiveChangeIntent,
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = mockk(),
+                invoiceClickIntent = mockk(),
+                fullAmountChangeIntent = mockk(),
+                skontoDueDateChangeIntent = mockk(),
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = mockk(),
+            )
+
+            viewModel.test(this) {
+                expectInitialState()
+                runOnCreate()
                 viewModel.onSkontoActiveChanged(false)
-                with(awaitItem()) {
-                    assert(this is SkontoScreenState.Ready)
-                    require(this is SkontoScreenState.Ready)
-                    assert(!this.isSkontoSectionActive)
-                    assert(this.totalAmount == this.fullAmount)
+                expectState {
+                    (this as SkontoScreenState.Ready).copy(
+                        isSkontoSectionActive = false,
+                        totalAmount = fullAmount,
+                        skontoPercentage = BigDecimal.ZERO
+                    )
                 }
-            }
-        }
-
-    @Test
-    fun `when user enables skonto the final amount should be changed to skonto price`() =
-        runTest {
-            val skontoData: SkontoData = mockk(relaxed = true)
-
-            val viewModel = SkontoFragmentViewModel(
-                data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk(),
-                getSkontoDiscountPercentageUseCase = mockk(relaxed = true),
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = mockk(),
-                getSkontoRemainingDaysUseCase = mockk(),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
-                skontoExtractionsHandler = mockk(),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk(),
-                skontoFullAmountValidator = mockk(),
-            )
-
-            viewModel.stateFlow.test {
-                skipItems(1) // skip initial state
                 viewModel.onSkontoActiveChanged(true)
-                with(awaitItem()) {
-                    assert(this is SkontoScreenState.Ready)
-                    require(this is SkontoScreenState.Ready)
-                    assert(this.isSkontoSectionActive)
-                    assert(this.totalAmount == this.skontoAmount)
+                expectState {
+                    (this as SkontoScreenState.Ready).copy(
+                        isSkontoSectionActive = true,
+                        totalAmount = skontoAmount,
+                        skontoPercentage = BigDecimal.ZERO
+                    )
                 }
             }
         }
@@ -300,85 +332,118 @@ class SkontoFragmentViewModelTest {
         runTest {
             val skontoData: SkontoData = mockk(relaxed = true) {
                 every { fullAmountToPay } returns Amount.parse("100:EUR")
+                every { skontoAmountToPay } returns Amount.parse("90:EUR")
+                every { skontoPercentageDiscounted } returns BigDecimal.ZERO
             }
 
-            val getSkontoDiscountPercentageUseCase = mockk<GetSkontoDiscountPercentageUseCase>(
-                relaxed = true
-            ) {
-                every { execute(any(), any()) } returns mockk()
+            val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase = mockk {
+                every { execute(any(), any()) } returns BigDecimal.ZERO
             }
+
+            val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase =
+                mockk(relaxed = true)
+
+            val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase =
+                mockk { every { execute(any()) } returns true }
+
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
+                getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
+                getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+                getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
+            )
+
+            val getSkontoDiscountPercentageUseCase: GetSkontoDiscountPercentageUseCase = mockk {
+                every { execute(any(), any()) } returns BigDecimal.ZERO
+            }
+
+            val skontoAmountFieldChangeIntent = SkontoAmountFieldChangeIntent(
+                skontoAmountValidator = SkontoAmountValidator(),
+                getSkontoDiscountPercentageUseCase = getSkontoDiscountPercentageUseCase,
+                getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
+            )
 
             val viewModel = SkontoFragmentViewModel(
                 data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk(),
-                getSkontoDiscountPercentageUseCase = getSkontoDiscountPercentageUseCase,
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = mockk(),
-                getSkontoRemainingDaysUseCase = mockk(),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
-                skontoExtractionsHandler = mockk(),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk {
-                    coEvery { execute(any(), any()) } returns null
-                },
-                skontoFullAmountValidator = mockk {
-                    coEvery { execute(any()) } returns null
-                },
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+                proceedClickedIntent = mockk(),
+                skontoActiveChangeIntent = mockk(),
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = skontoAmountFieldChangeIntent,
+                invoiceClickIntent = mockk(),
+                fullAmountChangeIntent = mockk(),
+                skontoDueDateChangeIntent = mockk(),
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = mockk(),
             )
 
-            viewModel.onSkontoAmountFieldChanged(BigDecimal("95"))
+            viewModel.test(this) {
+                expectInitialState()
+                runOnCreate()
+                val newSkontoAmount = BigDecimal("95")
+                containerHost.onSkontoAmountFieldChanged(newSkontoAmount)
+                expectState {
+                    (this as SkontoScreenState.Ready).copy(
+                        skontoAmount = skontoAmount.copy(value = newSkontoAmount),
+                        totalAmount = totalAmount.copy(value = newSkontoAmount),
+                    )
+                }
+            }
 
             coVerify(exactly = 1) {
-                getSkontoDiscountPercentageUseCase.execute(
-                    any(), any()
-                )
+                getSkontoDiscountPercentageUseCase.execute(any(), any())
             }
         }
 
     @Test
-    fun `when user changes skonto amount to incorrect value no action should be performed`() =
+    fun `when user changes skonto amount to incorrect value error should be shown`() =
         runTest {
             val skontoData: SkontoData = mockk(relaxed = true) {
                 every { fullAmountToPay } returns Amount.parse("100:EUR")
+                every { skontoAmountToPay } returns Amount.parse("90:EUR")
             }
 
             val getSkontoDiscountPercentageUseCase = mockk<GetSkontoDiscountPercentageUseCase> {
                 every { execute(any(), any()) } returns mockk()
             }
 
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
+                getSkontoSavedAmountUseCase = mockk(relaxed = true),
+                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
+                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
+            )
+
+            val skontoAmountFieldChangeIntent = SkontoAmountFieldChangeIntent(
+                skontoAmountValidator = SkontoAmountValidator(),
+                getSkontoDiscountPercentageUseCase = getSkontoDiscountPercentageUseCase,
+                getSkontoSavedAmountUseCase = mockk(),
+            )
 
             val viewModel = SkontoFragmentViewModel(
                 data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk(),
-                getSkontoDiscountPercentageUseCase = getSkontoDiscountPercentageUseCase,
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = mockk(),
-                getSkontoRemainingDaysUseCase = mockk(),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
-                skontoExtractionsHandler = mockk(),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk(relaxed = true),
-                skontoFullAmountValidator = mockk(),
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+                proceedClickedIntent = mockk(),
+                skontoActiveChangeIntent = mockk(),
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = skontoAmountFieldChangeIntent,
+                invoiceClickIntent = mockk(),
+                fullAmountChangeIntent = mockk(),
+                skontoDueDateChangeIntent = mockk(),
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = mockk(),
             )
 
-            viewModel.onSkontoAmountFieldChanged(BigDecimal("110"))
-
-            coVerify(exactly = 0) {
-                getSkontoDiscountPercentageUseCase.execute(
-                    any(), any()
-                )
+            viewModel.test(this) {
+                expectInitialState()
+                runOnCreate()
+                containerHost.onSkontoAmountFieldChanged(BigDecimal("110"))
+                expectState {
+                    with(this as SkontoScreenState.Ready) {
+                        copy(
+                            skontoAmountValidationError = SkontoScreenState
+                                .Ready.SkontoAmountValidationError.SkontoAmountMoreThanFullAmount
+                        )
+                    }
+                }
             }
         }
 
@@ -386,41 +451,63 @@ class SkontoFragmentViewModelTest {
     fun `when user changes full amount the skonto amount should be recalculated`() =
         runTest {
             val skontoData: SkontoData = mockk(relaxed = true) {
-                every { skontoAmountToPay } returns Amount.parse("100:EUR")
-                every { fullAmountToPay } returns Amount.parse("150:EUR")
+                every { fullAmountToPay } returns Amount.parse("100:EUR")
+                every { skontoAmountToPay } returns Amount.parse("90:EUR")
+                every { skontoPercentageDiscounted } returns BigDecimal.ZERO
             }
 
-            val getSkontoAmountUseCase = mockk<GetSkontoAmountUseCase> {
-                every { execute(any(), any()) } returns mockk()
+            val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase = mockk {
+                every { execute(any(), any()) } returns BigDecimal.ZERO
             }
+
+            val getSkontoAmountUseCase: GetSkontoAmountUseCase = mockk {
+                every { execute(any(), any()) } returns BigDecimal.ONE
+            }
+
+            val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase =
+                mockk(relaxed = true)
+
+            val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase =
+                mockk { every { execute(any()) } returns true }
+
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
+                getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
+                getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+                getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
+            )
+
+            val fullAmountChangeIntent = FullAmountChangeIntent(
+                skontoFullAmountValidator = SkontoFullAmountValidator(),
+                getSkontoAmountUseCase = getSkontoAmountUseCase,
+                getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
+            )
 
             val viewModel = SkontoFragmentViewModel(
                 data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk(),
-                getSkontoDiscountPercentageUseCase = mockk(relaxed = true),
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = getSkontoAmountUseCase,
-                getSkontoRemainingDaysUseCase = mockk(),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true) {
-                    every { execute(any()) } returns false
-                },
-                skontoExtractionsHandler = mockk(),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk {
-                    coEvery { execute(any(), any()) } returns null
-                },
-                skontoFullAmountValidator = mockk {
-                    coEvery { execute(any()) } returns null
-                },
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+                proceedClickedIntent = mockk(),
+                skontoActiveChangeIntent = mockk(),
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = mockk(),
+                invoiceClickIntent = mockk(),
+                fullAmountChangeIntent = fullAmountChangeIntent,
+                skontoDueDateChangeIntent = mockk(),
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = mockk(),
             )
 
-            viewModel.onFullAmountFieldChanged(BigDecimal("200"))
+            viewModel.test(this) {
+                expectInitialState()
+                runOnCreate()
+                val newFullAmount = BigDecimal("200")
+                containerHost.onFullAmountFieldChanged(newFullAmount)
+                expectState {
+                    (this as SkontoScreenState.Ready).copy(
+                        fullAmount = skontoAmount.copy(value = newFullAmount),
+                        skontoAmount = skontoAmount.copy(value = BigDecimal.ONE)
+                    )
+                }
+            }
 
             coVerify(exactly = 1) {
                 getSkontoAmountUseCase.execute(any(), any())
@@ -430,41 +517,59 @@ class SkontoFragmentViewModelTest {
     @Test
     fun `when user clicks proceed the extraction screen should be opened`() =
         runTest {
-            val skontoData: SkontoData = mockk(relaxed = true)
 
-            val getSkontoAmountUseCase = mockk<GetSkontoAmountUseCase> {
-                every { execute(any(), any()) } returns mockk()
-            }
+            val skontoData: SkontoData = mockk(relaxed = true)
 
             val listener = mockk<SkontoFragmentListener>(relaxed = true) {
                 every { onPayInvoiceWithSkonto(any(), any()) } just Runs
             }
 
+            val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase =
+                mockk(relaxed = true)
+            val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase =
+                mockk(relaxed = true)
+            val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase =
+                mockk(relaxed = true)
+
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
+                getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase,
+                getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+                getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
+            )
+
+            val openExtractionsScreenSubIntent = OpenExtractionsScreenSubIntent(
+                skontoExtractionsHandler = mockk(relaxed = true),
+                lastExtractionsProvider = mockk(relaxed = true),
+            )
+
+            val proceedClickedIntent = ProceedClickedIntent(
+                openExtractionsScreenSubIntent = openExtractionsScreenSubIntent,
+                getTransactionDocShouldBeAutoAttachedUseCase = mockk(relaxed = true),
+                getTransactionDocsFeatureEnabledUseCase = mockk(relaxed = true),
+                transactionDocDialogConfirmAttachUseCase = mockk(relaxed = true),
+            )
+
             val viewModel = SkontoFragmentViewModel(
                 data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk {
-                    every { this@mockk.invoke() } returns false
-                },
-                getSkontoDiscountPercentageUseCase = mockk(relaxed = true),
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = getSkontoAmountUseCase,
-                getSkontoRemainingDaysUseCase = mockk(),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
-                skontoExtractionsHandler = mockk(relaxed = true),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(relaxed = true),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk(),
-                skontoFullAmountValidator = mockk(),
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+                proceedClickedIntent = proceedClickedIntent,
+                skontoActiveChangeIntent = mockk(),
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = mockk(),
+                invoiceClickIntent = mockk(),
+                fullAmountChangeIntent = mockk(),
+                skontoDueDateChangeIntent = mockk(),
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = mockk(),
             )
 
             viewModel.setListener(listener)
 
-            viewModel.onProceedClicked()
+            viewModel.test(this) {
+                runOnCreate()
+                expectInitialState()
+                containerHost.onProceedClicked()
+            }
 
             verify(exactly = 1) {
                 listener.onPayInvoiceWithSkonto(any(), any())
@@ -474,45 +579,57 @@ class SkontoFragmentViewModelTest {
     @Test
     fun `when user changes due date to date it should be applied`() =
         runTest {
-            val skontoData: SkontoData = mockk(relaxed = true)
+            val skontoData: SkontoData = mockk(relaxed = true) {
+                every { skontoDueDate } returns LocalDate.now()
+            }
+
+            val getSkontoEdgeCaseUseCase = mockk<GetSkontoEdgeCaseUseCase> {
+                every { execute(any(), any()) } returns mockk(relaxed = true)
+            }
+
+            val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
+                getSkontoSavedAmountUseCase = mockk(relaxed = true),
+                getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
+            )
+
+            val skontoDueDateChangeIntent = SkontoDueDateChangeIntent(
+                getSkontoRemainingDaysUseCase = GetSkontoRemainingDaysUseCase(),
+                getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
+            )
 
             val viewModel = SkontoFragmentViewModel(
                 data = skontoData,
-                getTransactionDocsFeatureEnabledUseCase = mockk {
-                    every { this@mockk.invoke() } returns false
-                },
-                getSkontoDiscountPercentageUseCase = mockk(relaxed = true),
-                getSkontoSavedAmountUseCase = mockk(relaxed = true),
-                getSkontoEdgeCaseUseCase = mockk(relaxed = true),
-                getSkontoAmountUseCase = mockk(relaxed = true),
-                getSkontoRemainingDaysUseCase = mockk(relaxed = true),
-                getSkontoDefaultSelectionStateUseCase = mockk(relaxed = true),
-                skontoExtractionsHandler = mockk(relaxed = true),
-                lastAnalyzedDocumentProvider = mockk(),
-                skontoInvoicePreviewTextLinesFactory = mockk(),
-                lastExtractionsProvider = mockk(relaxed = true),
-                transactionDocDialogConfirmAttachUseCase = mockk(),
-                transactionDocDialogCancelAttachUseCase = mockk(),
-                getTransactionDocShouldBeAutoAttachedUseCase = mockk(),
-                skontoAmountValidator = mockk(),
-                skontoFullAmountValidator = mockk(),
+                skontoScreenInitialStateFactory = skontoScreenInitialStateFactory,
+                proceedClickedIntent = mockk(),
+                skontoActiveChangeIntent = mockk(),
+                keyboardStateChangeIntent = mockk(),
+                skontoAmountFieldChangeIntent = mockk(),
+                invoiceClickIntent = mockk(),
+                fullAmountChangeIntent = mockk(),
+                skontoDueDateChangeIntent = skontoDueDateChangeIntent,
+                transactionDocDialogDecisionIntent = mockk(),
+                infoBannerInteractionIntent = mockk(),
             )
 
-            viewModel.stateFlow.test {
-                skipItems(1) // skip initial state
-                val futureDueDate = LocalDate.now().plusDays(5)
-                viewModel.onSkontoDueDateChanged(futureDueDate)
-                with(awaitItem()) {
-                    assert(this is SkontoScreenState.Ready)
-                    require(this is SkontoScreenState.Ready)
-                    assert(this.discountDueDate == futureDueDate)
+            viewModel.test(this) {
+                expectInitialState()
+                runOnCreate()
+                val newDueDate = LocalDate.now().plusDays(5)
+                containerHost.onSkontoDueDateChanged(newDueDate)
+                expectState {
+                    (this as SkontoScreenState.Ready).copy(
+                        discountDueDate = newDueDate,
+                        paymentInDays = 5
+                    )
                 }
                 val pastDueDate = LocalDate.now().minusDays(5)
-                viewModel.onSkontoDueDateChanged(pastDueDate)
-                with(awaitItem()) {
-                    assert(this is SkontoScreenState.Ready)
-                    require(this is SkontoScreenState.Ready)
-                    assert(this.discountDueDate == pastDueDate)
+                containerHost.onSkontoDueDateChanged(pastDueDate)
+                expectState {
+                    (this as SkontoScreenState.Ready).copy(
+                        discountDueDate = pastDueDate,
+                        paymentInDays = 5 // always absolute value
+                    )
                 }
             }
         }

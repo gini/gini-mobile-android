@@ -50,7 +50,6 @@ val skontoScreenModule = module {
     }
     factory {
         SkontoScreenInitialStateFactory(
-            getSkontoDiscountPercentageUseCase = get(),
             getSkontoSavedAmountUseCase = get(),
             getSkontoEdgeCaseUseCase = get(),
             getSkontoDefaultSelectionStateUseCase = get()
