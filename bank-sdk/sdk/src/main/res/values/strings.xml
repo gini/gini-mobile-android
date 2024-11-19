@@ -107,6 +107,7 @@
     <string name="gbs_td_extraction_result_documents_section_menu_delete">Löschen</string>
     <!--   endregion -->
     <!--   region Transaction Docs. Invoice Preview -->
+    <string name="gbs_td_invoice_preview_content_description_more">Mehr</string>
     <string name="gbs_td_invoice_preview_info_text_amount">Betrag zu zahlen: %1$s</string>
     <string name="gbs_td_invoice_preview_info_text_iban">IBAN: %1$s</string>
     <string name="gbs_td_invoice_preview_info_text_due_date">Rechnungsfälligkeitsdatum: %1$s</string>
