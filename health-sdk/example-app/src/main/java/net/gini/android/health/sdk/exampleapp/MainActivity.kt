@@ -66,7 +66,14 @@ class MainActivity : AppCompatActivity() {
                 UploadActivity.getStartIntent(
                     this@MainActivity,
                     viewModel.pages.value.map { it.uri },
-                )
+                ).apply {
+                    viewModel.getPaymentComponentConfiguration()?.let {
+                        putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                    }
+                    viewModel.getPaymentFlowConfiguration()?.let {
+                        putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                    }
+                }
             )
         }
 
@@ -119,7 +126,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun importResult(uris: List<Uri>) {
         if (uris.isNotEmpty()) {
-            startActivity(UploadActivity.getStartIntent(this, uris))
+            startActivity(UploadActivity.getStartIntent(this, uris).apply {
+                viewModel.getPaymentComponentConfiguration()?.let {
+                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                }
+            })
         } else {
             Toast.makeText(this, "No document received", Toast.LENGTH_LONG).show()
         }
