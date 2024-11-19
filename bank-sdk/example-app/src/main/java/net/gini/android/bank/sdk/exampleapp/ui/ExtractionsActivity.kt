@@ -158,7 +158,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             )
         )
 
-        GiniBank.releaseCapture(applicationContext)
+        GiniBank.cleanupCapture(applicationContext)
 
         finish()
     }
