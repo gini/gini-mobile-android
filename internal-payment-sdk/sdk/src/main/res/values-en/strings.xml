@@ -27,7 +27,7 @@
 
     <!--  More Information & FAQ  -->
     <string name="gps_more_information_title">Pay bills easily with the banking app.</string>
-    <string name="gps_more_information_details">Medical bills and other submitted receipts can now be paid very easily.\n\nThe payment data such as IBAN, amount, recipient and reference number are seamlessly transferred to the banking app, and the payment only needs to be confirmed there.\n\nYou can also park the invoice and pay it within 3 months after uploading.\n\nThe data is encrypted and transferred securely to your banking app. The data protection regulations of your bank apply.\n\nSupported by the largest banks. Integration by
+    <string name="gps_more_information_details">Medical bills and other submitted receipts can now be paid very easily.\n\nThe payment data such as IBAN, amount, recipient and purpose are seamlessly transferred to the banking app, and the payment only needs to be confirmed there.\n\nYou can also park the invoice and pay it within 3 months after uploading.\n\nThe data is encrypted and transferred securely to your banking app. The data protection regulations of your bank apply.\n\nSupported by the largest banks. Integration by
 </string>
     <string name="gps_frequently_asked_questions">Frequently asked questions</string>
     <string name="gps_faq_1">Can I submit invoices and pay them later?</string>
