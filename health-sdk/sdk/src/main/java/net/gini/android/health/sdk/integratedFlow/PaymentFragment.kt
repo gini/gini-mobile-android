@@ -214,6 +214,9 @@ class PaymentFragment private constructor(
                 launch {
                     if (viewModel.getLastBackstackEntry() == DisplayedScreen.ShareSheet) {
                         viewModel.popBackStack()
+                        viewModel.getPaymentProviderApp()?.let {
+                            showOpenWithDialog(it)
+                        }
                     }
                 }
                 launch {
@@ -430,7 +433,6 @@ class PaymentFragment private constructor(
         ) {
             viewModel.onForwardToSharePdfTapped()
         }
-        viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
     }
 
     private fun GhsFragmentHealthBinding.handleSDKEvent(sdkEvent: GiniInternalPaymentModule.InternalPaymentEvents) {
@@ -469,7 +471,10 @@ class PaymentFragment private constructor(
                 viewModel.onPayment()
             }
             PaymentNextStep.ShowInstallApp -> showInstallAppDialog()
-            is PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let { showOpenWithDialog(it) }
+            is PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let {
+                showOpenWithDialog(it)
+                viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
+            }
             is PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
