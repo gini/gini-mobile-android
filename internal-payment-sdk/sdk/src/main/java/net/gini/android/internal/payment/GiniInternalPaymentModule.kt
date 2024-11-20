@@ -14,7 +14,6 @@ import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.GiniPaymentManager
@@ -88,7 +87,6 @@ class GiniInternalPaymentModule(private val context: Context,
         }
 
     var paymentComponent = PaymentComponent(context, this)
-    private val openWithPreferences = OpenWithPreferences(context)
 
     private val _paymentFlow =
         MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
@@ -128,13 +126,6 @@ class GiniInternalPaymentModule(private val context: Context,
             ResultWrapper.Loading()
         }
     }
-
-    suspend fun incrementCountForPaymentProviderId(paymentProviderAppId: String) {
-        openWithPreferences.incrementCountForPaymentProviderId(paymentProviderAppId)
-    }
-
-    fun getLiveCountForPaymentProviderId(paymentProviderAppId: String) =
-        openWithPreferences.getLiveCountForPaymentProviderId(paymentProviderAppId)
 
     fun emitSdkEvent(event: InternalPaymentEvents) {
         _eventsFlow.tryEmit(event)

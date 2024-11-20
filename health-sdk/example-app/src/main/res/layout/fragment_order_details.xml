@@ -74,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/ghs_medium"
-            android:hint="@string/purpose"
+            android:hint="@string/reference_number"
             app:boxBackgroundColor="#ffffff">
 
             <com.google.android.material.textfield.TextInputEditText

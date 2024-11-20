@@ -27,7 +27,7 @@
     <string name="recipient">Recipient</string>
     <string name="iban">IBAN</string>
     <string name="amount">Amount</string>
-    <string name="purpose">Purpose</string>
+    <string name="reference_number">Reference Number</string>
     <string name="pay_now">Pay</string>
     <string name="multiple_documents">Document contains multiple invoices</string>
     <string name="title_create_order">Your order</string>

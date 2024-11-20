@@ -28,6 +28,7 @@ import net.gini.android.health.sdk.databinding.GhsFragmentHealthBinding
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.health.sdk.review.model.PaymentDetails
+import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
@@ -213,6 +214,9 @@ class PaymentFragment private constructor(
                 launch {
                     if (viewModel.getLastBackstackEntry() == DisplayedScreen.ShareSheet) {
                         viewModel.popBackStack()
+                        viewModel.getPaymentProviderApp()?.let {
+                            showOpenWithDialog(it)
+                        }
                     }
                 }
                 launch {
@@ -423,12 +427,12 @@ class PaymentFragment private constructor(
         childFragmentManager.showOpenWithBottomSheet(
             paymentProviderApp = paymentProviderApp,
             paymentComponent = viewModel.paymentComponent,
-            backListener = viewModel
+            backListener = viewModel,
+            paymentDetails = viewModel.paymentDetails?.toCommonPaymentDetails(),
+            paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
             viewModel.onForwardToSharePdfTapped()
         }
-        viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
-        viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
     }
 
     private fun GhsFragmentHealthBinding.handleSDKEvent(sdkEvent: GiniInternalPaymentModule.InternalPaymentEvents) {
@@ -466,8 +470,11 @@ class PaymentFragment private constructor(
             PaymentNextStep.RedirectToBank -> {
                 viewModel.onPayment()
             }
-            PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let { showOpenWithDialog(it) }
             PaymentNextStep.ShowInstallApp -> showInstallAppDialog()
+            is PaymentNextStep.ShowOpenWithSheet -> viewModel.getPaymentProviderApp()?.let {
+                showOpenWithDialog(it)
+                viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
+            }
             is PaymentNextStep.OpenSharePdf -> {
                 binding.loading.isVisible = false
                 startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
