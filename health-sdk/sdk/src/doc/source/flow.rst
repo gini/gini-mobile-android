@@ -126,9 +126,7 @@ The ``PaymentFlowConfiguration`` class contains the following options:
 - ``shouldHandleErrorsInternally``: If set to ``true``, the ``PaymentFragment`` will handle errors internally and show
   snackbars for errors. If set to ``false``, errors will be ignored by the ``PaymentFragment``. In this case the flows
   exposed by ``GiniHealth`` should be observed for errors. Default value is ``true``.
-- ``showCloseButtonOnReviewFragment``: If set to ``true``, a floating close button will be shown in the top right corner of the screen.
-    This parameter is used only for payments started with a ``documentId``. Default value is ``false``.
-- ``shouldShowReviewBottomDialog``: If set to ``true``, the ``PaymentFragment`` will show a bottom sheet dialog containing the payment details.
-    If set to ``false``, the payment details will not be visible during the payment flow. They will be available to be reviewed after redirecting to the selected payment provider,
+- ``showCloseButtonOnReviewFragment``: If set to ``true``, a floating close button will be shown in the top right corner of the screen. This parameter is used only for payments started with a ``documentId``. Default value is ``false``.
+- ``shouldShowReviewBottomDialog``: If set to ``true``, the ``PaymentFragment`` will show a bottom sheet dialog containing the payment details. If set to ``false``, the payment details will not be visible during the payment flow. They will be available to be reviewed after redirecting to the selected payment provider,
     before finalizing the payment. This parameter is only used in the case of payment flows started without ``documentId``.
     Default value is ``false``
