@@ -50,8 +50,8 @@
         android:layout_width="match_parent"
         android:id="@+id/pay_invoice_button"
         app:layout_constraintTop_toBottomOf="@id/progress"
-        android:layout_marginTop="@dimen/ghs_large"
-        android:layout_marginHorizontal="@dimen/ghs_large"
+        android:layout_marginTop="@dimen/gps_large"
+        android:layout_marginHorizontal="@dimen/gps_large"
         android:enabled="false"
         />
 
