@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ghs_dot_selected" android:state_selected="true"/>
-    <item android:drawable="@drawable/ghs_dot_unselected"/>
+    <item android:drawable="@drawable/gps_dot_selected" android:state_selected="true"/>
+    <item android:drawable="@drawable/gps_dot_unselected"/>
 </selector>

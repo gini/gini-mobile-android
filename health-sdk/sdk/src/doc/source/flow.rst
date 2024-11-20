@@ -1,8 +1,8 @@
 Flow
 ====
 
-``GiniHealth`` and ``PaymentComponent`` are the main classes for interacting with the Gini Health SDK. ``GiniHealth``
-manages interaction with the Gini Health API and ``PaymentComponent`` manages the data and state used by every
+``GiniHealth``, ``GiniInternalPaymentModule`` and ``PaymentComponent`` are the main classes for interacting with the Gini Health SDK. ``GiniHealth``
+and it's ``GiniInternalPaymentModule`` manages interaction with the Gini Health API and ``PaymentComponent`` manages the data and state used by every
 ``PaymentComponentView`` and related screens.
 
 .. contents:: The recommended flow is:
@@ -99,11 +99,12 @@ Create the PaymentComponent instance
 ------------------------------------
 
 For creating an instance of the ``PaymentComponent`` you need to pass in the Android context (either the application or
-an activity context) and the ``GiniHealth`` instance:
+an activity context) and the ``GiniInternalPaymentModule`` instance.
+When creating GiniHealth it creates the ``GiniInternalPaymentModule`` and that has the ``PaymentComponent`` which can be used:
 
 .. code-block:: kotlin
 
-    val paymentComponent = PaymentComponent(context, giniHealth)
+    val paymentComponent = PaymentComponent(context, giniInternalModule)
 
 Add a listener to the PaymentComponent
 --------------------------------------
@@ -112,7 +113,7 @@ Set a listener on the ``PaymentComponent`` to get informed of events from every 
 
 .. code-block:: kotlin
 
-    paymentComponent.listener = object: PaymentComponent.Listener {
+    giniHealth.giniInternalModule.paymentComponent.listener = object: PaymentComponent.Listener {
             override fun onMoreInformationClicked() {
                 // Show the MoreInformationFragment.
             }

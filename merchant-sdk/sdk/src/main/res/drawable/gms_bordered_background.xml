@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--TODO to be merged with same drawable from branch IPC 160-->
-<shape android:shape="rectangle" xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="@dimen/gms_small"/>
-    <stroke android:color="@color/gms_payment_provider_border_color" android:width="@dimen/gms_small_1"/>
-    <solid android:color="@color/gms_bordered_background_color"/>
-</shape>

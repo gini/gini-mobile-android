@@ -1,65 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ghs_amount_hint">Amount</string>
-    <string name="ghs_purpose_hint">Reference number</string>
-    <string name="ghs_recipient_hint">Recipient</string>
-    <string name="ghs_iban_hint">IBAN</string>
-    <string name="ghs_pay_button">To the banking app</string>
-    <string name="ghs_bank_placeholder">Loading...</string>
-    <string name="ghs_error_failed_to_load_image">Failed to load image</string>
-    <string name="ghs_error_input_invalid_iban">IBAN is not valid.</string>
-    <string name="ghs_error_input_amount_format">Invalid format</string>
-    <string name="ghs_error_input_recipient_empty">Recipient is required.</string>
-    <string name="ghs_error_input_iban_empty">IBAN is required.</string>
-    <string name="ghs_error_input_amount_empty">Invalid.</string>
-    <string name="ghs_error_input_purpose_empty">Purpose is required.</string>
     <string name="ghs_snackbar_retry">Retry</string>
-    <string name="ghs_payment_details_info_bar_text">Please check the prefilled values</string>
-
-    <string name="ghs_more_information_label">Transfer payment data to the banking app and pay there directly.</string>
-    <string name="ghs_more_information_underlined_part"><u>More information.</u></string>
-    <string name="ghs_select_bank_label">Select your bank to pay</string>
-    <string name="ghs_select_bank">Your Bank</string>
-    <string name="ghs_pay_invoice_button">Pay the invoice</string>
-    <string name="ghs_payment_powered_by_label">Powered by</string>
-    <string name="ghs_payment_provider_apps_list_description">You can only pay the bill if you have an account with one of the banks listed below.</string>
-
-    <!--  More Information & FAQ  -->
-    <string name="ghs_more_information_title">Pay bills easily with the banking app.</string>
-    <string name="ghs_more_information_details">Medical bills and other submitted receipts can now be paid very easily.\n\nThe payment data such as IBAN, amount, recipient and purpose are seamlessly transferred to the banking app, and the payment only needs to be confirmed there.\n\nYou can also park the invoice and pay it within 3 months after uploading.\n\nThe data is encrypted and transferred securely to your banking app. The data protection regulations of your bank apply.\n\nSupported by the largest banks. Integration by
-</string>
-    <string name="ghs_frequently_asked_questions">Frequently asked questions</string>
-    <string name="ghs_faq_1">Can I submit invoices and pay them later?</string>
-    <string name="ghs_faq_2">Is the service free of charge?</string>
-    <string name="ghs_faq_3">Is my data secure?</string>
-    <string name="ghs_faq_4">Who or what is Gini?</string>
-    <string name="ghs_faq_5">What format must the submitted invoice have?</string>
-    <string name="ghs_faq_6">How do I know which banks are supported?</string>
-    <string name="ghs_faq_answer_1">Yes, this is possible. Larger amounts in particular can be paid after the reimbursement has been made.</string>
-    <string name="ghs_faq_answer_2">Yes, transferring the payment data to the selected banking app is free of charge. Charges may apply for the actual transfer, depending on the account model - please contact your bank for further details.</string>
-    <string name="ghs_faq_answer_3">Yes, the data is transferred to the banking app in encrypted form via a Gini server. Gini receives the payment data and forwards it to the banking app. There you always have the option of checking the payment data before the transfer is executed. Gini has concluded contracts with the insurance company and the banks for this purpose, and both regularly audit us.</string>
-    <string name="ghs_faq_answer_4">Gini simplifies payments. The Munich-based company behind the photo payment works with the leading German banks and insurance companies to enable direct payment with your bank.
-Gini is ISO 27001 certified for maximum data security and operates its own server machines in an ISO 27001 certified data center in Germany. Further information can be found in the %p and on the %s.</string>
-    <string name="ghs_faq_answer_5">Whether a photo of an invoice, screenshot or digital PDF - any format is suitable. Please ensure that all payment information, such as IBAN, recipient, purpose and amount, are visible and not cut off.</string>
-    <string name="ghs_faq_answer_6">The banks that support the Gini payment function are displayed in the bank selection menu. To use it, you must have installed your bank\'s mobile banking app on the same smartphone or tablet on which you use the insurance app. If you have not installed any of the banking apps, you can download them from the Apple App Store or Google Playstore. Subsequent activation of the banking app may be necessary.</string>
-    <string name="ghs_gini_link">Gini</string>
-    <string name="ghs_gini_website">Gini website</string>
-    <string name="ghs_gini_link_url">https://gini.net/en</string>
-    <string name="ghs_more_information_fragment_title">More Information</string>
-    <string name="ghs_privacy_policy">privacy policy</string>
-
-    <string name="ghs_payment_provider_logo_content_description">logo</string>
-    <string name="ghs_close_content_description">Close</string>
-    <string name="ghs_invalid_amount_content_description">Invalid amount</string>
-    <string name="ghs_powered_by_gini_content_description">Powered by Gini</string>
-    <string name="ghs_select_bank_content_description">Select Bank</string>
-
-    <!--  Install App  -->
-    <string name="ghs_install_app_detail">Note: You must first update or install the %s app from the Google Play Store.</string>
-    <string name="ghs_install_app_title">Invoice data ready to share with the %s bank</string>
-    <string name="ghs_install_app_tap_to_continue">Tip: Tap \'Forward\' to complete the payment in the %s app.</string>
-    <string name="ghs_forward">Forward</string>
-    <string name="ghs_play_store_content_description">Google Play Store</string>
-
     <string name="ghs_generic_error_message">Oops, something went wrong. Please try again.</string>
+    <string name="ghs_payment_details_info_bar_text">Please check the prefilled values</string>
+    <string name="ghs_close_content_description">Close</string>
+    <string name="ghs_more_information_fragment_title">More Information</string>
 </resources>

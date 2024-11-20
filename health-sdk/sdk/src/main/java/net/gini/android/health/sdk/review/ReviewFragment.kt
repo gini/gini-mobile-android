@@ -136,7 +136,7 @@ class ReviewFragment private constructor(
 
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            bottomMargin = -resources.getDimensionPixelSize(R.dimen.ghs_medium_12)
+            bottomMargin = -resources.getDimensionPixelSize(net.gini.android.internal.payment.R.dimen.gps_medium_12)
         }
     }
 

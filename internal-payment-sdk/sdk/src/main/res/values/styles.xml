@@ -3,7 +3,7 @@
 
     <!-- region Theme -->
 
-    <!-- Override this to change the theme for the Merchant SDK -->
+    <!-- Override this to change the theme for the SDKs -->
     <style name="Root.GiniPaymentTheme" parent="Theme.Material3.DayNight">
         <item name="colorPrimary">@color/gps_accent_01</item>
         <item name="colorPrimaryDark">@color/gps_light_02</item>
@@ -133,7 +133,6 @@
         <item name="cornerFamily">rounded</item>
     </style>
     <style name="GiniPaymentTheme.Widget.RoundShapeableImageView.Corners" parent="Root.GiniPaymentTheme.Widget.RoundShapeableImageView.Corners"/>
-
 
     <style name="Root.GiniPaymentTheme.Widget.Button.TransparentBackground" parent="Root.GiniPaymentTheme.Widget.Button.UnelevatedButton">
         <item name="android:background">@android:color/transparent</item>

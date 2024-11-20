@@ -8,9 +8,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.internal.payment.api.model.PaymentRequest
+import net.gini.android.internal.payment.api.model.toPaymentRequest
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 import java.io.File
@@ -20,6 +23,8 @@ class MainViewModel(
 ) : ViewModel() {
     private val _pages: MutableStateFlow<List<PagerAdapter.Page>> = MutableStateFlow(emptyList())
     val pages: StateFlow<List<PagerAdapter.Page>> = _pages
+    private val _paymentRequest = MutableStateFlow<PaymentRequest?>(null)
+    val paymentRequest: StateFlow<PaymentRequest?> = _paymentRequest
 
     private var currentIndex = 0
     private var currentFileUri: Uri? = null
@@ -46,6 +51,16 @@ class MainViewModel(
     fun setDocumentForReview(documentId: String) {
         viewModelScope.launch {
             giniHealth.setDocumentForReview(documentId)
+        }
+    }
+
+    fun getPaymentRequest(id: String) {
+        viewModelScope.launch {
+            val response = giniHealth.documentManager.getPaymentRequest(id)
+
+            if (response is Resource.Success) {
+                _paymentRequest.value = response.data.toPaymentRequest(id)
+            }
         }
     }
 

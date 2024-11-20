@@ -19,6 +19,7 @@ import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
+import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -106,7 +107,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        lifecycleScope.launchWhenStarted {
+            viewModel.paymentRequest.collect { paymentRequest ->
+                paymentRequest?.let {
+                    Toast.makeText(this@MainActivity, "Paymentrequest: ${paymentRequest.id} status is ${paymentRequest.status.name}", Toast.LENGTH_SHORT).show()
+                    SharedPreferencesUtil.saveStringToSharedPreferences(SharedPreferencesUtil.PAYMENTREQUEST_KEY, null, this@MainActivity)
+                }
+            }
+        }
+
         configureLogging()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        SharedPreferencesUtil.getStringFromSharedPreferences(SharedPreferencesUtil.PAYMENTREQUEST_KEY, this)?.let {
+            viewModel.getPaymentRequest(it)
+        }
     }
 
     private fun importFile() {

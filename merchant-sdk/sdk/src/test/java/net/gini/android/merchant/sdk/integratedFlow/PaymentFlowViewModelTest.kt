@@ -221,7 +221,7 @@ class PaymentFlowViewModelTest {
             giniMerchant = giniMerchant!!,
         )
 
-        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.INVALID) }
+        coEvery { giniMerchant!!.giniInternalPaymentModule.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED) }
 
         val paymentRequest = viewModel.getPaymentRequest()
         assertThat(paymentRequest.id).isEqualTo("1234")
