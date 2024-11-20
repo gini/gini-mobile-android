@@ -216,12 +216,12 @@ class PaymentFlowViewModelTest {
     @Test
     fun `returns payment request from giniPaymentManager`() = runTest {
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("1234", "", "", ""),
+            paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
         )
 
-        coEvery { giniMerchant!!.giniInternalPaymentModule.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED) }
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED) }
 
         val paymentRequest = viewModel.getPaymentRequest()
         assertThat(paymentRequest.id).isEqualTo("1234")
