@@ -27,6 +27,7 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBindin
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.internal.payment.bankselection.BankSelectionBottomSheet
@@ -106,8 +107,15 @@ open class InvoicesActivity : AppCompatActivity() {
                     viewModel.openBankState.collect { paymentState ->
                         when (paymentState) {
                             is GiniHealth.PaymentState.Success -> {
+                                SharedPreferencesUtil.saveStringToSharedPreferences(
+                                    SharedPreferencesUtil.PAYMENTREQUEST_KEY,
+                                    paymentState.paymentRequest.id,
+                                    this@InvoicesActivity
+                                )
+
                                 viewModel.updateDocument()
                                 supportFragmentManager.popBackStack()
+
                             }
                             else -> {}
                         }

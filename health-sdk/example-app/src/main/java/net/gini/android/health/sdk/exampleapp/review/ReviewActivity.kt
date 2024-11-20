@@ -26,6 +26,7 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_COMPONENT_CONFIG
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
+import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import net.gini.android.health.sdk.review.ReviewFragment
 import net.gini.android.health.sdk.review.ReviewFragmentListener
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -59,7 +60,14 @@ class ReviewActivity : AppCompatActivity() {
                         }
 
                         is GiniHealth.PaymentState.Success -> {
+                            SharedPreferencesUtil.saveStringToSharedPreferences(
+                                SharedPreferencesUtil.PAYMENTREQUEST_KEY,
+                                paymentState.paymentRequest.id,
+                                this@ReviewActivity
+                            )
+
                             LOG.debug("launching bank app: {}", paymentState.paymentRequest.bankApp.name)
+
                             cancel()
                         }
 
