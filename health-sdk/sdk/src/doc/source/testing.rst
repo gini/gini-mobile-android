@@ -34,14 +34,27 @@ the ``Gini-Test-Payment-Provider``.
     You can also install the Gini Bank SDK example app's ``devPaymentProvider2Debug`` and ``devPaymentProvider3Debug`` build
     variants to test with two additional example banking apps named ``GiniBank`` and ``Bank``.
 
-Payment component
+Payment Fragment
+~~~~~~~~~~~~~~~~
+
+By following the `flow guide <flow.html>`_ you should be showing the ``PaymentFragment`` in your hierarchy.
+
+Depending on how the fragment is instantiated, with document id or with payment details, the first shown screen will differ.
+
+If the user is a new user (has not finalised any payment flow within the app) the ``PaymentComponentBottomSheet`` will be displayed,
+allowing the user to select a payment provider with which to continue.
+
+If the user is a returning one and the ``PaymentFragment`` was instantiated with a document id, the ``ReviewFragment`` will be shown.
+Otherwise, if payment details were used to start the flow, the ``ReviewBottomSheet`` will be displayed.
+
+
+Payment component bottom sheet
 ~~~~~~~~~~~~~~~~~
 
-By following the `flow guide <flow.html>`_ you should be showing the ``PaymentComponentView`` for each invoice in your
-app's list of invoices. The following screenshot shows a sample list of invoices where the ``PaymentComponentView`` is
-shown for each invoice.
+The ``PaymentComponentBottomSheet`` allows the user to select a payment provider for the payment flow and also
+provides an entry point to read more information about the payment feature and FAQs.
 
-.. image:: images/testing/PaymentComponentViews.png
+.. image:: images/testing/PaymentComponentBottomSheet.png
     :alt: Screenshot of invoices list with PaymentComponentViews showing the Gini-Test-Payment-Provider.
     :width: 200px
     :align: center
@@ -51,9 +64,10 @@ shown for each invoice.
 Bank picker
 ~~~~~~~~~~~
 
-You should see the ``Gini-Test-Payment-Provider`` preselected in every ``PaymentComponentView``.  By clicking the picker
+By clicking the picker in the ``PaymentComponentBottomSheet`` or the payment provider icon in the ``ReviewFragment`` or the ``ReviewBottomSheet``
 you should see the ``BankSelectionBottomSheet`` with the list of available banking apps (including
-``Gini-Test-Payment-Provider`` and other testing and production apps).
+``Gini-Test-Payment-Provider`` and other testing and production apps). If a bank picker was previously selected,
+it should be highlighted in the list.
 
 .. image:: images/testing/BankSelectionBottomSheet.png
     :alt: Screenshot of BankPickerBottomSheet where Gini-Test-Payment-Provider is selected.
@@ -78,13 +92,23 @@ By clicking either the ``more information`` or the info icon on the ``PaymentCom
 Payment review
 ~~~~~~~~~~~~~~~
 
-By clicking the "Pay the invoice" button on a ``PaymentComponentView`` you should see the ``ReviewFragment``, which
-shows the invoice's pages and the payment information. It also allows editing the payment information. The "To the
-banking app" button should have the icon and colors of the banking app, which was selected in the
-``PaymentComponentView``.
+By clicking the "Pay the invoice" button on the ``PaymentComponentBottomSheet`` you should see either the ``ReviewFragment`` or the ``ReviewBottomSheet``, depending on
+how the flow was started: if a document id was used, the ``ReviewFragment`` will be shown, otherwise the ``ReviewBottomSheet`` will be displayed.
+
+The ``ReviewFragment`` shows the invoice's pages and the payment information. It also allows editing the payment information. The "To the
+banking app" button should have the colors of the banking app, which was selected in the
+``PaymentComponentBottomSheet``. There is also a picker with the icon of the banking app, which will display the ``BankSelectionBottomSheet`` when tapped.
 
 .. image:: images/testing/PaymentReviewScreen.png
     :alt: Screenshot of the Payment Review screen showing the Gini-Test-Payment-Provider.
+    :width: 200px
+    :align: center
+
+The ``ReviewBottomSheet`` is very similar to the ``ReviewFragment``, but there are two differences: there are no pages shown, and only the ``Amount`` field of
+the payment details is editable.
+
+.. image:: images/testing/ReviewBottomSheet.png
+    :alt: Screenshot of the Payment Review bottom sheet showing the Gini-Test-Payment-Provider.
     :width: 200px
     :align: center
 
@@ -93,9 +117,9 @@ banking app" button should have the icon and colors of the banking app, which wa
 Execute payment
 ~~~~~~~~~~~~~~~
 
-When clicking the "To the banking app" button on the ``ReviewFragment`` you should be redirected to the example banking
+When clicking the "To the banking app" button on the ``ReviewFragment`` or the ``ReviewBottomSheet`` you should be redirected to the example banking
 app where the payment information will be fetched from Gini (including any changes you made on the
-``ReviewFragment``). Press the "Pay" button to execute a test payment which will mark the payment as paid in the
+``ReviewFragment`` or the ``ReviewBottomSheet``). Press the "Pay" button to execute a test payment which will mark the payment as paid in the
 Gini Health API.
 
 .. image:: images/testing/BankSDKExampleAppPaymentDetails.png
@@ -129,4 +153,4 @@ to use production credentials in your app. This will make sure the Gini Health S
 which open real banking apps.
 
 You will also need to install a banking app which uses the Gini Bank SDK. You should be able to install these from the
-list shown by clicking the bank picker button in a ``PaymentComponentView``.
+list shown by clicking the bank picker button in a ``PaymentComponentBottomSheet``.
