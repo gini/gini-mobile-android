@@ -71,8 +71,6 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                 reviewComponent?.isPaymentButtonEnabled?.collect { isEnabled ->
                     binding.payment.isEnabled = isEnabled
                     binding.payment.alpha = if (isEnabled) 1f else 0.4f
-                    binding.payment.text =
-                        if (!isEnabled) "" else context.getString(R.string.gps_pay_button)
                 }
             }
             launch {
