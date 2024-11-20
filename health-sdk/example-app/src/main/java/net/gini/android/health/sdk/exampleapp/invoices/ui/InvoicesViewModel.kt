@@ -62,12 +62,6 @@ class InvoicesViewModel(
         }
     }
 
-    fun loadPaymentProviderApps() {
-        viewModelScope.launch {
-            giniPaymentModule.loadPaymentProviderApps()
-        }
-    }
-
     fun getPaymentReviewFragment(documentId: String?): Result<PaymentFragment> {
         val documentWithExtractions =
             invoicesRepository.invoicesFlow.value.find { it.documentId == documentId }
