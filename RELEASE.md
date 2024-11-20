@@ -3,6 +3,9 @@
 2. If there are multiple modules affected by this version, release should be created from top to bottom (the ones with less dependencies are released first, so after their release, the dependent ones can be released). So, with the new release of the `capture-sdk`, `bank-sdk` should be released as well.
 3. `capture-sdk:default-network` version is always bumped when the `capture-sdk` is updated.
 4. `core-api-library` and `capture-sdk:default-network` don't get their own release notes, but they still need to be released separately. For `core-api-library`, we share release notes through `bank-api-library` and `healht-api-library`. For `capture-sdk:default-network` we share the release notes through `capture-sdk`.
+5. `internal-payment-sdk` also doesn't get it's own release notes, but a release is needed in order to Health and Merchant SDKs can function.
+ It's main purpose is to gather common classes for the mentioned libraries without exposing them, but some parts of it should be accesible from libraries which are using it.
+
 
 # How to release
 To publish releases follow these steps:

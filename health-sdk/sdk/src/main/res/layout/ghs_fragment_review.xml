@@ -25,7 +25,7 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/indicator"
             android:layout_width="0dp"
-            android:layout_height="@dimen/ghs_large"
+            android:layout_height="@dimen/gps_large"
             android:background="@color/ghs_light_07"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/payment_details_scrollview"
@@ -34,33 +34,33 @@
             app:tabBackground="@drawable/ghs_tab_pager_selector"
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
-            app:tabMaxWidth="@dimen/ghs_large"
+            app:tabMaxWidth="@dimen/gps_large"
             app:tabMode="fixed"
             tools:visibility="visible" />
 
         <Space
             android:id="@+id/pager_negative_space"
             android:layout_width="0dp"
-            android:layout_height="@dimen/ghs_large"
+            android:layout_height="@dimen/gps_large"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/indicator" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/payment_details_info_bar"
-            style="@style/GiniHealthTheme.PaymentDetails.InfoBar"
+            style="@style/GiniPaymentTheme.PaymentDetails.InfoBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/ghs_medium_12"
+            android:paddingBottom="@dimen/gps_medium_12"
             app:layout_constraintBottom_toTopOf="@id/payment_details_scrollview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                style="@style/GiniHealthTheme.PaymentDetails.InfoBar.TextView"
+                style="@style/GiniPaymentTheme.PaymentDetails.InfoBar.TextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/ghs_medium_12"
+                android:paddingVertical="@dimen/gps_medium_12"
                 android:text="@string/ghs_payment_details_info_bar_text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -70,163 +70,17 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ScrollView
-            style="@style/GiniHealthTheme.PaymentDetailsCard"
+            style="@style/GiniPaymentTheme.PaymentDetailsCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/payment_details_scrollview"
-            android:paddingHorizontal="@dimen/ghs_large"
-            android:paddingTop="@dimen/ghs_medium_12"
-            android:paddingBottom="@dimen/ghs_zero"
+            android:paddingHorizontal="@dimen/gps_large"
+            android:paddingTop="@dimen/gps_medium_12"
+            android:paddingBottom="@dimen/gps_zero"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                android:id="@+id/payment_details"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content">-->
-
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/recipient_layout"-->
-<!--                    style="@style/GiniHealthTheme.PaymentInputLayout"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="@dimen/ghs_medium_12"-->
-<!--                    android:paddingTop="@dimen/ghs_medium"-->
-<!--                    android:nextFocusForward="@id/iban_layout"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:layout_constraintBottom_toTopOf="@id/iban_layout">-->
-
-<!--                    <com.google.android.material.textfield.TextInputEditText-->
-<!--                        android:id="@+id/recipient"-->
-<!--                        style="@style/GiniHealthTheme.PaymentInputEditTextStyle"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:hint="@string/ghs_recipient_hint"-->
-<!--                        android:paddingTop="@dimen/ghs_large_28"-->
-<!--                        android:paddingBottom="@dimen/ghs_medium"-->
-<!--                        android:paddingStart="@dimen/ghs_medium_12"-->
-<!--                        android:paddingEnd="@dimen/ghs_zero"-->
-<!--                        />-->
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/iban_layout"-->
-<!--                    style="@style/GiniHealthTheme.PaymentInputLayout"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginEnd="@dimen/ghs_medium"-->
-<!--                    android:paddingTop="@dimen/ghs_medium"-->
-<!--                    android:hint="@string/ghs_iban_hint"-->
-<!--                    app:layout_constraintEnd_toStartOf="@id/amount_layout"-->
-<!--                    app:layout_constraintHorizontal_weight="@dimen/ghs_float_0.7"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/amount_layout">-->
-
-<!--                    <com.google.android.material.textfield.TextInputEditText-->
-<!--                        android:id="@+id/iban"-->
-<!--                        style="@style/GiniHealthTheme.PaymentInputEditTextStyle"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:paddingTop="@dimen/ghs_large_28"-->
-<!--                        android:paddingBottom="@dimen/ghs_medium"-->
-<!--                        android:paddingStart="@dimen/ghs_medium_12"-->
-<!--                        android:paddingEnd="@dimen/ghs_zero"-->
-<!--                        android:nextFocusDown="@id/amount" />-->
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/amount_layout"-->
-<!--                    style="@style/GiniHealthTheme.PaymentInputLayout"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:paddingTop="@dimen/ghs_medium"-->
-<!--                    app:errorContentDescription="@string/ghs_invalid_amount_content_description"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintHorizontal_weight="@dimen/ghs_float_0.3"-->
-<!--                    app:layout_constraintStart_toEndOf="@id/iban_layout"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/iban_layout"-->
-<!--                    app:suffixText="€">-->
-
-<!--                    <com.google.android.material.textfield.TextInputEditText-->
-<!--                        android:id="@+id/amount"-->
-<!--                        style="@style/GiniHealthTheme.PaymentInputEditTextStyle"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:paddingTop="@dimen/ghs_large_28"-->
-<!--                        android:paddingBottom="@dimen/ghs_medium"-->
-<!--                        android:paddingEnd="@dimen/ghs_medium"-->
-<!--                        android:digits="0123456789.,"-->
-<!--                        android:hint="@string/ghs_amount_hint"-->
-<!--                        android:inputType="numberDecimal" />-->
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--                <androidx.constraintlayout.widget.Barrier-->
-<!--                    android:id="@+id/iban_amount_barrier_bottom"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    app:barrierDirection="bottom"-->
-<!--                    app:constraint_referenced_ids="iban_layout,amount_layout" />-->
-
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/purpose_layout"-->
-<!--                    style="@style/GiniHealthTheme.PaymentInputLayout"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:paddingTop="@dimen/ghs_medium"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/iban_amount_barrier_bottom"-->
-<!--                    app:layout_constraintBottom_toTopOf="@id/payment">-->
-
-<!--                    <com.google.android.material.textfield.TextInputEditText-->
-<!--                        android:id="@+id/purpose"-->
-<!--                        style="@style/GiniHealthTheme.PaymentInputEditTextStyle"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:paddingTop="@dimen/ghs_large_28"-->
-<!--                        android:paddingBottom="@dimen/ghs_medium"-->
-<!--                        android:paddingStart="@dimen/ghs_medium_12"-->
-<!--                        android:paddingEnd="@dimen/ghs_zero"-->
-<!--                        android:hint="@string/ghs_purpose_hint" />-->
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
-
-<!--                <com.google.android.material.button.MaterialButton-->
-<!--                    android:id="@+id/payment"-->
-<!--                    style="@style/GiniHealthTheme.Widget.Button.OutlinedButton"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="@dimen/ghs_medium"-->
-<!--                    android:enabled="false"-->
-<!--                    android:text="@string/ghs_pay_button"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/purpose_layout" />-->
-
-<!--                <ProgressBar-->
-<!--                    android:id="@+id/payment_progress"-->
-<!--                    style="@style/GiniHealth.PaymentButtonProgressStyle"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="0dp"-->
-<!--                    android:padding="@dimen/ghs_medium"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@id/payment"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/payment"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/payment"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/payment" />-->
-
-<!--                <include layout="@layout/ghs_powered_by_gini"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginEnd="@dimen/ghs_large"-->
-<!--                    android:layout_marginBottom="@dimen/ghs_medium"-->
-<!--                    android:layout_marginTop="@dimen/ghs_small"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/payment"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    />-->
-<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -249,11 +103,11 @@
 
         <ImageButton
             android:id="@+id/close"
-            style="@style/GiniHealthTheme.CloseButtonStyle"
+            style="@style/GiniPaymentTheme.CloseButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/ghs_small"
-            android:layout_marginEnd="@dimen/ghs_large"
+            android:layout_marginTop="@dimen/gps_small"
+            android:layout_marginEnd="@dimen/gps_large"
             android:nextFocusForward="@id/recipient_layout"
             android:contentDescription="@string/ghs_close_content_description"
             app:layout_constraintEnd_toEndOf="parent"

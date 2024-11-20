@@ -9,6 +9,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -61,7 +63,11 @@ class GiniHealth(
     val giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
         context = context,
         giniHealthAPI = giniHealthAPI
-    )
+    ).also { internalPaymentModule ->
+        CoroutineScope(Job()).launch(Dispatchers.IO) {
+            internalPaymentModule.loadPaymentProviderApps()
+        }
+    }
 
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
 

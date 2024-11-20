@@ -8,11 +8,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import net.gini.android.internal.payment.paymentComponentBottomSheet.PaymentComponentBottomSheet
 import net.gini.android.internal.payment.R
-import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
-import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.paymentComponentBottomSheet.PaymentComponentBottomSheet
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -75,10 +72,8 @@ class PaymentComponentBottomSheetTest {
         }
         paymentComponentBottomSheet.paymentComponentView.paymentComponent = paymentComponent
         paymentComponentBottomSheet.paymentComponentView.documentId = "123"
-        paymentComponentBottomSheet.paymentComponentView.isPayable = true
 
         Truth.assertThat(paymentComponentBottomSheet.paymentComponentView.documentId).isEqualTo("123")
-        Truth.assertThat(paymentComponentBottomSheet.paymentComponentView.isPayable).isEqualTo(true)
         Truth.assertThat((paymentComponentBottomSheet.paymentComponentView.findViewById(R.id.gps_pay_invoice_button) as Button).isEnabled).isEqualTo(true)
         Truth.assertThat((paymentComponentBottomSheet.paymentComponentView.findViewById(R.id.gps_select_bank_button) as Button).isEnabled).isEqualTo(true)
 
@@ -87,7 +82,6 @@ class PaymentComponentBottomSheetTest {
 
         // Then
         Truth.assertThat(paymentComponentBottomSheet.paymentComponentView.documentId).isNull()
-        Truth.assertThat(paymentComponentBottomSheet.paymentComponentView.isPayable).isEqualTo(false)
         Truth.assertThat((paymentComponentBottomSheet.paymentComponentView.findViewById(R.id.gps_pay_invoice_button) as Button).isEnabled).isEqualTo(false)
         Truth.assertThat((paymentComponentBottomSheet.paymentComponentView.findViewById(R.id.gps_select_bank_button) as Button).isEnabled).isEqualTo(false)
     }

@@ -3,6 +3,7 @@ package net.gini.android.internal.payment.utils.extensions
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.installApp.InstallAppBottomSheet
@@ -30,14 +31,16 @@ fun FragmentManager.showOpenWithBottomSheet(
     paymentProviderApp: PaymentProviderApp,
     backListener: BackListener? = null,
     paymentComponent: PaymentComponent,
-    buttonClickListener: () -> Unit
+    paymentDetails: PaymentDetails?,
+    paymentRequestId: String,
+    buttonClickListener: () -> Unit,
 ) {
     val dialog = OpenWithBottomSheet.newInstance(paymentProviderApp, object :
         OpenWithForwardListener {
         override fun onForwardSelected() {
             buttonClickListener()
         }
-    }, paymentComponent, backListener)
+    }, paymentComponent, backListener, paymentDetails, paymentRequestId)
     dialog.show(this, OpenWithBottomSheet::class.java.name)
 }
 

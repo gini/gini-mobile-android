@@ -20,7 +20,6 @@ import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
-import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.GiniPaymentManager
@@ -36,8 +35,7 @@ class GiniInternalPaymentModuleTest {
     private lateinit var giniPaymentManager: GiniPaymentManager
     private lateinit var paymentComponent: PaymentComponent
     private lateinit var documentManager: HealthApiDocumentManager
-    private lateinit var openWithPreferences: OpenWithPreferences
-    private val invalidPaymentRequest = PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.INVALID)
+    private val invalidPaymentRequest = PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED)
     private val paymentProviderApp = PaymentProviderApp(
         name = "payment provider",
         icon = null,
@@ -63,7 +61,6 @@ class GiniInternalPaymentModuleTest {
         giniPaymentManager = mockk(relaxed = true)
         paymentComponent = mockk(relaxed = true)
         documentManager = mockk(relaxed = true)
-        openWithPreferences = OpenWithPreferences(context)
         every { giniHealthAPI.documentManager } returns documentManager
         every { giniPaymentManager.giniHealthAPI } returns giniHealthAPI
     }
@@ -114,21 +111,6 @@ class GiniInternalPaymentModuleTest {
            assertThat((updatedDetails as ResultWrapper.Success).value.amount).isEqualTo(paymentDetails.amount)
        }
    }
-
-    @Test
-    fun `increments count for payment provider id`() = runTest {
-        //Given
-        val giniInternalPaymentModule = GiniInternalPaymentModule(context, giniHealthAPI)
-
-        giniInternalPaymentModule.getLiveCountForPaymentProviderId("123").test {
-            assertThat(awaitItem()).isNull()
-
-            //When
-            giniInternalPaymentModule.incrementCountForPaymentProviderId("123")
-            //Then
-            assertThat(awaitItem()).isEqualTo(1)
-        }
-    }
 
     @Test()
     fun `emits SDK events`() = runTest {

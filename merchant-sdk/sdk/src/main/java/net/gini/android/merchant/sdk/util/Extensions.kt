@@ -157,7 +157,12 @@ internal fun TextInputLayout.showErrorMessage() {
 }
 
 internal fun TextInputLayout.setBackground() {
-    if (isErrorEnabled) editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_error_background) else editText?.setBackgroundResource(R.drawable.gms_payment_input_edit_text_background)
+    if (isErrorEnabled) editText?.setBackgroundResource(
+        net.gini.android.internal.payment.R.drawable.gps_payment_input_edit_text_error_background
+    )
+    else editText?.setBackgroundResource(
+        net.gini.android.internal.payment.R.drawable.gps_payment_input_edit_text_background
+    )
 }
 
 private fun String.nonEmpty() = if (isEmpty()) " " else this

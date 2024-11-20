@@ -30,8 +30,8 @@ class ConfigurationFragment: Fragment() {
         }
 
         val languages = arrayOf(GiniLocalization.GERMAN, GiniLocalization.ENGLISH)
-        context?.let { it ->
-            val languageAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_dropdown_item, languages)
+        context?.let { context ->
+            val languageAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, languages)
             binding.languageSpinner.apply {
                 adapter = languageAdapter
                 onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

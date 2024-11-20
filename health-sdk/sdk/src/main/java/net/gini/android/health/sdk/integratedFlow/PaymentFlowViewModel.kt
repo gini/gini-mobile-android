@@ -37,7 +37,6 @@ internal class PaymentFlowViewModel(
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
 
-    override var openWithCounter: Int = 0
     override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
         extraBufferCapacity = 1,
     )
@@ -101,12 +100,8 @@ internal class PaymentFlowViewModel(
     }
 
     fun paymentProviderAppChanged(paymentProviderApp: PaymentProviderApp): Boolean {
-        if (initialSelectedPaymentProvider == null) {
-            observeOpenWithCount(paymentProviderApp.paymentProvider.id)
-        }
         if (initialSelectedPaymentProvider?.paymentProvider?.id != paymentProviderApp.paymentProvider.id) {
             initialSelectedPaymentProvider = paymentProviderApp
-            observeOpenWithCount(paymentProviderApp.paymentProvider.id)
             return true
         }
         return false
@@ -133,10 +128,6 @@ internal class PaymentFlowViewModel(
 
     fun getPaymentProviderApp() = initialSelectedPaymentProvider
 
-    private fun observeOpenWithCount(paymentProviderAppId: String) {
-        startObservingOpenWithCount(viewModelScope, paymentProviderAppId)
-    }
-
     fun emitShareWithStartedEvent() {
         paymentRequestFlow.value?.let {
             giniInternalPaymentModule.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(it.id, initialSelectedPaymentProvider?.name ?: ""))
@@ -152,12 +143,14 @@ internal class PaymentFlowViewModel(
         documentId?.let {
             sendFeedback()
         }
-        sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
+        sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope, paymentRequestFlow.value)
     }
 
     override suspend fun getPaymentRequest(): PaymentRequest = giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails?.toCommonPaymentDetails())
 
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
+
+    override suspend fun getPaymentRequestImage(paymentRequest: PaymentRequest): Resource<ByteArray> = giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestImage(paymentRequest.id)
 
     fun setFlowCancelled() {
         giniInternalPaymentModule.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled)
