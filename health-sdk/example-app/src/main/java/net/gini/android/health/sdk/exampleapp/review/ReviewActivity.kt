@@ -187,7 +187,7 @@ class ReviewActivity : AppCompatActivity() {
                     addToBackStack(REVIEW_FRAGMENT_TAG)
                 }
 
-                doctorName?.value.let {
+                doctorName?.value?.let {
                     Toast.makeText(this@ReviewActivity, "Extracted doctor's name: $it", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
