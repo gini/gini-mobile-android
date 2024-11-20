@@ -152,7 +152,6 @@ open class InvoicesActivity : AppCompatActivity() {
         }
 
         viewModel.loadInvoicesWithExtractions()
-        viewModel.loadPaymentProviderApps()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
         binding.invoicesList.adapter = InvoicesAdapter(emptyList()) { documentId ->
@@ -188,7 +187,6 @@ open class InvoicesActivity : AppCompatActivity() {
     }
 
     private fun startPaymentFlowForDocumentId(documentId: String) {
-        viewModel.loadPaymentProviderApps()
         viewModel.getPaymentReviewFragment(documentId)
             .onSuccess { reviewFragment ->
                 supportFragmentManager.beginTransaction()
