@@ -76,7 +76,7 @@ the following snippet to one of your resources XML file (e.g, ``colors.xml``):
 
 .. note::
 
-    If you overridde the ``GiniPaymentTheme``, the theme colors you set there override the color palette customization.
+    If you override the ``GiniPaymentTheme``, the theme colors you set there override the color palette customization.
 
 Find the names of the color resources in the color palette (you can also view it in Figma `here
 <https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=8502-357&t=a2nGT46mNSzeqjZ8-4>`_):
