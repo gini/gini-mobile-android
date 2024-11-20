@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -48,9 +47,7 @@ class ReviewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel.giniHealth.setSavedStateRegistryOwner(this, viewModel.viewModelScope)
-
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
+        
         super.onCreate(savedInstanceState)
 
         supportActionBar?.hide()
