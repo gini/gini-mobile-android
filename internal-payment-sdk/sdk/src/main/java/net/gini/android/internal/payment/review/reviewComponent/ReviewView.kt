@@ -71,8 +71,6 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                 reviewComponent?.isPaymentButtonEnabled?.collect { isEnabled ->
                     binding.payment.isEnabled = isEnabled
                     binding.payment.alpha = if (isEnabled) 1f else 0.4f
-                    binding.payment.text =
-                        if (!isEnabled) "" else context.getString(R.string.gps_pay_button)
                 }
             }
             launch {
@@ -114,6 +112,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         binding.gpsPaymentDetails.setOnClickListener { it.hideKeyboard() }
         binding.payment.setOnClickListener {
             it.hideKeyboard()
+            binding.root.clearFocus()
             reviewComponent?.paymentDetails?.value?.let { paymentDetails ->
                 val areFieldsValid = reviewComponent?.validatePaymentDetails(paymentDetails)
                 if (areFieldsValid == true) {
@@ -263,13 +262,6 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     private fun handleInputFocusChange(hasFocus: Boolean, textInputLayout: TextInputLayout) {
         if (hasFocus) textInputLayout.hideErrorMessage() else textInputLayout.showErrorMessage()
     }
-
-//    fun clearFocus() {
-//        binding.recipient.clearFocus()
-//        binding.iban.clearFocus()
-//        amount.clearFocus()
-//        purpose.clearFocus()
-//    }
 
     companion object {
         private val LOG = LoggerFactory.getLogger(ReviewView::class.java)

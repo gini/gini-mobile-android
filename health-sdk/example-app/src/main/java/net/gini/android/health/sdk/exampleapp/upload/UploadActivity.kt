@@ -5,12 +5,17 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_COMPONENT_CONFIG
+import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_FLOW_CONFIGURATION
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityUploadBinding
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadViewModel.UploadState
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class UploadActivity : AppCompatActivity() {
@@ -32,7 +37,14 @@ class UploadActivity : AppCompatActivity() {
         }
 
         binding.payment.setOnClickListener {
-            startActivity(ReviewActivity.getStartIntent(this, intent.pageUris))
+            startActivity(ReviewActivity.getStartIntent(this, intent.pageUris).apply {
+                IntentCompat.getParcelableExtra(intent, PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)?.let {
+                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+                IntentCompat.getParcelableExtra(intent, PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java)?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                }
+            })
         }
     }
 

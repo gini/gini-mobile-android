@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.commit
@@ -21,10 +22,12 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.exampleapp.MainActivity
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
@@ -72,6 +75,10 @@ class ReviewActivity : AppCompatActivity() {
 
         binding.payInvoiceButton.root.setOnClickListener {
             startPaymentFlow(binding, documentId)
+        }
+
+        IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)?.let {
+            viewModel.setPaymentComponentConfig(it)
         }
 
         lifecycleScope.launch {
@@ -176,7 +183,7 @@ class ReviewActivity : AppCompatActivity() {
             binding.progress.visibility = View.VISIBLE
             binding.payInvoiceButton.root.visibility = View.GONE
             try {
-                val reviewFragment = viewModel.giniHealth.getPaymentFragmentWithDocument(documentId, PaymentFlowConfiguration(showCloseButtonOnReviewFragment = true))
+                val reviewFragment = viewModel.giniHealth.getPaymentFragmentWithDocument(documentId, IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java))
 
                 supportFragmentManager.commit {
                     add(R.id.review_fragment, reviewFragment, REVIEW_FRAGMENT_TAG)
