@@ -16,19 +16,19 @@ data class ReviewConfiguration(
     val handleErrorsInternally: Boolean = true,
 
     /**
-     * Set to `true` to show a close button. Set a [ReviewFragmentListener] to be informed when the
-     * button is pressed.
-     *
-     * Default value is `false`.
-     */
-    val showCloseButton: Boolean = false,
-
-    /**
      * If set to `true`, the [Amount] field will be editable.
      * If set to `false` the [Amount] field will be read-only.
      *
      * Default value is `true`
      */
     internal val editableFields: List<ReviewFields> =
-        listOf(ReviewFields.IBAN, ReviewFields.AMOUNT, ReviewFields.RECIPIENT, ReviewFields.PURPOSE)
+        listOf(ReviewFields.IBAN, ReviewFields.AMOUNT, ReviewFields.RECIPIENT, ReviewFields.PURPOSE),
+
+    /**
+     * If set to `true`, the small [BankSelectionButton] will be shown on the [ReviewView].
+     * If set to `false`, only the `To the banking app` button will be displayed.
+     *
+     * Default value is `true`
+     */
+    internal val selectBankButtonVisible: Boolean = true
 )

@@ -19,7 +19,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -123,6 +122,10 @@ class PaymentFragment private constructor(
         override fun onPaymentButtonTapped(paymentDetails: PaymentDetails) {
             viewModel.updatePaymentDetails(paymentDetails)
             viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
+        }
+
+        override fun onSelectBankButtonTapped() {
+            //Nothing
         }
     }
 
@@ -307,16 +310,15 @@ class PaymentFragment private constructor(
             backListener = viewModel,
             configuration = ReviewConfiguration(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
-                showCloseButton = true,
                 editableFields = if (viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true) {
                     listOf(ReviewFields.AMOUNT)
                 } else {
                     listOf()
                 },
+                selectBankButtonVisible = false
             ),
             listener = reviewViewListener,
             giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
-            paymentComponent = viewModel.paymentComponent,
         )
         reviewBottomSheet.show(childFragmentManager, ReviewBottomSheet::class.java.name)
     }
@@ -388,11 +390,12 @@ class PaymentFragment private constructor(
         childFragmentManager.showOpenWithBottomSheet(
             paymentProviderApp = paymentProviderApp,
             paymentComponent = viewModel.paymentComponent,
-            backListener = viewModel
+            backListener = viewModel,
+            paymentDetails = viewModel.paymentDetails,
+            paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
             viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
         }
-        viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
     }
 

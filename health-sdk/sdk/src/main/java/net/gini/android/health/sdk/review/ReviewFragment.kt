@@ -1,10 +1,5 @@
 package net.gini.android.health.sdk.review
 
-import android.content.ActivityNotFoundException
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,7 +21,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.transition.ChangeBounds
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
@@ -48,24 +42,19 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
-import net.gini.android.internal.payment.utils.PaymentNextStep
 import net.gini.android.internal.payment.utils.autoCleared
-import net.gini.android.internal.payment.utils.extensions.createShareWithPendingIntent
 import net.gini.android.internal.payment.utils.extensions.getFontScale
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
-import net.gini.android.internal.payment.utils.extensions.showInstallAppBottomSheet
-import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomSheet
-import net.gini.android.internal.payment.utils.extensions.startSharePdfIntent
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
+import org.jetbrains.annotations.VisibleForTesting
 
 /**
  * Listener for [ReviewFragment] events.
  */
-interface ReviewFragmentListener {
+internal interface ReviewFragmentListener {
     /**
      * Called when the close button was pressed.
      */
@@ -79,7 +68,7 @@ interface ReviewFragmentListener {
      *
      * @param paymentProviderName the name of the selected payment provider
      */
-    fun onToTheBankButtonClicked(paymentProviderName: String)
+    fun onToTheBankButtonClicked(paymentProviderName: String, paymentDetails: PaymentDetails)
 }
 
 /**
@@ -89,7 +78,6 @@ interface ReviewFragmentListener {
  * Instances can be created using the [PaymentComponent.getPaymentReviewFragment] method.
  */
 class ReviewFragment private constructor(
-    var listener: ReviewFragmentListener? = null,
     private val viewModelFactory: ViewModelProvider.Factory? = null,
 ) : Fragment() {
 
@@ -100,9 +88,17 @@ class ReviewFragment private constructor(
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
     private var errorSnackbar: Snackbar? = null
-    private var broadcastReceiver = object: BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            viewModel.setOpenBankStateAfterShareWith()
+
+    @VisibleForTesting
+    internal val reviewViewListener = object: ReviewViewListener {
+        override fun onPaymentButtonTapped(paymentDetails: net.gini.android.internal.payment.api.model.PaymentDetails) {
+            requireActivity().currentFocus?.clearFocus()
+            binding.ghsPaymentDetails.hideKeyboard()
+            viewModel.reviewFragmentListener.onToTheBankButtonClicked(viewModel.paymentProviderApp.value?.name ?: "", viewModel.paymentDetails.value)
+        }
+
+        override fun onSelectBankButtonTapped() {
+            viewModel.paymentComponent.listener?.onBankPickerClicked()
         }
     }
 
@@ -130,8 +126,6 @@ class ReviewFragment private constructor(
         val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
 
         viewModel.userPreferences = UserPreferences(requireContext())
-        viewModel.startObservingOpenWithCount()
-        viewModel.loadPaymentDetails()
 
         with(binding) {
             ghsPaymentDetails.reviewComponent = viewModel.reviewComponent
@@ -161,9 +155,6 @@ class ReviewFragment private constructor(
                     viewModel.giniHealth.paymentFlow.collect { handlePaymentResult(it) }
                 }
                 launch {
-                    viewModel.giniHealth.openBankState.collect { handlePaymentState(it) }
-                }
-                launch {
                     viewModel.isInfoBarVisible.collect { visible ->
                         if (visible) showInfoBar() else hideInfoBarAnimated()
                     }
@@ -174,15 +165,6 @@ class ReviewFragment private constructor(
                             setActionListeners()
                         }
                     }
-                }
-                launch {
-                    viewModel.paymentNextStepFlow.collect { paymentNextStep ->
-                        handlePaymentNextStep(paymentNextStep)
-                    }
-                }
-                launch {
-                    requireActivity().registerReceiver(broadcastReceiver, IntentFilter().also { it.addAction(SHARE_INTENT_FILTER) },
-                        Context.RECEIVER_NOT_EXPORTED)
                 }
             }
         }
@@ -211,7 +193,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.configureViews() {
-        close.isGone = !viewModel.configuration.showCloseButton
+        close.isGone = !viewModel.shouldShowCloseButton
     }
 
     private fun GhsFragmentReviewBinding.configureOrientation() {
@@ -220,40 +202,7 @@ class ReviewFragment private constructor(
         TabLayoutMediator(indicator, pager) { tab, _ -> tab.view.isClickable = false }.attach()
     }
 
-    private fun GhsFragmentReviewBinding.handlePaymentState(paymentState: GiniHealth.PaymentState) {
-        (paymentState is GiniHealth.PaymentState.Loading).let { isLoading ->
-            handleLoading(isLoading)
-        }
-        when (paymentState) {
-            is GiniHealth.PaymentState.Success -> {
-                if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false) return
-                try {
-                    val intent =
-                        paymentState.paymentRequest.bankApp.getIntent(paymentState.paymentRequest.id)
-                    if (intent != null) {
-                        startActivity(intent)
-                        viewModel.onBankOpened()
-                    } else {
-                        handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
-                    }
-                } catch (exception: ActivityNotFoundException) {
-                    handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.onPayment() }
-                }
-            }
-            is GiniHealth.PaymentState.Error -> {
-                handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped(requireContext().externalCacheDir) }
-            }
-            else -> { // Loading is already handled
-            }
-        }
-    }
-
-    private fun GhsFragmentReviewBinding.handleLoading(isLoading: Boolean) {
-        paymentProgress.isVisible = isLoading
-    }
-
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
-        handleLoading(false)
         if (viewModel.configuration.handleErrorsInternally) {
             showSnackbar(text, onRetry)
         }
@@ -275,18 +224,12 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.setActionListeners() {
-        ghsPaymentDetails.listener = object: ReviewViewListener {
-            override fun onPaymentButtonTapped(paymentDetails: net.gini.android.internal.payment.api.model.PaymentDetails) {
-                requireActivity().currentFocus?.clearFocus()
-                ghsPaymentDetails.hideKeyboard()
-                viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
-            }
-        }
+        ghsPaymentDetails.listener = reviewViewListener
         close.setOnClickListener { view ->
             if (isKeyboardShown) {
                 view.hideKeyboard()
             } else {
-                listener?.onCloseReview()
+                viewModel.reviewFragmentListener.onCloseReview()
             }
         }
     }
@@ -416,53 +359,6 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun showInstallAppDialog() {
-        errorSnackbar?.dismiss()
-        childFragmentManager.showInstallAppBottomSheet(
-            paymentComponent = viewModel.paymentComponent
-        ) {
-            viewModel.paymentProviderApp.value?.let {
-                redirectToBankApp(it)
-            }
-        }
-    }
-
-    private fun redirectToBankApp(paymentProviderApp: PaymentProviderApp) {
-        listener?.onToTheBankButtonClicked(paymentProviderApp.name ?: "")
-        viewModel.onPayment()
-    }
-
-    private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
-        errorSnackbar?.dismiss()
-        childFragmentManager.showOpenWithBottomSheet(
-            paymentProviderApp = paymentProviderApp,
-            paymentComponent = viewModel.paymentComponent,
-        ) {
-            viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
-        }
-        viewModel.incrementOpenWithCounter(viewModel.viewModelScope, viewModel.paymentProviderApp.value?.paymentProvider?.id ?: "")
-    }
-
-    private fun handlePaymentNextStep(paymentNextStep: PaymentNextStep) {
-        when (paymentNextStep) {
-            is PaymentNextStep.SetLoadingVisibility -> {
-                binding.loading.isVisible = paymentNextStep.isVisible
-                errorSnackbar?.dismiss()
-            }
-            PaymentNextStep.RedirectToBank -> {
-                viewModel.paymentProviderApp.value?.let {
-                    redirectToBankApp(it)
-                }
-            }
-            PaymentNextStep.ShowOpenWithSheet -> viewModel.paymentProviderApp.value?.let { showOpenWithDialog(it) }
-            PaymentNextStep.ShowInstallApp -> showInstallAppDialog()
-            is PaymentNextStep.OpenSharePdf -> {
-                binding.loading.isVisible = false
-                startSharePdfIntent(paymentNextStep.file, requireContext().createShareWithPendingIntent())
-            }
-        }
-    }
-
     private fun getLocaleStringResource(resourceId: Int): String {
         return getLocaleStringResource(resourceId, viewModel.giniInternalPaymentModule)
     }
@@ -472,28 +368,17 @@ class ReviewFragment private constructor(
         super.onSaveInstanceState(outState)
     }
 
-    override fun onStop() {
-        requireActivity().unregisterReceiver(broadcastReceiver)
-        super.onStop()
-    }
-
     internal companion object {
         private const val PAGER_HEIGHT = "pager_height"
-        internal const val SHARE_INTENT_FILTER = "share_intent_filter"
 
         fun newInstance(
             giniHealth: GiniHealth,
             configuration: ReviewConfiguration = ReviewConfiguration(),
-            listener: ReviewFragmentListener? = null,
+            listener: ReviewFragmentListener,
             paymentComponent: PaymentComponent,
             documentId: String,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId),
-        ): ReviewFragment = ReviewFragment(listener, viewModelFactory)
-    }
-
-    internal class ShareWithBroadcastReceiver: BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            context?.sendBroadcast(Intent().also { it.action = SHARE_INTENT_FILTER })
-        }
+            shouldShowCloseButton: Boolean,
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, listener),
+        ): ReviewFragment = ReviewFragment(viewModelFactory)
     }
 }

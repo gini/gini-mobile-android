@@ -199,7 +199,7 @@
     </style>
 
     <!-- Style for the progress indicator that is displayed on top of the Pay button in ReviewFragment -->
-    <style name="GiniMerchant.PaymentButtonProgressStyle" parent="Root.GiniPaymentTheme.PaymentButtonProgressStyle" />
+    <style name="GiniPaymentTheme.PaymentButtonProgressStyle" parent="Root.GiniPaymentTheme.PaymentButtonProgressStyle" />
 
     <style name="Root.GiniPaymentTheme.CloseButtonStyle" parent="Widget.AppCompat.ImageButton">
         <item name="android:minWidth">@dimen/gps_large_50</item>

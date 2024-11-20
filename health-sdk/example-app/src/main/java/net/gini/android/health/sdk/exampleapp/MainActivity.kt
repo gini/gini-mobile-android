@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         binding.importFile.setOnClickListener {
             if (useTestDocument) {
                 viewModel.setDocumentForReview(testDocumentId)
-                startActivity(ReviewActivity.getStartIntent(this, paymentComponentConfiguration = viewModel.getPaymentComponentConfiguration()))
+                startActivity(ReviewActivity.getStartIntent(this))
             } else {
                 importFile()
             }
@@ -67,7 +67,14 @@ class MainActivity : AppCompatActivity() {
                 UploadActivity.getStartIntent(
                     this@MainActivity,
                     viewModel.pages.value.map { it.uri },
-                    viewModel.getPaymentComponentConfiguration())
+                ).apply {
+                    viewModel.getPaymentComponentConfiguration()?.let {
+                        putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                    }
+                    viewModel.getPaymentFlowConfiguration()?.let {
+                        putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                    }
+                }
             )
         }
 
@@ -76,6 +83,9 @@ class MainActivity : AppCompatActivity() {
                 viewModel.getPaymentComponentConfiguration()?.let {
                     putExtra(PAYMENT_COMPONENT_CONFIG, it)
                 }
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                }
             })
         }
 
@@ -83,6 +93,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, AppCompatThemeInvoicesActivity::class.java).apply {
                 viewModel.getPaymentComponentConfiguration()?.let {
                     putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
                 }
             })
         }
@@ -131,7 +144,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun importResult(uris: List<Uri>) {
         if (uris.isNotEmpty()) {
-            startActivity(UploadActivity.getStartIntent(this, uris, viewModel.getPaymentComponentConfiguration()))
+            startActivity(UploadActivity.getStartIntent(this, uris).apply {
+                viewModel.getPaymentComponentConfiguration()?.let {
+                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                }
+            })
         } else {
             Toast.makeText(this, "No document received", Toast.LENGTH_LONG).show()
         }
@@ -162,5 +182,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
         val PAYMENT_COMPONENT_CONFIG = "payment_component_config"
+        const val PAYMENT_FLOW_CONFIGURATION = "payment_flow_config"
     }
 }

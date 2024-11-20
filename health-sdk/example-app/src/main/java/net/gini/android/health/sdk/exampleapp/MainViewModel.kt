@@ -3,8 +3,6 @@ package net.gini.android.health.sdk.exampleapp
 import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +11,7 @@ import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
-import net.gini.android.internal.payment.api.model.PaymentDetails
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.toPaymentRequest
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
@@ -31,6 +29,7 @@ class MainViewModel(
     private var currentIndex = 0
     private var currentFileUri: Uri? = null
     private var paymentComponentConfiguration : PaymentComponentConfiguration? = null
+    private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
 
     fun getNextPageUri(context: Context): Uri {
         val uriForFile = FileProvider.getUriForFile(
@@ -76,4 +75,10 @@ class MainViewModel(
     }
 
     fun getGiniHealthLanguage(context: Context) = giniHealth.getSDKLanguage(context)
+
+    fun getPaymentFlowConfiguration() = paymentFlowConfiguration
+
+    fun setPaymentFlowConfiguration(paymentFlowConfiguration: PaymentFlowConfiguration) {
+        this.paymentFlowConfiguration = paymentFlowConfiguration
+    }
 }

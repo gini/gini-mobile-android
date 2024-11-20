@@ -14,7 +14,6 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
@@ -30,7 +29,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Locale
 
 
 @ExperimentalCoroutinesApi
@@ -139,7 +137,7 @@ class BankSelectionBottomSheetTest {
         }
 
         // Then
-        onView(withId(R.id.gps_title_label)).check(ViewAssertions.matches(ViewMatchers.withText("Your Bank")))
+        onView(withId(R.id.gps_title_label)).check(ViewAssertions.matches(ViewMatchers.withText("Select bank")))
         onView(withId(R.id.gps_subtitle_label)).check(
             ViewAssertions.matches(
                 ViewMatchers.withText
@@ -161,7 +159,7 @@ class BankSelectionBottomSheetTest {
         }
 
         // Then
-        onView(withId(R.id.gps_title_label)).check(ViewAssertions.matches(ViewMatchers.withText("Ihre Bank")))
+        onView(withId(R.id.gps_title_label)).check(ViewAssertions.matches(ViewMatchers.withText("Bank auswählen")))
         onView(withId(R.id.gps_subtitle_label)).check(
             ViewAssertions.matches(
                 ViewMatchers.withText

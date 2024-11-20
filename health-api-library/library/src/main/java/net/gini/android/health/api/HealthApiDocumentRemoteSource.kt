@@ -2,14 +2,12 @@ package net.gini.android.health.api
 
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.DocumentRemoteSource
-import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.requests.SafeApiRequest
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.models.toPaymentRequestBody
 import net.gini.android.health.api.response.PageResponse
 import net.gini.android.health.api.response.PaymentProviderResponse
-import okhttp3.RequestBody
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -65,6 +63,16 @@ class HealthApiDocumentRemoteSource internal constructor(
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(
                 bearerHeaderMap(accessToken, contentType = giniApiType.giniPaymentRequestDocumentMediaType, accept = giniApiType.giniPaymentRequestDocumentMediaType),
+                paymentRequestId
+            )
+        }
+        response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
+    }
+
+    suspend fun getPaymentRequestImage(accessToken: String, paymentRequestId: String): ByteArray = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            documentService.getPaymentRequestDocument(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniPaymentRequestDocumentPngMediaType, accept = giniApiType.giniPaymentRequestDocumentPngMediaType),
                 paymentRequestId
             )
         }

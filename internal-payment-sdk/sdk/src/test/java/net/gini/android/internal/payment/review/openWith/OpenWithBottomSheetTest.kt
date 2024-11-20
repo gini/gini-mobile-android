@@ -9,17 +9,19 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
+import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.utils.GiniLocalization
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -40,7 +42,9 @@ class OpenWithBottomSheetTest {
             OpenWithBottomSheet.newInstance(
                 mockk(relaxed = true),
                 paymentComponent = mockk(relaxed = true),
-                listener = listener
+                listener = listener,
+                paymentDetails = mockk(relaxed = true),
+                paymentRequestId = null
             )
         }
 
@@ -68,15 +72,16 @@ class OpenWithBottomSheetTest {
                 mockk(relaxed = true),
                 mockk(),
                 paymentComponentWithLocale,
-                mockk()
+                mockk(),
+                mockk(relaxed = true),
+                null
             )
         }
 
         // Then
-        onView(withId(R.id.gps_open_with_title)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Invoice")))
-        onView(withId(R.id.gps_open_with_details)).check(ViewAssertions.matches(ViewMatchers.withSubstring("In the")))
-        onView(withId(R.id.gps_open_with_info)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Tip")))
-        onView(withId(R.id.gps_forward_button)).check(ViewAssertions.matches(ViewMatchers.withText("Forward")))
+        onView(withId(R.id.gps_open_with_title)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Share")))
+        onView(withId(R.id.gps_open_with_details)).check(ViewAssertions.matches(ViewMatchers.withSubstring("screenshot")))
+        onView(withId(R.id.gps_forward_button)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Share")))
     }
 
     @Test
@@ -96,14 +101,46 @@ class OpenWithBottomSheetTest {
                 mockk(relaxed = true),
                 mockk(),
                 paymentComponentWithLocale,
-                mockk()
+                mockk(),
+                mockk(relaxed = true),
+                paymentRequestId = null
             )
         }
 
         // Then
-        onView(withId(R.id.gps_open_with_title)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Rechnungsdaten")))
-        onView(withId(R.id.gps_open_with_details)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Im nächsten")))
-        onView(withId(R.id.gps_open_with_info)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Tipp")))
-        onView(withId(R.id.gps_forward_button)).check(ViewAssertions.matches(ViewMatchers.withText("Weiter")))
+        onView(withId(R.id.gps_open_with_title)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Zahlungscode")))
+        onView(withId(R.id.gps_open_with_details)).check(ViewAssertions.matches(ViewMatchers.withSubstring("Fotoüberweisung")))
+        onView(withId(R.id.gps_forward_button)).check(ViewAssertions.matches(ViewMatchers.withSubstring("teilen")))
+    }
+
+    @Test
+    fun `calls getPaymentRequestImage on DocumentManager if paymentRequestId is not null`() = runTest {
+        // Given
+        val byteArray = byteArrayOf()
+
+        val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
+        coEvery { documentManager.getPaymentRequestImage(any()) } coAnswers { Resource.Success(byteArray) }
+        every { giniHealthAPI.documentManager } returns documentManager
+
+        val giniInternalPaymentModule: GiniInternalPaymentModule = mockk(relaxed = true)
+        every { giniInternalPaymentModule.giniHealthAPI } returns giniHealthAPI
+
+        val paymentComponent: PaymentComponent = mockk(relaxed = true)
+        every { paymentComponent.paymentModule } returns giniInternalPaymentModule
+
+        // When
+        launchFragmentInContainer {
+            OpenWithBottomSheet.newInstance(
+                mockk(relaxed = true),
+                mockk(),
+                paymentComponent,
+                mockk(),
+                mockk(relaxed = true),
+                paymentRequestId = "123"
+            )
+        }
+
+        coVerify { documentManager.getPaymentRequestImage("123") }
+
     }
 }

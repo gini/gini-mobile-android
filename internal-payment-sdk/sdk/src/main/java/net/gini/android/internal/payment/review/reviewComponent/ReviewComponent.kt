@@ -127,6 +127,9 @@ class ReviewComponent(
         _paymentDetails.value = paymentDetails.value.copy(purpose = purpose)
     }
 
+
+    fun shouldShowBankSelectionButton() = reviewConfig.selectBankButtonVisible
+
     fun validatePaymentDetails(paymentDetails: PaymentDetails): Boolean {
         val items = paymentDetails.validate()
         _paymentValidation.tryEmit(items)
@@ -135,7 +138,6 @@ class ReviewComponent(
     }
 
     companion object {
-        const val SHOW_OPEN_WITH_TIMES = 3
         private val LOG = LoggerFactory.getLogger(ReviewComponent::class.java)
     }
 }

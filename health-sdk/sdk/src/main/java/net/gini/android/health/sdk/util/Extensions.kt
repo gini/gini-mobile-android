@@ -157,7 +157,7 @@ internal fun TextInputLayout.setBackground() {
 
 private fun String.nonEmpty() = if (isEmpty()) " " else this
 
-internal fun View.hideKeyboard() {
+fun View.hideKeyboard() {
     getSystemService(context, InputMethodManager::class.java)?.let { imm ->
         if (imm.isAcceptingText) {
             imm.hideSoftInputFromWindow(windowToken, 0)

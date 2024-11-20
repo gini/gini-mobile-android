@@ -15,15 +15,14 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
-import net.gini.android.health.sdk.review.ReviewFragment
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
-import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.review.ReviewConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -235,25 +234,29 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `instantiates review fragment if payment provider app is set`() {
+    fun `instantiates payment fragment with documentId`() {
         // Given
-        val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
-        val paymentComponent: PaymentComponent = mockk(relaxed = true)
-        val paymentProviderApp: PaymentProviderApp = mockk(relaxed = true)
+        val paymentFlowConfiguration: PaymentFlowConfiguration = mockk(relaxed = true)
         val giniHealth: GiniHealth = mockk(relaxed = true)
 
-        // When
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
         // Then
-        Truth.assertThat(giniHealth.getPaymentReviewFragment("", paymentComponent, reviewConfiguration)).isInstanceOf(
-            ReviewFragment::class.java)
+        Truth.assertThat(giniHealth.getPaymentFragmentWithDocument("123", paymentFlowConfiguration)).isInstanceOf(PaymentFragment::class.java)
+    }
+
+    @Test
+    fun `instantiates payment fragment if payment details are valid`() {
+        // Given
+        val paymentFlowConfiguration: PaymentFlowConfiguration = mockk(relaxed = true)
+        val giniHealth: GiniHealth = mockk(relaxed = true)
+
+        // Then
+        Truth.assertThat(giniHealth.getPaymentFragmentWithoutDocument(PaymentDetails("recipient", "iban", "40", "purpose"), paymentFlowConfiguration)).isInstanceOf(PaymentFragment::class.java)
     }
 
     @Test(expected = IllegalStateException::class)
-    fun `throws exception when trying to create ReviewFragment if no payment provider app is set`() {
+    fun `throws exception when trying to create Payment fragment if payment details are incomplete`() {
         // Given
-        val reviewConfiguration: ReviewConfiguration = mockk(relaxed = true)
+        val paymentFlowConfiguration: PaymentFlowConfiguration = mockk(relaxed = true)
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
 
         // When
@@ -261,9 +264,10 @@ class GiniHealthTest {
             SelectedPaymentProviderAppState.NothingSelected)
 
         // When trying to instantiate fragment, then exception should be thrown
-        giniHealth.getPaymentReviewFragment("", paymentComponent, reviewConfiguration)
+        giniHealth.getPaymentFragmentWithoutDocument(PaymentDetails("", "", "", ""), paymentFlowConfiguration)
     }
 
+    @Test
     fun `When setting document id for review with medical provider details then that value can be reached from payment details`() = runTest {
         val paymentDetails = PaymentDetails("recipient", "iban", "123.56", "purpose", extractions)
 

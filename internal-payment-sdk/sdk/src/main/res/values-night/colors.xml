@@ -28,5 +28,7 @@
 
     <color name="gps_disabled_field_text_color">@color/gps_light_04</color>
     <color name="gps_amount_field_border">@color/gps_light_01</color>
+    <color name="gps_open_with_border_color">@color/gps_light_05</color>
+    <color name="gps_open_with_review_value">@color/gps_light_01</color>
 
 </resources>

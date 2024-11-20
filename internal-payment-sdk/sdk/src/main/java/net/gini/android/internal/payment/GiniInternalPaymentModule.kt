@@ -14,7 +14,6 @@ import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.GiniPaymentManager
@@ -88,10 +87,6 @@ class GiniInternalPaymentModule(private val context: Context,
         }
 
     var paymentComponent = PaymentComponent(context, this)
-    private val openWithPreferences = OpenWithPreferences(context)
-
-    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
-    suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
 
     private val _paymentFlow =
         MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
@@ -119,6 +114,9 @@ class GiniInternalPaymentModule(private val context: Context,
 
     val eventsFlow: SharedFlow<InternalPaymentEvents> = _eventsFlow
 
+    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?) =
+        giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
+    suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
     fun setPaymentDetails(paymentDetails: PaymentDetails?) {
@@ -129,13 +127,6 @@ class GiniInternalPaymentModule(private val context: Context,
         }
     }
 
-    suspend fun incrementCountForPaymentProviderId(paymentProviderAppId: String) {
-        openWithPreferences.incrementCountForPaymentProviderId(paymentProviderAppId)
-    }
-
-    suspend fun getLiveCountForPaymentProviderId(paymentProviderAppId: String) = openWithPreferences.getLiveCountForPaymentProviderId(paymentProviderAppId)
-
-
     fun emitSdkEvent(event: InternalPaymentEvents) {
         _eventsFlow.tryEmit(event)
     }
@@ -144,6 +135,12 @@ class GiniInternalPaymentModule(private val context: Context,
         localizedContext = null
         GiniPaymentPreferences(context).saveSDKLanguage(language)
     }
+
+    fun saveReturningUser() {
+        GiniPaymentPreferences(context).saveReturningUser()
+    }
+
+    fun getReturningUser() = GiniPaymentPreferences(context).getReturningUser()
 
     internal class GiniPaymentPreferences(context: Context) {
         private val sharedPreferences = context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)
@@ -158,12 +155,21 @@ class GiniInternalPaymentModule(private val context: Context,
             val enumValue = sharedPreferences.getString(SDK_LANGUAGE_PREFS_KEY, null)
             return if (enumValue.isNullOrEmpty()) null else GiniLocalization.valueOf(enumValue)
         }
+
+        fun saveReturningUser() {
+            val editor = sharedPreferences.edit()
+            editor.putBoolean(RETURNING_USER_PREFS_KEY, true)
+            editor.apply()
+        }
+
+        fun getReturningUser(): Boolean = sharedPreferences.getBoolean(RETURNING_USER_PREFS_KEY, false)
     }
 
     var localizedContext: Context? = null
 
     companion object {
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
+        private const val RETURNING_USER_PREFS_KEY = "RETURNING_USER_PREFS_KEY"
         private const val DEFAULT_API_VERSION = 1
         const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
 

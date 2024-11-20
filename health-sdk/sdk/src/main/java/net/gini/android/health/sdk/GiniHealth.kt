@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.lifecycle.Lifecycle
@@ -8,10 +9,16 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
@@ -19,26 +26,34 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
-import net.gini.android.health.sdk.review.ReviewFragment
+import net.gini.android.health.sdk.GiniHealth.TrustMarkerResponse
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.PaymentRequest
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.paymentComponent.BankPickerRows
-import net.gini.android.internal.payment.paymentComponent.PaymentComponent
-import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
-import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
+import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniLocalization
+import net.gini.android.internal.payment.utils.isValidIban
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
 
 /**
  * [GiniHealth] is one of the main classes for interacting with the Gini Health SDK. It manages interaction with the Gini Health API.
  *
- *  [documentFlow], [paymentFlow], [openBankState] are used by the [ReviewFragment] to observe their state, but they are public
+ *  [documentFlow], [paymentFlow], [openBankState] are used by the [PaymentFragment] to observe their state, but they are public
  *  so that they can be observed anywhere, the main purpose for this is to observe errors.
+ *
+ *  [displayedScreen] is a shared flow which forwards the [DisplayedScreen] that is currently visible in the [PaymentFragment].
+ *  It can be observed to update the activity title if needed.
+ *
+ *  [trustMarkersFlow] emits [TrustMarkerResponse], containing the icons of two payment providers and how many other payment providers
+ *  are integrating Gini. It can be observed to integrate the trust markers into custom UI.
  */
 class GiniHealth(
     giniHealthAPI: GiniHealthAPI,
@@ -48,8 +63,10 @@ class GiniHealth(
     val giniInternalPaymentModule: GiniInternalPaymentModule = GiniInternalPaymentModule(
         context = context,
         giniHealthAPI = giniHealthAPI
-    ).also {
-        it.paymentComponent.bankPickerRows = BankPickerRows.SINGLE
+    ).also { internalPaymentModule ->
+        CoroutineScope(Job()).launch(Dispatchers.IO) {
+            internalPaymentModule.loadPaymentProviderApps()
+        }
     }
 
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
@@ -92,6 +109,42 @@ class GiniHealth(
      */
     val openBankState: StateFlow<PaymentState> = _openBankState
 
+    private val _displayedScreen: MutableSharedFlow<DisplayedScreen> = MutableSharedFlow(extraBufferCapacity = 1)
+
+    /**
+     * A flow for exposing the [DisplayedScreen] currently visible. It always starts with [DisplayedScreen.Nothing].
+     * It can be observed to update the UI, such as the toolbar title.
+     */
+    val displayedScreen: SharedFlow<DisplayedScreen> = _displayedScreen
+
+    private val _trustMarkersFlow = giniInternalPaymentModule.paymentComponent.paymentProviderAppsFlow.map { result ->
+        when (result) {
+            is PaymentProviderAppsState.Error -> ResultWrapper.Error(result.throwable)
+            PaymentProviderAppsState.Loading -> ResultWrapper.Loading()
+            PaymentProviderAppsState.Nothing -> ResultWrapper.Loading()
+            is PaymentProviderAppsState.Success -> ResultWrapper.Success<TrustMarkerResponse> (
+                TrustMarkerResponse(
+                    paymentProviderIcon = result.paymentProviderApps.firstOrNull()?.icon,
+                    secondPaymentProviderIcon = if (result.paymentProviderApps.size >= 2) result.paymentProviderApps[1].icon else null,
+                    extraPaymentProvidersCount = maxOf(result.paymentProviderApps.size - 2, 0)
+                )
+            )
+        }
+    }
+
+    /**
+     * A flow for getting information about trust markers.
+     *
+     * It always starts with [ResultWrapper.Loading] while payment providers are being loaded.
+     * [TrustMarkerResponse] will be wrapped in [ResultWrapper.Success], otherwise the throwable will
+     * be in a [ResultWrapper.Error].
+     *
+     * [TrustMarkerResponse] will contain the icons of two payment providers and the total count of the
+     * other loaded payment providers.
+     *
+     * It never completes.
+     */
+    val trustMarkersFlow: Flow<ResultWrapper<TrustMarkerResponse>> = _trustMarkersFlow
 
     /**
      * Sets the app language to the desired one from the languages the SDK is supporting. If not set then defaults to the system's language locale.
@@ -260,41 +313,49 @@ class GiniHealth(
     }
 
     /**
-     * Loads the extractions for the given document id and creates an instance of the [ReviewFragment] with the given
+     * Creates an instance of the [PaymentFragment] with the given documentId and
      * configuration.
      *
-     * You should create and show the [ReviewFragment] in the [Listener.onPayInvoiceClicked] method.
-     *
      * @param documentId The document id for which the extractions should be loaded
-     * @param configuration The configuration for the [ReviewFragment]
-     * @throws IllegalStateException If no payment provider app has been selected
+     * @param configuration The configuration for the [PaymentFragment]
      */
-    fun getPaymentReviewFragment(documentId: String, paymentComponent: PaymentComponent, configuration: ReviewConfiguration): ReviewFragment {
+    fun getPaymentFragmentWithDocument(documentId: String, configuration: PaymentFlowConfiguration?): PaymentFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
         giniInternalPaymentModule.setPaymentDetails(null)
         _paymentFlow.value = ResultWrapper.Loading()
-        when (val selectedPaymentProviderAppState = paymentComponent.selectedPaymentProviderAppFlow.value) {
-            is SelectedPaymentProviderAppState.AppSelected -> {
-                LOG.debug("Creating ReviewFragment for selected payment provider app: {}", selectedPaymentProviderAppState.paymentProviderApp.name)
-
-                return ReviewFragment.newInstance(
-                    this,
-                    configuration = configuration,
-                    paymentComponent = paymentComponent,
-                    documentId = documentId
-                )
-            }
-
-            SelectedPaymentProviderAppState.NothingSelected -> {
-                LOG.error("Cannot create ReviewFragment: No selected payment provider app")
-
-                val exception =
-                    IllegalStateException("Cannot create ReviewFragment: No selected payment provider app")
-                throw exception
-            }
-        }
+        return PaymentFragment.newInstance(
+            giniHealth = this,
+            documentId = documentId,
+            paymentFlowConfiguration = configuration ?: PaymentFlowConfiguration()
+        )
     }
 
+    /**
+     * Creates an instance of [PaymentFragment] with the given payment details and
+     * configuration.
+     *
+     * @param paymentDetails The payment details
+     * @param configuration The configuration for the [PaymentFragment]
+     * @throws IllegalStateException if any of the payment details ([recipient], [IBAN], [amount], [purpose]] are empty
+     * or the [IBAN] is invalid.
+     */
+    fun getPaymentFragmentWithoutDocument(paymentDetails: PaymentDetails, configuration: PaymentFlowConfiguration?): PaymentFragment {
+        LOG.debug("Getting payment fragment for payment details: {}", paymentDetails.toString())
+        if (paymentDetails.iban.isEmpty() || paymentDetails.amount.isEmpty() || paymentDetails.purpose.isEmpty() || paymentDetails.recipient.isEmpty()) {
+            throw IllegalStateException("Payment details are incomplete")
+        }
+        if (!isValidIban(paymentDetails.iban)) {
+            throw IllegalStateException("Iban is invalid")
+        }
+        giniInternalPaymentModule.setPaymentDetails(paymentDetails.toCommonPaymentDetails())
+        _paymentFlow.value = ResultWrapper.Loading()
+        val paymentFragment = PaymentFragment.newInstance(
+            giniHealth = this,
+            paymentDetails = paymentDetails,
+            paymentFlowConfiguration = configuration ?: PaymentFlowConfiguration()
+        )
+        return paymentFragment
+    }
 
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
         Bundle().apply {
@@ -312,6 +373,10 @@ class GiniHealth(
         }
     }
 
+    internal fun setDisplayedScreen(screen: DisplayedScreen) {
+        _displayedScreen.tryEmit(screen)
+    }
+
     private sealed class CapturedArguments : Parcelable {
         @Parcelize
         class DocumentInstance(val value: Document) : CapturedArguments()
@@ -323,9 +388,16 @@ class GiniHealth(
     sealed class PaymentState {
         object NoAction : PaymentState()
         object Loading : PaymentState()
+        object Cancel : PaymentState()
         class Success(val paymentRequest: PaymentRequest) : PaymentState()
         class Error(val throwable: Throwable) : PaymentState()
     }
+
+    data class TrustMarkerResponse(
+        val paymentProviderIcon: BitmapDrawable?,
+        val secondPaymentProviderIcon: BitmapDrawable?,
+        val extraPaymentProvidersCount: Int
+    )
 
     companion object {
         private val LOG = LoggerFactory.getLogger(GiniHealth::class.java)
@@ -338,6 +410,5 @@ class GiniHealth(
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
         private const val PAYABLE = "Payable"
         private const val HAS_MULTIPLE_DOCUMENTS = "true"
-        private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
     }
 }

@@ -60,27 +60,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             addButtonInputHandlers()
         }
 
-    /**
-     * Sets the payable state of the [PaymentComponentView].
-     * If `true`, the view will be shown, otherwise it will be hidden.
-     */
-
-    var isPayable: Boolean = false
-        set(isPayable) {
-            field = isPayable
-            if (isPayable) {
-                show()
-            } else {
-                hide()
-            }
-        }
-
-    private var isReturning: Boolean = false
-        set(isReturning) {
-            field = isReturning
-            changeLabelsVisibilityIfNeeded()
-        }
-
     internal var coroutineContext: CoroutineContext = Dispatchers.Main
 
     @VisibleForTesting
@@ -109,19 +88,26 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             LOG.debug("Creating coroutine scope")
             coroutineScope = CoroutineScope(coroutineContext)
         }
-        if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) {
-            binding.gpsTwoRowsBankSelection.isVisible = true
-            binding.gpsSingleRowBankSelection.root.visibility = View.GONE
-        } else {
-            binding.gpsSingleRowBankSelection.root.visibility = View.VISIBLE
-            binding.gpsTwoRowsBankSelection.visibility = View.GONE
-        }
         checkPaymentComponentHeight()
         coroutineScope?.launch {
             if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
                 return@launch
             }
+            if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) {
+                binding.gpsTwoRowsBankSelection.isVisible = true
+                binding.gpsSingleRowBankSelection.root.visibility = View.GONE
+            } else {
+                binding.gpsSingleRowBankSelection.root.visibility = View.VISIBLE
+                binding.gpsTwoRowsBankSelection.visibility = View.GONE
+            }
+            binding.gpsPoweredByGini.visibility =
+                if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true)
+                {
+                    VISIBLE
+                } else {
+                    GONE
+                }
             paymentComponent?.checkReturningUser()
             paymentComponent?.let { pc ->
                 LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
@@ -159,12 +145,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                         }
                     }
                 }
-                launch {
-                    pc.returningUserFlow.collect { isReturning ->
-                        binding.gpsMoreInformation.visibility = if (isReturning) View.GONE else View.VISIBLE
-                        binding.gpsSelectBankLabel.visibility = if (isReturning) View.GONE else View.VISIBLE
-                    }
-                }
             }
         }
     }
@@ -174,7 +154,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
      * This should be called before the view is reused.
      */
     fun prepareForReuse() {
-        isPayable = false
         documentId = null
         disablePayInvoiceButton()
         restorePayInvoiceButtonDefaultState()
@@ -185,6 +164,14 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun checkPaymentComponentHeight() {
         if (resources.getDimension(R.dimen.gps_payment_component_height) >= resources.getDimension(R.dimen.gps_accessibility_min_height)) {
             binding.gpsSelectBankPickerLayout.layoutParams.height = resources.getDimension(R.dimen.gps_payment_component_height).toInt()
+        }
+    }
+
+    private fun checkReturningUser() {
+        if (paymentComponent?.shouldCheckReturningUser == true) {
+            val isReturning = paymentComponent?.checkReturningUser() == true
+            binding.gpsMoreInformation.visibility = if (isReturning) View.GONE else View.VISIBLE
+            binding.gpsSelectBankLabel.visibility = if (isReturning) View.GONE else View.VISIBLE
         }
     }
 
@@ -273,25 +260,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         }
     }
 
-    private fun show() {
-        LOG.debug("Showing payment component")
-        binding.gpsPoweredByGini.visibility =
-            if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else GONE
-        changeLabelsVisibilityIfNeeded()
-    }
-
-    private fun hide() {
-        LOG.debug("Hiding payment component")
-        binding.gpsSelectBankLabel.visibility = GONE
-        binding.gpsPoweredByGini.visibility = GONE
-        binding.gpsMoreInformation.visibility = GONE
-    }
-
-    private fun changeLabelsVisibilityIfNeeded() {
-        binding.gpsSelectBankLabel.visibility = if (isReturning || !isPayable) View.GONE else View.VISIBLE
-        binding.gpsMoreInformation.visibility = if (isReturning || !isPayable) View.GONE else View.VISIBLE
-    }
-
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         LOG.debug("onDetachedFromWindow")
@@ -331,6 +299,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             }
             coroutineScope?.launch {
                 paymentComponent?.onPayInvoiceClicked(documentId ?: "")
+                dismissListener?.onButtonClick(Buttons.PAY_INVOICE)
             }
         }
         binding.gpsMoreInformation.setIntervalClickListener {

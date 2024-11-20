@@ -39,13 +39,6 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, val
      */
     val selectedPaymentProviderAppFlow: StateFlow<SelectedPaymentProviderAppState> = _selectedPaymentProviderAppFlow.asStateFlow()
 
-    private val _returningUserFlow = MutableStateFlow(false)
-
-    /**
-     * A [StateFlow] which emits whether the user is a returning one or not.
-     */
-    val returningUserFlow: StateFlow<Boolean> = _returningUserFlow
-
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
@@ -77,8 +70,6 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, val
     /**
      * Loads the payment provider apps and selects the first installed payment provider app or nothing if no payment provider
      * app is installed. The selection (or lack of selection) will be visible once a [PaymentComponentView] is shown.
-     *
-     * It should be sufficient to call [loadPaymentProviderApps] only once when your app starts.
      *
      * By collecting the [paymentProviderAppsFlow] and [selectedPaymentProviderAppFlow] you can observe the state of the
      * loading process.
@@ -202,17 +193,14 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, val
         }
     }
 
-    suspend fun onPayInvoiceClicked(documentId: String = "") {
-        paymentComponentPreferences.saveReturningUser()
-        listener?.onPayInvoiceClicked(documentId)
+    suspend fun onPayInvoiceClicked(documentId: String? = "") {
+        paymentModule.saveReturningUser()
+        listener?.onPayInvoiceClicked(documentId ?: "")
         delay(500)
         checkReturningUser()
     }
 
-    suspend fun checkReturningUser() {
-        if (!shouldCheckReturningUser) return
-        _returningUserFlow.value = paymentComponentPreferences.getReturningUser()
-    }
+    fun checkReturningUser(): Boolean = paymentModule.getReturningUser()
 
     private companion object {
         private val LOG = LoggerFactory.getLogger(PaymentComponent::class.java)
