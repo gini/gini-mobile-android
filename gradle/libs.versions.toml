@@ -22,7 +22,7 @@ hilt = "2.46.1"
 navigation_component = "2.7.6"
 compose-bom = "2024.06.00"
 accompanist-themeAdapter = "1.1.1"
-compose-activity = "1.9.0"
+compose-activity = "1.9.3"
 koin-bom = "3.5.6"
 orbitMvi = "9.0.0"
 
@@ -31,10 +31,10 @@ android-gradle = { module = "com.android.tools.build:gradle", version.ref = "and
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 dokka-gradle = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 dokka-kotlinAsJava = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "dokka" }
-androidx-core-ktx = "androidx.core:core-ktx:1.12.0"
+androidx-core-ktx = "androidx.core:core-ktx:1.14.0-alpha01"
 androidx-multidex = "androidx.multidex:multidex:2.0.1"
-androidx-activity = "androidx.activity:activity:1.8.2"
-androidx-activity-ktx = "androidx.activity:activity-ktx:1.8.2"
+androidx-activity = "androidx.activity:activity:1.9.3"
+androidx-activity-ktx = "androidx.activity:activity-ktx:1.9.3"
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment" }
 androidx-fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "androidx-fragment" }
 androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
