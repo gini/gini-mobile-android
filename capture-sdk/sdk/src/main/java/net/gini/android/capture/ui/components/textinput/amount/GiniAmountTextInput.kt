@@ -50,8 +50,11 @@ fun GiniAmountTextInput(
         ),
         label = label,
         onValueChange = {
-            text = decimalFormatter.textToDigits(it) // take only 7 digits
-            onValueChange(decimalFormatter.parseDigits(text))
+            val newText = decimalFormatter.textToDigits(it) // take only 7 digits
+            if (newText != text) {
+                text = newText
+                onValueChange(decimalFormatter.parseDigits(text))
+            }
         },
         trailingContent = trailingContent,
         colors = colors,
