@@ -44,6 +44,7 @@
     <string name="gbs_skonto_screen_title">Skonto</string>
     <string name="gbs_skonto_screen_content_description_close">Schließen</string>
     <string name="gbs_skonto_screen_content_description_help">Hilfe</string>
+    <string name="gbs_skonto_screen_content_description_back">Zurück</string>
     <!--   region Section Invoice Scan -->
     <string name="gbs_skonto_section_invoice_preview_title">Rechnung</string>
     <string name="gbs_skonto_invoice_section_preview_subtitle">Zur Ansicht hier tippen</string>
