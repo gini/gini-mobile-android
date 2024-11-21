@@ -7,7 +7,7 @@ android-gradle-plugin = "8.4.2"
 dokka = "1.7.20"
 androidx-lifecycle = "2.7.0"
 androidx-camera = "1.3.1"
-androidx-fragment = "1.6.2"
+androidx-fragment = "1.8.5"
 androidx-test = "1.5.0"
 androidx-test-junit = "1.1.5"
 kotlinx-coroutines = "1.7.1"
@@ -36,14 +36,14 @@ androidx-activity = "androidx.activity:activity:1.9.3"
 androidx-activity-ktx = "androidx.activity:activity-ktx:1.9.3"
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment" }
 androidx-fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "androidx-fragment" }
-androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
+androidx-appcompat = "androidx.appcompat:appcompat:1.7.0"
 androidx-coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
 androidx-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
-androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.1.4"
+androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.2.0"
 androidx-viewpager = "androidx.viewpager:viewpager:1.0.0"
-androidx-viewpager2 = "androidx.viewpager2:viewpager2:1.0.0"
+androidx-viewpager2 = "androidx.viewpager2:viewpager2:1.1.0"
 androidx-recyclerview = "androidx.recyclerview:recyclerview:1.3.2"
 androidx-cardview = "androidx.cardview:cardview:1.0.0"
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "androidx-camera" }
@@ -66,7 +66,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 koin-androidx-scope = { module = "io.insert-koin:koin-androidx-scope", version.ref = "koin" }
 koin-androidx-viewmodel = { module = "io.insert-koin:koin-androidx-viewmodel", version.ref = "koin" }
 koin-androidx-fragment = { module = "io.insert-koin:koin-androidx-fragment", version.ref = "koin" }
-material = "com.google.android.material:material:1.11.0"
+material = "com.google.android.material:material:1.12.0"
 moshi-core = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 insetter = "dev.chrisbanes.insetter:insetter:0.6.1"
