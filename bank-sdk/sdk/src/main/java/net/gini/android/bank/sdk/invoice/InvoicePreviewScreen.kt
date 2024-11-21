@@ -141,8 +141,10 @@ private fun NavigationActionBack(
             onClick = onClick
         ) {
             Icon(
-                painter = painterResource(id = net.gini.android.capture.R.drawable.gc_action_bar_back),
-                contentDescription = null,
+                painter = painterResource(id = net.gini.android.capture.R.drawable.gc_close),
+                contentDescription = stringResource(
+                    id = R.string.gbs_skonto_screen_content_description_close
+                ),
                 tint = tint
             )
         }
