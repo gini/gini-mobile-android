@@ -72,6 +72,7 @@ object GiniBank {
     private var giniCapture: GiniCapture? = null
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
+    private var giniBankTerminateCallback: (() -> Unit)? = null
 
     internal const val USER_COMMENT_GINI_BANK_VERSION = "GiniBankVer"
 
@@ -157,6 +158,14 @@ object GiniBank {
 
 
     internal fun getCaptureConfiguration() = captureConfiguration
+
+    internal fun setGiniBankTerminationCallback(callback: () -> Unit) {
+        giniBankTerminateCallback = callback
+    }
+
+    internal fun cleanupGiniBankTerminationCallback() {
+        giniBankTerminateCallback = null
+    }
 
     /**
      * Shows the return reasons dialog in the return assistant, if enabled.
@@ -615,5 +624,15 @@ object GiniBank {
     @Suppress("UnusedParameter")
     private fun releaseTransactionDocsFeature(context: Context) {
         giniBankTransactionDocs = null
+    }
+
+    /**
+     *
+     *  Kills Bank sdk and stos Gini payment flow
+     *  Use this with cautions
+     *
+     */
+    fun terminateSDK() {
+        giniBankTerminateCallback?.invoke()
     }
 }

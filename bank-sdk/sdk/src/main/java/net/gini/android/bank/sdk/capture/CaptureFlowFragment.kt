@@ -134,6 +134,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
+        GiniBank.setGiniBankTerminationCallback {
+            captureFlowFragmentListener.onFinishedWithResult(CaptureResult.Cancel)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -146,6 +149,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         if (!didFinishWithResult && !willBeRestored) {
             finishWithResult(CaptureResult.Cancel)
         }
+        GiniBank.cleanupGiniBankTerminationCallback()
     }
 
 
