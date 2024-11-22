@@ -108,13 +108,12 @@ hilt-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version
 java-poet = "com.squareup:javapoet:1.13.0"
 cyclonedx-gradle = "org.cyclonedx:cyclonedx-gradle-plugin:1.8.1"
 cyclonedx-core-java = "org.cyclonedx:cyclonedx-core-java:8.0.3"
-jsonJava = "org.json:json:20231013"
+jsonJava = "org.json:json:20240303"
 navigation_fragment_ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation_component" }
 navigation_ui_ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation_component" }
 navigation_safe_args = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigation_component" }
 datastore-preferences = "androidx.datastore:datastore-preferences:1.1.1"
 tomlj = "org.tomlj:tomlj:1.1.1"
-json-testing = "org.json:json:20231013"
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
