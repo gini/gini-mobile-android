@@ -20,7 +20,7 @@ pmd = "6.0.0"
 jacoco = "0.8.10"
 hilt = "2.46.1"
 navigation_component = "2.8.4"
-compose-bom = "2024.06.00"
+compose-bom = "2024.11.00"
 accompanist-themeAdapter = "1.1.1"
 compose-activity = "1.9.3"
 koin-bom = "3.5.6"
@@ -49,7 +49,7 @@ androidx-cardview = "androidx.cardview:cardview:1.0.0"
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "androidx-camera" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "androidx-camera" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "androidx-camera" }
-androidx-annotation = "androidx.annotation:annotation:1.7.1"
+androidx-annotation = "androidx.annotation:annotation:1.9.1"
 androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-test" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
