@@ -28,6 +28,7 @@ import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithG
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
 import net.gini.android.internal.payment.utils.extensions.hideKeyboard
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
+import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import net.gini.android.internal.payment.utils.setTextIfDifferent
@@ -110,7 +111,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         }
 
         binding.gpsPaymentDetails.setOnClickListener { it.hideKeyboard() }
-        binding.payment.setOnClickListener {
+        binding.payment.setIntervalClickListener {
             it.hideKeyboard()
             binding.root.clearFocus()
             reviewComponent?.paymentDetails?.value?.let { paymentDetails ->
