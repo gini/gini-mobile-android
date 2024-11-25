@@ -66,7 +66,9 @@ private fun TransactionDocTopBarActions(
             },
         painter = painterResource(id = R.drawable.gbs_more_horizontal),
         tint = colors.topBarColors.actionContentColor,
-        contentDescription = null
+        contentDescription = stringResource(
+            id = R.string.gbs_td_invoice_preview_content_description_more
+        )
     )
     if (menuVisible) {
         GiniDropdownMenu(

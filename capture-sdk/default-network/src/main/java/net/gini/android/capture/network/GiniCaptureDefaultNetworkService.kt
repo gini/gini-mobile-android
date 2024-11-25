@@ -190,7 +190,6 @@ internal constructor(
             isSkontoEnabled = configuration.isSkontoEnabled,
             isReturnAssistantEnabled = configuration.isReturnAssistantEnabled,
             isTransactionDocsEnabled = configuration.transactionDocsEnabled,
-            mixpanelToken = configuration.mixpanelToken ?: "",
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
         )
 

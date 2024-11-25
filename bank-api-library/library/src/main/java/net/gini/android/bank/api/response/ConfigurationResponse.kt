@@ -10,7 +10,6 @@ data class ConfigurationResponse(
     @Json(name = "userJourneyAnalyticsEnabled") val userJourneyAnalyticsEnabled: Boolean?,
     @Json(name = "skontoEnabled") val skontoEnabled: Boolean?,
     @Json(name = "returnAssistantEnabled") val returnAssistantEnabled: Boolean?,
-    @Json(name = "mixpanelToken") val mixpanelToken: String?,
     @Json(name = "amplitudeApiKey") val amplitudeApiKey: String?,
     @Json(name = "transactionDocsEnabled") val transactionDocsEnabled: Boolean?,
 )
@@ -20,7 +19,6 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     isUserJourneyAnalyticsEnabled = userJourneyAnalyticsEnabled ?: false,
     isSkontoEnabled = skontoEnabled ?: false,
     isReturnAssistantEnabled = returnAssistantEnabled ?: false,
-    mixpanelToken = mixpanelToken,
     amplitudeApiKey = amplitudeApiKey,
     transactionDocsEnabled = transactionDocsEnabled ?: false,
 )

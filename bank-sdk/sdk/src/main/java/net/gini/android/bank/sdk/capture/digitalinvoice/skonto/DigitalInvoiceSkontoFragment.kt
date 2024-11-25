@@ -32,9 +32,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -56,7 +53,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -92,6 +88,7 @@ import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
 import net.gini.android.capture.ui.components.textinput.GiniTextInput
 import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInput
+import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -418,16 +415,24 @@ private fun NavigationActionBack(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        modifier = modifier
-            .width(24.dp)
-            .height(24.dp),
-        onClick = onClick
-    ) {
-        Icon(
-            painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.ArrowBack),
-            contentDescription = null,
+    GiniTooltipBox(
+        tooltipText = stringResource(
+            id = R.string.gbs_skonto_screen_content_description_back
         )
+    ) {
+        IconButton(
+            modifier = modifier
+                .width(24.dp)
+                .height(24.dp),
+            onClick = onClick
+        ) {
+            Icon(
+                painter = painterResource(id = net.gini.android.capture.R.drawable.gc_action_bar_back),
+                contentDescription = stringResource(
+                    id = R.string.gbs_skonto_screen_content_description_back
+                ),
+            )
+        }
     }
 }
 
@@ -436,16 +441,24 @@ private fun NavigationActionHelp(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        modifier = modifier
-            .width(24.dp)
-            .height(24.dp),
-        onClick = onClick
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.gbs_help_question_icon),
-            contentDescription = null,
+    GiniTooltipBox(
+        tooltipText = stringResource(
+            id = R.string.gbs_skonto_screen_content_description_help
         )
+    ) {
+        IconButton(
+            modifier = modifier
+                .width(24.dp)
+                .height(24.dp),
+            onClick = onClick
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.gbs_help_question_icon),
+                contentDescription = stringResource(
+                    id = R.string.gbs_skonto_screen_content_description_help
+                ),
+            )
+        }
     }
 }
 
@@ -500,7 +513,7 @@ private fun YourInvoiceScanSection(
             }
 
             Icon(
-                painter = rememberVectorPainter(image = Icons.AutoMirrored.Default.KeyboardArrowRight),
+                painter = painterResource(id = R.drawable.gbs_arrow_right),
                 contentDescription = null,
                 tint = colorScheme.arrowTint
             )
