@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Google Play Data Safety Guide &mdash; Gini Health SDK for Android  documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Health SDK for Android  documentation" href="index.html"/>
+        <link rel="next" title="Reference Docs" href="reference.html"/>
+        <link rel="prev" title="UI Customization Guide" href="customization.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-deep-link-for-your-app">Gini Pay Deep Link For Your App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-health-api-client-credentials">Gini Health API Client Credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-ginihealth-instance">Create the GiniHealth instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#upload-documents">Upload documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#check-which-documents-invoices-are-payable">Check which documents/invoices are payable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-paymentfragment">Create the PaymentFragment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="event-tracking.html">Event Tracking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#ginihealth">GiniHealth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#paymentcomponent">PaymentComponent</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#example-banking-app">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#development-gini-health-api-client-credentials">Development Gini Health API client credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#end-to-end-testing">End to end testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#id1">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-fragment">Payment Fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-component-bottom-sheet">Payment component bottom sheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#bank-picker">Bank picker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#more-information-and-faq">More information and FAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-review">Payment review</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#execute-payment">Execute payment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#return-to-your-app">Return to your app</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#testing-in-production">Testing in production</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">UI Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#overview-of-ui-customization-options">Overview of UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#ui-customization-options">UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-component">Payment Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#bank-selection-bottom-sheet">Bank Selection Bottom Sheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-feature-info-screen">Payment Feature Info Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-review-screen">Payment Review Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Google Play Data Safety Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-collection-and-security">Data collection and security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-types">Data types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-usage-and-handling">Data usage and handling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#financial-info-purchase-history">Financial info - Purchase history</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photos-and-videos">Photos and videos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#files-and-docs">Files and docs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#device-or-other-ids">Device or other IDs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#photoview">PhotoView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#insetter">Insetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Health SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Google Play Data Safety Guide</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="google-play-data-safety-guide">
+<h1>Google Play Data Safety Guide<a class="headerlink" href="#google-play-data-safety-guide" title="Permalink to this headline">¶</a></h1>
+<p>Since <a class="reference external" href="https://support.google.com/googleplay/android-developer/answer/10787469?hl=en">July 20, 2022</a>, Google requires
+all apps published via the Google Play Store to declare how their app collects and handles user data. This document
+provides information about the Gini Health SDK’s data use to help you fill out or update your app’s <a class="reference external" href="https://developer.android.com/privacy-and-security/declare-data-use">Data safety
+form</a> for the Google Play Store.</p>
+<div class="section" id="data-collection-and-security">
+<h2>Data collection and security<a class="headerlink" href="#data-collection-and-security" title="Permalink to this headline">¶</a></h2>
+<p>For the question <strong>“Does your app collect or share any of the required user data types?”</strong> please answer <strong>Yes</strong>. Gini
+Health SDK collects information about purchases and transactions.</p>
+<p>For the questions <strong>“Is all of the user data collected by your app encrypted in transit?“</strong> please answer <strong>Yes.</strong> Gini
+Health SDK transmits data only via https and in addition you can also use certificate pinning.</p>
+<p>The answer to the question <strong>“Do you provide a way for users to request that their data is deleted?“</strong> depends on
+whether you provide your users a way to request data deletion. If you do, then you can contact Gini support or use the
+Gini Pay API to delete user data.</p>
+</div>
+<div class="section" id="data-types">
+<h2>Data types<a class="headerlink" href="#data-types" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Category</th>
+<th class="head">Used by Gini Health SDK</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Location</td>
+<td>🔴 Gini Health SDK doesn’t collect approximate or precise location data.</td>
+</tr>
+<tr class="row-odd"><td>Personal info</td>
+<td>🔴 Gini Health SDK doesn’t collect personal user data.</td>
+</tr>
+<tr class="row-even"><td>Financial info</td>
+<td>🟢 Gini Health SDK collects <strong>purchase history</strong> (purchases and transactions).</td>
+</tr>
+<tr class="row-odd"><td>Health and fitness</td>
+<td>🔴 Gini Health SDK doesn’t collect health or fitness data.</td>
+</tr>
+<tr class="row-even"><td>Messages</td>
+<td>🔴 Gini Health SDK doesn’t collect data about emails, SMS/MMS messages, or other in-app messages from users.</td>
+</tr>
+<tr class="row-odd"><td>Photos and videos</td>
+<td>🟢 Gini Health SDK collects <strong>photos</strong> which you can upload for the purpose of data extraction.</td>
+</tr>
+<tr class="row-even"><td>Audio files</td>
+<td>🔴 Audio files</td>
+</tr>
+<tr class="row-odd"><td>Files and docs</td>
+<td>🟢 Gini Health SDK collects <strong>PDF files</strong> which you can upload for the purpose of data extraction.</td>
+</tr>
+<tr class="row-even"><td>Calendar</td>
+<td>🔴 Gini Health SDK doesn’t collect calendar events from users.</td>
+</tr>
+<tr class="row-odd"><td>Contacts</td>
+<td>🔴 Gini Health SDK doesn’t collect contacts from users.</td>
+</tr>
+<tr class="row-even"><td>App activity</td>
+<td>🔴 Gini Health SDK doesn’t collect app activity.</td>
+</tr>
+<tr class="row-odd"><td>Web browsing</td>
+<td>🔴 Gini Health SDK doesn’t collect web browsing history from users.</td>
+</tr>
+<tr class="row-even"><td>App info and performance</td>
+<td>🔴 Gini Health SDK doesn’t collect crash logs or diagnostics.</td>
+</tr>
+<tr class="row-odd"><td>Device or other IDs</td>
+<td>ℹ️ Gini Health SDK may collect <strong>anonymous user IDs</strong> which are generated random IDs and unique to app installations,
+provided you didn’t override authentication.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data-usage-and-handling">
+<h2>Data usage and handling<a class="headerlink" href="#data-usage-and-handling" title="Permalink to this headline">¶</a></h2>
+<p>The following sections provide information for filling out the “Data usage and handling” forms. For ease of use the
+terms and phrases which are used in the forms are highlighted in bold letters.</p>
+<div class="section" id="financial-info-purchase-history">
+<h3>Financial info - Purchase history<a class="headerlink" href="#financial-info-purchase-history" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Health SDK <strong>collects</strong> data related to purchases for a limited duration. This duration is 28 days unless a
+different period has been agreed upon during contract negotiations. This means that data is <strong>not processed
+ephemerally</strong>. In addition <strong>users can’t choose whether this data is collected</strong>.</p>
+<p>The <strong>purpose</strong> for collecting purchase history is to provide SDK functionality (<strong>app functionality</strong>) and for
+<strong>analytics</strong>.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+<div class="section" id="photos-and-videos">
+<h3>Photos and videos<a class="headerlink" href="#photos-and-videos" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Health SDK <strong>collects photos</strong> for a limited duration. This duration is 28 days unless a different period has
+been agreed upon during contract negotiations. This means that data is <strong>not processed ephemerally</strong>. In addition
+<strong>users can’t choose whether this data is collected</strong>.</p>
+<p>The <strong>purpose</strong> for collecting photos is to provide SDK functionality (<strong>app functionality</strong>) and for <strong>analytics</strong>.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+<div class="section" id="files-and-docs">
+<h3>Files and docs<a class="headerlink" href="#files-and-docs" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Health SDK <strong>collects PDF files</strong> for a limited duration. This duration is 28 days unless a different period
+has been agreed upon during contract negotiations. This means that data is <strong>not processed ephemerally</strong>. In addition
+<strong>users can’t choose whether this data is collected</strong>.</p>
+<p>The <strong>purpose</strong> for collecting PDF files is to provide SDK functionality (<strong>app functionality</strong>) and for <strong>analytics</strong>.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+<div class="section" id="device-or-other-ids">
+<h3>Device or other IDs<a class="headerlink" href="#device-or-other-ids" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Health SDK may <strong>collect</strong> anonymous user IDs which are generated random IDs and unique to app installations,
+provided you didn’t override authentication (via a custom session manager). This data is <strong>not processed ephemerally</strong> and <strong>users
+can’t choose whether this data is collected</strong>.</p>
+<p>The reason for collecting anonymous user IDs is to provide SDK functionality (<strong>app functionality</strong>) and for
+<strong>analytics</strong> to monitor service quality.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="reference.html" class="btn btn-neutral float-right" title="Reference Docs">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="customization.html" class="btn btn-neutral" title="UI Customization Guide"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
