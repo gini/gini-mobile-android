@@ -12,7 +12,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 import org.slf4j.LoggerFactory
 
-internal class InstallAppViewModel(private val paymentComponent: PaymentComponent?, val backListener: BackListener?) : ViewModel() {
+internal class InstallAppViewModel(val paymentComponent: PaymentComponent?, val backListener: BackListener?) : ViewModel() {
 
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp

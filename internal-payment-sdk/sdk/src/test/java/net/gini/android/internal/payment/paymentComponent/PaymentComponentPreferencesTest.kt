@@ -70,18 +70,4 @@ class PaymentComponentPreferencesTest {
         // Then
         assertThat(paymentComponentPreferences.getSelectedPaymentProviderId()).isNull()
     }
-
-    @Test
-    fun `sets returning user`() = runTest {
-        // Given
-        val paymentComponentPreferences = PaymentComponentPreferences(context)
-
-        assertThat(paymentComponentPreferences.getReturningUser()).isFalse()
-
-        // When
-        paymentComponentPreferences.saveReturningUser()
-
-        // Then
-        assertThat(paymentComponentPreferences.getReturningUser()).isTrue()
-    }
 }

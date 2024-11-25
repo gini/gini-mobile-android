@@ -7,9 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.databinding.GpsBottomSheetPaymentComponentBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
@@ -51,29 +49,18 @@ class PaymentComponentBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetPaymentComponentBinding.inflate(inflater, container, false)
-        binding.gmsPaymentComponent.reviewFragmentWillBeShown = viewModel.reviewFragmentShown
-        binding.gmsPaymentComponent.paymentComponent = viewModel.paymentComponent
-        binding.gmsPaymentComponent.getMoreInformationLabel().setOnClickListener {
-            viewModel.paymentComponent?.listener?.onMoreInformationClicked()
-            dismiss()
-        }
-        binding.gmsPaymentComponent.getBankPickerButton().setOnClickListener {
-            viewModel.paymentComponent?.listener?.onBankPickerClicked()
-            dismiss()
-        }
-        binding.gmsPaymentComponent.getPayInvoiceButton().setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.paymentComponent?.onPayInvoiceClicked()
-                // if payment provider does not support GPC and review fragment will not be shown,
-                // we're in the case where we show `Open With Bottom Sheet` from the payment component directly
+        binding.gpsPaymentComponent.reviewFragmentWillBeShown = viewModel.reviewFragmentShown
+        binding.gpsPaymentComponent.paymentComponent = viewModel.paymentComponent
+
+        binding.gpsPaymentComponent.dismissListener = object : PaymentComponentView.ButtonClickListener {
+            override fun onButtonClick(button: PaymentComponentView.Buttons) {
                 if (viewModel.paymentProviderApp.value?.paymentProvider?.gpcSupported() == false
-                    && !viewModel.reviewFragmentShown) {
-                    return@launch
-                }
+                    && !viewModel.reviewFragmentShown) return
                 dismiss()
             }
+
         }
-        paymentComponentView = binding.gmsPaymentComponent
+        paymentComponentView = binding.gpsPaymentComponent
         return binding.root
     }
 
@@ -86,4 +73,5 @@ class PaymentComponentBottomSheet private constructor(
         fun newInstance(paymentComponent: PaymentComponent?, reviewFragmentShown: Boolean, backListener: BackListener)
             = PaymentComponentBottomSheet(paymentComponent, reviewFragmentShown, backListener)
     }
+
 }

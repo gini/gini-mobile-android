@@ -174,7 +174,7 @@
     <ID>NewLineAtEndOfFile:PaymentComponentBottomSheetViewModel.kt$net.gini.android.merchant.sdk.paymentComponentBottomSheet.PaymentComponentBottomSheetViewModel.kt</ID>
     <ID>NewLineAtEndOfFile:PaymentComponentView.kt$net.gini.android.merchant.sdk.paymentcomponent.PaymentComponentView.kt</ID>
     <ID>NewLineAtEndOfFile:PaymentDetails.kt$net.gini.android.merchant.sdk.api.payment.model.PaymentDetails.kt</ID>
-    <ID>NewLineAtEndOfFile:PaymentFlowViewModel.kt$net.gini.android.merchant.sdk.integratedFlow.PaymentFlowViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:PaymentFlowViewModel.kt$net.gini.android.health.sdk.integratedFlow.PaymentFlowViewModel.kt</ID>
     <ID>NewLineAtEndOfFile:PaymentNextStep.kt$net.gini.android.internal.payment.utils.PaymentNextStep.kt</ID>
     <ID>NewLineAtEndOfFile:PaymentRequest.kt$net.gini.android.core.api.models.PaymentRequest.kt</ID>
     <ID>NewLineAtEndOfFile:Resource.kt$net.gini.android.merchant.sdk.util.extensions.Resource.kt</ID>

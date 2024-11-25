@@ -19,7 +19,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -33,6 +32,7 @@ import net.gini.android.internal.payment.paymentComponentBottomSheet.PaymentComp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewBottomSheet.ReviewBottomSheet
+import net.gini.android.internal.payment.review.reviewComponent.ReviewFields
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.internal.payment.utils.PaymentNextStep
 import net.gini.android.internal.payment.utils.autoCleared
@@ -123,6 +123,10 @@ class PaymentFragment private constructor(
             viewModel.updatePaymentDetails(paymentDetails)
             viewModel.onPaymentButtonTapped(requireContext().externalCacheDir)
         }
+
+        override fun onSelectBankButtonTapped() {
+            //Nothing
+        }
     }
 
     private val paymentComponentListener = object: PaymentComponent.Listener {
@@ -142,7 +146,7 @@ class PaymentFragment private constructor(
             }
         }
 
-        override fun onPayInvoiceClicked(documentId: String) {
+        override fun onPayInvoiceClicked(documentId: String?) {
             handlePayFlow()
         }
     }
@@ -306,12 +310,15 @@ class PaymentFragment private constructor(
             backListener = viewModel,
             configuration = ReviewConfiguration(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
-                showCloseButton = true,
-                isAmountFieldEditable = viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true
+                editableFields = if (viewModel.paymentFlowConfiguration?.isAmountFieldEditable == true) {
+                    listOf(ReviewFields.AMOUNT)
+                } else {
+                    listOf()
+                },
+                selectBankButtonVisible = false
             ),
             listener = reviewViewListener,
             giniInternalPaymentModule = viewModel.giniInternalPaymentModule,
-            paymentComponent = viewModel.paymentComponent,
         )
         reviewBottomSheet.show(childFragmentManager, ReviewBottomSheet::class.java.name)
     }
@@ -382,11 +389,13 @@ class PaymentFragment private constructor(
     private fun showOpenWithDialog(paymentProviderApp: PaymentProviderApp) {
         childFragmentManager.showOpenWithBottomSheet(
             paymentProviderApp = paymentProviderApp,
-            backListener = viewModel
+            paymentComponent = viewModel.paymentComponent,
+            backListener = viewModel,
+            paymentDetails = viewModel.paymentDetails,
+            paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
             viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
         }
-        viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
     }
 
