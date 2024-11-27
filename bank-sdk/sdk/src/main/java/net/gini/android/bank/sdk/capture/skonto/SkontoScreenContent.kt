@@ -1,8 +1,11 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class
+)
 
 package net.gini.android.bank.sdk.capture.skonto
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.icu.util.Calendar
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
@@ -18,10 +21,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -55,7 +58,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -84,6 +86,8 @@ import net.gini.android.capture.ui.components.textinput.GiniTextInput
 import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInput
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
+import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
+import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.ui.theme.typography.bold
@@ -487,28 +491,35 @@ private fun SkontoSection(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = stringResource(id = R.string.gbs_skonto_section_discount_title),
-                    style = GiniTheme.typography.subtitle1,
-                    color = colors.titleTextColor,
-                )
-                Box {
-                    androidx.compose.animation.AnimatedVisibility(visible = isActive) {
+                Row(
+                    modifier = Modifier.weight(1f, fill = false),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.weight(0.1f, fill = false),
+                        text = stringResource(id = R.string.gbs_skonto_section_discount_title),
+                        style = GiniTheme.typography.subtitle1,
+                        color = colors.titleTextColor,
+                    )
+
+                    AnimatedVisibility(
+                        modifier = Modifier.requiredWidth(IntrinsicSize.Max),
+                        visible = isActive
+                    ) {
                         Text(
                             text = stringResource(id = R.string.gbs_skonto_section_discount_hint_label_enabled),
                             style = GiniTheme.typography.subtitle2,
                             color = colors.enabledHintTextColor,
+                            softWrap = false,
                         )
                     }
                 }
-
-                Spacer(Modifier.weight(1f))
-
-
                 GiniSwitch(
+                    modifier = Modifier.padding(start = 8.dp),
                     checked = isActive,
                     onCheckedChange = onActiveChange,
                 )
@@ -774,14 +785,17 @@ private fun WithoutSkontoSection(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
+                    modifier = Modifier.weight(0.1f, fill = false),
                     text = stringResource(id = R.string.gbs_skonto_section_without_discount_title),
                     style = GiniTheme.typography.subtitle1,
                     color = colors.titleTextColor,
                 )
-                AnimatedVisibility(visible = isActive) {
+                AnimatedVisibility(
+                    modifier = Modifier.requiredWidth(IntrinsicSize.Max),
+                    visible = isActive
+                ) {
                     Text(
                         text = stringResource(id = R.string.gbs_skonto_section_discount_hint_label_enabled),
-                        modifier = Modifier.weight(0.1f),
                         style = GiniTheme.typography.subtitle2,
                         color = colors.enabledHintTextColor,
                     )
@@ -973,14 +987,9 @@ private fun FooterSection(
 }
 
 @Composable
-@Preview
+@GiniScreenPreviewUiModes
+@GiniScreenPreviewSizes
 private fun ScreenReadyStatePreviewLight() {
-    ScreenReadyStatePreview()
-}
-
-@Composable
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-private fun ScreenReadyStatePreviewDark() {
     ScreenReadyStatePreview()
 }
 
@@ -1027,7 +1036,7 @@ private fun previewState() = SkontoScreenState.Ready(
     edgeCase = SkontoEdgeCase.PayByCashOnly,
     edgeCaseInfoDialogVisible = false,
     savedAmount = Amount.parse("3:EUR"),
-    transactionDialogVisible = true,
+    transactionDialogVisible = false,
     skontoAmountValidationError = null,
     fullAmountValidationError = null,
 )

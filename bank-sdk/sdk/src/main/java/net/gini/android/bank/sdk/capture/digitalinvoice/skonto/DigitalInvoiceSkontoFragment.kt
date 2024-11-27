@@ -1,8 +1,7 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package net.gini.android.bank.sdk.capture.digitalinvoice.skonto
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -61,7 +60,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -94,6 +92,8 @@ import net.gini.android.capture.ui.components.textinput.GiniTextInput
 import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInput
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
+import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
+import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.view.InjectedViewAdapterInstance
@@ -534,6 +534,7 @@ private fun SkontoSection(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
+                    modifier = Modifier.weight(1f, fill = false),
                     text = stringResource(id = R.string.gbs_skonto_section_discount_title),
                     style = GiniTheme.typography.subtitle1,
                     color = colors.titleTextColor,
@@ -840,21 +841,16 @@ private fun InfoDialog(
 }
 
 @Composable
-@Preview
+@GiniScreenPreviewUiModes
+@GiniScreenPreviewSizes
 private fun ScreenReadyStatePreviewLight() {
-    ScreenReadyStatePreview()
-}
-
-@Composable
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-private fun ScreenReadyStatePreviewDark() {
     ScreenReadyStatePreview()
 }
 
 @Composable
 private fun ScreenReadyStatePreview() {
     GiniTheme {
-        var state by remember { mutableStateOf(previewState) }
+        val state by remember { mutableStateOf(previewState) }
 
         ScreenReadyState(
             state = state,
