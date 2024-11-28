@@ -21,6 +21,7 @@
     <dimen name="gps_large_56">56dp</dimen>
     <dimen name="gps_large_60">60dp</dimen>
     <dimen name="gps_large_64">64dp</dimen>
+    <dimen name="gps_large_72">72dp</dimen>
     <dimen name="gps_large_80">80dp</dimen>
     <dimen name="gps_large_96">96dp</dimen>
     <dimen name="gps_large_100">100dp</dimen>
