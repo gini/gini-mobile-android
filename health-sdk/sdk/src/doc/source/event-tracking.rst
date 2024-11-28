@@ -27,19 +27,21 @@ The ``GiniHealth`` class exposes kotlin flows which you can collect to track eve
    .. warning::
        As the SDK is not responsible for navigation flows outside of it, removing the payment fragment from the hierarchy is the responsibility of implementers at ``PaymentState.Success(paymentRequest)`` or ``PaymentState.Cancel()`` events.
 
-    .. code-block:: java
-        viewModel.openBankState.collect { paymentState ->
-            when (paymentState) {
-                is GiniHealth.PaymentState.Success -> {
-                    ...
-                    supportFragmentManager.popBackStack()
-                }
-                is GiniHealth.PaymentState.Cancel -> {
-                    supportFragmentManager.popBackStack()
-                }
-                else -> {}
-            }
-        }
+   .. code-block:: kotlin
+       launch {
+           viewModel.openBankState.collect { paymentState ->
+               when (paymentState) {
+                   is GiniHealth.PaymentState.Success -> {
+                       ...
+                       supportFragmentManager.popBackStack()
+                   }
+                   is GiniHealth.PaymentState.Cancel -> {
+                       supportFragmentManager.popBackStack()
+                   }
+                   else -> {}
+               }
+           }
+       }
 
 * ``displayedScreen`` is a ``SharedFlow`` of ``DisplayedScreen`` which emits the currently displayed screen in the ``PaymentFragment``. It can be collected to update the UI if needed, such as the toolbar title. It emits the following values:
    * ``DisplayedScreen.Nothing`` is the default state.
