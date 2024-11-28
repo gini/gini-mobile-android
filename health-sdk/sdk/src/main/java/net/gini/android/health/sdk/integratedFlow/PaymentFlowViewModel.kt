@@ -89,6 +89,9 @@ internal class PaymentFlowViewModel(
     }
 
     fun popBackStack() {
+        if (backstack.empty()) {
+            return
+        }
         backstack.pop()
         setDisplayedScreen()
     }
