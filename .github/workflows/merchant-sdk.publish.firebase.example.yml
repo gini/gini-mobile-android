@@ -65,11 +65,11 @@ jobs:
       - run: npm install -g firebase-tools@13.17.0
         shell: bash
 
-      - name: Publish to Firebase
+      - name: Distribute Merchant sdk example apk to Firebase App Distribution
         id: distribute
         run: |
-          chmod +x .github/publish.sh
-          .github/publish.sh
+          chmod +x .github/publish_to_firebase.sh
+          .github/publish_to_firebase.sh
         shell: bash
         env:
           INPUT_APPID: ${{secrets.GINI_MERCHANT_SDK_EXAMPLE_APP_FIREBASE_ID}}
@@ -100,4 +100,4 @@ jobs:
         uses: atlassian/gajira-comment@v3
         with:
           issue: ${{ env.JIRA_TICKET_NAME }}
-          comment: Build link ${{ steps.distribute.outputs.FIREBASE_CONSOLE_URI }}
+          comment: Build merchant example app ${{ steps.distribute.outputs.FIREBASE_CONSOLE_URI }}
