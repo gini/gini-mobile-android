@@ -24,6 +24,7 @@ import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import org.slf4j.LoggerFactory
@@ -74,7 +75,9 @@ class InstallAppBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetInstallAppBinding.inflate(inflater, container, false)
-        binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
+        if (!resources.isLandscapeOrientation()) {
+            binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
+        }
         return binding.root
     }
 
