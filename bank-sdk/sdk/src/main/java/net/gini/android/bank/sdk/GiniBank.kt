@@ -628,7 +628,7 @@ object GiniBank {
 
     /**
      *
-     *  Kills Bank sdk and stos Gini payment flow
+     *  Kills Bank sdk and stops Gini payment flow
      *  Use this with cautions
      *
      */
