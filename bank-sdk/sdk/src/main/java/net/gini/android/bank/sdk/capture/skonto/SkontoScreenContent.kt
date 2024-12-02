@@ -227,17 +227,21 @@ private fun ScreenReadyState(
     val imeState = rememberImeState()
     val activity = LocalView.current.context as? Activity
     val insets = ViewCompat.getRootWindowInsets(activity!!.window.decorView)
+    val textInputHeightPx = with(LocalDensity.current) { 8.dp.toPx() }
 
     //Enjoy your keyboard height
     val keyboardHeight = with(LocalDensity.current) {
         insets!!.getInsets(WindowInsetsCompat.Type.ime()).bottom.toDp()
     }
 
-   /* LaunchedEffect(key1 = imeState.value) {
+    LaunchedEffect(key1 = imeState.value) {
         if (imeState.value) {
-            scrollState.animateScrollTo(scrollState.maxValue, tween(300))
+            scrollState.animateScrollTo(
+                scrollState.value + textInputHeightPx.toInt(),
+                tween(300)
+            )
         }
-    }*/
+    }
 
     Log.d("AAAAAA", "$keyboardHeight")
 
