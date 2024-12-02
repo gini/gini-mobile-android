@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -19,8 +20,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -87,6 +90,7 @@ import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.ui.theme.typography.bold
+import net.gini.android.capture.util.compose.rememberImeState
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -214,7 +218,16 @@ private fun ScreenReadyState(
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
 ) {
     val scrollState = rememberScrollState()
-    Scaffold(modifier = modifier,
+    val imeState = rememberImeState()
+
+
+     LaunchedEffect(key1 = imeState.value) {
+         if (imeState.value) {
+             scrollState.animateScrollTo(scrollState.maxValue, tween(300))
+         }
+     }
+
+    Scaffold(modifier = modifier.fillMaxSize().imePadding(),
         containerColor = screenColorScheme.backgroundColor,
         topBar = {
             TopAppBar(
