@@ -233,11 +233,11 @@ private fun ScreenReadyState(
         insets!!.getInsets(WindowInsetsCompat.Type.ime()).bottom.toDp()
     }
 
-    LaunchedEffect(key1 = imeState.value) {
+   /* LaunchedEffect(key1 = imeState.value) {
         if (imeState.value) {
             scrollState.animateScrollTo(scrollState.maxValue, tween(300))
         }
-    }
+    }*/
 
     Log.d("AAAAAA", "$keyboardHeight")
 
