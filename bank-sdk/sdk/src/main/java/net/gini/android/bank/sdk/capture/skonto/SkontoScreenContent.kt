@@ -221,13 +221,13 @@ private fun ScreenReadyState(
     val imeState = rememberImeState()
 
 
-     LaunchedEffect(key1 = imeState.value) {
-         if (imeState.value) {
-             scrollState.animateScrollTo(scrollState.maxValue, tween(300))
-         }
-     }
+    LaunchedEffect(key1 = imeState.value) {
+        if (imeState.value) {
+            scrollState.animateScrollTo(scrollState.maxValue, tween(300))
+        }
+    }
 
-    Scaffold(modifier = modifier.fillMaxSize().imePadding(),
+    Scaffold(modifier = modifier,
         containerColor = screenColorScheme.backgroundColor,
         topBar = {
             TopAppBar(
@@ -255,7 +255,9 @@ private fun ScreenReadyState(
         Column(
             modifier = Modifier
                 .padding(it)
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
+                .fillMaxSize()
+                .imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Column(
