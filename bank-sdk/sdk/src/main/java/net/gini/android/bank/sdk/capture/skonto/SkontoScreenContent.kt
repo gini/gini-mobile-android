@@ -2,8 +2,10 @@
 
 package net.gini.android.bank.sdk.capture.skonto
 
+import android.app.Activity
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.icu.util.Calendar
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -23,7 +25,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -55,6 +56,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -63,6 +66,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
@@ -97,6 +102,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
 
 @Composable
 internal fun SkontoScreenContent(
@@ -219,13 +225,21 @@ private fun ScreenReadyState(
 ) {
     val scrollState = rememberScrollState()
     val imeState = rememberImeState()
+    val activity = LocalView.current.context as? Activity
+    val insets = ViewCompat.getRootWindowInsets(activity!!.window.decorView)
 
+    //Enjoy your keyboard height
+    val keyboardHeight = with(LocalDensity.current) {
+        insets!!.getInsets(WindowInsetsCompat.Type.ime()).bottom.toDp()
+    }
 
     LaunchedEffect(key1 = imeState.value) {
         if (imeState.value) {
             scrollState.animateScrollTo(scrollState.maxValue, tween(300))
         }
     }
+
+    Log.d("AAAAAA", "$keyboardHeight")
 
     Scaffold(modifier = modifier,
         containerColor = screenColorScheme.backgroundColor,
@@ -257,7 +271,7 @@ private fun ScreenReadyState(
                 .padding(it)
                 .verticalScroll(scrollState)
                 .fillMaxSize()
-                .imePadding(),
+                .padding(bottom = keyboardHeight),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Column(
