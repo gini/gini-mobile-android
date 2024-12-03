@@ -28,6 +28,7 @@ import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithG
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
 import net.gini.android.internal.payment.utils.extensions.hideKeyboard
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
+import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import net.gini.android.internal.payment.utils.setTextIfDifferent
@@ -35,6 +36,8 @@ import org.slf4j.LoggerFactory
 
 interface ReviewViewListener {
     fun onPaymentButtonTapped(paymentDetails: PaymentDetails)
+
+    fun onSelectBankButtonTapped()
 }
 class ReviewView(private val context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
@@ -48,6 +51,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         set(value) {
             field = value
             setEditableFields()
+            binding.gpsSelectBankLayout.isVisible = reviewComponent?.shouldShowBankSelectionButton() == true
         }
     var paymentDetails: PaymentDetails? = null
         set(value) {
@@ -68,8 +72,6 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                 reviewComponent?.isPaymentButtonEnabled?.collect { isEnabled ->
                     binding.payment.isEnabled = isEnabled
                     binding.payment.alpha = if (isEnabled) 1f else 0.4f
-                    binding.payment.text =
-                        if (!isEnabled) "" else context.getString(R.string.gps_pay_button)
                 }
             }
             launch {
@@ -94,7 +96,8 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             launch {
                 reviewComponent?.loadingFlow?.collect { isLoading ->
                     binding.paymentProgress.isVisible = isLoading
-                    binding.amountLayout.isEnabled = !isLoading && reviewComponent?.reviewConfig?.isAmountFieldEditable ?: false
+                    binding.amountLayout.isEnabled = !isLoading &&
+                            (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.AMOUNT) ?: false)
                 }
             }
         }
@@ -108,10 +111,14 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         }
 
         binding.gpsPaymentDetails.setOnClickListener { it.hideKeyboard() }
-        binding.payment.setOnClickListener {
+        binding.payment.setIntervalClickListener {
             it.hideKeyboard()
+            binding.root.clearFocus()
             reviewComponent?.paymentDetails?.value?.let { paymentDetails ->
-                listener?.onPaymentButtonTapped(paymentDetails)
+                val areFieldsValid = reviewComponent?.validatePaymentDetails(paymentDetails)
+                if (areFieldsValid == true) {
+                    listener?.onPaymentButtonTapped(paymentDetails)
+                }
             }
         }
     }
@@ -123,15 +130,20 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                     cornerRadius = resources.getDimension(R.dimen.gps_small_2)
                 }
 
-            binding.payment.setCompoundDrawablesWithIntrinsicBounds(
-                roundedDrawable,
-                null,
-                null,
-                null
-            )
+            if (reviewComponent?.shouldShowBankSelectionButton() == true) {
+                binding.gpsPaymentProviderAppIconHolder.gpsPaymentProviderIcon.setImageDrawable(roundedDrawable)
+                binding.gpsSelectBankButton.setOnClickListener { listener?.onSelectBankButtonTapped() }
+            } else {
+                binding.payment.setCompoundDrawablesWithIntrinsicBounds(
+                    roundedDrawable,
+                    null,
+                    null,
+                    null
+                )
 
-            // Adding negative icon padding in order to center the text on the button.
-            binding.payment.iconPadding = -roundedDrawable.intrinsicWidth
+                // Adding negative icon padding in order to center the text on the button.
+                binding.payment.iconPadding = -roundedDrawable.intrinsicWidth
+            }
         }
         binding.payment.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
         binding.payment.setTextColor(paymentProviderApp.colors.textColor)
@@ -172,7 +184,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                                     PaymentField.Recipient -> R.string.gps_error_input_recipient_empty
                                     PaymentField.Iban -> R.string.gps_error_input_iban_empty
                                     PaymentField.Amount -> R.string.gps_error_input_amount_empty
-                                    PaymentField.Purpose -> R.string.gps_error_input_purpose_empty
+                                    PaymentField.Purpose -> R.string.gps_error_input_reference_number_empty
                                 }
 
                                 ValidationMessage.InvalidIban -> R.string.gps_error_input_invalid_iban
@@ -202,10 +214,27 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     private fun setEditableFields() {
-        binding.iban.focusable = View.NOT_FOCUSABLE
-        binding.recipient.focusable = View.NOT_FOCUSABLE
-        binding.purpose.focusable = View.NOT_FOCUSABLE
-        binding.amount.focusable = if (reviewComponent?.reviewConfig?.isAmountFieldEditable == true) View.FOCUSABLE else View.NOT_FOCUSABLE
+        val editableFields = reviewComponent?.reviewConfig?.editableFields
+        binding.iban.focusable = if (editableFields?.contains(ReviewFields.IBAN) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
+        binding.recipient.focusable = if (editableFields?.contains(ReviewFields.RECIPIENT) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
+        binding.purpose.focusable = if (editableFields?.contains(ReviewFields.PURPOSE) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
+        binding.amount.focusable = if (editableFields?.contains(ReviewFields.AMOUNT) == true) {
+            View.FOCUSABLE
+        } else {
+            View.NOT_FOCUSABLE
+        }
     }
 
     private fun setDisabledIcon(text: String, textView:TextInputLayout) {
@@ -217,9 +246,18 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     private fun setDisabledIcons() {
-        setDisabledIcon(context.getString(R.string.gps_iban_hint), binding.ibanLayout)
-        setDisabledIcon(context.getString(R.string.gps_recipient_hint), binding.recipientLayout)
-        setDisabledIcon(context.getString(R.string.gps_purpose_hint), binding.purposeLayout)
+        if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.IBAN) == false) {
+            setDisabledIcon(context.getString(R.string.gps_iban_hint), binding.ibanLayout)
+            binding.iban.isEnabled = false
+        }
+        if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.RECIPIENT) == false) {
+            setDisabledIcon(context.getString(R.string.gps_recipient_hint), binding.recipientLayout)
+            binding.recipient.isEnabled = false
+        }
+        if (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.PURPOSE) == false) {
+            setDisabledIcon(context.getString(R.string.gps_reference_number_hint), binding.purposeLayout)
+            binding.purpose.isEnabled = false
+        }
     }
 
     private fun handleInputFocusChange(hasFocus: Boolean, textInputLayout: TextInputLayout) {
@@ -231,3 +269,4 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
 }
+enum class ReviewFields { RECIPIENT, IBAN, AMOUNT, PURPOSE }

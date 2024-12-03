@@ -24,6 +24,7 @@
     <dimen name="gps_large_80">80dp</dimen>
     <dimen name="gps_large_96">96dp</dimen>
     <dimen name="gps_large_100">100dp</dimen>
+    <dimen name="gps_large_208">208dp</dimen>
 
     <dimen name="gps_accessibility_min_height">44dp</dimen>
     <dimen name="gps_payment_component_height">0dp</dimen>

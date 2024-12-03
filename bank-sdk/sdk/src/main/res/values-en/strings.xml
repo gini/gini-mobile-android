@@ -42,6 +42,9 @@
     <string name="gbs_articles">Articles</string>
     <!-- region Skonto -->
     <string name="gbs_skonto_screen_title">Skonto discount</string>
+    <string name="gbs_skonto_screen_content_description_close">Close</string>
+    <string name="gbs_skonto_screen_content_description_help">Help</string>
+    <string name="gbs_skonto_screen_content_description_back">Back</string>
     <!--   region Section Invoice Scan -->
     <string name="gbs_skonto_section_invoice_preview_title">Invoice</string>
     <string name="gbs_skonto_invoice_section_preview_subtitle">Tap to view</string>
@@ -88,6 +91,7 @@
     <string name="gbs_skonto_help_footer_text">Take a photo of your invoice and the app will automatically calculate the Skonto discount. Just review the details, confirm, and enjoy the savings!</string>
     <!--   endregion -->
     <!--   region Skonto Invoice Preview -->
+    <string name="gbs_skonto_invoice_preview_content_description_close">Close</string>
     <string name="gbs_skonto_invoice_preview_title">Skonto discount details</string>
     <string name="gbs_skonto_invoice_preview_expire_date">Expiry date: %1$s</string>
     <string name="gbs_skonto_invoice_preview_final_amount">Final amount: %1$s</string>
@@ -107,6 +111,7 @@
     <string name="gbs_td_extraction_result_documents_section_menu_delete">Delete</string>
     <!--   endregion -->
     <!--   region Transaction Docs. Invoice Preview -->
+    <string name="gbs_td_invoice_preview_content_description_more">More</string>
     <string name="gbs_td_invoice_preview_info_text_amount">Amount to Pay: %1$s</string>
     <string name="gbs_td_invoice_preview_info_text_iban">IBAN: %1$s</string>
     <string name="gbs_td_invoice_preview_info_text_due_date">Invoice Due Date: %1$s</string>

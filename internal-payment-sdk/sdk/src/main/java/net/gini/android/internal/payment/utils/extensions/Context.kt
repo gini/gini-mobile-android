@@ -17,7 +17,7 @@ import java.util.Locale
 
 internal fun Context.wrappedWithGiniPaymentTheme(): Context = ContextThemeWrapper(this, R.style.GiniPaymentTheme)
 
-internal fun Context.wrappedWithGiniPaymentThemeAndLocale(locale: Locale? = null): Context =
+fun Context.wrappedWithGiniPaymentThemeAndLocale(locale: Locale? = null): Context =
     if (locale == null || locale.language.isEmpty()) {
         this.wrappedWithGiniPaymentTheme()
     } else {
@@ -50,7 +50,7 @@ internal fun Context.generateBitmapDrawableIcon(icon: ByteArray, iconSize: Int):
         }
 }
 
-internal fun Context.getFontScale() = resources.configuration.fontScale
+fun Context.getFontScale() = resources.configuration.fontScale
 
 fun Context.createShareWithPendingIntent(): PendingIntent = PendingIntent.getBroadcast(
     this, 123,

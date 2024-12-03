@@ -17,7 +17,7 @@ data class PaymentRequest(
     val status: Status,
 ) {
     enum class Status {
-        OPEN, PAID, INVALID
+        OPEN, PAID, PAID_ADJUSTED
     }
 }
 
@@ -32,6 +32,6 @@ internal fun PaymentRequestResponse.toPaymentRequest() = PaymentRequest(
     status = when (status.lowercase(Locale.ENGLISH)) {
         "open" -> PaymentRequest.Status.OPEN
         "paid" -> PaymentRequest.Status.PAID
-        else -> PaymentRequest.Status.INVALID
+        else -> PaymentRequest.Status.PAID_ADJUSTED
     }
 )

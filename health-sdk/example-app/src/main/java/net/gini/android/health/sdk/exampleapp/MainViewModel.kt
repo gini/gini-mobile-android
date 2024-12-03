@@ -8,10 +8,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
-import net.gini.android.health.sdk.paymentcomponent.PaymentComponentConfiguration
-import net.gini.android.health.sdk.util.GiniLocalization
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.internal.payment.api.model.PaymentRequest
+import net.gini.android.internal.payment.api.model.toPaymentRequest
+import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
+import net.gini.android.internal.payment.utils.GiniLocalization
 import java.io.File
 
 class MainViewModel(
@@ -19,10 +23,13 @@ class MainViewModel(
 ) : ViewModel() {
     private val _pages: MutableStateFlow<List<PagerAdapter.Page>> = MutableStateFlow(emptyList())
     val pages: StateFlow<List<PagerAdapter.Page>> = _pages
+    private val _paymentRequest = MutableStateFlow<PaymentRequest?>(null)
+    val paymentRequest: StateFlow<PaymentRequest?> = _paymentRequest
 
     private var currentIndex = 0
     private var currentFileUri: Uri? = null
     private var paymentComponentConfiguration : PaymentComponentConfiguration? = null
+    private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
 
     fun getNextPageUri(context: Context): Uri {
         val uriForFile = FileProvider.getUriForFile(
@@ -47,6 +54,16 @@ class MainViewModel(
         }
     }
 
+    fun getPaymentRequest(id: String) {
+        viewModelScope.launch {
+            val response = giniHealth.documentManager.getPaymentRequest(id)
+
+            if (response is Resource.Success) {
+                _paymentRequest.value = response.data.toPaymentRequest(id)
+            }
+        }
+    }
+
     fun setPaymentComponentConfiguration(config: PaymentComponentConfiguration) {
         paymentComponentConfiguration = config
     }
@@ -57,5 +74,11 @@ class MainViewModel(
         giniHealth.setSDKLanguage(localization, context)
     }
 
-    fun getGiniHealthLanguage(context: Context) = GiniHealth.getSDKLanguage(context)
+    fun getGiniHealthLanguage(context: Context) = giniHealth.getSDKLanguage(context)
+
+    fun getPaymentFlowConfiguration() = paymentFlowConfiguration
+
+    fun setPaymentFlowConfiguration(paymentFlowConfiguration: PaymentFlowConfiguration) {
+        this.paymentFlowConfiguration = paymentFlowConfiguration
+    }
 }

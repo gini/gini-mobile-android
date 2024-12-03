@@ -32,6 +32,7 @@ import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoSavedAmountTe
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
+import net.gini.android.bank.sdk.capture.util.safeNavigate
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
@@ -364,7 +365,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
             continueFlow()
             return
         }
-        binding.gbComposeView.setContent {
+        binding.gbsComposeView.setContent {
             GiniTheme {
                 if (!autoAttachDoc) {
                     AttachDocumentToTransactionDialog(onDismiss = {
@@ -420,8 +421,9 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     }
 
     override fun onEditLineItem(selectableLineItem: SelectableLineItem) {
-        findNavController().navigate(
-            DigitalInvoiceFragmentDirections.toDigitalInvoiceEditItemBottomSheetDialog(
+        safeNavigate(
+            navController = findNavController(),
+            navDirections = DigitalInvoiceFragmentDirections.toDigitalInvoiceEditItemBottomSheetDialog(
                 selectableLineItem
             )
         )

@@ -12,7 +12,6 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.configuration.ConfigurationFragment
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.health.sdk.exampleapp.invoices.ui.AppCompatThemeInvoicesActivity
@@ -20,6 +19,7 @@ import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
+import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         binding.importFile.setOnClickListener {
             if (useTestDocument) {
                 viewModel.setDocumentForReview(testDocumentId)
-                startActivity(ReviewActivity.getStartIntent(this, paymentComponentConfiguration = viewModel.getPaymentComponentConfiguration()))
+                startActivity(ReviewActivity.getStartIntent(this))
             } else {
                 importFile()
             }
@@ -67,7 +67,14 @@ class MainActivity : AppCompatActivity() {
                 UploadActivity.getStartIntent(
                     this@MainActivity,
                     viewModel.pages.value.map { it.uri },
-                    viewModel.getPaymentComponentConfiguration())
+                ).apply {
+                    viewModel.getPaymentComponentConfiguration()?.let {
+                        putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                    }
+                    viewModel.getPaymentFlowConfiguration()?.let {
+                        putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                    }
+                }
             )
         }
 
@@ -76,6 +83,9 @@ class MainActivity : AppCompatActivity() {
                 viewModel.getPaymentComponentConfiguration()?.let {
                     putExtra(PAYMENT_COMPONENT_CONFIG, it)
                 }
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                }
             })
         }
 
@@ -83,6 +93,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, AppCompatThemeInvoicesActivity::class.java).apply {
                 viewModel.getPaymentComponentConfiguration()?.let {
                     putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
                 }
             })
         }
@@ -94,7 +107,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        lifecycleScope.launchWhenStarted {
+            viewModel.paymentRequest.collect { paymentRequest ->
+                paymentRequest?.let {
+                    Toast.makeText(this@MainActivity, "Paymentrequest: ${paymentRequest.id} status is ${paymentRequest.status.name}", Toast.LENGTH_SHORT).show()
+                    SharedPreferencesUtil.saveStringToSharedPreferences(SharedPreferencesUtil.PAYMENTREQUEST_KEY, null, this@MainActivity)
+                }
+            }
+        }
+
         configureLogging()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        SharedPreferencesUtil.getStringFromSharedPreferences(SharedPreferencesUtil.PAYMENTREQUEST_KEY, this)?.let {
+            viewModel.getPaymentRequest(it)
+        }
     }
 
     private fun importFile() {
@@ -114,7 +144,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun importResult(uris: List<Uri>) {
         if (uris.isNotEmpty()) {
-            startActivity(UploadActivity.getStartIntent(this, uris, viewModel.getPaymentComponentConfiguration()))
+            startActivity(UploadActivity.getStartIntent(this, uris).apply {
+                viewModel.getPaymentComponentConfiguration()?.let {
+                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
+                }
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                }
+            })
         } else {
             Toast.makeText(this, "No document received", Toast.LENGTH_LONG).show()
         }
@@ -145,5 +182,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
         val PAYMENT_COMPONENT_CONFIG = "payment_component_config"
+        const val PAYMENT_FLOW_CONFIGURATION = "payment_flow_config"
     }
 }

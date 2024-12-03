@@ -13,7 +13,7 @@ class DecimalInputVisualTransformation(
 ) : VisualTransformation {
 
     override fun filter(text: AnnotatedString): TransformedText {
-        val source = text.text
+        val source = text.text.filter { it != ' ' && it != ' ' }
         var formatted = decimalFormatter.formatDigits(source).trim()
         if (isCurrencyCodeDisplay) {
             formatted += " $currencyCode"

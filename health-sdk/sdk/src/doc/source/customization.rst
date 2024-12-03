@@ -26,12 +26,12 @@ single place. They are then consistently applied on all screens.
 Theme
 +++++
 
-The theme style is based on Material Design v3 and is named ``GiniHealthTheme``. To override the theme in your
-application, use ``Root.GiniHealthTheme`` as the parent:
+We use one theme within the SDK: ``GiniPaymentTheme``. The theme style is based on Material Design v3. To override the theme in your
+application, use ``Root.GiniPaymentTheme`` as the parent:
 
 .. code-block:: xml
 
-    <style name="GiniHealthTheme" parent="Root.GiniHealthTheme">
+    <style name="GiniPaymentTheme" parent="Root.GiniPaymentTheme">
       (...)
     </style>
 
@@ -43,9 +43,11 @@ root style as the parent, for example:
 
 .. code-block:: xml
 
-    <style name="GiniHealthTheme.Widget.Button.OutlinedButton" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton">
+    <style name="GiniPaymentTheme.Widget.Button.OutlinedButton" parent="Root.GiniPaymentTheme.Widget.Button.OutlinedButton">
       (...)
     </style>
+
+Please refer to the customization guide to check what style name applies to which widget.
 
 .. note::
 
@@ -65,24 +67,24 @@ Colors
 ~~~~~~
 
 We provide a global color palette which you are free to override. The custom colors are then applied to all screens.
-Customization of colors is done via overriding of color resources. For example to override the color ``ghs_accent_01`` add
+Customization of colors is done via overriding of color resources. For example to override the color ``gps_accent_01`` add
 the following snippet to one of your resources XML file (e.g, ``colors.xml``):
 
 .. code-block:: xml
 
-    <color name="ghs_accent_01">#424242</color>
+    <color name="gps_accent_01">#424242</color>
 
 .. note::
 
-    If you overridde the ``GiniHealthTheme``, the theme colors you set there override the color palette customization.
+    If you override the ``GiniPaymentTheme``, the theme colors you set there override the color palette customization.
 
 Find the names of the color resources in the color palette (you can also view it in Figma `here
-<https://www.figma.com/file/AJTss4k0M6R2OxH0VQepdP/Android-Gini-Health-SDK-3.0.0-UI-Customisation?type=design&node-id=8502%3A357&mode=design&t=A1pTQWjJWSBUR6Zi-1>`_): 
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=8502-357&t=a2nGT46mNSzeqjZ8-4>`_):
 
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FAJTss4k0M6R2OxH0VQepdP%2FAndroid-Gini-Health-SDK-3.0.0-UI-Customisation%3Ftype%3Ddesign%26node-id%3D8502%253A357%26mode%3Ddesign%26t%3DA1pTQWjJWSBUR6Zi-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=8502-357&t=a2nGT46mNSzeqjZ8-4"
     allowfullscreen></iframe>
 
 |
@@ -115,24 +117,24 @@ application, use the root style as the parent, for example:
 
 .. code-block:: xml
 
-    <style name="GiniHealthTheme.Typography.Body1" parent="Root.GiniHealthTheme.Typography.Body1">
+    <style name="GiniPaymentTheme.Typography.Body1" parent="Root.GiniPaymentTheme.Typography.Body1">
        (...)
     </style>
 
 .. note::
 
-    If you override the ``GiniHealthTheme``, the text appearances you set there override the typography customization. The
+    If you override the ``GiniPaymentTheme``, the text appearances you set there override the typography customization. The
     same applies to the override of widget styles where you set a custom text appearance.
 
     We use ``android:lineSpacingMultiplier`` in combination with ``android:textSize`` to support resizing text for accessibility and avoid overlapping text.
 
 Preview our typography and find the names of the style resources (you can also view it in Figma `here
-<https://www.figma.com/file/AJTss4k0M6R2OxH0VQepdP/Android-Gini-Health-SDK-3.0.0-UI-Customisation?type=design&node-id=8503%3A491&mode=design&t=zZkiuvx3neNm8Tmv-1>`_):
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=8503-491&t=a2nGT46mNSzeqjZ8-4>`_):
 
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FAJTss4k0M6R2OxH0VQepdP%2FAndroid-Gini-Health-SDK-3.0.0-UI-Customisation%3Ftype%3Ddesign%26node-id%3D8503%253A491%26mode%3Ddesign%26t%3DzZkiuvx3neNm8Tmv-1"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=8503-491&t=a2nGT46mNSzeqjZ8-4"
     allowfullscreen></iframe>
 
 |
@@ -156,7 +158,7 @@ Payment Component
 ~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8663-1324&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19152&t=a2nGT46mNSzeqjZ8-4>`_.
 
 .. note::
 
@@ -164,11 +166,11 @@ You can also view the UI customisation guide in Figma `here
 
 .. note::
 
-  To change the paddings for the gray bank selection button (the one which shows the bank icon) you can override the ``GiniHealthTheme.Widget.Button.PaymentProviderSelector`` style:
+  To change the paddings for the gray bank selection button (the one which shows the bank icon) you can override the ``GiniPaymentTheme.Widget.Button.PaymentProviderSelector`` style:
 
   .. code-block:: xml
 
-      <style name="GiniHealthTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniHealthTheme.Widget.Button.PaymentProviderSelector">
+      <style name="GiniPaymentTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniPaymentTheme.Widget.Button.PaymentProviderSelector">
           <item name="android:paddingStart">5dp</item>
           <item name="android:paddingEnd">5dp</item>
       </style>
@@ -176,7 +178,7 @@ You can also view the UI customisation guide in Figma `here
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8663-1324&mode=design&t=OX3i9T5ItG0jIln0-4"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19152&t=a2nGT46mNSzeqjZ8-4"
     allowfullscreen></iframe>
 
 |
@@ -185,7 +187,7 @@ Bank Selection Bottom Sheet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8794-1437&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19234&t=a2nGT46mNSzeqjZ8-4>`_.
 
 .. note::
 
@@ -194,7 +196,7 @@ You can also view the UI customisation guide in Figma `here
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8794-1437&mode=design&t=OX3i9T5ItG0jIln0-4"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19234&t=a2nGT46mNSzeqjZ8-4"
     allowfullscreen></iframe>
 
 |
@@ -203,11 +205,11 @@ Payment Feature Info Screen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8865-1784&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19236&t=a2nGT46mNSzeqjZ8-4>`_.
 
 .. warning::
 
-    You need to override the ``ghs_privacy_policy_link_url`` string resource to provide a link to your company's privacy
+    You need to override the ``gps_privacy_policy_link_url`` string resource to provide a link to your company's privacy
     policy page. This link will be shown to users in the answer to the "Who or what is Gini?" question.
 
 .. note::
@@ -217,19 +219,19 @@ You can also view the UI customisation guide in Figma `here
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8865-1784&mode=design&t=OX3i9T5ItG0jIln0-4"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19236&t=a2nGT46mNSzeqjZ8-4"
     allowfullscreen></iframe>
 
 Payment Review Screen
 ~~~~~~~~~~~~~~~~~~~~~
 
 You can also view the UI customisation guide in Figma `here
-<https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8856-2345&mode=design&t=OX3i9T5ItG0jIln0-4>`_.
+<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19238&t=a2nGT46mNSzeqjZ8-4>`_.
 
 .. note::
 
     The close button in the top right corner is disabled by default. You can enable it by setting the
-    ``showCloseButton`` to ``true`` when creating a ``ReviewConfiguration``.
+    ``showCloseButtonOnReviewFragment`` to ``true`` when creating a ``PaymentFlowConfiguration``.
 
 .. note::
 
@@ -238,6 +240,6 @@ You can also view the UI customisation guide in Figma `here
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/kI24VceZD7WzNpEkE6f0fX/Android-Gini-Health-SDK-4.1-UI-Customisation?type=design&node-id=8856-2345&mode=design&t=OX3i9T5ItG0jIln0-4"
+    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=12517-19238&t=a2nGT46mNSzeqjZ8-4"
     allowfullscreen></iframe>
 

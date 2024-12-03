@@ -1,4 +1,8 @@
-import net.gini.gradle.*
+
+import net.gini.gradle.CodeAnalysisPlugin
+import net.gini.gradle.DokkaPlugin
+import net.gini.gradle.PublishToMavenPlugin
+import net.gini.gradle.SBOMPlugin
 import net.gini.gradle.extensions.apiProjectDependencyForSBOM
 import org.jetbrains.dokka.gradle.DokkaCollectorTask
 
@@ -99,11 +103,11 @@ tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 }
 
 dependencies {
-    val healthApiLibrary = project(":health-api-library:library")
+    val internalPaymentLibrary = project(":internal-payment-sdk:sdk")
     if (properties["createSBOM"] == "true") {
-        apiProjectDependencyForSBOM(healthApiLibrary)
+        apiProjectDependencyForSBOM(internalPaymentLibrary)
     } else {
-        api(healthApiLibrary)
+        api(internalPaymentLibrary)
     }
 
     api(libs.slf4j.api)

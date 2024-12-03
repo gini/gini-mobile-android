@@ -1,7 +1,6 @@
 package net.gini.android.merchant.sdk.integratedFlow
 
 import android.content.Context
-import androidx.lifecycle.viewModelScope
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
@@ -12,9 +11,10 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
+import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentDetails
@@ -44,6 +44,8 @@ class PaymentFlowViewModelTest {
     private var giniMerchant: GiniMerchant? = null
     private var paymentComponent: PaymentComponent? = null
     private var giniInternalPaymentModule: GiniInternalPaymentModule? = null
+    private var documentManager: HealthApiDocumentManager? = null
+    private var giniHealthApi: GiniHealthAPI? = null
     private var context: Context? = null
 
     private var initialPaymentProviderApp =  PaymentProviderApp(
@@ -86,9 +88,14 @@ class PaymentFlowViewModelTest {
         paymentComponent = mockk(relaxed = true)
         giniInternalPaymentModule = mockk(relaxed = true)
 
+        documentManager = mockk(relaxed = true)
+        giniHealthApi = mockk(relaxed = true)
+        every { giniHealthApi!!.documentManager } returns documentManager!!
+
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(mockk())
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.AppSelected(initialPaymentProviderApp))
         every { giniInternalPaymentModule!!.paymentComponent } returns paymentComponent!!
+        every { giniInternalPaymentModule!!.giniHealthAPI } returns giniHealthApi!!
         every { giniMerchant!!.giniInternalPaymentModule } returns giniInternalPaymentModule!!
     }
 
@@ -214,7 +221,7 @@ class PaymentFlowViewModelTest {
             giniMerchant = giniMerchant!!,
         )
 
-        coEvery { giniMerchant!!.giniInternalPaymentModule.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.INVALID) }
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED) }
 
         val paymentRequest = viewModel.getPaymentRequest()
         assertThat(paymentRequest.id).isEqualTo("1234")
@@ -229,32 +236,10 @@ class PaymentFlowViewModelTest {
         )
         val byteArray = byteArrayOf()
 
-        coEvery { giniMerchant!!.giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument("1234") } coAnswers { Resource.Success(byteArray)}
+        coEvery { documentManager!!.getPaymentRequestDocument("1234") } coAnswers { Resource.Success(byteArray)}
 
         val document = viewModel.getPaymentRequestDocument(PaymentRequest("1234", "", "", "", "", "", "", "", PaymentRequest.Status.OPEN))
         assertThat(document.data).isEqualTo(byteArray)
-    }
-
-    @Test
-    fun `increments 'Open With' counter`() = runTest {
-        // Given
-        val paymentProviderApp = mockk<PaymentProviderApp>()
-        every { paymentProviderApp.paymentProvider.id } returns "123"
-
-        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
-
-        val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant!!,
-        )
-
-        // When
-        viewModel.incrementOpenWithCounter(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
-
-        // Then
-        coVerify { giniInternalPaymentModule!!.incrementCountForPaymentProviderId("123") }
     }
 
     @Test
@@ -290,21 +275,19 @@ class PaymentFlowViewModelTest {
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN) }
+
         val viewModel = PaymentFlowViewModel(
             paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
         )
 
-        viewModel.paymentNextStep.test {
-            // When
-            viewModel.onPaymentButtonTapped(context!!.externalCacheDir)
-            val nextStep = awaitItem()
+        // When
+        viewModel.onPaymentButtonTapped(context!!.externalCacheDir)
 
-            // Then
-            assertThat(nextStep).isEqualTo(PaymentNextStep.ShowOpenWithSheet)
-            cancelAndConsumeRemainingEvents()
-        }
+        // Then
+        coVerify { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) }
     }
 
     @Test
@@ -314,7 +297,7 @@ class PaymentFlowViewModelTest {
         every { paymentProviderApp.paymentProvider.gpcSupported() } returns false
         every { paymentProviderApp.paymentProvider.id } returns "123"
 
-        coEvery { giniInternalPaymentModule!!.getLiveCountForPaymentProviderId(any()) } returns flowOf(3)
+        coEvery { giniInternalPaymentModule!!.giniHealthAPI.documentManager.getPaymentRequestDocument(any()) } coAnswers { mockk(relaxed = true) }
 
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
@@ -324,7 +307,6 @@ class PaymentFlowViewModelTest {
             paymentFlowConfiguration = null,
             giniMerchant = giniMerchant!!,
         )
-        viewModel.startObservingOpenWithCount(viewModel.viewModelScope, paymentProviderApp.paymentProvider.id)
 
         viewModel.paymentNextStep.test {
             // When

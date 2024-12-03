@@ -15,7 +15,7 @@ data class PaymentRequest(
     val status: Status,
 ) {
     enum class Status {
-        OPEN, PAID, INVALID
+        OPEN, PAID, PAID_ADJUSTED
     }
 }
 
@@ -33,6 +33,6 @@ fun net.gini.android.core.api.models.PaymentRequest.toPaymentRequest(
     status = when (status) {
         net.gini.android.core.api.models.PaymentRequest.Status.OPEN -> PaymentRequest.Status.OPEN
         net.gini.android.core.api.models.PaymentRequest.Status.PAID -> PaymentRequest.Status.PAID
-        net.gini.android.core.api.models.PaymentRequest.Status.INVALID -> PaymentRequest.Status.INVALID
+        else -> PaymentRequest.Status.PAID_ADJUSTED
     }
 )

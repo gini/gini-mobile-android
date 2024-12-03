@@ -20,7 +20,8 @@ import net.gini.android.internal.payment.databinding.GpsViewPaymentComponentBind
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.setBackgroundTint
-import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
+import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import org.slf4j.LoggerFactory
 import kotlin.coroutines.CoroutineContext
 
@@ -56,27 +57,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         set(value) {
             field = value
             initViews()
-        }
-
-    /**
-     * Sets the payable state of the [PaymentComponentView].
-     * If `true`, the view will be shown, otherwise it will be hidden.
-     */
-
-    var isPayable: Boolean = false
-        set(isPayable) {
-            field = isPayable
-            if (isPayable) {
-                show()
-            } else {
-                hide()
-            }
-        }
-
-    private var isReturning: Boolean = false
-        set(isReturning) {
-            field = isReturning
-            changeLabelsVisibilityIfNeeded()
+            addButtonInputHandlers()
         }
 
     internal var coroutineContext: CoroutineContext = Dispatchers.Main
@@ -91,10 +72,14 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     var reviewFragmentWillBeShown: Boolean = false
 
+    var dismissListener: ButtonClickListener? = null
+
     private val binding = GpsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()), this)
-    private lateinit var selectBankButton: Button
-    private lateinit var payInvoiceButton: Button
+    @VisibleForTesting
+    internal lateinit var payInvoiceButton: Button
     private lateinit var paymentProviderAppIconHolder: GpsPaymentProviderIconHolderBinding
+    @VisibleForTesting
+    internal lateinit var selectBankButton: Button
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -103,19 +88,26 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             LOG.debug("Creating coroutine scope")
             coroutineScope = CoroutineScope(coroutineContext)
         }
-        if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) {
-            binding.gpsTwoRowsBankSelection.isVisible = true
-            binding.gpsSingleRowBankSelection.root.visibility = View.GONE
-        } else {
-            binding.gpsSingleRowBankSelection.root.visibility = View.VISIBLE
-            binding.gpsTwoRowsBankSelection.visibility = View.GONE
-        }
         checkPaymentComponentHeight()
         coroutineScope?.launch {
             if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
                 return@launch
             }
+            if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) {
+                binding.gpsTwoRowsBankSelection.isVisible = true
+                binding.gpsSingleRowBankSelection.root.visibility = View.GONE
+            } else {
+                binding.gpsSingleRowBankSelection.root.visibility = View.VISIBLE
+                binding.gpsTwoRowsBankSelection.visibility = View.GONE
+            }
+            binding.gpsPoweredByGini.visibility =
+                if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true)
+                {
+                    VISIBLE
+                } else {
+                    GONE
+                }
             paymentComponent?.checkReturningUser()
             paymentComponent?.let { pc ->
                 LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
@@ -153,12 +145,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                         }
                     }
                 }
-                launch {
-                    pc.returningUserFlow.collect { isReturning ->
-                        binding.gpsMoreInformation.visibility = if (isReturning) View.GONE else View.VISIBLE
-                        binding.gpsSelectBankLabel.visibility = if (isReturning) View.GONE else View.VISIBLE
-                    }
-                }
             }
         }
     }
@@ -168,7 +154,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
      * This should be called before the view is reused.
      */
     fun prepareForReuse() {
-        isPayable = false
         documentId = null
         disablePayInvoiceButton()
         restorePayInvoiceButtonDefaultState()
@@ -182,9 +167,17 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         }
     }
 
+    private fun checkReturningUser() {
+        if (paymentComponent?.shouldCheckReturningUser == true) {
+            val isReturning = paymentComponent?.checkReturningUser() == true
+            binding.gpsMoreInformation.visibility = if (isReturning) View.GONE else View.VISIBLE
+            binding.gpsSelectBankLabel.visibility = if (isReturning) View.GONE else View.VISIBLE
+        }
+    }
+
     private fun restoreBankPickerDefaultState() {
         LOG.debug("Restoring bank picker default state")
-        context?.wrappedWithGiniPaymentTheme()?.let { context ->
+        context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             payInvoiceButton.visibility = View.GONE
             paymentProviderAppIconHolder.root.visibility = View.GONE
             selectBankButton.text = context.getString(R.string.gps_select_bank)
@@ -199,7 +192,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun customizeBankPicker(paymentProviderApp: PaymentProviderApp) {
         LOG.debug("Customizing bank picker for payment provider app: {}", paymentProviderApp.name)
-        context?.wrappedWithGiniPaymentTheme()?.let { context ->
+        context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             selectBankButton.apply {
                 text = if (paymentComponent?.bankPickerRows == BankPickerRows.SINGLE) "" else paymentProviderApp.name
                 setCompoundDrawablesWithIntrinsicBounds(
@@ -249,7 +242,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     private fun restorePayInvoiceButtonDefaultState() {
         LOG.debug("Restoring pay invoice button default state")
-        context?.wrappedWithGiniPaymentTheme()?.let { context ->
+        context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             payInvoiceButton.apply {
                 setBackgroundTint(
                     ContextCompat.getColor(
@@ -267,25 +260,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         }
     }
 
-    private fun show() {
-        LOG.debug("Showing payment component")
-        binding.gpsPoweredByGini.visibility =
-            if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true) VISIBLE else GONE
-        changeLabelsVisibilityIfNeeded()
-    }
-
-    private fun hide() {
-        LOG.debug("Hiding payment component")
-        binding.gpsSelectBankLabel.visibility = GONE
-        binding.gpsPoweredByGini.visibility = GONE
-        binding.gpsMoreInformation.visibility = GONE
-    }
-
-    private fun changeLabelsVisibilityIfNeeded() {
-        binding.gpsSelectBankLabel.visibility = if (isReturning || !isPayable) View.GONE else View.VISIBLE
-        binding.gpsMoreInformation.visibility = if (isReturning || !isPayable) View.GONE else View.VISIBLE
-    }
-
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         LOG.debug("onDetachedFromWindow")
@@ -294,20 +268,61 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     private fun initViews() {
-        selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsSelectBankButton else binding.gpsSingleRowBankSelection.gpsSelectBankButton
-        payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
-        paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
+        context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
+            selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsSelectBankButton else binding.gpsSingleRowBankSelection.gpsSelectBankButton
+            payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
+            paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
 
-        payInvoiceButton.text = if (reviewFragmentWillBeShown) resources.getString(R.string.gps_continue_to_overview) else resources.getString(R.string.gps_pay_button)
+            payInvoiceButton.text =
+                if (reviewFragmentWillBeShown) context.getString(R.string.gps_continue_to_overview)
+                else context.getString(R.string.gps_pay_button)
+        }
     }
 
     fun getMoreInformationLabel() = binding.gpsMoreInformation
 
-    fun getPayInvoiceButton() = payInvoiceButton
-
     fun getBankPickerButton() = selectBankButton
+
+    private fun addButtonInputHandlers() {
+        selectBankButton.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: " +
+                        "PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            paymentComponent?.listener?.onBankPickerClicked()
+            dismissListener?.onButtonClick(Buttons.SELECT_BANK)
+        }
+        payInvoiceButton.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: " +
+                        "PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            coroutineScope?.launch {
+                paymentComponent?.onPayInvoiceClicked(documentId ?: "")
+                dismissListener?.onButtonClick(Buttons.PAY_INVOICE)
+            }
+        }
+        binding.gpsMoreInformation.setIntervalClickListener {
+            if (paymentComponent == null) {
+                LOG.warn("Cannot call PaymentComponent's listener: " +
+                        "PaymentComponent must be set before showing the PaymentComponentView")
+            }
+            paymentComponent?.listener?.onMoreInformationClicked()
+            dismissListener?.onButtonClick(Buttons.MORE_INFORMATION)
+        }
+    }
 
     private companion object {
         private val LOG = LoggerFactory.getLogger(PaymentComponentView::class.java)
+    }
+
+    interface ButtonClickListener {
+        fun onButtonClick(button: Buttons)
+    }
+
+    enum class Buttons {
+        MORE_INFORMATION,
+        PAY_INVOICE,
+        SELECT_BANK
     }
 }

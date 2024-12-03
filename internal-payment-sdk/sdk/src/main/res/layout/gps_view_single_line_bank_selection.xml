@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="@id/gps_select_bank_button"
         />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/gps_select_bank_button"
         style="@style/GiniPaymentTheme.Widget.Button.PaymentProviderSelector"
         android:layout_width="0dp"
@@ -42,7 +42,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/gps_pay_invoice_button"
         style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"
         android:layout_width="0dp"

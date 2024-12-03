@@ -3,7 +3,7 @@
 
     <!-- region Theme -->
 
-    <!-- Override this to change the theme for the Merchant SDK -->
+    <!-- Override this to change the theme for the SDKs -->
     <style name="Root.GiniPaymentTheme" parent="Theme.Material3.DayNight">
         <item name="colorPrimary">@color/gps_accent_01</item>
         <item name="colorPrimaryDark">@color/gps_light_02</item>
@@ -134,7 +134,6 @@
     </style>
     <style name="GiniPaymentTheme.Widget.RoundShapeableImageView.Corners" parent="Root.GiniPaymentTheme.Widget.RoundShapeableImageView.Corners"/>
 
-
     <style name="Root.GiniPaymentTheme.Widget.Button.TransparentBackground" parent="Root.GiniPaymentTheme.Widget.Button.UnelevatedButton">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:textColor">@color/gps_bank_selector_button_color</item>
@@ -177,17 +176,9 @@
         <item name="android:singleLine">true</item>
         <item name="android:background">@drawable/gps_payment_input_edit_text_background</item>
         <item name="android:textAppearance">@style/GiniPaymentTheme.Typography.Body1</item>
-        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:textColor">@color/gps_edit_text_color</item>
     </style>
     <style name="GiniPaymentTheme.PaymentInputEditTextStyle" parent="Root.GiniPaymentTheme.PaymentInputEditTextStyle"/>
-
-    <style name="Root.GiniPaymentTheme.DisabledPaymentInputEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
-        <item name="android:singleLine">true</item>
-        <item name="android:background">@drawable/gps_payment_input_edit_text_background</item>
-        <item name="android:textAppearance">@style/GiniPaymentTheme.Typography.Body1</item>
-        <item name="android:textColor">@color/gps_disabled_field_text_color</item>
-    </style>
-    <style name="GiniPaymentTheme.DisabledPaymentInputEditTextStyle" parent="Root.GiniPaymentTheme.DisabledPaymentInputEditTextStyle"/>
 
     <style name="Root.GiniPaymentTheme.PageErrorText">
         <item name="android:textColor">@color/gps_dark_07</item>
@@ -208,7 +199,7 @@
     </style>
 
     <!-- Style for the progress indicator that is displayed on top of the Pay button in ReviewFragment -->
-    <style name="GiniMerchant.PaymentButtonProgressStyle" parent="Root.GiniPaymentTheme.PaymentButtonProgressStyle" />
+    <style name="GiniPaymentTheme.PaymentButtonProgressStyle" parent="Root.GiniPaymentTheme.PaymentButtonProgressStyle" />
 
     <style name="Root.GiniPaymentTheme.CloseButtonStyle" parent="Widget.AppCompat.ImageButton">
         <item name="android:minWidth">@dimen/gps_large_50</item>

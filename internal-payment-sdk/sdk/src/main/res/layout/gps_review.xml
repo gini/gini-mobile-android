@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/gps_medium"
         android:nextFocusForward="@id/iban_layout"
+        android:hint="@string/gps_recipient_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +27,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/recipient"
-            style="@style/GiniPaymentTheme.DisabledPaymentInputEditTextStyle"
+            style="@style/GiniPaymentTheme.PaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="@dimen/gps_large_28"
@@ -43,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/gps_medium"
         android:paddingTop="@dimen/gps_medium"
+        android:hint="@string/gps_iban_hint"
         app:layout_constraintEnd_toStartOf="@id/amount_layout"
         app:layout_constraintHorizontal_weight="@dimen/gps_float_0.7"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +52,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/iban"
-            style="@style/GiniPaymentTheme.DisabledPaymentInputEditTextStyle"
+            style="@style/GiniPaymentTheme.PaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="@dimen/gps_large_28"
@@ -99,6 +101,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/gps_medium"
+        android:hint="@string/gps_reference_number_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iban_amount_barrier_bottom"
@@ -106,7 +109,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/purpose"
-            style="@style/GiniPaymentTheme.DisabledPaymentInputEditTextStyle"
+            style="@style/GiniPaymentTheme.PaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="@dimen/gps_large_28"
@@ -114,6 +117,49 @@
             android:paddingStart="@dimen/gps_medium_12"
             android:paddingEnd="@dimen/gps_zero" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gps_select_bank_layout"
+        android:paddingEnd="@dimen/gps_medium"
+        app:layout_constraintTop_toTopOf="@id/payment"
+        >
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/gps_background_view"
+            android:background="@drawable/gps_bordered_background"
+            app:layout_constraintStart_toStartOf="@id/gps_select_bank_button"
+            app:layout_constraintEnd_toEndOf="@id/gps_select_bank_button"
+            app:layout_constraintTop_toTopOf="@id/gps_select_bank_button"
+            app:layout_constraintBottom_toBottomOf="@id/gps_select_bank_button"/>
+
+        <include android:id="@+id/gps_payment_provider_app_icon_holder"
+            layout="@layout/gps_payment_provider_icon_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/gps_medium"
+            app:layout_constraintStart_toStartOf="@id/gps_select_bank_button"
+            app:layout_constraintTop_toTopOf="@id/gps_select_bank_button"
+            app:layout_constraintBottom_toBottomOf="@id/gps_select_bank_button"
+            />
+
+        <Button
+            android:id="@+id/gps_select_bank_button"
+            style="@style/GiniPaymentTheme.Widget.Button.PaymentProviderSelector"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:drawableRight="@drawable/gps_chevron_down_icon"
+            android:clickable="false"
+            android:gravity="start|center_vertical"
+            android:paddingHorizontal="@dimen/gps_large"
+            android:contentDescription="@string/gps_select_bank_content_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/gps_pay_invoice_button"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/payment"
@@ -124,13 +170,14 @@
         android:enabled="false"
         android:text="@string/gps_pay_button"
         android:gravity="center"
+        app:layout_constraintHorizontal_weight="2.8"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/purpose_layout" />
+        app:layout_constraintTop_toBottomOf="@id/purpose_layout"
+        app:layout_constraintStart_toEndOf="@id/gps_select_bank_layout" />
 
     <ProgressBar
         android:id="@+id/payment_progress"
-        style="@style/GiniMerchant.PaymentButtonProgressStyle"
+        style="@style/GiniPaymentTheme.PaymentButtonProgressStyle"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:padding="@dimen/gps_medium"

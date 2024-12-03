@@ -20,19 +20,18 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="colorAccent">?attr/colorPrimary</item>
-        <item name="alertDialogTheme">@style/GiniHealthTheme.ThemeOverlay.Dialog.Alert</item>
+        <item name="alertDialogTheme">@style/GiniPaymentTheme.ThemeOverlay.Dialog.Alert</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
-        <item name="bottomSheetDialogTheme">@style/GiniHealthTheme.ThemeOverlay.BottomSheetDialog</item>
-        <item name="textAppearanceHeadline1">@style/GiniHealthTheme.Typography.Headline1</item>
-        <item name="textAppearanceHeadline2">@style/GiniHealthTheme.Typography.Headline2</item>
-        <item name="textAppearanceHeadline3">@style/GiniHealthTheme.Typography.Headline3</item>
-        <item name="textAppearanceBody1">@style/GiniHealthTheme.Typography.Body1</item>
-        <item name="textAppearanceBody2">@style/GiniHealthTheme.Typography.Body2</item>
-        <item name="textAppearanceSubtitle1">@style/GiniHealthTheme.Typography.Subtitle1</item>
-        <item name="textAppearanceSubtitle2">@style/GiniHealthTheme.Typography.Subtitle2</item>
-        <item name="textAppearanceButton">@style/GiniHealthTheme.Typography.Button</item>
-        <item name="textAppearanceCaption">@style/GiniHealthTheme.Typography.Caption1</item>
-        <item name="textAppearanceOverline">@style/GiniHealthTheme.Typography.Caption2</item>
+        <item name="textAppearanceHeadline1">@style/GiniPaymentTheme.Typography.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/GiniPaymentTheme.Typography.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/GiniPaymentTheme.Typography.Headline3</item>
+        <item name="textAppearanceBody1">@style/GiniPaymentTheme.Typography.Body1</item>
+        <item name="textAppearanceBody2">@style/GiniPaymentTheme.Typography.Body2</item>
+        <item name="textAppearanceSubtitle1">@style/GiniPaymentTheme.Typography.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/GiniPaymentTheme.Typography.Subtitle2</item>
+        <item name="textAppearanceButton">@style/GiniPaymentTheme.Typography.Button</item>
+        <item name="textAppearanceCaption">@style/GiniPaymentTheme.Typography.Caption1</item>
+        <item name="textAppearanceOverline">@style/GiniPaymentTheme.Typography.Caption2</item>
         <item name="textAppearanceDisplaySmall">?attr/textAppearanceHeadline1</item>
         <item name="textAppearanceHeadlineLarge">?attr/textAppearanceHeadline2</item>
         <item name="textAppearanceHeadlineMedium">?attr/textAppearanceHeadline3</item>
@@ -45,199 +44,18 @@
         <item name="textAppearanceBodySmall">?attr/textAppearanceCaption</item>
         <item name="textAppearanceLabelLarge">?attr/textAppearanceButton</item>
         <item name="textAppearanceLabelMedium">?attr/textAppearanceOverline</item>
-        <item name="snackbarStyle">@style/GiniHealthTheme.Widget.Snackbar</item>
-        <item name="snackbarButtonStyle">@style/GiniHealthTheme.Widget.Snackbar.Button</item>
-        <item name="snackbarTextViewStyle">@style/GiniHealthTheme.Widget.Snackbar.TextView</item>
+        <item name="snackbarStyle">@style/GiniPaymentTheme.Widget.Snackbar</item>
+        <item name="snackbarButtonStyle">@style/GiniPaymentTheme.Widget.Snackbar.Button</item>
+        <item name="snackbarTextViewStyle">@style/GiniPaymentTheme.Widget.Snackbar.TextView</item>
     </style>
-    <style name="GiniHealthTheme" parent="Root.GiniHealthTheme"/>
-
-    <style name="GiniHealthTheme.ThemeOverlay.Dialog.Alert" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="colorPrimary">?attr/colorPrimary</item>
-    </style>
-
     <!-- endregion -->
-
-    <!-- region Widgets -->
-
-    <style name="Root.GiniHealthTheme.Widget.Button.UnelevatedButton" parent="Widget.Material3.Button.UnelevatedButton">
-        <item name="cornerRadius">@dimen/ghs_small</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:autoSizeTextType">uniform</item>
-        <item name="android:autoSizeMaxTextSize">16sp</item>
-        <item name="android:minHeight">@dimen/ghs_large_56</item>
-        <item name="android:insetTop">@dimen/ghs_zero</item>
-        <item name="android:insetBottom">@dimen/ghs_zero</item>
-        <item name="android:backgroundTint">@color/ghs_unelevated_button_background</item>
-        <item name="android:textColor">@color/ghs_unelevated_button_text</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Button.UnelevatedButton" parent="Root.GiniHealthTheme.Widget.Button.UnelevatedButton"/>
-
-    <style name="Root.GiniHealthTheme.Widget.Button.IconButton" parent="Widget.Material3.Button.IconButton">
-        <item name="iconTint">@color/ghs_dark_02</item>
-        <item name="android:insetTop">@dimen/ghs_zero</item>
-        <item name="android:insetBottom">@dimen/ghs_zero</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Button.IconButton" parent="Root.GiniHealthTheme.Widget.Button.IconButton"/>
-
-    <style name="Root.GiniHealthTheme.Widget.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="cornerRadius">@dimen/ghs_small</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:autoSizeTextType">uniform</item>
-        <item name="android:autoSizeMaxTextSize">16sp</item>
-        <item name="android:minHeight">@dimen/ghs_large_56</item>
-        <item name="strokeColor">@color/ghs_dark_05</item>
-        <item name="android:insetTop">@dimen/ghs_zero</item>
-        <item name="android:insetBottom">@dimen/ghs_zero</item>
-        <item name="iconPadding">@dimen/ghs_large</item>
-        <item name="materialThemeOverlay">@style/GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker</item>
-        <item name="android:textColor">@color/ghs_outlined_button_text</item>
-        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Button.Picker</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Button.OutlinedButton" parent="Root.GiniHealthTheme.Widget.Button.OutlinedButton"/>
-
-    <style name="Root.GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" parent="ThemeOverlay.Material3.Button">
-        <item name="colorPrimary">@color/ghs_outlined_button_background</item>
-    </style>
-    <style name="GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" parent="Root.GiniHealthTheme.ThemeOverlay.Button.OutlinedButton.Picker" />
-
-    <style name="Root.GiniHealthTheme.ThemeOverlay.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
-        <item name="colorPrimary">@color/ghs_dark_07</item>
-        <item name="bottomSheetStyle">@style/GiniHealthTheme.Widget.BottomSheet</item>
-    </style>
-    <style name="GiniHealthTheme.ThemeOverlay.BottomSheetDialog" parent="Root.GiniHealthTheme.ThemeOverlay.BottomSheetDialog" />
-
-    <style name="Root.GiniHealthTheme.Widget.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
-        <item name="backgroundTint">@color/ghs_dark_07</item>
-        <item name="shapeAppearance">@style/GiniHealthTheme.Widget.BottomSheet.ShapeAppearance</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.BottomSheet" parent="Root.GiniHealthTheme.Widget.BottomSheet" />
-
-    <style name="Root.GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" parent="ShapeAppearance.Material3.LargeComponent">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">@dimen/ghs_medium_12</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" parent="Root.GiniHealthTheme.Widget.BottomSheet.ShapeAppearance" />
-
-    <style name="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
-        <item name="tint">@color/ghs_dark_05</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.BottomSheet.DragHandle" parent="Root.GiniHealthTheme.Widget.BottomSheet.DragHandle" />
-
-    <style name="Root.GiniHealthTheme.Widget.ShapeableImageView.Corners" parent="">
-        <item name="cornerSize">@dimen/ghs_small_2</item>
-        <item name="cornerFamily">rounded</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.ShapeableImageView.Corners" parent="Root.GiniHealthTheme.Widget.ShapeableImageView.Corners"/>
-
-    <style name="Root.GiniHealthTheme.Widget.RoundShapeableImageView.Corners" parent="">
-        <item name="cornerSize">50%</item>
-        <item name="cornerFamily">rounded</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.RoundShapeableImageView.Corners" parent="Root.GiniHealthTheme.Widget.RoundShapeableImageView.Corners"/>
-
-
-    <style name="Root.GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.UnelevatedButton">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColor">@color/ghs_bank_selector_button_color</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Button.TransparentBackground" parent="Root.GiniHealthTheme.Widget.Button.TransparentBackground"/>
-
-    <style name="Root.GiniHealthTheme.Widget.Snackbar" parent="Widget.Material3.Snackbar">
-        <item name="android:backgroundTint">?attr/backgroundColor</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Snackbar" parent="Root.GiniHealthTheme.Widget.Snackbar" />
-
-    <style name="Root.GiniHealthTheme.Widget.Snackbar.Button" parent="Widget.Material3.Button.TextButton.Snackbar">
-        <item name="android:textColor">?attr/colorAccent</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Snackbar.Button" parent="Root.GiniHealthTheme.Widget.Snackbar.Button" />
-
-    <style name="Root.GiniHealthTheme.Widget.Snackbar.TextView" parent="Widget.Material3.Snackbar.TextView">
-        <item name="android:textColor">?attr/colorOnBackground</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Snackbar.TextView" parent="Root.GiniHealthTheme.Widget.Snackbar.TextView" />
-    
-    <!-- endregion -->
-
-    <style name="Root.GiniHealthTheme.PaymentInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="errorIconDrawable">@null</item>
-        <item name="cornerRadius">@dimen/ghs_small</item>
-        <item name="hintTextAppearance">@style/GiniHealthTheme.Typography.Caption2</item>
-        <item name="android:textColorHint">@color/ghs_payment_input_hint</item>
-        <item name="boxStrokeWidth">@dimen/ghs_zero</item>
-        <item name="boxStrokeWidthFocused">@dimen/ghs_zero</item>
-        <item name="boxBackgroundColor">@android:color/transparent</item>
-        <item name="boxCornerRadiusBottomStart">@dimen/ghs_small</item>
-        <item name="boxCornerRadiusBottomEnd">@dimen/ghs_small</item>
-        <item name="errorTextColor">@color/ghs_feedback_01</item>
-        <item name="errorTextAppearance">@style/GiniHealthTheme.Typography.Caption2</item>
-    </style>
-    <style name="GiniHealthTheme.PaymentInputLayout" parent="Root.GiniHealthTheme.PaymentInputLayout"/>
-
-    <style name="Root.GiniHealthTheme.PaymentInputEditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
-        <item name="android:singleLine">true</item>
-        <item name="android:background">@drawable/ghs_payment_input_edit_text_background</item>
-        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Body1</item>
-        <item name="android:textColor">?attr/colorOnBackground</item>
-    </style>
-    <style name="GiniHealthTheme.PaymentInputEditTextStyle" parent="Root.GiniHealthTheme.PaymentInputEditTextStyle"/>
-
-    <style name="Root.GiniHealthTheme.PageErrorText">
-        <item name="android:textColor">@color/ghs_dark_07</item>
-    </style>
-    <!-- Style for error text that is displayed when loading a page fails -->
-    <style name="GiniHealthTheme.PageErrorText" parent="Root.GiniHealthTheme.PageErrorText" />
-
-    <style name="Root.GiniHealthTheme.PaymentDetailsCard">
-        <item name="android:background">@drawable/ghs_payment_details_background</item>
-        <item name="android:elevation">@dimen/ghs_medium_12</item>
-    </style>
-
-    <!-- Style for the Payment Details card in ReviewFragment-->
-    <style name="GiniHealthTheme.PaymentDetailsCard" parent="Root.GiniHealthTheme.PaymentDetailsCard" />
 
     <style name="Root.GiniHealthTheme.PaymentButtonProgressStyle">
-        <item name="android:translationZ" tools:targetApi="lollipop">@dimen/ghs_large_100</item>
+        <item name="android:translationZ" tools:targetApi="lollipop">@dimen/gps_large_100</item>
     </style>
 
     <!-- Style for the progress indicator that is displayed on top of the Pay button in ReviewFragment -->
     <style name="GiniHealth.PaymentButtonProgressStyle" parent="Root.GiniHealthTheme.PaymentButtonProgressStyle" />
 
-    <style name="Root.GiniHealthTheme.CloseButtonStyle" parent="Widget.AppCompat.ImageButton">
-        <item name="android:minWidth">@dimen/ghs_large_50</item>
-        <item name="android:minHeight">@dimen/ghs_large_50</item>
-        <item name="android:background">@drawable/ghs_close_button</item>
-    </style>
 
-    <!-- Style for close button in ReviewFragment -->
-    <style name="GiniHealthTheme.CloseButtonStyle" parent="Root.GiniHealthTheme.CloseButtonStyle"/>
-
-    <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar" parent="">
-        <item name="android:background">@drawable/ghs_payment_details_info_bar_background</item>
-    </style>
-    <style name="GiniHealthTheme.PaymentDetails.InfoBar" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar" />
-
-    <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextView" parent="Widget.MaterialComponents.TextView">
-        <item name="android:gravity">center</item>
-        <item name="android:textAppearance">@style/GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance</item>
-    </style>
-    <style name="GiniHealthTheme.PaymentDetails.InfoBar.TextView" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextView" />
-
-    <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="GiniHealthTheme.Typography.Caption1">
-        <item name="android:textColor">@color/ghs_dark_07</item>
-    </style>
-    <style name="GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" />
-
-    <style name="Root.GiniHealthTheme.Widget.Button.PaymentProviderSelector" parent="GiniHealthTheme.Widget.Button.TransparentBackground">
-        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Input</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniHealthTheme.Widget.Button.PaymentProviderSelector">
-        <item name="android:paddingStart">@dimen/ghs_large</item>
-        <item name="android:paddingEnd">@dimen/ghs_large</item>
-    </style>
-    
-    <style name="Root.GiniHealthTheme.Widget.Button.PaymentProviderPicker" parent="GiniHealthTheme.Widget.Button.TransparentBackground">
-        <item name="android:textAppearance">@style/GiniHealthTheme.Typography.Body1</item>
-    </style>
-    <style name="GiniHealthTheme.Widget.Button.PaymentProviderPicker" parent="Root.GiniHealthTheme.Widget.Button.PaymentProviderPicker"/>
 </resources>
