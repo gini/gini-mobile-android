@@ -2,15 +2,12 @@
 
 package net.gini.android.bank.sdk.capture.skonto
 
-import android.app.Activity
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.icu.util.Calendar
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -56,8 +53,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -66,8 +61,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
@@ -95,7 +88,7 @@ import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.ui.theme.typography.bold
-import net.gini.android.capture.util.compose.rememberImeState
+import net.gini.android.capture.util.compose.keyboardPadding
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -224,26 +217,7 @@ private fun ScreenReadyState(
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
 ) {
     val scrollState = rememberScrollState()
-    val imeState = rememberImeState()
-    val activity = LocalView.current.context as? Activity
-    val insets = ViewCompat.getRootWindowInsets(activity!!.window.decorView)
-    val textInputHeightPx = with(LocalDensity.current) { 8.dp.toPx() }
-
-    //Enjoy your keyboard height
-    val keyboardHeight = with(LocalDensity.current) {
-        insets!!.getInsets(WindowInsetsCompat.Type.ime()).bottom.toDp()
-    }
-
-    LaunchedEffect(key1 = imeState.value) {
-        if (imeState.value) {
-            scrollState.animateScrollTo(
-                scrollState.value + textInputHeightPx.toInt(),
-                tween(300)
-            )
-        }
-    }
-
-    Log.d("AAAAAA", "$keyboardHeight")
+    val keyboardPadding by keyboardPadding(108.dp, scrollState)
 
     Scaffold(modifier = modifier,
         containerColor = screenColorScheme.backgroundColor,
@@ -275,7 +249,7 @@ private fun ScreenReadyState(
                 .padding(it)
                 .verticalScroll(scrollState)
                 .fillMaxSize()
-                .padding(bottom = keyboardHeight),
+                .padding(bottom = keyboardPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Column(

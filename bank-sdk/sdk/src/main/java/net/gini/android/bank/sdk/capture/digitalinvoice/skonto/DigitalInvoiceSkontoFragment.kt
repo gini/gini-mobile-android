@@ -96,6 +96,7 @@ import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
+import net.gini.android.capture.util.compose.keyboardPadding
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.compose.collectAsState
@@ -286,6 +287,8 @@ private fun ScreenReadyState(
 ) {
 
     val scrollState = rememberScrollState()
+    val keyboardPadding by keyboardPadding(108.dp, scrollState)
+
     Scaffold(
         modifier = modifier,
         containerColor = screenColorScheme.backgroundColor,
@@ -310,7 +313,8 @@ private fun ScreenReadyState(
         Column(
             modifier = Modifier
                 .padding(it)
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
+                .padding(bottom = keyboardPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Column(
