@@ -59,11 +59,14 @@
     <string name="gbs_skonto_section_discount_info_banner_date_expired_message">The %1$s discount has expired</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Final amount</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Expiry date</string>
+    <string name="gbs_skonto_section_discount_field_amount_validation_error_limit_exceeded">Your transfer limit has been exceeded: %1$s</string>
+    <string name="gbs_skonto_section_discount_field_amount_validation_error_skonto_amount_more_than_full_amount">Discounted value cannot exceed initial value</string>
     <!--   endregion -->
     <!--   region Section Without Discount -->
     <string name="gbs_skonto_section_without_discount_title">Without Skonto discount</string>
     <string name="gbs_skonto_section_without_discount_hint_label_enabled">  •  Active</string>
     <string name="gbs_skonto_section_without_discount_field_amount_hint">Full amount</string>
+    <string name="gbs_skonto_section_without_discount_field_amount_validation_error_limit_exceeded">Your transfer limit has been exceeded: %1$s</string>
     <!--   endregion -->
     <!--   region Footer -->
     <string name="gbs_skonto_section_footer_title">Total</string>
