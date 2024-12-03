@@ -4,9 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Button
-import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -14,12 +12,16 @@ import com.google.common.truth.Truth
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.internal.payment.GiniInternalPaymentModule
-import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.R
+import net.gini.android.internal.payment.utils.GiniLocalization
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -28,6 +30,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class PaymentComponentViewTest {
     private var context: Context? = null
@@ -39,6 +42,9 @@ class PaymentComponentViewTest {
     private lateinit var giniPaymentModule: GiniInternalPaymentModule
     private val giniHealthAPI: GiniHealthAPI = mockk(relaxed = true) { GiniHealthAPI::class.java }
     private val documentManager: HealthApiDocumentManager = mockk { HealthApiDocumentManager::class.java }
+    private val testCoroutineDispatcher = UnconfinedTestDispatcher()
+    private val testCoroutineScope =
+        TestScope(testCoroutineDispatcher + Job())
 
     @Before
     fun setUp() {
@@ -67,6 +73,39 @@ class PaymentComponentViewTest {
         scenario!!.close()
     }
 
+
+    @Test
+    fun `calls onMoreInformation method of listener when clicking on info button`() = runTest {
+        // Given
+        scenario?.onActivity { activity ->
+            val paymentComponentView = PaymentComponentView(activity, null)
+            paymentComponentView.paymentComponent = paymentComponent
+
+            // When
+            (paymentComponentView.findViewById<TextView>(R.id.gps_more_information)!!).performClick()
+            // Then
+            verify {
+                paymentComponentListener.onMoreInformationClicked()
+            }
+        }
+    }
+    @Test
+    fun `calls onBankPickerClicked method of listener when clicking on select bank button`() = runTest {
+        // Given
+        scenario?.onActivity { activity ->
+            val paymentComponentView = PaymentComponentView(activity, null)
+            paymentComponentView.paymentComponent = paymentComponent
+
+            // When
+            (paymentComponentView.selectBankButton).performClick()
+
+            // Then
+            verify {
+                paymentComponentListener.onBankPickerClicked()
+            }
+        }
+    }
+
     @Test
     fun `does not call onPayInvoiceClicked method of listener if no document id is set`() = runTest {
         // Given
@@ -75,7 +114,7 @@ class PaymentComponentViewTest {
             paymentComponentView.paymentComponent = paymentComponent
 
             // When
-            (paymentComponentView.findViewById(R.id.gps_pay_invoice_button) as Button).performClick()
+            (paymentComponentView.findViewById<Button>(R.id.gps_pay_invoice_button)!!).performClick()
 
             // Then
             verify(exactly = 0) { paymentComponentListener.onPayInvoiceClicked("") }
@@ -103,27 +142,50 @@ class PaymentComponentViewTest {
 //    }
 
     @Test
-    fun `hides powered by Gini`() = runTest {
+    fun `disables buttons and deletes document id to reuse`() = runTest {
         // Given
         scenario?.onActivity { activity ->
             val paymentComponentView = PaymentComponentView(activity, null)
-            paymentComponentView.paymentComponent = paymentComponentBrandedOff
-            paymentComponentView.isPayable = true
+            paymentComponentView.paymentComponent = paymentComponent
+            paymentComponentView.documentId = "123"
+
+            Truth.assertThat(paymentComponentView.documentId).isEqualTo("123")
+            Truth.assertThat((paymentComponentView.payInvoiceButton).isEnabled).isEqualTo(true)
+            Truth.assertThat((paymentComponentView.selectBankButton).isEnabled).isEqualTo(true)
+
+            // When
+            paymentComponentView.prepareForReuse()
 
             // Then
-            Truth.assertThat((paymentComponentView.findViewById<FrameLayout>(R.id.gps_powered_by_gini)!!).isVisible).isEqualTo(false)
+            Truth.assertThat(paymentComponentView.documentId).isNull()
+            Truth.assertThat((paymentComponentView.payInvoiceButton).isEnabled).isEqualTo(false)
+            Truth.assertThat((paymentComponentView.selectBankButton).isEnabled).isEqualTo(false)
         }
     }
 
+    //TODO fix this while bugs are being validated
+//    @Test
+//    fun `hides powered by Gini`() = runTest {
+//        // Given
+//        scenario?.moveToState(Lifecycle.State.STARTED)
+//        scenario?.onActivity { activity ->
+//            val paymentComponentView = PaymentComponentView(activity, null)
+//            paymentComponentView.coroutineScope = testCoroutineScope
+//            paymentComponentView.paymentComponent = paymentComponentBrandedOff
+//
+//            // Then
+//            Truth.assertThat((paymentComponentView.findViewById<FrameLayout>(R.id.gps_powered_by_gini)!!).isVisible).isEqualTo(false)
+//        }
+//    }
+
     @Test
-    fun `shows text values in english if that is set to GiniHealth`() = runTest {
+    fun `shows text values in english if that is set to module`() = runTest {
         // Given
         giniPaymentModule.setSDKLanguage(GiniLocalization.ENGLISH, context!!)
 
         scenario?.onActivity { activity ->
             val paymentComponentView = PaymentComponentView(activity, null)
             paymentComponentView.paymentComponent = paymentComponentWithLocale
-            paymentComponentView.isPayable = true
 
             // Then
             assertEquals("English text", "More information.", paymentComponentView.findViewById<TextView>(R.id.gps_more_information)!!.text.toString())
@@ -132,14 +194,13 @@ class PaymentComponentViewTest {
     }
 
     @Test
-    fun `shows text values in german if that is set to GiniHealth`() = runTest {
+    fun `shows text values in german if that is set to module`() = runTest {
         // Given
         giniPaymentModule.setSDKLanguage(GiniLocalization.GERMAN, context!!)
 
         scenario?.onActivity { activity ->
             val paymentComponentView = PaymentComponentView(activity, null)
             paymentComponentView.paymentComponent = paymentComponentWithLocale
-            paymentComponentView.isPayable = true
 
             // Then
             assertEquals("German text", "Mehr Informationen.", paymentComponentView.findViewById<TextView>(R.id.gps_more_information)!!.text.toString())

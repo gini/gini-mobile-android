@@ -12,13 +12,13 @@ internal class SkontoAmountValidator {
         newSkontoAmount > fullAmount ->
             SkontoScreenState.Ready.SkontoAmountValidationError.SkontoAmountMoreThanFullAmount
 
-        newSkontoAmount > BigDecimal.valueOf(SKONTO_AMOUNT_LIMIT) ->
+        newSkontoAmount > BigDecimal(SKONTO_AMOUNT_LIMIT) ->
             SkontoScreenState.Ready.SkontoAmountValidationError.SkontoAmountLimitExceeded
 
         else -> null
     }
 
     companion object {
-        internal const val SKONTO_AMOUNT_LIMIT = 99_999L
+        internal const val SKONTO_AMOUNT_LIMIT = "99999.99"
     }
 }

@@ -42,6 +42,9 @@
     <string name="gbs_articles">Artikel</string>
     <!-- region Skonto -->
     <string name="gbs_skonto_screen_title">Skonto</string>
+    <string name="gbs_skonto_screen_content_description_close">Schließen</string>
+    <string name="gbs_skonto_screen_content_description_help">Hilfe</string>
+    <string name="gbs_skonto_screen_content_description_back">Zurück</string>
     <!--   region Section Invoice Scan -->
     <string name="gbs_skonto_section_invoice_preview_title">Rechnung</string>
     <string name="gbs_skonto_invoice_section_preview_subtitle">Zur Ansicht hier tippen</string>
@@ -88,6 +91,7 @@
     <string name="gbs_skonto_help_footer_text">Machen Sie einfach ein Foto der Rechnung und die App erkennt automatisch die Rabatte. Überprüfen Sie die Details, bestätigen Sie und sparen Sie mit den Rabatten!</string>
     <!--   endregion -->
     <!--   region Skonto Invoice Preview -->
+    <string name="gbs_skonto_invoice_preview_content_description_close">Schließen</string>
     <string name="gbs_skonto_invoice_preview_title">Skonto-Details</string>
     <string name="gbs_skonto_invoice_preview_expire_date">Ablaufdatum Skonto: %1$s</string>
     <string name="gbs_skonto_invoice_preview_final_amount">Betrag nach Abzug: %1$s</string>
@@ -107,6 +111,7 @@
     <string name="gbs_td_extraction_result_documents_section_menu_delete">Löschen</string>
     <!--   endregion -->
     <!--   region Transaction Docs. Invoice Preview -->
+    <string name="gbs_td_invoice_preview_content_description_more">Mehr</string>
     <string name="gbs_td_invoice_preview_info_text_amount">Betrag zu zahlen: %1$s</string>
     <string name="gbs_td_invoice_preview_info_text_iban">IBAN: %1$s</string>
     <string name="gbs_td_invoice_preview_info_text_due_date">Rechnungsfälligkeitsdatum: %1$s</string>

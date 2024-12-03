@@ -9,13 +9,13 @@ internal class SkontoFullAmountValidator {
         fullAmount: BigDecimal
     ): SkontoScreenState.Ready.FullAmountValidationError? = when {
 
-        fullAmount > BigDecimal.valueOf(SKONTO_AMOUNT_LIMIT) ->
+        fullAmount > BigDecimal(SKONTO_AMOUNT_LIMIT) ->
             SkontoScreenState.Ready.FullAmountValidationError.FullAmountLimitExceeded
 
         else -> null
     }
 
     companion object {
-        private const val SKONTO_AMOUNT_LIMIT = 99_999L
+        private const val SKONTO_AMOUNT_LIMIT = "99999.99"
     }
 }

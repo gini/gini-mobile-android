@@ -98,3 +98,10 @@ internal fun MutableMap<String, CompoundExtraction>.withFeedback(paymentDetails:
 }
 
 internal fun MutableMap<String, CompoundExtraction>.getPaymentExtraction(name: String) = this["payment"]?.specificExtractionMaps?.get(0)?.get(name)
+
+internal fun PaymentDetails.toCommonPaymentDetails() = net.gini.android.internal.payment.api.model.PaymentDetails(
+    recipient = this.recipient,
+    iban = this.iban,
+    amount = this.amount,
+    purpose = this.purpose
+)

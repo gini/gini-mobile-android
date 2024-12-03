@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory
  *
  * It requires a [GiniMerchant] instance and a [Context] (application or activity) to be created.
  */
-class PaymentComponent(@get:VisibleForTesting internal val context: Context, @get:VisibleForTesting internal val paymentModule: GiniInternalPaymentModule, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
+class PaymentComponent(@get:VisibleForTesting internal val context: Context, val paymentModule: GiniInternalPaymentModule, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -39,17 +39,13 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
      */
     val selectedPaymentProviderAppFlow: StateFlow<SelectedPaymentProviderAppState> = _selectedPaymentProviderAppFlow.asStateFlow()
 
-    private val _returningUserFlow = MutableStateFlow(false)
-
-    /**
-     * A [StateFlow] which emits whether the user is a returning one or not.
-     */
-    val returningUserFlow: StateFlow<Boolean> = _returningUserFlow
-
     @VisibleForTesting
     internal val paymentComponentPreferences = PaymentComponentPreferences(context)
 
-    internal val giniPaymentLanguage = GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()
+    fun getGiniPaymentLanguage(context: Context? = null) =
+        context?.let {
+            GiniInternalPaymentModule.getSDKLanguage(it)?.languageLocale()
+        } ?: GiniInternalPaymentModule.getSDKLanguage(this.context)?.languageLocale()
 
     /**
      * A listener for the payment component. It exposes the user interactions with all of the [PaymentComponentView]s.
@@ -74,8 +70,6 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
     /**
      * Loads the payment provider apps and selects the first installed payment provider app or nothing if no payment provider
      * app is installed. The selection (or lack of selection) will be visible once a [PaymentComponentView] is shown.
-     *
-     * It should be sufficient to call [loadPaymentProviderApps] only once when your app starts.
      *
      * By collecting the [paymentProviderAppsFlow] and [selectedPaymentProviderAppFlow] you can observe the state of the
      * loading process.
@@ -199,17 +193,14 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
         }
     }
 
-    suspend fun onPayInvoiceClicked(documentId: String = "") {
-        paymentComponentPreferences.saveReturningUser()
-        listener?.onPayInvoiceClicked(documentId)
+    suspend fun onPayInvoiceClicked(documentId: String? = "") {
+        paymentModule.saveReturningUser()
+        listener?.onPayInvoiceClicked(documentId ?: "")
         delay(500)
         checkReturningUser()
     }
 
-    suspend fun checkReturningUser() {
-        if (!shouldCheckReturningUser) return
-        _returningUserFlow.value = paymentComponentPreferences.getReturningUser()
-    }
+    fun checkReturningUser(): Boolean = paymentModule.getReturningUser()
 
     private companion object {
         private val LOG = LoggerFactory.getLogger(PaymentComponent::class.java)
@@ -239,7 +230,7 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, @ge
          *
          * @param documentId The value in the clicked PaymentComponentView's [PaymentComponentView.documentId] property
          */
-        fun onPayInvoiceClicked(documentId: String)
+        fun onPayInvoiceClicked(documentId: String?)
     }
 
 }

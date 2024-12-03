@@ -14,7 +14,6 @@ import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.review.openWith.OpenWithPreferences
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.GiniPaymentManager
@@ -56,8 +55,9 @@ class GiniInternalPaymentModule(private val context: Context,
                 ) {
                     _eventsFlow.tryEmit(InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(paymentRequest.id, paymentProviderName))
                 }
-
-            })
+            }).also {
+                _giniPaymentManager = it
+            }
         }
 
     val giniHealthAPI: GiniHealthAPI
@@ -87,10 +87,6 @@ class GiniInternalPaymentModule(private val context: Context,
         }
 
     var paymentComponent = PaymentComponent(context, this)
-    private val openWithPreferences = OpenWithPreferences(context)
-
-    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
-    suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
 
     private val _paymentFlow =
         MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
@@ -106,7 +102,7 @@ class GiniInternalPaymentModule(private val context: Context,
      *
      * It never completes.
      */
-    internal val paymentFlow: StateFlow<ResultWrapper<PaymentDetails>> = _paymentFlow
+    val paymentFlow: StateFlow<ResultWrapper<PaymentDetails>> = _paymentFlow
 
     /**
      * A flow that exposes events from the Merchant SDK. You can collect this flow to be informed about events such as errors,
@@ -118,34 +114,33 @@ class GiniInternalPaymentModule(private val context: Context,
 
     val eventsFlow: SharedFlow<InternalPaymentEvents> = _eventsFlow
 
+    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?) =
+        giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
+    suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
-    fun setPaymentDetails(paymentDetails: PaymentDetails) {
-        _paymentFlow.tryEmit(ResultWrapper.Success(paymentDetails))
+    fun setPaymentDetails(paymentDetails: PaymentDetails?) {
+        _paymentFlow.value = if (paymentDetails != null) {
+            ResultWrapper.Success(paymentDetails)
+        } else {
+            ResultWrapper.Loading()
+        }
     }
-
-    suspend fun incrementCountForPaymentProviderId(paymentProviderAppId: String) {
-        openWithPreferences.incrementCountForPaymentProviderId(paymentProviderAppId)
-    }
-
-    suspend fun getLiveCountForPaymentProviderId(paymentProviderAppId: String) = openWithPreferences.getLiveCountForPaymentProviderId(paymentProviderAppId)
-
 
     fun emitSdkEvent(event: InternalPaymentEvents) {
         _eventsFlow.tryEmit(event)
     }
 
-
-    /**
-     * Sets the app language to the desired one from the languages the SDK is supporting. If not set then defaults to the system's language locale.
-     *
-     * @param language enum value for the desired language or null for default system language
-     * @param context Context object to save the configuration.
-     */
     fun setSDKLanguage(language: GiniLocalization?, context: Context) {
         localizedContext = null
         GiniPaymentPreferences(context).saveSDKLanguage(language)
     }
+
+    fun saveReturningUser() {
+        GiniPaymentPreferences(context).saveReturningUser()
+    }
+
+    fun getReturningUser() = GiniPaymentPreferences(context).getReturningUser()
 
     internal class GiniPaymentPreferences(context: Context) {
         private val sharedPreferences = context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)
@@ -160,12 +155,21 @@ class GiniInternalPaymentModule(private val context: Context,
             val enumValue = sharedPreferences.getString(SDK_LANGUAGE_PREFS_KEY, null)
             return if (enumValue.isNullOrEmpty()) null else GiniLocalization.valueOf(enumValue)
         }
+
+        fun saveReturningUser() {
+            val editor = sharedPreferences.edit()
+            editor.putBoolean(RETURNING_USER_PREFS_KEY, true)
+            editor.apply()
+        }
+
+        fun getReturningUser(): Boolean = sharedPreferences.getBoolean(RETURNING_USER_PREFS_KEY, false)
     }
 
-    internal var localizedContext: Context? = null
+    var localizedContext: Context? = null
 
     companion object {
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
+        private const val RETURNING_USER_PREFS_KEY = "RETURNING_USER_PREFS_KEY"
         private const val DEFAULT_API_VERSION = 1
         const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
 

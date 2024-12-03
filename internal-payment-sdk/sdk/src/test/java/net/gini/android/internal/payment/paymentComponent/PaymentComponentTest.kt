@@ -495,46 +495,6 @@ class PaymentComponentTest {
     }
 
     @Test
-    fun `rechecks returning user`() = runTest {
-        // Given
-        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
-        paymentComponent.shouldCheckReturningUser = true
-
-        paymentComponent.checkReturningUser()
-
-        paymentComponent.returningUserFlow.test {
-            assertThat(awaitItem()).isEqualTo(false)
-
-            // When
-            paymentComponent.paymentComponentPreferences.saveReturningUser()
-            paymentComponent.checkReturningUser()
-
-            // Then
-            assertThat(awaitItem()).isEqualTo(true)
-        }
-    }
-
-    @Test
-    fun `calls to save returning user`() = runTest {
-        // Given
-        val paymentComponent = PaymentComponent(context!!, giniPaymentModule)
-        paymentComponent.shouldCheckReturningUser = true
-
-        paymentComponent.checkReturningUser()
-
-        paymentComponent.returningUserFlow.test {
-            assertThat(awaitItem()).isEqualTo(false)
-
-            // When
-            paymentComponent.onPayInvoiceClicked("123")
-            paymentComponent.checkReturningUser()
-
-            // Then
-            assertThat(awaitItem()).isEqualTo(true)
-        }
-    }
-
-    @Test
     fun `forwards onPay call to listener`() = runTest {
         // Given
         val paymentComponent = PaymentComponent(context!!, giniPaymentModule)

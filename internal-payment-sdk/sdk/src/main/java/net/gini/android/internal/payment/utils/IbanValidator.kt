@@ -18,18 +18,23 @@ private val countryIbanLength = mapOf(
 
 private const val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-internal fun isValidIban(iban: String): Boolean {
+fun isValidIban(iban: String): Boolean {
+    var isValidIban = true
     var ibanNumber = iban.filter { !it.isWhitespace() }.uppercase(Locale.US)
 
-    if (countryIbanLength[ibanNumber.take(2)] != ibanNumber.length) return false
+    if (countryIbanLength[ibanNumber.take(2)] != ibanNumber.length) {
+        isValidIban = false
+    } else if (ibanNumber.contains("[^0-9A-Z]+".toRegex())) {
+        isValidIban = false
+    } else {
+        ibanNumber = ibanNumber.substring(startIndex = 4) + ibanNumber.substring(0, 4)
+        val number = ibanNumber.map { it.toString() }.joinToString(separator = "") { char ->
+            if (char in alphabet) (alphabet.indexOf(char) + 10).toString() else char
+        }.toBigInteger()
 
-    if (ibanNumber.contains("[^0-9A-Z]+".toRegex())) return false
-
-    ibanNumber = ibanNumber.substring(startIndex = 4) + ibanNumber.substring(0, 4)
-    val number = ibanNumber.map { it.toString() }.joinToString(separator = "") { char ->
-        if (char in alphabet) (alphabet.indexOf(char) + 10).toString() else char
-    }.toBigInteger()
-
-    if (number.mod(97.toBigInteger()) != 1.toBigInteger()) return false
-    return true
+        if (number.mod(97.toBigInteger()) != 1.toBigInteger()) {
+            isValidIban = false
+        }
+    }
+    return isValidIban
 }
