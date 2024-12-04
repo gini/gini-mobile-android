@@ -1,16 +1,8 @@
 name: Check Core API Library
 
 on:
-  push:
-    paths:
-      - 'core-api-library/**'
-      - 'gradle/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'core-api-library/**'
       - 'gradle/**'

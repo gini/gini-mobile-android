@@ -1,15 +1,8 @@
 name: Build docs for Bank SDK
 
 on:
-  push:
-    paths:
-      - 'bank-sdk/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'bank-sdk/**'
 

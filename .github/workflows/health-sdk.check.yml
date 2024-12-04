@@ -1,18 +1,8 @@
 name: Check Health SDK
 
 on:
-  push:
-    paths:
-      - 'health-sdk/**'
-      - 'health-api-library/**'
-      - 'core-api-library/**'
-      - 'gradle/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'health-sdk/**'
       - 'health-api-library/**'
