@@ -55,6 +55,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:contentDescription="@string/gps_qr_image_content_description"
                         app:layout_constraintBottom_toTopOf="@id/powered"
                         android:id="@+id/gps_qr_image_view"
                         android:layout_gravity="center_horizontal" />
