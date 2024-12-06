@@ -59,11 +59,14 @@
     <string name="gbs_skonto_section_discount_info_banner_date_expired_message">Die %1$s Skonto sind abgelaufen</string>
     <string name="gbs_skonto_section_discount_field_amount_hint">Betrag nach Abzug</string>
     <string name="gbs_skonto_section_discount_field_due_date_hint">Ablaufdatum Skonto</string>
+    <string name="gbs_skonto_section_discount_field_amount_validation_error_limit_exceeded">Ihr Überweisungslimit wurde überschritten: %1$s</string>
+    <string name="gbs_skonto_section_discount_field_amount_validation_error_skonto_amount_more_than_full_amount">Der Betrag mit Skonto darf nicht höher sein als ohne</string>
     <!--   endregion -->
     <!--   region Section Without Discount -->
     <string name="gbs_skonto_section_without_discount_title">Ohne Skonto</string>
     <string name="gbs_skonto_section_without_discount_hint_label_enabled">  •  Aktiviert</string>
     <string name="gbs_skonto_section_without_discount_field_amount_hint">Betrag ohne Abzug</string>
+    <string name="gbs_skonto_section_without_discount_field_amount_validation_error_limit_exceeded">Ihr Überweisungslimit wurde überschritten: %1$s</string>
     <!--   endregion -->
     <!--   region Footer -->
     <string name="gbs_skonto_section_footer_title">Gesamtpreis</string>

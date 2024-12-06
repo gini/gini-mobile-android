@@ -130,3 +130,22 @@ The ``PaymentFlowConfiguration`` class contains the following options:
 - ``shouldShowReviewBottomDialog``: If set to ``true``, the ``PaymentFragment`` will show a bottom sheet dialog containing the payment details. If set to ``false``, the payment details will not be visible during the payment flow. They will be available to be reviewed after redirecting to the selected payment provider,
     before finalizing the payment. This parameter is only used in the case of payment flows started without ``documentId``.
     Default value is ``false``
+
+.. warning::
+    As the SDK is not responsible for navigation flows outside of it, removing the payment fragment from the hierarchy is the responsibility of implementers at ``PaymentState.Success(paymentRequest)`` or ``PaymentState.Cancel()`` events.
+
+.. code-block:: kotlin
+
+   giniHealth.openBankState.collect { paymentState ->
+        when (paymentState) {
+            is GiniHealth.PaymentState.Success -> {
+               ...
+               // Remove fragment from view hierarchy
+            }
+            is GiniHealth.PaymentState.Cancel -> {
+               // Remove fragment from view hierarchy
+            }
+            else -> {}
+        }
+   }
+
