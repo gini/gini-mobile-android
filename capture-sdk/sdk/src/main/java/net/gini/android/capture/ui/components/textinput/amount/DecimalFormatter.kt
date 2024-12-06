@@ -5,7 +5,7 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 
 class DecimalFormatter(
-    val numberFormat: NumberFormat = NumberFormat.getCurrencyInstance().apply {
+    private val numberFormat: NumberFormat = NumberFormat.getCurrencyInstance().apply {
         (this as? DecimalFormat)?.apply {
             decimalFormatSymbols = decimalFormatSymbols.apply {
                 currencySymbol = ""
@@ -14,14 +14,12 @@ class DecimalFormatter(
     }
 ) {
 
-    fun parseAmount(amount: BigDecimal) =  numberFormat.format(amount).trim()
-        .filter { it != '.' && it != ',' }
-        .take(7)
+    fun parseAmount(amount: BigDecimal) = numberFormat.format(amount).trim()
+        .filter { NUMBER_CHARS.contains(it) }
         .trimStart('0')
 
     fun textToDigits(text: String): String = text.trim()
-        .filter { it != '.' && it != ',' }
-        .take(7)
+        .filter { NUMBER_CHARS.contains(it) }
         .trimStart('0')
 
     fun parseDigits(digits: String): BigDecimal =
@@ -33,5 +31,9 @@ class DecimalFormatter(
         val decimal = parseDigits(digits)
         // Format to a currency string
         return numberFormat.format(decimal).trim()
+    }
+
+    companion object {
+        private val NUMBER_CHARS = "0123456789".toCharArray()
     }
 }

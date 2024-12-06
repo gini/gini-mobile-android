@@ -29,6 +29,7 @@ fun GiniTextInput(
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    supportingText: @Composable (() -> Unit)? = null,
 ) {
     GiniTextInput(
         modifier = modifier,
@@ -48,6 +49,7 @@ fun GiniTextInput(
         trailingContent = trailingContent,
         colors = colors,
         visualTransformation = visualTransformation,
+        supportingText = supportingText,
     )
 }
 
@@ -65,6 +67,7 @@ fun GiniTextInput(
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
     visualTransformation: VisualTransformation = VisualTransformation.None,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    supportingText: @Composable (() -> Unit)? = null,
 ) {
     TextField(
         modifier = modifier,
@@ -102,7 +105,8 @@ fun GiniTextInput(
             )
         },
         onValueChange = onValueChange,
-        trailingIcon = trailingContent
+        trailingIcon = trailingContent,
+        supportingText = supportingText,
     )
 }
 
