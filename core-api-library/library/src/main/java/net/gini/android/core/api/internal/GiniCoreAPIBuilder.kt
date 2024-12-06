@@ -315,7 +315,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     @Synchronized
     protected fun getTrackingAnalyticsApiRetrofit(): Retrofit {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.eu.amplitude.com")
+            .baseUrl(getApiBaseUrl()!!)
             .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
             .client(createOkHttpClient())
             .build()
