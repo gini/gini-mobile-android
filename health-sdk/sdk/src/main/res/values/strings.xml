@@ -6,4 +6,5 @@
     <string name="ghs_payment_details_info_bar_text">Bitte überprüfe die vorausgefüllten Felder</string>
     <string name="ghs_error_failed_to_load_image">Bild konnte nicht geladen werden</string>
     <string name="ghs_more_information_fragment_title">Mehr Informationen</string>
+    <string name="ghs_invoice_image_content_description">Rechnungsdokument</string>
 </resources>
