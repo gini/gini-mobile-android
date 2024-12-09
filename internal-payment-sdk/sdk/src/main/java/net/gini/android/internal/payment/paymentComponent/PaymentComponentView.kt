@@ -278,9 +278,10 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             payInvoiceButton.text =
                 if (reviewFragmentWillBeShown) context.getString(R.string.gps_continue_to_overview)
                 else context.getString(R.string.gps_pay_button)
-            payInvoiceButton.contentDescription =
-                if (reviewFragmentWillBeShown) context.getString(R.string.gps_to_banking_app_content_description)
-                else context.getString(R.string.gps_to_banking_app_content_description)
+
+            if (reviewFragmentWillBeShown) {
+                payInvoiceButton.contentDescription = context.getString(R.string.gps_to_banking_app_content_description)
+            }
         }
     }
 
