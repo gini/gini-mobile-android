@@ -224,9 +224,13 @@ class GiniHealth(
      * @throws Exception if there was an error while retrieving the document or the extractions
      */
     suspend fun checkIfDocumentIsPayable(documentId: String): Boolean {
-        return when (val extractions = getExtractionsForDocument(documentId)) {
-            null -> false
-            else -> (extractions.specificExtractions["payment_state"]?.value ?: "") == PAYABLE
+        return try {
+            when (val extractions = getExtractionsForDocument(documentId)) {
+                null -> false
+                else -> (extractions.specificExtractions["payment_state"]?.value ?: "") == PAYABLE
+            }
+        } catch (e: DocumentNotPayableException) {
+            false
         }
     }
 
@@ -238,11 +242,17 @@ class GiniHealth(
      * @throws Exception if there was an error while retrieving the document or the extractions
      */
     suspend fun checkIfDocumentContainsMultipleDocuments(documentId: String): Boolean {
-        return when (val extractions = getExtractionsForDocument(documentId)) {
-            null -> false
-            else -> (extractions.specificExtractions["contains_multiple_docs"]?.value ?: "" ) == HAS_MULTIPLE_DOCUMENTS
+        return try {
+            when (val extractions = getExtractionsForDocument(documentId)) {
+                null -> false
+                else -> (extractions.specificExtractions["contains_multiple_docs"]?.value ?: "" ) == HAS_MULTIPLE_DOCUMENTS
+            }
+        } catch (e: DocumentNotPayableException) {
+            false
         }
     }
+
+    internal class DocumentNotPayableException: Exception()
 
     private suspend fun getExtractionsForDocument(documentId: String): ExtractionsContainer? {
         val extractionsResource = documentManager.getDocument(documentId)
@@ -251,7 +261,12 @@ class GiniHealth(
             }
         return when (extractionsResource) {
             is Resource.Cancelled -> null
-            is Resource.Error -> throw Exception(extractionsResource.exception)
+            is Resource.Error -> {
+                throw if (extractionsResource.responseStatusCode == ERROR_CODE_NOT_FOUND)
+                    DocumentNotPayableException()
+                else
+                    Exception(extractionsResource.exception)
+            }
             is Resource.Success -> extractionsResource.data
         }
     }
@@ -410,5 +425,6 @@ class GiniHealth(
         private const val CAPTURED_ARGUMENTS = "CAPTURED_ARGUMENTS"
         private const val PAYABLE = "Payable"
         private const val HAS_MULTIPLE_DOCUMENTS = "true"
+        private const val ERROR_CODE_NOT_FOUND = 404
     }
 }
