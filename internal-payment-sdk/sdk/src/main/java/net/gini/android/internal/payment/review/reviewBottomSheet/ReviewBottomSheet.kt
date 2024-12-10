@@ -83,7 +83,8 @@ class ReviewBottomSheet private constructor(
         binding.gpsReviewLayout.reviewComponent = viewModel.reviewComponent
         binding.gpsReviewLayout.listener = listener
         if (resources.isLandscapeOrientation()) {
-            val fieldsLayout = binding.gpsReviewLayout.findViewById<View>(net.gini.android.internal.payment.R.id.gps_fields_layout)
+            val fieldsLayout =
+                binding.gpsReviewLayout.findViewById<View>(net.gini.android.internal.payment.R.id.gps_fields_layout)
             binding.dragHandle.setOnTouchListener { v, event ->
                 // By default, bottom sheet has gravity TOP - layout changes make it jump to the top of the screen
                 // set layoutGravity = Gravity.BOTTOM prevents that.
