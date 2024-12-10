@@ -1,0 +1,40 @@
+name: Check Merchant SDK alternative version
+
+on:
+  push:
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET:
+        required: true
+      MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+        required: true
+
+jobs:
+  build-example-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: build release example app for QA
+        run: >
+          ./gradlew merchant-sdk:example-app:assembleQaRelease
+          -PclientId="gini-mobile-test" 
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+          -PreleaseKeystoreFile="merchant_sdk_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="merchant_sdk_example"
+          -PreleaseKeyPassword='${{ secrets.MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+
+      - name: archive release example app for QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: merchant-sdk-example-app-qaUnique-release
+          path: merchant-sdk/example-app/build/outputs/apk/qaUnique/release

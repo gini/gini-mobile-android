@@ -114,12 +114,9 @@ android {
         create("dev") {
             isDefault = true
             dimension = "environment"
-            applicationIdSuffix = ".qa"
         }
         create("qa") {
             dimension = "environment"
-
-            applicationIdSuffix = ".qa"
         }
         create("qaUnique"){
             dimension = "environment"

@@ -1,4 +1,4 @@
-name: Build Bank SDK alternative version
+name: Build Health SDK alternative version
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
-      BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+      HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
         required: true
 
 jobs:
-  build-example-apps:
+  build-example-app:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -25,16 +25,16 @@ jobs:
 
       - name: build unique release example app for QA
         run: >
-          ./gradlew bank-sdk:example-app:assembleQaUniqueExampleAppRelease
+          ./gradlew health-sdk:example-app:assembleUniqueQaRelease
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-          -PreleaseKeystoreFile="screen_api_example.jks"
-          -PreleaseKeystorePassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
-          -PreleaseKeyAlias="screen_api_example"
-          -PreleaseKeyPassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeystoreFile="health_sdk_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="health_sdk_example"
+          -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
 
       - name: archive unique release example app for QA
         uses: actions/upload-artifact@v4
         with:
-          name: bank-sdk-example-app-qa-release
-          path: bank-sdk/example-app/build/outputs/apk/qaUniqueExampleApp/release
+          name: health-sdk-example-app-qaUnique-release
+          path: health-sdk/example-app/build/outputs/apk/qaUnique/release
