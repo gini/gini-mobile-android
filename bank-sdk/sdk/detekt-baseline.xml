@@ -137,7 +137,7 @@
     <ID>NewLineAtEndOfFile:SkontoFragment.kt$net.gini.android.bank.sdk.capture.skonto.SkontoFragment.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoFragmentContract.kt$net.gini.android.bank.sdk.capture.skonto.SkontoFragmentContract.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoFragmentListener.kt$net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener.kt</ID>
-    <ID>NewLineAtEndOfFile:SkontoFragmentViewModel.kt$net.gini.android.bank.sdk.capture.skonto.SkontoFragmentViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:SkontoFragmentViewModel.kt$net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoInfoDialogColors.kt$net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInfoDialogColors.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoInvoiceScanSectionColors.kt$net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoInvoiceScanSectionColors.kt</ID>
     <ID>NewLineAtEndOfFile:SkontoNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.capture.skonto.SkontoNavigationBarBottomAdapter.kt</ID>

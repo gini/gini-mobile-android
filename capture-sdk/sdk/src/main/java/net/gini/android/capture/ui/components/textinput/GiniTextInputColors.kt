@@ -37,7 +37,7 @@ data class GiniTextInputColors(
             textFocused: Color = GiniTheme.colorScheme.textField.text.focused,
             textUnfocused: Color = GiniTheme.colorScheme.textField.text.unfocused,
             textDisabled: Color = GiniTheme.colorScheme.textField.text.disabled,
-            textError: Color = GiniTheme.colorScheme.textField.text.focused,
+            textError: Color = GiniTheme.colorScheme.textField.text.error,
             indicatorFocused: Color = GiniTheme.colorScheme.textField.indicator.focused,
             indicatorUnfocused: Color = GiniTheme.colorScheme.textField.indicator.unfocused,
             indicatorDisabled: Color = GiniTheme.colorScheme.textField.indicator.disabled,

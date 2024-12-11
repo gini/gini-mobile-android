@@ -61,7 +61,7 @@
     <string name="gps_install_app_title">Rechnungsdaten bereit zum Teilen mit der %s</string>
     <string name="gps_install_app_tap_to_continue">Tipp: Tippen Sie auf \'Weiter\', um die Zahlung in der %s-App abzuschließen.</string>
     <string name="gps_forward">Weiter</string>
-    <string name="gps_play_store_content_description">Google Play Store</string>
+    <string name="gps_play_store_content_description">Google Play Store-Schaltfläche</string>
 
     <!--  Open With bottom sheet  -->
     <string name="gps_open_with_title">Teilen Sie diesen QR-Zahlungscode mit Ihrer Banking-App</string>
@@ -70,6 +70,12 @@
     <string name="gps_open_with_button_text">Mit der %s-App teilen</string>
     <string name="gps_sharing_file">Sharing 1 file</string>
     <string name="gps_reference_number">Verwendungszweck</string>
+    <string name="gps_qr_image_content_description">QR-Code zur Einleitung einer SEPA-Überweisung.</string>
+    <string name="gps_share_with_button_content_description">Schaltfläche “Mit der %s-App teilen”</string>
+
+    <!--  Payment component  -->
+    <string name="gps_bank_selection_dropdown_content_description">Wählen Sie Ihre Bank aus der Dropdown-Liste aus. Verwenden Sie die Pfeiltasten, um durch die Optionen zu navigieren, und drücken Sie die Eingabetaste, um Ihre Bank auszuwählen. Diese Auswahl ist erforderlich, um fortzufahren.</string>
+    <string name="gps_to_banking_app_content_description">Schaltfläche “Zur Banking App”. Es öffnet  die Banking-App, um die Zahlung abzuschließen.</string>
 
     <string name="gps_generic_error_message">Oh da ist was schief gelaufen. Probiere es bitte noch einmal.</string>
 </resources>
