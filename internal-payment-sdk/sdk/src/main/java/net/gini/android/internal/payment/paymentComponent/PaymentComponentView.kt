@@ -270,7 +270,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun initViews() {
         context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsSelectBankButton else binding.gpsSingleRowBankSelection.gpsSelectBankButton
-            selectBankButton.contentDescription = context.getString(R.string.gps_bank_selection_dropdown_content_description)
+            selectBankButton.contentDescription =
+                context.getString(R.string.gps_bank_selection_dropdown_content_description)
 
             payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
             paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
