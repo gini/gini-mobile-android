@@ -329,6 +329,14 @@ class PaymentFragment private constructor(
                     if (childFragmentManager.fragments.any { it is PaymentComponentBottomSheet }) {
                         return
                     }
+
+                    if (!viewModel.giniInternalPaymentModule.getReturningUser() && viewModel.documentId != null) {
+                        viewModel.giniInternalPaymentModule.saveReturningUser()
+                        viewModel.popBackStack()
+                        showReviewFragment()
+                        return
+                    }
+
                     PaymentComponentBottomSheet.newInstance(
                         viewModel.paymentComponent,
                         if (viewModel.documentId != null) true else viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false,
@@ -395,7 +403,7 @@ class PaymentFragment private constructor(
     internal fun showPaymentComponentBottomSheet() {
         val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
             viewModel.paymentComponent,
-            reviewFragmentShown = if (viewModel.documentId != null) true else viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false,
+            reviewFragmentShown = viewModel.documentId != null,
             backListener = viewModel
         )
         paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)

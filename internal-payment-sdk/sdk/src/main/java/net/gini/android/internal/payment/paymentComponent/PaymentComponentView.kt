@@ -70,8 +70,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
      */
     var documentId: String? = null
 
-    var reviewFragmentWillBeShown: Boolean = false
-
     var dismissListener: ButtonClickListener? = null
 
     private val binding = GpsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()), this)
@@ -275,13 +273,8 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
             paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
 
-            payInvoiceButton.text =
-                if (reviewFragmentWillBeShown) context.getString(R.string.gps_continue_to_overview)
-                else context.getString(R.string.gps_pay_button)
-
-            if (reviewFragmentWillBeShown) {
-                payInvoiceButton.contentDescription = context.getString(R.string.gps_to_banking_app_content_description)
-            }
+            payInvoiceButton.text = context.getString(R.string.gps_pay_button)
+            payInvoiceButton.contentDescription = context.getString(R.string.gps_to_banking_app_content_description)
         }
     }
 
