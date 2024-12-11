@@ -25,7 +25,7 @@ jobs:
 
       - name: build unique release example app for QA
         run: >
-          ./gradlew health-sdk:example-app:assembleUniqueQaRelease
+          ./gradlew health-sdk:example-app:assembleQaUniqueRelease
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="health_sdk_example.jks"

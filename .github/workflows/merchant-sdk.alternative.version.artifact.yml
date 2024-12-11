@@ -25,7 +25,7 @@ jobs:
 
       - name: build release example app for QA
         run: >
-          ./gradlew merchant-sdk:example-app:assembleQaRelease
+          ./gradlew merchant-sdk:example-app:assembleQaUniqueRelease
           -PclientId="gini-mobile-test" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="merchant_sdk_example.jks"
