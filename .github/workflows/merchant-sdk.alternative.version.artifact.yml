@@ -1,7 +1,6 @@
 name: Check Merchant SDK alternative version
 
 on:
-  push:
   workflow_dispatch:
   workflow_call:
     secrets:

@@ -1,7 +1,6 @@
 name: Build Health SDK alternative version
 
 on:
-  push:
   workflow_dispatch:
   workflow_call:
     secrets:
