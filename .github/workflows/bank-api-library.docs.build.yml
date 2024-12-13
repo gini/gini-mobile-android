@@ -1,15 +1,8 @@
 name: Build docs for Bank API Library
 
 on:
-  push:
-    paths:
-      - 'bank-api-library/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'bank-api-library/**'
 
