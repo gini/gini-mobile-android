@@ -72,6 +72,7 @@ class SkontoFragmentViewModelTest {
             skontoDueDateChangeIntent = mockk(),
             transactionDocDialogDecisionIntent = mockk(),
             infoBannerInteractionIntent = mockk(),
+            skontoScreenAnalytics = mockk(relaxed = true),
         )
 
         viewModel.test(this) {
@@ -112,6 +113,7 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = mockk(),
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = mockk(),
+                skontoScreenAnalytics = mockk(relaxed = true),
             )
 
             viewModel.test(this) {
@@ -158,6 +160,7 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = mockk(),
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = infoBannerInteractionIntent,
+                skontoScreenAnalytics = mockk(relaxed = true),
             )
 
             viewModel.test(this) {
@@ -201,6 +204,7 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = mockk(),
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = infoBannerInteractionIntent,
+                skontoScreenAnalytics = mockk(relaxed = true),
             )
 
             viewModel.test(this) {
@@ -236,6 +240,7 @@ class SkontoFragmentViewModelTest {
             val invoiceClickIntent = InvoiceClickIntent(
                 lastAnalyzedDocumentProvider = lastAnalyzedDocumentProvider,
                 skontoInvoicePreviewTextLinesFactory = skontoInvoicePreviewTextLinesFactory,
+                analyticsTracker = mockk(relaxed = true),
             )
 
             val skontoScreenInitialStateFactory = SkontoScreenInitialStateFactory(
@@ -256,6 +261,7 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = mockk(),
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = mockk(),
+                skontoScreenAnalytics = mockk(relaxed = true),
             )
 
             viewModel.test(this) {
@@ -289,6 +295,7 @@ class SkontoFragmentViewModelTest {
 
             val skontoActiveChangeIntent = SkontoActiveChangeIntent(
                 getSkontoDiscountPercentageUseCase = getSkontoDiscountPercentageUseCase,
+                analyticsTracker = mockk(relaxed = true),
             )
 
             val viewModel = SkontoFragmentViewModel(
@@ -303,6 +310,7 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = mockk(),
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = mockk(),
+                skontoScreenAnalytics = mockk(relaxed = true),
             )
 
             viewModel.test(this) {
@@ -374,6 +382,7 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = mockk(),
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = mockk(),
+                skontoScreenAnalytics = mockk(relaxed = true),
             )
 
             viewModel.test(this) {
@@ -430,6 +439,7 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = mockk(),
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = mockk(),
+                skontoScreenAnalytics = mockk(relaxed = true),
             )
 
             viewModel.test(this) {
@@ -494,6 +504,7 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = mockk(),
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = mockk(),
+                skontoScreenAnalytics = mockk(relaxed = true),
             )
 
             viewModel.test(this) {
@@ -547,6 +558,7 @@ class SkontoFragmentViewModelTest {
                 getTransactionDocShouldBeAutoAttachedUseCase = mockk(relaxed = true),
                 getTransactionDocsFeatureEnabledUseCase = mockk(relaxed = true),
                 transactionDocDialogConfirmAttachUseCase = mockk(relaxed = true),
+                analyticsTracker = mockk(),
             )
 
             val viewModel = SkontoFragmentViewModel(
@@ -561,6 +573,9 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = mockk(),
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = mockk(),
+                skontoScreenAnalytics = mockk {
+                    every { logScreenShownEvent(any(), any()) } just Runs
+                },
             )
 
             viewModel.setListener(listener)
@@ -610,6 +625,7 @@ class SkontoFragmentViewModelTest {
                 skontoDueDateChangeIntent = skontoDueDateChangeIntent,
                 transactionDocDialogDecisionIntent = mockk(),
                 infoBannerInteractionIntent = mockk(),
+                skontoScreenAnalytics = mockk(relaxed = true),
             )
 
             viewModel.test(this) {

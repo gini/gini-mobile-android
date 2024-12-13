@@ -11,4 +11,7 @@ sealed class UserAnalyticsEventSuperProperty(key: String, value: String) :
             OPEN_WITH("open_with"), BUTTON("button"), FIELD("field")
         }
     }
+
+    data class AnalyzedDocumentId(val documentId: String) :
+        UserAnalyticsEventSuperProperty("document_id", documentId)
 }

@@ -19,6 +19,11 @@ import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceLineItemBindin
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceSkontoBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import java.util.Collections.emptyList
 
 /**
@@ -62,6 +67,7 @@ internal class LineItemsAdapter(
 ) : RecyclerView.Adapter<ViewHolder<*>>() {
 
     private val amountFormatter: AmountFormatter by getGiniBankKoin().inject()
+    private val analyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
     var lineItems: List<SelectableLineItem> = emptyList()
         set(value) {
@@ -90,7 +96,13 @@ internal class LineItemsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewTypeId: Int): ViewHolder<*> {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return ViewHolder.forViewTypeId(viewTypeId, layoutInflater, parent, amountFormatter)
+        return ViewHolder.forViewTypeId(
+            viewTypeId,
+            layoutInflater,
+            parent,
+            amountFormatter,
+            analyticsEventTracker
+        )
     }
 
 
@@ -210,7 +222,9 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
      *
      * @suppress
      */
-    internal class LineItemViewHolder(private val binding: GbsItemDigitalInvoiceLineItemBinding) :
+    internal class LineItemViewHolder(
+        private val binding: GbsItemDigitalInvoiceLineItemBinding,
+    ) :
         ViewHolder<SelectableLineItem>(binding.root, LineItem) {
         internal var listener: LineItemsAdapterListener? = null
 
@@ -333,6 +347,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
     internal class SkontoViewHolder(
         private val binding: GbsItemDigitalInvoiceSkontoBinding,
         private val amountFormatter: AmountFormatter,
+        private val analyticsEventTracker: UserAnalyticsEventTracker,
     ) :
         ViewHolder<DigitalInvoiceSkontoListItem>(binding.root, SkontoInfo) {
 
@@ -368,6 +383,12 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
                 )
                 gbsEditButton.setOnClickListener {
+                    analyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.EDIT_TAPPED,
+                        setOf(
+                            UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.ReturnAssistant),
+                        )
+                    )
                     listener?.onSkontoEditClicked(data)
                 }
             } else {
@@ -376,6 +397,13 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             }
 
             gbsEnableSwitch.setOnClickListener {
+                analyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.SKONTO_SWITCH_TAPPED,
+                    setOf(
+                        UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.ReturnAssistant),
+                        UserAnalyticsEventProperty.SwitchActive(gbsEnableSwitch.isChecked)
+                    )
+                )
                 if (gbsEnableSwitch.isChecked) {
                     listener?.onSkontoEnabled(data)
                 } else {
@@ -393,6 +421,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         fun forViewTypeId(
             viewTypeId: Int, layoutInflater: LayoutInflater, parent: ViewGroup,
             amountFormatter: AmountFormatter,
+            analyticsEventTracker: UserAnalyticsEventTracker,
         ) =
             when (ViewType.from(viewTypeId)) {
                 LineItem -> LineItemViewHolder(
@@ -417,7 +446,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                         parent,
                         false,
                     ),
-                    amountFormatter
+                    amountFormatter,
+                    analyticsEventTracker
                 )
             }
     }

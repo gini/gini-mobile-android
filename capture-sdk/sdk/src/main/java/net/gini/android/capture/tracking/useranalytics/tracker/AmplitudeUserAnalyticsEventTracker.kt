@@ -102,10 +102,10 @@ internal class AmplitudeUserAnalyticsEventTracker(
         )
 
         Log.e("User journey", "Event: ${eventName.eventName}\n" +
-                properties.joinToString("\n") { "  ${it.getPair().first}=${it.getPair().second}" })
+                finalProperties.toList().joinToString("\n") { "  ${it.first}=${it.second}" })
 
         LOG.debug("\nEvent: ${eventName.eventName}\n" +
-                properties.joinToString("\n") { "  ${it.getPair().first}=${it.getPair().second}" })
+                finalProperties.toList().joinToString("\n") { "  ${it.first}=${it.second}" })
     }
 
     fun startRepeatingJob(): Job {
