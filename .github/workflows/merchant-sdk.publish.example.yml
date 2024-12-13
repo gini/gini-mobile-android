@@ -10,6 +10,10 @@ on:
       - 'core-api-library/**'
       - 'gradle/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-publish
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
+
 jobs:
   check:
     uses: ./.github/workflows/merchant-sdk.check.yml
