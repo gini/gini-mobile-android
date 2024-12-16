@@ -142,6 +142,12 @@ class GiniInternalPaymentModule(private val context: Context,
 
     fun getReturningUser() = GiniPaymentPreferences(context).getReturningUser()
 
+    fun saveIngredientBrandVisibility(isVisible: Boolean) {
+        GiniPaymentPreferences(context).saveIngredientBrandVisibility(isVisible)
+    }
+
+    fun getIngredientBrandVisibility() = GiniPaymentPreferences(context).getIngredientBrandVisibility()
+
     internal class GiniPaymentPreferences(context: Context) {
         private val sharedPreferences = context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)
 
@@ -163,6 +169,16 @@ class GiniInternalPaymentModule(private val context: Context,
         }
 
         fun getReturningUser(): Boolean = sharedPreferences.getBoolean(RETURNING_USER_PREFS_KEY, false)
+
+        fun saveIngredientBrandVisibility(isVisible: Boolean) {
+            sharedPreferences.edit().apply {
+                putBoolean(INGREDIENT_BRAND_VISIBILITY_PREFS_KEY, isVisible)
+                apply()
+            }
+        }
+
+        fun getIngredientBrandVisibility(): Boolean = sharedPreferences.getBoolean(
+            INGREDIENT_BRAND_VISIBILITY_PREFS_KEY, false)
     }
 
     var localizedContext: Context? = null
@@ -170,6 +186,7 @@ class GiniInternalPaymentModule(private val context: Context,
     companion object {
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
         private const val RETURNING_USER_PREFS_KEY = "RETURNING_USER_PREFS_KEY"
+        private const val INGREDIENT_BRAND_VISIBILITY_PREFS_KEY = "INGREDIENT_BRAND_VISIBILITY_PREFS_KEY"
         private const val DEFAULT_API_VERSION = 1
         const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
 

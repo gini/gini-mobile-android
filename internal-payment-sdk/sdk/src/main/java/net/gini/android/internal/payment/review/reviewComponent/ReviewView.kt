@@ -66,6 +66,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         setDisabledIcons()
         setButtonHandlers()
         setInputListeners()
+        setIngredientBrandVisibility()
         coroutineScope = CoroutineScope(coroutineContext)
         coroutineScope?.launch {
             launch {
@@ -262,6 +263,10 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
 
     private fun handleInputFocusChange(hasFocus: Boolean, textInputLayout: TextInputLayout) {
         if (hasFocus) textInputLayout.hideErrorMessage() else textInputLayout.showErrorMessage()
+    }
+
+    private fun setIngredientBrandVisibility() {
+        binding.gpsPoweredByGiniLayout.root.isVisible = reviewComponent?.giniInternalPaymentModule?.getIngredientBrandVisibility() ?: false
     }
 
     companion object {

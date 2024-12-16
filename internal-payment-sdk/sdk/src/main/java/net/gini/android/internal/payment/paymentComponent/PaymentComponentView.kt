@@ -89,6 +89,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             coroutineScope = CoroutineScope(coroutineContext)
         }
         checkPaymentComponentHeight()
+        setIngredientBrandVisibility()
         coroutineScope?.launch {
             if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
@@ -310,6 +311,10 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             paymentComponent?.listener?.onMoreInformationClicked()
             dismissListener?.onButtonClick(Buttons.MORE_INFORMATION)
         }
+    }
+
+    private fun setIngredientBrandVisibility() {
+        binding.gpsPoweredByGini.isVisible = paymentComponent?.paymentModule?.getIngredientBrandVisibility() ?: false
     }
 
     private companion object {

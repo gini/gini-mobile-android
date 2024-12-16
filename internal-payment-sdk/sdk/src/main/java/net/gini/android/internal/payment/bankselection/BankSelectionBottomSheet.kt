@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -88,6 +89,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                 dismiss()
             }
         }
+        binding.gpsPoweredByGiniLayout.root.isVisible = paymentComponent?.paymentModule?.getIngredientBrandVisibility() ?: false
         return binding.root
     }
 
