@@ -6,9 +6,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
+import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
@@ -119,6 +121,18 @@ class GiniInternalPaymentModule(private val context: Context,
     suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
+    suspend fun getConfigurations() {
+        _giniHealthAPI?.documentManager?.let {
+            when (val configurations = it.getConfigurations()) {
+                is Resource.Success -> {
+                    val ingredientBrandVisibility = IngredientBrandType.valueOf(configurations.data.ingredientBrandType)
+                    saveIngredientBrandVisibility(ingredientBrandVisibility)
+                }
+                else -> {}
+            }
+        }
+    }
+
     fun setPaymentDetails(paymentDetails: PaymentDetails?) {
         _paymentFlow.value = if (paymentDetails != null) {
             ResultWrapper.Success(paymentDetails)
@@ -142,8 +156,8 @@ class GiniInternalPaymentModule(private val context: Context,
 
     fun getReturningUser() = GiniPaymentPreferences(context).getReturningUser()
 
-    fun saveIngredientBrandVisibility(isVisible: Boolean) {
-        GiniPaymentPreferences(context).saveIngredientBrandVisibility(isVisible)
+    private fun saveIngredientBrandVisibility(visibility: IngredientBrandType) {
+        GiniPaymentPreferences(context).saveIngredientBrandVisibility(visibility.name)
     }
 
     fun getIngredientBrandVisibility() = GiniPaymentPreferences(context).getIngredientBrandVisibility()
@@ -170,15 +184,19 @@ class GiniInternalPaymentModule(private val context: Context,
 
         fun getReturningUser(): Boolean = sharedPreferences.getBoolean(RETURNING_USER_PREFS_KEY, false)
 
-        fun saveIngredientBrandVisibility(isVisible: Boolean) {
+        fun saveIngredientBrandVisibility(visibility: String) {
             sharedPreferences.edit().apply {
-                putBoolean(INGREDIENT_BRAND_VISIBILITY_PREFS_KEY, isVisible)
+                putString(INGREDIENT_BRAND_VISIBILITY_PREFS_KEY, visibility)
                 apply()
             }
         }
 
-        fun getIngredientBrandVisibility(): Boolean = sharedPreferences.getBoolean(
-            INGREDIENT_BRAND_VISIBILITY_PREFS_KEY, false)
+        fun getIngredientBrandVisibility(): IngredientBrandType = sharedPreferences.getString(INGREDIENT_BRAND_VISIBILITY_PREFS_KEY, IngredientBrandType.INVISIBLE.name)
+            ?.let {
+                IngredientBrandType.valueOf(
+                    it
+                )
+            } ?: IngredientBrandType.INVISIBLE
     }
 
     var localizedContext: Context? = null

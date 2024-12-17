@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetInstallAppBinding
@@ -75,6 +76,7 @@ class InstallAppBottomSheet private constructor(
     ): View {
         binding = GpsBottomSheetInstallAppBinding.inflate(inflater, container, false)
         binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
+        binding.gpsPoweredByGiniLayout.root.visibility = if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE) View.VISIBLE else View.INVISIBLE
         return binding.root
     }
 

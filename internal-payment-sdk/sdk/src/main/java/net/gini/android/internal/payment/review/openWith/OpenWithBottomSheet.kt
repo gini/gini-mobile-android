@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.api.model.PaymentDetails
@@ -115,6 +116,7 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
             binding.gpsForwardButton.text =
                 String.format(getLocaleStringResource(R.string.gps_open_with_button_text), paymentProviderApp.name)
         }
+        binding.gpsPoweredByGiniLayout.root.visibility = if (viewModel.paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE) View.VISIBLE else View.INVISIBLE
         return binding.root
     }
 

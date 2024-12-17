@@ -15,6 +15,7 @@ import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.databinding.GpsReviewBinding
@@ -66,9 +67,11 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         setDisabledIcons()
         setButtonHandlers()
         setInputListeners()
-        setIngredientBrandVisibility()
         coroutineScope = CoroutineScope(coroutineContext)
         coroutineScope?.launch {
+            launch {
+                setIngredientBrandVisibility()
+            }
             launch {
                 reviewComponent?.isPaymentButtonEnabled?.collect { isEnabled ->
                     binding.payment.isEnabled = isEnabled
@@ -266,7 +269,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     private fun setIngredientBrandVisibility() {
-        binding.gpsPoweredByGiniLayout.root.isVisible = reviewComponent?.giniInternalPaymentModule?.getIngredientBrandVisibility() ?: false
+        binding.gpsPoweredByGiniLayout.root.visibility = if (reviewComponent?.giniInternalPaymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE) View.VISIBLE else View.INVISIBLE
     }
 
     companion object {

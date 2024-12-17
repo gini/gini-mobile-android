@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
@@ -102,13 +103,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                 binding.gpsSingleRowBankSelection.root.visibility = View.VISIBLE
                 binding.gpsTwoRowsBankSelection.visibility = View.GONE
             }
-            binding.gpsPoweredByGini.visibility =
-                if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true)
-                {
-                    VISIBLE
-                } else {
-                    GONE
-                }
             paymentComponent?.checkReturningUser()
             paymentComponent?.let { pc ->
                 LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
@@ -314,7 +308,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     private fun setIngredientBrandVisibility() {
-        binding.gpsPoweredByGini.isVisible = paymentComponent?.paymentModule?.getIngredientBrandVisibility() ?: false
+        binding.gpsPoweredByGini.visibility = if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.INVISIBLE) View.INVISIBLE else View.VISIBLE
     }
 
     private companion object {
