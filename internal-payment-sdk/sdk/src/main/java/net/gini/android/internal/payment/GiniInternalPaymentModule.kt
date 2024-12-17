@@ -186,7 +186,7 @@ class GiniInternalPaymentModule(private val context: Context,
 
         fun saveIngredientBrandVisibility(visibility: String) {
             sharedPreferences.edit().apply {
-                putString(INGREDIENT_BRAND_VISIBILITY_PREFS_KEY, IngredientBrandType.PAYMENT_COMPONENT.name)
+                putString(INGREDIENT_BRAND_VISIBILITY_PREFS_KEY, visibility)
                 apply()
             }
         }
