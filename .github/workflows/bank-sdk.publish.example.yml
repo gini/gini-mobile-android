@@ -2,14 +2,7 @@ name: Publish Bank SDK Example App QA Build to App Center
 
 on:
   workflow_dispatch:
-  pull_request:
-    types: [opened, edited, reopened, synchronize]
-    paths:
-      - 'bank-sdk/**'
-      - 'capture-sdk/**'
-      - 'bank-api-library/**'
-      - 'core-api-library/**'
-      - 'gradle/**'
+  push:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-publish
