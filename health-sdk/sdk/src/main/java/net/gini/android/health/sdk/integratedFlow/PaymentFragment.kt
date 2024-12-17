@@ -330,11 +330,12 @@ class PaymentFragment private constructor(
                         return
                     }
 
-                    if (!viewModel.giniInternalPaymentModule.getReturningUser() && viewModel.documentId != null) {
-                        viewModel.giniInternalPaymentModule.saveReturningUser()
-                        viewModel.popBackStack()
-                        showReviewFragment()
-                        return
+                    if (!viewModel.giniInternalPaymentModule.getReturningUser() &&
+                        (viewModel.documentId != null || (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true))) {
+                            viewModel.giniInternalPaymentModule.saveReturningUser()
+                            viewModel.popBackStack()
+                            showReviewFragment()
+                            return
                     }
 
                     PaymentComponentBottomSheet.newInstance(
