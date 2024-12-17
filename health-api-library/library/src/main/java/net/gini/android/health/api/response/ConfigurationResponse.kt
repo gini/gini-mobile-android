@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ConfigurationResponse(
     @Json(name = "clientID") val clientId: String,
-    @Json(name = "communicationTone") val communicationTone: CommunicationTone,
+    @Json(name = "communicationTone") val communicationTone: CommunicationTone?,
     @Json(name = "ingredientBrandType") val ingredientBrandType: String
 )
 
