@@ -308,7 +308,9 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     }
 
     private fun setIngredientBrandVisibility() {
-        binding.gpsPoweredByGini.visibility = if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.INVISIBLE) View.INVISIBLE else View.VISIBLE
+        binding.gpsPoweredByGini.visibility =
+            if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.INVISIBLE)
+                View.INVISIBLE else View.VISIBLE
     }
 
     private companion object {

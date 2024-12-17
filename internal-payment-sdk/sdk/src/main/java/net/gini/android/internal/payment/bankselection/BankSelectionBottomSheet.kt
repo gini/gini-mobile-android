@@ -89,7 +89,9 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                 dismiss()
             }
         }
-        binding.gpsPoweredByGiniLayout.root.visibility = if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.INVISIBLE) View.INVISIBLE else View.VISIBLE
+        binding.gpsPoweredByGiniLayout.root.visibility =
+            if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.INVISIBLE)
+                View.INVISIBLE else View.VISIBLE
         return binding.root
     }
 

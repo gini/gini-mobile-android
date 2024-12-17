@@ -46,6 +46,8 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     private val binding = GpsReviewBinding.inflate(getLayoutInflaterWithGiniPaymentTheme(), this)
     private val coroutineContext = Dispatchers.Main
     private var coroutineScope: CoroutineScope? = null
+    private val internalPaymentModule
+        get() = reviewComponent?.giniInternalPaymentModule
 
     var listener: ReviewViewListener? = null
     var reviewComponent: ReviewComponent? = null
@@ -269,7 +271,9 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
     private fun setIngredientBrandVisibility() {
-        binding.gpsPoweredByGiniLayout.root.visibility = if (reviewComponent?.giniInternalPaymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE) View.VISIBLE else View.INVISIBLE
+        binding.gpsPoweredByGiniLayout.root.visibility =
+            if (internalPaymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
+                View.VISIBLE else View.INVISIBLE
     }
 
     companion object {

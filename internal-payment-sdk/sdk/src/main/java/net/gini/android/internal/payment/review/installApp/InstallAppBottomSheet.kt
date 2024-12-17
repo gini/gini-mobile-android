@@ -76,7 +76,9 @@ class InstallAppBottomSheet private constructor(
     ): View {
         binding = GpsBottomSheetInstallAppBinding.inflate(inflater, container, false)
         binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
-        binding.gpsPoweredByGiniLayout.root.visibility = if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE) View.VISIBLE else View.INVISIBLE
+        binding.gpsPoweredByGiniLayout.root.visibility =
+            if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
+                View.VISIBLE else View.INVISIBLE
         return binding.root
     }
 
