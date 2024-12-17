@@ -2,16 +2,6 @@ name: Check Bank SDK
 
 on:
   push:
-    paths:
-      - 'bank-sdk/**'
-      - 'capture-sdk/**'
-      - 'bank-api-library/**'
-      - 'core-api-library/**'
-      - 'gradle/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
     types: [opened, edited, reopened]
     paths:
