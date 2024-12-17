@@ -49,7 +49,8 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
         )
     }
     private var binding: GpsBottomSheetOpenWithBinding by autoCleared()
-    private val internalPaymentModule = viewModel.paymentComponent?.paymentModule
+    private val internalPaymentModule
+        get() = viewModel.paymentComponent?.paymentModule
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
