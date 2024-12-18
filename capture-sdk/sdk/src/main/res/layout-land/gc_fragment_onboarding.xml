@@ -33,29 +33,14 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/gc_next"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/gc_guideline_image_start">
+        app:layout_constraintStart_toEndOf="@id/gc_guideline_image_start"/>
 
-
-        <!--         These views are created during runtime. Kept here only for visualization during development. -->
-        <!--        <ImageView-->
-        <!--        android:id="@+id/gc_page_indicator_1"-->
-        <!--        android:layout_width="@dimen/gc_onboarding_indicator_width"-->
-        <!--        android:layout_height="@dimen/gc_onboarding_indicator_height"-->
-        <!--        android:scaleType="center"-->
-        <!--        app:tint="@color/Accent_01"-->
-        <!--        android:src="@drawable/gc_onboarding_page_indicator" />-->
-
-        <!--        <Space-->
-        <!--        android:layout_width="@dimen/gc_onboarding_indicator_width"-->
-        <!--        android:layout_height="@dimen/gc_onboarding_indicator_height" />-->
-    </LinearLayout>
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gc_guideline_image_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="270dp"/>
-
 
     <TextView
         android:id="@+id/gc_title"
