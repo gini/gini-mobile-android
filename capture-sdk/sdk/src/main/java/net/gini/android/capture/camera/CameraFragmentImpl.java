@@ -374,6 +374,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
 
         bindViews(view);
+        setContentDescriptions();
         preventPaneClickThrough();
         setCustomLoadingIndicator();
         setInputHandlers();
@@ -748,6 +749,17 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         if (!ContextHelper.isTablet(mFragment.getActivity())) {
             mScanTextView = view.findViewById(R.id.gc_camera_title);
+        }
+    }
+
+    private void setContentDescriptions() {
+        final Activity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+
+        if (mPhotoThumbnail != null) {
+            mPhotoThumbnail.setContentDescriptionThumbnail(activity.getString(R.string.gc_photo_review_content_description));
         }
     }
 
