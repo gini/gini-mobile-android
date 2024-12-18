@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetBankSelectionBinding
@@ -88,6 +89,9 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                 dismiss()
             }
         }
+        binding.gpsPoweredByGiniLayout.root.visibility =
+            if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.INVISIBLE)
+                View.INVISIBLE else View.VISIBLE
         return binding.root
     }
 

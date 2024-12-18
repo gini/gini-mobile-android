@@ -40,6 +40,7 @@
                 android:layout_marginTop="@dimen/gps_large_24"/>
 
             <include layout="@layout/gps_powered_by_gini"
+                android:id="@+id/gps_powered_by_gini_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

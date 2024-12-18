@@ -2,6 +2,7 @@ package net.gini.android.health.api
 
 import net.gini.android.core.api.DocumentService
 import net.gini.android.health.api.requests.PaymentRequestBody
+import net.gini.android.health.api.response.ConfigurationResponse
 import net.gini.android.health.api.response.PageResponse
 import net.gini.android.health.api.response.PaymentProviderResponse
 import okhttp3.RequestBody
@@ -12,7 +13,6 @@ import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.Url
 
 internal interface HealthApiDocumentService: DocumentService {
 
@@ -33,4 +33,7 @@ internal interface HealthApiDocumentService: DocumentService {
 
     @GET("/paymentRequests/{paymentRequestId}")
     suspend fun getPaymentRequestDocument(@HeaderMap bearer: Map<String, String>, @Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
+
+    @GET("/configurations")
+    suspend fun getConfigurations(@HeaderMap bearer: Map<String, String>): Response<ConfigurationResponse>
 }

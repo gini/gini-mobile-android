@@ -67,6 +67,10 @@ class GiniHealth(
         CoroutineScope(Job()).launch(Dispatchers.IO) {
             internalPaymentModule.loadPaymentProviderApps()
         }
+
+        CoroutineScope(Job()).launch(Dispatchers.IO) {
+            internalPaymentModule.getConfigurations()
+        }
     }
 
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
