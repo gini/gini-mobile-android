@@ -201,11 +201,12 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     @Override
     public void showGetStartedButtonInNavigationBarBottom() {
         navigationBarBottomButtons = new OnboardingNavigationBarBottomButton[]{GET_STARTED};
-        if (injectedNavigationBarBottomContainer != null)
-        injectedNavigationBarBottomContainer.modifyAdapterIfOwned(adapter -> {
-            adapter.showButtons(navigationBarBottomButtons);
-            return Unit.INSTANCE;
-        });
+        if (injectedNavigationBarBottomContainer != null) {
+            injectedNavigationBarBottomContainer.modifyAdapterIfOwned(adapter -> {
+                adapter.showButtons(navigationBarBottomButtons);
+                return Unit.INSTANCE;
+            });
+        }
     }
 
     @Override
@@ -217,22 +218,24 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     @Override
     public void showSkipAndNextButtonsInNavigationBarBottom() {
         navigationBarBottomButtons = new OnboardingNavigationBarBottomButton[]{SKIP, NEXT};
-        if (injectedNavigationBarBottomContainer != null)
-        injectedNavigationBarBottomContainer.modifyAdapterIfOwned(adapter -> {
-            adapter.showButtons(navigationBarBottomButtons);
-            return Unit.INSTANCE;
-        });
+        if (injectedNavigationBarBottomContainer != null) {
+            injectedNavigationBarBottomContainer.modifyAdapterIfOwned(adapter -> {
+                adapter.showButtons(navigationBarBottomButtons);
+                return Unit.INSTANCE;
+            });
+        }
     }
 
     @Override
     public void setNavigationBarBottomAdapterInstance(@NonNull InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> adapterInstance) {
-        if (injectedNavigationBarBottomContainer != null)
-        injectedNavigationBarBottomContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(adapterInstance, injectedViewAdapter -> {
-            injectedViewAdapter.setOnNextButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
-            injectedViewAdapter.setOnSkipButtonClickListener(new IntervalClickListener(v -> mPresenter.skip()));
-            injectedViewAdapter.setOnGetStartedButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
-            injectedViewAdapter.showButtons(navigationBarBottomButtons);
-        }));
+        if (injectedNavigationBarBottomContainer != null) {
+            injectedNavigationBarBottomContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(adapterInstance, injectedViewAdapter -> {
+                injectedViewAdapter.setOnNextButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
+                injectedViewAdapter.setOnSkipButtonClickListener(new IntervalClickListener(v -> mPresenter.skip()));
+                injectedViewAdapter.setOnGetStartedButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
+                injectedViewAdapter.showButtons(navigationBarBottomButtons);
+            }));
+        }
     }
 
     static class PageIndicators {
