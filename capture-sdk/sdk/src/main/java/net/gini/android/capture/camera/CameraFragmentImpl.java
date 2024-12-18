@@ -348,7 +348,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (activity == null) {
             return;
         }
-        forcePortraitOrientationOnPhones(activity);
         initFlashState();
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
