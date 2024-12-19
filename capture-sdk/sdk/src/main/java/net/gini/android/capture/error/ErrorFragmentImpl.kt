@@ -16,7 +16,6 @@ import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.ui.setIntervalClickListener
-import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
