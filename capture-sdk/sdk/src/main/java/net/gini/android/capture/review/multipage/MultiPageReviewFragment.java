@@ -146,7 +146,6 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        forcePortraitOrientationOnPhones(getActivity());
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
         mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
                 new HashSet<UserAnalyticsEventProperty>() {
