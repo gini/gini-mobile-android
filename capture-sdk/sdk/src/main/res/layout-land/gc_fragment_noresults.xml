@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
+    android:orientation="vertical">
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_navigation_top_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="@id/gc_no_results_header_layout"
+        app:layout_constraintEnd_toEndOf="@id/gc_no_results_header_layout"
+        app:layout_constraintTop_toTopOf="@id/gc_no_results_header_layout"
+        app:layout_constraintBottom_toBottomOf="@id/gc_no_results_header_layout"
+        android:alpha="0.15"
+        android:background="@color/gc_error_01"/>
+
+    <RelativeLayout
+        android:id="@+id/gc_no_results_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/gc_large_48"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/gc_large"
+        android:paddingStart="@dimen/gc_large_24"
+        android:paddingEnd="@dimen/gc_large_24">
+
+        <TextView
+            android:id="@+id/gc_no_results_header"
+            style="@style/GiniCaptureTheme.Typography.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/gc_large_24"
+            android:gravity="center_vertical"
+            android:layout_centerInParent="true"
+            android:text="@string/gc_noresults_header"
+            app:drawableStartCompat="@drawable/gc_alert_triangle_icon" />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gc_no_results_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingTop="@dimen/gc_large"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/gc_large_96"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_no_results_header_layout"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gc_no_results_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginEnd="@dimen/gc_large_24"
+        android:layout_marginBottom="@dimen/gc_large_24">
+
+        <Button
+            android:id="@+id/gc_button_no_results_enter_manually"
+            style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton.DefaultBackground"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/gc_button_no_results_retake_images"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/gc_noresults_enter_manually" />
+
+        <Button
+            android:id="@+id/gc_button_no_results_retake_images"
+            style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/gc_large"
+            app:layout_constraintStart_toEndOf="@id/gc_button_no_results_enter_manually"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/gc_noresults_retake_images" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
