@@ -34,7 +34,7 @@ jobs:
       - name: run unit tests
         run: ./gradlew bank-sdk:sdk:testDebugUnitTest
 
-      - name: archive unit test results2
+      - name: archive unit test results3
         if: always()
         uses: actions/upload-artifact@v4
         with:

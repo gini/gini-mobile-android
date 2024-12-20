@@ -1,6 +1,8 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.rule.GrantPermissionRule
@@ -14,9 +16,11 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.Properties
 
 /**
  * Test class for Edit button on Digital Invoice Screen.
@@ -39,8 +43,19 @@ class DigitalInvoiceEditButtonTests {
     private val increaseQuantity = 5
     private val decreaseQuantity = 2
 
+    val testProperties = Properties().apply {
+        getApplicationContext<Context>().resources.assets
+            .open("test.properties").use { load(it) }
+    }
+
+    private fun cancelTestIfRunOnCi() {
+        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        Assume.assumeTrue(ignoreTests != "true")
+    }
+
     @Before
     fun setup() {
+        cancelTestIfRunOnCi()
         idlingResource = SimpleIdlingResource(10000)
         IdlingRegistry.getInstance().register(idlingResource)
     }
