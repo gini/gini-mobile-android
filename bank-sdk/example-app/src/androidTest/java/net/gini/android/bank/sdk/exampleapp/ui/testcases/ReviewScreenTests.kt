@@ -1,6 +1,8 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -14,9 +16,11 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.After
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.Properties
 
 
 /**
@@ -43,8 +47,19 @@ class ReviewScreenTests {
         device.executeShellCommand("pm grant net.gini.android.bank.sdk.exampleapp android.permission.WRITE_EXTERNAL_STORAGE")
     }
 
+    val testProperties = Properties().apply {
+        getApplicationContext<Context>().resources.assets
+            .open("test.properties").use { load(it) }
+    }
+
+    private fun cancelTestIfRunOnCi() {
+        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        Assume.assumeTrue(ignoreTests != "true")
+    }
+
     @Before
     fun setup() {
+        cancelTestIfRunOnCi()
         grantStoragePermission()
         idlingResource = SimpleIdlingResource(2000)
         IdlingRegistry.getInstance().register(idlingResource)
