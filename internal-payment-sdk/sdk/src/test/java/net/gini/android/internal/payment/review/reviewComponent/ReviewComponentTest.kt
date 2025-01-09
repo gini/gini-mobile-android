@@ -22,6 +22,7 @@ import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.review.PaymentField
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.GiniPaymentManager
@@ -157,7 +158,8 @@ class ReviewComponentTest {
         )
 
         every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(
+            SelectedPaymentProviderAppState.NothingSelected)
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
@@ -184,7 +186,7 @@ class ReviewComponentTest {
         )
 
         every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
@@ -217,7 +219,7 @@ class ReviewComponentTest {
         )
 
         every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
@@ -250,7 +252,7 @@ class ReviewComponentTest {
         )
 
         every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
@@ -284,7 +286,7 @@ class ReviewComponentTest {
         )
 
         every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,

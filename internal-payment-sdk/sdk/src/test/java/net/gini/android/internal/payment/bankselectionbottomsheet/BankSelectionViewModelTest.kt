@@ -84,8 +84,8 @@ class BankSelectionViewModelTest {
     @Before
     fun setup() {
         paymentComponent = mockk(relaxed = true)
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
-        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(mockk()).asStateFlow()
+        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading).asStateFlow()
+        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected).asStateFlow()
     }
 
     @After
