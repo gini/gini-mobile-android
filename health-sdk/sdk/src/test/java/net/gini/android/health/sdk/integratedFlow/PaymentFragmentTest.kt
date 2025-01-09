@@ -18,6 +18,7 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.utils.PaymentNextStep
 import org.junit.Before
 import org.junit.Test
@@ -44,7 +45,9 @@ class PaymentFragmentTest {
         every { giniHealth!!.documentFlow } returns MutableStateFlow(ResultWrapper.Success(mockk(relaxed = true)))
 
         paymentComponent = mockk<PaymentComponent>(relaxed = true)
-        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(
+            SelectedPaymentProviderAppState.NothingSelected)
+
         every { giniInternalPaymentModule!!.paymentComponent } returns paymentComponent!!
         every { giniInternalPaymentModule!!.paymentFlow } returns MutableStateFlow(net.gini.android.internal.payment.api.model.ResultWrapper.Success(
             mockk(relaxed = true)
