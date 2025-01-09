@@ -169,7 +169,7 @@ data class InstalledPaymentProviderApp(
             val packageName = resolveInfo.activityInfo.applicationInfo.packageName
             return InstalledPaymentProviderApp(
                 packageName = packageName,
-                version = packageManager.getPackageInfo(packageName, 0).versionName,
+                version = packageManager.getPackageInfo(packageName, 0).versionName ?: "",
                 launchIntent = Intent().apply {
                     action = Intent.ACTION_VIEW
                     component = ComponentName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name)
