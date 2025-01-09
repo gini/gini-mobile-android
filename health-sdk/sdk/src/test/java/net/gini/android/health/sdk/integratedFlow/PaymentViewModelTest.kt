@@ -10,6 +10,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
@@ -87,7 +88,7 @@ class PaymentFlowViewModelTest {
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(mockk())
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.AppSelected(initialPaymentProviderApp))
         every { giniInternalPaymentModule!!.paymentComponent } returns paymentComponent!!
-        every { giniInternalPaymentModule!!.eventsFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { giniInternalPaymentModule!!.eventsFlow } returns MutableSharedFlow()
         every { giniHealth!!.giniInternalPaymentModule } returns giniInternalPaymentModule!!
 
         val giniHealthAPI = mockk<GiniHealthAPI>(relaxed = true)
