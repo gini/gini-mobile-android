@@ -8,6 +8,7 @@ plugins {
     id("kotlin-parcelize")
     id("jacoco")
     id("androidx.navigation.safeargs")
+    alias(libs.plugins.compose.compiler)
 }
 
 jacoco {

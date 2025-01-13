@@ -20,6 +20,7 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
@@ -92,7 +93,8 @@ class PaymentFlowViewModelTest {
         giniHealthApi = mockk(relaxed = true)
         every { giniHealthApi!!.documentManager } returns documentManager!!
 
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(mockk())
+        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(
+            PaymentProviderAppsState.Nothing)
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.AppSelected(initialPaymentProviderApp))
         every { giniInternalPaymentModule!!.paymentComponent } returns paymentComponent!!
         every { giniInternalPaymentModule!!.giniHealthAPI } returns giniHealthApi!!
