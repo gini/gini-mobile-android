@@ -106,11 +106,7 @@ dependencies {
     implementation(libs.moshi.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     kapt(libs.moshi.codegen)
-    implementation(libs.logback.android.core)
-    implementation(libs.logback.android.classic) {
-        // workaround issue #73
-        exclude(group = "com.google.android", module = "android")
-    }
+    implementation(libs.logback.android)
 
     testImplementation(libs.junit)
 
