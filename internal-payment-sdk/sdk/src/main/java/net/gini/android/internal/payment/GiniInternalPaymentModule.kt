@@ -2,6 +2,7 @@ package net.gini.android.internal.payment
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Resources
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -10,6 +11,7 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
+import net.gini.android.health.api.response.CommunicationTone
 import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
@@ -37,7 +39,35 @@ class GiniInternalPaymentModule(private val context: Context,
         giniHealthAPI: GiniHealthAPI,
     ) : this(context) {
         _giniHealthAPI = giniHealthAPI
+        updateSDKLanguageForInternalRecord(context)
     }
+
+    /**
+     * This method will track record of current locale because user can change language from setting and if our
+     * clients(who get the sdk from us) do not change the language explicitly by calling [setSDKLanguage] we have to
+     * respect the user settings and show the strings from En or DE respectively.
+     * Once our client set the SDK language this method will not update the current locale, and we will respect
+     * the explicit changes done by our client. This record keeping is required because we support Formal / Informal
+     * German. Which is unfortunately not a part of language packs offered by systems. so we cannot just simply make values folders
+     * like values-de, we need to have a workaround and update locale accordingly, other wise we need to put checks every where
+     * like if(tone == formal) getString(R.id.hello_formal) else getString(R.id.hello_informal).
+     * */
+
+    internal fun updateSDKLanguageForInternalRecord(context: Context) {
+        if (!GiniPaymentPreferences(context).getLanguageOverriddenByUser()) {
+            val sdkLanguage = when (Resources.getSystem().configuration.locales[0].language) {
+                "en" -> {
+                    GiniLocalization.ENGLISH
+                }
+
+                else -> {
+                    GiniLocalization.GERMAN
+                }
+            }
+            GiniPaymentPreferences(context).saveSDKLanguage(sdkLanguage, false)
+        }
+    }
+
 
     internal val giniPaymentManager: GiniPaymentManager
         get() {
@@ -162,12 +192,16 @@ class GiniInternalPaymentModule(private val context: Context,
 
     fun getIngredientBrandVisibility() = GiniPaymentPreferences(context).getIngredientBrandVisibility()
 
+    private fun saveSDKCommunicationTone(tone: String) =
+        GiniPaymentPreferences(context).saveSDKCommunicationTone(tone)
+
     internal class GiniPaymentPreferences(context: Context) {
         private val sharedPreferences = context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)
 
-        fun saveSDKLanguage(value: GiniLocalization?) {
+        fun saveSDKLanguage(value: GiniLocalization?, isCalledByClient :Boolean = true) {
             val editor: SharedPreferences.Editor = sharedPreferences.edit()
             editor.putString(SDK_LANGUAGE_PREFS_KEY, value?.readableName?.uppercase())
+            if (value != null && !getLanguageOverriddenByUser() && isCalledByClient) saveLanguageOverriddenByUser(true)
             editor.apply()
         }
 
@@ -200,14 +234,43 @@ class GiniInternalPaymentModule(private val context: Context,
                     it
                 )
             } ?: IngredientBrandType.INVISIBLE
+
+        fun saveSDKCommunicationTone(tone: String) {
+            sharedPreferences.edit().apply {
+                putString(SDK_COMMUNICATION_TONE_PREFS_KEY, tone)
+                apply()
+            }
+        }
+
+        fun getSDKCommunicationTone(): CommunicationTone =
+            sharedPreferences.getString(
+                SDK_COMMUNICATION_TONE_PREFS_KEY,
+                CommunicationTone.FORMAL.toString()
+            )?.let {
+                CommunicationTone.valueOf(
+                    it
+                )
+            } ?: CommunicationTone.FORMAL
+
+        fun saveLanguageOverriddenByUser(value: Boolean) {
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            editor.putBoolean(SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY, value )
+            editor.apply()
+        }
+
+        fun getLanguageOverriddenByUser() = sharedPreferences.getBoolean(
+            SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY, false)
+
     }
 
     var localizedContext: Context? = null
 
     companion object {
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
+        private const val SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY = "SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY"
         private const val RETURNING_USER_PREFS_KEY = "RETURNING_USER_PREFS_KEY"
         private const val INGREDIENT_BRAND_VISIBILITY_PREFS_KEY = "INGREDIENT_BRAND_VISIBILITY_PREFS_KEY"
+        private const val SDK_COMMUNICATION_TONE_PREFS_KEY = "SDK_COMMUNICATION_TONE_PREFS_KEY"
         private const val DEFAULT_API_VERSION = 1
         const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
 
