@@ -58,7 +58,7 @@ class GiniInternalPaymentModule(private val context: Context,
      * German. Which is unfortunately not a part of language packs offered by systems. Details in comments of [GiniLocalizationInternal]
      * */
 
-    internal fun updateSDKLanguageForInternalRecord(context: Context) {
+    private fun updateSDKLanguageForInternalRecord(context: Context) {
         if (!GiniPaymentPreferences(context).getLanguageOverriddenByUser()) {
             val sdkLanguage = when (Resources.getSystem().configuration.locales[0].language) {
                 "en" -> GiniLocalization.ENGLISH
@@ -296,7 +296,12 @@ class GiniInternalPaymentModule(private val context: Context,
          * Public method for clients to return current language of SDK
          * */
         fun getSDKLanguage(context: Context): GiniLocalization? {
-            return GiniPaymentPreferences(context).getSDKLanguage()
+            val preferences = GiniPaymentPreferences(context)
+            val language = preferences.getSDKLanguage()
+            return when {
+                language == GiniLocalization.GERMAN && preferences.getSDKCommunicationTone() == CommunicationTone.INFORMAL -> GiniLocalization.GERMAN_INFORMAL
+                else -> language
+            }
         }
 
         /**
