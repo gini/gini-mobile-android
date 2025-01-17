@@ -53,16 +53,11 @@ class GiniInternalPaymentModule(private val context: Context,
      * like if(tone == formal) getString(R.id.hello_formal) else getString(R.id.hello_informal).
      * */
 
-    internal fun updateSDKLanguageForInternalRecord(context: Context) {
+    private fun updateSDKLanguageForInternalRecord(context: Context) {
         if (!GiniPaymentPreferences(context).getLanguageOverriddenByUser()) {
             val sdkLanguage = when (Resources.getSystem().configuration.locales[0].language) {
-                "en" -> {
-                    GiniLocalization.ENGLISH
-                }
-
-                else -> {
-                    GiniLocalization.GERMAN
-                }
+                "en" -> GiniLocalization.ENGLISH
+                else -> GiniLocalization.GERMAN
             }
             GiniPaymentPreferences(context).saveSDKLanguage(sdkLanguage, false)
         }
@@ -157,6 +152,10 @@ class GiniInternalPaymentModule(private val context: Context,
                 is Resource.Success -> {
                     val ingredientBrandVisibility = IngredientBrandType.valueOf(configurations.data.ingredientBrandType)
                     saveIngredientBrandVisibility(ingredientBrandVisibility)
+
+                    configurations.data.communicationTone?.let { tone ->
+                        saveSDKCommunicationTone(tone.name)
+                    }
                 }
                 else -> {}
             }
@@ -275,7 +274,12 @@ class GiniInternalPaymentModule(private val context: Context,
         const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
 
         fun getSDKLanguage(context: Context): GiniLocalization? {
-            return GiniPaymentPreferences(context).getSDKLanguage()
+            val preferences = GiniPaymentPreferences(context)
+            val language = preferences.getSDKLanguage()
+            return when {
+                language == GiniLocalization.GERMAN && preferences.getSDKCommunicationTone() == CommunicationTone.INFORMAL -> GiniLocalization.GERMAN_INFORMAL
+                else -> language
+            }
         }
     }
 
