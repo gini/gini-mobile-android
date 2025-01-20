@@ -21,6 +21,7 @@ import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.GiniPaymentManager
 import net.gini.android.internal.payment.utils.PaymentEventListener
+import org.slf4j.LoggerFactory
 
 class GiniInternalPaymentModule(private val context: Context,
                                 private val clientId: String = "",
@@ -126,10 +127,16 @@ class GiniInternalPaymentModule(private val context: Context,
         _giniHealthAPI?.documentManager?.let {
             when (val configurations = it.getConfigurations()) {
                 is Resource.Success -> {
-                    val ingredientBrandVisibility = IngredientBrandType.getValue(configurations.data.ingredientBrandType)
+                    val ingredientBrandVisibility =
+                        IngredientBrandType.getValue(configurations.data.ingredientBrandType)
                     saveIngredientBrandVisibility(ingredientBrandVisibility)
                 }
-                else -> {}
+                is Resource.Error -> {
+                    LoggerFactory.getLogger(GiniInternalPaymentModule::class.java).error("Getting configuration from server failed: ${configurations.exception}")
+                }
+                is Resource.Cancelled -> {
+                    LoggerFactory.getLogger(GiniInternalPaymentModule::class.java).error("Getting configuration from server was cancelled")
+                }
             }
         }
     }
