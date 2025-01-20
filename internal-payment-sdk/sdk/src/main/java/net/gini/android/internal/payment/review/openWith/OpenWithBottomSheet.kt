@@ -56,7 +56,7 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return getLayoutInflaterWithGiniPaymentThemeAndLocale(
             inflater,
-            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
+            GiniInternalPaymentModule.getSDKLanguageInternal(requireContext())?.languageLocale()
         )
     }
 

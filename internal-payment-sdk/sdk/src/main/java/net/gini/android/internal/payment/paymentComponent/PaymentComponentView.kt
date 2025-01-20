@@ -75,7 +75,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     var dismissListener: ButtonClickListener? = null
 
-    private val binding = GpsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()), this)
+    private val binding = GpsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguageInternal(context)?.languageLocale()), this)
     @VisibleForTesting
     internal lateinit var payInvoiceButton: Button
     private lateinit var paymentProviderAppIconHolder: GpsPaymentProviderIconHolderBinding
