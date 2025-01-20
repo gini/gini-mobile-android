@@ -42,7 +42,11 @@ enum class GiniLocalizationInternal(val readableName: String) {
 
     fun languageLocale(): Locale {
         return when (this) {
-            GERMAN -> Locale("-1") // setting -1 so system can fallback to default values folder. Detailed reason provided in above comments.
+            /**
+             * setting -1 so system can fallback to default values folder. Detailed reason
+             * is provided in above comments.
+             * */
+            GERMAN -> Locale("-1")
             GERMAN_INFORMAL -> Locale("de")
             else -> Locale("en")
         }
