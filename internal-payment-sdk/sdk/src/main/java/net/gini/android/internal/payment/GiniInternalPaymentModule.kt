@@ -20,6 +20,7 @@ import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniLocalization
+import net.gini.android.internal.payment.utils.GiniLocalizationInternal
 import net.gini.android.internal.payment.utils.GiniPaymentManager
 import net.gini.android.internal.payment.utils.PaymentEventListener
 
@@ -44,16 +45,15 @@ class GiniInternalPaymentModule(private val context: Context,
 
     /**
      * This method will track record of current locale because user can change language from setting and if our
-     * clients(who get the sdk from us) do not change the language explicitly by calling [setSDKLanguage] we have to
+     * clients(SDK users) do not change the language explicitly by calling [setSDKLanguage] we have to
      * respect the user settings and show the strings from En or DE respectively.
+     *
      * Once our client set the SDK language this method will not update the current locale, and we will respect
      * the explicit changes done by our client. This record keeping is required because we support Formal / Informal
-     * German. Which is unfortunately not a part of language packs offered by systems. so we cannot just simply make values folders
-     * like values-de, we need to have a workaround and update locale accordingly, other wise we need to put checks every where
-     * like if(tone == formal) getString(R.id.hello_formal) else getString(R.id.hello_informal).
+     * German. Which is unfortunately not a part of language packs offered by systems. Details in comments of [GiniLocalizationInternal]
      * */
 
-    private fun updateSDKLanguageForInternalRecord(context: Context) {
+    internal fun updateSDKLanguageForInternalRecord(context: Context) {
         if (!GiniPaymentPreferences(context).getLanguageOverriddenByUser()) {
             val sdkLanguage = when (Resources.getSystem().configuration.locales[0].language) {
                 "en" -> GiniLocalization.ENGLISH
@@ -191,7 +191,7 @@ class GiniInternalPaymentModule(private val context: Context,
 
     fun getIngredientBrandVisibility() = GiniPaymentPreferences(context).getIngredientBrandVisibility()
 
-    private fun saveSDKCommunicationTone(tone: String) =
+    fun saveSDKCommunicationTone(tone: String) =
         GiniPaymentPreferences(context).saveSDKCommunicationTone(tone)
 
     internal class GiniPaymentPreferences(context: Context) {
@@ -273,12 +273,27 @@ class GiniInternalPaymentModule(private val context: Context,
         private const val DEFAULT_API_VERSION = 1
         const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"
 
+        /**
+         * Public method for clients to return current language of SDK
+         * */
         fun getSDKLanguage(context: Context): GiniLocalization? {
+            return GiniPaymentPreferences(context).getSDKLanguage()
+        }
+
+        /**
+         * Internal method for SDK development, This method returns[GiniLocalizationInternal] which is a wrapper around [GiniLocalization]
+         * because we have to keep track of German formal and Informal, as German informal is just a dialect rather then a language, we applied
+         * a work-around to tackle this, detailed comments in [GiniLocalizationInternal]. This method will be used to keep track of current language
+         * which is set either by clients(SDK users) by calling [setSDKLanguage] or user's phone language.
+         * */
+
+        internal fun getSDKLanguageInternal(context: Context): GiniLocalizationInternal? {
             val preferences = GiniPaymentPreferences(context)
             val language = preferences.getSDKLanguage()
-            return when {
-                language == GiniLocalization.GERMAN && preferences.getSDKCommunicationTone() == CommunicationTone.INFORMAL -> GiniLocalization.GERMAN_INFORMAL
-                else -> language
+            return when (language) {
+                GiniLocalization.GERMAN -> if (preferences.getSDKCommunicationTone() == CommunicationTone.INFORMAL) GiniLocalizationInternal.GERMAN_INFORMAL else GiniLocalizationInternal.GERMAN
+                GiniLocalization.ENGLISH -> GiniLocalizationInternal.ENGLISH
+                null -> null
             }
         }
     }
