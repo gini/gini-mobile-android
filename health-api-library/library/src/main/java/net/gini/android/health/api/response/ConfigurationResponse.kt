@@ -18,5 +18,12 @@ enum class CommunicationTone {
 enum class IngredientBrandType(visibility: String) {
     FULL_VISIBLE("FULL_VISIBLE"),
     PAYMENT_COMPONENT("PAYMENT_COMPONENT"),
-    INVISIBLE("INVISIBLE")
+    INVISIBLE("INVISIBLE");
+    companion object
+}
+
+fun IngredientBrandType.Companion.getValue(visibility: String): IngredientBrandType = try {
+    IngredientBrandType.valueOf(visibility)
+} catch (exception: IllegalArgumentException) {
+    IngredientBrandType.INVISIBLE
 }

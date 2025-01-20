@@ -13,6 +13,7 @@ import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.GiniHealthAPIBuilder
 import net.gini.android.health.api.response.CommunicationTone
 import net.gini.android.health.api.response.IngredientBrandType
+import net.gini.android.health.api.response.getValue
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
@@ -150,7 +151,7 @@ class GiniInternalPaymentModule(private val context: Context,
         _giniHealthAPI?.documentManager?.let {
             when (val configurations = it.getConfigurations()) {
                 is Resource.Success -> {
-                    val ingredientBrandVisibility = IngredientBrandType.valueOf(configurations.data.ingredientBrandType)
+                    val ingredientBrandVisibility = IngredientBrandType.getValue(configurations.data.ingredientBrandType)
                     saveIngredientBrandVisibility(ingredientBrandVisibility)
 
                     configurations.data.communicationTone?.let { tone ->
