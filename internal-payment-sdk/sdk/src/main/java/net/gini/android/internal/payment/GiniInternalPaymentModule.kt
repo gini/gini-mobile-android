@@ -132,10 +132,12 @@ class GiniInternalPaymentModule(private val context: Context,
                     saveIngredientBrandVisibility(ingredientBrandVisibility)
                 }
                 is Resource.Error -> {
-                    LoggerFactory.getLogger(GiniInternalPaymentModule::class.java).error("Getting configuration from server failed: ${configurations.exception}")
+                    LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
+                        .error("Getting configuration from server failed: ${configurations.exception}")
                 }
                 is Resource.Cancelled -> {
-                    LoggerFactory.getLogger(GiniInternalPaymentModule::class.java).error("Getting configuration from server was cancelled")
+                    LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
+                        .error("Getting configuration from server was cancelled")
                 }
             }
         }
