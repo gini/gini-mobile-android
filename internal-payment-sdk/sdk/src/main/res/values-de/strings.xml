@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--This file is used for the informal strings used in German, [IPC-492]. For detailed information please see [GiniLocalizationInternal] class. -->
 <resources>
     <string name="gps_amount_hint">Betrag</string>
     <string name="gps_reference_number_hint">Verwendungszweck</string>
