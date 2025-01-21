@@ -177,7 +177,7 @@ class GiniInternalPaymentModule(private val context: Context,
                      * are already including all the branches of when. Need to investigate later why getting NoWhenBranchMatchedException!
                      * */
                     LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
-                        .error("Unknown state reached")
+                        .error("Unknown state reached while getting configuration and parsing")
                 }
             }
         }
