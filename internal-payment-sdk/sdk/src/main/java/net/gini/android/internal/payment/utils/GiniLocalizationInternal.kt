@@ -35,7 +35,7 @@ import java.util.Locale
  * for the formal no change is made.
  * */
 
-enum class GiniLocalizationInternal(val readableName: String) {
+internal enum class GiniLocalizationInternal(val readableName: String) {
     GERMAN("German"),
     ENGLISH("English"),
     GERMAN_INFORMAL("German_informal");
