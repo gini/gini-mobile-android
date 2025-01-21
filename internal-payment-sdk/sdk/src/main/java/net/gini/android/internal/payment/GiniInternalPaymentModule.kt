@@ -300,23 +300,6 @@ class GiniInternalPaymentModule(private val context: Context,
         }
 
         /**
-         * Internal method for SDK development, This method returns[GiniLocalizationInternal] which is a wrapper around [GiniLocalization]
-         * because we have to keep track of German formal and Informal, as German informal is just a dialect rather then a language, we applied
-         * a work-around to tackle this, detailed comments in [GiniLocalizationInternal]. This method will be used to keep track of current language
-         * which is set either by clients(SDK users) by calling [setSDKLanguage] or user's phone language.
-         * */
-
-        internal fun getSDKLanguageInternal(context: Context): GiniLocalizationInternal? {
-            val preferences = GiniPaymentPreferences(context)
-            val language = preferences.getSDKLanguage()
-            return when (language) {
-                GiniLocalization.GERMAN -> if (preferences.getSDKCommunicationTone() == CommunicationTone.INFORMAL) GiniLocalizationInternal.GERMAN_INFORMAL else GiniLocalizationInternal.GERMAN
-                GiniLocalization.ENGLISH -> GiniLocalizationInternal.ENGLISH
-                null -> null
-            }
-        }
-
-        /**
          * Internal method for SDK development, This method returns[GiniLocalizationInternal] which is a wrapper around
          * [GiniLocalization] because we have to keep track of German formal and Informal, as German informal is just a
          * dialect rather then a language, we applied a work-around to tackle this, detailed comments in
