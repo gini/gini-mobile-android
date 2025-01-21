@@ -1,6 +1,7 @@
 name: Check Bank API Library
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, edited, reopened, synchronize]
     paths:

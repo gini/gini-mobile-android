@@ -1,6 +1,7 @@
 name: Release docs for Capture SDK
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'capture-sdk;[0-9]+.[0-9]+.[0-9]+;doc**'
