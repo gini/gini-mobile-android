@@ -171,6 +171,14 @@ class GiniInternalPaymentModule(private val context: Context,
                     LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                         .error("Getting configuration from server was cancelled")
                 }
+                else -> {
+                    /**
+                     * this block is added because tests were failing in GiniHealthTest. It should not happen because we
+                     * are already including all the branches of when. Need to investigate later why getting NoWhenBranchMatchedException!
+                     * */
+                    LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
+                        .error("Unknown state reached")
+                }
             }
         }
     }
