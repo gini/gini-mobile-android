@@ -72,9 +72,15 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
     ): View {
         binding = GpsBottomSheetOpenWithBinding.inflate(inflater, container, false)
         viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loadPaymentRequestQrCode()
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                val qrCode = viewModel.loadPaymentRequestQrCode()
-                binding.gpsQrImageView.setImageBitmap(qrCode)
+                viewModel.qrCodeFlow.collect { qrCode ->
+                    binding.gpsQrImageView.setImageBitmap(qrCode)
+                }
             }
         }
         viewModel.paymentDetails?.let {
