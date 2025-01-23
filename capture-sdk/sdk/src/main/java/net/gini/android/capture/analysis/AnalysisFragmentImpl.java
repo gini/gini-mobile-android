@@ -235,7 +235,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         if (activity == null) {
             return;
         }
-        forcePortraitOrientationOnPhones(activity);
     }
 
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
