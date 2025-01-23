@@ -73,7 +73,7 @@ Gini is ISO 27001 certified for maximum data security and operates its own serve
 
     <!--  Payment component  -->
     <string name="gps_bank_selection_dropdown_content_description">Select your bank from the dropdown list. Use the arrow keys to navigate through the options and press Enter to choose your bank. This selection is required to proceed.</string>
-    <string name="gps_to_banking_app_content_description">Button “To the banking app”. It opens  the banking app to complete the payment.</string>
+    <string name="gps_to_banking_app_content_description">Button “To the banking app”. It opens the banking app to complete the payment.</string>
 
     <string name="gps_generic_error_message">Oops, something went wrong. Please try again.</string>
 </resources>
