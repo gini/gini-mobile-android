@@ -25,7 +25,7 @@ import java.util.Locale
  * - Invalid input -> 0.00
  *
  */
-
+@Suppress("TooGenericExceptionCaught" ,"SwallowedException")
 internal fun formatCurrency(input: String): String {
     if (input.isEmpty()) return ""
     val sanitizedInput = input.trimEnd().trimStart()
@@ -58,9 +58,12 @@ internal fun formatCurrency(input: String): String {
  * - 1.2 -> false
  * - 1.22 -> true
  * - 1 -> false
+ * - "" -> false
  * */
-internal fun hasMoreThenOneDecimalPlaces(input: String): Boolean {
-    val isCommaAsDecimal = input.contains(',') && input.lastIndexOf(',') > input.lastIndexOf('.')
+@Suppress("TooGenericExceptionCaught" ,"SwallowedException")
+internal fun hasMoreThenOneDecimalPlace(input: String): Boolean {
+    if (input.isEmpty()) return false
+    val isCommaAsDecimal = input.trimStart().trimEnd().contains(',') && input.lastIndexOf(',') > input.lastIndexOf('.')
     val normalizedInput = if (isCommaAsDecimal) {
         input.replace(".", "").replace(",", ".")
     } else {

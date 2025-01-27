@@ -31,7 +31,7 @@ import net.gini.android.internal.payment.utils.extensions.setErrorMessage
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
 import net.gini.android.internal.payment.utils.formatCurrency
-import net.gini.android.internal.payment.utils.hasMoreThenOneDecimalPlaces
+import net.gini.android.internal.payment.utils.hasMoreThenOneDecimalPlace
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import net.gini.android.internal.payment.utils.setTextIfDifferent
 import org.slf4j.LoggerFactory
@@ -105,11 +105,17 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         }
     }
 
-    private fun sanitizeAmount(paymentDetails: PaymentDetails) : PaymentDetails {
-        return if (!hasMoreThenOneDecimalPlaces(paymentDetails.amount))
-            PaymentDetails(recipient = paymentDetails.recipient, iban = paymentDetails.iban, amount = formatCurrency(paymentDetails.amount), purpose = paymentDetails.purpose)
+    private fun sanitizeAmount(paymentDetails: PaymentDetails): PaymentDetails {
+        return if (!hasMoreThenOneDecimalPlace(paymentDetails.amount))
+            PaymentDetails(
+                recipient = paymentDetails.recipient,
+                iban = paymentDetails.iban,
+                amount = formatCurrency(paymentDetails.amount),
+                purpose = paymentDetails.purpose
+            )
         else paymentDetails
     }
+
     private fun setButtonHandlers() {
         binding.gpsPaymentDetails.applyInsetter {
             type(navigationBars = true, ime = true) {
