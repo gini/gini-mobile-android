@@ -24,8 +24,12 @@ After that you can create an instance of ``GiniHealth``:
 
 .. note::
 
-    ``GiniHealth`` exposes a method for loading payment providers manually: ``giniHealth.loadPaymentProviders()``. It can be used if there was an error
-when loading the payment providers, as a manual retry mechanism. 
+    ``GiniHealth`` exposes a method for loading payment providers manually: ``giniHealth.loadPaymentProviders()``.
+
+    Although ``GiniHealth`` loads the payment providers when it is instantiated, this method can be used if there was an error when loading the payment providers, as a manual retry mechanism. If ``GiniHealth`` does not have internet access when instantiated, or if it was instantiated
+    with a session manager without credentials, this method should be called when the SDK gains internet access (or session manager receives credentials).
+
+    The ``trustMarkersFlow`` depends on the loaded payment providers, so please make sure you call this method manually if your SDK instantiation is similar to the cases described above.
 
 
 Upload documents
