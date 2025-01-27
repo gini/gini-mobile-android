@@ -22,6 +22,12 @@ After that you can create an instance of ``GiniHealth``:
 
     val giniHealth = GiniHealth(giniHealthApi)
 
+.. note::
+
+    ``GiniHealth`` exposes a method for loading payment providers manually: ``giniHealth.loadPaymentProviders()``. It can be used if there was an error
+when loading the payment providers, as a manual retry mechanism. 
+
+
 Upload documents
 ----------------
 
