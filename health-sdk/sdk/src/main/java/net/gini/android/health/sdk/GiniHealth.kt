@@ -357,6 +357,11 @@ class GiniHealth(
         return paymentFragment
     }
 
+    /**
+     * Manually load payment provider apps, in case there was an error when trying to load them automatically.
+     */
+    suspend fun loadPaymentProviders() = giniInternalPaymentModule.paymentComponent.loadPaymentProviderApps()
+
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
         Bundle().apply {
             when (capturedArguments) {
