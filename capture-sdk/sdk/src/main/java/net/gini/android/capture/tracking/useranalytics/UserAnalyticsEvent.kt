@@ -28,6 +28,7 @@ enum class UserAnalyticsEvent(val eventName: String) {
     SAVE_TAPPED("save_tapped"),
     FULL_SCREEN_PAGE_TAPPED("full_screen_page_tapped"),
     PREVIEW_ZOOMED("preview_zoomed"),
+    BACK_TAPPED("back_tapped"),
     // region Return Assistant
     ITEM_SWITCH_TAPPED("item_switch_tapped"),
     EDIT_TAPPED("edit_tapped"),
