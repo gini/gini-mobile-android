@@ -19,7 +19,7 @@ import java.util.Locale
  * - Ensures the output is formatted with thousands separators and two decimal places.
  *
  * Examples:
- * - 4,761 -> 4,761.00
+ * - 4,761 -> 4.76
  * - 12,345.6 -> 12,345.60
  * - 1.2 -> 1.20
  * - Invalid input -> 0.00
@@ -50,7 +50,7 @@ internal fun formatCurrency(input: String): String {
 
 /**
  * This method:
- * - Detects if the number has more then one decimal place because
+ * - Detects if the number has exactly two decimal places or not because
  * value with the two decimals are already perfect and can be taken
  * care by [amountWatcher].
  *
@@ -58,10 +58,11 @@ internal fun formatCurrency(input: String): String {
  * - 1.2 -> false
  * - 1.22 -> true
  * - 1 -> false
+ * - 1.333 -> false
  * - "" -> false
  * */
 @Suppress("TooGenericExceptionCaught" ,"SwallowedException")
-internal fun hasMoreThenOneDecimalPlace(input: String): Boolean {
+internal fun isValidTwoDecimalNumber(input: String): Boolean {
     if (input.isEmpty()) return false
     val isCommaAsDecimal = input.trimStart().trimEnd().contains(',') && input.lastIndexOf(',') > input.lastIndexOf('.')
     val normalizedInput = if (isCommaAsDecimal) {
@@ -72,7 +73,7 @@ internal fun hasMoreThenOneDecimalPlace(input: String): Boolean {
 
     return try {
         val parts = normalizedInput.split('.')
-        parts.size == 2 && parts[1].length > 1
+        parts.size == 2 && parts[1].length == 2
     } catch (e: Exception) {
         false
     }
