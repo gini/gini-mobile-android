@@ -101,9 +101,6 @@ internal class AmplitudeUserAnalyticsEventTracker(
             )
         )
 
-        Log.e("User journey", "Event: ${eventName.eventName}\n" +
-                finalProperties.toList().joinToString("\n") { "  ${it.first}=${it.second}" })
-
         LOG.debug("\nEvent: ${eventName.eventName}\n" +
                 finalProperties.toList().joinToString("\n") { "  ${it.first}=${it.second}" })
     }

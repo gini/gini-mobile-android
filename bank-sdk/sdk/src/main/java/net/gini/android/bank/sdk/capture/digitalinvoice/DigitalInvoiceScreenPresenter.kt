@@ -262,7 +262,9 @@ internal class DigitalInvoiceScreenPresenter(
     private fun trackScreenShownEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
-            setOf(UserAnalyticsEventProperty.Screen(screenName))
+            setOf(
+                UserAnalyticsEventProperty.Screen(screenName)
+            ) + if (skontoData != null) setOf(UserAnalyticsEventProperty.SwitchActive(digitalInvoice.skontoEnabled)) else emptySet(),
         )
     }
 }
