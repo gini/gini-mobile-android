@@ -116,6 +116,10 @@ You need to pass the payment details as parameter to the method:
 
     getPaymentFragmentWithoutDocument(paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration?): PaymentFragment
 
+.. warning::
+
+    Currently, We support ``amount`` which is passed in ``PaymentDetails`` in the format 12345.67, meaning up to five digits before the decimal and two digits after the decimal. The maximum allowed amount is 99999.99.
+
 .. note::
 
     The ``PaymentFragment`` handles the navigation for the screens shown during the payment flow. It doesn't handle external navigation related events and doesn't show a navigation bar. You are
