@@ -72,9 +72,15 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
     ): View {
         binding = GpsBottomSheetOpenWithBinding.inflate(inflater, container, false)
         viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loadPaymentRequestQrCode()
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                val qrCode = viewModel.loadPaymentRequestQrCode()
-                binding.gpsQrImageView.setImageBitmap(qrCode)
+                viewModel.qrCodeFlow.collect { qrCode ->
+                    binding.gpsQrImageView.setImageBitmap(qrCode)
+                }
             }
         }
         viewModel.paymentDetails?.let {
@@ -114,6 +120,12 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
             }
             binding.gpsForwardButton.text =
                 String.format(getLocaleStringResource(R.string.gps_open_with_button_text), paymentProviderApp.name)
+
+            binding.gpsForwardButton.contentDescription =
+                String.format(getLocaleStringResource(
+                    R.string.gps_share_with_button_content_description),
+                    paymentProviderApp.name
+                )
         }
         return binding.root
     }

@@ -135,6 +135,10 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
+    implementation(libs.orbitmvi.test)
+    implementation(libs.orbitmvi.compose)
+    implementation(libs.orbitmvi.viewmodel)
+
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
