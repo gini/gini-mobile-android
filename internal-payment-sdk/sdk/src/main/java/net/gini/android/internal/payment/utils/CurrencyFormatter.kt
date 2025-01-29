@@ -5,13 +5,6 @@ import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 /**
- * Context: IBM reported a issue, that if the value is passed like this 471.8 then it
- * is converted to 47.18 which is a major bug, as clients can give this value often
- * to ReviewView, and we already have proper formating of the field in specific fragments
- * which takes care that if user is entering 12 then it will be automatically converted
- * to 12.00, so we will just sanitize the input first time and then it will be taken
- * care by the views it self by [amountWatcher].
- *
  * This method:
  * - Detects the decimal and grouping separators based on the input.
  * - Handles both '.' and ',' as decimal separators.
@@ -23,7 +16,6 @@ import java.util.Locale
  * - 12,345.6 -> 12,345.60
  * - 1.2 -> 1.20
  * - Invalid input -> 0.00
- *
  */
 @Suppress("TooGenericExceptionCaught" ,"SwallowedException")
 internal fun formatCurrency(input: String): String {
@@ -70,7 +62,6 @@ internal fun isValidTwoDecimalNumber(input: String): Boolean {
     } else {
         input.replace(",", "")
     }
-
     return try {
         val parts = normalizedInput.split('.')
         parts.size == 2 && parts[1].length == 2

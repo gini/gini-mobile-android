@@ -41,7 +41,6 @@ class CurrencyFormatterTest {
         assertThat(formatCurrency("5,5")).isEqualTo("5.50")
         assertThat(formatCurrency("0,5")).isEqualTo("0.50")
         assertThat(formatCurrency("1234,56")).isEqualTo("1,234.56")
-
     }
 
     @Test
