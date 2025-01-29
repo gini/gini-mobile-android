@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gps_payment_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:animateLayoutChanges="true"
         android:visibility="visible">
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,7 +29,7 @@
                 android:hint="@string/gps_recipient_hint"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/iban_layout"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@id/iban_layout"
                 android:layout_marginEnd="@dimen/gps_small"
                 >
 
@@ -76,6 +72,13 @@
                     android:nextFocusDown="@id/amount" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/iban_recipient_barrier_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="iban_layout,recipient_layout" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/amount_layout"
                 style="@style/GiniPaymentTheme.PaymentInputLayout"
@@ -86,7 +89,7 @@
                 app:errorContentDescription="@string/gps_invalid_amount_content_description"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/guideline"
-                app:layout_constraintTop_toBottomOf="@id/recipient_layout"
+                app:layout_constraintTop_toBottomOf="@id/iban_recipient_barrier_bottom"
                 android:hint="@string/gps_amount_hint"
                 app:suffixText="€">
 
