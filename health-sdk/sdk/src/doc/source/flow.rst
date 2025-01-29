@@ -22,6 +22,16 @@ After that you can create an instance of ``GiniHealth``:
 
     val giniHealth = GiniHealth(giniHealthApi)
 
+.. note::
+
+    ``GiniHealth`` exposes a method for loading payment providers manually: ``giniHealth.loadPaymentProviders()``.
+
+    Although ``GiniHealth`` loads the payment providers when it is instantiated, this method can be used if there was an error when loading the payment providers, as a manual retry mechanism. If ``GiniHealth`` does not have internet access when instantiated, or if it was instantiated
+    with a session manager without credentials, this method should be called when the SDK gains internet access (or session manager receives credentials).
+
+    The ``trustMarkersFlow`` depends on the loaded payment providers, so please make sure you call this method manually if your SDK instantiation is similar to the cases described above.
+
+
 Upload documents
 ----------------
 
@@ -115,6 +125,10 @@ You need to pass the payment details as parameter to the method:
 .. code-block:: kotlin
 
     getPaymentFragmentWithoutDocument(paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration?): PaymentFragment
+
+.. warning::
+
+    Currently, We support ``amount`` which is passed in ``PaymentDetails`` in the format 12345.67, meaning up to five digits before the decimal and two digits after the decimal. The maximum allowed amount is 99999.99.
 
 .. note::
 

@@ -3,7 +3,6 @@ package net.gini.android.health.sdk.integratedFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -55,15 +54,6 @@ internal class PaymentFlowViewModel(
     private var externalCacheDir: File? = null
 
     init {
-        viewModelScope.launch {
-            paymentComponent.paymentProviderAppsFlow.collect {
-                if (it is PaymentProviderAppsState.Error) {
-                    giniInternalPaymentModule.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(it.throwable))
-                    delay(50)
-                    giniInternalPaymentModule.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled)
-                }
-            }
-        }
         viewModelScope.launch {
             giniInternalPaymentModule.eventsFlow.collect { event ->
                 handleInternalEvents(event)
