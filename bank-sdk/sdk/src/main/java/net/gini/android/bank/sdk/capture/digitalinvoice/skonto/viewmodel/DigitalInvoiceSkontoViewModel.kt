@@ -102,7 +102,7 @@ internal class DigitalInvoiceSkontoViewModel(
 
     private fun logBackClicked() {
         analyticsTracker.trackEvent(
-            UserAnalyticsEvent.BACK_TAPPED,
+            UserAnalyticsEvent.CLOSE_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoReturnAssistant))
         )
     }
