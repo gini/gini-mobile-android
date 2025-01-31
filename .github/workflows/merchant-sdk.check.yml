@@ -1,19 +1,9 @@
 name: Check Merchant SDK
 
 on:
-  push:
-    paths:
-      - 'merchant-sdk/**'
-      - 'internal-payment-sdk/**'
-      - 'health-api-library/**'
-      - 'core-api-library/**'
-      - 'gradle/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
+  workflow_dispatch:
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'merchant-sdk/**'
       - 'internal-payment-sdk/**'
@@ -26,6 +16,10 @@ on:
         required: true
       MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
         required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-check
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
 
 jobs:
   test:

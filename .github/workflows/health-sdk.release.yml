@@ -1,6 +1,7 @@
 name: Release Health SDK
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'health-sdk;[0-9]+.[0-9]+.[0-9]+'

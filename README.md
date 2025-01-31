@@ -174,3 +174,8 @@ A detailed explanation can be found in the [.git-stuff/commit-msg-template.txt](
 ## Merging
 
 We are using merge commits and restrict rebasing and squashing to feature branches.
+
+
+# Common issues
+
+After cloning if this issue is happening "java.lang.IllegalAccessError: superclass access check failed", Please goto Tools -> SDK manager -> Build, Execution, Deployment -> Build Tools -> Gradle, after clicking Gradle and on the right pane change the Gradle JDK to version 17 or lower. Version 17 is preferred.
