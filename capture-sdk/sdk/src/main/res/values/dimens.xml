@@ -12,6 +12,7 @@
     <dimen name="gc_large_64">64dp</dimen>
     <dimen name="gc_large_80">80dp</dimen>
     <dimen name="gc_large_96">96dp</dimen>
+    <dimen name="gc_large_120">120dp</dimen>
     <dimen name="gc_inner_padding_detection_error_layout">8dp</dimen>
 
     <dimen name="gc_review_bottom_bar_height">80dp</dimen>
