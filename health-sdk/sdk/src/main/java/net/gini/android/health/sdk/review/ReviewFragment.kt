@@ -379,7 +379,7 @@ class ReviewFragment private constructor(
                 setupConstraintsForTabLayout((dragHandle?.height ?: 0) + bottomLayout.height)
             }
 
-            dragHandle?.setOnTouchListener { v, event ->
+            dragHandle?.setOnTouchListener { _, _ ->
                 fieldsLayout.alpha = if (isVisible) 0f else 1f
                 fieldsLayout.isVisible = !fieldsLayout.isVisible
                 false
