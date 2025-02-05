@@ -40,6 +40,15 @@ public final class ContextHelper {
         return context.getResources().getBoolean(R.bool.gc_is_portrait);
     }
 
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
+    public static boolean isPortraitOrTablet(@NonNull final Context context) {
+        return isPortraitOrientation(context) || isTablet(context);
+    }
+
     private ContextHelper() {
     }
 }
