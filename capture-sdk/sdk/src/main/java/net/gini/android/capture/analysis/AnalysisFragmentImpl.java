@@ -230,13 +230,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mImageDocumentView.setRotation(rotationForDisplay);
     }
 
-    public void onCreate(final Bundle savedInstanceState) {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-    }
-
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_analysis, container, false);
