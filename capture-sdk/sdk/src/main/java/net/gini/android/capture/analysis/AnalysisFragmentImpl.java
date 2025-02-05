@@ -230,7 +230,9 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mImageDocumentView.setRotation(rotationForDisplay);
     }
 
-    public void onCreate(final Bundle savedInstanceState) {}
+    public void onCreate(final Bundle savedInstanceState) {
+        // Required by superclass, no changes need to remove it.
+    }
 
 
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
