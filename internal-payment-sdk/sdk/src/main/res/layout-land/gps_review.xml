@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gps_payment_details"
         android:layout_width="match_parent"
@@ -12,6 +13,7 @@
         android:orientation="vertical"
         android:animateLayoutChanges="true"
         android:visibility="visible">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -129,6 +131,7 @@
                     android:paddingStart="@dimen/gps_medium_12"
                     android:paddingEnd="@dimen/gps_zero" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <androidx.constraintlayout.widget.Guideline
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -143,6 +146,7 @@
             android:id="@+id/gps_bottom_layout"
             app:layout_constraintTop_toBottomOf="@id/gps_fields_layout"
             android:layout_marginTop="@dimen/gps_medium">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -151,6 +155,7 @@
                 app:layout_constraintTop_toTopOf="@id/payment"
                 app:layout_constraintStart_toStartOf="parent"
                 >
+
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
