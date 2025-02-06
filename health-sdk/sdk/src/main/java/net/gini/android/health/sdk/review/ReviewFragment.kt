@@ -397,7 +397,9 @@ class ReviewFragment private constructor(
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
+        if (!resources.isLandscapeOrientation()) {
+            outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
+        }
         super.onSaveInstanceState(outState)
     }
 
