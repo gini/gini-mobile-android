@@ -257,7 +257,7 @@ class ReviewFragment private constructor(
                 clear(R.id.pager, ConstraintSet.BOTTOM)
                 applyTo(constraintRoot)
             }
-            if (savedHeight != -1) {
+            if (savedHeight > 0) {
                 val pagerLayoutParams = binding.pager.layoutParams
                 pagerLayoutParams.height = savedHeight
                 binding.pager.layoutParams = pagerLayoutParams
@@ -327,6 +327,9 @@ class ReviewFragment private constructor(
 
     private fun GhsFragmentReviewBinding.showInfoBar() {
         root.doOnLayout {
+            if (resources.isLandscapeOrientation()) {
+                paymentDetailsInfoBar.isVisible = true
+            }
             // paymentDetailsInfoBar visibility should never be GONE, otherwise the animation won't work
             if (paymentDetailsInfoBar.isInvisible) {
                 TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
@@ -397,9 +400,7 @@ class ReviewFragment private constructor(
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        if (!resources.isLandscapeOrientation()) {
-            outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
-        }
+        outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
         super.onSaveInstanceState(outState)
     }
 
