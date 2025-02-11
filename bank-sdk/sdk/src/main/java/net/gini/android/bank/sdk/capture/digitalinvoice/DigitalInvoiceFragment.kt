@@ -44,7 +44,6 @@ import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalToolbarMenuItemIntervalClickListener
-import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -152,7 +151,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-        forcePortraitOrientationOnPhones(activity)
         initListener()
         createPresenter(activity, savedInstanceState)
 
@@ -285,42 +283,50 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
     private fun initBottomBar() {
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+            if (ContextHelper.isPortraitOrTablet(requireContext())) {
+                binding.gbsBottomWrapper.visibility = View.INVISIBLE
+                binding.gbsPay.isEnabled = false
 
-            binding.gbsBottomWrapper.visibility = View.INVISIBLE
-            binding.gbsPay.isEnabled = false
-
-            binding.gbsBottomBarNavigation.injectedViewAdapterHolder =
-                InjectedViewAdapterHolder(GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
-                    injectedViewAdapter.setOnHelpClickListener {
-                        showHelp()
-                    }
-
-                    injectedViewAdapter.setOnProceedClickListener {
-                        payButtonClicked()
-                    }
-
-                    footerDetails?.let {
-                        val (integral, fractional) = it.totalGrossPriceIntegralAndFractionalParts
-                        injectedViewAdapter.setTotalPrice(integral + fractional)
-                        injectedViewAdapter.setProceedButtonEnabled(it.buttonEnabled)
-                        injectedViewAdapter.onSkontoPercentageBadgeVisibilityUpdate(
-                            it.skontoDiscountPercentage != null
-                        )
-                        injectedViewAdapter.onSkontoSavingsAmountVisibilityUpdated(
-                            it.skontoSavedAmount != null
-                        )
-                        it.skontoDiscountPercentage?.let { percentage ->
-                            injectedViewAdapter.onSkontoPercentageBadgeUpdated(
-                                skontoDiscountLabelTextFactory.create(percentage)
-                            )
+                binding.gbsBottomBarNavigation.injectedViewAdapterHolder =
+                    InjectedViewAdapterHolder(GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
+                        injectedViewAdapter.setOnHelpClickListener {
+                            showHelp()
                         }
-                        it.skontoSavedAmount?.let { amount ->
-                            injectedViewAdapter.onSkontoSavingsAmountUpdated(
-                                skontoSavedAmountTextFactory.create(amount)
+
+                        injectedViewAdapter.setOnProceedClickListener {
+                            payButtonClicked()
+                        }
+
+                        footerDetails?.let {
+                            val (integral, fractional) = it.totalGrossPriceIntegralAndFractionalParts
+                            injectedViewAdapter.setTotalPrice(integral + fractional)
+                            injectedViewAdapter.setProceedButtonEnabled(it.buttonEnabled)
+                            injectedViewAdapter.onSkontoPercentageBadgeVisibilityUpdate(
+                                it.skontoDiscountPercentage != null
                             )
+                            injectedViewAdapter.onSkontoSavingsAmountVisibilityUpdated(
+                                it.skontoSavedAmount != null
+                            )
+                            it.skontoDiscountPercentage?.let { percentage ->
+                                injectedViewAdapter.onSkontoPercentageBadgeUpdated(
+                                    skontoDiscountLabelTextFactory.create(percentage)
+                                )
+                            }
+                            it.skontoSavedAmount?.let { amount ->
+                                injectedViewAdapter.onSkontoSavingsAmountUpdated(
+                                    skontoSavedAmountTextFactory.create(amount)
+                                )
+                            }
                         }
                     }
-                }
+            } else {
+                binding.gbsBottomBarNavigation.injectedViewAdapterHolder =
+                    InjectedViewAdapterHolder(GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
+                        injectedViewAdapter.setOnHelpClickListener {
+                            showHelp()
+                        }
+                    }
+            }
         }
     }
 
@@ -435,7 +441,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
     private fun scrollList(toTop: Boolean) {
         val delay: Long = if (toTop) 350 else 200
-        binding.lineItems.postDelayed(Runnable {
+        binding.lineItems.postDelayed({
             smoothScroller.targetPosition = if (toTop) 0 else lineItemsAdapter.itemCount
             (binding.lineItems.layoutManager as? LinearLayoutManager)?.startSmoothScroll(
                 smoothScroller
@@ -490,7 +496,9 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         }
 
 
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled
+            && ContextHelper.isPortraitOrTablet(requireContext())
+        ) {
             binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
                 (it as DigitalInvoiceNavigationBarBottomAdapter).apply {
                     setTotalPrice(integral + fractional)
