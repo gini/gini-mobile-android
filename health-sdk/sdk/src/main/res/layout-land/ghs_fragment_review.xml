@@ -93,6 +93,7 @@
                     android:layout_height="wrap_content"
                     android:elevation="12dp"
                     android:animateLayoutChanges="true"
+                    android:visibility="invisible"
                     app:layout_constraintTop_toTopOf="@id/drag_handle"
                     >
                     <TextView
