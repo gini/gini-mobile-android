@@ -1,7 +1,6 @@
 package net.gini.android.capture.tracking.useranalytics.tracker
 
 import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

@@ -58,7 +58,8 @@ internal class DigitalInvoiceScreenPresenter(
         DigitalInvoiceScreenContract.FooterDetails(inaccurateExtraction = isInaccurateExtraction)
 
     private fun shouldDisplayOnboarding(): Boolean = !onboardingDisplayed &&
-            !oncePerInstallEventStore.containsEvent(OncePerInstallEvent.SHOW_DIGITAL_INVOICE_ONBOARDING)
+            !oncePerInstallEventStore
+                .containsEvent(OncePerInstallEvent.SHOW_DIGITAL_INVOICE_ONBOARDING)
 
     private val digitalInvoice: DigitalInvoice
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
@@ -237,7 +238,8 @@ internal class DigitalInvoiceScreenPresenter(
             digitalInvoice.selectedAndTotalLineItemsCount().let { (selected, total) ->
                 footerDetails = footerDetails
                     .copy(
-                        totalGrossPriceIntegralAndFractionalParts = digitalInvoice.totalPriceIntegralAndFractionalParts(),
+                        totalGrossPriceIntegralAndFractionalParts =
+                        digitalInvoice.totalPriceIntegralAndFractionalParts(),
                         buttonEnabled = digitalInvoice.getAmountToPay() > BigDecimal.ZERO,
                         count = selected,
                         total = total,
@@ -267,7 +269,11 @@ internal class DigitalInvoiceScreenPresenter(
             UserAnalyticsEvent.SCREEN_SHOWN,
             setOf(
                 UserAnalyticsEventProperty.Screen(screenName)
-            ) + if (skontoData != null) setOf(UserAnalyticsEventProperty.SwitchActive(digitalInvoice.skontoEnabled)) else emptySet()
+            ) + if (skontoData != null) setOf(
+                UserAnalyticsEventProperty
+                    .SwitchActive(digitalInvoice.skontoEnabled)
+            )
+            else emptySet()
         )
     }
 
