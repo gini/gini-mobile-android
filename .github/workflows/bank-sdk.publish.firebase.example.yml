@@ -89,6 +89,9 @@ jobs:
           echo "JIRA_TICKET_NAME=${jira_ticket}" >> $GITHUB_ENV
           commit_message=$(git log -1 --pretty=%B)
 
+      - name: Debug Jira Ticket
+        run: echo "JIRA_TICKET_NAME is ${{ env.JIRA_TICKET_NAME }}"
+
       - name: Login to jira
         if: ${{ env.JIRA_TICKET_NAME != null }}
         uses: justin-jhg/gajira-login@v1
