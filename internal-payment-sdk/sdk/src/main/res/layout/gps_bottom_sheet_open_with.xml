@@ -36,6 +36,7 @@
                 android:layout_width="@dimen/gps_large_208"
                 android:layout_height="@dimen/gps_large_208"
                 android:id="@+id/gps_qr_image_view"
+                android:contentDescription="@string/gps_qr_image_content_description"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/gps_large_24"/>
 
