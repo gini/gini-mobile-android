@@ -48,14 +48,11 @@ class MiddlePageManager : LinearLayoutManager {
 
         if (lpPos != 0 && lpPos != itemCount - 1) return
 
-        //Post wait to obtain child width
-        //Pas the calculation to start and end padding to centre the child
-        child.post {
-            val hPadding = ((width - child.measuredWidth) / 2).coerceAtLeast(0)
-            if (lpPos == 0) recyclerView.updatePaddingRelative(start = hPadding, end = hPadding)
-            if (lpPos == itemCount - 1) recyclerView.updatePaddingRelative(end = hPadding)
 
-        }
+        val hPadding = ((width - child.measuredWidth) / 2).coerceAtLeast(0)
+        if (lpPos == 0) recyclerView.updatePaddingRelative(start = hPadding, end = hPadding)
+        if (lpPos == itemCount - 1) recyclerView.updatePaddingRelative(end = hPadding)
+
     }
 
     override fun onAttachedToWindow(view: RecyclerView) {

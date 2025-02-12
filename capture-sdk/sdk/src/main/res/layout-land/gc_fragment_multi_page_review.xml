@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -38,8 +37,8 @@
             android:text="@string/gc_payment_details_visible"
             android:textColor="@color/gc_dark_06"
             app:layout_constraintBottom_toTopOf="@+id/gc_view_pager_wrapper"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/gc_view_pager_wrapper"
+            app:layout_constraintStart_toStartOf="@+id/gc_view_pager_wrapper"
             app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,9 +46,11 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_above="@+id/gc_thumbnails_panel"
-            android:layout_marginBottom="@dimen/gc_large_24"
+            android:layout_marginBottom="@dimen/gc_medium_12"
+            android:layout_marginStart="@dimen/gc_large"
+            android:layout_marginEnd="@dimen/gc_large_48"
             app:layout_constraintBottom_toTopOf="@+id/gc_tab_indicator"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/gc_process_documents_wrapper"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gc_payment_visible_txt">
 
@@ -69,33 +70,14 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/gc_tab_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/gc_large"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="@dimen/gc_large_32"
-            android:backgroundTint="@android:color/transparent"
-            app:layout_constraintBottom_toTopOf="@+id/gc_process_documents_wrapper"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:tabBackground="@drawable/gc_tab_selector"
-            app:tabGravity="center"
-            app:tabIndicatorHeight="0dp"
-            app:tabMode="fixed"
-            app:tabPaddingEnd="@dimen/gc_medium"
-            app:tabSelectedTextColor="@android:color/transparent"
-            app:tabTextColor="@android:color/transparent" />
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_process_documents_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/gc_large_32"
+            android:layout_marginEnd="@dimen/gc_large_48"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
             <net.gini.android.capture.view.InjectedViewContainer
                 android:id="@+id/gc_injected_loading_indicator_container"
@@ -112,21 +94,24 @@
                 android:id="@+id/gc_button_next"
                 style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
                 android:layout_width="wrap_content"
+                android:minWidth="@dimen/gc_large_120"
                 android:layout_height="wrap_content"
                 android:text="@string/gc_process_documents"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/gc_add_pages_wrapper"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
                 android:id="@+id/gc_add_pages_wrapper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/gc_large_24"
+                android:layout_marginTop="@dimen/gc_large"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@+id/gc_button_next"
-                app:layout_constraintStart_toEndOf="@+id/gc_button_next"
-                app:layout_constraintTop_toTopOf="@+id/gc_button_next">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/gc_button_next"
+                app:layout_constraintEnd_toEndOf="@+id/gc_button_next"
+                app:layout_constraintTop_toBottomOf="@+id/gc_button_next">
 
                 <ImageView
                     android:id="@+id/gc_add_page"
@@ -157,6 +142,25 @@
                 app:layout_constraintEnd_toEndOf="@id/gc_add_pages_wrapper"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/gc_tab_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/gc_large"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="@dimen/gc_medium_12"
+            android:backgroundTint="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/gc_view_pager_wrapper"
+            app:layout_constraintStart_toStartOf="@+id/gc_view_pager_wrapper"
+            app:tabBackground="@drawable/gc_tab_selector"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="fixed"
+            app:tabPaddingEnd="@dimen/gc_medium"
+            app:tabSelectedTextColor="@android:color/transparent"
+            app:tabTextColor="@android:color/transparent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
