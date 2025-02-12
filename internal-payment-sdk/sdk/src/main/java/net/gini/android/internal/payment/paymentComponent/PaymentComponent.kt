@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory
  *
  * It requires a [GiniMerchant] instance and a [Context] (application or activity) to be created.
  */
-class PaymentComponent(@get:VisibleForTesting internal val context: Context, val paymentModule: GiniInternalPaymentModule, private var configuration: PaymentComponentConfiguration = PaymentComponentConfiguration()) {
+class PaymentComponent(@get:VisibleForTesting internal val context: Context, val paymentModule: GiniInternalPaymentModule) {
 
     // Holds the state of the Payment Provider apps as received from the server - no processing is done on this list, to serve as a point of truth
     private val _initialStatePaymentProviderAppsFlow = MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Loading)
@@ -52,10 +52,6 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, val
      * See [Listener] for the methods you need to implement.
      */
     var listener: Listener? = null
-
-    var paymentComponentConfiguration: PaymentComponentConfiguration
-        get() = configuration
-        set(value) { configuration = value}
 
     /**
      * Holds information about which layout to use for the bank picker: single line or two lines.
