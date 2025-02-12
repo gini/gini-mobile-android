@@ -104,6 +104,26 @@ Health API. You can then store the ``isPayable`` state in your own data model.
         }
     }
 
+Check if document has multiple invoices
+---------------------------------------
+
+Call ``giniHealth.checkIfDocumentContainsMultipleDocuments()`` with the composite document id to check whether it contains multiple invoices or not.
+We recommend performing this check after checking if the document is payable. The method will return ``true`` if the document contains
+multiple invoices, ``false`` if otherwise.
+
+.. code-block:: kotlin
+
+    // Assuming `compositeDocument` is `Document` returned by `createCompositeDocument(...)`
+
+    coroutineScope.launch {
+        try {
+            // Check whether the composite document contains multiple invoices
+            val containsMultipleInvoices = giniHealth.checkIfDocumentContainsMultipleDocuments(compositeDocument.id)
+        } catch (e: Exception) {
+            // Handle error
+        }
+    }
+
 Create the PaymentFragment
 --------------------------
 
