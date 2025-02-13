@@ -87,59 +87,45 @@ jobs:
         id: extract_jira_ticket
         run: |
           commit_message=$(git log -1 --pretty=%B)
-          echo "$commit_message"
-          echo commit_message=$(git log --no-merges -1 --pretty=%B)
-          echo "$commit_message"
-          jira_ticket=$(echo "$commit_message" | awk 'NR > 1 && $0 != "" { print $0; print $commit_message}')
+          jira_ticket=$(echo "$commit_message" | awk 'NR > 1 && $0 != "" { print $0; exit }')
           echo "JIRA_TICKET_NAME=${jira_ticket}" >> $GITHUB_ENV
           commit_message=$(git log -1 --pretty=%B)
 
-      - name: Jira ticket extraction
-        id: jira_ticket_extraction
-        run: |
-          commit_message=$(git log -1 --pretty=%B)
-          echo "$commit_message"
-          echo $(git log -1 --pretty=%B)
-          jira_ticket=$(echo "$commit_message" | grep -oE '[A-Z]+-[0-9]+' | head -1)
-          echo "Extracted JIRA Ticket: $jira_ticket" 
 
-#      - name: Debug Jira Ticket
-#        run: |
-#          echo "$(git log -3 --pretty=%B)"
-#          echo "First statement ended"
-#          echo "$(git log --no-merges -3 --pretty=%B)"
-#          echo "Second statement ended"
-      - name: Debug Jira Ticket
+      - name: Extract Jira ticket
+        id: extract_jira_ticket
         run: |
           echo "Checking the last 3 commits for JIRA tickets..."
-
-          # Define a regex for the JIRA ticket format (e.g., AB-123, XYZ-456)
           jira_ticket_pattern='[A-Z]+-[0-9]+'
+          jira_ticket=""
+          
+          commit_message=$(git log -1 --pretty=%B)
+          jira_ticket=$(echo "$commit_message" | grep -oE "$jira_ticket_pattern" | head -1)
 
-          # Check the last commit
-          jira_ticket=$(git log -1 --pretty=%B | grep -oE "$jira_ticket_pattern" | head -1)
           if [[ -n "$jira_ticket" ]]; then
             echo "JIRA Ticket Found in Last Commit: $jira_ticket"
-            exit 0
+          else
+            commit_message=$(git log --no-merges -1 --pretty=%B)
+            jira_ticket=$(echo "$commit_message" | grep -oE "$jira_ticket_pattern" | head -1)
+
+            if [[ -n "$jira_ticket" ]]; then
+              echo "JIRA Ticket Found in Second Last Commit: $jira_ticket"
+            else    
+              commit_message=$(git log --no-merges -2 --pretty=%B)
+              jira_ticket=$(echo "$commit_message" | grep -oE "$jira_ticket_pattern" | head -1)
+
+              if [[ -n "$jira_ticket" ]]; then
+                echo "JIRA Ticket Found in Third Last Commit: $jira_ticket"
+              fi
+            fi
           fi
 
-          # If no JIRA ticket found in the last commit, check the second to last commit
-          jira_ticket=$(git log --no-merges -1 --pretty=%B | grep -oE "$jira_ticket_pattern" | head -1)
           if [[ -n "$jira_ticket" ]]; then
-            echo "JIRA Ticket Found in Second Last Commit: $jira_ticket"
-            exit 0
+            echo "JIRA_TICKET_NAME=${jira_ticket}" >> $GITHUB_ENV
+          else
+            echo "No JIRA Ticket found in the last 3 commits. Build link will not be posted to Jira."
+            exit 1
           fi
-
-          # If no JIRA ticket found, check the third to last commit
-          jira_ticket=$(git log --no-merges -2 --pretty=%B | grep -oE "$jira_ticket_pattern" | head -1)
-          if [[ -n "$jira_ticket" ]]; then
-            echo "JIRA Ticket Found in Third Last Commit: $jira_ticket"
-            exit 0
-          fi
-
-          # If no JIRA ticket found in the last 3 commits, exit
-          echo "No JIRA Ticket found in the last 3 commits."
-          exit 1
 
       - name: Login to jira
         if: ${{ env.JIRA_TICKET_NAME != null }}
