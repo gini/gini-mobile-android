@@ -29,7 +29,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 3
 
       - name: setup java
         uses: actions/setup-java@v3
@@ -105,16 +105,10 @@ jobs:
 
       - name: Debug Jira Ticket
         run: |
-          echo "$(git log -1 --pretty=%B)"
+          echo "$(git log -5 --pretty=%B)"
           echo "First statement ended"
-          echo "$(git log --no-merges -1 --pretty=%B)"
+          echo "$(git log --no-merges -5 --pretty=%B)"
           echo "Second statement ended"
-          echo "$(git log -1)"
-          echo "Third statement ended"
-          echo "$(git log --no-merges)"
-          echo "Fourth statement ended"
-          echo "JIRA_TICKET_NAME is ${{ env.JIRA_TICKET_NAME }}"
-          echo "Fifth statement ended"
 
       - name: Login to jira
         if: ${{ env.JIRA_TICKET_NAME != null }}
