@@ -28,6 +28,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: setup java
         uses: actions/setup-java@v3
@@ -102,11 +104,11 @@ jobs:
           echo "Extracted JIRA Ticket: $jira_ticket" 
 
       - name: Debug Jira Ticket
-        run:
-          print $(git log -1 --pretty=%B)
-          print $(git log --no-merges -1 --pretty=%B)
-          print $(git log -1)
-          print $(git log --no-merges)
+        run: |
+          echo "$(git log -1 --pretty=%B)"
+          echo "$(git log --no-merges -1 --pretty=%B)"
+          echo "$(git log -1)"
+          echo "$(git log --no-merges)"
           echo "JIRA_TICKET_NAME is ${{ env.JIRA_TICKET_NAME }}"
 
       - name: Login to jira
