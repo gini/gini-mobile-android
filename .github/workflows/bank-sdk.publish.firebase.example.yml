@@ -86,15 +86,6 @@ jobs:
       - name: Extract Jira ticket
         id: extract_jira_ticket
         run: |
-          commit_message=$(git log -1 --pretty=%B)
-          jira_ticket=$(echo "$commit_message" | awk 'NR > 1 && $0 != "" { print $0; exit }')
-          echo "JIRA_TICKET_NAME=${jira_ticket}" >> $GITHUB_ENV
-          commit_message=$(git log -1 --pretty=%B)
-
-
-      - name: Extract Jira ticket
-        id: extract_jira_ticket
-        run: |
           echo "Checking the last 3 commits for JIRA tickets..."
           jira_ticket_pattern='[A-Z]+-[0-9]+'
           jira_ticket=""
