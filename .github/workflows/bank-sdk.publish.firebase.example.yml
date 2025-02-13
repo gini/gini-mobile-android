@@ -30,7 +30,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 3
-        ref: ${{ github.head_ref }}
 
       - name: setup java
         uses: actions/setup-java@v3
@@ -104,12 +103,43 @@ jobs:
           jira_ticket=$(echo "$commit_message" | grep -oE '[A-Z]+-[0-9]+' | head -1)
           echo "Extracted JIRA Ticket: $jira_ticket" 
 
+#      - name: Debug Jira Ticket
+#        run: |
+#          echo "$(git log -3 --pretty=%B)"
+#          echo "First statement ended"
+#          echo "$(git log --no-merges -3 --pretty=%B)"
+#          echo "Second statement ended"
       - name: Debug Jira Ticket
         run: |
-          echo "$(git log -3 --pretty=%B)"
-          echo "First statement ended"
-          echo "$(git log --no-merges -3 --pretty=%B)"
-          echo "Second statement ended"
+          echo "Checking the last 3 commits for JIRA tickets..."
+
+          # Define a regex for the JIRA ticket format (e.g., AB-123, XYZ-456)
+          jira_ticket_pattern='[A-Z]+-[0-9]+'
+
+          # Check the last commit
+          jira_ticket=$(git log -1 --pretty=%B | grep -oE "$jira_ticket_pattern" | head -1)
+          if [[ -n "$jira_ticket" ]]; then
+            echo "JIRA Ticket Found in Last Commit: $jira_ticket"
+            exit 0
+          fi
+
+          # If no JIRA ticket found in the last commit, check the second to last commit
+          jira_ticket=$(git log --no-merges -1 --pretty=%B | grep -oE "$jira_ticket_pattern" | head -1)
+          if [[ -n "$jira_ticket" ]]; then
+            echo "JIRA Ticket Found in Second Last Commit: $jira_ticket"
+            exit 0
+          fi
+
+          # If no JIRA ticket found, check the third to last commit
+          jira_ticket=$(git log --no-merges -2 --pretty=%B | grep -oE "$jira_ticket_pattern" | head -1)
+          if [[ -n "$jira_ticket" ]]; then
+            echo "JIRA Ticket Found in Third Last Commit: $jira_ticket"
+            exit 0
+          fi
+
+          # If no JIRA ticket found in the last 3 commits, exit
+          echo "No JIRA Ticket found in the last 3 commits."
+          exit 1
 
       - name: Login to jira
         if: ${{ env.JIRA_TICKET_NAME != null }}
