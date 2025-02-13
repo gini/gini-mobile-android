@@ -1,6 +1,7 @@
 name: Release docs for Capture SDK
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'capture-sdk;[0-9]+.[0-9]+.[0-9]+;doc**'
@@ -11,6 +12,10 @@ on:
         required: true
       RELEASE_GITHUB_PASSWORD:
         required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
 
 jobs:
   release-docs:

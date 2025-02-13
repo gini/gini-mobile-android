@@ -1,6 +1,7 @@
 name: Release docs for Health API Library
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'health-api-library;[0-9]+.[0-9]+.[0-9]+;doc**'

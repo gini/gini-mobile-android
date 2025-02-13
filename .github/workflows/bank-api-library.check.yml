@@ -1,17 +1,9 @@
 name: Check Bank API Library
 
 on:
-  push:
-    paths:
-      - 'bank-api-library/**'
-      - 'core-api-library/**'
-      - 'gradle/**'
-    branches:
-      - '**'  
-    tags-ignore:
-      - '**'
+  workflow_dispatch:
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'bank-api-library/**'
       - 'core-api-library/**'
@@ -20,6 +12,10 @@ on:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
 
 jobs:
   test:

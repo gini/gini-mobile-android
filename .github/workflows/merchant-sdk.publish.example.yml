@@ -2,12 +2,17 @@ name: Publish Merchant SDK Example App QA Build to App Center
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'merchant-sdk/**'
       - 'health-api-library/**'
       - 'core-api-library/**'
       - 'gradle/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-publish
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
 
 jobs:
   check:
