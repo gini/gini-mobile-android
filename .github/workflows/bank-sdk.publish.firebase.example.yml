@@ -89,6 +89,13 @@ jobs:
           echo "JIRA_TICKET_NAME=${jira_ticket}" >> $GITHUB_ENV
           commit_message=$(git log -1 --pretty=%B)
 
+      - name: Jira ticket extraction
+        id: jira_ticket_extraction
+        run: |
+          commit_message=$(git log -1 --pretty=%B)
+          jira_ticket=$(echo "$commit_message" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+          echo "Extracted JIRA Ticket: $jira_ticket" 
+
       - name: Debug Jira Ticket
         run: echo "JIRA_TICKET_NAME is ${{ env.JIRA_TICKET_NAME }}"
 
