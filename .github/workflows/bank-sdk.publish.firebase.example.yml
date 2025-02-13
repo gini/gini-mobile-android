@@ -28,6 +28,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+#        ref: ${{ github.head_ref }}
         with:
           fetch-depth: 3
 
@@ -105,9 +106,9 @@ jobs:
 
       - name: Debug Jira Ticket
         run: |
-          echo "$(git log -5 --pretty=%B)"
+          echo "$(git log -3 --pretty=%B)"
           echo "First statement ended"
-          echo "$(git log --no-merges -5 --pretty=%B)"
+          echo "$(git log --no-merges -3 --pretty=%B)"
           echo "Second statement ended"
 
       - name: Login to jira
