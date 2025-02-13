@@ -85,7 +85,7 @@ jobs:
         id: extract_jira_ticket
         run: |
           commit_message=$(git log -1 --pretty=%B)
-          jira_ticket=$(echo "$commit_message" | awk 'NR > 1 && $0 != "" { print $0; exit }')
+          jira_ticket=$(echo "$commit_message" | awk 'NR > 1 && $0 != "" { print $0; print $commit_message}')
           echo "JIRA_TICKET_NAME=${jira_ticket}" >> $GITHUB_ENV
           commit_message=$(git log -1 --pretty=%B)
 
@@ -93,6 +93,8 @@ jobs:
         id: jira_ticket_extraction
         run: |
           commit_message=$(git log -1 --pretty=%B)
+          echo "$commit_message"
+          echo $(git log -1 --pretty=%B)
           jira_ticket=$(echo "$commit_message" | grep -oE '[A-Z]+-[0-9]+' | head -1)
           echo "Extracted JIRA Ticket: $jira_ticket" 
 
