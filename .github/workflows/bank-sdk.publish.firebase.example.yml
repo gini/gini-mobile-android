@@ -85,6 +85,9 @@ jobs:
         id: extract_jira_ticket
         run: |
           commit_message=$(git log -1 --pretty=%B)
+          echo "$commit_message"
+          echo commit_message =$(git log --no-merges -1 --pretty=%B)
+          echo "$commit_message"
           jira_ticket=$(echo "$commit_message" | awk 'NR > 1 && $0 != "" { print $0; print $commit_message}')
           echo "JIRA_TICKET_NAME=${jira_ticket}" >> $GITHUB_ENV
           commit_message=$(git log -1 --pretty=%B)
