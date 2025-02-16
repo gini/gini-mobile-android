@@ -1,0 +1,39 @@
+name: Build Health SDK alternative version
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      GINI_MOBILE_TEST_CLIENT_SECRET:
+        required: true
+      HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+        required: true
+
+jobs:
+  build-example-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: build unique release example app for QA
+        run: >
+          ./gradlew health-sdk:example-app:assembleQaUniqueRelease
+          -PclientId="gini-mobile-test" 
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+          -PreleaseKeystoreFile="health_sdk_example.jks"
+          -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+          -PreleaseKeyAlias="health_sdk_example"
+          -PreleaseKeyPassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
+
+      - name: archive unique release example app for QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-sdk-example-app-qaUnique-release
+          path: health-sdk/example-app/build/outputs/apk/qaUnique/release
