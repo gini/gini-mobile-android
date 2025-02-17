@@ -512,11 +512,14 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
             binding.skontoDiscountLabel.text =
                 skontoDiscountLabelTextFactory.create(data.skontoDiscountPercentage)
         }
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled &&
-            (ContextHelper.isPortraitOrTablet(requireContext()) || !isDefaultBottomNavigationBar())
-        ) {
 
-            if ((!ContextHelper.isPortraitOrTablet(requireContext()) && !isDefaultBottomNavigationBar())) {
+        val hasInstanceAndNavBarEnabled =
+            GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled
+        val isPortraitOrTablet = ContextHelper.isPortraitOrTablet(requireContext())
+        val isNotDefaultBottomNav = !isDefaultBottomNavigationBar()
+
+        if (hasInstanceAndNavBarEnabled && (isPortraitOrTablet || isNotDefaultBottomNav)) {
+            if ((!isPortraitOrTablet && !isDefaultBottomNavigationBar())) {
                 hideBottomBarWrapper()
             }
             binding.gbsBottomBarNavigation.modifyAdapterIfOwned {
