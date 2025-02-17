@@ -11,11 +11,14 @@ import java.util.Locale
  * - Removes grouping separators (like ',' or '.') and standardizes decimals to '.'.
  * - Ensures the output is formatted with thousands separators and two decimal places.
  *
+ * According to IPC-566, the formatting should follow Locale.GERMAN conventions, no matter what locale
+ * formatting the input comes in.
+ *
  * Examples:
- * - 4,761 -> 4.76
- * - 12,345.6 -> 12,345.60
- * - 1.2 -> 1.20
- * - Invalid input -> 0.00
+ * - 4,761 -> 4,76
+ * - 12,345.6 -> 12.345,60
+ * - 1.2 -> 1,20
+ * - Invalid input -> 0,00
  */
 @Suppress("TooGenericExceptionCaught" ,"SwallowedException")
 internal fun formatCurrency(input: String): String {
