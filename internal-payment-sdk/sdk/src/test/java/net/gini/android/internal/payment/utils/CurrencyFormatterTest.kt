@@ -64,29 +64,4 @@ class CurrencyFormatterTest {
         assertThat(formatCurrency("abc")).isEqualTo("0,00")
         assertThat(formatCurrency("123-456")).isEqualTo("0,00")
     }
-
-    @Test
-    fun `hasMoreThenTwoDecimalPlaces handles valid input`() {
-        assertThat(isValidTwoDecimalNumber("1.234")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1,234")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1.2")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1,2")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1.23")).isTrue()
-        assertThat(isValidTwoDecimalNumber("1,23")).isTrue()
-        assertThat(isValidTwoDecimalNumber("1")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1 ")).isFalse()
-        assertThat(isValidTwoDecimalNumber(" 1")).isFalse()
-        assertThat(isValidTwoDecimalNumber(" 1 ")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1,")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1.")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1,123.123")).isFalse()
-        assertThat(isValidTwoDecimalNumber("")).isFalse()
-        assertThat(isValidTwoDecimalNumber("a")).isFalse()
-        assertThat(isValidTwoDecimalNumber(".")).isFalse()
-        assertThat(isValidTwoDecimalNumber(".1")).isFalse()
-        assertThat(isValidTwoDecimalNumber(".12")).isTrue()
-        assertThat(isValidTwoDecimalNumber("1.123,123")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1.123")).isFalse()
-        assertThat(isValidTwoDecimalNumber("1.12")).isTrue()
-    }
 }

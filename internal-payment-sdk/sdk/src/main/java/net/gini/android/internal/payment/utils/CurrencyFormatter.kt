@@ -23,7 +23,7 @@ import java.util.Locale
 @Suppress("TooGenericExceptionCaught" ,"SwallowedException")
 internal fun formatCurrency(input: String): String {
     if (input.isEmpty()) return ""
-    val sanitizedInput = input.trimEnd().trimStart()
+    val sanitizedInput = input.trimEnd().trimStart().trimCurrency()
     return try {
         val hasCommaAsDecimal = sanitizedInput.lastIndexOf(',') > sanitizedInput.lastIndexOf('.')
         val decimalSeparator = if (hasCommaAsDecimal) ',' else '.'
@@ -41,32 +41,9 @@ internal fun formatCurrency(input: String): String {
     }
 }
 
-/**
- * This method:
- * - Detects if the number has exactly two decimal places or not because
- * value with the two decimals are already perfect and can be taken
- * care by [amountWatcher].
- *
- *  Examples:
- * - 1.2 -> false
- * - 1.22 -> true
- * - 1 -> false
- * - 1.333 -> false
- * - "" -> false
- * */
-@Suppress("TooGenericExceptionCaught" ,"SwallowedException")
-internal fun isValidTwoDecimalNumber(input: String): Boolean {
-    if (input.isEmpty()) return false
-    val isCommaAsDecimal = input.trimStart().trimEnd().contains(',') && input.lastIndexOf(',') > input.lastIndexOf('.')
-    val normalizedInput = if (isCommaAsDecimal) {
-        input.replace(".", "").replace(",", ".")
-    } else {
-        input.replace(",", "")
-    }
-    return try {
-        val parts = normalizedInput.split('.')
-        parts.size == 2 && parts[1].length == 2
-    } catch (e: Exception) {
-        false
-    }
+internal fun String.trimCurrency(): String {
+    val currencySeparator = ":"
+    val currencySeparatorIndex = this.lastIndexOf(currencySeparator)
+    if (currencySeparatorIndex > -1) return this.substring(0, currencySeparatorIndex)
+    return this
 }

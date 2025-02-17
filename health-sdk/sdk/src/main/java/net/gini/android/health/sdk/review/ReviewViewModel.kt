@@ -14,7 +14,6 @@ import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
-import net.gini.android.health.sdk.util.adjustToLocalDecimalSeparation
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
@@ -56,9 +55,7 @@ internal class ReviewViewModel(
             giniHealth.paymentFlow.collect { extractedPaymentDetails ->
                 if (extractedPaymentDetails is ResultWrapper.Success) {
                     val paymentDetails = paymentDetails.value.overwriteEmptyFields(
-                        extractedPaymentDetails.value.copy(
-                            amount = extractedPaymentDetails.value.amount.adjustToLocalDecimalSeparation()
-                        )
+                        extractedPaymentDetails.value
                     )
                     _paymentDetails.value = paymentDetails
                     giniInternalPaymentModule.setPaymentDetails(paymentDetails.toCommonPaymentDetails())

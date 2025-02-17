@@ -1,7 +1,6 @@
 package net.gini.android.internal.payment.utils.extensions
 
 import net.gini.android.internal.payment.utils.formatCurrency
-import net.gini.android.internal.payment.utils.isValidTwoDecimalNumber
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 
@@ -19,8 +18,7 @@ internal fun String.isNumber(): Boolean {
 }
 
 internal fun String.nonEmpty() = if (isEmpty()) " " else this
-
-internal fun String.toBackendFormat(): String {
+fun String.toBackendFormat(): String {
     val separator = DecimalFormatSymbols.getInstance(Locale.GERMAN).decimalSeparator
     return this.filter { it.isDigit() || it == separator }
         .map { if (it == separator) "." else it.toString() }
@@ -29,12 +27,4 @@ internal fun String.toBackendFormat(): String {
         .toString()
 }
 
-internal fun String.adjustToLocalDecimalSeparation(): String {
-    return this.replace('.', DecimalFormatSymbols.getInstance(Locale.GERMAN).decimalSeparator)
-}
-
-fun String.sanitizeAmount(): String {
-    return if (!isValidTwoDecimalNumber(this))
-        formatCurrency(this)
-    else this
-}
+fun String.sanitizeAmount(): String = formatCurrency(this)
