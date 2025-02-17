@@ -380,7 +380,8 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     }
 
     private fun isDefaultBottomNavigationBar() =
-        GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance.viewAdapter is DefaultDigitalInvoiceNavigationBarBottomAdapter
+        GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance
+            .viewAdapter is DefaultDigitalInvoiceNavigationBarBottomAdapter
 
     private fun tryShowAttachDocToTransactionDialog(continueFlow: () -> Unit) {
         val autoAttachDoc = runBlocking { transactionDocShouldBeAutoAttachedUseCase() }
