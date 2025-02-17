@@ -30,13 +30,11 @@ internal fun formatCurrency(input: String): String {
             .replace(decimalSeparator, '.')
 
         val number = standardizedInput.toBigDecimal()
-        val symbols = DecimalFormatSymbols(Locale.getDefault()).apply {
-            this.decimalSeparator = '.'
-        }
+        val symbols = DecimalFormatSymbols(Locale.GERMAN)
         val formatter = DecimalFormat("#,##0.00", symbols)
         formatter.format(number)
     } catch (e: Exception) {
-        "0.00"
+        "0,00"
     }
 }
 

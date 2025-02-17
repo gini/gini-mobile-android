@@ -7,6 +7,7 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
 import net.gini.android.health.sdk.util.toBackendFormat
+import net.gini.android.internal.payment.utils.extensions.sanitizeAmount
 
 /**
  * Represents the payment details of an invoice as extracted from a document.
@@ -102,6 +103,6 @@ internal fun MutableMap<String, CompoundExtraction>.getPaymentExtraction(name: S
 internal fun PaymentDetails.toCommonPaymentDetails() = net.gini.android.internal.payment.api.model.PaymentDetails(
     recipient = this.recipient,
     iban = this.iban,
-    amount = this.amount,
+    amount = this.amount.sanitizeAmount(),
     purpose = this.purpose
 )
