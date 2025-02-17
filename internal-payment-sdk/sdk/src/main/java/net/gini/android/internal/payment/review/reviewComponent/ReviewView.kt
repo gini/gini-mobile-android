@@ -27,7 +27,6 @@ import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
 import net.gini.android.internal.payment.utils.extensions.hideKeyboard
-import net.gini.android.internal.payment.utils.extensions.sanitizeAmount
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
@@ -86,9 +85,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             }
             launch {
                 reviewComponent?.paymentDetails?.collect {
-                    paymentDetails = it.copy(
-                        amount = it.amount.sanitizeAmount()
-                    )
+                    paymentDetails = it
                 }
             }
             launch {
