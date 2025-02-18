@@ -68,9 +68,6 @@ class MainActivity : AppCompatActivity() {
                     this@MainActivity,
                     viewModel.pages.value.map { it.uri },
                 ).apply {
-                    viewModel.getPaymentComponentConfiguration()?.let {
-                        putExtra(PAYMENT_COMPONENT_CONFIG, it)
-                    }
                     viewModel.getPaymentFlowConfiguration()?.let {
                         putExtra(PAYMENT_FLOW_CONFIGURATION, it)
                     }
@@ -80,9 +77,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.invoicesScreen.setOnClickListener {
             startActivity(Intent(this, InvoicesActivity::class.java).apply {
-                viewModel.getPaymentComponentConfiguration()?.let {
-                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
-                }
                 viewModel.getPaymentFlowConfiguration()?.let {
                     putExtra(PAYMENT_FLOW_CONFIGURATION, it)
                 }
@@ -91,9 +85,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.appcompatThemeInvoicesScreen.setOnClickListener {
             startActivity(Intent(this, AppCompatThemeInvoicesActivity::class.java).apply {
-                viewModel.getPaymentComponentConfiguration()?.let {
-                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
-                }
                 viewModel.getPaymentFlowConfiguration()?.let {
                     putExtra(PAYMENT_FLOW_CONFIGURATION, it)
                 }
@@ -145,9 +136,6 @@ class MainActivity : AppCompatActivity() {
     private fun importResult(uris: List<Uri>) {
         if (uris.isNotEmpty()) {
             startActivity(UploadActivity.getStartIntent(this, uris).apply {
-                viewModel.getPaymentComponentConfiguration()?.let {
-                    putExtra(PAYMENT_COMPONENT_CONFIG, it)
-                }
                 viewModel.getPaymentFlowConfiguration()?.let {
                     putExtra(PAYMENT_FLOW_CONFIGURATION, it)
                 }
@@ -181,7 +169,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
-        val PAYMENT_COMPONENT_CONFIG = "payment_component_config"
         const val PAYMENT_FLOW_CONFIGURATION = "payment_flow_config"
     }
 }

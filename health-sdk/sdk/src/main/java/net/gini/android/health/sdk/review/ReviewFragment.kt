@@ -124,7 +124,6 @@ class ReviewFragment private constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
-
         viewModel.userPreferences = UserPreferences(requireContext())
 
         with(binding) {

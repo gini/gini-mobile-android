@@ -16,6 +16,7 @@ import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.requests.PaymentRequestBody
 import net.gini.android.health.api.response.AppVersionResponse
 import net.gini.android.health.api.response.Colors
+import net.gini.android.health.api.response.ConfigurationResponse
 import net.gini.android.health.api.response.PageResponse
 import net.gini.android.health.api.response.PaymentProviderResponse
 import okhttp3.Headers
@@ -224,6 +225,10 @@ class HealthApiDocumentRemoteSourceTest {
             bearer: Map<String, String>,
             paymentRequestId: String
         ): Response<ResponseBody> {
+            return Response.success(null)
+        }
+
+        override suspend fun getConfigurations(bearer: Map<String, String>): Response<ConfigurationResponse> {
             return Response.success(null)
         }
 

@@ -6,7 +6,7 @@ import net.gini.android.core.api.models.SpecificExtraction
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import java.util.*
+import java.util.Locale
 
 /**
  * Created by Alpár Szotyori on 01.02.22.

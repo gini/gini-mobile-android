@@ -28,6 +28,7 @@ import net.gini.android.internal.payment.utils.extensions.setIntervalClickListen
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import java.util.Locale
 
 class OrderDetailsFragment : Fragment() {
 
@@ -145,7 +146,7 @@ class OrderDetailsFragment : Fragment() {
     }
 
     fun currencyFormatterWithoutSymbol(): NumberFormat =
-        NumberFormat.getCurrencyInstance().apply {
+        NumberFormat.getCurrencyInstance(Locale.GERMAN).apply {
             (this as? DecimalFormat)?.apply {
                 decimalFormatSymbols = decimalFormatSymbols.apply {
                     currencySymbol = ""
