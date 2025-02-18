@@ -2,7 +2,6 @@ package net.gini.android.capture.network
 
 import android.content.Context
 import android.text.TextUtils
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.XmlRes
 import kotlinx.coroutines.CoroutineScope
