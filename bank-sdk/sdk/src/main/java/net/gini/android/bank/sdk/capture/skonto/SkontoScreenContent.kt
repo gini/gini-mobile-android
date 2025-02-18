@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -527,7 +528,9 @@ private fun SkontoSection(
                     )
 
                     AnimatedVisibility(
-                        modifier = Modifier.requiredWidth(IntrinsicSize.Max),
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .requiredWidth(IntrinsicSize.Max),
                         visible = isActive
                     ) {
                         Text(
@@ -535,6 +538,7 @@ private fun SkontoSection(
                             style = GiniTheme.typography.subtitle2,
                             color = colors.enabledHintTextColor,
                             softWrap = false,
+                            maxLines = 1,
                         )
                     }
                 }
@@ -811,13 +815,17 @@ private fun WithoutSkontoSection(
                     color = colors.titleTextColor,
                 )
                 AnimatedVisibility(
-                    modifier = Modifier.requiredWidth(IntrinsicSize.Max),
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .requiredWidth(IntrinsicSize.Max),
                     visible = isActive
                 ) {
                     Text(
                         text = stringResource(id = R.string.gbs_skonto_section_discount_hint_label_enabled),
                         style = GiniTheme.typography.subtitle2,
                         color = colors.enabledHintTextColor,
+                        softWrap = false,
+                        maxLines = 1,
                     )
                 }
             }
