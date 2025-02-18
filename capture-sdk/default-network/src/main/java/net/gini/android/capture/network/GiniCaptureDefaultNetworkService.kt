@@ -2,6 +2,7 @@ package net.gini.android.capture.network
 
 import android.content.Context
 import android.text.TextUtils
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.XmlRes
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +24,8 @@ import net.gini.android.capture.network.GiniCaptureDefaultNetworkService.Compani
 import net.gini.android.capture.network.logging.formattedErrorMessage
 import net.gini.android.capture.network.logging.toErrorEvent
 import net.gini.android.capture.network.model.*
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.core.api.DocumentMetadata
 import net.gini.android.core.api.Resource
@@ -331,6 +334,9 @@ internal constructor(
                     giniApiDocuments[compositeDocument.id] = compositeDocument
                     giniBankApi.documentManager.getAllExtractionsWithPolling(compositeDocument)
                         .mapSuccess {
+                            UserAnalytics.getAnalyticsEventTracker().setEventSuperProperty(
+                                UserAnalyticsEventSuperProperty.DocumentId(compositeDocument.id)
+                            )
                             Resource.Success(compositeDocument to it.data)
                         }
                 }
