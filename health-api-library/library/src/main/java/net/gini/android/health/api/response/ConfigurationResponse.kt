@@ -12,7 +12,14 @@ data class ConfigurationResponse(
 
 enum class CommunicationTone {
     FORMAL,
-    INFORMAL
+    INFORMAL;
+    companion object
+}
+
+fun CommunicationTone.Companion.getValue(visibility: String): CommunicationTone = try {
+    CommunicationTone.valueOf(visibility)
+} catch (exception: IllegalArgumentException) {
+    CommunicationTone.FORMAL
 }
 
 enum class IngredientBrandType(visibility: String) {

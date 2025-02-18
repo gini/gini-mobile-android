@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import net.gini.android.health.api.response.CommunicationTone
 import net.gini.android.internal.payment.utils.GiniLocalization
 import org.junit.Before
 import org.junit.Test
@@ -48,5 +49,29 @@ class GiniPaymentPreferencesTest {
 
         // Then
         assertThat(giniPaymentPreferencesTest.getSDKLanguage()).isEqualTo(GiniLocalization.GERMAN)
+    }
+
+    @Test
+    fun `sets SDK communication tone`() = runTest {
+        // Given
+        val giniPaymentPreferencesTest = GiniInternalPaymentModule.GiniPaymentPreferences(context)
+
+        // When
+        giniPaymentPreferencesTest.saveSDKCommunicationTone(CommunicationTone.FORMAL.name)
+
+        // Then
+        assertThat(giniPaymentPreferencesTest.getSDKCommunicationTone()).isEqualTo(CommunicationTone.FORMAL)
+    }
+
+    @Test
+    fun `sets the language is overridden `() = runTest {
+        // Given
+        val giniPaymentPreferencesTest = GiniInternalPaymentModule.GiniPaymentPreferences(context)
+
+        // When
+        giniPaymentPreferencesTest.saveLanguageOverriddenByUser(true)
+
+        // Then
+        assertThat(giniPaymentPreferencesTest.getLanguageOverriddenByUser()).isEqualTo(true)
     }
 }

@@ -57,7 +57,7 @@ class InstallAppBottomSheet private constructor(
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return getLayoutInflaterWithGiniPaymentThemeAndLocale(
             inflater,
-            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
+            GiniInternalPaymentModule.getSDKLanguageInternal(requireContext())?.languageLocale()
         )
     }
 
