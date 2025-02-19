@@ -3,12 +3,14 @@ package net.gini.android.capture.network
 import android.net.Uri
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import io.mockk.*
 import net.gini.android.bank.api.BankApiDocumentManager
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.capture.Document
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.core.api.Resource
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,6 +29,7 @@ class GiniCaptureDefaultNetworkServiceTest {
     @Test
     fun `allows retrieving the analyzed Gini Bank API document after analysis`() {
         // Given
+        UserAnalytics.initialize(getApplicationContext())
         // Mock Gini Bank API documents
         val partialDocument = net.gini.android.core.api.models.Document(
             "id1",
