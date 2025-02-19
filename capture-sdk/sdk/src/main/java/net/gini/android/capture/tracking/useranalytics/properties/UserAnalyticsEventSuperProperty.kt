@@ -5,6 +5,9 @@ sealed class UserAnalyticsEventSuperProperty(key: String, value: String) :
     data class GiniClientId(val clientId: String) :
         UserAnalyticsEventSuperProperty("gini_client_id", clientId)
 
+    data class DocumentId(val documentId: String) :
+        UserAnalyticsEventSuperProperty("document_id", documentId)
+
     data class EntryPoint(val entryPointType: EntryPointType) :
         UserAnalyticsEventSuperProperty("entry_point", entryPointType.analyticsName) {
         enum class EntryPointType(val analyticsName: String) {
