@@ -16,7 +16,6 @@ import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.ui.setIntervalClickListener
-import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
@@ -52,7 +51,6 @@ class ErrorFragmentImpl(
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Error
 
     fun onCreate(savedInstanceState: Bundle?) {
-        ActivityHelper.forcePortraitOrientationOnPhones(fragmentCallback.activity)
         // Clear the image from the memory store because the user can only exit for manual entry or in some cases
         // can go back to the camera to take new pictures
         if (GiniCapture.hasInstance()) {

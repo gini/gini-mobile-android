@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/gc_image_preview_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:paddingStart="@dimen/gc_small"
+    android:paddingEnd="@dimen/gc_small">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/gc_image_wrapper">
+
+        <net.gini.android.capture.review.RotatableImageViewContainer
+            android:id="@+id/gc_image_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?attr/gcPageItemBackground"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_image_selected_rect"
+            app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
+            app:layout_constraintStart_toStartOf="@+id/gc_image_selected_rect"
+            app:layout_constraintTop_toTopOf="@+id/gc_image_selected_rect" />
+
+        <LinearLayout
+            android:id="@+id/gc_image_selected_rect"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/gc_image_preview_rectangle"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1.414"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </LinearLayout>
+
+
+        <ImageButton
+            android:id="@+id/gc_button_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gc_small"
+            android:layout_marginEnd="@dimen/gc_small"
+            android:padding="@dimen/gc_small"
+            android:background="@android:color/transparent"
+            android:src="@drawable/gc_delete"
+            android:contentDescription="@string/gc_delete_page"
+            app:layout_constraintEnd_toEndOf="@+id/gc_image_selected_rect"
+            app:layout_constraintTop_toTopOf="@+id/gc_image_selected_rect" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>
