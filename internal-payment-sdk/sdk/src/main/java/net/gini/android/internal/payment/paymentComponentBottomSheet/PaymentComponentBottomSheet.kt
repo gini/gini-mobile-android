@@ -49,9 +49,7 @@ class PaymentComponentBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetPaymentComponentBinding.inflate(inflater, container, false)
-        binding.gpsPaymentComponent.reviewFragmentWillBeShown = viewModel.reviewFragmentShown
         binding.gpsPaymentComponent.paymentComponent = viewModel.paymentComponent
-
         binding.gpsPaymentComponent.dismissListener = object : PaymentComponentView.ButtonClickListener {
             override fun onButtonClick(button: PaymentComponentView.Buttons) {
                 dismiss()
