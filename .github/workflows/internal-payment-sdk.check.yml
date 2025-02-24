@@ -1,6 +1,7 @@
 name: Check Internal Payment SDK
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'internal-payment-sdk/**'

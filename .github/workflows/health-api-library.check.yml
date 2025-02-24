@@ -1,17 +1,8 @@
 name: Check Health API Library
 
 on:
-  push:
-    paths:
-      - 'health-api-library/**'
-      - 'core-api-library/**'
-      - 'gradle/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'health-api-library/**'
       - 'core-api-library/**'
@@ -30,6 +21,10 @@ on:
         options:
           - production
           - staging
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
 
 jobs:
   test:

@@ -27,6 +27,9 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
         } else {
             restoreFragmentListener()
         }
+        GiniBank.setGiniBankTerminationCallback {
+            setResultAndFinish(CaptureResult.Cancel)
+        }
     }
 
     private fun handleInput() {
@@ -102,6 +105,10 @@ internal class CaptureFlowActivity : AppCompatActivity(), CaptureFlowFragmentLis
         const val EXTRA_OUT_RESULT = "GBS_EXTRA_OUT_RESULT"
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        GiniBank.cleanupGiniBankTerminationCallback()
+    }
 }
 
 /**

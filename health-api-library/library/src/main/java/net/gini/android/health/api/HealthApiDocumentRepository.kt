@@ -17,6 +17,7 @@ import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.models.getPageByPageNumber
 import net.gini.android.health.api.models.toPageList
 import net.gini.android.health.api.models.toPaymentProvider
+import net.gini.android.health.api.response.ConfigurationResponse
 import net.gini.android.health.api.util.ImageCompression
 import org.json.JSONObject
 
@@ -120,6 +121,13 @@ class HealthApiDocumentRepository(
         withAccessToken { accessToken ->
             wrapInResource {
                 documentRemoteSource.getPaymentRequestImage(accessToken, paymentRequestId)
+            }
+        }
+
+    suspend fun getConfigurations(): Resource<ConfigurationResponse> =
+        withAccessToken {  accessToken ->
+            wrapInResource {
+                documentRemoteSource.getConfigurations(accessToken)
             }
         }
 }

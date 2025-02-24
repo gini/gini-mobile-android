@@ -1,6 +1,7 @@
 name: Release Internal Payment SDK
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'internal-payment-sdk;[0-9]+.[0-9]+.[0-9]+'

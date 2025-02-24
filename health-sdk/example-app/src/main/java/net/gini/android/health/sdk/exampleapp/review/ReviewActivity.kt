@@ -26,7 +26,6 @@ import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
@@ -72,10 +71,6 @@ class ReviewActivity : AppCompatActivity() {
 
         binding.payInvoiceButton.root.setOnClickListener {
             startPaymentFlow(binding, documentId)
-        }
-
-        IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)?.let {
-            viewModel.setPaymentComponentConfig(it)
         }
 
         lifecycleScope.launch {

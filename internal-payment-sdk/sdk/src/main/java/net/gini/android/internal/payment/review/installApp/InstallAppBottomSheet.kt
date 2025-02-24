@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetInstallAppBinding
@@ -24,6 +25,7 @@ import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
@@ -57,7 +59,7 @@ class InstallAppBottomSheet private constructor(
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return getLayoutInflaterWithGiniPaymentThemeAndLocale(
             inflater,
-            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
+            GiniInternalPaymentModule.getSDKLanguageInternal(requireContext())?.languageLocale()
         )
     }
 
@@ -78,6 +80,9 @@ class InstallAppBottomSheet private constructor(
         if (!resources.isLandscapeOrientation()) {
             binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
         }
+        binding.gpsPoweredByGiniLayout.root.visibility =
+            if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
+                View.VISIBLE else View.INVISIBLE
         return binding.root
     }
 

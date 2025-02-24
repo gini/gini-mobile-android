@@ -1,6 +1,7 @@
 name: Release Core API Library
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'core-api-library;[0-9]+.[0-9]+.[0-9]+'

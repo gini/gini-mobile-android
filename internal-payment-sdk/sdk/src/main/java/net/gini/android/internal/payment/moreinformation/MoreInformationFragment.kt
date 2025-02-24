@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsFragmentPaymentMoreInformationBinding
@@ -70,7 +71,7 @@ class MoreInformationFragment private constructor(
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return this.getLayoutInflaterWithGiniPaymentThemeAndLocale(
             inflater,
-            GiniInternalPaymentModule.getSDKLanguage(requireContext())?.languageLocale()
+            GiniInternalPaymentModule.getSDKLanguageInternal(requireContext())?.languageLocale()
         )
     }
 
@@ -107,6 +108,9 @@ class MoreInformationFragment private constructor(
         binding.gpsFaqList.postDelayed({
             setListViewHeight(listView = binding.gpsFaqList, group = getExpandedGroupPosition(), isReload = true)
         }, 100)
+        binding.gpsPoweredByGini.root.visibility =
+            if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
+                View.VISIBLE else View.INVISIBLE
 
         viewModel.start()
         viewLifecycleOwner.lifecycleScope.launch {
