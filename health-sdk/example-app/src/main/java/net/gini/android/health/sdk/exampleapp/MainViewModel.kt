@@ -14,7 +14,6 @@ import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.toPaymentRequest
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 import java.io.File
 
@@ -28,7 +27,6 @@ class MainViewModel(
 
     private var currentIndex = 0
     private var currentFileUri: Uri? = null
-    private var paymentComponentConfiguration : PaymentComponentConfiguration? = null
     private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
 
     fun getNextPageUri(context: Context): Uri {
@@ -63,12 +61,6 @@ class MainViewModel(
             }
         }
     }
-
-    fun setPaymentComponentConfiguration(config: PaymentComponentConfiguration) {
-        paymentComponentConfiguration = config
-    }
-
-    fun getPaymentComponentConfiguration() = paymentComponentConfiguration
 
     fun setGiniHealthLanguage(localization: GiniLocalization, context: Context) {
         giniHealth.setSDKLanguage(localization, context)

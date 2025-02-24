@@ -1,6 +1,7 @@
 name: Check Merchant SDK
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, edited, reopened, synchronize]
     paths:

@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
@@ -74,7 +75,11 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
 
     var dismissListener: ButtonClickListener? = null
 
-    private val binding = GpsViewPaymentComponentBinding.inflate(getLayoutInflaterWithGiniPaymentThemeAndLocale(GiniInternalPaymentModule.getSDKLanguage(context)?.languageLocale()), this)
+    private val binding = GpsViewPaymentComponentBinding.inflate(
+        getLayoutInflaterWithGiniPaymentThemeAndLocale(
+            GiniInternalPaymentModule.getSDKLanguageInternal(context)?.languageLocale()
+        ), this
+    )
     @VisibleForTesting
     internal lateinit var payInvoiceButton: Button
     private lateinit var paymentProviderAppIconHolder: GpsPaymentProviderIconHolderBinding
@@ -89,6 +94,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             coroutineScope = CoroutineScope(coroutineContext)
         }
         checkPaymentComponentHeight()
+        setIngredientBrandVisibility()
         coroutineScope?.launch {
             if (paymentComponent == null) {
                 LOG.warn("Cannot show payment provider apps: PaymentComponent must be set before showing the PaymentComponentView")
@@ -101,13 +107,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
                 binding.gpsSingleRowBankSelection.root.visibility = View.VISIBLE
                 binding.gpsTwoRowsBankSelection.visibility = View.GONE
             }
-            binding.gpsPoweredByGini.visibility =
-                if (paymentComponent?.paymentComponentConfiguration?.isPaymentComponentBranded == true)
-                {
-                    VISIBLE
-                } else {
-                    GONE
-                }
             paymentComponent?.checkReturningUser()
             paymentComponent?.let { pc ->
                 LOG.debug("Collecting payment provider apps state and selected payment provider app from PaymentComponent")
@@ -310,6 +309,12 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             paymentComponent?.listener?.onMoreInformationClicked()
             dismissListener?.onButtonClick(Buttons.MORE_INFORMATION)
         }
+    }
+
+    private fun setIngredientBrandVisibility() {
+        binding.gpsPoweredByGini.visibility =
+            if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.INVISIBLE)
+                View.INVISIBLE else View.VISIBLE
     }
 
     private companion object {

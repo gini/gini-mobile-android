@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.flow
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import java.util.Locale
 
 internal val amountWatcher = object : TextWatcher {
 
@@ -40,7 +41,6 @@ internal val amountWatcher = object : TextWatcher {
             } catch (e: NumberFormatException) {
                 ""
             }
-
             if (newString != input.toString()) {
                 input.replace(0, input.length, newString)
             }
@@ -48,8 +48,9 @@ internal val amountWatcher = object : TextWatcher {
     }
 }
 
+// Based on IPC-566, Locale.GERMAN is used to always format amount in the same way.
 internal fun currencyFormatterWithoutSymbol(): NumberFormat =
-    NumberFormat.getCurrencyInstance().apply {
+    NumberFormat.getCurrencyInstance(Locale.GERMAN).apply {
         (this as? DecimalFormat)?.apply {
             decimalFormatSymbols = decimalFormatSymbols.apply {
                 currencySymbol = ""

@@ -7,7 +7,6 @@ import net.gini.android.bank.api.models.AmplitudeRoot
 
 @JsonClass(generateAdapter = true)
 data class AmplitudeRequestBody(
-    @Json(name = "api_key") val apiKey: String,
     @Json(name = "events") val events: List<AmplitudeEventBody>,
 )
 
@@ -35,7 +34,6 @@ data class AmplitudeEventBody(
 
 
 internal fun AmplitudeRoot.toAmplitudeRequestBody() = AmplitudeRequestBody(
-    apiKey = apiKey,
     events = events.map { it.toAmplitudeEventBody() }
 )
 
