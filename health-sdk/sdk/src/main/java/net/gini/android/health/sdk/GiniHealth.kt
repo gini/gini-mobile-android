@@ -67,6 +67,10 @@ class GiniHealth(
         CoroutineScope(Job()).launch(Dispatchers.IO) {
             internalPaymentModule.loadPaymentProviderApps()
         }
+
+        CoroutineScope(Job()).launch(Dispatchers.IO) {
+            internalPaymentModule.getConfigurations()
+        }
     }
 
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
@@ -356,6 +360,11 @@ class GiniHealth(
         )
         return paymentFragment
     }
+
+    /**
+     * Manually load payment provider apps, in case there was an error when trying to load them automatically.
+     */
+    suspend fun loadPaymentProviders() = giniInternalPaymentModule.paymentComponent.loadPaymentProviderApps()
 
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
         Bundle().apply {

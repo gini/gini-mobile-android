@@ -1,6 +1,7 @@
 name: Build docs for Merchant SDK
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'merchant-sdk/**'

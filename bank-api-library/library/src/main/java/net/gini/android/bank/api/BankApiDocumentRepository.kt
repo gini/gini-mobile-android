@@ -62,8 +62,10 @@ class BankApiDocumentRepository(
         }
 
     suspend fun sendEvents(amplitudeRoot: AmplitudeRoot): Resource<Unit> =
-        wrapInResource {
-            trackingAnalysisRemoteSource.sendEvents(amplitudeRoot)
+        withAccessToken { accessToken ->
+            wrapInResource {
+                trackingAnalysisRemoteSource.sendEvents(accessToken, amplitudeRoot)
+            }
         }
 
 

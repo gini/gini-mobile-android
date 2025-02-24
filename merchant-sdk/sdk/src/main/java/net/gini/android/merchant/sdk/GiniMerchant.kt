@@ -1,10 +1,14 @@
 package net.gini.android.merchant.sdk
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
@@ -44,7 +48,11 @@ class GiniMerchant(
         userCenterApiBaseUrl = userCenterApiBaseUrl,
         debuggingEnabled = debuggingEnabled,
         apiVersion = API_VERSION
-    )
+    ).also { internalPaymentModule ->
+        CoroutineScope(Job()).launch(Dispatchers.IO) {
+            internalPaymentModule.getConfigurations()
+        }
+    }
 
     /**
      * A flow that exposes events from the Merchant SDK. You can collect this flow to be informed about events such as errors,
@@ -80,6 +88,7 @@ class GiniMerchant(
      * @param flowConfiguration - optional parameter with the [PaymentFlowConfiguration]
      */
     fun createFragment(iban: String, recipient: String, amount: String, purpose: String, flowConfiguration: PaymentFlowConfiguration? = null): PaymentFragment {
+
         if (iban.isEmpty() || recipient.isEmpty() || amount.isEmpty() || purpose.isEmpty()) {
             error("Payment details are incomplete.")
         }
