@@ -101,8 +101,6 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
                 setTextColor(paymentProviderApp.colors.textColor)
             }
-            binding.gpsForwardButton.setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
-            binding.gpsForwardButton.setTextColor(paymentProviderApp.colors.textColor)
             binding.gpsOpenWithTitle.text =
                 String.format(getLocaleStringResource(R.string.gps_open_with_title), paymentProviderApp.name)
             binding.gpsOpenWithDetails.text =
