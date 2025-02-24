@@ -62,6 +62,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = GpsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
 
+        binding.gpsPaymentProviderAppsList.setHasFixedSize(false)
         binding.gpsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
         binding.gpsPaymentProviderAppsList.adapter =
             PaymentProviderAppsAdapter(emptyList(),
@@ -75,11 +76,6 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                         viewModel.backListener?.backCalled()
                     }
             })
-
-        binding.gpsCloseButton.setOnClickListener {
-            viewModel.backListener?.backCalled()
-            dismiss()
-        }
 
         binding.gpsMoreInformationLabel.apply {
             paintFlags = binding.gpsMoreInformationLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
