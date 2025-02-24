@@ -56,13 +56,13 @@
                         app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintTop_toTopOf="parent"
                         android:contentDescription="@string/gps_qr_image_content_description"
-                        app:layout_constraintBottom_toTopOf="@id/powered"
+                        app:layout_constraintBottom_toTopOf="@id/gps_powered_by_gini_layout"
                         android:id="@+id/gps_qr_image_view"
                         android:layout_gravity="center_horizontal" />
 
                     <include layout="@layout/gps_powered_by_gini"
                         android:layout_width="wrap_content"
-                        android:id="@+id/powered"
+                        android:id="@+id/gps_powered_by_gini_layout"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
