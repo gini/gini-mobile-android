@@ -23,6 +23,7 @@ internal class ProceedClickedIntent(
 
     fun SkontoScreenContainerHost.run(skontoFragmentListener: SkontoFragmentListener?) = intent {
         val state = state as? SkontoScreenState.Ready ?: return@intent
+
         logProceedClickEvent(state)
 
         if (!getTransactionDocsFeatureEnabledUseCase()) {
@@ -31,6 +32,7 @@ internal class ProceedClickedIntent(
             }
             return@intent
         }
+
         if (getTransactionDocShouldBeAutoAttachedUseCase()) {
             transactionDocDialogConfirmAttachUseCase(true)
             with(openExtractionsScreenSubIntent) {
