@@ -20,6 +20,7 @@
         <item name="colorOnSurfaceInverse">@color/ghs_color_02</item>
         <item name="colorSurfaceVariant">@color/ghs_color_01</item>
         <item name="colorOnSurfaceVariant">?attr/colorOnBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="AppTheme" parent="Root.AppTheme" />
