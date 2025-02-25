@@ -42,7 +42,7 @@ data class InvoiceItem(
                 val price = parsePrice(substrings[0])
                 val currency = Currency.getInstance(substrings[1])
 
-                val numberFormat = NumberFormat.getCurrencyInstance()
+                val numberFormat = NumberFormat.getCurrencyInstance(Locale.GERMAN)
                 numberFormat.maximumFractionDigits = 2
                 numberFormat.currency = currency
 

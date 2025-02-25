@@ -6,6 +6,7 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.api.models.PaymentRequestInput
+import net.gini.android.health.api.response.ConfigurationResponse
 
 /**
  * Created by Alpár Szotyori on 25.01.22.
@@ -78,4 +79,11 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
     suspend fun getPaymentRequestImage(
         paymentRequestId: String
     ): Resource<ByteArray> = documentRepository.getPaymentRequestImage(paymentRequestId)
+
+    /**
+     * Returns the configurations for the client.
+     *
+     * @return [Resource] with the [ConfigurationResponse] for the client.
+     */
+    suspend fun getConfigurations(): Resource<ConfigurationResponse> = documentRepository.getConfigurations()
 }

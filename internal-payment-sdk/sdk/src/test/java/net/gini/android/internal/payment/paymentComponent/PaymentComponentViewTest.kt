@@ -54,7 +54,7 @@ class PaymentComponentViewTest {
         giniPaymentModule = GiniInternalPaymentModule(context!!, giniHealthAPI)
 
         paymentComponent = PaymentComponent(context!!, mockk())
-        paymentComponentBrandedOff = PaymentComponent(context!!, mockk(), PaymentComponentConfiguration(isPaymentComponentBranded = false))
+        paymentComponentBrandedOff = PaymentComponent(context!!, mockk())
         paymentComponentWithLocale = PaymentComponent(context!!, giniPaymentModule)
         paymentComponentListener = mockk(relaxed = true)
         paymentComponent.listener = paymentComponentListener
