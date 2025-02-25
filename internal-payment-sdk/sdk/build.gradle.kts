@@ -104,6 +104,7 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.androidx.test.espresso.core)
     testImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.test.junit)
 }
 
 apply<PublishToMavenPlugin>()
