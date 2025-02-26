@@ -70,7 +70,7 @@ squareup-javapoet = "1.13.0"
 cyclonedx = "1.8.1"
 cyclonedx-core = "8.0.3"
 json = "20240303"
-datastore = "1.1.1"
+datastore = "1.1.2"
 org-tomlj = "1.1.1"
 hiya-android="0.2"
 
