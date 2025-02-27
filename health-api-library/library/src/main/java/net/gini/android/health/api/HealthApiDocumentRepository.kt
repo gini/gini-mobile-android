@@ -130,4 +130,11 @@ class HealthApiDocumentRepository(
                 documentRemoteSource.getConfigurations(accessToken)
             }
         }
+
+    suspend fun deleteDocuments(documentIds: List<String>): Resource<Unit> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.deleteDocuments(accessToken, documentIds)
+            }
+        }
 }
