@@ -41,10 +41,11 @@ import org.slf4j.LoggerFactory
 open class InvoicesActivity : AppCompatActivity() {
 
     private val viewModel: InvoicesViewModel by viewModel()
+    private lateinit var binding: ActivityInvoicesBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityInvoicesBinding.inflate(layoutInflater)
+        binding = ActivityInvoicesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setActivityTitle(DisplayedScreen.Nothing)
 
@@ -53,7 +54,7 @@ open class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.invoicesFlow.collect { invoicesWithExtractions ->
                         (binding.invoicesList.adapter as InvoicesAdapter).apply {
-                            dataSet = invoicesWithExtractions
+                            dataSet = invoicesWithExtractions.toMutableList()
                             notifyDataSetChanged()
                         }
                         binding.noInvoicesLabel.visibility =
@@ -149,6 +150,49 @@ open class InvoicesActivity : AppCompatActivity() {
                         }
                     }
                 }
+                launch {
+                    viewModel.deleteDocumentsFlow.collect { deleteDocumentErrorResponse ->
+                        when (deleteDocumentErrorResponse) {
+                            null -> {
+                                val adapter = (binding.invoicesList.adapter as InvoicesAdapter)
+                                val invoices: List<String> = if (adapter.dataSet.size >= 2) {
+                                    adapter.dataSet.subList(0, 2).map { it.documentId }
+                                } else if (adapter.dataSet.isNotEmpty()) {
+                                    listOf(adapter.dataSet.first().documentId)
+                                } else {
+                                    emptyList<String>()
+                                }
+                                adapter.removeInvoices(invoices)
+                            }
+                            else -> {
+                                if (deleteDocumentErrorResponse.message != null) {
+                                    AlertDialog.Builder(this@InvoicesActivity)
+                                        .setTitle(getString(R.string.could_not_delete_documents))
+                                        .setMessage(deleteDocumentErrorResponse.message)
+                                        .setPositiveButton(android.R.string.ok, null)
+                                        .show()
+                                    return@collect
+                                }
+
+                                var errorMessage = ""
+                                deleteDocumentErrorResponse.unauthorizedDocuments?.let {
+                                    errorMessage += "unauthorized documents: $it"
+                                }
+                                deleteDocumentErrorResponse.notFoundDocuments?.let {
+                                    errorMessage += "\nnot found documents: $it"
+                                }
+                                deleteDocumentErrorResponse.missingCompositeDocuments?.let {
+                                    errorMessage += "\nmissing composite documents: $it"
+                                }
+                                AlertDialog.Builder(this@InvoicesActivity)
+                                    .setTitle(getString(R.string.could_not_delete_documents))
+                                    .setMessage(errorMessage)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .show()
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -157,7 +201,7 @@ open class InvoicesActivity : AppCompatActivity() {
         viewModel.loadInvoicesWithExtractions()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList()) { documentId ->
+        binding.invoicesList.adapter = InvoicesAdapter(mutableListOf()) { documentId ->
             startPaymentFlowForDocumentId(documentId)
         }
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
@@ -227,6 +271,19 @@ open class InvoicesActivity : AppCompatActivity() {
                     .commit()
                 true
             }
+            R.id.batch_delete -> {
+                val adapter = binding.invoicesList.adapter as InvoicesAdapter
+                val toDelete: MutableList<String> = mutableListOf()
+                if (adapter.dataSet.isNotEmpty()) {
+                    if (adapter.dataSet.size >= 2) {
+                        toDelete.addAll(adapter.dataSet.map { it.documentId }.subList(0, 2))
+                    } else {
+                        toDelete.add(adapter.dataSet.first().documentId)
+                    }
+                }
+                viewModel.batchDelete(toDelete)
+                true
+            }
             android.R.id.home -> {
                 onBackPressedDispatcher.onBackPressed()
                 true
@@ -242,7 +299,7 @@ open class InvoicesActivity : AppCompatActivity() {
 }
 
 class InvoicesAdapter(
-    var dataSet: List<InvoiceItem>,
+    var dataSet: MutableList<InvoiceItem>,
     var trustMarkerResponse: GiniHealth.TrustMarkerResponse? = null,
     var listener: (String) -> Unit
 ) :
@@ -302,6 +359,13 @@ class InvoicesAdapter(
     }
 
     override fun getItemCount() = dataSet.size
+
+    fun removeInvoices(invoices: List<String>) {
+        for (invoiceId in invoices) {
+            dataSet.find { it.documentId == invoiceId }?.let { dataSet.remove(it) }
+        }
+        notifyDataSetChanged()
+    }
 }
 
 private const val REVIEW_FRAGMENT_TAG = "payment_review_fragment"
