@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string name="app_name">Gini Health</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="import_file">Import</string>
+    <string name="payment">Pay</string>
+    <string name="upload_failed">Upload failed</string>
+    <string name="upload_succeeded">Upload succeeded</string>
+    <string name="document_not_payable_title">Invoice is not payable</string>
+    <string name="document_not_payable_message">Please try again with a different invoice.</string>
+    <string name="failed_to_load_bank_apps">Failed to load bank apps</string>
+    <string name="upload">Upload</string>
+    <string name="invoice">Invoice</string>
+    <string name="title_activity_invoices">Invoices list</string>
+    <string name="no_invoices">No invoices</string>
+    <string name="upload_test_invoices">Upload Invoices</string>
+    <string name="create_payment_order">Create payment order</string>
+    <string name="welcome_to_gini">Welcome to Gini</string>
+    <string name="example_of_health_sdk">Example of Gini Pay Connect integration in the insurance app</string>
+    <string name="could_not_start_payment_review">Could not start payment review</string>
     <string name="title_payment_review">Your Invoice</string>
+    <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default values.</string>
+    <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
+    <string name="hide_powered_by_gini">Hide powered by Gini on payment component</string>
+    <string name="show_review_bottom_dialog">Show the review bottom dialog</string>
+    <string name="gini_health_version">Gini Health SDK v: </string>
+    <string name="sdk_language">SDK language: </string>
+    <string name="recipient">Recipient</string>
+    <string name="iban">IBAN</string>
+    <string name="amount">Amount</string>
+    <string name="reference_number">Reference Number</string>
+    <string name="pay_now">Pay</string>
+    <string name="multiple_documents">Document contains multiple invoices</string>
     <string name="title_create_order">Your order</string>
+
+    <string name="ghs_privacy_policy_link_url">https://www.google.com</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
