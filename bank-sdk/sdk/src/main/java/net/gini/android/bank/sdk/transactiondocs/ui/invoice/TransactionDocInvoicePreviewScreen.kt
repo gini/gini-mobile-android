@@ -48,6 +48,7 @@ internal fun TransactionDocInvoicePreviewScreen(
         images = state.images,
         screenTitle = state.screenTitle,
         isLoading = state.isLoading,
+        onUserZoomedScreenOnce = { /* No Action needed on TD */ },
     )
 }
 
@@ -111,6 +112,7 @@ private fun InvoiceScreenContentPreview() {
             images = emptyList(),
             infoTextLines = listOf("Line 1", "Line 2"),
             onCloseClicked = {},
+            onUserZoomedScreenOnce = {}
         )
     }
 }
