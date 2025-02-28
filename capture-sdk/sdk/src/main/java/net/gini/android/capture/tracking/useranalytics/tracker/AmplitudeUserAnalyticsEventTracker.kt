@@ -1,7 +1,6 @@
 package net.gini.android.capture.tracking.useranalytics.tracker
 
 import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -101,11 +100,8 @@ internal class AmplitudeUserAnalyticsEventTracker(
             )
         )
 
-        Log.e("User journey", "Event: ${eventName.eventName}\n" +
-                properties.joinToString("\n") { "  ${it.getPair().first}=${it.getPair().second}" })
-
         LOG.debug("\nEvent: ${eventName.eventName}\n" +
-                properties.joinToString("\n") { "  ${it.getPair().first}=${it.getPair().second}" })
+                finalProperties.toList().joinToString("\n") { "  ${it.first}=${it.second}" })
     }
 
     fun startRepeatingJob(): Job {
