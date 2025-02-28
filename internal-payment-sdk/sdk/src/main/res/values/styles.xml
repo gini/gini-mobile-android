@@ -201,31 +201,6 @@
     <!-- Style for the progress indicator that is displayed on top of the Pay button in ReviewFragment -->
     <style name="GiniPaymentTheme.PaymentButtonProgressStyle" parent="Root.GiniPaymentTheme.PaymentButtonProgressStyle" />
 
-    <style name="Root.GiniPaymentTheme.CloseButtonStyle" parent="Widget.AppCompat.ImageButton">
-        <item name="android:minWidth">@dimen/gps_large_50</item>
-        <item name="android:minHeight">@dimen/gps_large_50</item>
-        <item name="android:background">@drawable/gps_close_button</item>
-    </style>
-
-    <!-- Style for close button in ReviewFragment -->
-    <style name="GiniPaymentTheme.CloseButtonStyle" parent="Root.GiniPaymentTheme.CloseButtonStyle"/>
-
-    <style name="Root.GiniPaymentTheme.PaymentDetails.InfoBar" parent="">
-        <item name="android:background">@drawable/gps_payment_details_info_bar_background</item>
-    </style>
-    <style name="GiniPaymentTheme.PaymentDetails.InfoBar" parent="Root.GiniPaymentTheme.PaymentDetails.InfoBar" />
-
-    <style name="Root.GiniPaymentTheme.PaymentDetails.InfoBar.TextView" parent="Widget.MaterialComponents.TextView">
-        <item name="android:gravity">center</item>
-        <item name="android:textAppearance">@style/GiniPaymentTheme.PaymentDetails.InfoBar.TextAppearance</item>
-    </style>
-    <style name="GiniPaymentTheme.PaymentDetails.InfoBar.TextView" parent="Root.GiniPaymentTheme.PaymentDetails.InfoBar.TextView" />
-
-    <style name="Root.GiniPaymentTheme.PaymentDetails.InfoBar.TextAppearance" parent="GiniPaymentTheme.Typography.Caption1">
-        <item name="android:textColor">@color/gps_dark_07</item>
-    </style>
-    <style name="GiniPaymentTheme.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniPaymentTheme.PaymentDetails.InfoBar.TextAppearance" />
-
     <style name="Root.GiniPaymentTheme.Widget.Button.PaymentProviderSelector" parent="GiniPaymentTheme.Widget.Button.TransparentBackground">
         <item name="android:textAppearance">@style/GiniPaymentTheme.Typography.Input</item>
     </style>
