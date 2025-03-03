@@ -270,13 +270,13 @@ class GiniHealth(
             is Resource.Error -> {
                 LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                     .error("Failed to delete documents with ids: ${response.exception}")
-                response.message?.let {
+                response.message?.let { failureMessage ->
                     if (!this::moshi.isInitialized) {
                         moshi = Moshi.Builder()
                             .build()
                     }
-                    val response2 = moshi.adapter(DeleteDocumentErrorResponse::class.java).lenient().fromJson(it)
-                    return response2
+                    val deleteDocumentsError = moshi.adapter(DeleteDocumentErrorResponse::class.java).lenient().fromJson(failureMessage)
+                    return deleteDocumentsError
                 }
                 return DeleteDocumentErrorResponse()
             }
