@@ -4,6 +4,9 @@ import net.gini.android.internal.payment.utils.formatCurrency
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 
+private val PDF_NAME_MAX_LENGTH = 25
+private val PDF_NAME_REGEX = "^[a-zA-Z0-9-_]*\$".toRegex()
+
 internal fun String.isNumber(): Boolean {
     val separator = DecimalFormatSymbols.getInstance(Locale.GERMAN).decimalSeparator
     return try {
@@ -28,3 +31,10 @@ fun String.toBackendFormat(): String {
 }
 
 fun String.sanitizeAmount(): String = formatCurrency(this)
+
+fun String.isValidPdfName(): Boolean {
+    if (this.isEmpty()) return false
+    if (this.length > PDF_NAME_MAX_LENGTH) return false
+    if (!(this matches PDF_NAME_REGEX)) return false
+    return true
+}
