@@ -33,5 +33,4 @@ fun String.toBackendFormat(): String {
 fun String.sanitizeAmount(): String = formatCurrency(this)
 
 fun String.isValidPdfName(): Boolean =
-    if (this.isEmpty() || this.length > PDF_NAME_MAX_LENGTH || !(this matches PDF_NAME_REGEX)) false
-    else true
+    !(this.isEmpty() || this.length > PDF_NAME_MAX_LENGTH || !(this matches PDF_NAME_REGEX))
