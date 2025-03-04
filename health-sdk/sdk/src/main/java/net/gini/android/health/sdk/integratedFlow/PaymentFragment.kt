@@ -46,6 +46,8 @@ import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.add
 import net.gini.android.internal.payment.utils.extensions.createShareWithPendingIntent
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isValidPdfName
 import net.gini.android.internal.payment.utils.extensions.showInstallAppBottomSheet
 import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomSheet
 import net.gini.android.internal.payment.utils.extensions.startSharePdfIntent
@@ -431,7 +433,9 @@ class PaymentFragment private constructor(
             paymentDetails = viewModel.paymentDetails?.toCommonPaymentDetails(),
             paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
-            viewModel.onForwardToSharePdfTapped()
+            val overriddenPdfName = getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name, viewModel.giniInternalPaymentModule)
+            val pdfName = if (overriddenPdfName.isValidPdfName()) overriddenPdfName else getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name_default, viewModel.giniInternalPaymentModule)
+            viewModel.onForwardToSharePdfTapped(pdfName)
         }
     }
 
