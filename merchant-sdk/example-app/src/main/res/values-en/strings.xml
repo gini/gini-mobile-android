@@ -24,5 +24,4 @@
 
     <string name="payment_component_two_rows">Display payment component on two rows</string>
     <string name="check_returning_user">Check for returning user</string>
-    <string name="gps_payment_request_pdf_name">Danis_payment_req</string>
 </resources>
