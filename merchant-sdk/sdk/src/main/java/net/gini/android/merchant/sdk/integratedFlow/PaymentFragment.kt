@@ -38,6 +38,7 @@ import net.gini.android.internal.payment.utils.PaymentNextStep
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.add
 import net.gini.android.internal.payment.utils.extensions.createShareWithPendingIntent
+import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.isValidPdfName
 import net.gini.android.internal.payment.utils.extensions.showInstallAppBottomSheet
 import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomSheet
@@ -397,9 +398,9 @@ class PaymentFragment private constructor(
             paymentDetails = viewModel.paymentDetails,
             paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
-            val overriddenPdfName = getString(internalSdkStringResource.gps_payment_request_pdf_name)
+            val overriddenPdfName = getLocaleStringResource(internalSdkStringResource.gps_payment_request_pdf_name, viewModel.giniInternalPaymentModule)
             val pdfName = if (overriddenPdfName.isValidPdfName()) overriddenPdfName
-                            else getString(internalSdkStringResource.gps_payment_request_pdf_name_default)
+                            else getLocaleStringResource(internalSdkStringResource.gps_payment_request_pdf_name_default, viewModel.giniInternalPaymentModule)
             viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir, fileName = pdfName)
         }
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
