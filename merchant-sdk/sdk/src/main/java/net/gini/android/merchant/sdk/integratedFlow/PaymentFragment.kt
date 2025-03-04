@@ -50,6 +50,8 @@ import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
 import org.jetbrains.annotations.VisibleForTesting
 
+import net.gini.android.internal.payment.R.string as internalSdkStringResource
+
 /**
  * Configuration for the payment flow.
  */
@@ -395,8 +397,9 @@ class PaymentFragment private constructor(
             paymentDetails = viewModel.paymentDetails,
             paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
-            val overriddenPdfName = getString(net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name)
-            val pdfName = if (overriddenPdfName.isValidPdfName()) overriddenPdfName else getString(net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name_default)
+            val overriddenPdfName = getString(internalSdkStringResource.gps_payment_request_pdf_name)
+            val pdfName = if (overriddenPdfName.isValidPdfName()) overriddenPdfName
+                            else getString(internalSdkStringResource.gps_payment_request_pdf_name_default)
             viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir, fileName = pdfName)
         }
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
