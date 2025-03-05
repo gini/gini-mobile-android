@@ -172,7 +172,7 @@ open class InvoicesActivity : AppCompatActivity() {
 
     private fun setActivityTitle(screen: DisplayedScreen) {
         when (screen) {
-            DisplayedScreen.MoreInformationFragment -> title = getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
+            DisplayedScreen.MoreInformationFragment -> title = getString(net.gini.android.internal.payment.R.string.gps_more_information_fragment_title)
             DisplayedScreen.ReviewScreen -> title = getString(R.string.title_payment_review)
             DisplayedScreen.Nothing -> title = getString(R.string.title_activity_invoices)
             else -> {}

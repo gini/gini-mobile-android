@@ -108,7 +108,7 @@ class OrderDetailsFragment : Fragment() {
 
     private fun setTitle(screen: DisplayedScreen) {
         requireActivity().title = if (screen is DisplayedScreen.MoreInformationFragment) {
-            resources.getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
+            resources.getString(net.gini.android.internal.payment.R.string.gps_more_information_fragment_title)
         } else {
             resources.getString(R.string.title_create_order)
         }
