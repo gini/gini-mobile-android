@@ -151,37 +151,32 @@ open class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.deleteDocumentsFlow.collect { deleteDocumentErrorResponse ->
-                        when (deleteDocumentErrorResponse) {
-                            null -> {
-
-                            }
-                            else -> {
-                                if (deleteDocumentErrorResponse.message != null) {
-                                    AlertDialog.Builder(this@InvoicesActivity)
-                                        .setTitle(getString(R.string.could_not_delete_documents))
-                                        .setMessage(deleteDocumentErrorResponse.message)
-                                        .setPositiveButton(android.R.string.ok, null)
-                                        .show()
-                                    return@collect
-                                }
-
-                                var errorMessage = ""
-                                deleteDocumentErrorResponse.unauthorizedDocuments?.let {
-                                    errorMessage += "unauthorized documents: $it"
-                                }
-                                deleteDocumentErrorResponse.notFoundDocuments?.let {
-                                    errorMessage += "\nnot found documents: $it"
-                                }
-                                deleteDocumentErrorResponse.missingCompositeDocuments?.let {
-                                    errorMessage += "\nmissing composite documents: $it"
-                                }
+                    viewModel.deleteDocumentsFlow.collect { response ->
+                        response?.let { deleteDocumentErrorResponse ->
+                            if (deleteDocumentErrorResponse.message != null) {
                                 AlertDialog.Builder(this@InvoicesActivity)
                                     .setTitle(getString(R.string.could_not_delete_documents))
-                                    .setMessage(errorMessage)
+                                    .setMessage(deleteDocumentErrorResponse.message)
                                     .setPositiveButton(android.R.string.ok, null)
                                     .show()
+                                return@collect
                             }
+
+                            var errorMessage = ""
+                            deleteDocumentErrorResponse.unauthorizedDocuments?.let {
+                                errorMessage += "${getString(R.string.unauthorized_documents)} $it"
+                            }
+                            deleteDocumentErrorResponse.notFoundDocuments?.let {
+                                errorMessage += "\n${getString(R.string.not_found_documents)} $it"
+                            }
+                            deleteDocumentErrorResponse.missingCompositeDocuments?.let {
+                                errorMessage += "\n${getString(R.string.missing_composite_documents)} $it"
+                            }
+                            AlertDialog.Builder(this@InvoicesActivity)
+                                .setTitle(getString(R.string.could_not_delete_documents))
+                                .setMessage(errorMessage)
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
                         }
                     }
                 }

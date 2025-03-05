@@ -37,4 +37,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="could_not_delete_documents">Could not delete documents</string>
+    <string name="not_found_documents">not found documents: </string>
+    <string name="missing_composite_documents">missing composite documents: </string>
+    <string name="unauthorized_documents">unauthorized documents: </string>
 </resources>
