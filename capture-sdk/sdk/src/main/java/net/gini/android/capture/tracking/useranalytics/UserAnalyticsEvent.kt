@@ -37,5 +37,12 @@ enum class UserAnalyticsEvent(val eventName: String) {
     // endregion
     SDK_OPENED("sdk_opened"),
     SDK_CLOSED("sdk_closed"),
-    DISMISSED("dismissed")
+    DISMISSED("dismissed"),
+    // region Skonto
+    INVOICE_PREVIEW_TAPPED("invoice_preview_tapped"),
+    SKONTO_SWITCH_TAPPED("skonto_switch_tapped"),
+    FINAL_AMOUNT_TAPPED("final_amount_tapped"),
+    FULL_AMOUNT_TAPPED("full_amount_tapped"),
+    DUE_DATE_TAPPED("due_date_tapped"),
+    // endregion
 }

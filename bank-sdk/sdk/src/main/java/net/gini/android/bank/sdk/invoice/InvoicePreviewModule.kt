@@ -59,6 +59,7 @@ val invoicePreviewScreenModule = module {
             infoTextLines = infoTextLines.toList(),
             highlightBoxes = highlights.toList(),
             loadInvoiceBitmapsUseCase = get(),
+            analyticsTracker = get(),
         )
     }
 }
