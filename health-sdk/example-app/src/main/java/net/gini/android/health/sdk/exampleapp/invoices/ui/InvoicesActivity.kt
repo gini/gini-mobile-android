@@ -154,15 +154,7 @@ open class InvoicesActivity : AppCompatActivity() {
                     viewModel.deleteDocumentsFlow.collect { deleteDocumentErrorResponse ->
                         when (deleteDocumentErrorResponse) {
                             null -> {
-                                val adapter = (binding.invoicesList.adapter as InvoicesAdapter)
-                                val invoices: List<String> = if (adapter.dataSet.size >= 2) {
-                                    adapter.dataSet.subList(0, 2).map { it.documentId }
-                                } else if (adapter.dataSet.isNotEmpty()) {
-                                    listOf(adapter.dataSet.first().documentId)
-                                } else {
-                                    emptyList<String>()
-                                }
-                                adapter.removeInvoices(invoices)
+
                             }
                             else -> {
                                 if (deleteDocumentErrorResponse.message != null) {
