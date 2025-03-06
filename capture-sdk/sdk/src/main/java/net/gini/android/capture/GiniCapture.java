@@ -299,15 +299,19 @@ public class GiniCapture {
 
         if (oldInstance.mGiniCaptureNetworkService != null) {
             oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, compoundExtractionMap, new GiniCaptureNetworkCallback<Void, Error>() {
-                //No implementation needed here as it will be handled by the normal transfer summary implemented by clients!
+                //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
+                private int retryCount = 0;
                 @Override
                 public void failure(Error error) {
+                    int maxRetries = 3;
+                    if (retryCount < maxRetries) {
+                        retryCount++;
+                        oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, compoundExtractionMap, this);
+                    }
                 }
-
                 @Override
                 public void success(Void result) {
                 }
-
                 @Override
                 public void cancelled() {
                 }
