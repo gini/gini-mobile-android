@@ -20,7 +20,12 @@ internal class ProceedClickedIntent(
         val state = state as? SkontoScreenState.Ready ?: return@intent
 
         if (state.isSkontoSectionActive) {
-            GiniBank.sendTransferSummaryForSkonto(state.totalAmount, state.totalAmount.amountToPay(), state.skontoPercentage.toString(), state.discountDueDate.toString())
+            GiniBank.sendTransferSummaryForSkonto(
+                state.totalAmount,
+                state.totalAmount.amountToPay(),
+                state.skontoPercentage.toString(),
+                state.discountDueDate.toString()
+            )
         }
         if (!getTransactionDocsFeatureEnabledUseCase()) {
             with(openExtractionsScreenSubIntent) {

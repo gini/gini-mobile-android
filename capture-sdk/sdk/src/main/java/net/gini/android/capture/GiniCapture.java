@@ -217,9 +217,11 @@ public class GiniCapture {
             return;
         }
 
+        final String EXTRACTION_AMOUNT_TO_PAY = "amountToPay";
+
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
-        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(), "amount", null, emptyList()));
+        extractionMap.put(EXTRACTION_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_AMOUNT_TO_PAY, amount.amountToPay(), "amount", null, emptyList()));
 
         extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient, "companyname", null, emptyList()));
 
@@ -275,24 +277,31 @@ public class GiniCapture {
                                                                  @NonNull final String skontoPercentageDiscountedCalculated,
                                                                  @NonNull final String skontoDueDateCalculated) {
 
+        final String EXTRACTION_AMOUNT_TO_PAY = "amountToPay";
+        final String EXTRACTION_AMOUNT = "amount";
+        final String EXTRACTION_SKONTO_AMOUNT_TO_PAY = "skontoAmountToPayCalculated";
+        final String EXTRACTION_SKONTO_PERCENTAGE_TO_PAY = "skontoPercentageDiscountedCalculated";
+        final String EXTRACTION_SKONTO_DUE_DATE = "skontoDueDateCalculated";
+        final String EXTRACTION_SKONTO_DISCOUNTS = "skontoDiscounts";
+
         if (sInstance == null) {
             return;
         }
 
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
-        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(), "amount", null, emptyList()));
+        extractionMap.put(EXTRACTION_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_AMOUNT_TO_PAY, amount.amountToPay(), EXTRACTION_AMOUNT, null, emptyList()));
 
         final GiniCapture oldInstance = sInstance;
         Map<String, GiniCaptureCompoundExtraction> compoundExtractionMap = new HashMap<>();
         Map<String, GiniCaptureSpecificExtraction> skontoSpecificExtractions = new HashMap<>();
 
-        skontoSpecificExtractions.put("skontoAmountToPayCalculated", new GiniCaptureSpecificExtraction("skontoAmountToPayCalculated", skontoAmountToPayCalculated, "amount", null, emptyList()));
+        skontoSpecificExtractions.put(EXTRACTION_SKONTO_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_AMOUNT_TO_PAY, skontoAmountToPayCalculated, EXTRACTION_AMOUNT, null, emptyList()));
 
         double percentage = ((int) (Double.parseDouble(skontoPercentageDiscountedCalculated) * 100)) / 100.0;
-        skontoSpecificExtractions.put("skontoPercentageDiscountedCalculated", new GiniCaptureSpecificExtraction("skontoPercentageDiscountedCalculated", percentage + "%", "amount", null, emptyList()));
-        skontoSpecificExtractions.put("skontoDueDateCalculated", new GiniCaptureSpecificExtraction("skontoDueDateCalculated", skontoDueDateCalculated, "amount", null, emptyList()));
-        compoundExtractionMap.put("skontoDiscounts", new GiniCaptureCompoundExtraction("skontoDiscounts", listOf(skontoSpecificExtractions)));
+        skontoSpecificExtractions.put(EXTRACTION_SKONTO_PERCENTAGE_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_PERCENTAGE_TO_PAY, percentage + "%", EXTRACTION_AMOUNT, null, emptyList()));
+        skontoSpecificExtractions.put(EXTRACTION_SKONTO_DUE_DATE, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_DUE_DATE, skontoDueDateCalculated, EXTRACTION_AMOUNT, null, emptyList()));
+        compoundExtractionMap.put(EXTRACTION_SKONTO_DISCOUNTS, new GiniCaptureCompoundExtraction(EXTRACTION_SKONTO_DISCOUNTS, listOf(skontoSpecificExtractions)));
 
         // Test fails here if for some reason mGiniCaptureNetworkService is null
         // Added null checking to fix test fail -> or figure out something else
@@ -311,9 +320,11 @@ public class GiniCapture {
                 }
                 @Override
                 public void success(Void result) {
+                    //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
                 }
                 @Override
                 public void cancelled() {
+                    //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
                 }
             });
         }
