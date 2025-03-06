@@ -78,7 +78,6 @@ class NoResultsFragmentImpl {
     }
 
     void onCreate(final Bundle savedInstanceState) {
-        forcePortraitOrientationOnPhones(mFragment.getActivity());
         // Clear the image from the memory store because the user can only exit for manual entry or in some cases
         // can go back to the camera to take new pictures
         if (GiniCapture.hasInstance()) {
