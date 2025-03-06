@@ -92,23 +92,27 @@ class NoResultsFragmentImpl {
         final View retakeImagesButton = view.findViewById(R.id.gc_button_no_results_retake_images);
         handleOnBackPressed();
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                new HashSet<UserAnalyticsEventProperty>() {
-                    {
-                        add(new UserAnalyticsEventProperty.Screen(screenName));
-                        add(new UserAnalyticsEventProperty.DocumentId(mDocument.getId()));
-                        add(new UserAnalyticsEventProperty.DocumentType(UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument)));
+        if (mUserAnalyticsEventTracker != null) {
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                            add(new UserAnalyticsEventProperty.DocumentId(mDocument.getId()));
+                            add(new UserAnalyticsEventProperty.DocumentType(UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument)));
+                        }
                     }
-                }
-        );
+            );
+        }
         if (shouldAllowRetakeImages()) {
             ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                if (mUserAnalyticsEventTracker != null) {
+                    mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED,
+                            new HashSet<UserAnalyticsEventProperty>() {
+                                {
+                                    add(new UserAnalyticsEventProperty.Screen(screenName));
+                                }
+                            });
+                }
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
                 mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
             });
@@ -118,12 +122,14 @@ class NoResultsFragmentImpl {
 
         final View enterManuallyButton = view.findViewById(R.id.gc_button_no_results_enter_manually);
         ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v -> {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+            if (mUserAnalyticsEventTracker != null) {
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                            }
+                        });
+            }
             mListener.onEnterManuallyPressed();
         });
 
@@ -143,12 +149,14 @@ class NoResultsFragmentImpl {
         mFragment.getActivity().getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+                if (mUserAnalyticsEventTracker != null) {
+                    mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                            new HashSet<UserAnalyticsEventProperty>() {
+                                {
+                                    add(new UserAnalyticsEventProperty.Screen(screenName));
+                                }
+                            });
+                }
                 remove();
 
             }
@@ -207,12 +215,14 @@ class NoResultsFragmentImpl {
                         injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> {
                             if (mFragment.getActivity() != null) {
-                                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                                        new HashSet<UserAnalyticsEventProperty>() {
-                                            {
-                                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                                            }
-                                        });
+                                if (mUserAnalyticsEventTracker != null) {
+                                    mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                                            new HashSet<UserAnalyticsEventProperty>() {
+                                                {
+                                                    add(new UserAnalyticsEventProperty.Screen(screenName));
+                                                }
+                                            });
+                                }
                                 mCancelListener.onCancelFlow();
                             }
                         }));

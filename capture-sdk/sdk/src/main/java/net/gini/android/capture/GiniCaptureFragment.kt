@@ -105,7 +105,7 @@ class GiniCaptureFragment(
     }
 
     private fun setUserEventProperties(configuration: Configuration) {
-        userAnalyticsEventTracker.setUserProperty(
+        userAnalyticsEventTracker?.setUserProperty(
             setOf(
                 UserAnalyticsUserProperty.ReturnAssistantEnabled(
                     configuration.isReturnAssistantEnabled
@@ -274,7 +274,7 @@ class GiniCaptureFragment(
                 }
             )
         }
-        userAnalyticsEventTracker.setEventSuperProperty(entryPointProperty)
+        userAnalyticsEventTracker?.setEventSuperProperty(entryPointProperty)
     }
 
     companion object {
