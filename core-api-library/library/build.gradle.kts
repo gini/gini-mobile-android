@@ -14,6 +14,14 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    packaging {
+        resources {
+            merges += "META-INF/LICENSE-notice.md"
+            merges += "META-INF/LICENSE.md"
+        }
+    }
+
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         testOptions.targetSdk = libs.versions.android.targetSdk.get().toInt()
