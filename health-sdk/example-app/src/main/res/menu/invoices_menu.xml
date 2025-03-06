@@ -7,4 +7,7 @@
     <item android:id="@+id/create_payment_order"
         android:title="@string/create_payment_order"
         app:showAsAction="never"/>
+    <item android:id="@+id/batch_delete"
+        android:title="@string/batch_delete_documents"
+        app:showAsAction="never"/>
 </menu>

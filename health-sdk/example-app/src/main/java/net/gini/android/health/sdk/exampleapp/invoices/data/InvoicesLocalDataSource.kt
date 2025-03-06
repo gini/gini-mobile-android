@@ -69,6 +69,13 @@ class InvoicesLocalDataSource(private val context: Context) {
         _invoicesFlow.value = storedInvoices
     }
 
+    suspend fun deleteDocuments(documentIds: List<String>) {
+        val storedInvoices = readInvoicesFromPreferences().toMutableList()
+        storedInvoices.removeAll { it.documentId in documentIds }
+        writeInvoicesToPreferences(storedInvoices)
+        _invoicesFlow.value = storedInvoices
+    }
+
     private suspend fun readInvoicesFromPreferences(): List<DocumentWithExtractions> {
         return context.dataStore.data.map { preferences ->
             val invoicesJson = preferences[KEY_INVOICES] ?: ""

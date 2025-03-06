@@ -246,5 +246,12 @@ class HealthApiDocumentRemoteSourceTest {
             return Response.success(null)
         }
 
+        override suspend fun batchDeleteDocuments(
+            bearer: Map<String, String>,
+            body: List<String>
+        ): Response<Void> {
+            return Response.success(null)
+        }
+
     }
 }

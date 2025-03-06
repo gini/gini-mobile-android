@@ -17,6 +17,7 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
+import net.gini.android.health.api.response.DeleteDocumentErrorResponse
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
@@ -282,5 +283,84 @@ class GiniHealthTest {
         assert(giniHealth.paymentFlow.value is ResultWrapper.Success<PaymentDetails>) { "Expected Success" }
         val result = (giniHealth.paymentFlow.value as ResultWrapper.Success<PaymentDetails>).value.extractions?.specificExtractions?.get("medical_service_provider")
         assertEquals(extractions.specificExtractions["medical_service_provider"], result)
+    }
+
+    @Test
+    fun `Returns null when batch delete was successful`() = runTest {
+        coEvery { documentManager.deleteDocuments(any()) } returns Resource.Success(Unit)
+
+        val result = giniHealth.deleteDocuments(listOf())
+        assertTrue(result == null)
+    }
+
+    @Test
+    fun `Returns DocumentResponseError with message field when batch delete with empty list`() = runTest {
+        coEvery { documentManager.deleteDocuments(emptyList()) } returns Resource.Error("{ \"message\": \"No documents to expire\" }")
+
+        val result = giniHealth.deleteDocuments(emptyList())
+        Truth.assertThat(result).isInstanceOf(DeleteDocumentErrorResponse::class.java)
+        Truth.assertThat(result?.message).isNotNull()
+    }
+
+    @Test
+    fun `Returns DocumentResponseError with unauthorizedDocuments field when batch delete documents that do not belong to the user`() = runTest {
+        coEvery { documentManager.deleteDocuments(emptyList()) } returns Resource.Error(
+                "  { \"unauthorizedDocuments\": [\"0eb26fec-4a7f-4376-b5d5-5155adf8adca\", \"8f434c37-7167-4c42-ac10-02e0826bba98\"] }" )
+
+        val result = giniHealth.deleteDocuments(emptyList())
+        Truth.assertThat(result).isInstanceOf(DeleteDocumentErrorResponse::class.java)
+        Truth.assertThat(result?.message).isNull()
+        Truth.assertThat(result?.notFoundDocuments).isNull()
+        Truth.assertThat(result?.missingCompositeDocuments).isNull()
+        Truth.assertThat(result?.unauthorizedDocuments).isNotNull()
+        Truth.assertThat(result?.unauthorizedDocuments).isNotEmpty()
+        Truth.assertThat(result?.unauthorizedDocuments).hasSize(2)
+    }
+
+    @Test
+    fun `Returns DocumentResponseError with notFoundDocuments field when batch delete documents that do not exist anymore`() = runTest {
+        coEvery { documentManager.deleteDocuments(emptyList()) } returns Resource.Error(
+            "  { \"notFoundDocuments\": [\"0eb26fec-4a7f-4376-b5d5-5155adf8adca\", \"8f434c37-7167-4c42-ac10-02e0826bba98\"] }" )
+
+        val result = giniHealth.deleteDocuments(emptyList())
+        Truth.assertThat(result).isInstanceOf(DeleteDocumentErrorResponse::class.java)
+        Truth.assertThat(result?.message).isNull()
+        Truth.assertThat(result?.unauthorizedDocuments).isNull()
+        Truth.assertThat(result?.missingCompositeDocuments).isNull()
+        Truth.assertThat(result?.notFoundDocuments).isNotNull()
+        Truth.assertThat(result?.notFoundDocuments).isNotEmpty()
+        Truth.assertThat(result?.notFoundDocuments).hasSize(2)
+    }
+
+    @Test
+    fun `Returns DocumentResponseError with missingCompositeDocuments field when batch delete documents that do not have the composite documents`() = runTest {
+        coEvery { documentManager.deleteDocuments(emptyList()) } returns Resource.Error(
+            "  { \"missingCompositeDocuments\": [\"0eb26fec-4a7f-4376-b5d5-5155adf8adca\", \"8f434c37-7167-4c42-ac10-02e0826bba98\"] }" )
+
+        val result = giniHealth.deleteDocuments(emptyList())
+        Truth.assertThat(result).isInstanceOf(DeleteDocumentErrorResponse::class.java)
+        Truth.assertThat(result?.message).isNull()
+        Truth.assertThat(result?.unauthorizedDocuments).isNull()
+        Truth.assertThat(result?.notFoundDocuments).isNull()
+        Truth.assertThat(result?.missingCompositeDocuments).isNotNull()
+        Truth.assertThat(result?.missingCompositeDocuments).isNotEmpty()
+        Truth.assertThat(result?.missingCompositeDocuments).hasSize(2)
+    }
+
+    @Test
+    fun `Returns DocumentResponseError with notFoundDocuments and unauthorizedDocuments fields when batch delete documents that do not exist anymore and documents that do not belong to the user`() = runTest {
+        coEvery { documentManager.deleteDocuments(emptyList()) } returns Resource.Error(
+            "  { \"notFoundDocuments\": [\"0eb26fec-4a7f-4376-b5d5-5155adf8adca\", \"8f434c37-7167-4c42-ac10-02e0826bba98\"], \"unauthorizedDocuments\": [\"0eb26fec-4a7f-4376-b5d5-5155adf8adca\", \"8f434c37-7167-4c42-ac10-02e0826bba98\"] }" )
+
+        val result = giniHealth.deleteDocuments(emptyList())
+        Truth.assertThat(result).isInstanceOf(DeleteDocumentErrorResponse::class.java)
+        Truth.assertThat(result?.message).isNull()
+        Truth.assertThat(result?.missingCompositeDocuments).isNull()
+        Truth.assertThat(result?.notFoundDocuments).isNotNull()
+        Truth.assertThat(result?.notFoundDocuments).isNotEmpty()
+        Truth.assertThat(result?.notFoundDocuments).hasSize(2)
+        Truth.assertThat(result?.unauthorizedDocuments).isNotNull()
+        Truth.assertThat(result?.unauthorizedDocuments).isNotEmpty()
+        Truth.assertThat(result?.unauthorizedDocuments).hasSize(2)
     }
 }
