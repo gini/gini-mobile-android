@@ -92,6 +92,10 @@ public class PhotoThumbnail extends ConstraintLayout {
         badge.setVisibility(count > 0 ? VISIBLE : INVISIBLE);
     }
 
+    public void setContentDescriptionThumbnail(String contentDescription) {
+        thumbnail.setContentDescription(contentDescription);
+    }
+
     public void removeImage() {
         removeClickListener(thumbnail);
         resetImageView(thumbnail);
