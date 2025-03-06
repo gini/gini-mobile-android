@@ -9,3 +9,4 @@ captures
 .cxx
 fastlane/report.xml
 .vscode
+.kotlin/

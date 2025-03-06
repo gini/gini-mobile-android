@@ -2,7 +2,7 @@
 android-compileSdk = "35"
 android-minSdk = "21"
 android-targetSdk = "35"
-kotlin = "1.9.25"
+kotlin = "2.0.0"
 android-gradle-plugin = "8.9.0"
 dokka = "1.9.20"
 androidx-lifecycle = "2.8.7"
@@ -19,7 +19,7 @@ espresso = "3.6.1"
 checkstyle = "7.8.2"
 pmd = "6.0.0"
 jacoco = "0.8.10"
-hilt = "2.46.1"
+hilt = "2.51.1"
 navigation_component = "2.8.4"
 compose-bom = "2024.06.00"
 accompanist-themeAdapter = "1.1.1"
@@ -73,6 +73,9 @@ json = "20240303"
 datastore = "1.1.2"
 org-tomlj = "1.1.1"
 hiya-android="0.2"
+
+[plugins]
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
