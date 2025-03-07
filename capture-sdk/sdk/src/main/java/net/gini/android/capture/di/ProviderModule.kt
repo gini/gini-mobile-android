@@ -6,7 +6,7 @@ import net.gini.android.capture.provider.LastExtractionsProvider
 import org.koin.dsl.module
 
 internal val providerModule = module {
-    factory<LastAnalyzedDocumentProvider> {
+    single<LastAnalyzedDocumentProvider> {
         LastAnalyzedDocumentProvider(
             backgroundDispatcher = Dispatchers.IO,
             userAnalyticsEventTracker = get(),
