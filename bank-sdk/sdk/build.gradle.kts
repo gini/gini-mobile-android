@@ -9,6 +9,7 @@ plugins {
     id("kotlin-parcelize")
     id("jacoco")
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.compose.compiler)
 }
 
 jacoco {
@@ -55,9 +56,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
 
     buildTypes {
         debug {

@@ -45,6 +45,10 @@ public class Document implements Parcelable {
         UNKNOWN
     }
 
+    /**
+     * The possible source classification of a document.
+     */
+
     public enum SourceClassification {
         SCANNED,
         SANDWICH,
@@ -148,6 +152,7 @@ public class Document implements Parcelable {
      *
      * @param responseData The response data. Should be a valid response.
      * @return The created document instance.
+     * @throws JSONException in case of json error
      */
     public static Document fromApiResponse(JSONObject responseData) throws JSONException {
         final String documentId = responseData.getString("id");
