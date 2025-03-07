@@ -680,7 +680,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     private fun trackSdkClosedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SDK_CLOSED, setOf(
-                UserAnalyticsEventProperty.Screen(screenName),
                 UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful)
             )
         )

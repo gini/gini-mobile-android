@@ -318,7 +318,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
         didFinishWithResult = true
         captureFlowFragmentListener.onFinishedWithResult(result)
-        trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
+        trackSdkClosedEvent()
     }
 
     private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
@@ -387,11 +387,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
     }
 
-    private fun trackSdkClosedEvent(screen: UserAnalyticsScreen) = runCatching {
+    private fun trackSdkClosedEvent() = runCatching {
         userAnalyticsEventTracker.trackEvent(
             UserAnalyticsEvent.SDK_CLOSED,
             setOf(
-                UserAnalyticsEventProperty.Screen(screen),
                 UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful),
             )
         )
