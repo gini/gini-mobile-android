@@ -10,11 +10,7 @@ import java.util.Map;
 
 /**
  * Created by Alpar Szotyori on 13.02.2020.
- *
  * Copyright (c) 2020 Gini GmbH.
- */
-
-/**
  * Internal use only.
  */
 public class BundleHelper {
@@ -35,12 +31,12 @@ public class BundleHelper {
         return bundle;
     }
 
-    public static <V extends Parcelable> HashMap<String, V> bundleToMap(Bundle bundle, ClassLoader classLoader){
+    public static <V extends Parcelable> HashMap<String, V> bundleToMap(Bundle bundle, ClassLoader classLoader) {
         bundle.setClassLoader(classLoader);
         return bundleToMap(bundle);
     }
 
-    public static <V extends Parcelable> HashMap<String, V> bundleToMap(Bundle bundle){
+    public static <V extends Parcelable> HashMap<String, V> bundleToMap(Bundle bundle) {
         final HashMap<String, V> map = new HashMap<>(bundle.keySet().size());
         for (final String key : bundle.keySet()) {
             map.put(key, bundle.<V>getParcelable(key));
