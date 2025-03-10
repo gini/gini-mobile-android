@@ -5,7 +5,7 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 
 internal fun SkontoEdgeCase.toAnalyticsModel() = when(this) {
     SkontoEdgeCase.PayByCashOnly -> UserAnalyticsEventProperty.EdgeCaseType.Type.PayByCash
-    SkontoEdgeCase.PayByCashToday -> UserAnalyticsEventProperty.EdgeCaseType.Type.PayToday
+    SkontoEdgeCase.PayByCashToday -> UserAnalyticsEventProperty.EdgeCaseType.Type.PayByCash
     SkontoEdgeCase.SkontoExpired -> UserAnalyticsEventProperty.EdgeCaseType.Type.Expired
     SkontoEdgeCase.SkontoLastDay -> UserAnalyticsEventProperty.EdgeCaseType.Type.PayToday
 }
