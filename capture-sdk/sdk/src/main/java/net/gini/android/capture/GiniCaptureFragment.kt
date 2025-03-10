@@ -122,7 +122,7 @@ class GiniCaptureFragment(
     }
 
     private fun setEventSuperProperties(configuration: Configuration) {
-        userAnalyticsEventTracker.setEventSuperProperty(
+        userAnalyticsEventTracker?.setEventSuperProperty(
             UserAnalyticsEventSuperProperty.GiniClientId(configuration.clientID)
         )
     }

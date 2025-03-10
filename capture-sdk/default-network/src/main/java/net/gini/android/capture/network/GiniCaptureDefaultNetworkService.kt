@@ -333,7 +333,7 @@ internal constructor(
                     giniApiDocuments[compositeDocument.id] = compositeDocument
                     giniBankApi.documentManager.getAllExtractionsWithPolling(compositeDocument)
                         .mapSuccess {
-                            UserAnalytics.getAnalyticsEventTracker().setEventSuperProperty(
+                            UserAnalytics.getAnalyticsEventTracker()?.setEventSuperProperty(
                                 UserAnalyticsEventSuperProperty.DocumentId(compositeDocument.id)
                             )
                             Resource.Success(compositeDocument to it.data)

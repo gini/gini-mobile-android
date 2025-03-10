@@ -279,7 +279,7 @@ internal class DigitalInvoiceScreenPresenter(
 
     private fun trackProceedTapped() = runCatching {
         val skontoEdgeCase = skontoEdgeCase
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.PROCEED_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(screenName))
                     + if (skontoEdgeCase != null) {

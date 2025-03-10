@@ -347,7 +347,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
     internal class SkontoViewHolder(
         private val binding: GbsItemDigitalInvoiceSkontoBinding,
         private val amountFormatter: AmountFormatter,
-        private val analyticsEventTracker: UserAnalyticsEventTracker,
+        private val analyticsEventTracker: UserAnalyticsEventTracker?,
     ) :
         ViewHolder<DigitalInvoiceSkontoListItem>(binding.root, SkontoInfo) {
 
@@ -383,7 +383,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
                 )
                 gbsEditButton.setOnClickListener {
-                    analyticsEventTracker.trackEvent(
+                    analyticsEventTracker?.trackEvent(
                         UserAnalyticsEvent.EDIT_TAPPED,
                         setOf(
                             UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.ReturnAssistant),
@@ -397,7 +397,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             }
 
             gbsEnableSwitch.setOnClickListener {
-                analyticsEventTracker.trackEvent(
+                analyticsEventTracker?.trackEvent(
                     UserAnalyticsEvent.SKONTO_SWITCH_TAPPED,
                     setOf(
                         UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.ReturnAssistant),
@@ -421,7 +421,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         fun forViewTypeId(
             viewTypeId: Int, layoutInflater: LayoutInflater, parent: ViewGroup,
             amountFormatter: AmountFormatter,
-            analyticsEventTracker: UserAnalyticsEventTracker,
+            analyticsEventTracker: UserAnalyticsEventTracker?,
         ) =
             when (ViewType.from(viewTypeId)) {
                 LineItem -> LineItemViewHolder(
