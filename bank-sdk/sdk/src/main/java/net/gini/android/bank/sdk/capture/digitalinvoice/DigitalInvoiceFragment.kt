@@ -354,7 +354,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     override fun payButtonClicked() {
         tryShowAttachDocToTransactionDialog {
             presenter?.pay()
-            trackSdkClosedEvent()
         }
     }
 
@@ -676,14 +675,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         )
     }
 
-
-    private fun trackSdkClosedEvent() = runCatching {
-        userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.SDK_CLOSED, setOf(
-                UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful)
-            )
-        )
-    }
 
     private fun getAmountsAreConsistentExtraction(extractions: Map<String, GiniCaptureSpecificExtraction>): Boolean {
         val isInaccurateExtraction = extractions["amountsAreConsistent"]?.let {
