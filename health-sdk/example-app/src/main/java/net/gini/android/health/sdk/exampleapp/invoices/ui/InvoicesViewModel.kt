@@ -61,7 +61,7 @@ class InvoicesViewModel(
         }
     }
 
-    fun getPaymentReviewFragment(documentId: String?): Result<PaymentFragment> {
+    fun getPaymentReviewFragment(documentId: String?, paymentFlowConfiguration: PaymentFlowConfiguration?): Result<PaymentFragment> {
         val documentWithExtractions =
             invoicesRepository.invoicesFlow.value.find { it.documentId == documentId }
 
@@ -72,7 +72,8 @@ class InvoicesViewModel(
                     PaymentFlowConfiguration(
                         shouldHandleErrorsInternally = true,
                         shouldShowReviewBottomDialog = false,
-                        showCloseButtonOnReviewFragment = true
+                        showCloseButtonOnReviewFragment = true,
+                        popupDurationPaymentReview = paymentFlowConfiguration?.popupDurationPaymentReview?: 3
                     )
                 )
                 Result.success(paymentReviewFragment)

@@ -94,7 +94,7 @@ class ReviewViewModelTest {
         }
 
         // When
-        advanceTimeBy(ReviewViewModel.SHOW_INFO_BAR_MS + 100)
+        advanceTimeBy(viewModel.showInfoBarDurationMs + 100)
 
         val isVisible = viewModel.isInfoBarVisible.first()
 
