@@ -265,7 +265,7 @@ internal class DigitalInvoiceScreenPresenter(
     }
 
     private fun trackScreenShownEvent() = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             setOf(
                 UserAnalyticsEventProperty.Screen(screenName)

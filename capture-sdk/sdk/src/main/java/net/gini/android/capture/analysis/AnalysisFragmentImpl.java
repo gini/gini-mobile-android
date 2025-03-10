@@ -36,6 +36,7 @@ import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
@@ -72,7 +73,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
-
+    UserAnalyticsEventTracker userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
                          @NonNull final Document document,
@@ -95,17 +96,19 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     private void addUserAnalyticEvents(@NonNull Document document) {
-        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
-                UserAnalyticsEvent.SCREEN_SHOWN,
-                new HashSet<UserAnalyticsEventProperty>() {
-                    {
-                        add(new UserAnalyticsEventProperty.DocumentType(
-                                UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document)
-                        ));
-                        add(new UserAnalyticsEventProperty.Screen(screenName));
+        if (userAnalyticsEventTracker != null) {
+            userAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.SCREEN_SHOWN,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.DocumentType(
+                                    UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document)
+                            ));
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                        }
                     }
-                }
-        );
+            );
+        }
     }
 
     @Override
@@ -318,12 +321,15 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private void onBack() {
         boolean popBackStack = mFragment.findNavController().popBackStack();
         if (!popBackStack) {
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+            if (userAnalyticsEventTracker != null) {
+                userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                            }
+                        });
+            }
+
             trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
             mCancelListener.onCancelFlow();
         }

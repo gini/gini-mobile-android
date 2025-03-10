@@ -33,7 +33,6 @@ import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsFragment
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -155,10 +154,6 @@ open class InvoicesActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)?.let {
-            viewModel.setPaymentComponentConfig(it)
-        }
-
         viewModel.loadInvoicesWithExtractions()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
@@ -177,7 +172,7 @@ open class InvoicesActivity : AppCompatActivity() {
 
     private fun setActivityTitle(screen: DisplayedScreen) {
         when (screen) {
-            DisplayedScreen.MoreInformationFragment -> title = getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
+            DisplayedScreen.MoreInformationFragment -> title = getString(net.gini.android.internal.payment.R.string.gps_more_information_fragment_title)
             DisplayedScreen.ReviewScreen -> title = getString(R.string.title_payment_review)
             DisplayedScreen.Nothing -> title = getString(R.string.title_activity_invoices)
             else -> {}

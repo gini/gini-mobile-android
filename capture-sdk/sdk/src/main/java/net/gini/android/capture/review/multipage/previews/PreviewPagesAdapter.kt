@@ -35,7 +35,7 @@ class PreviewPagesAdapter(
         init {
 
             mDeletePage?.setIntervalClickListener {
-                getAnalyticsEventTracker().trackEvent(
+                getAnalyticsEventTracker()?.trackEvent(
                     UserAnalyticsEvent.DELETE_PAGES_TAPPED,
                     setOf(UserAnalyticsEventProperty.Screen(screenName))
                 )

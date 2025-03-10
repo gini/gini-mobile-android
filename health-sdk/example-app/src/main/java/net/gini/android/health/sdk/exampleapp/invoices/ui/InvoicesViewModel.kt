@@ -13,7 +13,6 @@ import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
@@ -99,10 +98,6 @@ class InvoicesViewModel(
             LOG.error("Error getting payment fragment without document", e)
             return Result.failure(e)
         }
-    }
-
-    fun setPaymentComponentConfig(paymentComponentConfiguration: PaymentComponentConfiguration) {
-        giniPaymentModule.paymentComponent.paymentComponentConfiguration = paymentComponentConfiguration
     }
 
     companion object {

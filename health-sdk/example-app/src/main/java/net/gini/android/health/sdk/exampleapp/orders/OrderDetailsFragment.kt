@@ -28,6 +28,7 @@ import net.gini.android.internal.payment.utils.extensions.setIntervalClickListen
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import java.util.Locale
 
 class OrderDetailsFragment : Fragment() {
 
@@ -107,7 +108,7 @@ class OrderDetailsFragment : Fragment() {
 
     private fun setTitle(screen: DisplayedScreen) {
         requireActivity().title = if (screen is DisplayedScreen.MoreInformationFragment) {
-            resources.getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
+            resources.getString(net.gini.android.internal.payment.R.string.gps_more_information_fragment_title)
         } else {
             resources.getString(R.string.title_create_order)
         }
@@ -145,7 +146,7 @@ class OrderDetailsFragment : Fragment() {
     }
 
     fun currencyFormatterWithoutSymbol(): NumberFormat =
-        NumberFormat.getCurrencyInstance().apply {
+        NumberFormat.getCurrencyInstance(Locale.GERMAN).apply {
             (this as? DecimalFormat)?.apply {
                 decimalFormatSymbols = decimalFormatSymbols.apply {
                     currencySymbol = ""

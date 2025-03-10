@@ -89,7 +89,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     private lateinit var composeView: ComposeView
 
     private fun setReturnReasonsEventProperty() {
-        userAnalyticsEventTracker.setUserProperty(
+        userAnalyticsEventTracker?.setUserProperty(
             setOf(
                 UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
                 UserAnalyticsUserProperty.BankSdkVersionName(BuildConfig.VERSION_NAME),
@@ -122,7 +122,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         super.onViewCreated(view, savedInstanceState)
         composeView = view.findViewById(R.id.gbs_compose_view)
         setReturnReasonsEventProperty()
-        userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
+        userAnalyticsEventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
     }
 
@@ -388,7 +388,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     }
 
     private fun trackSdkClosedEvent() = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SDK_CLOSED,
             setOf(
                 UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful),
