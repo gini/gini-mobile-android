@@ -73,7 +73,7 @@ class ReviewViewModelTest {
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
         val mockConfiguration = mockk<ReviewConfiguration>()
-        every { mockConfiguration.popupDurationPaymentReview } returns 3 // مقدار دلخواه برحسب ثانیه
+        every { mockConfiguration.popupDurationPaymentReview } returns 3
 
         // Given
         val viewModel = ReviewViewModel(giniHealth!!, mockConfiguration, paymentComponent, "", shouldShowCloseButton = true, reviewFragmentListener = mockk()).apply {
@@ -92,7 +92,7 @@ class ReviewViewModelTest {
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
         val reviewConfig = mockk<ReviewConfiguration> {
-            every { popupDurationPaymentReview } returns 3 // مقدار دلخواه برحسب ثانیه
+            every { popupDurationPaymentReview } returns 3
         }
         // Given
         val viewModel = ReviewViewModel(giniHealth!!, reviewConfig, paymentComponent, "", true, mockk()).apply {
@@ -115,7 +115,7 @@ class ReviewViewModelTest {
 
         val documentId = "1234"
         val reviewConfig = mockk<ReviewConfiguration> {
-            every { popupDurationPaymentReview } returns 3 // مقدار دلخواه برحسب ثانیه
+            every { popupDurationPaymentReview } returns 3
         }
         val viewModel = ReviewViewModel(giniHealth!!,reviewConfig, paymentComponent, documentId, true, mockk())
 
