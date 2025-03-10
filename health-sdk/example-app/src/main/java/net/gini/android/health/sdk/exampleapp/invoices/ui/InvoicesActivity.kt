@@ -220,7 +220,8 @@ open class InvoicesActivity : AppCompatActivity() {
     }
 
     private fun startPaymentFlowForDocumentId(documentId: String) {
-        viewModel.getPaymentReviewFragment(documentId)
+        val paymentFlowConfiguration = IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java)
+        viewModel.getPaymentReviewFragment(documentId,paymentFlowConfiguration)
             .onSuccess { reviewFragment ->
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, reviewFragment, REVIEW_FRAGMENT_TAG)

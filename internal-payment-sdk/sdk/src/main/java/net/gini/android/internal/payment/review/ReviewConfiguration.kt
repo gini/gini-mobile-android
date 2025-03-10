@@ -30,5 +30,14 @@ data class ReviewConfiguration(
      *
      * Default value is `true`
      */
-    internal val selectBankButtonVisible: Boolean = true
+    internal val selectBankButtonVisible: Boolean = true,
+
+    /**
+     * Defines the duration (in seconds) for which the payment review popup will be displayed before automatically closing.
+     * This value should be within a reasonable range (e.g., 0-10 seconds) to ensure a smooth user experience.
+     *
+     * Default value is `3` seconds.
+     */
+    val popupDurationPaymentReview: Int = 3
+
 )

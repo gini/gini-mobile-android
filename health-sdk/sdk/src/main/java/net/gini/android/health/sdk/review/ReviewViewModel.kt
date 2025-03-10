@@ -20,6 +20,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewComponent
 import org.slf4j.LoggerFactory
+import kotlin.time.Duration.Companion.seconds
 
 internal class ReviewViewModel(
     val giniHealth: GiniHealth,
@@ -38,6 +39,10 @@ internal class ReviewViewModel(
         giniInternalPaymentModule = giniHealth.giniInternalPaymentModule,
         coroutineScope = viewModelScope
     )
+
+
+    private val _showInfoBarDurationMs = configuration.popupDurationPaymentReview.seconds.inWholeMilliseconds
+    val showInfoBarDurationMs: Long get() = _showInfoBarDurationMs
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
@@ -63,7 +68,7 @@ internal class ReviewViewModel(
             }
         }
         viewModelScope.launch {
-            delay(SHOW_INFO_BAR_MS)
+            delay(showInfoBarDurationMs)
             _isInfoBarVisible.value = false
         }
         viewModelScope.launch {
@@ -114,7 +119,6 @@ internal class ReviewViewModel(
     }
 
     companion object {
-        const val SHOW_INFO_BAR_MS = 3000L
         private val LOG = LoggerFactory.getLogger(ReviewViewModel::class.java)
     }
 }
