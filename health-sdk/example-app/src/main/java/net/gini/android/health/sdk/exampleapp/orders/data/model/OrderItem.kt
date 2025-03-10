@@ -1,4 +1,4 @@
-package net.gini.android.health.sdk.exampleapp.orders.model
+package net.gini.android.health.sdk.exampleapp.orders.data.model
 
 import java.math.BigDecimal
 import java.text.DecimalFormat
@@ -36,7 +36,7 @@ data class OrderItem(
             val price = parsePrice(substrings[0])
             val currency = Currency.getInstance(substrings[1])
 
-            val numberFormat = NumberFormat.getCurrencyInstance()
+            val numberFormat = NumberFormat.getCurrencyInstance(Locale.GERMAN)
             numberFormat.maximumFractionDigits = 2
             numberFormat.currency = currency
 

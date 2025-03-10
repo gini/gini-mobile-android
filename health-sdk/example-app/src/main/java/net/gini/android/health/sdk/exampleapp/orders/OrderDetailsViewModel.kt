@@ -5,7 +5,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
-import net.gini.android.health.sdk.exampleapp.orders.model.Order
+import net.gini.android.health.sdk.exampleapp.orders.data.model.Order
 import kotlin.time.Duration.Companion.milliseconds
 
 class OrderDetailsViewModel : ViewModel() {
@@ -17,6 +17,16 @@ class OrderDetailsViewModel : ViewModel() {
 
     fun getOrder(): Order {
         return _orderFlow.value
+    }
+
+    fun setOrder(order: Order) {
+        _orderFlow.value = order.copy(
+            amount = if (order.amount.indexOf(":") != -1) {
+                order.amount.substring(0, order.amount.indexOf(":"))
+            } else {
+                order.amount
+            }
+        )
     }
 
     fun updateRecipient(recipient: String) {

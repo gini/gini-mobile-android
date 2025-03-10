@@ -1,4 +1,4 @@
-package net.gini.android.health.sdk.exampleapp.orders.model
+package net.gini.android.health.sdk.exampleapp.orders.data.model
 
 import net.gini.android.health.sdk.review.model.PaymentDetails
 

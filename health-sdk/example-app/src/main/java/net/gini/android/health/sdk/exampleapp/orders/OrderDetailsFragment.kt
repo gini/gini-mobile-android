@@ -19,9 +19,8 @@ import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.FragmentOrderDetailsBinding
-import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesViewModel
-import net.gini.android.health.sdk.exampleapp.orders.model.Order
-import net.gini.android.health.sdk.exampleapp.orders.model.getPaymentDetails
+import net.gini.android.health.sdk.exampleapp.orders.data.model.Order
+import net.gini.android.health.sdk.exampleapp.orders.data.model.getPaymentDetails
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
@@ -33,7 +32,7 @@ import java.util.Locale
 class OrderDetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentOrderDetailsBinding
-    private val invoicesViewModel: InvoicesViewModel by activityViewModels()
+    private val ordersViewModel: OrdersViewModel by activityViewModels()
     private val orderDetailsViewModel: OrderDetailsViewModel by viewModels()
     private val amountWatcher = object : TextWatcher {
 
@@ -60,7 +59,6 @@ class OrderDetailsFragment : Fragment() {
                 } catch (e: NumberFormatException) {
                     ""
                 }
-
                 if (newString != input.toString()) {
                     input.replace(0, input.length, newString)
                 }
@@ -84,12 +82,20 @@ class OrderDetailsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
+                    ordersViewModel.selectedOrderItem.collectLatest { orderItem ->
+                        if (orderItem == null) {
+                            return@collectLatest
+                        }
+                        orderDetailsViewModel.setOrder(orderItem.order)
+                    }
+                }
+                launch {
                     orderDetailsViewModel.orderFlow.collectLatest { order ->
                         showOrder(order)
                     }
                 }
                 launch {
-                    invoicesViewModel.openBankState.collect { openBankState ->
+                    ordersViewModel.openBankState.collect { openBankState ->
                         if (openBankState is GiniHealth.PaymentState.Success) {
                             requireActivity().title = resources.getString(R.string.title_activity_invoices)
                             requireActivity().supportFragmentManager.popBackStack()
@@ -97,7 +103,7 @@ class OrderDetailsFragment : Fragment() {
                     }
                 }
                 launch {
-                    invoicesViewModel.displayedScreen.collect { screen ->
+                    ordersViewModel.displayedScreen.collect { screen ->
                         setTitle(screen)
                     }
                 }
@@ -122,7 +128,7 @@ class OrderDetailsFragment : Fragment() {
             purpose.setTextIfDifferent(order.purpose)
             payNowBtn.setIntervalClickListener {
                 this.root.hideKeyboard()
-                invoicesViewModel.startPaymentFlowWithoutDocument(orderDetailsViewModel.getOrder().getPaymentDetails())
+                ordersViewModel.startPaymentFlowWithoutDocument(orderDetailsViewModel.getOrder().getPaymentDetails())
             }
         }
     }
