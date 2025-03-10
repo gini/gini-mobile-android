@@ -48,7 +48,6 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.ui.theme.GiniTheme
