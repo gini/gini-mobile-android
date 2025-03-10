@@ -21,6 +21,7 @@ import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
+import net.gini.android.internal.payment.review.ReviewConfiguration
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -71,8 +72,11 @@ class ReviewViewModelTest {
     fun `shows info bar on launch`() = runTest {
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
+        val mockConfiguration = mockk<ReviewConfiguration>()
+        every { mockConfiguration.popupDurationPaymentReview } returns 3 // مقدار دلخواه برحسب ثانیه
+
         // Given
-        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent, "", shouldShowCloseButton = true, reviewFragmentListener = mockk()).apply {
+        val viewModel = ReviewViewModel(giniHealth!!, mockConfiguration, paymentComponent, "", shouldShowCloseButton = true, reviewFragmentListener = mockk()).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
@@ -87,9 +91,11 @@ class ReviewViewModelTest {
     fun `hides info bar after a delay`() = runTest {
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
-
+        val reviewConfig = mockk<ReviewConfiguration> {
+            every { popupDurationPaymentReview } returns 3 // مقدار دلخواه برحسب ثانیه
+        }
         // Given
-        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent, "", true, mockk()).apply {
+        val viewModel = ReviewViewModel(giniHealth!!, reviewConfig, paymentComponent, "", true, mockk()).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
         }
 
@@ -108,8 +114,10 @@ class ReviewViewModelTest {
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
 
         val documentId = "1234"
-
-        val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent, documentId, true, mockk())
+        val reviewConfig = mockk<ReviewConfiguration> {
+            every { popupDurationPaymentReview } returns 3 // مقدار دلخواه برحسب ثانیه
+        }
+        val viewModel = ReviewViewModel(giniHealth!!,reviewConfig, paymentComponent, documentId, true, mockk())
 
         // When
         viewModel.retryDocumentReview()
