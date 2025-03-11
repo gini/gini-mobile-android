@@ -31,7 +31,7 @@
         android:layout_marginTop="@dimen/gc_large_80"
         android:layout_marginBottom="60dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/gc_next"
+        app:layout_constraintBottom_toTopOf="@+id/gc_barrier_for_indicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/gc_guideline_image_start"/>
 
@@ -116,9 +116,24 @@
         android:visibility="invisible"
         android:text="@string/gc_get_started"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/gc_guideline_image_start"
         app:layout_constraintTop_toTopOf="@id/gc_skip"
         app:layout_constraintWidth_max="160dp"
         app:layout_constraintWidth_min="120dp" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/gc_barrier_for_indicator"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="gc_skip,gc_injected_navigation_bar_container_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_navigation_bar_container_bottom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/gc_onboarding_viewpager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/gc_guideline_image_start" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
