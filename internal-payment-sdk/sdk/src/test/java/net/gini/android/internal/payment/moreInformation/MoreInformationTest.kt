@@ -42,8 +42,7 @@ class MoreInformationTest {
     fun setup() {
         paymentComponent = mockk(relaxed = true)
         context = ApplicationProvider.getApplicationContext()
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
+        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(PaymentProviderAppsState.Nothing)
         every { paymentComponent!!.paymentModule.localizedContext } returns context
         every { paymentComponent!!.getGiniPaymentLanguage(context) } returns null
     }

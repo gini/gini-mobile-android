@@ -100,10 +100,12 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.truth)
     testImplementation(libs.androidx.test.espresso.core)
     testImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.test.junit)
 }
 
 apply<PublishToMavenPlugin>()

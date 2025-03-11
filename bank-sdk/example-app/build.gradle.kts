@@ -178,11 +178,7 @@ dependencies {
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.androidx.multidex)
     implementation(libs.dexter)
-    implementation(libs.logback.android.core)
-    implementation(libs.logback.android.classic) {
-        // workaround issue #73
-        exclude(group = "com.google.android", module = "android")
-    }
+    implementation(libs.logback.android)
 
     implementation(libs.lottie)
 

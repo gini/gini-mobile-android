@@ -22,6 +22,7 @@ import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.review.PaymentField
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.GiniPaymentManager
@@ -157,7 +158,9 @@ class ReviewComponentTest {
         )
 
         every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(
+            SelectedPaymentProviderAppState.NothingSelected
+        )
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
@@ -184,7 +187,9 @@ class ReviewComponentTest {
         )
 
         every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(
+            SelectedPaymentProviderAppState.NothingSelected
+        )
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
@@ -217,7 +222,9 @@ class ReviewComponentTest {
         )
 
         every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(
+            SelectedPaymentProviderAppState.NothingSelected
+        )
 
         val reviewComponent = ReviewComponent(
             paymentComponent = paymentComponent,
@@ -238,71 +245,86 @@ class ReviewComponentTest {
             assertThat(awaitItem()).isEmpty()
         }
     }
-//
-    @Test
-    fun `clears 'input field empty' error if the amount field is not empty after input`() = runTest {
-        //Given
-        val paymentDetails = PaymentDetails(
-            recipient = "recipient",
-            iban = "iban",
-            amount = "",
-            purpose = "purpose",
-        )
-
-        every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
-
-        val reviewComponent = ReviewComponent(
-            paymentComponent = paymentComponent,
-            reviewConfig = mockk(relaxed = true),
-            giniInternalPaymentModule = giniPaymentModule,
-            coroutineScope = testCoroutineScope
-        )
-
-        reviewComponent.paymentValidation.test {
-            val validation = awaitItem()
-            assertThat(validation.size).isEqualTo(1)
-            assertThat(validation[0]).isEqualTo(ValidationMessage.Empty(PaymentField.Amount))
-
-            //When
-            reviewComponent.setAmount("amount")
-
-            //Then
-            assertThat(awaitItem()).isEmpty()
-        }
-    }
-
 
     @Test
-    fun `clears 'input field empty' error if the purpose field is not empty after input`() = runTest {
-        //Given
-        val paymentDetails = PaymentDetails(
-            recipient = "recipient",
-            iban = "iban",
-            amount = "amount",
-            purpose = "",
-        )
+    fun `clears 'input field empty' error if the amount field is not empty after input`() =
+        runTest {
+            //Given
+            val paymentDetails = PaymentDetails(
+                recipient = "recipient",
+                iban = "iban",
+                amount = "",
+                purpose = "purpose",
+            )
 
-        every { giniPaymentModule.paymentFlow } returns MutableStateFlow(ResultWrapper.Success(paymentDetails))
-        every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(mockk(relaxed = true))
+            every { giniPaymentModule.paymentFlow } returns MutableStateFlow(
+                ResultWrapper.Success(
+                    paymentDetails
+                )
+            )
+            every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(
+                SelectedPaymentProviderAppState.NothingSelected
+            )
 
-        val reviewComponent = ReviewComponent(
-            paymentComponent = paymentComponent,
-            reviewConfig = mockk(relaxed = true),
-            giniInternalPaymentModule = giniPaymentModule,
-            coroutineScope = testCoroutineScope
-        )
+            val reviewComponent = ReviewComponent(
+                paymentComponent = paymentComponent,
+                reviewConfig = mockk(relaxed = true),
+                giniInternalPaymentModule = giniPaymentModule,
+                coroutineScope = testCoroutineScope
+            )
 
-        reviewComponent.paymentValidation.test {
-            val validation = awaitItem()
-            assertThat(validation.size).isEqualTo(1)
-            assertThat(validation[0]).isEqualTo(ValidationMessage.Empty(PaymentField.Purpose))
+            reviewComponent.paymentValidation.test {
+                val validation = awaitItem()
+                assertThat(validation.size).isEqualTo(1)
+                assertThat(validation[0]).isEqualTo(ValidationMessage.Empty(PaymentField.Amount))
 
-            //When
-            reviewComponent.setPurpose("purpose")
+                //When
+                reviewComponent.setAmount("amount")
 
-            //Then
-            assertThat(awaitItem()).isEmpty()
+                //Then
+                assertThat(awaitItem()).isEmpty()
+            }
         }
-    }
+
+
+    @Test
+    fun `clears 'input field empty' error if the purpose field is not empty after input`() =
+        runTest {
+            //Given
+            val paymentDetails = PaymentDetails(
+                recipient = "recipient",
+                iban = "iban",
+                amount = "amount",
+                purpose = "",
+            )
+
+            every { giniPaymentModule.paymentFlow } returns MutableStateFlow(
+                ResultWrapper.Success(
+                    paymentDetails
+                )
+            )
+            every { paymentComponent.selectedPaymentProviderAppFlow } returns
+                    MutableStateFlow<SelectedPaymentProviderAppState>(
+                        SelectedPaymentProviderAppState.NothingSelected
+                    )
+
+            val reviewComponent = ReviewComponent(
+                paymentComponent = paymentComponent,
+                reviewConfig = mockk(relaxed = true),
+                giniInternalPaymentModule = giniPaymentModule,
+                coroutineScope = testCoroutineScope
+            )
+
+            reviewComponent.paymentValidation.test {
+                val validation = awaitItem()
+                assertThat(validation.size).isEqualTo(1)
+                assertThat(validation[0]).isEqualTo(ValidationMessage.Empty(PaymentField.Purpose))
+
+                //When
+                reviewComponent.setPurpose("purpose")
+
+                //Then
+                assertThat(awaitItem()).isEmpty()
+            }
+        }
 }

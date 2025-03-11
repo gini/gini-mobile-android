@@ -159,6 +159,10 @@ public final class PubKeyManager implements X509TrustManager {
         return new X509Certificate[0];
     }
 
+    /**
+     * Builder for setting host name, NetworkSecurityConfigResId
+     */
+
     public static class Builder {
 
         private Context mContext;
