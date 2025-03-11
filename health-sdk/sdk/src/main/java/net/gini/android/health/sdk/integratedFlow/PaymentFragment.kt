@@ -397,10 +397,9 @@ class PaymentFragment private constructor(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
                 selectBankButtonVisible = true,
             ),
-            popupDurationPaymentReview = viewModel.paymentFlowConfiguration?.popupDurationPaymentReview
-                ?: 3,
-            shouldShowCloseButton = viewModel.paymentFlowConfiguration?.showCloseButtonOnReviewFragment
-                ?: false
+            paymentFlowConfiguration = viewModel.paymentFlowConfiguration
+                ?: PaymentFlowConfiguration()
+
         )
         childFragmentManager.beginTransaction()
             .add(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)

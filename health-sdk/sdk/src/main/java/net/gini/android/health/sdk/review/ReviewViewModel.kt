@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -27,8 +28,7 @@ internal class ReviewViewModel(
     val configuration: ReviewConfiguration,
     val paymentComponent: PaymentComponent,
     val documentId: String,
-    val shouldShowCloseButton: Boolean,
-    val popupDurationPaymentReview: Int,
+    val paymentFlowConfiguration: PaymentFlowConfiguration,
     val reviewFragmentListener: ReviewFragmentListener
 ) : ViewModel() {
 
@@ -42,7 +42,7 @@ internal class ReviewViewModel(
     )
 
 
-    private val _showInfoBarDurationMs = popupDurationPaymentReview.coerceIn(0, 10).seconds.inWholeMilliseconds
+    private val _showInfoBarDurationMs = paymentFlowConfiguration.popupDurationPaymentReview.coerceIn(0, 10).seconds.inWholeMilliseconds
     val showInfoBarDurationMs: Long get() = _showInfoBarDurationMs
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
@@ -109,14 +109,13 @@ internal class ReviewViewModel(
         private val configuration: ReviewConfiguration,
         private val paymentComponent: PaymentComponent,
         private val documentId: String,
-        private val shouldShowCloseButton: Boolean,
-        private val popupDurationPaymentReview: Int,
+        private val paymentFlowConfiguration: PaymentFlowConfiguration,
         private val reviewFragmentListener: ReviewFragmentListener
     ) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, popupDurationPaymentReview, reviewFragmentListener) as T
+            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId, paymentFlowConfiguration, reviewFragmentListener) as T
         }
     }
 
