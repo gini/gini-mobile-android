@@ -28,6 +28,7 @@ internal class ReviewViewModel(
     val paymentComponent: PaymentComponent,
     val documentId: String,
     val shouldShowCloseButton: Boolean,
+    val popupDurationPaymentReview: Int,
     val reviewFragmentListener: ReviewFragmentListener
 ) : ViewModel() {
 
@@ -41,7 +42,7 @@ internal class ReviewViewModel(
     )
 
 
-    private val _showInfoBarDurationMs = configuration.popupDurationPaymentReview.seconds.inWholeMilliseconds
+    private val _showInfoBarDurationMs = popupDurationPaymentReview.coerceIn(0, 10).seconds.inWholeMilliseconds
     val showInfoBarDurationMs: Long get() = _showInfoBarDurationMs
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
@@ -109,12 +110,13 @@ internal class ReviewViewModel(
         private val paymentComponent: PaymentComponent,
         private val documentId: String,
         private val shouldShowCloseButton: Boolean,
+        private val popupDurationPaymentReview: Int,
         private val reviewFragmentListener: ReviewFragmentListener
     ) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, reviewFragmentListener) as T
+            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, popupDurationPaymentReview, reviewFragmentListener) as T
         }
     }
 
