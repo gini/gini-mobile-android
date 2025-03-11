@@ -377,7 +377,8 @@ class ReviewFragment private constructor(
             paymentComponent: PaymentComponent,
             documentId: String,
             shouldShowCloseButton: Boolean,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, listener),
+            popupDurationPaymentReview: Int,
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, popupDurationPaymentReview, listener),
         ): ReviewFragment = ReviewFragment(viewModelFactory)
     }
 }
