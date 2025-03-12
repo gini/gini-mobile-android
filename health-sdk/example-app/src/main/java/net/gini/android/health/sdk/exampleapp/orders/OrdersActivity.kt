@@ -83,7 +83,7 @@ class OrdersActivity : AppCompatActivity() {
                             is GiniHealth.PaymentState.Cancel -> {
                                 supportFragmentManager.popBackStack()
                             }
-                            else -> {}
+                            else -> Unit
                         }
                     }
                 }
@@ -120,7 +120,7 @@ class OrdersActivity : AppCompatActivity() {
             DisplayedScreen.MoreInformationFragment -> title = getString(net.gini.android.internal.payment.R.string.gps_more_information_fragment_title)
             DisplayedScreen.ReviewScreen -> title = getString(R.string.title_payment_review)
             DisplayedScreen.Nothing -> title = getString(R.string.title_activity_invoices)
-            else -> {}
+            else -> Unit
         }
         invalidateOptionsMenu()
     }

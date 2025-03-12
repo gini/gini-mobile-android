@@ -28,10 +28,6 @@ data class OrderItem(
         }
 
         private fun parseAmount(amount: String): String = amount.split(":").let { substrings ->
-
-            if (substrings.size == 2) {
-
-            }
             val price = parsePrice(substrings[0])
             val currency = if (substrings.size == 2) Currency.getInstance(substrings[1]) else Currency.getInstance(Locale.GERMANY)
 
