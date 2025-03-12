@@ -66,7 +66,7 @@ class ConfigurationFragment: Fragment() {
             (viewModel.getPaymentFlowConfiguration()?.popupDurationPaymentReview ?: PaymentFlowConfiguration.DEFAULT_POPUP_DURATION).toFloat()
         tvPopupDurationValue.text = getString(
             R.string.popup_duration_value,
-            viewModel.getPaymentFlowConfiguration()?.popupDurationPaymentReview ?: 3
+            viewModel.getPaymentFlowConfiguration()?.popupDurationPaymentReview ?: PaymentFlowConfiguration.DEFAULT_POPUP_DURATION
         )
 
         sliderPopupDuration.addOnChangeListener { _, value, _ ->
