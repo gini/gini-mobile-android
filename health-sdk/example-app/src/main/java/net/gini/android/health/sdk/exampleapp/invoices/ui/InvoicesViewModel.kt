@@ -90,7 +90,7 @@ class InvoicesViewModel(
                         shouldHandleErrorsInternally = true,
                         shouldShowReviewBottomDialog = false,
                         showCloseButtonOnReviewFragment = true,
-                        popupDurationPaymentReview = paymentFlowConfiguration?.popupDurationPaymentReview?: 3
+                        popupDurationPaymentReview = paymentFlowConfiguration?.popupDurationPaymentReview?: PaymentFlowConfiguration.DEFAULT_POPUP_DURATION
                     )
                 )
                 Result.success(paymentReviewFragment)

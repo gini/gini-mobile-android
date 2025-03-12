@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import net.gini.android.health.sdk.exampleapp.MainViewModel
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.FragmentConfigurationBinding
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 
 class ConfigurationFragment: Fragment() {
@@ -62,7 +63,7 @@ class ConfigurationFragment: Fragment() {
 
     private fun FragmentConfigurationBinding.setupSliderListener() {
         sliderPopupDuration.value =
-            (viewModel.getPaymentFlowConfiguration()?.popupDurationPaymentReview ?: 3).toFloat()
+            (viewModel.getPaymentFlowConfiguration()?.popupDurationPaymentReview ?: PaymentFlowConfiguration.DEFAULT_POPUP_DURATION).toFloat()
         tvPopupDurationValue.text = getString(
             R.string.popup_duration_value,
             viewModel.getPaymentFlowConfiguration()?.popupDurationPaymentReview ?: 3
