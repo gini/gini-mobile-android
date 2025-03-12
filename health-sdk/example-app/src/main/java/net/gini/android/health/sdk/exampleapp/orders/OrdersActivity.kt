@@ -92,8 +92,6 @@ class OrdersActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel.startObservingPaymentFlow()
-
         IntentCompat.getParcelableExtra(
             intent,
             MainActivity.PAYMENT_FLOW_CONFIGURATION,

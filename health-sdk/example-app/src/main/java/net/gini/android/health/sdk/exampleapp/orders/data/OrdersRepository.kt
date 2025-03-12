@@ -1,15 +1,16 @@
 package net.gini.android.health.sdk.exampleapp.orders.data
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import net.gini.android.health.sdk.exampleapp.orders.data.model.Order
 
 class OrdersRepository(
-    hardcodedOrdersLocalDataSource: HardcodedOrdersLocalDataSource
+    private val ordersLocalDataSource: OrdersLocalDataSource
 ) {
 
-    val ordersFlow: Flow<List<Order>> = flow {
-        emit(hardcodedOrdersLocalDataSource.getOrders())
-    }
+    val ordersFlow: Flow<List<Order>> = ordersLocalDataSource.ordersFlow
+
+    suspend fun loadOrders() = ordersLocalDataSource.loadOrders()
+
+    suspend fun updateOrAppendOrder(order: Order) = ordersLocalDataSource.updateOrAppendOrder(order)
 
 }

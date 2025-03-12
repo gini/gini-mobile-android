@@ -39,21 +39,12 @@ class OrdersViewModel(
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
 
-    private var _finishPaymentFlow = MutableStateFlow<Boolean?>(null)
-    val finishPaymentFlow: StateFlow<Boolean?> = _finishPaymentFlow
-
     val openBankState = giniHealth.openBankState
     val displayedScreen = giniHealth.displayedScreen
 
-    fun startObservingPaymentFlow() = viewModelScope.launch {
-        giniHealth.openBankState.collect { event ->
-            when (event) {
-                is GiniHealth.PaymentState.Success,
-                is GiniHealth.PaymentState.Cancel -> {
-                    _finishPaymentFlow.tryEmit(true)
-                }
-                else -> {}
-            }
+    init {
+        viewModelScope.launch {
+            ordersRepository.loadOrders()
         }
     }
 
@@ -74,30 +65,13 @@ class OrdersViewModel(
         }
     }
 
-    fun startPaymentFlow(order: Order) {
-//        try {
-//            _startIntegratedPaymentFlow.tryEmit(giniHealth.getPaymentFragmentWithoutDocument(
-//                paymentDetails = PaymentDetails(
-//                    recipient = order.recipient,
-//                    iban = order.iban,
-//                    amount = order.amount,
-//                    purpose = order.purpose,
-//                    extractions = null
-//                ),
-//                configuration = paymentFlowConfiguration)
-//            )
-//        } catch (e: IllegalStateException) {
-//            LOG.error(e.message)
-//            _errorsFlow.tryEmit(e.message ?: "")
-//        }
-    }
-
     fun setIntegratedFlowConfiguration(flowConfiguration: PaymentFlowConfiguration) {
         this.paymentFlowConfiguration = flowConfiguration
     }
 
-    fun resetFinishPaymentFlow() {
-        _finishPaymentFlow.tryEmit(null)
+
+    fun saveOrderToLocal(order: Order) = viewModelScope.launch {
+        ordersRepository.updateOrAppendOrder(order)
     }
 
     companion object {

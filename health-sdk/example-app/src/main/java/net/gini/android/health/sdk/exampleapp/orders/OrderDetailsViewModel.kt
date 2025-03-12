@@ -6,11 +6,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import net.gini.android.health.sdk.exampleapp.orders.data.model.Order
+import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
 
 class OrderDetailsViewModel : ViewModel() {
 
-    private val _orderFlow = MutableStateFlow(Order("", "", "", ""))
+    private val _orderFlow = MutableStateFlow(Order(UUID.randomUUID().toString(),"", "", "", ""))
 
     @OptIn(FlowPreview::class)
     val orderFlow = _orderFlow.asStateFlow().debounce(300.milliseconds)

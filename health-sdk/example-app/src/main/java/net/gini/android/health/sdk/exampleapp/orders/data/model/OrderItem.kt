@@ -28,13 +28,12 @@ data class OrderItem(
         }
 
         private fun parseAmount(amount: String): String = amount.split(":").let { substrings ->
-            if (substrings.size != 2) {
-                throw java.lang.NumberFormatException(
-                    "Invalid price format. Expected <Price>:<Currency Code>, but got: $amount"
-                )
+
+            if (substrings.size == 2) {
+
             }
             val price = parsePrice(substrings[0])
-            val currency = Currency.getInstance(substrings[1])
+            val currency = if (substrings.size == 2) Currency.getInstance(substrings[1]) else Currency.getInstance(Locale.GERMANY)
 
             val numberFormat = NumberFormat.getCurrencyInstance(Locale.GERMAN)
             numberFormat.maximumFractionDigits = 2

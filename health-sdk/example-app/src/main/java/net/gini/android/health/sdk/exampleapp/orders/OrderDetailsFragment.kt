@@ -128,6 +128,7 @@ class OrderDetailsFragment : Fragment() {
             purpose.setTextIfDifferent(order.purpose)
             payNowBtn.setIntervalClickListener {
                 this.root.hideKeyboard()
+                ordersViewModel.saveOrderToLocal(order)
                 ordersViewModel.startPaymentFlowWithoutDocument(orderDetailsViewModel.getOrder().getPaymentDetails())
             }
         }
