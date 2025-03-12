@@ -33,6 +33,7 @@
     <string name="title_create_order">Your order</string>
     <string name="button_orders_list">Orders list</string>
     <string name="no_orders">No orders</string>
+    <string name="create_payment_request">Create payment request</string>
 
     <string name="ghs_privacy_policy_link_url">https://www.google.com</string>
     <!-- TODO: Remove or change this placeholder text -->

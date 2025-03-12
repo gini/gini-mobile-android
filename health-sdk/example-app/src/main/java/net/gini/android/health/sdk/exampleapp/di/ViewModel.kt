@@ -22,7 +22,7 @@ val viewModelModule = module {
     viewModel { ReviewViewModel(get()) }
     viewModel { InvoicesViewModel(get(), get()) }
     viewModel { OrdersViewModel(get(), get()) }
-    viewModel { OrderDetailsViewModel() }
+    viewModel { OrderDetailsViewModel(get()) }
     factory { InvoicesRepository(get(), get(), get(), get()) }
     factory { InvoicesLocalDataSource(get()) }
     factory { HardcodedInvoicesLocalDataSource(get()) }

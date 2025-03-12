@@ -84,6 +84,16 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/create_payment_request_btn"
+            style="@style/GiniPaymentTheme.Widget.Button.UnelevatedButton"
+            android:backgroundTint="@color/gps_accent_01"
+            android:textColor="@color/white"
+            android:text="@string/create_payment_request"
+            />
+
     </LinearLayout>
 
     <Button
@@ -94,5 +104,6 @@
         android:layout_marginBottom="@dimen/gps_large"
         android:text="@string/pay_now"
         android:backgroundTint="@color/ghs_accent_01"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

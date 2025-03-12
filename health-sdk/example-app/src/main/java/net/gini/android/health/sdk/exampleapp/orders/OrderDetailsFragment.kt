@@ -24,6 +24,7 @@ import net.gini.android.health.sdk.exampleapp.orders.data.model.getPaymentDetail
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -33,7 +34,7 @@ class OrderDetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentOrderDetailsBinding
     private val ordersViewModel: OrdersViewModel by activityViewModels()
-    private val orderDetailsViewModel: OrderDetailsViewModel by viewModels()
+    private val orderDetailsViewModel: OrderDetailsViewModel by viewModel()
     private val amountWatcher = object : TextWatcher {
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -130,6 +131,9 @@ class OrderDetailsFragment : Fragment() {
                 this.root.hideKeyboard()
                 ordersViewModel.saveOrderToLocal(order)
                 ordersViewModel.startPaymentFlowWithoutDocument(orderDetailsViewModel.getOrder().getPaymentDetails())
+            }
+            createPaymentRequestBtn.setIntervalClickListener {
+                orderDetailsViewModel.createPaymentRequest()
             }
         }
     }
