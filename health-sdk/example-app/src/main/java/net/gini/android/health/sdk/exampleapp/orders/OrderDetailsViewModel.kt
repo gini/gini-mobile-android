@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.exampleapp.orders.data.OrdersRepository
 import net.gini.android.health.sdk.exampleapp.orders.data.model.Order
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
@@ -15,13 +16,17 @@ import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
 
 class OrderDetailsViewModel(
-    private val giniHealth: GiniHealth
+    private val giniHealth: GiniHealth,
+    private val ordersRepository: OrdersRepository
 ) : ViewModel() {
 
     private val _orderFlow = MutableStateFlow(Order(UUID.randomUUID().toString(),"", "", "", ""))
 
     @OptIn(FlowPreview::class)
     val orderFlow = _orderFlow.asStateFlow().debounce(300.milliseconds)
+
+    private val _errorFlow = MutableStateFlow<String?>(null)
+    val errorFlow = _errorFlow
 
     fun getOrder(): Order {
         return _orderFlow.value
@@ -57,19 +62,23 @@ class OrderDetailsViewModel(
         when (val paymentProvidersAppsState = giniHealth.giniInternalPaymentModule.paymentComponent.paymentProviderAppsFlow.value) {
             is PaymentProviderAppsState.Success -> {
                 val paymentProviders = paymentProvidersAppsState.paymentProviderApps
-                val paymentProviderForRequest = paymentProviders.first { it.paymentProvider.id == PAYMENT_PROVIDER_ID_FOR_PAYMENT_REQUEST }.runCatching {
-                    val paymentRequest = giniHealth.giniInternalPaymentModule.getPaymentRequest(this, paymentDetails = PaymentDetails(
+                paymentProviders.first { it.paymentProvider.id == PAYMENT_PROVIDER_ID_FOR_PAYMENT_REQUEST }.runCatching {
+                    giniHealth.giniInternalPaymentModule.getPaymentRequest(this, paymentDetails = PaymentDetails(
                         recipient = _orderFlow.value.recipient,
                         amount = _orderFlow.value.amount,
                         purpose = _orderFlow.value.purpose,
                         iban = _orderFlow.value.iban
-                    ))
+                    )).also {
+                        val newOrder = _orderFlow.value.copy(expiryDate = it.expirationDate)
+                        ordersRepository.convertToPaymentRequest(newOrder, it.id)
+                        _orderFlow.value = newOrder.copy(id = it.id)
+                    }
                 }.onFailure {
-                    // error
+                    _errorFlow.value = it.message ?: ""
                 }
             }
             else -> {
-                // log error
+                _errorFlow.value = ""
             }
         }
     }

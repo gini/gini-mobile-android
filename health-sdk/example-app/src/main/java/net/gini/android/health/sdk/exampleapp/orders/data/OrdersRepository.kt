@@ -13,4 +13,6 @@ class OrdersRepository(
 
     suspend fun updateOrAppendOrder(order: Order) = ordersLocalDataSource.updateOrAppendOrder(order)
 
+    suspend fun convertToPaymentRequest(order: Order, id: String) = ordersLocalDataSource.convertToPaymentRequest(order, id)
+
 }
