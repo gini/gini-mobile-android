@@ -66,9 +66,8 @@ class OrdersLocalDataSource(private val context: Context, val hardcodedOrdersLoc
     }
 
     private suspend fun writeOrdersToPreferences(invoices: List<Order>) {
-        val invoicesJson = jsonAdapter.toJson(invoices)
         context.dataStore.edit { preferences ->
-            preferences[KEY_ORDERS] = invoicesJson
+            preferences[KEY_ORDERS] = jsonAdapter.toJson(invoices)
         }
     }
 }
