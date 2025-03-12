@@ -207,6 +207,7 @@ class PaymentFragmentTest {
         every { paymentFlowViewModel!!.paymentNextStep } returns paymentFlow
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewBottomDialog } returns false
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.popupDurationPaymentReview } returns 3
         every { paymentFlowViewModel!!.documentId } returns "123"
         val fragment = PaymentFragment.newInstance(
             giniHealth = giniHealth!!,

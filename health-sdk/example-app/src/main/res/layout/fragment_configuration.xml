@@ -42,6 +42,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gps_medium" />
+    <TextView
+        android:id="@+id/tv_popup_duration"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/popup_duration_label"
+        android:layout_marginTop="@dimen/gps_medium_12"/>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slider_popup_duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:value="3"
+        android:valueFrom="0"
+        android:valueTo="10"
+        android:stepSize="1"/>
+
+    <TextView
+        android:id="@+id/tv_popup_duration_value"
+        style="@style/TextAppearance.MaterialComponents.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/popup_duration_value"
+        android:layout_gravity="center_horizontal"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gps_medium" />
 
     <LinearLayout
         android:layout_width="match_parent"
