@@ -4,9 +4,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 
 class LastAnalyzedDocumentProvider(
-    backgroundDispatcher: CoroutineDispatcher
+    backgroundDispatcher: CoroutineDispatcher,
+    private val userAnalyticsEventTracker: UserAnalyticsEventTracker,
 ) {
 
     private val coroutineScope = CoroutineScope(backgroundDispatcher)
@@ -16,6 +19,8 @@ class LastAnalyzedDocumentProvider(
     fun provide(): RemoteAnalyzedDocument? = data.value
 
     fun update(document: RemoteAnalyzedDocument) {
+        userAnalyticsEventTracker
+            .setEventSuperProperty(UserAnalyticsEventSuperProperty.AnalyzedDocumentId(document.giniApiDocumentId))
         coroutineScope.launch { data.emit(document) }
     }
 

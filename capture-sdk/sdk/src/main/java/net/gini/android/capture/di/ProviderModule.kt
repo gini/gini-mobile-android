@@ -8,7 +8,8 @@ import org.koin.dsl.module
 internal val providerModule = module {
     single<LastAnalyzedDocumentProvider> {
         LastAnalyzedDocumentProvider(
-            backgroundDispatcher = Dispatchers.IO
+            backgroundDispatcher = Dispatchers.IO,
+            userAnalyticsEventTracker = get(),
         )
     }
     single {

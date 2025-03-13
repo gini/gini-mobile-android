@@ -5,4 +5,7 @@ internal sealed interface SkontoScreenSideEffect {
         val documentId: String,
         val infoTextLines: List<String>,
     ) : SkontoScreenSideEffect
+
+    object OpenHelpScreen : SkontoScreenSideEffect
+    object NavigateBack : SkontoScreenSideEffect
 }

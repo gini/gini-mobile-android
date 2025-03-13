@@ -23,7 +23,8 @@ val digitalInvoiceSkontoScreenModule = module {
             infoBannerInteractionIntent = get(),
             keyboardStateChangeIntent = get(),
             skontoDueDateChangeIntent = get(),
-            skontoAmountFieldChangeIntent = get()
+            skontoAmountFieldChangeIntent = get(),
+            analyticsTracker = get(),
         )
     }
     factory { DigitalInvoiceSkontoAmountValidator() }
@@ -36,6 +37,7 @@ val digitalInvoiceSkontoScreenModule = module {
         InvoiceClickIntent(
             lastAnalyzedDocumentProvider = get(),
             skontoInvoicePreviewTextLinesFactory = get(),
+            analyticsTracker = get(),
         )
     }
     factory { BackClickIntent() }

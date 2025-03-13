@@ -5,15 +5,14 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Bitmap
-import android.view.View
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
-import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
 import net.gini.android.capture.*
-import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.document.*
 import net.gini.android.capture.internal.document.DocumentRenderer
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
@@ -448,7 +447,7 @@ class AnalysisScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(listener).onProceedToNoExtractionsScreen(any())
+        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
     }
 
     @Test
@@ -487,8 +486,11 @@ class AnalysisScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(listener)
-            .onExtractionsAvailable(extractions, compoundExtraction, returnReasons)
+        TestScope().launch {
+            verify(listener)
+                .onExtractionsAvailable(extractions, compoundExtraction, returnReasons)
+        }
+
     }
 
     @Test
@@ -515,7 +517,7 @@ class AnalysisScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(presenter).clearSavedImages()
+        TestScope().launch { verify(presenter).clearSavedImages() }
     }
 
     @Test

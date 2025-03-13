@@ -40,6 +40,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -74,6 +75,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private boolean isScanAnimationActive;
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
     UserAnalyticsEventTracker userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
+
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
                          @NonNull final Document document,
@@ -97,13 +99,16 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     private void addUserAnalyticEvents(@NonNull Document document) {
         if (userAnalyticsEventTracker != null) {
+            userAnalyticsEventTracker.setEventSuperProperty(
+                    new UserAnalyticsEventSuperProperty.DocumentType(
+                            UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document)
+                    )
+            );
+
             userAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.SCREEN_SHOWN,
                     new HashSet<UserAnalyticsEventProperty>() {
                         {
-                            add(new UserAnalyticsEventProperty.DocumentType(
-                                    UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document)
-                            ));
                             add(new UserAnalyticsEventProperty.Screen(screenName));
                         }
                     }
