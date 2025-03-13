@@ -114,13 +114,13 @@ class OrderDetailsFragment : Fragment() {
                     }
                 }
                 launch {
-                    orderDetailsViewModel.errorFlow.collect { message ->
-                        message?.let {
-                            if (it.isEmpty()) {
-                                showError(getString(internalR.string.gps_generic_error_message))
-                            } else {
-                                showError(it)
-                            }
+                    orderDetailsViewModel.errorFlow.collect { error ->
+                        when (error) {
+                            is OrderDetailsViewModel.Error.ErrorMessage -> showError(error.error)
+                            OrderDetailsViewModel.Error.GenericError -> showError(getString(internalR.string.gps_generic_error_message))
+                            OrderDetailsViewModel.Error.InvalidIban -> showError(getString(internalR.string.gps_error_input_invalid_iban))
+                            OrderDetailsViewModel.Error.PaymentDetailsIncomplete -> showError(getString(R.string.payment_details_incomplete))
+                            null -> Unit
                         }
                     }
                 }
