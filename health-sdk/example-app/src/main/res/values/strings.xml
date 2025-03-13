@@ -31,6 +31,8 @@
     <string name="pay_now">Pay</string>
     <string name="multiple_documents">Document contains multiple invoices</string>
     <string name="title_create_order">Your order</string>
+    <string name="button_orders_list">Orders list</string>
+    <string name="no_orders">No orders</string>
 
     <string name="ghs_privacy_policy_link_url">https://www.google.com</string>
     <!-- TODO: Remove or change this placeholder text -->

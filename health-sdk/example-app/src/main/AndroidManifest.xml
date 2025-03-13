@@ -49,6 +49,10 @@
             android:label="@string/title_activity_invoices"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity android:name=".orders.OrdersActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:label="@string/button_orders_list"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
