@@ -56,6 +56,18 @@ class OrdersViewModel(
         _startIntegratedPaymentFlow.tryEmit(paymentDetails)
     }
 
+
+    fun deletePaymentRequest(requestId:String) = viewModelScope.launch {
+        val errorResponse = giniHealth.deletePaymentRequest(requestId)
+
+        if (errorResponse == null) {
+            ordersRepository.deleteRequestIdAndExpiryDate(requestId)
+        } else {
+            _errorsFlow.emit(errorResponse)
+        }
+
+    }
+
     fun getPaymentFragmentForPaymentDetails(paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration?): Result<PaymentFragment> {
         try {
             val paymentFragment = giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewBottomDialog = (paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false), shouldHandleErrorsInternally = true))

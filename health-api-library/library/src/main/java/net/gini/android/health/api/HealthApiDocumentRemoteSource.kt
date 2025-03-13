@@ -70,6 +70,16 @@ class HealthApiDocumentRemoteSource internal constructor(
         response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
+    suspend fun deletePaymentRequest(accessToken: String, paymentRequestId: String): ByteArray = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            documentService.deletePaymentRequest(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniPaymentRequestDocumentMediaType),
+                paymentRequestId
+            )
+        }
+        response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
+    }
+
     suspend fun getPaymentRequestImage(accessToken: String, paymentRequestId: String): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(

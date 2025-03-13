@@ -283,4 +283,31 @@ class GiniHealthTest {
         val result = (giniHealth.paymentFlow.value as ResultWrapper.Success<PaymentDetails>).value.extractions?.specificExtractions?.get("medical_service_provider")
         assertEquals(extractions.specificExtractions["medical_service_provider"], result)
     }
+
+    @Test
+    fun `Returns null when delete payment request was successful`() = runTest {
+        coEvery { giniHealthAPI.documentManager.deletePaymentRequest(any()) } returns Resource.Success(ByteArray(0))
+
+        val result = giniHealth.deletePaymentRequest("")
+
+        assertTrue(result == null)
+    }
+
+    @Test
+    fun `Returns error message when delete request returned with error`() = runTest {
+        coEvery { giniHealthAPI.documentManager.deletePaymentRequest(any()) } returns Resource.Error("{ \"message\": \"Payment request not found\" }")
+
+        val result = giniHealth.deletePaymentRequest("")
+
+        assertEquals("{ \"message\": \"Payment request not found\" }", result)
+    }
+
+    @Test
+    fun `Returns Request cancelled when delete request was cancelled`() = runTest {
+        coEvery { giniHealthAPI.documentManager.deletePaymentRequest(any()) } returns Resource.Cancelled()
+
+        val result = giniHealth.deletePaymentRequest("")
+
+        assertEquals("Request cancelled", result)
+    }
 }
