@@ -24,6 +24,7 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.internal.util.MimeType
 import net.gini.android.capture.network.*
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -87,6 +88,7 @@ class TransferSummaryIntegrationTest {
 
     @Test
     fun sendExtractionFeedbackWithoutPaymentReference() = runBlocking {
+        UserAnalytics.initialize(getApplicationContext())
         // 1. Analyze a test document
         val result = getExtractionsFromBankSDK(TEST_DOCUMENT_WITHOUT_PAYMENT_REFERENCE)
 

@@ -5,6 +5,7 @@ import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.validation.SkontoAmountValidator
 import net.gini.android.bank.sdk.capture.skonto.validation.SkontoFullAmountValidator
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel
+import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoScreenAnalytics
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoScreenInitialStateFactory
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.FullAmountChangeIntent
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.InfoBannerInteractionIntent
@@ -33,7 +34,8 @@ val skontoScreenModule = module {
             fullAmountChangeIntent = get(),
             skontoDueDateChangeIntent = get(),
             transactionDocDialogDecisionIntent = get(),
-            infoBannerInteractionIntent = get()
+            infoBannerInteractionIntent = get(),
+            skontoScreenAnalytics = get(),
         )
     }
     factory {
@@ -60,13 +62,15 @@ val skontoScreenModule = module {
             openExtractionsScreenSubIntent = get(),
             getTransactionDocShouldBeAutoAttachedUseCase = get(),
             getTransactionDocsFeatureEnabledUseCase = get(),
-            transactionDocDialogConfirmAttachUseCase = get()
+            transactionDocDialogConfirmAttachUseCase = get(),
+            analyticsTracker = get(),
         )
     }
     factory {
         InvoiceClickIntent(
             lastAnalyzedDocumentProvider = get(),
-            skontoInvoicePreviewTextLinesFactory = get()
+            skontoInvoicePreviewTextLinesFactory = get(),
+            analyticsTracker = get(),
         )
     }
     factory {
@@ -84,7 +88,8 @@ val skontoScreenModule = module {
     }
     factory {
         SkontoActiveChangeIntent(
-            getSkontoDiscountPercentageUseCase = get()
+            getSkontoDiscountPercentageUseCase = get(),
+            analyticsTracker = get(),
         )
     }
     factory {
@@ -111,6 +116,11 @@ val skontoScreenModule = module {
         OpenExtractionsScreenSubIntent(
             skontoExtractionsHandler = get(),
             lastExtractionsProvider = get()
+        )
+    }
+    factory {
+        SkontoScreenAnalytics(
+            analyticsTracker = get(),
         )
     }
 }

@@ -105,4 +105,15 @@ sealed class UserAnalyticsEventProperty(key: String, value: String) :
             Successful("successful")
         }
     }
+
+    data class EdgeCaseType(val type: Type) :
+        UserAnalyticsEventProperty("edge_case_type", type.analyticsName) {
+
+
+        enum class Type(val analyticsName: String) {
+            PayToday("pay_today"),
+            PayByCash("pay_by_cash"),
+            Expired("expired")
+        }
+    }
 }
