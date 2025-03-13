@@ -1,5 +1,8 @@
 package net.gini.android.health.sdk.exampleapp.util
 
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import net.gini.android.health.sdk.exampleapp.R
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.math.BigDecimal
@@ -70,3 +73,10 @@ fun parsePriceWithLocale(price: String, locale: Locale) = DecimalFormat(
             throw NumberFormatException(e.message)
         }
     }
+
+fun FragmentManager.add(fragment: Fragment) {
+    this.beginTransaction()
+        .add(R.id.fragment_container, fragment, fragment::class.java.simpleName)
+        .addToBackStack(fragment::class.java.simpleName)
+        .commit()
+}
