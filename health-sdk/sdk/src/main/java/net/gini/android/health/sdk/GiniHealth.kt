@@ -192,6 +192,27 @@ class GiniHealth(
     }
 
     /**
+     * This function deletes a payment request by its unique `paymentRequestId`.
+     * If the deletion is successful, it returns `null`. Otherwise, if an error occurs or the request is cancelled,
+     * it returns the corresponding error message or `"Request cancelled"`.
+     *
+     * @param paymentRequestId The unique identifier of the payment request to be deleted.
+     * @return `null` if the deletion is successful, otherwise the error message or `"Request cancelled"`.
+     */
+    suspend fun deletePaymentRequest(paymentRequestId: String): String? {
+        val response =
+            giniInternalPaymentModule.giniHealthAPI.documentManager.deletePaymentRequest(
+                paymentRequestId
+            )
+        return when (response) {
+            is Resource.Success -> null
+            is Resource.Error -> response.message
+            is Resource.Cancelled -> "Request cancelled"
+
+        }
+    }
+
+    /**
      * Sets a [Document] for review. Results can be collected from [documentFlow] and [paymentFlow].
      *
      * @param documentId id of the document returned by Gini API.

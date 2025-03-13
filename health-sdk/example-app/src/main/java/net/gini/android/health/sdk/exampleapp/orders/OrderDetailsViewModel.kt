@@ -65,7 +65,7 @@ class OrderDetailsViewModel(
                 val paymentProviders = paymentProvidersAppsState.paymentProviderApps
                 paymentProviders.first { it.paymentProvider.id == PAYMENT_PROVIDER_ID_FOR_PAYMENT_REQUEST }.runCatching {
                     giniHealth.giniInternalPaymentModule.getPaymentRequest(this, paymentDetails = getPaymentDetails()).also {
-                        val newOrder = _orderFlow.value.copy(expiryDate = it.expirationDate)
+                        val newOrder = _orderFlow.value.copy(expiryDate = it.expirationDate, requestId = it.id)
                         ordersRepository.convertToPaymentRequest(newOrder, it.id)
                         _orderFlow.value = newOrder.copy(id = it.id)
                     }

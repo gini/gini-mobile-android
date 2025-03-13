@@ -3,6 +3,7 @@ package net.gini.android.health.sdk.exampleapp.orders.data.model
 import net.gini.android.health.sdk.exampleapp.util.parseAmount
 
 data class OrderItem(
+    val requestId:String?,
     val order: Order,
     val recipient: String,
     val amount: String,
@@ -15,7 +16,8 @@ data class OrderItem(
                 order = order,
                 recipient = order.recipient,
                 amount = order.amount.parseAmount(shouldThrowErrorForFormat = false),
-                purpose = order.purpose
+                purpose = order.purpose,
+                requestId = order.requestId
             )
         }
     }

@@ -82,6 +82,17 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
         paymentRequestId: String
     ): Resource<ByteArray> = documentRepository.getPaymentRequestDocument(paymentRequestId)
 
+
+    /**
+     * This function is used to delete payment requests.
+     *
+     * @param paymentRequestId The unique identifier of the payment request to be deleted.
+     * @return [Resource] with the byte array corresponding to the deleted [PaymentRequest]
+     */
+    suspend fun deletePaymentRequest(
+        paymentRequestId: String
+    ): Resource<ByteArray> = documentRepository.deletePaymentRequest(paymentRequestId)
+
     /**
      * Returns a QR code in PNG format
      *
