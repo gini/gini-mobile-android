@@ -1,31 +1,26 @@
 package net.gini.android.health.sdk.exampleapp.orders
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.MainActivity
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityOrdersBinding
-import net.gini.android.health.sdk.exampleapp.orders.data.model.OrderItem
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
+import net.gini.android.health.sdk.exampleapp.util.add
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.internal.payment.utils.DisplayedScreen
@@ -83,7 +78,7 @@ class OrdersActivity : AppCompatActivity() {
                             is GiniHealth.PaymentState.Cancel -> {
                                 supportFragmentManager.popBackStack()
                             }
-                            else -> {}
+                            else -> Unit
                         }
                     }
                 }
@@ -120,23 +115,19 @@ class OrdersActivity : AppCompatActivity() {
             DisplayedScreen.MoreInformationFragment -> title = getString(net.gini.android.internal.payment.R.string.gps_more_information_fragment_title)
             DisplayedScreen.ReviewScreen -> title = getString(R.string.title_payment_review)
             DisplayedScreen.Nothing -> title = getString(R.string.title_activity_invoices)
-            else -> {}
+            else -> Unit
         }
         invalidateOptionsMenu()
     }
 
     private fun showOrderDetailsFragment() {
-        OrderDetailsFragment.newInstance().apply {
-            add()
-        }
+        supportFragmentManager.add(OrderDetailsFragment.newInstance())
     }
 
     private fun startIntegratedPaymentFlow(paymentDetails: PaymentDetails) {
         viewModel.getPaymentFragmentForPaymentDetails(paymentDetails, IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java))
             .onSuccess { paymentFragment ->
-                paymentFragment.apply{
-                    add()
-                }
+                supportFragmentManager.add(paymentFragment)
             }
             .onFailure { error ->
                 LOG.error("Error getting payment review fragment", )
@@ -146,13 +137,6 @@ class OrdersActivity : AppCompatActivity() {
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
             }
-    }
-
-    private fun Fragment.add() {
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, this, this::class.java.simpleName)
-            .addToBackStack(this::class.java.simpleName)
-            .commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -182,45 +166,4 @@ class OrdersActivity : AppCompatActivity() {
     companion object {
         private val LOG = LoggerFactory.getLogger(OrdersActivity::class.java)
     }
-}
-
-class OrdersAdapter(
-    var dataSet: List<OrderItem>,
-    private val showOrderDetails: (OrderItem) -> Unit,
-) :
-    RecyclerView.Adapter<OrdersAdapter.ViewHolder>() {
-
-    class ViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-        val recipient: TextView
-        val purpose: TextView
-        val amount: TextView
-
-        init {
-            recipient = view.findViewById(R.id.recipient)
-            purpose = view.findViewById(R.id.purpose)
-            amount = view.findViewById(R.id.amount)
-        }
-    }
-
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.item_order, viewGroup, false)
-        return ViewHolder(view).also { vh ->
-            vh.itemView.setOnClickListener {
-                showOrderDetails(dataSet[vh.adapterPosition])
-            }
-        }
-    }
-
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val orderItem = dataSet[position]
-
-        viewHolder.recipient.text = orderItem.recipient ?: ""
-        viewHolder.purpose.text = orderItem.purpose ?: ""
-        viewHolder.amount.text = orderItem.amount ?: ""
-
-    }
-
-    override fun getItemCount() = dataSet.size
 }
