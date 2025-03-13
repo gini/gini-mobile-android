@@ -63,6 +63,10 @@ class OrdersLocalDataSource(private val context: Context, val hardcodedOrdersLoc
             it.iban = order.iban
             it.purpose = order.purpose
             it.expiryDate = order.expiryDate
+        } ?: run {
+            documentsList = documentsList.toMutableList().apply {
+                add(order.copy(id = id, amount = order.amount.toBackendFormat()))
+            }
         }
         _ordersFlow.value = documentsList
         writeOrdersToPreferences(documentsList)
