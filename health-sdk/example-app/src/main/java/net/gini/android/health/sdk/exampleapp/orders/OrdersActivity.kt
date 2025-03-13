@@ -96,10 +96,14 @@ class OrdersActivity : AppCompatActivity() {
         }
 
         binding.ordersList.layoutManager = LinearLayoutManager(this)
-        binding.ordersList.adapter = OrdersAdapter(emptyList()) { orderItem ->
+        binding.ordersList.adapter = OrdersAdapter(emptyList(), showOrderDetails = { orderItem ->
             viewModel.setSelectedOrderItem(orderItem)
             showOrderDetailsFragment()
-        }
+        }, deletePaymentRequest = {
+                requestId -> viewModel.deletePaymentRequest(requestId)
+            }
+        )
+
         binding.ordersList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
 
         supportFragmentManager.addOnBackStackChangedListener {
