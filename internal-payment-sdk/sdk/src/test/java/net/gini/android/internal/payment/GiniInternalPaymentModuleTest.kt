@@ -38,7 +38,7 @@ class GiniInternalPaymentModuleTest {
     private lateinit var giniPaymentManager: GiniPaymentManager
     private lateinit var paymentComponent: PaymentComponent
     private lateinit var documentManager: HealthApiDocumentManager
-    private val invalidPaymentRequest = PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED)
+    private val invalidPaymentRequest = PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED, "", "")
     private val paymentProviderApp = PaymentProviderApp(
         name = "payment provider",
         icon = null,
@@ -80,7 +80,9 @@ class GiniInternalPaymentModuleTest {
             bic = null,
             amount = "",
             purpose = "",
-            status = net.gini.android.core.api.models.PaymentRequest.Status.OPEN
+            status = net.gini.android.core.api.models.PaymentRequest.Status.OPEN,
+            "",
+            ""
         )) }
         coEvery { giniHealthAPI.documentManager.createPaymentRequest(any()) } coAnswers { Resource.Success(invalidPaymentRequest.id) }
 
