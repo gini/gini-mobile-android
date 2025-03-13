@@ -392,6 +392,35 @@ internal class DigitalInvoice(
         }
     }
 
+    fun updateSkontoExtractions() {
+        extractions["amountToPay"]?.value = skontoData?.skontoAmountToPay?.amountToPay() ?: ""
+
+        compoundExtractions["skontoDiscounts"]?.specificExtractionMaps?.map { skontoDiscountData ->
+            skontoDiscountData.putDataByKeys(
+                skontoData?.skontoPercentageDiscounted.toString(),
+                "skontoPercentageDiscountedCalculated",
+            ) ?: throw NoSuchElementException("Data for `PercentageDiscounted` is missing")
+
+            skontoDiscountData.putDataByKeys(
+                skontoData?.skontoAmountToPay?.amountToPay() ?: "",
+                "skontoAmountToPayCalculated"
+            )
+
+            skontoDiscountData.putDataByKeys(
+                skontoData?.skontoDueDate.toString(),
+                "skontoDueDateCalculated"
+            )
+
+        }
+
+    }
+
+    private fun MutableMap<String, GiniCaptureSpecificExtraction>.putDataByKeys(
+        value: String,
+        vararg keys: String
+    ) = keys.firstNotNullOfOrNull { this[it]?.value = value }
+
+
     @JvmSynthetic
     private fun copyGiniCaptureSpecificExtraction(
         other: GiniCaptureSpecificExtraction,
