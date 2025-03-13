@@ -16,7 +16,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
@@ -84,7 +83,7 @@ class OrderDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().title = resources.getString(net.gini.android.health.sdk.exampleapp.R.string.title_create_order)
+        requireActivity().title = resources.getString(R.string.title_create_order)
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
@@ -103,7 +102,7 @@ class OrderDetailsFragment : Fragment() {
                 launch {
                     ordersViewModel.openBankState.collect { openBankState ->
                         if (openBankState is GiniHealth.PaymentState.Success) {
-                            requireActivity().title = resources.getString(net.gini.android.health.sdk.exampleapp.R.string.title_activity_invoices)
+                            requireActivity().title = resources.getString(R.string.title_activity_invoices)
                             requireActivity().supportFragmentManager.popBackStack()
                         }
                     }
@@ -133,7 +132,7 @@ class OrderDetailsFragment : Fragment() {
         requireActivity().title = if (screen is DisplayedScreen.MoreInformationFragment) {
             resources.getString(net.gini.android.internal.payment.R.string.gps_more_information_fragment_title)
         } else {
-            resources.getString(net.gini.android.health.sdk.exampleapp.R.string.title_create_order)
+            resources.getString(R.string.title_create_order)
         }
     }
 
@@ -153,7 +152,7 @@ class OrderDetailsFragment : Fragment() {
                 orderDetailsViewModel.createPaymentRequest()
             }
             order.expiryDate?.let {
-                expirationDate.text = "${getString(net.gini.android.health.sdk.exampleapp.R.string.expiration_date)} ${it.prettifyDate()}"
+                expirationDate.text = "${getString(R.string.expiration_date)} ${it.prettifyDate()}"
             }
         }
     }
@@ -178,7 +177,7 @@ class OrderDetailsFragment : Fragment() {
 
     private fun showError(message: String) {
         AlertDialog.Builder(requireActivity())
-            .setTitle(getString(net.gini.android.health.sdk.exampleapp.R.string.create_payment_request_error))
+            .setTitle(getString(R.string.create_payment_request_error))
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, null)
             .show()
