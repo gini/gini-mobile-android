@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,6 +24,7 @@ import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.FragmentOrderDetailsBinding
 import net.gini.android.health.sdk.exampleapp.orders.data.model.Order
 import net.gini.android.health.sdk.exampleapp.orders.data.model.getPaymentDetails
+import net.gini.android.health.sdk.exampleapp.util.isInTheFuture
 import net.gini.android.health.sdk.exampleapp.util.prettifyDate
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.utils.DisplayedScreen
@@ -143,13 +145,16 @@ class OrderDetailsFragment : Fragment() {
             iban.setTextIfDifferent(order.iban)
             amount.setTextIfDifferent(order.amount)
             purpose.setTextIfDifferent(order.purpose)
+            payNowBtn.isEnabled = order.expiryDate.isNullOrEmpty() || order.expiryDate?.isInTheFuture() == true
             payNowBtn.setIntervalClickListener {
                 this.root.hideKeyboard()
                 ordersViewModel.saveOrderToLocal(order)
                 ordersViewModel.startPaymentFlowWithoutDocument(orderDetailsViewModel.getOrder().getPaymentDetails())
             }
             createPaymentRequestBtn.setIntervalClickListener {
-                orderDetailsViewModel.createPaymentRequest()
+                if (orderDetailsViewModel.arePaymentDetailsValid()) {
+                    orderDetailsViewModel.createPaymentRequest()
+                }
             }
             order.expiryDate?.let {
                 expirationDate.text = "${getString(R.string.expiration_date)} ${it.prettifyDate()}"

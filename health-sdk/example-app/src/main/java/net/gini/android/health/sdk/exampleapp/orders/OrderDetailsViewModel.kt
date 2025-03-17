@@ -60,26 +60,12 @@ class OrderDetailsViewModel(
     }
 
     fun createPaymentRequest() = viewModelScope.launch {
-        val paymentDetails = PaymentDetails(
-            recipient = _orderFlow.value.recipient,
-            amount = _orderFlow.value.amount,
-            purpose = _orderFlow.value.purpose,
-            iban = _orderFlow.value.iban
-        )
-
-        if (paymentDetails.iban.isEmpty() || paymentDetails.amount.isEmpty() || paymentDetails.purpose.isEmpty() || paymentDetails.recipient.isEmpty()) {
-            _errorFlow.value = Error.PaymentDetailsIncomplete
-            return@launch
-        }
-        if (!isValidIban(paymentDetails.iban)) {
-            _errorFlow.value = Error.InvalidIban
-            return@launch
-        }
-
         when (val paymentProvidersAppsState = giniHealth.giniInternalPaymentModule.paymentComponent.paymentProviderAppsFlow.value) {
             is PaymentProviderAppsState.Success -> {
                 val paymentProviders = paymentProvidersAppsState.paymentProviderApps
                 paymentProviders.first { it.paymentProvider.id == PAYMENT_PROVIDER_ID_FOR_PAYMENT_REQUEST }.runCatching {
+                    giniHealth.giniInternalPaymentModule.getPaymentRequest(this, paymentDetails = getPaymentDetails()).also {
+                        val newOrder = _orderFlow.value.copy(expiryDate = it.expirationDate)
                     giniHealth.giniInternalPaymentModule.getPaymentRequest(this, paymentDetails = paymentDetails).also {
                         val newOrder = _orderFlow.value.copy(expiryDate = it.expirationDate, requestId = it.id)
                         ordersRepository.convertToPaymentRequest(newOrder, it.id)
@@ -94,6 +80,27 @@ class OrderDetailsViewModel(
             }
         }
     }
+
+    fun arePaymentDetailsValid(): Boolean {
+        val paymentDetails = getPaymentDetails()
+        if (paymentDetails.iban.isEmpty() || paymentDetails.amount.isEmpty() || paymentDetails.purpose.isEmpty() || paymentDetails.recipient.isEmpty()) {
+            _errorFlow.value = Error.PaymentDetailsIncomplete
+            return false
+        }
+        if (!isValidIban(paymentDetails.iban)) {
+            _errorFlow.value = Error.InvalidIban
+            return false
+        }
+
+        return true
+    }
+
+    private fun getPaymentDetails(): PaymentDetails = PaymentDetails(
+        recipient = _orderFlow.value.recipient,
+        amount = _orderFlow.value.amount,
+        purpose = _orderFlow.value.purpose,
+        iban = _orderFlow.value.iban
+    )
 
     companion object {
         const val PAYMENT_PROVIDER_ID_FOR_PAYMENT_REQUEST = "b09ef70a-490f-11eb-952e-9bc6f4646c57"
