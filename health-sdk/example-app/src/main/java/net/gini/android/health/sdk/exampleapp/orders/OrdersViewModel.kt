@@ -57,7 +57,7 @@ class OrdersViewModel(
     }
 
 
-    fun deletePaymentRequest(requestId:String) = viewModelScope.launch {
+    fun deletePaymentRequest(requestId: String) = viewModelScope.launch {
         val errorResponse = giniHealth.deletePaymentRequest(requestId)
 
         if (errorResponse == null) {

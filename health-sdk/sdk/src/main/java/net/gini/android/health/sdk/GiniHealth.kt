@@ -204,7 +204,6 @@ class GiniHealth(
             is Resource.Success -> null
             is Resource.Error -> response.message
             is Resource.Cancelled -> "Request cancelled"
-
         }
     }
 
