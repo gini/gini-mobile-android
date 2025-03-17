@@ -176,7 +176,7 @@ internal class DigitalInvoiceScreenPresenter(
                 digitalInvoice.compoundExtractions
             )
         }
-        if (digitalInvoice.skontoData != null) {
+        if (digitalInvoice.skontoData != null && digitalInvoice.skontoEnabled) {
             sendTransferSummary()
         }
         listener?.onPayInvoice(digitalInvoice.extractions, digitalInvoice.compoundExtractions)
