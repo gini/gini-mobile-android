@@ -77,7 +77,7 @@ class HealthApiDocumentRemoteSource internal constructor(
                 paymentRequestId
             )
         }
-        response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body()
     }
 
     suspend fun getPaymentRequestImage(accessToken: String, paymentRequestId: String): ByteArray = withContext(coroutineContext) {
