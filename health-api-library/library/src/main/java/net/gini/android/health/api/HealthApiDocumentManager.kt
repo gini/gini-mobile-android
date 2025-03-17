@@ -91,7 +91,7 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
      */
     suspend fun deletePaymentRequest(
         paymentRequestId: String
-    ): Resource<ByteArray> = documentRepository.deletePaymentRequest(paymentRequestId)
+    ): Resource<Unit> = documentRepository.deletePaymentRequest(paymentRequestId)
 
     /**
      * Returns a QR code in PNG format
