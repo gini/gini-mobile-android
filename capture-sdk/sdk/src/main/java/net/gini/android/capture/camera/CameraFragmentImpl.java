@@ -24,6 +24,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,6 +32,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -348,7 +352,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (activity == null) {
             return;
         }
-        forcePortraitOrientationOnPhones(activity);
         initFlashState();
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
@@ -393,6 +396,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         handleOnBackPressed();
+        if (!ContextHelper.isTablet(mFragment.getActivity()))
+            setNavigationBarVisibility(ContextHelper.isPortraitOrientation(mFragment.getActivity()), mFragment.getActivity());
+
     }
 
     private void handleOnBackPressed() {
@@ -1743,6 +1749,31 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void hidePaneAnimated() {
         mPaneWrapper.animate().alpha(0.0f);
+    }
+
+    private void setNavigationBarVisibility(boolean shouldShow, Activity activity) {
+        Window window = activity.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsetsController controller = window.getInsetsController();
+            if (controller != null) {
+                if (shouldShow) {
+                    controller.show(WindowInsets.Type.navigationBars());
+                } else {
+                    controller.hide(WindowInsets.Type.navigationBars());
+                    controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                }
+            }
+        } else {
+            View decorView = window.getDecorView();
+            if (shouldShow) {
+                decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            } else {
+                decorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                );
+            }
+        }
     }
 
     private void showNoPermissionView() {

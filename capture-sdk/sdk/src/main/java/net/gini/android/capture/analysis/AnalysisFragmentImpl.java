@@ -234,12 +234,9 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onCreate(final Bundle savedInstanceState) {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        forcePortraitOrientationOnPhones(activity);
+        // Required by superclass, no changes need to remove it.
     }
+
 
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {

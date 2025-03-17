@@ -33,6 +33,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
+import net.gini.android.capture.util.safeNavigate
 import java.util.UUID
 
 
@@ -154,7 +155,7 @@ class GiniCaptureFragment(
                 ))
             ) {
                 oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
-                navController.navigate(CameraFragmentDirections.toOnboardingFragment())
+                safeNavigate(navController, CameraFragmentDirections.toOnboardingFragment())
             }
         }
     }

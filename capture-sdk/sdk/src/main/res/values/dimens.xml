@@ -7,11 +7,13 @@
     <dimen name="gc_large_20">20dp</dimen>
     <dimen name="gc_large_24">24dp</dimen>
     <dimen name="gc_large_32">32dp</dimen>
+    <dimen name="gc_large_40">40dp</dimen>
     <dimen name="gc_large_42">42dp</dimen>
     <dimen name="gc_large_48">48dp</dimen>
     <dimen name="gc_large_64">64dp</dimen>
     <dimen name="gc_large_80">80dp</dimen>
     <dimen name="gc_large_96">96dp</dimen>
+    <dimen name="gc_large_120">120dp</dimen>
     <dimen name="gc_inner_padding_detection_error_layout">8dp</dimen>
 
     <dimen name="gc_review_bottom_bar_height">80dp</dimen>
