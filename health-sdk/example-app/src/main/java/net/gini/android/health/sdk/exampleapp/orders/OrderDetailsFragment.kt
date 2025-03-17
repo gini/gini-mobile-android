@@ -149,7 +149,9 @@ class OrderDetailsFragment : Fragment() {
                 ordersViewModel.startPaymentFlowWithoutDocument(orderDetailsViewModel.getOrder().getPaymentDetails())
             }
             createPaymentRequestBtn.setIntervalClickListener {
-                orderDetailsViewModel.createPaymentRequest()
+                if (orderDetailsViewModel.arePaymentDetailsValid()) {
+                    orderDetailsViewModel.createPaymentRequest()
+                }
             }
             order.expiryDate?.let {
                 expirationDate.text = "${getString(R.string.expiration_date)} ${it.prettifyDate()}"
