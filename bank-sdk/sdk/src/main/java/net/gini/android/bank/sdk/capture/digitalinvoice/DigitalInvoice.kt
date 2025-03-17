@@ -393,8 +393,6 @@ internal class DigitalInvoice(
     }
 
     fun updateSkontoExtractions() {
-        extractions["amountToPay"]?.value = skontoData?.skontoAmountToPay?.amountToPay() ?: ""
-
         compoundExtractions["skontoDiscounts"]?.specificExtractionMaps?.map { skontoDiscountData ->
             skontoDiscountData.putDataByKeys(
                 skontoData?.skontoPercentageDiscounted.toString(),
