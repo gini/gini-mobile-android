@@ -46,14 +46,10 @@ class OrdersAdapter(
         viewHolder.amount.text = orderItem.amount
 
         val requestId = orderItem.order.requestId
-        if (!requestId.isNullOrEmpty()) {
-            if (orderItem.order.expiryDate.isInTheFuture()) {
-                viewHolder.deleteBtn.visibility = View.VISIBLE
-                viewHolder.deleteBtn.setOnClickListener {
-                    deletePaymentRequest(requestId)
-                }
-            } else {
-                viewHolder.deleteBtn.visibility = View.GONE
+        if (!requestId.isNullOrEmpty() && orderItem.order.expiryDate.isInTheFuture()) {
+            viewHolder.deleteBtn.visibility = View.VISIBLE
+            viewHolder.deleteBtn.setOnClickListener {
+                deletePaymentRequest(requestId)
             }
         } else {
             viewHolder.deleteBtn.visibility = View.GONE
