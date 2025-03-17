@@ -7,6 +7,7 @@
     <dimen name="gc_large_20">20dp</dimen>
     <dimen name="gc_large_24">24dp</dimen>
     <dimen name="gc_large_32">32dp</dimen>
+    <dimen name="gc_large_40">40dp</dimen>
     <dimen name="gc_large_42">52dp</dimen>
     <dimen name="gc_large_48">64dp</dimen>
     <dimen name="gc_large_64">80dp</dimen>
