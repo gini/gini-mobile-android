@@ -15,7 +15,7 @@ data class OrderItem(
                 order = order,
                 recipient = order.recipient,
                 amount = order.amount.parseAmount(shouldThrowErrorForFormat = false),
-                purpose = order.purpose,
+                purpose = order.purpose
             )
         }
     }
