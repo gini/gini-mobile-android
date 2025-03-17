@@ -13,6 +13,7 @@ import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.text.ParseException
 import java.util.Currency
+import java.util.Date
 import java.util.Locale
 
 private val PRICE_STRING_REGEX = "^-?[0-9]+([.,])[0-9]+\$".toRegex()
@@ -34,6 +35,13 @@ fun String.prettifyDate(): String {
 
     val date = format.parse(this)
     return localDateFormat.format(date)
+}
+
+fun String?.isInTheFuture(): Boolean {
+    val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS")
+
+    val date = format.parse(this)
+    return date.after(Date())
 }
 
 fun String?.parseAmount(shouldThrowErrorForFormat: Boolean): String =
