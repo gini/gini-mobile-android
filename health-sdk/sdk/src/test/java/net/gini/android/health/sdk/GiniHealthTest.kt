@@ -366,7 +366,7 @@ class GiniHealthTest {
 
     @Test
     fun `Returns null when delete payment request was successful`() = runTest {
-        coEvery { giniHealthAPI.documentManager.deletePaymentRequest(any()) } returns Resource.Success(ByteArray(0))
+        coEvery { giniHealthAPI.documentManager.deletePaymentRequest(any()) } returns Resource.Success(Unit)
 
         val result = giniHealth.deletePaymentRequest("")
 
