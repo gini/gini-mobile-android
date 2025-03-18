@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="gc_title_camera">Aufnahme</string>
-    <string name="gc_title_onboarding"/>
+    <string name="gc_title_onboarding" />
     <string name="gc_title_review">Übersicht</string>
     <string name="gc_title_help">Hilfe</string>
     <string name="gc_title_photo_tips">Tipps</string>
@@ -177,6 +177,21 @@
     <!--   region Date Picker -->
     <string name="gc_date_picker_select">Auswählen</string>
     <string name="gc_date_picker_cancel">Abbrechen</string>
+    <!--   endregion -->
+    <!--   region Qr Enagagement -->
+    <string name="gc_qr_engagement_page_1_title">Nicht nur QR-Codes!</string>
+    <string name="gc_qr_engagement_page_1_description">Fotoüberweisung kann mehr als nur QR-Codes scannen! Rechnungen, Zahlungsformulare, Bildschirme, PDFs und sogar GIFs – tippen Sie auf die Schaltfläche "Mehr lesen, um mehr zu erfahren.</string>
+
+    <string name="gc_qr_engagement_page_2_title">Fotos, PDFs &amp; mehr!</string>
+    <string name="gc_qr_engagement_page_2_description">Machen Sie ein Foto, laden Sie ein PDF hoch (bis zu 10 Seiten) oder scannen Sie digital erstellte Rechnungen und Überweisungsträger – Fotoüberweisung übernimmt die Zahlungsdaten für Sie!</string>
+
+    <string name="gc_qr_engagement_page_3_title">Sogar Bildschirme &amp; GIFs!</string>
+    <string name="gc_qr_engagement_page_3_description">Scannen Sie Zahlungsdaten direkt von einem Monitor, Screenshot, GIF oder QR-Code – schnell und einfach!</string>
+
+    <string name="gc_qr_engagement_btn_read_more">Mehr lesen</string>
+    <string name="gc_qr_engagement_btn_skip">Zahlung fortsetzen</string>
+    <string name="gc_qr_engagement_btn_back">Zurück</string>
+    <string name="gc_qr_engagement_btn_next">Weiter</string>
     <!--   endregion -->
     <string name="gc_detection_error_layout_description">QR-Code scannen ist derzeit nicht verfügbar. Bitte fotografieren Sie stattdessen Ihre Rechnung.</string>
 </resources>

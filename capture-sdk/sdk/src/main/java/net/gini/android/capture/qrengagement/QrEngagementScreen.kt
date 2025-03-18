@@ -1,6 +1,7 @@
 package net.gini.android.capture.qrengagement
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +10,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,12 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import net.gini.android.capture.R
 import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.button.outlined.GiniOutlinedButton
 import net.gini.android.capture.ui.components.logo.GiniLogo
+import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 import org.orbitmvi.orbit.compose.collectAsState
@@ -35,12 +42,23 @@ internal fun QrEngagementScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    BackHandler { }
+    BackHandler {
+        viewModel.onNavigateBackClicked()
+    }
 
     val state by viewModel.collectAsState()
-    viewModel.collectSideEffect {
 
+    viewModel.collectSideEffect {
+        when(it) {
+            QrEngagementSideEffect.NavigateBack -> navController.popBackStack()
+            QrEngagementSideEffect.Skip -> TODO()
+        }
     }
+
+    QrEngagementScreenContent(
+        modifier = modifier,
+        state = state
+    )
 }
 
 @Composable
@@ -48,15 +66,44 @@ private fun QrEngagementScreenContent(
     state: QrEngagementState,
     modifier: Modifier = Modifier,
 ) {
+
+    val title = when (state.page) {
+        QrEngagementState.Page.NotJustQrCodes -> stringResource(R.string.gc_qr_engagement_page_1_title)
+        QrEngagementState.Page.PhotosPdfsMore -> stringResource(R.string.gc_qr_engagement_page_2_title)
+        QrEngagementState.Page.EvenScreensGifs -> stringResource(R.string.gc_qr_engagement_page_3_title)
+    }
+
+    val description = when (state.page) {
+        QrEngagementState.Page.NotJustQrCodes -> stringResource(R.string.gc_qr_engagement_page_1_description)
+        QrEngagementState.Page.PhotosPdfsMore -> stringResource(R.string.gc_qr_engagement_page_2_description)
+        QrEngagementState.Page.EvenScreensGifs -> stringResource(R.string.gc_qr_engagement_page_3_description)
+    }
+
+    val painter = when (state.page) {
+        QrEngagementState.Page.NotJustQrCodes -> painterResource(R.drawable.gc_qr_code_engagement_page_1)
+        QrEngagementState.Page.PhotosPdfsMore -> painterResource(R.drawable.gc_qr_code_engagement_page_2)
+        QrEngagementState.Page.EvenScreensGifs -> painterResource(R.drawable.gc_qr_code_engagement_page_3)
+    }
+
+    val progress = when (state.page) {
+        QrEngagementState.Page.NotJustQrCodes -> 1
+        QrEngagementState.Page.PhotosPdfsMore -> 2
+        QrEngagementState.Page.EvenScreensGifs -> 3
+    }
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        ProgressIndicator(1, 3)
+        ProgressIndicator(progress, 3)
         GiniLogo(modifier = Modifier.align(Alignment.End))
+        QrEngagementPageContent(
+            imagePainter = painter,
+            title = title,
+            description = description,
+            isReadMoreButtonVisible = state.page == QrEngagementState.Page.NotJustQrCodes
+        )
     }
-
-
 }
 
 @Composable
@@ -112,33 +159,83 @@ private fun QrEngagementPageContent(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
+    isReadMoreButtonVisible: Boolean,
 ) {
-    Column(modifier = modifier) {
-        Image(painter = imagePainter, contentDescription = null)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Image(
+            modifier = Modifier
+                .size(140.dp)
+                .align(Alignment.CenterHorizontally),
+            painter = imagePainter,
+            contentDescription = null
+        )
 
-        Column {
-            Text(text = title)
-            Text(text = description)
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = title,
+                style = GiniTheme.typography.headline6
+            )
+            Text(
+                text = description,
+                style = GiniTheme.typography.body1
+            )
         }
 
-        Column {
-            Row {
-                GiniButton(text = "Back", onClick = {})
-                GiniButton(text = "Next", onClick = {})
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            AnimatedVisibility(isReadMoreButtonVisible) {
+                GiniButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.gc_qr_engagement_btn_read_more),
+                    onClick = {})
             }
-            GiniOutlinedButton(text = "Skip", onClick = {})
+            AnimatedVisibility(
+                visible = !isReadMoreButtonVisible
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    GiniButton(
+                        modifier = Modifier.weight(0.65f),
+                        text = stringResource(R.string.gc_qr_engagement_btn_back),
+                        onClick = {}
+                    )
+                    GiniButton(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.gc_qr_engagement_btn_next),
+                        onClick = {}
+                    )
+                }
+            }
+            GiniOutlinedButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.gc_qr_engagement_btn_skip),
+                onClick = {}
+            )
         }
     }
 }
 
 @Composable
-@Preview
+@GiniScreenPreviewUiModes
 private fun ProgressIndicatorPreview() {
     GiniTheme {
-        QrEngagementScreenContent(
-            state = QrEngagementState(
-                isLoading = false
+        Surface {
+            QrEngagementScreenContent(
+                state = QrEngagementState(
+                    page = QrEngagementState.Page.NotJustQrCodes
+                )
             )
-        )
+        }
     }
 }
