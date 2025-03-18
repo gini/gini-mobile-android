@@ -5,7 +5,6 @@ import static net.gini.android.capture.camera.CameraFragment.RESULT_KEY_SHOULD_S
 import static net.gini.android.capture.document.ImageDocument.ImportMethod;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
