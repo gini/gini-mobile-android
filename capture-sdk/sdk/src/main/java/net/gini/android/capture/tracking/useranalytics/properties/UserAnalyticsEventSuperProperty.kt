@@ -17,4 +17,14 @@ sealed class UserAnalyticsEventSuperProperty(key: String, value: String) :
 
     data class AnalyzedDocumentId(val documentId: String) :
         UserAnalyticsEventSuperProperty("document_id", documentId)
+
+    data class DocumentType(private val docType: Type) :
+        UserAnalyticsEventSuperProperty("document_type", docType.analyticsValue) {
+        enum class Type(val analyticsValue: String) {
+            Image("image"),
+            Pdf("pdf"),
+            QrCode("qrcode"),
+            Unknown("unknown")
+        }
+    }
 }

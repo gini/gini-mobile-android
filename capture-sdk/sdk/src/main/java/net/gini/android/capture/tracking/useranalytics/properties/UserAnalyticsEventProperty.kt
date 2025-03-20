@@ -6,16 +6,6 @@ import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
 sealed class UserAnalyticsEventProperty(key: String, value: String) :
     AnalyticsKeyPairProperty(key, value) {
 
-    data class DocumentType(private val docType: Type) :
-        UserAnalyticsEventProperty("document_type", docType.analyticsValue) {
-        enum class Type(val analyticsValue: String) {
-            Image("image"),
-            Pdf("pdf"),
-            QrCode("qrcode"),
-            Unknown("unknown")
-        }
-    }
-
     data class PartialDocumentId(val documentId: String) :
         UserAnalyticsEventProperty("partial_document_id", documentId)
 
