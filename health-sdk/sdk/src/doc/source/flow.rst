@@ -84,7 +84,7 @@ into one final document:
         }
     }
 
-delete payment request
+Delete payment request
 ---------------------------------
 
 ``GiniHealthSDK`` provides a method to delete a payment request. You can do this by calling ``giniHealth.deletePaymentRequest(...)`` with a payment request ID.
@@ -104,7 +104,7 @@ delete payment request
         }
     }
 
-delete multiple payment requests
+Delete multiple payment requests
 ---------------------------------
 
 ``GiniHealthSDK`` provides a  method to delete multiple payment request at once. You can do this by calling ``giniHealth.deletePaymentRequests(...)`` with a list of payment request IDs. The call will only succeed if all payment request were successfully deleted. If any payment request is invalid, unauthorized, or not found, the entire deletion request will fail, and no payment requests will be deleted. In the case of failures, an error or type ``DeletePaymentRequestErrorResponse`` will be provided, with more insight into why the deletion failed.
