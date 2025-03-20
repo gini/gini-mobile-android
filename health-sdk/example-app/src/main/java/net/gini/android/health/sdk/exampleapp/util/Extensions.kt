@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import net.gini.android.health.sdk.exampleapp.R
-import org.slf4j.Logger
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.math.BigDecimal

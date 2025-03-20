@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -30,11 +29,11 @@ import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import net.gini.android.internal.payment.R as internalR
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
+import net.gini.android.internal.payment.R as internalR
 
 class OrderDetailsFragment : Fragment() {
 
