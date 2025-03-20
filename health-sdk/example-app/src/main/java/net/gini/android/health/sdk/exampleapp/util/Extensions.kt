@@ -1,5 +1,7 @@
 package net.gini.android.health.sdk.exampleapp.util
-
+import android.icu.text.SimpleDateFormat
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import net.gini.android.health.sdk.exampleapp.R
@@ -11,6 +13,7 @@ import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.text.ParseException
 import java.util.Currency
+import java.util.Date
 import java.util.Locale
 
 private val PRICE_STRING_REGEX = "^-?[0-9]+([.,])[0-9]+\$".toRegex()
@@ -23,6 +26,30 @@ fun InputStream.getBytes(): ByteArray {
         byteBuffer.write(buffer, 0, len)
     }
     return byteBuffer.toByteArray()
+}
+
+@RequiresApi(Build.VERSION_CODES.N)
+fun String.prettifyDate(): String {
+    val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS")
+    val localDateFormat = SimpleDateFormat("dd MMM yyyy")
+
+    try {
+        val date = format.parse(this)
+        return localDateFormat.format(date)
+    } catch (exception: ParseException) {
+        return ""
+    }
+}
+
+fun String?.isInTheFuture(): Boolean {
+    val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS")
+
+    try {
+        val date = format.parse(this)
+        return date.after(Date())
+    } catch (exception: ParseException) {
+        return false
+    }
 }
 
 fun String?.parseAmount(shouldThrowErrorForFormat: Boolean): String =
