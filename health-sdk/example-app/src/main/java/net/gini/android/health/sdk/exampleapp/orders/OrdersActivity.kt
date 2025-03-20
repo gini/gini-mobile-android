@@ -42,77 +42,12 @@ class OrdersActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.ordersFlow.collect { orders ->
-                        (binding.ordersList.adapter as OrdersAdapter).apply {
-                            dataSet = orders
-                            notifyDataSetChanged()
-                        }
-                        binding.noOrdersLabel.visibility =
-                            if (orders.isEmpty()) View.VISIBLE else View.GONE
-                    }
-                }
-                launch {
-                    viewModel.startIntegratedPaymentFlow.collect { paymentDetails ->
-                        startIntegratedPaymentFlow(paymentDetails)
-                    }
-                }
-                launch {
-                    viewModel.giniHealth.displayedScreen.collect { screen ->
-                        setActivityTitle(screen)
-                    }
-                }
-                launch {
-                    viewModel.errorsFlow.collect {
-                        Toast.makeText(this@OrdersActivity, it, Toast.LENGTH_LONG).show()
-                    }
-                }
-                launch {
-                    viewModel.deletePaymentRequestErrorsFlow.collect { error ->
-                        error?.let { deletePaymentRequestErrorResponse ->
-                            if (deletePaymentRequestErrorResponse.message != null) {
-                                this@OrdersActivity.showAlertDialog(
-                                    getString(R.string.payment_request_error_deleting),
-                                    deletePaymentRequestErrorResponse.message ?: ""
-                                )
-                                return@collect
-                            }
-
-                            var errorMessage = ""
-
-                            deletePaymentRequestErrorResponse.unauthorizedPaymentRequests?.let {
-                                errorMessage += "${getString(R.string.payment_requests_unauthorized)} $it"
-                            }
-
-                            deletePaymentRequestErrorResponse.notFoundPaymentRequests?.let {
-                                errorMessage += "\n${getString(R.string.payment_requests_not_found)} $it"
-                            }
-                            this@OrdersActivity.showAlertDialog(
-                                getString(R.string.payment_request_error_deleting),
-                                errorMessage
-                            )
-                        }
-
-                    }
-                }
-                launch {
-                    viewModel.openBankState.collect { paymentState ->
-                        when (paymentState) {
-                            is GiniHealth.PaymentState.Success -> {
-                                SharedPreferencesUtil.saveStringToSharedPreferences(
-                                    SharedPreferencesUtil.PAYMENTREQUEST_KEY,
-                                    paymentState.paymentRequest.id,
-                                    this@OrdersActivity
-                                )
-                                supportFragmentManager.popBackStack()
-                            }
-                            is GiniHealth.PaymentState.Cancel -> {
-                                supportFragmentManager.popBackStack()
-                            }
-                            else -> Unit
-                        }
-                    }
-                }
+                launch { observeOrders() }
+                launch { observeStartIntegratedPaymentFlow() }
+                launch { observeDisplayedScreen() }
+                launch { observeErrors() }
+                launch { observeDeletePaymentErrors() }
+                launch { observeBankState() }
             }
         }
 
@@ -142,6 +77,84 @@ class OrdersActivity : AppCompatActivity() {
                 title = resources.getString(R.string.button_orders_list)
             }
             invalidateOptionsMenu()
+        }
+    }
+
+    private suspend fun observeStartIntegratedPaymentFlow() {
+        viewModel.startIntegratedPaymentFlow.collect { paymentDetails ->
+            startIntegratedPaymentFlow(paymentDetails)
+        }
+    }
+
+    private suspend fun observeOrders() {
+        viewModel.ordersFlow.collect { orders ->
+            (binding.ordersList.adapter as OrdersAdapter).apply {
+                dataSet = orders
+                notifyDataSetChanged()
+            }
+            binding.noOrdersLabel.visibility =
+                if (orders.isEmpty()) View.VISIBLE else View.GONE
+        }
+    }
+
+
+    private suspend fun observeDisplayedScreen() {
+        viewModel.giniHealth.displayedScreen.collect { screen ->
+            setActivityTitle(screen)
+        }
+    }
+
+    private suspend fun observeErrors() {
+        viewModel.errorsFlow.collect { error ->
+            Toast.makeText(this@OrdersActivity, error, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private suspend fun observeDeletePaymentErrors() {
+        viewModel.deletePaymentRequestErrorsFlow.collect { error ->
+            error?.let { deletePaymentRequestErrorResponse ->
+                if (deletePaymentRequestErrorResponse.message != null) {
+                    this@OrdersActivity.showAlertDialog(
+                        getString(R.string.payment_request_error_deleting),
+                        deletePaymentRequestErrorResponse.message ?: ""
+                    )
+                    return@collect
+                }
+
+                var errorMessage = ""
+
+                deletePaymentRequestErrorResponse.unauthorizedPaymentRequests?.let {
+                    errorMessage += "${getString(R.string.payment_requests_unauthorized)} $it"
+                }
+
+                deletePaymentRequestErrorResponse.notFoundPaymentRequests?.let {
+                    errorMessage += "\n${getString(R.string.payment_requests_not_found)} $it"
+                }
+                this@OrdersActivity.showAlertDialog(
+                    getString(R.string.payment_request_error_deleting),
+                    errorMessage
+                )
+            }
+
+        }
+    }
+
+    private suspend fun observeBankState() {
+        viewModel.openBankState.collect { paymentState ->
+            when (paymentState) {
+                is GiniHealth.PaymentState.Success -> {
+                    SharedPreferencesUtil.saveStringToSharedPreferences(
+                        SharedPreferencesUtil.PAYMENTREQUEST_KEY,
+                        paymentState.paymentRequest.id,
+                        this@OrdersActivity
+                    )
+                    supportFragmentManager.popBackStack()
+                }
+                is GiniHealth.PaymentState.Cancel -> {
+                    supportFragmentManager.popBackStack()
+                }
+                else -> Unit
+            }
         }
     }
 
