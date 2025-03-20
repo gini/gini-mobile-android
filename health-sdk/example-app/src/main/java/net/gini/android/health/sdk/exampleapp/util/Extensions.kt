@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import net.gini.android.health.sdk.exampleapp.R
+import org.slf4j.Logger
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.math.BigDecimal
@@ -33,15 +34,23 @@ fun String.prettifyDate(): String {
     val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS")
     val localDateFormat = SimpleDateFormat("dd MMM yyyy")
 
-    val date = format.parse(this)
-    return localDateFormat.format(date)
+    try {
+        val date = format.parse(this)
+        return localDateFormat.format(date)
+    } catch (exception: ParseException) {
+        return ""
+    }
 }
 
 fun String?.isInTheFuture(): Boolean {
     val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS")
 
-    val date = format.parse(this)
-    return date.after(Date())
+    try {
+        val date = format.parse(this)
+        return date.after(Date())
+    } catch (exception: ParseException) {
+        return false
+    }
 }
 
 fun String?.parseAmount(shouldThrowErrorForFormat: Boolean): String =
