@@ -10,6 +10,7 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("kotlin-parcelize")
+    kotlin("kapt")
 }
 
 android {
@@ -123,6 +124,8 @@ dependencies {
     implementation(libs.photoview)
     implementation(libs.insetter)
     implementation(libs.datastore.preferences)
+    kapt(libs.moshi.codegen)
+    implementation(libs.moshi.core)
 
     debugImplementation(libs.androidx.test.core.ktx)
     debugImplementation(libs.androidx.fragment.testing)
