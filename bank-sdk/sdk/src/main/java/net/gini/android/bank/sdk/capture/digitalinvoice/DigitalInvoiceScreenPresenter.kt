@@ -17,6 +17,8 @@ import net.gini.android.bank.sdk.capture.util.OncePerInstallEvent
 import net.gini.android.bank.sdk.capture.util.OncePerInstallEventStore
 import net.gini.android.bank.sdk.capture.util.SimpleBusEventStore
 import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.capture.Amount
+import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -167,13 +169,56 @@ internal class DigitalInvoiceScreenPresenter(
     private fun skipOrPay() {
         digitalInvoice.updateLineItemExtractionsWithReviewedLineItems()
         digitalInvoice.updateAmountToPayExtractionWithTotalPrice()
+        digitalInvoice.updateSkontoExtractions()
+
         if (GiniCapture.hasInstance()) {
             GiniCapture.getInstance().internal().setUpdatedCompoundExtractions(
                 digitalInvoice.compoundExtractions
             )
         }
+        if (digitalInvoice.skontoData != null && digitalInvoice.skontoEnabled) {
+            sendTransferSummary()
+        }
         listener?.onPayInvoice(digitalInvoice.extractions, digitalInvoice.compoundExtractions)
     }
+
+
+    private fun sendTransferSummary() {
+        val amount =
+            Amount(digitalInvoice.extractions["amountToPay"]?.let { parsePriceString(it.value).first }
+                ?: BigDecimal.ZERO, AmountCurrency.EUR)
+
+        var skontoPercentageDiscountedCalculated: String? = null
+        var skontoAmountToPayCalculated: String? = null
+        var skontoDueDateCalculated: String? = null
+
+        compoundExtractions["skontoDiscounts"]?.specificExtractionMaps?.map { skontoDiscountData ->
+            skontoPercentageDiscountedCalculated = skontoDiscountData.getDataByKeys(
+                "skontoPercentageDiscountedCalculated",
+            ) ?: throw NoSuchElementException("Data for `PercentageDiscounted` is missing")
+
+            skontoAmountToPayCalculated = skontoDiscountData.getDataByKeys(
+                "skontoAmountToPayCalculated"
+            ) ?: ""
+
+            skontoDueDateCalculated = skontoDiscountData.getDataByKeys(
+                "skontoDueDateCalculated"
+            ) ?: ""
+
+        }
+        GiniBank.sendTransferSummaryForSkonto(
+            amount,
+            skontoAmountToPayCalculated ?: "",
+            skontoPercentageDiscountedCalculated ?: "",
+            skontoDueDateCalculated ?: ""
+        )
+
+    }
+
+    private fun MutableMap<String, GiniCaptureSpecificExtraction>.getDataByKeys(
+        vararg keys: String
+    ) = keys.firstNotNullOfOrNull { this[it]?.value }
+
 
     override fun updateLineItem(selectableLineItem: SelectableLineItem) {
         digitalInvoice.updateLineItem(selectableLineItem)
