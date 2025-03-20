@@ -22,6 +22,7 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         testOptions.targetSdk = libs.versions.android.targetSdk.get().toInt()
