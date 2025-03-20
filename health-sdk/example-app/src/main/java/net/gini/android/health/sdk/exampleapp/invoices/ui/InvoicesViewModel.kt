@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.DeleteDocumentErrorResponse
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
@@ -38,6 +40,10 @@ class InvoicesViewModel(
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
 
+    private val _deleteDocumentsFlow = MutableSharedFlow<DeleteDocumentErrorResponse?>(
+        extraBufferCapacity = 1
+    )
+    val deleteDocumentsFlow: SharedFlow<DeleteDocumentErrorResponse?> = _deleteDocumentsFlow
 
     fun updateDocument() {
         viewModelScope.launch {
@@ -58,6 +64,16 @@ class InvoicesViewModel(
     fun uploadHardcodedInvoices() {
         viewModelScope.launch {
             invoicesRepository.uploadHardcodedInvoices()
+        }
+    }
+
+    fun batchDelete(documentIds: List<String>) {
+        viewModelScope.launch {
+            val deleteDocumentsRequest = giniHealth.deleteDocuments(documentIds)
+            if (deleteDocumentsRequest == null) {
+                invoicesRepository.deleteDocuments(documentIds)
+            }
+            _deleteDocumentsFlow.tryEmit(deleteDocumentsRequest)
         }
     }
 

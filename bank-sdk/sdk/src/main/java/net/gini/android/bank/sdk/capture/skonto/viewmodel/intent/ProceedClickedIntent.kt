@@ -1,5 +1,6 @@
 package net.gini.android.bank.sdk.capture.skonto.viewmodel.intent
 
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
 import net.gini.android.bank.sdk.capture.skonto.SkontoScreenState
 import net.gini.android.bank.sdk.capture.skonto.mapper.toAnalyticsModel
@@ -24,6 +25,14 @@ internal class ProceedClickedIntent(
     fun SkontoScreenContainerHost.run(skontoFragmentListener: SkontoFragmentListener?) = intent {
         val state = state as? SkontoScreenState.Ready ?: return@intent
 
+        if (state.isSkontoSectionActive) {
+            GiniBank.sendTransferSummaryForSkonto(
+                state.totalAmount,
+                state.totalAmount.amountToPay(),
+                state.skontoPercentage.toString(),
+                state.discountDueDate.toString()
+            )
+        }
         logProceedClickEvent(state)
 
         if (!getTransactionDocsFeatureEnabledUseCase()) {

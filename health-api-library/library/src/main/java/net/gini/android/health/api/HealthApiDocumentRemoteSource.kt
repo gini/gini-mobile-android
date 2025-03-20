@@ -88,4 +88,15 @@ class HealthApiDocumentRemoteSource internal constructor(
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
+
+    suspend fun deleteDocuments(accessToken: String, documentIds: List<String>): Unit = withContext(coroutineContext) {
+        val response =
+            SafeApiRequest.apiRequest {
+            documentService.batchDeleteDocuments(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
+                documentIds
+            )
+        }
+        response.body()
+    }
 }
