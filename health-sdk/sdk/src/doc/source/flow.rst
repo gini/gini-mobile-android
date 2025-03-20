@@ -169,8 +169,7 @@ Check which documents/invoices are payable
         }
     }
 
-
-To delete a payment request, you must first create one to obtain a valid payment Request Id. Ensure that the request has not expired before attempting deletion.
+delete multiple payment requests
 ---------------------------------
 
 ``GiniHealthSDK`` provides a  method to delete multiple payment request at once. You can do this by calling ``giniHealth.deletePaymentRequests(...)`` with a list of payment request IDs. The call will only succeed if all payment request were successfully deleted. If any payment request is invalid, unauthorized, or not found, the entire deletion request will fail, and no payment requests will be deleted. In the case of failures, an error or type ``DeletePaymentRequestErrorResponse`` will be provided, with more insight into why the deletion failed.
@@ -194,7 +193,7 @@ To delete a payment request, you must first create one to obtain a valid payment
     }
 
 
-To check which payment requests are deletable, ensure that they are valid, authorized, and have not expired before attempting deletion.
+Check which documents/invoices are payable
 ------------------------------------------
 
 Call ``giniHealth.checkIfDocumentIsPayable()`` with the composite document id for each invoice to check whether it is
