@@ -3,5 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/custom_order"
         android:title="@string/create_payment_order"
-        app:showAsAction="always"/>
+        app:showAsAction="never"/>
+    <item android:id="@+id/delete_orders"
+        android:title="@string/delete_payment_request"
+        app:showAsAction="never"/>
 </menu>

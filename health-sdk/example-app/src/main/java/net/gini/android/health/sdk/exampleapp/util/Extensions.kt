@@ -1,7 +1,9 @@
 package net.gini.android.health.sdk.exampleapp.util
+import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import net.gini.android.health.sdk.exampleapp.R
@@ -37,6 +39,7 @@ fun String.prettifyDate(): String {
     return localDateFormat.format(date)
 }
 
+@RequiresApi(Build.VERSION_CODES.N)
 fun String?.isInTheFuture(): Boolean {
     val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS")
 
@@ -98,4 +101,12 @@ fun FragmentManager.add(fragment: Fragment) {
         .add(R.id.fragment_container, fragment, fragment::class.java.simpleName)
         .addToBackStack(fragment::class.java.simpleName)
         .commit()
+}
+
+fun Context.showAlertDialog(title: String, message: String) {
+    AlertDialog.Builder(this)
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton(android.R.string.ok, null)
+        .show()
 }
