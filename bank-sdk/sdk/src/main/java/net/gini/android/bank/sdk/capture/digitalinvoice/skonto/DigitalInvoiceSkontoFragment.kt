@@ -48,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ComposeView
@@ -230,6 +231,8 @@ private fun ScreenContent(
         onInvoiceClicked = viewModel::onInvoiceClicked,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onHelpClicked = viewModel::onHelpClicked,
+        onSkontoAmountFieldFocused = viewModel::onSkontoAmountFieldFocused,
+        onDueDateFieldFocused = viewModel::onDueDateFieldFocused
     )
 }
 
@@ -244,6 +247,8 @@ private fun ScreenStateContent(
     onInfoDialogDismissed: () -> Unit,
     onInvoiceClicked: () -> Unit,
     onHelpClicked: () -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors()
@@ -262,6 +267,8 @@ private fun ScreenStateContent(
             onInvoiceClicked = onInvoiceClicked,
             customBottomNavBarAdapter = customBottomNavBarAdapter,
             onHelpClicked = onHelpClicked,
+            onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
+            onDueDateFieldFocused = onDueDateFieldFocused
         )
     }
 
@@ -277,6 +284,8 @@ private fun ScreenReadyState(
     onInfoDialogDismissed: () -> Unit,
     onDiscountAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
@@ -348,6 +357,8 @@ private fun ScreenReadyState(
                     edgeCase = state.edgeCase,
                     onInfoBannerClicked = onInfoBannerClicked,
                     skontoAmountValidationError = state.skontoAmountValidationError,
+                    onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
+                    onDueDateFieldFocued = onDueDateFieldFocused,
                 )
             }
         }
@@ -528,6 +539,8 @@ private fun SkontoSection(
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocued: () -> Unit,
     edgeCase: SkontoEdgeCase?,
     colors: DigitalInvoiceSkontoSectionColors,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
@@ -637,7 +650,12 @@ private fun SkontoSection(
                 currencyCode = amount.currency.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 16.dp)
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            onSkontoAmountFieldFocused()
+                        }
+                    },
                 enabled = isActive,
                 colors = colors.amountFieldColors,
                 onValueChange = { onSkontoAmountChange(it) },
@@ -662,6 +680,7 @@ private fun SkontoSection(
             LaunchedEffect(key1 = pressed) {
                 if (pressed) {
                     isDatePickerVisible = true
+                    onDueDateFieldFocued()
                 }
             }
 
@@ -880,6 +899,8 @@ private fun ScreenReadyStatePreview() {
             onInvoiceClicked = {},
             onHelpClicked = {},
             customBottomNavBarAdapter = null,
+            onSkontoAmountFieldFocused = {},
+            onDueDateFieldFocused = {}
         )
     }
 }
