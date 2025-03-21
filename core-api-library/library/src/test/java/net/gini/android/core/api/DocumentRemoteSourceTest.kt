@@ -18,7 +18,6 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
-import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import retrofit2.Response
@@ -208,12 +207,12 @@ class DocumentRemoteSourceTest {
             id: String
         ): Response<PaymentRequestResponse> {
             bearerAuthHeader = bearer["Authorization"]
-            return Response.success(PaymentRequestResponse(null, null, "", "", null, "", "", ""))
+            return Response.success(PaymentRequestResponse(null, null, "", "", null, "", "", "", "", ""))
         }
 
         override suspend fun getPaymentRequests(bearer: Map<String, String>): Response<List<PaymentRequestResponse>> {
             bearerAuthHeader = bearer["Authorization"]
-            return Response.success(listOf(PaymentRequestResponse(null, null, "", "", null, "", "", "")))
+            return Response.success(listOf(PaymentRequestResponse(null, null, "", "", null, "", "", "", "", "")))
         }
 
         override suspend fun getPayment(
