@@ -51,7 +51,20 @@ class OrdersLocalDataSource(private val context: Context, val hardcodedOrdersLoc
         writeOrdersToPreferences(documentsList)
         _ordersFlow.value = documentsList
     }
+    suspend fun deleteRequestIdAndExpiryDate(orderId: String) {
+        val documentsList = readOrdersFromPreferences()
 
+        val document = documentsList.firstOrNull { it.id == orderId }
+
+        document?.let {
+            it.requestId = null
+            it.expiryDate = null
+        }
+
+        writeOrdersToPreferences(documentsList)
+
+        _ordersFlow.value = documentsList
+    }
     suspend fun convertToPaymentRequest(order: Order, id: String) {
         var documentsList = readOrdersFromPreferences()
         val document =
@@ -63,6 +76,7 @@ class OrdersLocalDataSource(private val context: Context, val hardcodedOrdersLoc
             it.iban = order.iban
             it.purpose = order.purpose
             it.expiryDate = order.expiryDate
+            it.requestId = order.requestId
         } ?: run {
             documentsList = documentsList.toMutableList().apply {
                 add(order.copy(id = id, amount = order.amount.toBackendFormat()))
