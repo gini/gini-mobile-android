@@ -6,16 +6,6 @@ import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsValue
 sealed class UserAnalyticsEventProperty(key: String, value: String) :
     AnalyticsKeyPairProperty(key, value) {
 
-    data class DocumentType(private val docType: Type) :
-        UserAnalyticsEventProperty("document_type", docType.analyticsValue) {
-        enum class Type(val analyticsValue: String) {
-            Image("image"),
-            Pdf("pdf"),
-            QrCode("qrcode"),
-            Unknown("unknown")
-        }
-    }
-
     data class PartialDocumentId(val documentId: String) :
         UserAnalyticsEventProperty("partial_document_id", documentId)
 
@@ -103,6 +93,17 @@ sealed class UserAnalyticsEventProperty(key: String, value: String) :
         UserAnalyticsEventProperty("status", statusType.analyticsName) {
         enum class StatusType(val analyticsName: String) {
             Successful("successful")
+        }
+    }
+
+    data class EdgeCaseType(val type: Type) :
+        UserAnalyticsEventProperty("edge_case_type", type.analyticsName) {
+
+
+        enum class Type(val analyticsName: String) {
+            PayToday("pay_today"),
+            PayByCash("pay_by_cash"),
+            Expired("expired")
         }
     }
 }
