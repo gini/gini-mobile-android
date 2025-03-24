@@ -1,30 +1,30 @@
-package net.gini.android.capture.ui.components.button.filled
+package net.gini.android.capture.ui.components.button.outlined
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.R
+import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
-fun GiniButton(
+fun GiniOutlinedButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    giniButtonColors: GiniButtonColors = GiniButtonColors(),
+    giniButtonColors: GiniOutlinedButtonColors = GiniOutlinedButtonColors.colors(),
 ) {
-    GiniButton(
+    GiniOutlinedButton(
         onClick = onClick,
         modifier = modifier,
         giniButtonColors = giniButtonColors,
@@ -36,19 +36,19 @@ fun GiniButton(
 }
 
 @Composable
-fun GiniButton(
+fun GiniOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    giniButtonColors: GiniButtonColors = GiniButtonColors.colors(),
+    giniButtonColors: GiniOutlinedButtonColors = GiniOutlinedButtonColors.colors(),
     content: @Composable () -> Unit,
 ) {
-    Button(
+    OutlinedButton(
         modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(4.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = giniButtonColors.containerColor,
-            contentColor = giniButtonColors.contentContent,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = giniButtonColors.container,
+            contentColor = giniButtonColors.content
         ),
     ) {
         content()
@@ -56,22 +56,22 @@ fun GiniButton(
 }
 
 
-@Preview
+@GiniScreenPreviewUiModes
 @Composable
 private fun GiniTextButtonPreview() {
     GiniTheme {
         Column {
-            GiniButton(text = "Text Only", onClick = {})
+            GiniOutlinedButton(text = "Text Only", onClick = {})
         }
     }
 }
 
-@Preview
+@GiniScreenPreviewUiModes
 @Composable
 private fun GiniContentButtonPreview() {
     GiniTheme {
         Column {
-            GiniButton(onClick = {}) {
+            GiniOutlinedButton(onClick = {}) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)

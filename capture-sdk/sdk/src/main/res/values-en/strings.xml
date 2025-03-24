@@ -159,5 +159,20 @@
     <string name="gc_date_picker_select">Select</string>
     <string name="gc_date_picker_cancel">Cancel</string>
     <!--   endregion -->
+    <!--   region Qr Enagagement -->
+    <string name="gc_qr_engagement_page_1_title">More than just QR codes!</string>
+    <string name="gc_qr_engagement_page_1_description">Photo Payment isn’t just for QR codes. You can photo invoices or payment forms. Or upload images, PDFs or even GIFs.</string>
+
+    <string name="gc_qr_engagement_page_2_title">Photos, PDFs &amp; more!</string>
+    <string name="gc_qr_engagement_page_2_description">Take a photo, upload a PDF (up to 10 pages), or scan digital invoices and remittance slips – Photo Payment will handle the payment details for you!</string>
+
+    <string name="gc_qr_engagement_page_3_title">Send Screens &amp; GIFs!</string>
+    <string name="gc_qr_engagement_page_3_description">Scan payment details directly from a monitor, screenshot, GIF or QR code – quick and easy!</string>
+
+    <string name="gc_qr_engagement_btn_read_more">More Information</string>
+    <string name="gc_qr_engagement_btn_skip">Continue Payment</string>
+    <string name="gc_qr_engagement_btn_back">Back</string>
+    <string name="gc_qr_engagement_btn_next">Next</string>
+    <!--   endregion -->
     <string name="gc_detection_error_layout_description">QR code scanning is currently unavailable. Please take a picture of your invoice instead.</string>
 </resources>
