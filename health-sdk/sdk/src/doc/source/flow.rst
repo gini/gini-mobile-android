@@ -84,6 +84,26 @@ into one final document:
         }
     }
 
+Delete payment request
+---------------------------------
+
+``GiniHealthSDK`` provides a method to delete a payment request. You can do this by calling ``giniHealth.deletePaymentRequest(...)`` with a payment request ID.
+
+.. code-block:: kotlin
+
+    coroutineScope.launch {
+        // Delete  payment requests
+        val deletePaymentRequest = giniHealth.deletePaymentRequest(paymentRequestId)
+
+        when (deletePaymentRequest) {
+            is Resource.Success -> {
+                // `null` will be returned here
+            }
+            is Resource.Error -> // Handle Error
+            is Resource.Cancelled -> //  Handle cancellation
+        }
+    }
+
 Delete multiple documents at once
 ---------------------------------
 
