@@ -2,7 +2,7 @@ Getting started
 ===============
 
 Installation
-------------
+-------------
 
 Add our sdk to your dependencies:
 
