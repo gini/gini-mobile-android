@@ -52,6 +52,26 @@ class OrdersLocalDataSource(private val context: Context, val hardcodedOrdersLoc
         _ordersFlow.value = documentsList
     }
 
+    suspend fun convertToPaymentRequest(order: Order, id: String) {
+        var documentsList = readOrdersFromPreferences()
+        val document =
+            documentsList.firstOrNull { it.id == order.id }
+        document?.let {
+            it.id = id
+            it.amount = order.amount.toBackendFormat()
+            it.recipient = order.recipient
+            it.iban = order.iban
+            it.purpose = order.purpose
+            it.expiryDate = order.expiryDate
+        } ?: run {
+            documentsList = documentsList.toMutableList().apply {
+                add(order.copy(id = id, amount = order.amount.toBackendFormat()))
+            }
+        }
+        _ordersFlow.value = documentsList
+        writeOrdersToPreferences(documentsList)
+    }
+
     private suspend fun readOrdersFromPreferences(): List<Order> {
         return context.dataStore.data.map { preferences ->
             val invoicesJson = preferences[KEY_ORDERS] ?: ""
