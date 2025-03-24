@@ -117,7 +117,8 @@ class GiniHealth(
      */
     val openBankState: StateFlow<PaymentState> = _openBankState
 
-    private val _displayedScreen: MutableSharedFlow<DisplayedScreen> = MutableSharedFlow(extraBufferCapacity = 1)
+    private val _displayedScreen: MutableSharedFlow<DisplayedScreen> =
+        MutableSharedFlow(extraBufferCapacity = 1)
 
     /**
      * A flow for exposing the [DisplayedScreen] currently visible. It always starts with [DisplayedScreen.Nothing].
@@ -206,7 +207,14 @@ class GiniHealth(
             )
         return when (response) {
             is Resource.Success -> null
-            is Resource.Error -> response.message
+            is Resource.Error -> if (response.message.isNullOrEmpty()) {
+                when(response.responseStatusCode){
+                    404 -> "Payment request not found"
+                   else -> "Failed to delete payment request"
+                }
+            } else
+                response.message
+
             is Resource.Cancelled -> "Request cancelled"
         }
     }
