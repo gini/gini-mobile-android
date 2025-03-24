@@ -1,6 +1,5 @@
 package net.gini.android.capture.review.multipage;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;

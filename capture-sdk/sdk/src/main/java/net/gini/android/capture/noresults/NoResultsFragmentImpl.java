@@ -1,7 +1,6 @@
 package net.gini.android.capture.noresults;
 
 import static android.view.View.GONE;
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 import android.os.Bundle;
