@@ -363,4 +363,31 @@ class GiniHealthTest {
         Truth.assertThat(result?.unauthorizedDocuments).isNotEmpty()
         Truth.assertThat(result?.unauthorizedDocuments).hasSize(2)
     }
+
+    @Test
+    fun `Returns null when delete payment request was successful`() = runTest {
+        coEvery { giniHealthAPI.documentManager.deletePaymentRequest(any()) } returns Resource.Success(Unit)
+
+        val result = giniHealth.deletePaymentRequest("")
+
+        assertTrue(result == null)
+    }
+
+    @Test
+    fun `Returns error message when delete request returned with error`() = runTest {
+        coEvery { giniHealthAPI.documentManager.deletePaymentRequest(any()) } returns Resource.Error("{ \"message\": \"Payment request not found\" }")
+
+        val result = giniHealth.deletePaymentRequest("")
+
+        assertEquals("{ \"message\": \"Payment request not found\" }", result)
+    }
+
+    @Test
+    fun `Returns Request cancelled when delete request was cancelled`() = runTest {
+        coEvery { giniHealthAPI.documentManager.deletePaymentRequest(any()) } returns Resource.Cancelled()
+
+        val result = giniHealth.deletePaymentRequest("")
+
+        assertEquals("Request cancelled", result)
+    }
 }
