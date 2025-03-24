@@ -71,7 +71,6 @@ class SkontoHelpFragment : Fragment() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-        ActivityHelper.forcePortraitOrientationOnPhones(activity)
 
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -229,7 +228,7 @@ private fun HelpCustomNavBarSection(
         ) {
             AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
                 NavigationActionBack(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(16.dp),
                     onClick = onBackClicked
                 )
             }
