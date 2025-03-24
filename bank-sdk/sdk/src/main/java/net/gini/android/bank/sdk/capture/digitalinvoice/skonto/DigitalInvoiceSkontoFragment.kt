@@ -82,7 +82,7 @@ import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.ui.keyboardAsState
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
 import net.gini.android.capture.ui.components.textinput.GiniTextInput
 import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInput
@@ -129,7 +129,6 @@ class DigitalInvoiceSkontoFragment : Fragment() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-        ActivityHelper.forcePortraitOrientationOnPhones(activity)
 
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -174,7 +173,8 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                             findNavController().navigate(
                                 DigitalInvoiceSkontoFragmentDirections.toSkontoHelpFragment()
                             )
-                        }
+                        },
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext())
                     )
                 }
             }
@@ -193,6 +193,7 @@ private fun ScreenContent(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
+    isLandScape: Boolean
 ) {
 
     BackHandler { viewModel.onBackClicked() }
@@ -230,6 +231,7 @@ private fun ScreenContent(
         onInvoiceClicked = viewModel::onInvoiceClicked,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onHelpClicked = viewModel::onHelpClicked,
+        isLandScape = isLandScape
     )
 }
 
@@ -246,7 +248,8 @@ private fun ScreenStateContent(
     onHelpClicked: () -> Unit,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
-    screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors()
+    screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
+    isLandScape : Boolean
 ) {
     when (state) {
         is SkontoScreenState.Ready -> ScreenReadyState(
@@ -262,6 +265,7 @@ private fun ScreenStateContent(
             onInvoiceClicked = onInvoiceClicked,
             customBottomNavBarAdapter = customBottomNavBarAdapter,
             onHelpClicked = onHelpClicked,
+            isLandScape = isLandScape
         )
     }
 
@@ -281,6 +285,7 @@ private fun ScreenReadyState(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
+    isLandScape : Boolean
 ) {
 
     val scrollState = rememberScrollState()
@@ -348,6 +353,7 @@ private fun ScreenReadyState(
                     edgeCase = state.edgeCase,
                     onInfoBannerClicked = onInfoBannerClicked,
                     skontoAmountValidationError = state.skontoAmountValidationError,
+                    isLandScape = isLandScape
                 )
             }
         }
@@ -532,6 +538,7 @@ private fun SkontoSection(
     colors: DigitalInvoiceSkontoSectionColors,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
+    isLandScape : Boolean,
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
@@ -697,7 +704,8 @@ private fun SkontoSection(
                 onDueDateChanged(it)
             },
             date = dueDate,
-            selectableDates = getSkontoSelectableDates()
+            selectableDates = getSkontoSelectableDates(),
+            isLandScape = isLandScape
         )
     }
 }
@@ -880,6 +888,7 @@ private fun ScreenReadyStatePreview() {
             onInvoiceClicked = {},
             onHelpClicked = {},
             customBottomNavBarAdapter = null,
+            isLandScape = false
         )
     }
 }
