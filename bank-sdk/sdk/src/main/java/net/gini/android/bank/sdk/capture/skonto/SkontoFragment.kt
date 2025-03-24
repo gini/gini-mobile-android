@@ -17,8 +17,8 @@ import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewMode
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.koin.core.parameter.parametersOf
@@ -52,7 +52,6 @@ class SkontoFragment : Fragment() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-        forcePortraitOrientationOnPhones(activity)
 
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -95,6 +94,7 @@ class SkontoFragment : Fragment() {
                             findNavController().navigate(SkontoFragmentDirections.toSkontoHelpFragment())
                         },
                         amountFormatter = amountFormatter,
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext())
                     )
                 }
             }
