@@ -5,8 +5,11 @@ package net.gini.android.capture.ui.components.picker.date
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -37,7 +40,8 @@ fun GiniDatePickerDialog(
     modifier: Modifier = Modifier,
     date: LocalDate = LocalDate.now(),
     selectableDates: SelectableDates = DatePickerDefaults.AllDates,
-    colors: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors()
+    colors: GiniDatePickerDialogColors = GiniDatePickerDialogColors.colors(),
+    isLandScape : Boolean = false
 ) {
 
     val dateState = rememberDatePickerState(
@@ -54,7 +58,8 @@ fun GiniDatePickerDialog(
         onDismissRequest = onDismissRequest
     ) {
         Card(
-            modifier = modifier.fillMaxWidth(0.95f),
+            modifier = if (isLandScape) modifier.fillMaxWidth(0.65f).fillMaxHeight(0.90f).verticalScroll(rememberScrollState())
+            else modifier.fillMaxWidth(0.95f),
         ) {
             DatePicker(
                 state = dateState,
