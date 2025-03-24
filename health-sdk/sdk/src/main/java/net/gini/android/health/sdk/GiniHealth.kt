@@ -208,7 +208,7 @@ class GiniHealth(
             is Resource.Success -> null
             is Resource.Error -> response.message ?: response.responseStatusCode?.let {
                 "Failed to delete payment request with status code: $it"
-            }
+                } ?: "Failed to delete payment request"
 
             is Resource.Cancelled -> "Request cancelled"
         }
