@@ -206,7 +206,10 @@ class GiniHealth(
             )
         return when (response) {
             is Resource.Success -> null
-            is Resource.Error -> response.message
+            is Resource.Error -> response.message ?: response.responseStatusCode?.let {
+                "Failed to delete payment request with status code: $it"
+            }
+
             is Resource.Cancelled -> "Request cancelled"
         }
     }
