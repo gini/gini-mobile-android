@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
@@ -110,6 +112,7 @@ internal fun SkontoScreenContent(
     navigateToInvoiceScreen: (documentId: String, infoTextLines: List<String>) -> Unit,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
+    isLandScape : Boolean
 ) {
 
     BackHandler { navigateBack() }
@@ -147,6 +150,7 @@ internal fun SkontoScreenContent(
         onConfirmAttachTransactionDocClicked = viewModel::onConfirmAttachTransactionDocClicked,
         onCancelAttachTransactionDocClicked = viewModel::onCancelAttachTransactionDocClicked,
         amountFormatter = amountFormatter,
+        isLandScape = isLandScape
     )
 }
 
@@ -169,7 +173,8 @@ private fun ScreenStateContent(
     onCancelAttachTransactionDocClicked: () -> Unit,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
-    screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors()
+    screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
+    isLandScape : Boolean
 ) {
     when (state) {
         is SkontoScreenState.Ready -> ScreenReadyState(
@@ -191,6 +196,7 @@ private fun ScreenStateContent(
             onInvoiceClicked = onInvoiceClicked,
             onConfirmAttachTransactionDocClicked = onConfirmAttachTransactionDocClicked,
             onCancelAttachTransactionDocClicked = onCancelAttachTransactionDocClicked,
+            isLandScape = isLandScape
         )
     }
 
@@ -217,6 +223,7 @@ private fun ScreenReadyState(
     modifier: Modifier = Modifier,
     discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
+    isLandScape : Boolean
 ) {
     val scrollState = rememberScrollState()
     val keyboardPadding by keyboardPadding(108.dp, scrollState)
@@ -232,19 +239,46 @@ private fun ScreenReadyState(
             )
         },
         bottomBar = {
-            FooterSection(
-                colors = screenColorScheme.footerSectionColors,
-                discountValue = state.skontoPercentage,
-                totalAmount = state.totalAmount,
-                isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-                onBackClicked = onBackClicked,
-                onHelpClicked = onHelpClicked,
-                customBottomNavBarAdapter = customBottomNavBarAdapter,
-                onProceedClicked = onProceedClicked,
-                isSkontoSectionActive = state.isSkontoSectionActive,
-                savedAmount = state.savedAmount,
-                discountPercentageFormatter = discountPercentageFormatter,
-            )
+            if (!isLandScape || (customBottomNavBarAdapter != null)) {
+                FooterSection(
+                    colors = screenColorScheme.footerSectionColors,
+                    discountValue = state.skontoPercentage,
+                    totalAmount = state.totalAmount,
+                    isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
+                    onBackClicked = onBackClicked,
+                    onHelpClicked = onHelpClicked,
+                    customBottomNavBarAdapter = customBottomNavBarAdapter,
+                    onProceedClicked = onProceedClicked,
+                    isSkontoSectionActive = state.isSkontoSectionActive,
+                    savedAmount = state.savedAmount,
+                    discountPercentageFormatter = discountPercentageFormatter,
+                    isLandScape = isLandScape
+                )
+            } else if (isBottomNavigationBarEnabled) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color(screenColorScheme.footerSectionColors.cardBackgroundColor.value))
+                ) {
+                    AnimatedVisibility(visible = true) {
+                        NavigationActionBack(
+                            modifier = Modifier.padding(16.dp),
+                            onClick = onBackClicked
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    AnimatedVisibility(visible = true) {
+                        NavigationActionHelp(
+                            onClick = onHelpClicked,
+                            modifier = Modifier.padding(end = 16.dp),
+                        )
+                    }
+                }
+            }
         }) {
         Column(
             modifier = Modifier
@@ -291,6 +325,7 @@ private fun ScreenReadyState(
                     onInfoBannerClicked = onInfoBannerClicked,
                     discountPercentageFormatter = discountPercentageFormatter,
                     skontoAmountValidationError = state.skontoAmountValidationError,
+                    isLandScape = isLandScape
                 )
                 WithoutSkontoSection(
                     modifier = Modifier.tabletMaxWidth(),
@@ -301,6 +336,23 @@ private fun ScreenReadyState(
                     amountFormatter = amountFormatter,
                     fullAmountValidationError = state.fullAmountValidationError,
                 )
+
+                if (isLandScape && customBottomNavBarAdapter == null) {
+                    FooterSection(
+                        colors = screenColorScheme.footerSectionColors,
+                        discountValue = state.skontoPercentage,
+                        totalAmount = state.totalAmount,
+                        isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
+                        onBackClicked = onBackClicked,
+                        onHelpClicked = onHelpClicked,
+                        customBottomNavBarAdapter = null,
+                        onProceedClicked = onProceedClicked,
+                        isSkontoSectionActive = state.isSkontoSectionActive,
+                        savedAmount = state.savedAmount,
+                        discountPercentageFormatter = discountPercentageFormatter,
+                        isLandScape = true
+                    )
+                }
             }
         }
 
@@ -497,6 +549,7 @@ private fun SkontoSection(
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
     discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
+    isLandScape : Boolean
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
@@ -674,6 +727,7 @@ private fun SkontoSection(
     if (isDatePickerVisible) {
         GiniDatePickerDialog(
             onDismissRequest = { isDatePickerVisible = false },
+            isLandScape = isLandScape,
             onSaved = {
                 isDatePickerVisible = false
                 onDueDateChanged(it)
@@ -871,6 +925,7 @@ private fun FooterSection(
     discountPercentageFormatter: SkontoDiscountPercentageFormatter,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
+    isLandScape : Boolean
 ) {
     val animatedTotalAmount by animateFloatAsState(
         targetValue = totalAmount.value.toFloat(), label = "totalAmount"
@@ -982,18 +1037,24 @@ private fun FooterSection(
                         )
                     }
                 }
-                val buttonPaddingStart = if (isBottomNavigationBarEnabled) 16.dp else 20.dp
-                val buttonPaddingEnd = if (isBottomNavigationBarEnabled) 16.dp else 20.dp
+
+                val buttonPaddingStart =
+                    if (isBottomNavigationBarEnabled && !isLandScape) 16.dp else 20.dp
+                val buttonPaddingEnd =
+                    if (isBottomNavigationBarEnabled && !isLandScape) 16.dp else 20.dp
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
-                        NavigationActionBack(
-                            modifier = Modifier.padding(start = 16.dp),
-                            onClick = onBackClicked
-                        )
+                    if (!isLandScape) {
+                        AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
+                            NavigationActionBack(
+                                modifier = Modifier.padding(start = 16.dp),
+                                onClick = onBackClicked
+                            )
+                        }
                     }
+
                     GiniButton(
                         modifier = Modifier
                             .weight(0.1f)
@@ -1002,11 +1063,14 @@ private fun FooterSection(
                         onClick = onProceedClicked,
                         giniButtonColors = colors.continueButtonColors
                     )
-                    AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
-                        NavigationActionHelp(
-                            modifier = Modifier.padding(end = 20.dp),
-                            onClick = onHelpClicked
-                        )
+
+                    if (!isLandScape) {
+                        AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
+                            NavigationActionHelp(
+                                modifier = Modifier.padding(end = 20.dp),
+                                onClick = onHelpClicked
+                            )
+                        }
                     }
                 }
             }
@@ -1022,7 +1086,7 @@ private fun ScreenReadyStatePreviewLight() {
 }
 
 @Composable
-private fun ScreenReadyStatePreview() {
+private fun ScreenReadyStatePreview(isLandScape: Boolean = false) {
     GiniTheme {
         var state by remember { mutableStateOf(previewState()) }
         ScreenReadyState(
@@ -1047,7 +1111,8 @@ private fun ScreenReadyStatePreview() {
             onConfirmAttachTransactionDocClicked = {
 
             },
-            amountFormatter = AmountFormatter(currencyFormatterWithoutSymbol())
+            amountFormatter = AmountFormatter(currencyFormatterWithoutSymbol()),
+            isLandScape = isLandScape
         )
     }
 }
