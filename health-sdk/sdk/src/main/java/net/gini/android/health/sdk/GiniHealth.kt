@@ -208,9 +208,10 @@ class GiniHealth(
         return when (response) {
             is Resource.Success -> null
             is Resource.Error -> if (response.message.isNullOrEmpty()) {
-                response.responseStatusCode?.let {
-                    "Failed to delete payment request with status code: $it"
-                } ?: "Failed to delete payment request"
+                when(response.responseStatusCode){
+                    404 -> "Payment request not found"
+                   else -> "Failed to delete payment request"
+                }
             } else
                 response.message
 
