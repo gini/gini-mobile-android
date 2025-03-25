@@ -658,16 +658,8 @@ private fun SkontoSection(
                 label = "discountAmount"
             )
 
-            val remainingDaysText =
-                if (infoPaymentInDays != 0) {
-                    pluralStringResource(
-                        id = R.plurals.days,
-                        count = infoPaymentInDays,
-                        infoPaymentInDays.toString()
-                    )
-                } else {
-                    stringResource(id = R.string.days_zero)
-                }
+            val remainingDaysText = getSkontoRemainingDays(infoPaymentInDays)
+
 
             val infoBannerText = when (edgeCase) {
                 SkontoEdgeCase.PayByCashOnly ->
@@ -793,6 +785,19 @@ private fun SkontoSection(
             date = dueDate,
             selectableDates = getSkontoSelectableDates()
         )
+    }
+}
+
+@Composable
+private fun getSkontoRemainingDays(infoPaymentInDays : Int) : String {
+    return if (infoPaymentInDays != 0) {
+        pluralStringResource(
+            id = R.plurals.days,
+            count = infoPaymentInDays,
+            infoPaymentInDays.toString()
+        )
+    } else {
+        stringResource(id = R.string.days_zero)
     }
 }
 
