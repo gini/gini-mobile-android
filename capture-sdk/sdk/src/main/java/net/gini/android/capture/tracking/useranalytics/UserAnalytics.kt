@@ -26,9 +26,7 @@ object UserAnalytics {
     }
 
     fun getAnalyticsEventTracker(
-    ) = eventTracker ?: throw IllegalStateException(
-        "You need to initialize analytics by calling `UserAnalytics.initialize(...)`"
-    )
+    ) = eventTracker
 
     fun cleanup() {
         eventTracker = null

@@ -11,7 +11,6 @@ import androidx.fragment.app.activityViewModels
 import net.gini.android.health.sdk.exampleapp.MainViewModel
 import net.gini.android.health.sdk.exampleapp.databinding.FragmentConfigurationBinding
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.utils.GiniLocalization
 
 class ConfigurationFragment: Fragment() {
@@ -52,12 +51,6 @@ class ConfigurationFragment: Fragment() {
     }
 
     private fun FragmentConfigurationBinding.setupSwitchListeners() {
-        ghsHidePoweredBy.isChecked = !(viewModel.getPaymentComponentConfiguration()?.isPaymentComponentBranded ?: true)
-
-        ghsHidePoweredBy.setOnCheckedChangeListener { _, newValue ->
-            viewModel.setPaymentComponentConfiguration(PaymentComponentConfiguration(isPaymentComponentBranded = !newValue))
-        }
-
         ghsShowReviewDialog.isChecked = viewModel.getPaymentFlowConfiguration()?.shouldShowReviewBottomDialog ?: false
         ghsShowReviewDialog.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setPaymentFlowConfiguration(PaymentFlowConfiguration(shouldShowReviewBottomDialog = isChecked))

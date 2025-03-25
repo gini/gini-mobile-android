@@ -18,7 +18,7 @@ import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.review.validate
 import net.gini.android.internal.payment.review.validateIban
-import net.gini.android.internal.payment.utils.extensions.adjustToLocalDecimalSeparation
+import net.gini.android.internal.payment.utils.extensions.sanitizeAmount
 import net.gini.android.internal.payment.utils.withPrev
 import org.slf4j.LoggerFactory
 
@@ -86,12 +86,12 @@ class ReviewComponent(
                 _loadingFlow.tryEmit(extractedPaymentDetails is ResultWrapper.Loading)
                 if (extractedPaymentDetails is ResultWrapper.Success) {
                     val paymentDetails = paymentDetails.value.overwriteEmptyFields(
-                        extractedPaymentDetails.value.copy(
-                            amount = extractedPaymentDetails.value.amount.adjustToLocalDecimalSeparation()
-                        )
+                        extractedPaymentDetails.value
                     )
                     _loadingFlow.tryEmit(false)
-                    _paymentDetails.value = paymentDetails
+                    _paymentDetails.value = paymentDetails.copy(
+                        amount = paymentDetails.amount.sanitizeAmount()
+                    )
                 }
             }
         }

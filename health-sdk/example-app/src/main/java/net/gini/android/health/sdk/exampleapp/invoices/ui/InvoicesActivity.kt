@@ -29,11 +29,9 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBindin
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsFragment
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.internal.payment.paymentComponent.PaymentComponentConfiguration
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -42,10 +40,11 @@ import org.slf4j.LoggerFactory
 open class InvoicesActivity : AppCompatActivity() {
 
     private val viewModel: InvoicesViewModel by viewModel()
+    private lateinit var binding: ActivityInvoicesBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityInvoicesBinding.inflate(layoutInflater)
+        binding = ActivityInvoicesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setActivityTitle(DisplayedScreen.Nothing)
 
@@ -54,7 +53,7 @@ open class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.invoicesFlow.collect { invoicesWithExtractions ->
                         (binding.invoicesList.adapter as InvoicesAdapter).apply {
-                            dataSet = invoicesWithExtractions
+                            dataSet = invoicesWithExtractions.toMutableList()
                             notifyDataSetChanged()
                         }
                         binding.noInvoicesLabel.visibility =
@@ -150,19 +149,45 @@ open class InvoicesActivity : AppCompatActivity() {
                         }
                     }
                 }
+                launch {
+                    viewModel.deleteDocumentsFlow.collect { response ->
+                        response?.let { deleteDocumentErrorResponse ->
+                            if (deleteDocumentErrorResponse.message != null) {
+                                AlertDialog.Builder(this@InvoicesActivity)
+                                    .setTitle(getString(R.string.could_not_delete_documents))
+                                    .setMessage(deleteDocumentErrorResponse.message)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .show()
+                                return@collect
+                            }
+
+                            var errorMessage = ""
+                            deleteDocumentErrorResponse.unauthorizedDocuments?.let {
+                                errorMessage += "${getString(R.string.unauthorized_documents)} $it"
+                            }
+                            deleteDocumentErrorResponse.notFoundDocuments?.let {
+                                errorMessage += "\n${getString(R.string.not_found_documents)} $it"
+                            }
+                            deleteDocumentErrorResponse.missingCompositeDocuments?.let {
+                                errorMessage += "\n${getString(R.string.missing_composite_documents)} $it"
+                            }
+                            AlertDialog.Builder(this@InvoicesActivity)
+                                .setTitle(getString(R.string.could_not_delete_documents))
+                                .setMessage(errorMessage)
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
+                        }
+                    }
+                }
             }
         }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_COMPONENT_CONFIG, PaymentComponentConfiguration::class.java)?.let {
-            viewModel.setPaymentComponentConfig(it)
-        }
-
         viewModel.loadInvoicesWithExtractions()
 
         binding.invoicesList.layoutManager = LinearLayoutManager(this)
-        binding.invoicesList.adapter = InvoicesAdapter(emptyList()) { documentId ->
+        binding.invoicesList.adapter = InvoicesAdapter(mutableListOf()) { documentId ->
             startPaymentFlowForDocumentId(documentId)
         }
         binding.invoicesList.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
@@ -177,7 +202,7 @@ open class InvoicesActivity : AppCompatActivity() {
 
     private fun setActivityTitle(screen: DisplayedScreen) {
         when (screen) {
-            DisplayedScreen.MoreInformationFragment -> title = getString(net.gini.android.health.sdk.R.string.ghs_more_information_fragment_title)
+            DisplayedScreen.MoreInformationFragment -> title = getString(net.gini.android.internal.payment.R.string.gps_more_information_fragment_title)
             DisplayedScreen.ReviewScreen -> title = getString(R.string.title_payment_review)
             DisplayedScreen.Nothing -> title = getString(R.string.title_activity_invoices)
             else -> {}
@@ -225,11 +250,17 @@ open class InvoicesActivity : AppCompatActivity() {
                 viewModel.uploadHardcodedInvoices()
                 true
             }
-            R.id.create_payment_order -> {
-                supportFragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, OrderDetailsFragment.newInstance(), OrderDetailsFragment::class.java.name)
-                    .addToBackStack(OrderDetailsFragment::class.java.name)
-                    .commit()
+            R.id.batch_delete -> {
+                val adapter = binding.invoicesList.adapter as InvoicesAdapter
+                val toDelete: MutableList<String> = mutableListOf()
+                if (adapter.dataSet.isNotEmpty()) {
+                    if (adapter.dataSet.size >= 2) {
+                        toDelete.addAll(adapter.dataSet.map { it.documentId }.subList(0, 2))
+                    } else {
+                        toDelete.add(adapter.dataSet.first().documentId)
+                    }
+                }
+                viewModel.batchDelete(toDelete)
                 true
             }
             android.R.id.home -> {
@@ -247,7 +278,7 @@ open class InvoicesActivity : AppCompatActivity() {
 }
 
 class InvoicesAdapter(
-    var dataSet: List<InvoiceItem>,
+    var dataSet: MutableList<InvoiceItem>,
     var trustMarkerResponse: GiniHealth.TrustMarkerResponse? = null,
     var listener: (String) -> Unit
 ) :
@@ -307,6 +338,13 @@ class InvoicesAdapter(
     }
 
     override fun getItemCount() = dataSet.size
+
+    fun removeInvoices(invoices: List<String>) {
+        for (invoiceId in invoices) {
+            dataSet.find { it.documentId == invoiceId }?.let { dataSet.remove(it) }
+        }
+        notifyDataSetChanged()
+    }
 }
 
 private const val REVIEW_FRAGMENT_TAG = "payment_review_fragment"

@@ -436,14 +436,14 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     // region Analytics
 
     private fun trackScreenShownEvent() {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
     }
 
     private fun trackCloseTappedEvent() {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
@@ -455,7 +455,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         val differenceList =
             originalLineItem?.getDifferences(finalLineItem) ?: emptySet()
 
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SAVE_TAPPED,
             setOf(
                 UserAnalyticsEventProperty.Screen(screenName),

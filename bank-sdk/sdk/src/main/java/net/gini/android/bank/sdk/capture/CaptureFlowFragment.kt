@@ -48,7 +48,6 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -89,7 +88,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     private lateinit var composeView: ComposeView
 
     private fun setReturnReasonsEventProperty() {
-        userAnalyticsEventTracker.setUserProperty(
+        userAnalyticsEventTracker?.setUserProperty(
             setOf(
                 UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
                 UserAnalyticsUserProperty.BankSdkVersionName(BuildConfig.VERSION_NAME),
@@ -122,7 +121,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         super.onViewCreated(view, savedInstanceState)
         composeView = view.findViewById(R.id.gbs_compose_view)
         setReturnReasonsEventProperty()
-        userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
+        userAnalyticsEventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
     }
 
@@ -318,7 +317,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
         didFinishWithResult = true
         captureFlowFragmentListener.onFinishedWithResult(result)
-        trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
+        trackSdkClosedEvent()
     }
 
     private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
@@ -387,11 +386,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
     }
 
-    private fun trackSdkClosedEvent(screen: UserAnalyticsScreen) = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+    private fun trackSdkClosedEvent() = runCatching {
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SDK_CLOSED,
             setOf(
-                UserAnalyticsEventProperty.Screen(screen),
                 UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful),
             )
         )

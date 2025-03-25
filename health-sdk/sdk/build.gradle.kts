@@ -9,6 +9,7 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
+    kotlin("kapt")
     id("kotlin-parcelize")
 }
 
@@ -123,6 +124,8 @@ dependencies {
     implementation(libs.photoview)
     implementation(libs.insetter)
     implementation(libs.datastore.preferences)
+    implementation(libs.moshi.core)
+    kapt(libs.moshi.codegen)
 
     debugImplementation(libs.androidx.test.core.ktx)
     debugImplementation(libs.androidx.fragment.testing)

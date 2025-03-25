@@ -37,6 +37,7 @@ import android.widget.Scroller;
 
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 
@@ -936,10 +937,12 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
         @Override
         public void onScaleEnd(final ScaleGestureDetector detector) {
             super.onScaleEnd(detector);
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
-                    UserAnalyticsEvent.PREVIEW_ZOOMED,
-                    Collections.singleton(new UserAnalyticsEventProperty.Screen(screenName))
-            );
+            UserAnalyticsEventTracker userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
+            if (userAnalyticsEventTracker != null)
+                userAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.PREVIEW_ZOOMED,
+                        Collections.singleton(new UserAnalyticsEventProperty.Screen(screenName))
+                );
             setState(State.NONE);
             boolean animateToZoomBoundary = false;
             float targetZoom = normalizedScale;

@@ -28,6 +28,7 @@ data class GiniColorScheme(
     val datePicker: DatePicker = DatePicker(),
     val checkbox: Checkbox = Checkbox(),
     val contextMenu: ContextMenu = ContextMenu(),
+    val logo: Logo = Logo(),
 ) {
 
     @Immutable
@@ -223,6 +224,11 @@ data class GiniColorScheme(
             val contentOutlined: Color = Color.Unspecified,
         )
     }
+
+    @Immutable
+    data class Logo(
+        val tint: Color = Color.Unspecified,
+    )
 }
 
 /**
@@ -347,6 +353,9 @@ internal fun giniLightColorScheme(
         contextMenu = GiniColorScheme.ContextMenu(
             container = light01,
             borderColor = light03
+        ),
+        logo = GiniColorScheme.Logo(
+            tint = accent01
         )
     )
 }
@@ -477,6 +486,9 @@ internal fun giniDarkColorScheme(
         contextMenu = GiniColorScheme.ContextMenu(
             container = dark02,
             borderColor = dark03
+        ),
+        logo = GiniColorScheme.Logo(
+            tint = accent01
         )
     )
 }
