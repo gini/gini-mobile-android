@@ -58,7 +58,10 @@ fun GiniDatePickerDialog(
         onDismissRequest = onDismissRequest
     ) {
         Card(
-            modifier = if (isLandScape) modifier.fillMaxWidth(0.65f).fillMaxHeight(0.90f).verticalScroll(rememberScrollState())
+            modifier = if (isLandScape) modifier
+                .fillMaxWidth(0.65f)
+                .fillMaxHeight(0.90f)
+                .verticalScroll(rememberScrollState())
             else modifier.fillMaxWidth(0.95f),
         ) {
             DatePicker(
