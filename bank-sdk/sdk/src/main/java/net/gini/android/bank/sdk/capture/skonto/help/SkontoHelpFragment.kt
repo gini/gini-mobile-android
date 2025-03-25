@@ -47,7 +47,6 @@ import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpFo
 import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpItemsSectionColors
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
