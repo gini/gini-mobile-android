@@ -379,15 +379,6 @@ private fun ScreenReadyState(
 }
 
 @Composable
-private fun getInvoicePreviewPaddingTop(): Dp {
-    val context = LocalContext.current
-    val isTablet =
-        remember { context.resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet) }
-
-    return if (isTablet) 64.dp else 8.dp
-}
-
-@Composable
 private fun TopAppBar(
     onBackClicked: () -> Unit,
     onHelpClicked: () -> Unit,
@@ -660,7 +651,6 @@ private fun SkontoSection(
 
             val remainingDaysText = getSkontoRemainingDays(infoPaymentInDays)
 
-
             val infoBannerText = when (edgeCase) {
                 SkontoEdgeCase.PayByCashOnly ->
                     stringResource(
@@ -785,19 +775,6 @@ private fun SkontoSection(
             date = dueDate,
             selectableDates = getSkontoSelectableDates()
         )
-    }
-}
-
-@Composable
-private fun getSkontoRemainingDays(infoPaymentInDays : Int) : String {
-    return if (infoPaymentInDays != 0) {
-        pluralStringResource(
-            id = R.plurals.days,
-            count = infoPaymentInDays,
-            infoPaymentInDays.toString()
-        )
-    } else {
-        stringResource(id = R.string.days_zero)
     }
 }
 
