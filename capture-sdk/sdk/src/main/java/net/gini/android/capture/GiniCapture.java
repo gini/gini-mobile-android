@@ -1,5 +1,6 @@
 package net.gini.android.capture;
 
+import static com.google.android.gms.common.util.CollectionUtils.listOf;
 import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -216,9 +217,11 @@ public class GiniCapture {
             return;
         }
 
+        final String EXTRACTION_AMOUNT_TO_PAY = "amountToPay";
+
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
-        extractionMap.put("amountToPay", new GiniCaptureSpecificExtraction("amountToPay", amount.amountToPay(), "amount", null, emptyList()));
+        extractionMap.put(EXTRACTION_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_AMOUNT_TO_PAY, amount.amountToPay(), "amount", null, emptyList()));
 
         extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient, "companyname", null, emptyList()));
 
@@ -230,6 +233,8 @@ public class GiniCapture {
 
         extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic, "bic", null, emptyList()));
 
+        // We should remove skonto from compound extractions as we don't want to override them by clients when sending normal feedback!
+        sInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
 
         // Test fails here if for some reason mGiniCaptureNetworkService is null
         // Added null checking to fix test fail -> or figure out something else
@@ -255,6 +260,71 @@ public class GiniCapture {
                     if (oldInstance.mNetworkRequestsManager != null) {
                         oldInstance.mNetworkRequestsManager.cleanup();
                     }
+                }
+            });
+        }
+
+    }
+
+
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
+    public static synchronized void sendTransferSummaryForSkonto(@NonNull final Amount amount,
+                                                                 @NonNull final String skontoAmountToPayCalculated,
+                                                                 @NonNull final String skontoPercentageDiscountedCalculated,
+                                                                 @NonNull final String skontoDueDateCalculated) {
+
+        final String EXTRACTION_AMOUNT_TO_PAY = "amountToPay";
+        final String EXTRACTION_AMOUNT = "amount";
+        final String EXTRACTION_SKONTO_AMOUNT_TO_PAY = "skontoAmountToPayCalculated";
+        final String EXTRACTION_SKONTO_PERCENTAGE_TO_PAY = "skontoPercentageDiscountedCalculated";
+        final String EXTRACTION_SKONTO_DUE_DATE = "skontoDueDateCalculated";
+        final String EXTRACTION_SKONTO_DISCOUNTS = "skontoDiscounts";
+
+        if (sInstance == null) {
+            return;
+        }
+
+        Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
+
+        extractionMap.put(EXTRACTION_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_AMOUNT_TO_PAY, amount.amountToPay(), EXTRACTION_AMOUNT, null, emptyList()));
+
+        final GiniCapture oldInstance = sInstance;
+        Map<String, GiniCaptureCompoundExtraction> compoundExtractionMap = new HashMap<>();
+        Map<String, GiniCaptureSpecificExtraction> skontoSpecificExtractions = new HashMap<>();
+
+        skontoSpecificExtractions.put(EXTRACTION_SKONTO_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_AMOUNT_TO_PAY, skontoAmountToPayCalculated, EXTRACTION_AMOUNT, null, emptyList()));
+
+        double percentage = ((int) (Double.parseDouble(skontoPercentageDiscountedCalculated) * 100)) / 100.0;
+        skontoSpecificExtractions.put(EXTRACTION_SKONTO_PERCENTAGE_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_PERCENTAGE_TO_PAY, percentage + "%", EXTRACTION_AMOUNT, null, emptyList()));
+        skontoSpecificExtractions.put(EXTRACTION_SKONTO_DUE_DATE, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_DUE_DATE, skontoDueDateCalculated, EXTRACTION_AMOUNT, null, emptyList()));
+        compoundExtractionMap.put(EXTRACTION_SKONTO_DISCOUNTS, new GiniCaptureCompoundExtraction(EXTRACTION_SKONTO_DISCOUNTS, listOf(skontoSpecificExtractions)));
+
+        // Test fails here if for some reason mGiniCaptureNetworkService is null
+        // Added null checking to fix test fail -> or figure out something else
+
+        if (oldInstance.mGiniCaptureNetworkService != null) {
+            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, compoundExtractionMap, new GiniCaptureNetworkCallback<Void, Error>() {
+                //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
+                private int retryCount = 0;
+                @Override
+                public void failure(Error error) {
+                    int maxRetries = 3;
+                    if (retryCount < maxRetries) {
+                        retryCount++;
+                        oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, compoundExtractionMap, this);
+                    }
+                }
+                @Override
+                public void success(Void result) {
+                    //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
+                }
+                @Override
+                public void cancelled() {
+                    //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
                 }
             });
         }

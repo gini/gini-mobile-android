@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +37,7 @@ import net.gini.android.capture.ui.components.list.ZoomableLazyColumn
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.theme.GiniTheme
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 internal fun InvoicePreviewScreen(
@@ -47,16 +47,20 @@ internal fun InvoicePreviewScreen(
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
     isLandScape : Boolean
 ) {
-    val state by viewModel.stateFlow.collectAsState()
+    val state by viewModel.collectAsState()
 
     InvoiceScreenContent(
         modifier = modifier,
-        onCloseClicked = navigateBack,
+        onCloseClicked = {
+            navigateBack()
+            viewModel.onUserNavigatesBack()
+        },
         colors = colors,
         isLoading = state.isLoading,
         screenTitle = state.screenTitle,
         infoTextLines = state.infoTextLines,
         images = state.images,
+        onUserZoomedScreenOnce = viewModel::onUserZoomedImage,
         isLandScape = isLandScape
     )
 }
@@ -70,11 +74,13 @@ internal fun InvoiceScreenContent(
     infoTextLines: List<String>,
     images: List<Bitmap>,
     onCloseClicked: () -> Unit,
+    onUserZoomedScreenOnce: () -> Unit,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
     topBarActions: @Composable RowScope.() -> Unit = {},
     isLandScape: Boolean = false
 ) {
+    var isUserZoomedOnce = false
     Scaffold(
         modifier = modifier.fillMaxSize(),
     ) { paddings ->
@@ -100,6 +106,12 @@ internal fun InvoiceScreenContent(
                 ImagesList(
                     modifier = Modifier,
                     pages = images,
+                    onScaleChanged = {
+                        if (it != DEFAULT_ZOOM && !isUserZoomedOnce) {
+                            onUserZoomedScreenOnce()
+                            isUserZoomedOnce = true
+                        }
+                    },
                     isLandScape = isLandScape
                 )
             }
@@ -219,6 +231,7 @@ private fun InvoiceScreenContentPreviewLandscape() {
             isLoading = true,
             images = emptyList(),
             infoTextLines = listOf("Line 1", "Line 2"),
+            onUserZoomedScreenOnce = {}
         )
     }
 }
@@ -233,6 +246,7 @@ private fun InvoiceScreenContentPreview() {
             isLoading = true,
             images = emptyList(),
             infoTextLines = listOf("Line 1", "Line 2"),
+            onUserZoomedScreenOnce = {}
         )
     }
 }

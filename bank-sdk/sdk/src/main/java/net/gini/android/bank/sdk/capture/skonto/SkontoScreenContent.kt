@@ -51,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
@@ -116,13 +117,16 @@ internal fun SkontoScreenContent(
     isLandScape: Boolean
 ) {
 
-    BackHandler { navigateBack() }
+    BackHandler { viewModel.onBackClicked() }
 
     val state by viewModel.collectAsState()
     viewModel.collectSideEffect {
         when (it) {
             is SkontoScreenSideEffect.OpenInvoiceScreen ->
                 navigateToInvoiceScreen(it.documentId, it.infoTextLines)
+
+            SkontoScreenSideEffect.OpenHelpScreen -> navigateToHelp()
+            SkontoScreenSideEffect.NavigateBack -> navigateBack()
         }
     }
 
@@ -141,8 +145,8 @@ internal fun SkontoScreenContent(
         onDueDateChanged = viewModel::onSkontoDueDateChanged,
         onFullAmountChange = viewModel::onFullAmountFieldChanged,
         isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-        onBackClicked = navigateBack,
-        onHelpClicked = navigateToHelp,
+        onBackClicked = viewModel::onBackClicked,
+        onHelpClicked = viewModel::onHelpClicked,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onProceedClicked = viewModel::onProceedClicked,
         onInfoBannerClicked = viewModel::onInfoBannerClicked,
@@ -151,6 +155,9 @@ internal fun SkontoScreenContent(
         onConfirmAttachTransactionDocClicked = viewModel::onConfirmAttachTransactionDocClicked,
         onCancelAttachTransactionDocClicked = viewModel::onCancelAttachTransactionDocClicked,
         amountFormatter = amountFormatter,
+        onSkontoAmountFieldFocused = viewModel::onSkontoAmountFieldFocused,
+        onDueDateFieldFocused = viewModel::onDueDateFieldFocused,
+        onFullAmountFieldFocused = viewModel::onFullAmountFieldFocused,
         isLandScape = isLandScape
     )
 }
@@ -170,6 +177,9 @@ private fun ScreenStateContent(
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
     onInvoiceClicked: () -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
+    onFullAmountFieldFocused: () -> Unit,
     onConfirmAttachTransactionDocClicked: (alwaysAttach: Boolean) -> Unit,
     onCancelAttachTransactionDocClicked: () -> Unit,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
@@ -197,6 +207,9 @@ private fun ScreenStateContent(
             onInvoiceClicked = onInvoiceClicked,
             onConfirmAttachTransactionDocClicked = onConfirmAttachTransactionDocClicked,
             onCancelAttachTransactionDocClicked = onCancelAttachTransactionDocClicked,
+            onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
+            onDueDateFieldFocused = onDueDateFieldFocused,
+            onFullAmountFieldFocused = onFullAmountFieldFocused,
             isLandScape = isLandScape
         )
     }
@@ -220,6 +233,9 @@ private fun ScreenReadyState(
     onFullAmountChange: (BigDecimal) -> Unit,
     onInfoBannerClicked: () -> Unit,
     onInfoDialogDismissed: () -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
+    onFullAmountFieldFocused: () -> Unit,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
@@ -292,7 +308,10 @@ private fun ScreenReadyState(
                     onInfoBannerClicked = onInfoBannerClicked,
                     discountPercentageFormatter = discountPercentageFormatter,
                     skontoAmountValidationError = state.skontoAmountValidationError,
-                    isLandScape = isLandScape
+                    isLandScape = isLandScape,
+                    onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
+                    onDueDateFieldFocued = onDueDateFieldFocused,
+
                 )
                 WithoutSkontoSection(
                     modifier = Modifier.tabletMaxWidth(),
@@ -302,6 +321,7 @@ private fun ScreenReadyState(
                     onFullAmountChange = onFullAmountChange,
                     amountFormatter = amountFormatter,
                     fullAmountValidationError = state.fullAmountValidationError,
+                    onFullAmountFieldFocused = onFullAmountFieldFocused,
                 )
 
                 if (isLandScape && customBottomNavBarAdapter == null) {
@@ -575,6 +595,8 @@ private fun SkontoSection(
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocued: () -> Unit,
     edgeCase: SkontoEdgeCase?,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
@@ -701,7 +723,12 @@ private fun SkontoSection(
                 currencyCode = amount.currency.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 16.dp)
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            onSkontoAmountFieldFocused()
+                        }
+                    },
                 enabled = isActive,
                 colors = colors.amountFieldColors,
                 onValueChange = { onSkontoAmountChange(it) },
@@ -727,6 +754,7 @@ private fun SkontoSection(
             LaunchedEffect(key1 = pressed) {
                 if (pressed) {
                     isDatePickerVisible = true
+                    onDueDateFieldFocued()
                 }
             }
 
@@ -871,6 +899,7 @@ private fun InfoDialog(
 private fun WithoutSkontoSection(
     isActive: Boolean,
     onFullAmountChange: (BigDecimal) -> Unit,
+    onFullAmountFieldFocused: () -> Unit,
     colors: WithoutSkontoSectionColors,
     amount: Amount,
     amountFormatter: AmountFormatter,
@@ -916,7 +945,12 @@ private fun WithoutSkontoSection(
             GiniAmountTextInput(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 16.dp)
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            onFullAmountFieldFocused()
+                        }
+                    },
                 enabled = isActive,
                 colors = colors.amountFieldColors,
                 amount = amount.value,
@@ -1161,6 +1195,9 @@ private fun ScreenReadyStatePreview(isLandScape: Boolean = false) {
             onConfirmAttachTransactionDocClicked = {
 
             },
+            onDueDateFieldFocused = {},
+            onSkontoAmountFieldFocused = {},
+            onFullAmountFieldFocused = {},
             amountFormatter = AmountFormatter(currencyFormatterWithoutSymbol()),
             isLandScape = isLandScape
         )

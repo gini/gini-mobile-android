@@ -33,6 +33,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
@@ -91,12 +92,16 @@ class NoResultsFragmentImpl {
         handleOnBackPressed();
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
         if (mUserAnalyticsEventTracker != null) {
+            mUserAnalyticsEventTracker.setEventSuperProperty(
+                    new UserAnalyticsEventSuperProperty.DocumentType(
+                            UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument)
+                    )
+            );
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
                     new HashSet<UserAnalyticsEventProperty>() {
                         {
                             add(new UserAnalyticsEventProperty.Screen(screenName));
                             add(new UserAnalyticsEventProperty.DocumentId(mDocument.getId()));
-                            add(new UserAnalyticsEventProperty.DocumentType(UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument)));
                         }
                     }
             );
