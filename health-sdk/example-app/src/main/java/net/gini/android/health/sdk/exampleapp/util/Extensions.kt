@@ -45,6 +45,7 @@ fun String.prettifyDate(): String {
 
 @RequiresApi(Build.VERSION_CODES.N)
 fun String?.isInTheFuture(): Boolean {
+    if (this.isNullOrEmpty()) { return false }
     val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS")
 
     try {
