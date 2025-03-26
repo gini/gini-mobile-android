@@ -78,6 +78,12 @@ android {
 
     buildFeatures {
         viewBinding = true
+        dataBinding = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     signingConfigs {
@@ -183,6 +189,17 @@ dependencies {
         // workaround issue #73
         exclude(group = "com.google.android", module = "android")
     }
+    
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.material3)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.tools.uiToolingPreview)
+    implementation(libs.accompanist.themeAdapter)
+    debugImplementation(libs.compose.tools.uiTooling)
+
+    implementation(libs.orbitmvi.test)
+    implementation(libs.orbitmvi.compose)
+    implementation(libs.orbitmvi.viewmodel)
 
     implementation(libs.lottie)
 

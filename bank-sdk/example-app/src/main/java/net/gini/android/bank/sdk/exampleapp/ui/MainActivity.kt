@@ -25,6 +25,7 @@ import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewO
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.bank.sdk.exampleapp.ui.transactionlist.TransactionListActivity
 import net.gini.android.capture.Document
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.util.CancellationToken
@@ -58,7 +59,11 @@ class MainActivity : AppCompatActivity() {
             if (isIntentActionViewOrSend(intent)) {
                 startGiniBankSdkForOpenWith(intent)
             } else if (intent.hasExtra(EXTRA_IN_OPEN_WITH_DOCUMENT)) {
-                IntentCompat.getParcelableExtra(intent, EXTRA_IN_OPEN_WITH_DOCUMENT, Document::class.java)?.let {
+                IntentCompat.getParcelableExtra(
+                    intent,
+                    EXTRA_IN_OPEN_WITH_DOCUMENT,
+                    Document::class.java
+                )?.let {
                     // Launch the Bank SDK with a delay to allow the SplashActivity to finish.
                     // This will lead to a PermissionDenied exception, if the files received through "open with"
                     // were not loaded into memory before the SplashActivity was finished.
@@ -87,9 +92,9 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun showVersions() {
         binding.textGiniBankVersion.text =
-                getString(R.string.gini_bank_sdk_version) + net.gini.android.bank.sdk.BuildConfig.VERSION_NAME +
-                getString(R.string.gini_capture_sdk_version) + net.gini.android.capture.BuildConfig.VERSION_NAME +
-                getString(R.string.gini_client_id) +  getString(R.string.gini_api_client_id)
+            getString(R.string.gini_bank_sdk_version) + net.gini.android.bank.sdk.BuildConfig.VERSION_NAME +
+                    getString(R.string.gini_capture_sdk_version) + net.gini.android.capture.BuildConfig.VERSION_NAME +
+                    getString(R.string.gini_client_id) + getString(R.string.gini_api_client_id)
 
     }
 
@@ -123,7 +128,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.tilFieldEntryPoint.setEndIconOnClickListener {
             checkIfAppShouldAskForCameraPermission(EntryPoint.FIELD)
+        }
 
+        binding.buttonOpenTlDemo.setOnClickListener {
+            startActivity(Intent(this, TransactionListActivity::class.java))
         }
 
         binding.buttonStartSingleActivity.setOnClickListener {
