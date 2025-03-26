@@ -8,7 +8,6 @@ import android.text.TextPaint
 import android.text.style.URLSpan
 import android.view.View
 
-
 class UrlSpanNoUnderline(private val context: Context, url: String) : URLSpan(url) {
     override fun onClick(widget: View) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
