@@ -84,70 +84,6 @@ into one final document:
         }
     }
 
-Delete payment request
----------------------------------
-
-``GiniHealthSDK`` provides a method to delete a payment request. You can do this by calling ``giniHealth.deletePaymentRequest(...)`` with a payment request ID.
-
-.. code-block:: kotlin
-
-    coroutineScope.launch {
-        // Delete  payment requests
-        val deletePaymentRequest = giniHealth.deletePaymentRequest(paymentRequestId)
-
-        when (deletePaymentRequest) {
-            is Resource.Success -> {
-                // `null` will be returned here
-            }
-            is Resource.Error -> // Handle Error
-            is Resource.Cancelled -> //  Handle cancellation
-        }
-    }
-
-Delete multiple documents at once
----------------------------------
-
-``GiniHealthSDK`` provides an easy method to delete multiple documents at once. You can call ``giniHealth.deleteDocuments(...)`` with the list of document
-ids you want to delete. The call will only succeed if all documents were successfully deleted. If not all documents can be deleted, the whole call will fail
-and no documents will be deleted. In the case of failures, an error or type ``DeleteDocumentErrorResponse`` will be provided, with more insight into why the deletion failed.
-
-.. code-block:: kotlin
-
-    // Assuming `documentIds` is a list of `String` which
-    // represent the ids of the documents to be deleted
-
-    coroutineScope.launch {
-        // Delete multiple documents at once
-        val deleteDocuments = giniHealth.deleteDocuments(documentIds)
-
-        when (deleteDocuments) {
-            is Resource.Success -> {
-                // `null` will be returned here
-            }
-            is Resource.Error -> // Handle `DeleteDocumentErrorResponse`
-            is Resource.Cancelled -> // Handle `DeleteDocumentErrorResponse`
-        }
-    }
-
-Delete payment request
----------------------------------
-
-``GiniHealthSDK`` provides a method to delete a payment request. You can do this by calling ``giniHealth.deletePaymentRequest(...)`` with a payment request ID.
-
-.. code-block:: kotlin
-
-    coroutineScope.launch {
-        // Delete  payment requests
-        val deletePaymentRequest = giniHealth.deletePaymentRequest(paymentRequestId)
-
-        when (deletePaymentRequest) {
-            is Resource.Success -> {
-                // `null` will be returned here
-            }
-            is Resource.Error -> // Handle Error
-            is Resource.Cancelled -> //  Handle cancellation
-        }
-    }
 
 Check which documents/invoices are payable
 ------------------------------------------
@@ -168,28 +104,6 @@ Health API. You can then store the ``isPayable`` state in your own data model.
             // Handle error
         }
     }
-
-get Payment Details
-------------------------
-
-Call ``giniHealth.getPayment()`` with the payment request ID to retrieve the details of a specific payment.
-The method returns a ``Payment`` object containing the relevant payment information.
-
-If the request fails or is canceled, an exception will be thrown with an error message.
-
-.. code-block:: kotlin
-
-    // Assuming paymentId is the ID of the payment request
-
-    coroutineScope.launch {
-        try {
-            // Retrieve payment details
-            val paymentDetails = giniHealth.getPayment(paymentId)
-        } catch (e: Exception) {
-            // Handle error
-        }
-    }
-
 
 Check if document has multiple invoices
 ---------------------------------------
@@ -241,6 +155,72 @@ You need to pass the payment details as parameter to the method:
 
     The ``PaymentFragment`` handles the navigation for the screens shown during the payment flow. It doesn't handle external navigation related events and doesn't show a navigation bar. You are
     free to design navigation to and from the fragment as you see fit.
+
+Get Payment Details
+------------------------
+
+Call ``giniHealth.getPayment()`` with the payment request ID to retrieve the details of a specific payment.
+The method returns a ``Payment`` object containing the relevant payment information.
+
+If the request fails or is canceled, an exception will be thrown with an error message.
+
+.. code-block:: kotlin
+
+    // Assuming paymentId is the ID of the payment request
+
+    coroutineScope.launch {
+        try {
+            // Retrieve payment details
+            val paymentDetails = giniHealth.getPayment(paymentId)
+        } catch (e: Exception) {
+            // Handle error
+        }
+    }
+
+Delete payment request
+---------------------------------
+
+``GiniHealthSDK`` provides a method to delete a payment request. You can do this by calling ``giniHealth.deletePaymentRequest(...)`` with a payment request ID.
+
+.. code-block:: kotlin
+
+    coroutineScope.launch {
+        // Delete  payment requests
+        val deletePaymentRequest = giniHealth.deletePaymentRequest(paymentRequestId)
+
+        when (deletePaymentRequest) {
+            is Resource.Success -> {
+                // `null` will be returned here
+            }
+            is Resource.Error -> // Handle Error
+            is Resource.Cancelled -> //  Handle cancellation
+        }
+    }
+
+Delete multiple documents at once
+---------------------------------
+
+``GiniHealthSDK`` provides an easy method to delete multiple documents at once. You can call ``giniHealth.deleteDocuments(...)`` with the list of document
+ids you want to delete. The call will only succeed if all documents were successfully deleted. If not all documents can be deleted, the whole call will fail
+and no documents will be deleted. In the case of failures, an error or type ``DeleteDocumentErrorResponse`` will be provided, with more insight into why the deletion failed.
+
+.. code-block:: kotlin
+
+    // Assuming `documentIds` is a list of `String` which
+    // represent the ids of the documents to be deleted
+
+    coroutineScope.launch {
+        // Delete multiple documents at once
+        val deleteDocuments = giniHealth.deleteDocuments(documentIds)
+
+        when (deleteDocuments) {
+            is Resource.Success -> {
+                // `null` will be returned here
+            }
+            is Resource.Error -> // Handle `DeleteDocumentErrorResponse`
+            is Resource.Cancelled -> // Handle `DeleteDocumentErrorResponse`
+        }
+    }
 
 The ``PaymentFlowConfiguration`` class contains the following options:
 
