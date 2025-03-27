@@ -11,6 +11,7 @@
         android:id="@+id/gc_navigation_top_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,6 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_alignParentTop="true"
+        android:focusable="true"
         android:layout_marginTop="@dimen/gc_large"
         android:minHeight="@dimen/gc_large_64"
         android:paddingStart="@dimen/gc_large_24"
@@ -64,6 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/gc_large"
+        android:focusable="true"
         android:layout_marginTop="@dimen/gc_large"
         app:layout_constraintStart_toStartOf="@+id/gc_no_results_recyclerview"
         app:layout_constraintTop_toBottomOf="@+id/view2"
