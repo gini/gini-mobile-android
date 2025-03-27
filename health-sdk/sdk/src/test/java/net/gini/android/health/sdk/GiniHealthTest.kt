@@ -14,6 +14,7 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.models.Payment
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
@@ -390,4 +391,60 @@ class GiniHealthTest {
 
         assertEquals("Request cancelled", result)
     }
+
+    @Test
+    fun `Returns Payment model when getPayment request was successful`() = runTest {
+        // Arrange: Create a mock Payment model
+        val mockPayment = Payment(
+            paidAt = "2021-03-18T16:29:37.572409",
+            recipient = "Dr. med. Hackler",
+            iban = "DE02300209000106531065",
+            amount = "335.50:EUR",
+            purpose = "ReNr AZ356789Z",
+            bic = "CMCIDEDDXXX"
+        )
+        // Mock the response from documentManager.getPayment
+        coEvery { documentManager.getPayment(any()) } returns Resource.Success(mockPayment)
+
+        // Act: Call getPayment function
+        val result = giniHealth.getPayment("d89f26ab-a374-4c69-ae83-a88b078e4c49")
+
+        // Assert: Check that the result is the Payment model
+        assertTrue(result == mockPayment)
+    }
+
+    @Test
+    fun `Returns error message when getPayment request returns an error`() = runTest {
+        // Arrange: Mock error response from documentManager.getPayment
+        coEvery { documentManager.getPayment(any()) } returns Resource.Error("{ \"message\": \"Payment request not found\" }")
+
+        // Act: Call getPayment function
+        val result = try {
+            giniHealth.getPayment("d89f26ab-a374-4c69-ae83-a88b078e4c49")
+            null // This should not be reached
+        } catch (e: Exception) {
+            e.message
+        }
+
+        // Assert: Check that the error message is returned
+        assertEquals("{ \"message\": \"Payment request not found\" }", result)
+    }
+
+    @Test
+    fun `Returns Request cancelled when getPayment request was cancelled`() = runTest {
+        // Arrange: Mock cancelled response from documentManager.getPayment
+        coEvery { documentManager.getPayment(any()) } returns Resource.Cancelled()
+
+        // Act: Call getPayment function
+        val result = try {
+            giniHealth.getPayment("d89f26ab-a374-4c69-ae83-a88b078e4c49")
+            null // This should not be reached
+        } catch (e: Exception) {
+            e.message
+        }
+
+        // Assert: Check that the request was cancelled
+        assertEquals("Request cancelled", result)
+    }
+
 }
