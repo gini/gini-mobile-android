@@ -51,10 +51,27 @@ internal class IBANRecognizerImpl @JvmOverloads constructor(
 
     private fun extractIBAN(recognizedText: String?, doneCallback: (List<String>) -> Unit) {
         if (!recognizedText.isNullOrEmpty()) {
-            val ibans = (singleLineIBANs(recognizedText) + ibanInBlocks(recognizedText))
+            val ibansFromRegex = (singleLineIBANs(recognizedText) + ibanInBlocks(recognizedText))
                 .removeWhitespace()
                 .distinct()
+
+            var ibans = ibansFromRegex
                 .removeInvalidIBANs()
+
+            if (ibans.isEmpty()) {
+                ibans = ibansFromRegex.map { iban ->
+                    iban.substring(0, 2) + iban.substring(2).map { char ->
+                        when (char) {
+                            'S', 's' -> '5'
+                            'B' -> '8'
+                            'Z' -> '7'
+                            'I', 'i', 'l' ,'T' -> '1'
+                            'O', 'o', 'Q' -> '0'
+                            else -> char
+                        }
+                    }.joinToString("")
+                }.removeInvalidIBANs()
+            }
 
             val preferredIBANs = ibans.filter(::isPreferredIBAN)
 
