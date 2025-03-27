@@ -15,6 +15,7 @@
     <string name="upload_test_invoices">Upload Invoices</string>
     <string name="create_payment_order">Create payment order</string>
     <string name="batch_delete_documents">Batch delete documents</string>
+    <string name="delete_payment_request">Delete Payment Request</string>
     <string name="welcome_to_gini">Welcome to Gini</string>
     <string name="example_of_health_sdk">Example of Gini Pay Connect integration in the insurance app</string>
     <string name="could_not_start_payment_review">Could not start payment review</string>
@@ -45,4 +46,7 @@
     <string name="not_found_documents">not found documents: </string>
     <string name="missing_composite_documents">missing composite documents: </string>
     <string name="unauthorized_documents">unauthorized documents: </string>
+    <string name="payment_request_error_deleting">Payment Request Deletion Failed</string>
+    <string name="payment_requests_unauthorized">unauthorized payment request: </string>
+    <string name="payment_requests_not_found">not found payment request: </string>
 </resources>
