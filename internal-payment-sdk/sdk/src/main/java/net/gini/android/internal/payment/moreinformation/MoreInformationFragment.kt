@@ -3,10 +3,8 @@ package net.gini.android.internal.payment.moreinformation
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannedString
-import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.TextAppearanceSpan
-import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +28,7 @@ import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolde
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
+import net.gini.android.internal.payment.utils.UrlSpanNoUnderline
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
@@ -145,7 +144,7 @@ class MoreInformationFragment private constructor(
     private fun createSpanForLink(@StringRes placeholder: Int, @StringRes urlResource: Int) =
         SpannableString(getLocaleStringResource(placeholder)).apply {
             setSpan(
-                URLSpanNoUnderline(getLocaleStringResource(urlResource)),
+                UrlSpanNoUnderline(requireContext(), getLocaleStringResource(urlResource)),
                 0,
                 this.length,
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -236,12 +235,5 @@ class MoreInformationFragment private constructor(
         fun newInstance(paymentComponent: PaymentComponent?,
                         backListener: BackListener? = null): MoreInformationFragment =
             MoreInformationFragment(paymentComponent = paymentComponent, backListener = backListener)
-    }
-
-    private class URLSpanNoUnderline(url: String?) : URLSpan(url) {
-        override fun updateDrawState(ds: TextPaint) {
-            super.updateDrawState(ds)
-            ds.isUnderlineText = false
-        }
     }
 }
