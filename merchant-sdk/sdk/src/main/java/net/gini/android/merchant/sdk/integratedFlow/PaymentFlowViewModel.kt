@@ -118,8 +118,8 @@ internal class PaymentFlowViewModel(
         checkNextStep(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
     }
 
-    fun onForwardToSharePdfTapped(externalCacheDir: File?) {
-        sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope, paymentRequestFlow.value)
+    fun onForwardToSharePdfTapped(externalCacheDir: File?, fileName: String) {
+        sharePdf(initialSelectedPaymentProvider, externalCacheDir, fileName, viewModelScope, paymentRequestFlow.value)
     }
 
     override suspend fun getPaymentRequest(): PaymentRequest =

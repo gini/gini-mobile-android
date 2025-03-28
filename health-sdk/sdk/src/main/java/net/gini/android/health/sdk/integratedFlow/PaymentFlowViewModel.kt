@@ -132,11 +132,11 @@ internal class PaymentFlowViewModel(
         checkNextStep(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
     }
 
-    fun onForwardToSharePdfTapped() {
+    fun onForwardToSharePdfTapped(fileName: String) {
         documentId?.let {
             sendFeedback()
         }
-        sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope, paymentRequestFlow.value)
+        sharePdf(initialSelectedPaymentProvider, externalCacheDir, fileName, viewModelScope, paymentRequestFlow.value)
     }
 
     override suspend fun getPaymentRequest(): PaymentRequest = giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails?.toCommonPaymentDetails())
