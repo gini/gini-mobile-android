@@ -138,7 +138,7 @@ class HelpFragment : Fragment() {
 
         val helpItems = helpItemsAdapter.items.map { "\"${getString(it.title)}\"" }
 
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN, setOf(
                 UserAnalyticsEventProperty.Screen(screenName),
                 UserAnalyticsEventProperty.HasCustomItems(hasCustomItems),
@@ -148,14 +148,14 @@ class HelpFragment : Fragment() {
     }
 
     private fun trackBackTappedEvent() = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
     }
 
     private fun trackHelpItemTappedEvent(helpItem: HelpItem) = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.HELP_ITEM_TAPPED,
             setOf(
                 UserAnalyticsEventProperty.Screen(screenName),

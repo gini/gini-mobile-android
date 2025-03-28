@@ -188,7 +188,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     }
 
     private fun trackAnalyticsScreenShownEvent() {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN, setOf(
                 UserAnalyticsEventProperty.Screen(screenName)
             )
@@ -196,7 +196,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     }
 
     private fun trackAnalyticsGetStartedTappedEvent() {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.GET_STARTED_TAPPED, setOf(
                 UserAnalyticsEventProperty.Screen(screenName)
             )
@@ -204,7 +204,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     }
 
     private fun trackAnalyticsDismissedEvent() {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.DISMISSED, setOf(
                 UserAnalyticsEventProperty.Screen(screenName)
             )

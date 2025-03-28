@@ -298,7 +298,7 @@ class PaymentFragment private constructor(
         val context = requireContext().wrappedWithGiniPaymentThemeAndLocale(viewModel.paymentComponent.getGiniPaymentLanguage(requireContext()))
         snackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             setTextMaxLines(2)
-            setAction(getString(R.string.ghs_snackbar_retry)) { onRetry() }
+            setAction(getString(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) { onRetry() }
             show()
         }
     }
@@ -446,15 +446,15 @@ class PaymentFragment private constructor(
                     if (intent != null) {
                         startActivity(intent)
                     } else {
-                        handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
+                        handleError(getString(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.onPaymentButtonTapped() }
                     }
                 } catch (exception: ActivityNotFoundException) {
-                    handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
+                    handleError(getString(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.onPaymentButtonTapped() }
                 }
             }
             is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> {
                 binding.loading.isVisible = false
-                handleError(getString(R.string.ghs_generic_error_message)) { viewModel.onPaymentButtonTapped() }
+                handleError(getString(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.onPaymentButtonTapped() }
             }
             GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> viewModel.giniHealth.setOpenBankState(GiniHealth.PaymentState.Cancel, viewModel.viewModelScope)
             else -> {

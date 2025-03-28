@@ -2,17 +2,19 @@ package net.gini.android.health.api
 
 import net.gini.android.core.api.DocumentService
 import net.gini.android.health.api.requests.PaymentRequestBody
+import net.gini.android.health.api.response.ConfigurationResponse
 import net.gini.android.health.api.response.PageResponse
 import net.gini.android.health.api.response.PaymentProviderResponse
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.Url
 
 internal interface HealthApiDocumentService: DocumentService {
 
@@ -33,4 +35,13 @@ internal interface HealthApiDocumentService: DocumentService {
 
     @GET("/paymentRequests/{paymentRequestId}")
     suspend fun getPaymentRequestDocument(@HeaderMap bearer: Map<String, String>, @Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
+
+    @DELETE("/paymentRequests/{paymentRequestId}")
+    suspend fun deletePaymentRequest(@HeaderMap bearer: Map<String, String>, @Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
+
+    @GET("/configurations")
+    suspend fun getConfigurations(@HeaderMap bearer: Map<String, String>): Response<ConfigurationResponse>
+
+    @HTTP(method = "DELETE", path = "/documents", hasBody = true)
+    suspend fun batchDeleteDocuments(@HeaderMap bearer: Map<String, String>, @Body body: List<String>): Response<Void>
 }

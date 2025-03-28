@@ -13,6 +13,8 @@ data class PaymentRequest(
     val amount: String,
     val purpose: String,
     val status: Status,
+    val createdAt: String?,
+    val expirationDate: String?
 ) {
     enum class Status {
         OPEN, PAID, PAID_ADJUSTED
@@ -34,5 +36,7 @@ fun net.gini.android.core.api.models.PaymentRequest.toPaymentRequest(
         net.gini.android.core.api.models.PaymentRequest.Status.OPEN -> PaymentRequest.Status.OPEN
         net.gini.android.core.api.models.PaymentRequest.Status.PAID -> PaymentRequest.Status.PAID
         else -> PaymentRequest.Status.PAID_ADJUSTED
-    }
+    },
+    createdAt = createdAt,
+    expirationDate = expirationDate
 )

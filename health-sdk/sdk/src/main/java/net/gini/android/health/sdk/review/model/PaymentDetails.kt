@@ -6,7 +6,8 @@ import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
-import net.gini.android.health.sdk.util.toBackendFormat
+import net.gini.android.internal.payment.utils.extensions.sanitizeAmount
+import net.gini.android.internal.payment.utils.extensions.toBackendFormat
 
 /**
  * Represents the payment details of an invoice as extracted from a document.
@@ -75,7 +76,7 @@ internal fun MutableMap<String, CompoundExtraction>.withFeedback(paymentDetails:
                     extractions["amount_to_pay"] = extractions["amount_to_pay"].let { extraction ->
                         SpecificExtraction(
                             extraction?.name ?: "amount_to_pay",
-                            "${paymentDetails.amount.toBackendFormat()}:EUR",
+                            "${paymentDetails.amount.sanitizeAmount().toBackendFormat()}:EUR",
                             extraction?.entity ?: "",
                             extraction?.box,
                             extraction?.candidate ?: emptyList()
@@ -102,6 +103,6 @@ internal fun MutableMap<String, CompoundExtraction>.getPaymentExtraction(name: S
 internal fun PaymentDetails.toCommonPaymentDetails() = net.gini.android.internal.payment.api.model.PaymentDetails(
     recipient = this.recipient,
     iban = this.iban,
-    amount = this.amount,
+    amount = this.amount.sanitizeAmount(),
     purpose = this.purpose
 )

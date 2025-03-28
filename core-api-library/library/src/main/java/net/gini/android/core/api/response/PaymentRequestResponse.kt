@@ -16,4 +16,6 @@ data class PaymentRequestResponse(
     @Json(name = "amount") val amount: String,
     @Json(name = "purpose") val purpose: String,
     @Json(name = "status") val status: String,
+    @Json(name = "createdAt") val createdAt: String?,
+    @Json(name = "expirationDate") val expirationDate: String?
 )
