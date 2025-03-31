@@ -198,7 +198,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.configureOrientation() {
         pager.isVisible = true
         pager.adapter = documentPageAdapter
-        TabLayoutMediator(indicator, pager) { tab, _ -> tab.view.isClickable = false }.attach()
+        TabLayoutMediator(indicator, pager) { tab, _ -> tab.view.isClickable = true }.attach()
     }
 
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
