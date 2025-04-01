@@ -9,7 +9,9 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -34,6 +36,12 @@ internal interface HealthApiDocumentService: DocumentService {
     @GET("/paymentRequests/{paymentRequestId}")
     suspend fun getPaymentRequestDocument(@HeaderMap bearer: Map<String, String>, @Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
 
+    @DELETE("/paymentRequests/{paymentRequestId}")
+    suspend fun deletePaymentRequest(@HeaderMap bearer: Map<String, String>, @Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
+
     @GET("/configurations")
     suspend fun getConfigurations(@HeaderMap bearer: Map<String, String>): Response<ConfigurationResponse>
+
+    @HTTP(method = "DELETE", path = "/documents", hasBody = true)
+    suspend fun batchDeleteDocuments(@HeaderMap bearer: Map<String, String>, @Body body: List<String>): Response<Void>
 }

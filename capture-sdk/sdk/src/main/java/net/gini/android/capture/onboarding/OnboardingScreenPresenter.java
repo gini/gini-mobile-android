@@ -14,6 +14,7 @@ import net.gini.android.capture.internal.util.FeatureConfiguration;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 
@@ -116,13 +117,15 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
                     new UserAnalyticsEventProperty.CustomOnboardingTitle(String.valueOf(mPages.get(pageIndex).getTitleResId()))
             );
             eventProperties.add(new UserAnalyticsEventProperty.Screen(new UserAnalyticsScreen.OnBoarding.Custom(pageIndex)));
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
+        } else {
+            eventProperties.add(new UserAnalyticsEventProperty.Screen(getOnBoardingEventScreenName(mPages.get(pageIndex).getTitleResId())));
+        }
+        UserAnalyticsEventTracker userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
+        if (userAnalyticsEventTracker != null) {
+            userAnalyticsEventTracker.trackEvent(
                     event,
                     eventProperties
             );
-        } else {
-            eventProperties.add(new UserAnalyticsEventProperty.Screen(getOnBoardingEventScreenName(mPages.get(pageIndex).getTitleResId())));
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(event, eventProperties);
         }
     }
 

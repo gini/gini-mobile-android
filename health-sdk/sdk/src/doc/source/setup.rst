@@ -2,7 +2,7 @@ Getting started
 ===============
 
 Installation
-------------
+-------------
 
 Add our sdk to your dependencies:
 
@@ -11,7 +11,7 @@ build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini.android:gini-health-sdk:5.0.2'
+        implementation 'net.gini.android:gini-health-sdk:5.3.0'
     }
 
 Gini Pay Deep Link For Your App

@@ -35,6 +35,18 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
     ): Resource<ByteArray> = documentRepository.getPageImage(documentId, page)
 
     /**
+     * Delete multiple documents in one go.
+     *
+     * @param documentIds the list of document ids to be deleted
+     * @return [Resource] with the status of the deletion, success or failure - if at least one document could not
+     * be deleted, the call will not return Success
+     */
+    suspend fun deleteDocuments(
+        documentIds: List<String>
+    ): Resource<Unit> =
+        documentRepository.deleteDocuments(documentIds)
+
+    /**
      * A payment provider is a Gini partner which integrated the GiniPay for Banks SDK into their mobile apps.
      *
      * @return [Resource] with a list of [PaymentProvider] instances or information about the error
@@ -69,6 +81,17 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
     suspend fun getPaymentRequestDocument(
         paymentRequestId: String
     ): Resource<ByteArray> = documentRepository.getPaymentRequestDocument(paymentRequestId)
+
+
+    /**
+     * This function is used to delete payment requests.
+     *
+     * @param paymentRequestId The unique identifier of the payment request to be deleted.
+     * @return [Resource] with the byte array corresponding to the deleted [PaymentRequest]
+     */
+    suspend fun deletePaymentRequest(
+        paymentRequestId: String
+    ): Resource<Unit> = documentRepository.deletePaymentRequest(paymentRequestId)
 
     /**
      * Returns a QR code in PNG format

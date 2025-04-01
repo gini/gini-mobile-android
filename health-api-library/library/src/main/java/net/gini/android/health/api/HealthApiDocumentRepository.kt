@@ -117,6 +117,13 @@ class HealthApiDocumentRepository(
             }
         }
 
+    suspend fun deletePaymentRequest(paymentRequestId: String): Resource<Unit> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.deletePaymentRequest(accessToken, paymentRequestId)
+            }
+        }
+
     suspend fun getPaymentRequestImage(paymentRequestId: String): Resource<ByteArray> =
         withAccessToken { accessToken ->
             wrapInResource {
@@ -128,6 +135,13 @@ class HealthApiDocumentRepository(
         withAccessToken {  accessToken ->
             wrapInResource {
                 documentRemoteSource.getConfigurations(accessToken)
+            }
+        }
+
+    suspend fun deleteDocuments(documentIds: List<String>): Resource<Unit> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.deleteDocuments(accessToken, documentIds)
             }
         }
 }

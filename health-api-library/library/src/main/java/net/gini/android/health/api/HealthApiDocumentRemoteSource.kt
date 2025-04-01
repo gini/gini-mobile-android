@@ -70,6 +70,16 @@ class HealthApiDocumentRemoteSource internal constructor(
         response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
+    suspend fun deletePaymentRequest(accessToken: String, paymentRequestId: String): Unit = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            documentService.deletePaymentRequest(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniPaymentRequestDocumentMediaType),
+                paymentRequestId
+            )
+        }
+        response.body()
+    }
+
     suspend fun getPaymentRequestImage(accessToken: String, paymentRequestId: String): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(
@@ -87,5 +97,16 @@ class HealthApiDocumentRemoteSource internal constructor(
             )
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
+    }
+
+    suspend fun deleteDocuments(accessToken: String, documentIds: List<String>): Unit = withContext(coroutineContext) {
+        val response =
+            SafeApiRequest.apiRequest {
+            documentService.batchDeleteDocuments(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
+                documentIds
+            )
+        }
+        response.body()
     }
 }

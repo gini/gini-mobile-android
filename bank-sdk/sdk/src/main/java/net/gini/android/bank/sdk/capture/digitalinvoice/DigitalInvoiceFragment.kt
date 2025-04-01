@@ -354,8 +354,6 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     override fun payButtonClicked() {
         tryShowAttachDocToTransactionDialog {
             presenter?.pay()
-            trackProceedTapped()
-            trackSdkClosedEvent()
         }
     }
 
@@ -647,21 +645,21 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     // region Analytics
 
     private fun trackCloseTappedEvent() = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(screenName)),
         )
     }
 
     private fun trackHelpTappedEvent() = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.HELP_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(screenName)),
         )
     }
 
     private fun trackItemSwitchTappedTappedEvent(selected: Boolean) = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.ITEM_SWITCH_TAPPED,
             setOf(
                 UserAnalyticsEventProperty.Screen(screenName),
@@ -671,27 +669,12 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     }
 
     private fun trackItemEditTappedTappedEvent() = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.EDIT_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(screenName)),
         )
     }
 
-    private fun trackProceedTapped() = runCatching {
-        userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.PROCEED_TAPPED,
-            setOf(UserAnalyticsEventProperty.Screen(screenName))
-        )
-    }
-
-    private fun trackSdkClosedEvent() = runCatching {
-        userAnalyticsEventTracker.trackEvent(
-            UserAnalyticsEvent.SDK_CLOSED, setOf(
-                UserAnalyticsEventProperty.Screen(screenName),
-                UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful)
-            )
-        )
-    }
 
     private fun getAmountsAreConsistentExtraction(extractions: Map<String, GiniCaptureSpecificExtraction>): Boolean {
         val isInaccurateExtraction = extractions["amountsAreConsistent"]?.let {

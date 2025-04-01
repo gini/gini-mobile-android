@@ -1,9 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ghs_snackbar_retry">Retry</string>
-    <string name="ghs_generic_error_message">Oops, something went wrong. Please try again.</string>
-    <string name="ghs_payment_details_info_bar_text">Please check the prefilled values</string>
-    <string name="ghs_close_content_description">Close</string>
-    <string name="ghs_more_information_fragment_title">More Information</string>
-    <string name="ghs_invoice_image_content_description">Invoice document</string>
 </resources>

@@ -1,8 +1,7 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package net.gini.android.bank.sdk.capture.digitalinvoice.skonto
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -49,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ComposeView
@@ -57,7 +57,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -91,6 +90,8 @@ import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInp
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
+import net.gini.android.capture.ui.compose.GiniScreenPreviewSizes
+import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.modifier.tabletMaxWidth
 import net.gini.android.capture.util.compose.keyboardPadding
@@ -230,6 +231,8 @@ private fun ScreenContent(
         onInvoiceClicked = viewModel::onInvoiceClicked,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onHelpClicked = viewModel::onHelpClicked,
+        onSkontoAmountFieldFocused = viewModel::onSkontoAmountFieldFocused,
+        onDueDateFieldFocused = viewModel::onDueDateFieldFocused
     )
 }
 
@@ -244,6 +247,8 @@ private fun ScreenStateContent(
     onInfoDialogDismissed: () -> Unit,
     onInvoiceClicked: () -> Unit,
     onHelpClicked: () -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors()
@@ -262,6 +267,8 @@ private fun ScreenStateContent(
             onInvoiceClicked = onInvoiceClicked,
             customBottomNavBarAdapter = customBottomNavBarAdapter,
             onHelpClicked = onHelpClicked,
+            onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
+            onDueDateFieldFocused = onDueDateFieldFocused
         )
     }
 
@@ -277,6 +284,8 @@ private fun ScreenReadyState(
     onInfoDialogDismissed: () -> Unit,
     onDiscountAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
@@ -348,6 +357,8 @@ private fun ScreenReadyState(
                     edgeCase = state.edgeCase,
                     onInfoBannerClicked = onInfoBannerClicked,
                     skontoAmountValidationError = state.skontoAmountValidationError,
+                    onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
+                    onDueDateFieldFocued = onDueDateFieldFocused,
                 )
             }
         }
@@ -528,6 +539,8 @@ private fun SkontoSection(
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocued: () -> Unit,
     edgeCase: SkontoEdgeCase?,
     colors: DigitalInvoiceSkontoSectionColors,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
@@ -551,6 +564,7 @@ private fun SkontoSection(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
+                    modifier = Modifier.weight(1f, fill = false),
                     text = stringResource(id = R.string.gbs_skonto_section_discount_title),
                     style = GiniTheme.typography.subtitle1,
                     color = colors.titleTextColor,
@@ -636,7 +650,12 @@ private fun SkontoSection(
                 currencyCode = amount.currency.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 16.dp)
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            onSkontoAmountFieldFocused()
+                        }
+                    },
                 enabled = isActive,
                 colors = colors.amountFieldColors,
                 onValueChange = { onSkontoAmountChange(it) },
@@ -661,6 +680,7 @@ private fun SkontoSection(
             LaunchedEffect(key1 = pressed) {
                 if (pressed) {
                     isDatePickerVisible = true
+                    onDueDateFieldFocued()
                 }
             }
 
@@ -857,21 +877,16 @@ private fun InfoDialog(
 }
 
 @Composable
-@Preview
+@GiniScreenPreviewUiModes
+@GiniScreenPreviewSizes
 private fun ScreenReadyStatePreviewLight() {
-    ScreenReadyStatePreview()
-}
-
-@Composable
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-private fun ScreenReadyStatePreviewDark() {
     ScreenReadyStatePreview()
 }
 
 @Composable
 private fun ScreenReadyStatePreview() {
     GiniTheme {
-        var state by remember { mutableStateOf(previewState) }
+        val state by remember { mutableStateOf(previewState) }
 
         ScreenReadyState(
             state = state,
@@ -884,6 +899,8 @@ private fun ScreenReadyStatePreview() {
             onInvoiceClicked = {},
             onHelpClicked = {},
             customBottomNavBarAdapter = null,
+            onSkontoAmountFieldFocused = {},
+            onDueDateFieldFocused = {}
         )
     }
 }

@@ -185,7 +185,7 @@ class ReviewFragment private constructor(
                 })
             }
 
-            is ResultWrapper.Error -> handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
+            is ResultWrapper.Error -> handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
             else -> { // Loading state handled by payment details
             }
         }
@@ -194,7 +194,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
         binding.loading.isVisible = paymentResult is ResultWrapper.Loading
         if (paymentResult is ResultWrapper.Error) {
-            handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
+            handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
         }
     }
 
@@ -222,7 +222,7 @@ class ReviewFragment private constructor(
                 anchorView = paymentDetailsScrollview
             }
             setTextMaxLines(2)
-            setAction(getLocaleStringResource(R.string.ghs_snackbar_retry)) {
+            setAction(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) {
                 onRetry()
             }
             show()

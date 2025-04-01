@@ -17,16 +17,17 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsDocumentType
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsErrorType
-import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
@@ -48,7 +49,7 @@ class ErrorFragmentImpl(
 
     private var enterManuallyButtonListener: EnterManuallyButtonListener? = null
     private lateinit var retakeImagesButton: Button
-    private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
+    private var mUserAnalyticsEventTracker : UserAnalyticsEventTracker? = null
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Error
 
     fun onCreate(savedInstanceState: Bundle?) {
@@ -75,7 +76,7 @@ class ErrorFragmentImpl(
 
         if (shouldAllowRetakeImages()) {
             retakeImagesButton.setIntervalClickListener {
-                mUserAnalyticsEventTracker.trackEvent(
+                mUserAnalyticsEventTracker?.trackEvent(
                     UserAnalyticsEvent.BACK_TO_CAMERA_TAPPED,
                     setOf(UserAnalyticsEventProperty.Screen(screenName))
                 )
@@ -89,7 +90,7 @@ class ErrorFragmentImpl(
 
         val enterManuallyButton = view.findViewById<View>(R.id.gc_button_error_enter_manually)
         enterManuallyButton.setIntervalClickListener {
-            mUserAnalyticsEventTracker.trackEvent(
+            mUserAnalyticsEventTracker?.trackEvent(
                 UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
                 setOf(UserAnalyticsEventProperty.Screen(screenName))
             )
@@ -115,16 +116,19 @@ class ErrorFragmentImpl(
     private fun addUserAnalyticEvents() {
         val errorMessage = customError ?:
         fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0).toString()
-        mUserAnalyticsEventTracker.trackEvent(
+        mUserAnalyticsEventTracker?.setEventSuperProperty(
+            UserAnalyticsEventSuperProperty.DocumentType(document.mapToAnalyticsDocumentType())
+        )
+        mUserAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             setOf(
                 UserAnalyticsEventProperty.Screen(screenName),
-                UserAnalyticsEventProperty.DocumentType(document.mapToAnalyticsDocumentType()),
                 UserAnalyticsEventProperty.DocumentId(document?.id.toString()),
                 UserAnalyticsEventProperty.ErrorType(errorType.mapToAnalyticsErrorType()),
                 UserAnalyticsEventProperty.ErrorMessage(errorMessage)
             ),
         )
+
     }
 
     private fun setInjectedTopBarContainer(view: View) {
@@ -138,7 +142,7 @@ class ErrorFragmentImpl(
                     setTitle(fragmentCallback.activity?.getString(R.string.gc_title_error) ?: "")
                     setNavButtonType(NavButtonType.CLOSE)
                     setOnNavButtonClickListener(IntervalClickListener {
-                        mUserAnalyticsEventTracker.trackEvent(
+                        mUserAnalyticsEventTracker?.trackEvent(
                             UserAnalyticsEvent.CLOSE_TAPPED,
                             setOf(UserAnalyticsEventProperty.Screen(screenName))
                         )
@@ -155,7 +159,7 @@ class ErrorFragmentImpl(
                 fragmentCallback.getViewLifecycleOwner(),
                 object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
-                        mUserAnalyticsEventTracker.trackEvent(
+                        mUserAnalyticsEventTracker?.trackEvent(
                             UserAnalyticsEvent.CLOSE_TAPPED,
                             setOf(UserAnalyticsEventProperty.Screen(screenName))
                         )
