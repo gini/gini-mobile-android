@@ -55,6 +55,7 @@
     <string name="gps_invalid_amount_content_description">Ungültiger Zahlbetrag</string>
     <string name="gps_powered_by_gini_content_description">Powered by Gini</string>
     <string name="gps_select_bank_content_description">Bank Auswählen</string>
+    <string name="gps_invoice_image_content_description">Rechnungsdokument</string>
 
     <!--  Install App  -->
     <string name="gps_install_app_detail">Hinweis: Bitte aktualisieren oder installieren Sie zunächst die %s-App aus dem Google Play Store.</string>

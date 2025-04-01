@@ -15,115 +15,118 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/gps_large"
-            android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/recipient_input_layout"
-                style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
+            android:layout_height="wrap_content">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/gps_medium"
-                android:hint="@string/recipient"
-                app:layout_constraintTop_toTopOf="parent"
-                app:boxBackgroundColor="#ffffff">
+                android:layout_marginTop="@dimen/gps_large"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/recipient"
-                    android:layout_width="match_parent"
-                    style="@style/Example.Widget.TextInputEditText"
-                    android:textColor="@color/black"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="flagNoExtractUi"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/iban_input_layout"
-                style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/iban"
-                app:layout_constraintTop_toBottomOf="@id/recipient_input_layout"
-                app:boxBackgroundColor="#ffffff">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/iban"
-                    style="@style/Example.Widget.TextInputEditText"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/recipient_input_layout"
+                    style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="flagNoExtractUi"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginBottom="@dimen/gps_medium"
+                    android:hint="@string/recipient"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:boxBackgroundColor="#ffffff">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/amount_input_layout"
-                style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gps_medium"
-                android:hint="@string/amount"
-                app:layout_constraintTop_toBottomOf="@id/iban_input_layout"
-                app:boxBackgroundColor="#ffffff">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/recipient"
+                        android:layout_width="match_parent"
+                        style="@style/Example.Widget.TextInputEditText"
+                        android:textColor="@color/black"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="flagNoExtractUi"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/amount"
-                    style="@style/Example.Widget.TextInputEditText"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/iban_input_layout"
+                    style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="flagNoExtractUi"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:hint="@string/iban"
+                    app:layout_constraintTop_toBottomOf="@id/recipient_input_layout"
+                    app:boxBackgroundColor="#ffffff">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/purpose_input_layout"
-                style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/iban"
+                        style="@style/Example.Widget.TextInputEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="flagNoExtractUi"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/amount_input_layout"
+                    style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/gps_medium"
+                    android:hint="@string/amount"
+                    app:layout_constraintTop_toBottomOf="@id/iban_input_layout"
+                    app:boxBackgroundColor="#ffffff">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/amount"
+                        style="@style/Example.Widget.TextInputEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="flagNoExtractUi"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/purpose_input_layout"
+                    style="@style/Example.Widget.MaterialComponents.TextInputLayout.FilledBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/gps_medium"
+                    android:hint="@string/reference_number"
+                    app:layout_constraintTop_toBottomOf="@id/amount_input_layout"
+                    app:boxBackgroundColor="#ffffff">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/purpose"
+                        style="@style/Example.Widget.TextInputEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/expiration_date"
+                    style="@style/GiniPaymentTheme.Typography.Body2"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/gps_accent_01"
+                    />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/create_payment_request_btn"
+                    style="@style/GiniPaymentTheme.Widget.Button.UnelevatedButton"
+                    android:backgroundTint="@color/gps_accent_01"
+                    android:textColor="@color/white"
+                    android:text="@string/create_payment_request"
+                    android:layout_marginTop="@dimen/gps_medium"
+                    />
+
+            </LinearLayout>
+            <Button
+                android:id="@+id/pay_now_btn"
+                style="@style/GiniPaymentTheme.Widget.Button.UnelevatedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gps_medium"
-                android:hint="@string/reference_number"
-                app:layout_constraintTop_toBottomOf="@id/amount_input_layout"
-                app:boxBackgroundColor="#ffffff">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/purpose"
-                style="@style/Example.Widget.TextInputEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/expiration_date"
-            style="@style/GiniPaymentTheme.Typography.Body2"
-            android:gravity="center_horizontal"
-            android:textColor="@color/gps_accent_01"
-            />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/create_payment_request_btn"
-            style="@style/GiniPaymentTheme.Widget.Button.UnelevatedButton"
-            android:backgroundTint="@color/gps_accent_01"
-            android:textColor="@color/white"
-            android:text="@string/create_payment_request"
-            android:layout_marginTop="@dimen/gps_medium"
-            />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/pay_now_btn"
-        style="@style/GiniPaymentTheme.Widget.Button.UnelevatedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/gps_large"
-        android:text="@string/pay_now"
-        android:backgroundTint="@color/ghs_accent_01"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent" />
+                android:layout_marginBottom="@dimen/gps_large"
+                android:text="@string/pay_now"
+                android:backgroundTint="@color/ghs_accent_01"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

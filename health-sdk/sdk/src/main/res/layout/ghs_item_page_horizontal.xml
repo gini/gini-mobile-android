@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/gps_zero"
-        android:contentDescription="@string/ghs_invoice_image_content_description" />
+        android:contentDescription="@string/gps_invoice_image_content_description" />
 
     <ProgressBar
         android:id="@+id/loading"
