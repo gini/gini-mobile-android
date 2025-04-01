@@ -33,8 +33,6 @@
     <color name="ghs_feedback_03">#ECD0D0</color>
     <color name="ghs_feedback_04">#EEDEDE</color>
 
-    <color name="ghs_hint_color">#191D30</color>
-
     <color name="ghs_payment_component_caption">@color/ghs_dark_04</color>
     <color name="ghs_bank_selection_bottom_sheet_caption">@color/ghs_dark_03</color>
     <color name="ghs_bank_selection_bottom_sheet_title">@color/ghs_dark_02</color>

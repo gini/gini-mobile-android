@@ -10,20 +10,18 @@
     <color name="gps_dark_01">#191D30</color>
     <color name="gps_dark_02">#565656</color>
     <color name="gps_dark_03">#808080</color>
-    <color name="gps_dark_04">#8A8A8E</color>
+    <color name="gps_dark_04">#464646</color>
     <color name="gps_dark_05">#E8E9EB</color>
     <color name="gps_dark_06">#F3F3F3</color>
     <color name="gps_dark_07">#FAFAFA</color>
-    <color name="gps_dark_08">#464646</color>
 
     <color name="gps_light_01">#F2F2F2</color>
     <color name="gps_light_02">#E8E9EB</color>
     <color name="gps_light_03">#f3f3f3</color>
-    <color name="gps_light_04">#8A8A8E</color>
+    <color name="gps_light_04">#ADADAD</color>
     <color name="gps_light_05">#565656</color>
     <color name="gps_light_06">#353535</color>
     <color name="gps_light_07">#212121</color>
-    <color name="gps_light_08">#ADADAD</color>
 
     <color name="gps_success_01">#B0B347</color>
     <color name="gps_success_02">#D5D6A0</color>
@@ -35,13 +33,15 @@
     <color name="gps_feedback_03">#ECD0D0</color>
     <color name="gps_feedback_04">#EEDEDE</color>
 
-    <color name="gps_payment_component_caption">@color/gps_dark_08</color>
-    <color name="gps_bank_selection_bottom_sheet_caption">@color/gps_dark_08</color>
+    <color name="gps_hint_color">#191D30</color>
+
+    <color name="gps_payment_component_caption">@color/gps_dark_04</color>
+    <color name="gps_bank_selection_bottom_sheet_caption">@color/gps_dark_04</color>
     <color name="gps_bank_selection_bottom_sheet_title">@color/gps_dark_02</color>
     <color name="gps_payment_details_background_color">@color/gps_dark_07</color>
     <color name="gps_payment_input_border_color">@color/gps_dark_05</color>
     <color name="gps_payment_input_background_color">@color/gps_dark_06</color>
-    <color name="gps_payment_input_hint">@color/gps_dark_08</color>
+    <color name="gps_payment_input_hint">@color/gps_dark_04</color>
     <color name="gps_more_information_fragment_background">@color/gps_dark_07</color>
     <color name="gps_payment_provider_border_color">@color/gps_dark_05</color>
     <color name="gps_bordered_background_color">@color/gps_dark_06</color>
