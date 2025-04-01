@@ -123,8 +123,8 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
                 String.format(getLocaleStringResource(R.string.gps_open_with_button_text), paymentProviderApp.name)
 
             binding.gpsForwardButton.contentDescription =
-                String.format(getLocaleStringResource(
-                    R.string.gps_share_with_button_content_description),
+                String.format(
+                    getLocaleStringResource(R.string.gps_share_with_button_content_description),
                     paymentProviderApp.name
                 )
         }
