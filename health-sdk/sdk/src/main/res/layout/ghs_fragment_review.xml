@@ -48,7 +48,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/payment_details_info_bar"
-            style="@style/GiniPaymentTheme.PaymentDetails.InfoBar"
+            style="@style/GiniHealthTheme.PaymentDetails.InfoBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/gps_medium_12"
@@ -57,7 +57,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                style="@style/GiniPaymentTheme.PaymentDetails.InfoBar.TextView"
+                style="@style/GiniHealthTheme.PaymentDetails.InfoBar.TextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:paddingVertical="@dimen/gps_medium_12"
@@ -103,7 +103,7 @@
 
         <ImageButton
             android:id="@+id/close"
-            style="@style/GiniPaymentTheme.CloseButtonStyle"
+            style="@style/GiniHealthTheme.CloseButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/gps_small"

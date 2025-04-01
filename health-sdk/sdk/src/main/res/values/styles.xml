@@ -57,5 +57,29 @@
     <!-- Style for the progress indicator that is displayed on top of the Pay button in ReviewFragment -->
     <style name="GiniHealth.PaymentButtonProgressStyle" parent="Root.GiniHealthTheme.PaymentButtonProgressStyle" />
 
+    <style name="Root.GiniHealthTheme.CloseButtonStyle" parent="Widget.AppCompat.ImageButton">
+        <item name="android:minWidth">@dimen/gps_large_50</item>
+        <item name="android:minHeight">@dimen/gps_large_50</item>
+        <item name="android:background">@drawable/gps_close_button</item>
+    </style>
+
+    <!-- Style for close button in ReviewFragment -->
+    <style name="GiniHealthTheme.CloseButtonStyle" parent="Root.GiniHealthTheme.CloseButtonStyle"/>
+
+    <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar" parent="">
+        <item name="android:background">@drawable/gps_payment_details_info_bar_background</item>
+    </style>
+    <style name="GiniHealthTheme.PaymentDetails.InfoBar" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar" />
+
+    <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextView" parent="Widget.MaterialComponents.TextView">
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">@style/GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance</item>
+    </style>
+    <style name="GiniHealthTheme.PaymentDetails.InfoBar.TextView" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextView" />
+
+    <style name="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="GiniPaymentTheme.Typography.Caption1">
+        <item name="android:textColor">@color/ghs_hint_color</item>
+    </style>
+    <style name="GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniHealthTheme.PaymentDetails.InfoBar.TextAppearance" />
 
 </resources>
