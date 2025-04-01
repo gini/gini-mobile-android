@@ -17,6 +17,7 @@ import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.models.getPageByPageNumber
 import net.gini.android.health.api.models.toPageList
 import net.gini.android.health.api.models.toPaymentProvider
+import net.gini.android.health.api.response.ConfigurationResponse
 import net.gini.android.health.api.util.ImageCompression
 import org.json.JSONObject
 
@@ -116,10 +117,31 @@ class HealthApiDocumentRepository(
             }
         }
 
+    suspend fun deletePaymentRequest(paymentRequestId: String): Resource<Unit> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.deletePaymentRequest(accessToken, paymentRequestId)
+            }
+        }
+
     suspend fun getPaymentRequestImage(paymentRequestId: String): Resource<ByteArray> =
         withAccessToken { accessToken ->
             wrapInResource {
                 documentRemoteSource.getPaymentRequestImage(accessToken, paymentRequestId)
+            }
+        }
+
+    suspend fun getConfigurations(): Resource<ConfigurationResponse> =
+        withAccessToken {  accessToken ->
+            wrapInResource {
+                documentRemoteSource.getConfigurations(accessToken)
+            }
+        }
+
+    suspend fun deleteDocuments(documentIds: List<String>): Resource<Unit> =
+        withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.deleteDocuments(accessToken, documentIds)
             }
         }
 }

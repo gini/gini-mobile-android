@@ -10,6 +10,11 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.viewmodel.intent.
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.viewmodel.intent.KeyboardStateChangeIntent
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.viewmodel.intent.SkontoAmountFieldChangeIntent
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.viewmodel.intent.SkontoDueDateChangeIntent
+import net.gini.android.bank.sdk.capture.skonto.mapper.toAnalyticsModel
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -22,6 +27,7 @@ internal typealias SkontoContainerHost =
 internal class DigitalInvoiceSkontoViewModel(
     args: DigitalInvoiceSkontoArgs,
     skontoScreenInitialStateFactory: SkontoScreenInitialStateFactory,
+    private val analyticsTracker: UserAnalyticsEventTracker,
     private val invoiceClickIntent: InvoiceClickIntent,
     private val backClickIntent: BackClickIntent,
     private val infoBannerInteractionIntent: InfoBannerInteractionIntent,
@@ -31,7 +37,9 @@ internal class DigitalInvoiceSkontoViewModel(
 ) : ViewModel(), SkontoContainerHost {
 
     override val container: Container<SkontoScreenState, SkontoSideEffect> =
-        container(skontoScreenInitialStateFactory.create(args.data, args.isSkontoSectionActive))
+        container(skontoScreenInitialStateFactory.create(args.data, args.isSkontoSectionActive)) {
+            logScreenShownEvent()
+        }
 
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) =
         with(skontoAmountFieldChangeIntent) { run(newValue) }
@@ -52,9 +60,64 @@ internal class DigitalInvoiceSkontoViewModel(
         with(invoiceClickIntent) { run() }
 
     fun onBackClicked() =
-        with(backClickIntent) { run() }
+        with(backClickIntent) {
+            logBackClicked()
+            run()
+        }
+
+    fun onSkontoAmountFieldFocused(){
+        logSkontoAmountTapped()
+    }
+
+    fun onDueDateFieldFocused(){
+        logDueDateTapped()
+    }
 
 
     fun onHelpClicked() =
-        intent { postSideEffect(SkontoSideEffect.OpenHelpScreen) }
+        intent {
+            logHelpClicked()
+            postSideEffect(SkontoSideEffect.OpenHelpScreen)
+        }
+
+
+    private fun logScreenShownEvent() = intent {
+        val state = state as SkontoScreenState.Ready? ?: return@intent
+        analyticsTracker.trackEvent(
+            UserAnalyticsEvent.SCREEN_SHOWN,
+            setOfNotNull(
+                UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoReturnAssistant),
+                UserAnalyticsEventProperty.SwitchActive(state.isSkontoSectionActive),
+                state.edgeCase?.let { UserAnalyticsEventProperty.EdgeCaseType(it.toAnalyticsModel()) }
+            )
+        )
+    }
+
+    private fun logHelpClicked() {
+        analyticsTracker.trackEvent(
+            UserAnalyticsEvent.HELP_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoReturnAssistant))
+        )
+    }
+
+    private fun logBackClicked() {
+        analyticsTracker.trackEvent(
+            UserAnalyticsEvent.CLOSE_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoReturnAssistant))
+        )
+    }
+
+    private fun logSkontoAmountTapped() {
+        analyticsTracker.trackEvent(
+            UserAnalyticsEvent.FINAL_AMOUNT_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoReturnAssistant))
+        )
+    }
+
+    private fun logDueDateTapped() {
+        analyticsTracker.trackEvent(
+            UserAnalyticsEvent.DUE_DATE_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoReturnAssistant))
+        )
+    }
 }

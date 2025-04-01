@@ -1,6 +1,7 @@
 package net.gini.android.internal.payment
 
 import android.content.Context
+import android.content.res.Resources
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
@@ -14,6 +15,7 @@ import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
+import net.gini.android.health.api.response.CommunicationTone
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.ResultWrapper
@@ -22,6 +24,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.GiniLocalization
+import net.gini.android.internal.payment.utils.GiniLocalizationInternal
 import net.gini.android.internal.payment.utils.GiniPaymentManager
 import org.junit.Before
 import org.junit.Test
@@ -35,7 +38,7 @@ class GiniInternalPaymentModuleTest {
     private lateinit var giniPaymentManager: GiniPaymentManager
     private lateinit var paymentComponent: PaymentComponent
     private lateinit var documentManager: HealthApiDocumentManager
-    private val invalidPaymentRequest = PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED)
+    private val invalidPaymentRequest = PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED, "", "")
     private val paymentProviderApp = PaymentProviderApp(
         name = "payment provider",
         icon = null,
@@ -77,7 +80,9 @@ class GiniInternalPaymentModuleTest {
             bic = null,
             amount = "",
             purpose = "",
-            status = net.gini.android.core.api.models.PaymentRequest.Status.OPEN
+            status = net.gini.android.core.api.models.PaymentRequest.Status.OPEN,
+            "",
+            ""
         )) }
         coEvery { giniHealthAPI.documentManager.createPaymentRequest(any()) } coAnswers { Resource.Success(invalidPaymentRequest.id) }
 
@@ -155,5 +160,60 @@ class GiniInternalPaymentModuleTest {
 
         //Then
         assertThat(giniInternalPaymentModule.getReturningUser()).isTrue()
+    }
+
+    @Test
+    fun `get SDK language Internally when tone is formal`() = runTest {
+        //Given
+        val giniInternalPaymentModule = GiniInternalPaymentModule(context, giniHealthAPI)
+
+        //When
+        giniInternalPaymentModule.setSDKLanguage(GiniLocalization.GERMAN, context)
+        giniInternalPaymentModule.saveSDKCommunicationTone(CommunicationTone.FORMAL.name)
+
+        //Then
+        assertThat(GiniInternalPaymentModule.getSDKLanguageInternal(context)).isEqualTo(GiniLocalizationInternal.GERMAN)
+    }
+
+    @Test
+    fun `get SDK language when tone is informal`() = runTest {
+        //Given
+        val giniInternalPaymentModule = GiniInternalPaymentModule(context, giniHealthAPI)
+
+        //When
+        giniInternalPaymentModule.setSDKLanguage(GiniLocalization.GERMAN, context)
+        giniInternalPaymentModule.saveSDKCommunicationTone(CommunicationTone.INFORMAL.name)
+
+        //Then
+        assertThat(GiniInternalPaymentModule.getSDKLanguageInternal(context)).isEqualTo(GiniLocalizationInternal.GERMAN_INFORMAL)
+    }
+
+    @Test
+    fun `get SDK language when language is selected english and tone is also set`() = runTest {
+        //Given
+        val giniInternalPaymentModule = GiniInternalPaymentModule(context, giniHealthAPI)
+
+        //When
+        giniInternalPaymentModule.setSDKLanguage(GiniLocalization.ENGLISH, context)
+        giniInternalPaymentModule.saveSDKCommunicationTone(CommunicationTone.INFORMAL.name)
+
+        //Then
+        assertThat(GiniInternalPaymentModule.getSDKLanguageInternal(context)).isEqualTo(GiniLocalizationInternal.ENGLISH)
+    }
+
+    @Test
+    fun `language is saved when clients did not set the language explicitly`() = runTest {
+        //Given
+        val giniInternalPaymentModule = GiniInternalPaymentModule(context, giniHealthAPI)
+
+        //When
+        giniInternalPaymentModule.updateSDKLanguageForInternalRecord(context)
+
+        //Then
+        val sdkLanguage = when (Resources.getSystem().configuration.locales[0].language) {
+            "en" -> GiniLocalization.ENGLISH
+            else -> GiniLocalization.GERMAN
+        }
+        assertThat(GiniInternalPaymentModule.getSDKLanguage(context)).isEqualTo(sdkLanguage)
     }
 }

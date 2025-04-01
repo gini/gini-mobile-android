@@ -6,6 +6,7 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.api.models.PaymentRequestInput
+import net.gini.android.health.api.response.ConfigurationResponse
 
 /**
  * Created by Alpár Szotyori on 25.01.22.
@@ -32,6 +33,18 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
         documentId: String,
         page: Int
     ): Resource<ByteArray> = documentRepository.getPageImage(documentId, page)
+
+    /**
+     * Delete multiple documents in one go.
+     *
+     * @param documentIds the list of document ids to be deleted
+     * @return [Resource] with the status of the deletion, success or failure - if at least one document could not
+     * be deleted, the call will not return Success
+     */
+    suspend fun deleteDocuments(
+        documentIds: List<String>
+    ): Resource<Unit> =
+        documentRepository.deleteDocuments(documentIds)
 
     /**
      * A payment provider is a Gini partner which integrated the GiniPay for Banks SDK into their mobile apps.
@@ -69,6 +82,17 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
         paymentRequestId: String
     ): Resource<ByteArray> = documentRepository.getPaymentRequestDocument(paymentRequestId)
 
+
+    /**
+     * This function is used to delete payment requests.
+     *
+     * @param paymentRequestId The unique identifier of the payment request to be deleted.
+     * @return [Resource] with the byte array corresponding to the deleted [PaymentRequest]
+     */
+    suspend fun deletePaymentRequest(
+        paymentRequestId: String
+    ): Resource<Unit> = documentRepository.deletePaymentRequest(paymentRequestId)
+
     /**
      * Returns a QR code in PNG format
      *
@@ -78,4 +102,11 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
     suspend fun getPaymentRequestImage(
         paymentRequestId: String
     ): Resource<ByteArray> = documentRepository.getPaymentRequestImage(paymentRequestId)
+
+    /**
+     * Returns the configurations for the client.
+     *
+     * @return [Resource] with the [ConfigurationResponse] for the client.
+     */
+    suspend fun getConfigurations(): Resource<ConfigurationResponse> = documentRepository.getConfigurations()
 }

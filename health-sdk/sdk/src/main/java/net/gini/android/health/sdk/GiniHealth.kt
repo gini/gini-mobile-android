@@ -8,6 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -26,6 +27,7 @@ import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.health.api.GiniHealthAPI
+import net.gini.android.health.api.response.DeleteDocumentErrorResponse
 import net.gini.android.health.sdk.GiniHealth.TrustMarkerResponse
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
@@ -42,6 +44,7 @@ import net.gini.android.internal.payment.utils.GiniLocalization
 import net.gini.android.internal.payment.utils.isValidIban
 import org.slf4j.LoggerFactory
 import java.lang.ref.WeakReference
+
 
 /**
  * [GiniHealth] is one of the main classes for interacting with the Gini Health SDK. It manages interaction with the Gini Health API.
@@ -67,6 +70,10 @@ class GiniHealth(
         CoroutineScope(Job()).launch(Dispatchers.IO) {
             internalPaymentModule.loadPaymentProviderApps()
         }
+
+        CoroutineScope(Job()).launch(Dispatchers.IO) {
+            internalPaymentModule.getConfigurations()
+        }
     }
 
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
@@ -78,6 +85,7 @@ class GiniHealth(
 
     private val _documentFlow = MutableStateFlow<ResultWrapper<Document>>(ResultWrapper.Loading())
 
+    private lateinit var moshi: Moshi
     /**
      * A flow for getting the [Document] set for review [setDocumentForReview].
      *
@@ -109,7 +117,8 @@ class GiniHealth(
      */
     val openBankState: StateFlow<PaymentState> = _openBankState
 
-    private val _displayedScreen: MutableSharedFlow<DisplayedScreen> = MutableSharedFlow(extraBufferCapacity = 1)
+    private val _displayedScreen: MutableSharedFlow<DisplayedScreen> =
+        MutableSharedFlow(extraBufferCapacity = 1)
 
     /**
      * A flow for exposing the [DisplayedScreen] currently visible. It always starts with [DisplayedScreen.Nothing].
@@ -184,6 +193,33 @@ class GiniHealth(
     }
 
     /**
+     * This function deletes a payment request by its unique `paymentRequestId`.
+     * If the deletion is successful, it returns `null`. Otherwise, if an error occurs or the request is cancelled,
+     * it returns the corresponding error message or `"Request cancelled"`.
+     *
+     * @param paymentRequestId The unique identifier of the payment request to be deleted.
+     * @return `null` if the deletion is successful, otherwise the error message or `"Request cancelled"`.
+     */
+    suspend fun deletePaymentRequest(paymentRequestId: String): String? {
+        val response =
+            giniInternalPaymentModule.giniHealthAPI.documentManager.deletePaymentRequest(
+                paymentRequestId
+            )
+        return when (response) {
+            is Resource.Success -> null
+            is Resource.Error -> if (response.message.isNullOrEmpty()) {
+                when(response.responseStatusCode){
+                    404 -> "Payment request not found"
+                   else -> "Failed to delete payment request"
+                }
+            } else
+                response.message
+
+            is Resource.Cancelled -> "Request cancelled"
+        }
+    }
+
+    /**
      * Sets a [Document] for review. Results can be collected from [documentFlow] and [paymentFlow].
      *
      * @param documentId id of the document returned by Gini API.
@@ -241,6 +277,43 @@ class GiniHealth(
         return when (val extractions = getExtractionsForDocument(documentId)) {
             null -> false
             else -> (extractions.specificExtractions["contains_multiple_docs"]?.value ?: "" ) == HAS_MULTIPLE_DOCUMENTS
+        }
+    }
+
+    /**
+     * Deletes multiple documents in one go.
+     * If request was successful, it returns null.
+     * If request failed, it returns a [DeleteDocumentErrorResponse], with more information about why the request failed.
+     *
+     * @param documentIds the list of documentIds to be deleted
+     * @return [DeleteDocumentErrorResponse] with more information about why the request failed
+     */
+    suspend fun deleteDocuments(documentIds: List<String>): DeleteDocumentErrorResponse? {
+        val response = giniInternalPaymentModule.giniHealthAPI.documentManager.deleteDocuments(documentIds)
+        return when (response) {
+            is Resource.Success -> {
+                null
+            }
+
+            is Resource.Error -> {
+                LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
+                    .error("Failed to delete documents with ids: ${response.exception}")
+                response.message?.let { failureMessage ->
+                    if (!this::moshi.isInitialized) {
+                        moshi = Moshi.Builder()
+                            .build()
+                    }
+                    val deleteDocumentsError = moshi.adapter(DeleteDocumentErrorResponse::class.java).lenient().fromJson(failureMessage)
+                    return deleteDocumentsError
+                }
+                return DeleteDocumentErrorResponse()
+            }
+
+            is Resource.Cancelled -> {
+                LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
+                    .error("Deleting documents was cancelled")
+                DeleteDocumentErrorResponse(message = "Delete documents request was cancelled")
+            }
         }
     }
 

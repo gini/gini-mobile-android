@@ -5,7 +5,6 @@ import static net.gini.android.capture.camera.CameraFragment.RESULT_KEY_SHOULD_S
 import static net.gini.android.capture.document.ImageDocument.ImportMethod;
 import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
 import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
@@ -917,52 +916,60 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void setInputHandlers() {
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraTrigger, v -> {
-            mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.CAPTURE_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty.IbanDetectionLayerVisible(isIbanDetectedOnceForUserAnalytics));
+            if (mUserAnalyticsEventTracker != null) {
+                mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.CAPTURE_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                                add(new UserAnalyticsEventProperty.IbanDetectionLayerVisible(isIbanDetectedOnceForUserAnalytics));
+                            }
                         }
-                    }
-            );
+                );
+            }
             onCameraTriggerClicked();
         });
 
         ClickListenerExtKt.setIntervalClickListener(mButtonCameraFlashTrigger, v -> {
-            mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.FLASH_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty.FlashActive(mCameraController.isFlashEnabled()));
+            if (mUserAnalyticsEventTracker != null) {
+                mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.FLASH_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                                add(new UserAnalyticsEventProperty.FlashActive(mCameraController.isFlashEnabled()));
+                            }
                         }
-                    }
-            );
+                );
+            }
             mIsFlashEnabled = !mCameraController.isFlashEnabled();
             updateCameraFlashState();
         });
 
         ClickListenerExtKt.setIntervalClickListener(mButtonImportDocument, v -> {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.IMPORT_FILES_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+            if (mUserAnalyticsEventTracker != null) {
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.IMPORT_FILES_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                            }
+                        });
+            }
             showFileChooser();
         });
 
         ClickListenerExtKt.setIntervalClickListener(mPhotoThumbnail, v -> {
-            mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty.DocumentPageNumber(mMultiPageDocument.getDocuments().size()));
+            if (mUserAnalyticsEventTracker != null) {
+                mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.MULTIPLE_PAGES_CAPTURED_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                                add(new UserAnalyticsEventProperty.DocumentPageNumber(mMultiPageDocument.getDocuments().size()));
+                            }
                         }
-                    }
-            );
+                );
+            }
             onBackPressed();
         });
 
@@ -1020,15 +1027,17 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void sendQRCodeScannedEventToUserAnalytics(boolean validQRCode) {
         if (shouldSendUserAnalyticsTrackerForQrCodes) {
-            mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.QR_CODE_SCANNED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty.QrCodeValid(validQRCode));
+            if (mUserAnalyticsEventTracker != null) {
+                mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.QR_CODE_SCANNED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                                add(new UserAnalyticsEventProperty.QrCodeValid(validQRCode));
+                            }
                         }
-                    }
-            );
+                );
+            }
             shouldSendUserAnalyticsTrackerForQrCodes = false;
         }
     }
@@ -1488,15 +1497,17 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void showGenericInvalidFileError(ErrorType errorType) {
         String errorMessage = mFragment.getActivity().getResources()
                 .getString(errorType.getTitleTextResource());
-        mUserAnalyticsEventTracker.trackEvent(
-                UserAnalyticsEvent.ERROR_DIALOG_SHOWN,
-                new HashSet<UserAnalyticsEventProperty>() {
-                    {
-                        add(new UserAnalyticsEventProperty.Screen(screenName));
-                        add(new UserAnalyticsEventProperty.ErrorMessage(errorMessage));
+        if (mUserAnalyticsEventTracker != null) {
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.ERROR_DIALOG_SHOWN,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                            add(new UserAnalyticsEventProperty.ErrorMessage(errorMessage));
+                        }
                     }
-                }
-        );
+            );
+        }
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
             return;
@@ -2021,28 +2032,20 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     }
 
     private void trackCameraScreenCloseTappedEventIfNeeded() {
-        if (mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
-        }
+        if ((mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) && mUserAnalyticsEventTracker != null) {
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                            }
+                        });
+            }
+
     }
 
     private void trackCameraScreenShownEvent() {
-        mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                new HashSet<UserAnalyticsEventProperty>() {
-                    {
-                        add(new UserAnalyticsEventProperty.Screen(screenName));
-                    }
-                });
-    }
-
-    private void trackCameraScreenHelpTappedIfNeeded() {
-        if (mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) {
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED,
+        if (mUserAnalyticsEventTracker != null) {
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
                     new HashSet<UserAnalyticsEventProperty>() {
                         {
                             add(new UserAnalyticsEventProperty.Screen(screenName));
@@ -2051,45 +2054,60 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
+    private void trackCameraScreenHelpTappedIfNeeded() {
+        if ((mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) && mUserAnalyticsEventTracker != null)
+                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                            }
+                        });
+
+    }
+
     private void trackCameraAccessPermissionRequiredShownEvent() {
-        mUserAnalyticsEventTracker.trackEvent(
-                UserAnalyticsEvent.SCREEN_SHOWN,
-                new HashSet<UserAnalyticsEventProperty>() {
-                    {
-                        add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
+        if (mUserAnalyticsEventTracker != null) {
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.SCREEN_SHOWN,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
+                        }
                     }
-                }
-        );
+            );
+        }
     }
 
     private void trackCameraAccessPermissionRequiredGetAccessClickedEvent() {
-        mUserAnalyticsEventTracker.trackEvent(
-                UserAnalyticsEvent.GIVE_ACCESS_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                    {
-                        add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                    }
-                });
+        if (mUserAnalyticsEventTracker != null) {
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.GIVE_ACCESS_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
+                        }
+                    });
+        }
     }
 
     private void trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded() {
-        if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE) {
-            mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.HELP_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    });
-        }
+        if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE && mUserAnalyticsEventTracker != null)
+                mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.HELP_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
+                            }
+                        });
+
     }
 
     private void trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded() {
-        if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE) {
-            mUserAnalyticsEventTracker.trackEvent(
-                    UserAnalyticsEvent.CLOSE_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                        }
-                    });
-        }
+        if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE && mUserAnalyticsEventTracker != null)
+                mUserAnalyticsEventTracker.trackEvent(
+                        UserAnalyticsEvent.CLOSE_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
+                            }
+                        });
+
     }
 }
