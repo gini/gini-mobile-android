@@ -331,11 +331,18 @@ class PaymentFragment private constructor(
                     }
 
                     if (!viewModel.giniInternalPaymentModule.getReturningUser() &&
+                        viewModel.paymentComponent.selectedPaymentProviderAppFlow.value is SelectedPaymentProviderAppState.AppSelected &&
                         (viewModel.documentId != null || (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true))) {
                             viewModel.giniInternalPaymentModule.saveReturningUser()
                             viewModel.popBackStack()
-                            showReviewFragment()
-                            return
+                            if (viewModel.documentId != null) {
+                                showReviewFragment()
+                                return
+                            }
+                            else if (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true) {
+                                showReviewBottomDialog()
+                                return
+                            }
                     }
 
                     PaymentComponentBottomSheet.newInstance(
