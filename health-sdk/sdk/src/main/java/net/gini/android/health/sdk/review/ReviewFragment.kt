@@ -7,6 +7,7 @@ import android.transition.Transition
 import android.transition.TransitionListenerAdapter
 import android.transition.TransitionManager
 import android.transition.TransitionSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.DocumentPage
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
@@ -173,6 +175,11 @@ class ReviewFragment private constructor(
                         }
                     }
                 }
+                launch {
+                    viewModel.showLoading.collect { isLoading ->
+                        binding.loading.isVisible = isLoading
+                    }
+                }
             }
         }
     }
@@ -185,14 +192,16 @@ class ReviewFragment private constructor(
                     pager.isUserInputEnabled = pages.size > 1
                 })
             }
-            else -> {
+            is DocumentPagesResult.Error -> {
                 handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
+            }
+            else -> {
+                //do nothing, loading is handled separately
             }
         }
     }
 
     private fun GhsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
-        binding.loading.isVisible = paymentResult is ResultWrapper.Loading
         if (paymentResult is ResultWrapper.Error) {
             handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
         }

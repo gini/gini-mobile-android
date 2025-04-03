@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.preferences.UserPreferences
@@ -51,6 +52,10 @@ internal class ReviewViewModel(
 
     private val _documentPages = MutableStateFlow<DocumentPagesResult>(DocumentPagesResult.Loading)
     val documentPages: StateFlow<DocumentPagesResult> = _documentPages
+
+    val showLoading = giniHealth.paymentFlow.combine(documentPages) { paymentFlow, pagesFlow ->
+        paymentFlow is ResultWrapper.Loading && pagesFlow is DocumentPagesResult.Loading
+    }
 
     init {
         viewModelScope.launch {
@@ -101,7 +106,7 @@ internal class ReviewViewModel(
                         _documentPages.value = DocumentPagesResult.Error
                     }
                     else -> {
-                        _documentPages.value = DocumentPagesResult.Error
+                        _documentPages.value = DocumentPagesResult.Loading
                     }
                 }
             }
