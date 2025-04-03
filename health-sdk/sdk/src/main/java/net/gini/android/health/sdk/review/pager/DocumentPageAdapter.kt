@@ -53,7 +53,7 @@ internal class DocumentPageAdapter(private val onRetryPage: (Int) -> Unit) :
                     imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageResult.data, 0, imageResult.data.size))
                 }
                 else -> {
-
+                    // Do nothing
                 }
             }
         }
