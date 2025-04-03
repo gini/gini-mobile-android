@@ -55,6 +55,7 @@ class ReviewViewModelTest {
         every { giniInternalPaymentModule!!.giniHealthAPI } returns mockk(relaxed = true)
         every { giniInternalPaymentModule!!.giniHealthAPI.documentManager } returns mockk(relaxed = true)
         every { giniHealth!!.giniInternalPaymentModule } returns giniInternalPaymentModule!!
+        every { giniHealth!!.documentFlow } returns MutableStateFlow(ResultWrapper.Loading())
         userPreferences = mockk(relaxed = true)
         context = getApplicationContext()
     }
@@ -71,7 +72,6 @@ class ReviewViewModelTest {
     fun `shows info bar on launch`() = runTest {
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
-        every { giniHealth!!.documentFlow } returns MutableStateFlow(ResultWrapper.Loading())
         // Given
         val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent, "", shouldShowCloseButton = true, reviewFragmentListener = mockk()).apply {
             userPreferences = this@ReviewViewModelTest.userPreferences!!
@@ -88,7 +88,6 @@ class ReviewViewModelTest {
     fun `hides info bar after a delay`() = runTest {
         val paymentComponent = mockk<PaymentComponent>(relaxed = true)
         every { paymentComponent.selectedPaymentProviderAppFlow } returns MutableStateFlow(SelectedPaymentProviderAppState.AppSelected(mockk()))
-        every { giniHealth!!.documentFlow } returns MutableStateFlow(ResultWrapper.Loading())
 
         // Given
         val viewModel = ReviewViewModel(giniHealth!!, mockk(), paymentComponent, "", true, mockk()).apply {
