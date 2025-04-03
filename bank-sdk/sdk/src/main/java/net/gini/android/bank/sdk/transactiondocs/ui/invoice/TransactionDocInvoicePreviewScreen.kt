@@ -28,6 +28,7 @@ internal fun TransactionDocInvoicePreviewScreen(
     viewModel: TransactionDocInvoicePreviewViewModel,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
+    isLandScape : Boolean
 ) {
     val state by viewModel.stateFlow.collectAsState()
 
@@ -49,6 +50,7 @@ internal fun TransactionDocInvoicePreviewScreen(
         screenTitle = state.screenTitle,
         isLoading = state.isLoading,
         onUserZoomedScreenOnce = { /* No Action needed on TD */ },
+        isLandScape = isLandScape
     )
 }
 
