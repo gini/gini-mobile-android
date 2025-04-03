@@ -16,69 +16,57 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.github.chrisbanes.photoview.PhotoView
 import dev.chrisbanes.insetter.applyInsetter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.launch
-import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.databinding.GhsItemPageHorizontalBinding
-import net.gini.android.health.sdk.review.model.ResultWrapper
-import net.gini.android.health.sdk.review.model.wrapToResult
 import net.gini.android.health.sdk.util.hideKeyboard
 
-internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
+internal class DocumentPageAdapter(private val onRetryPage: (Int) -> Unit) :
     ListAdapter<DocumentPageAdapter.Page, DocumentPageAdapter.PageViewHolder>(DiffUtilCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder =
-        HorizontalViewHolder(giniHealth, GhsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        HorizontalViewHolder(GhsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false), onRetryPage)
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
         holder.onBind(currentList[position])
     }
 
-    abstract class PageViewHolder(private val giniHealth: GiniHealth, view: View) : RecyclerView.ViewHolder(view) {
-        private val imageLoadingScope = CoroutineScope(Dispatchers.Main)
-
+    abstract class PageViewHolder(view: View, private val onRetryPage: (Int) -> Unit) : RecyclerView.ViewHolder(view) {
         protected abstract val loadingView: ProgressBar
         protected abstract val imageView: ImageView
         protected abstract val errorView: FrameLayout
         protected abstract val retry: Button
 
         fun onBind(page: Page) {
-            imageLoadingScope.launch {
-                loadingView.isVisible = true
-                when (val imageResult = wrapToResult { giniHealth.documentManager.getPageImage(page.documentId, page.number) }) {
-                    is ResultWrapper.Error -> {
-                        loadingView.isVisible = false
-                        errorView.isVisible = true
-                        retry.setOnClickListener {
-                            errorView.isVisible = false
-                            onBind(page)
-                        }
+            when (val imageResult = page.pageImage) {
+                is Resource.Error -> {
+                    loadingView.isVisible = false
+                    errorView.isVisible = true
+                    retry.setOnClickListener {
+                        errorView.isVisible = false
+                        loadingView.isVisible = true
+                        onRetryPage(page.number)
                     }
-                    is ResultWrapper.Success -> {
-                        loadingView.isVisible = false
-                        imageView.isVisible = true
-                        imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageResult.value, 0, imageResult.value.size))
-                    }
-                    is ResultWrapper.Loading -> {}
+                }
+                is Resource.Success -> {
+                    loadingView.isVisible = false
+                    imageView.isVisible = true
+                    imageView.setImageBitmap(BitmapFactory.decodeByteArray(imageResult.data, 0, imageResult.data.size))
+                }
+                else -> {
+
                 }
             }
-        }
-
-        fun cancel() {
-            imageLoadingScope.coroutineContext.cancelChildren()
         }
     }
 
     class HorizontalViewHolder(
-        giniHealth: GiniHealth,
         private val binding: GhsItemPageHorizontalBinding,
+        onRetryPage: (Int) -> Unit,
         override val loadingView: ProgressBar = binding.loading,
         override val imageView: PhotoView = binding.image,
         override val errorView: FrameLayout = binding.error.root,
         override val retry: Button = binding.error.pageErrorRetry,
-    ) : PageViewHolder(giniHealth, binding.root) {
+    ) : PageViewHolder(binding.root, onRetryPage) {
 
         private val photoViewMatrix = Matrix()
 
@@ -99,6 +87,7 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
             imageView.setOnScaleChangeListener { _, _, _ ->
                 binding.root.parent.requestDisallowInterceptTouchEvent(true)
             }
+
             ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
                 with(imageView) {
                     post {
@@ -114,16 +103,11 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
         }
     }
 
-    override fun onViewRecycled(holder: PageViewHolder) {
-        holder.cancel()
-        super.onViewRecycled(holder)
-    }
-
     object DiffUtilCallback : DiffUtil.ItemCallback<Page>() {
         override fun areItemsTheSame(oldItem: Page, newItem: Page) = oldItem.number == newItem.number
 
-        override fun areContentsTheSame(oldItem: Page, newItem: Page) = oldItem.documentId == newItem.documentId
+        override fun areContentsTheSame(oldItem: Page, newItem: Page) = oldItem.pageImage == newItem.pageImage
     }
 
-    data class Page(val documentId: String, val number: Int)
+    data class Page(val pageImage: Resource<ByteArray>, val number: Int)
 }

@@ -7,7 +7,6 @@ import android.transition.Transition
 import android.transition.TransitionListenerAdapter
 import android.transition.TransitionManager
 import android.transition.TransitionSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,7 +114,9 @@ class ReviewFragment private constructor(
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        documentPageAdapter = DocumentPageAdapter(viewModel.giniHealth)
+        documentPageAdapter = DocumentPageAdapter { pageNumber ->
+            viewModel.reloadImage(pageNumber)
+        }
         binding = GhsFragmentReviewBinding.inflate(inflater).apply {
             configureViews()
             configureOrientation()
@@ -155,7 +156,7 @@ class ReviewFragment private constructor(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.giniHealth.documentFlow.collect { handleDocumentResult(it) }
+                    viewModel.documentPages.collect { handleDocumentPagesResult(it) }
                 }
                 launch {
                     viewModel.giniHealth.paymentFlow.collect { handlePaymentResult(it) }
@@ -176,17 +177,16 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.handleDocumentResult(documentResult: ResultWrapper<Document>) {
-        when (documentResult) {
-            is ResultWrapper.Success -> {
-                documentPageAdapter.submitList(viewModel.getPages(documentResult.value).also { pages ->
+    private fun GhsFragmentReviewBinding.handleDocumentPagesResult(documentPagesResult: DocumentPagesResult) {
+        when (documentPagesResult) {
+            is DocumentPagesResult.Success -> {
+                documentPageAdapter.submitList(documentPagesResult.pagesList.also { pages ->
                     indicator.isVisible = pages.size > 1
                     pager.isUserInputEnabled = pages.size > 1
                 })
             }
-
-            is ResultWrapper.Error -> handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
-            else -> { // Loading state handled by payment details
+            else -> {
+                handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
             }
         }
     }

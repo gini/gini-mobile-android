@@ -7,7 +7,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
@@ -50,6 +49,9 @@ internal class ReviewViewModel(
 
     val giniInternalPaymentModule = giniHealth.giniInternalPaymentModule
 
+    private val _documentPages = MutableStateFlow<DocumentPagesResult>(DocumentPagesResult.Loading)
+    val documentPages: StateFlow<DocumentPagesResult> = _documentPages
+
     init {
         viewModelScope.launch {
             giniHealth.paymentFlow.collect { extractedPaymentDetails ->
@@ -84,11 +86,47 @@ internal class ReviewViewModel(
                 _paymentDetails.value = _paymentDetails.value.copy(recipient = paymentDetails.recipient, iban = paymentDetails.iban, amount = paymentDetails.amount, purpose = paymentDetails.purpose)
             }
         }
+
+        viewModelScope.launch {
+            giniHealth.documentFlow.collect { documentResult ->
+                when (documentResult) {
+                    is ResultWrapper.Success -> {
+                        val pages = (1..documentResult.value.pageCount).map { pageNumber ->
+                            val image = giniHealth.documentManager.getPageImage(documentId, pageNumber)
+                            DocumentPageAdapter.Page(image, pageNumber)
+                        }
+                        _documentPages.value = DocumentPagesResult.Success(pages)
+                    }
+                    is ResultWrapper.Error -> {
+                        _documentPages.value = DocumentPagesResult.Error
+                    }
+                    else -> {
+                        _documentPages.value = DocumentPagesResult.Error
+                    }
+                }
+            }
+        }
     }
 
-    fun getPages(document: Document): List<DocumentPageAdapter.Page> {
-        return (1..document.pageCount).map { pageNumber ->
-            DocumentPageAdapter.Page(document.id, pageNumber)
+    /**
+     * In case one of the images in the document returned Error, try to fetch it again and insert it at the corresponding location.
+     *
+     * We will not get to this case if the document fetch returned Error, since we don't display the retry button for the image.
+     *
+     */
+
+    fun reloadImage(pageNumber: Int) {
+        viewModelScope.launch {
+            val image = giniHealth.documentManager.getPageImage(documentId, pageNumber)
+            if (_documentPages.value is DocumentPagesResult.Success) {
+                with(_documentPages.value as DocumentPagesResult.Success) {
+                    val pages = this.pagesList.toMutableList().apply {
+                        removeAt(pageNumber - 1)    // page number is the number in the document, which starts with 1. subtract 1 to match the list ordering
+                        add(pageNumber - 1, DocumentPageAdapter.Page(image, pageNumber))
+                    }
+                    _documentPages.value = DocumentPagesResult.Success(pages)
+                }
+            }
         }
     }
 
@@ -117,6 +155,13 @@ internal class ReviewViewModel(
         const val SHOW_INFO_BAR_MS = 3000L
         private val LOG = LoggerFactory.getLogger(ReviewViewModel::class.java)
     }
+}
+
+internal sealed interface DocumentPagesResult {
+    data class Success(val pagesList: List<DocumentPageAdapter.Page>): DocumentPagesResult
+    data object Error: DocumentPagesResult
+
+    data object Loading: DocumentPagesResult
 }
 
 private fun PaymentDetails.overwriteEmptyFields(value: PaymentDetails): PaymentDetails = this.copy(
