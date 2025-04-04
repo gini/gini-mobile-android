@@ -3,14 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/clientCaptureFragment"
+    app:startDestination="@id/mainFragment"
     >
 
     <fragment
-        android:id="@+id/clientCaptureFragment"
+        android:id="@+id/mainFragment"
+        android:name="net.gini.android.bank.sdk.exampleapp.ui.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_clientBankSDKFragment"
+            app:destination="@id/clientBankSDKFragment" >
+            <argument
+                android:name="entryPoint"
+                app:argType="net.gini.android.capture.EntryPoint" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/clientBankSDKFragment"
         android:name="net.gini.android.bank.sdk.exampleapp.ui.ClientBankSDKFragment"
-        android:label="StartCaptureFragment"
-        tools:layout="@layout/fragment_client" >
+        android:label="clientBankSDKFragment"
+        tools:layout="@layout/fragment_client_bank_sdk" >
+        <action
+            android:id="@+id/action_clientBankSDKFragment_to_extractionsFragment"
+            app:destination="@id/extractionsFragment" >
+        </action>
 
     </fragment>
+
+
+    <fragment
+        android:id="@+id/extractionsFragment"
+        android:name="net.gini.android.bank.sdk.exampleapp.ui.ExtractionsFragment"
+        android:label="extractionsFragment"
+        tools:layout="@layout/fragment_extractions" />
+
 </navigation>

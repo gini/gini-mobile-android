@@ -8,7 +8,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
@@ -22,30 +25,47 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
 
+@AndroidEntryPoint
 class ClientBankSDKFragment :
-    Fragment(R.layout.fragment_client),
+    Fragment(R.layout.fragment_client_bank_sdk),
     CaptureFlowFragmentListener {
 
     private lateinit var permissionHandler: PermissionHandler
-
+    private val configurationViewModel: ConfigurationViewModel by viewModels()
     private var wasCameraPermissionGranted = false
+
+    fun onNewIntentReceived(intent: Intent?) {
+        intent ?: return
+        handleOpenWithIntent(intent)
+    }
+
+    private fun handleOpenWithIntent(intent: Intent?) {
+        val captureFlowFragment =
+            requireActivity().supportFragmentManager.findFragmentByTag("captureFlowFragment") as? CaptureFlowFragment
+        captureFlowFragment?.setListener(this)
+        configureGiniBank()
+        val openWithIntent =
+            intent ?: requireArguments().getParcelable<Intent>("fileIntent")
+        openWithIntent?.let { startBankSdkForIntent(it) }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState != null) {
-            val captureFlowFragment =
-                requireActivity().supportFragmentManager.findFragmentByTag("fragment_host") as? CaptureFlowFragment
-            captureFlowFragment?.setListener(this)
+
+        if (savedInstanceState == null) {
+            handleOpenWithIntent(null)
         }
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        checkCameraPermissionAndStartBankSdk()
     }
 
     fun checkCameraPermissionAndStartBankSdk() {
-        permissionHandler = PermissionHandler(requireActivity())
+        permissionHandler = PermissionHandler(this)
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
                 // Bank SDK is configured in the MainActivity, but you can
                 // call [overrideBankSDKConfiguration] here if you want to override the configuration
+                configureGiniBank()
                 startBankSDK()
                 wasCameraPermissionGranted = true
                 hideNoCameraPermissionMessage()
@@ -105,8 +125,8 @@ class ClientBankSDKFragment :
     private fun startBankSDK() {
         val captureFlowFragment = GiniBank.createCaptureFlowFragment()
         captureFlowFragment.setListener(this)
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_host, captureFlowFragment, "fragment_host")
+        childFragmentManager.beginTransaction()
+            .replace(R.id.client_sdk, captureFlowFragment, "captureFlowFragment")
             .addToBackStack(null)
             .commit()
     }
@@ -126,8 +146,8 @@ class ClientBankSDKFragment :
                 is GiniBank.CreateCaptureFlowFragmentForIntentResult.Success -> {
                     result.fragment.setListener(this)
 
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_host, result.fragment, "fragment_host")
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.client_sdk, result.fragment, "captureFlowFragment")
                         .addToBackStack(null)
                         .commit()
                 }
@@ -136,16 +156,20 @@ class ClientBankSDKFragment :
 
     }
 
+
+    private fun configureGiniBank() {
+        configurationViewModel.clearGiniCaptureNetworkInstances()
+        configurationViewModel.configureGiniBank(requireContext())
+    }
+
+
     override fun onFinishedWithResult(result: CaptureResult) {
         when (result) {
             is CaptureResult.Success -> {
-                startActivity(
-                    ExtractionsActivity.getStartIntent(
-                        requireContext(),
-                        result.specificExtractions
-                    )
+                configurationViewModel.extractionsBundle = result.specificExtractions
+                findNavController().navigate(
+                    ClientBankSDKFragmentDirections.actionClientBankSDKFragmentToExtractionsFragment()
                 )
-                activity?.finish()
             }
 
             is CaptureResult.Error -> {
@@ -166,15 +190,15 @@ class ClientBankSDKFragment :
 
                     else -> {}
                 }
-                activity?.finish()
+                openMainFragment()
             }
 
             CaptureResult.Empty -> {
-                activity?.finish()
+                openMainFragment()
             }
 
             CaptureResult.Cancel -> {
-                activity?.finish()
+                openMainFragment()
             }
 
             CaptureResult.EnterManually -> {
@@ -183,9 +207,14 @@ class ClientBankSDKFragment :
                     "Scan exited for manual enter mode",
                     Toast.LENGTH_SHORT
                 ).show()
-                activity?.finish()
+                openMainFragment()
             }
         }
+    }
+
+    private fun openMainFragment() {
+        requireActivity().supportFragmentManager.popBackStackImmediate() // Removes SDK fragment
+        findNavController().navigate(R.id.mainFragment)
     }
 
 

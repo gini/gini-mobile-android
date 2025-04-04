@@ -15,7 +15,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.test.getAssetFileStorageUri
-import net.gini.android.bank.sdk.exampleapp.ui.CaptureFlowHostActivity
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.SplashActivity
 import org.junit.After
@@ -53,11 +52,6 @@ class OpenWithTest {
     }
 
     @Test
-    fun opening_pdf_with_CaptureFlowHostActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_pdf.pdf"), "application/pdf")
-    }
-
-    @Test
     fun opening_image_with_SplashActivity_launches_Bank_SDK() {
         launchActivityForOpenWith<SplashActivity>(listOf("test_image.jpeg"), "image/jpeg")
     }
@@ -68,11 +62,6 @@ class OpenWithTest {
     }
 
     @Test
-    fun opening_image_with_CaptureFlowHostActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_image.jpeg"), "image/jpeg")
-    }
-
-    @Test
     fun opening_images_with_SplashActivity_launches_Bank_SDK() {
         launchActivityForOpenWith<SplashActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
     }
@@ -80,11 +69,6 @@ class OpenWithTest {
     @Test
     fun opening_images_with_MainActivity_launches_Bank_SDK() {
         launchActivityForOpenWith<MainActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
-    }
-
-    @Test
-    fun opening_images_with_CaptureFlowHostActivity_launches_Bank_SDK() {
-        launchActivityForOpenWith<CaptureFlowHostActivity>(listOf("test_image.jpeg", "test_image_2.jpeg"), "image/jpeg")
     }
 
     private inline fun <reified T: Activity> launchActivityForOpenWith(assetFilePaths: List<String>, assetFileMimeType: String) {

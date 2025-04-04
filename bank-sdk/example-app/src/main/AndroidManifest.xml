@@ -79,9 +79,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ExtractionsActivity"
-            android:label="@string/title_extractions" />
-        <activity
             android:name=".ui.CustomHelpActivity"
             android:label="@string/custom_help_screen_title" />
         <activity
@@ -98,32 +95,6 @@
                 <data
                     android:host="@string/gini_pay_connect_host"
                     android:scheme="@string/gini_pay_connect_scheme" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.CaptureFlowHostActivity"
-            android:exported="true"
-            android:launchMode="singleTask">
-            <intent-filter
-                android:label="@string/single_activity"
-                tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.SEND" />
-                <action android:name="android.intent.action.SEND_MULTIPLE" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="image/*" />
-            </intent-filter>
-            <intent-filter
-                android:label="@string/single_activity"
-                tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="application/pdf" />
             </intent-filter>
         </activity>
         <activity
