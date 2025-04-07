@@ -37,6 +37,29 @@
         android:id="@+id/extractionsFragment"
         android:name="net.gini.android.bank.sdk.exampleapp.ui.ExtractionsFragment"
         android:label="extractionsFragment"
-        tools:layout="@layout/fragment_extractions" />
+        tools:layout="@layout/fragment_extractions" >
+        <action
+            android:id="@+id/action_extractionsFragment_to_transactionDocInvoicePreviewContainerFragment"
+            app:destination="@id/transactionDocInvoicePreviewContainerFragment" >
+
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/transactionDocInvoicePreviewContainerFragment"
+        android:name="net.gini.android.bank.sdk.exampleapp.ui.TransactionDocInvoicePreviewContainerFragment"
+        android:label="transactionDocInvoicePreviewContainerFragment"
+        tools:layout="@layout/fragment_transaction_doc_invoice_preview_container" >
+        <argument
+            android:name="document_id"
+            app:argType="string" />
+        <argument
+            android:name="screen_title"
+            app:argType="string" />
+        <argument
+            android:name="info_text_lines"
+            app:argType="string[]" />
+    </fragment>
 
 </navigation>

@@ -11,6 +11,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -205,14 +206,13 @@ private class ExtractionsAdapter(
                         .inflate(R.layout.item_transaction_docs, parent, false)
                 ).apply {
                     this.transactionDocView.onDocumentClick { doc, infoTextLines ->
-//                        this.itemView.context.startActivity(
-//                            TransactionDocInvoicePreviewActivity.newIntent(
-//                                screenTitle = doc.documentFileName,
-//                                context = this.itemView.context,
-//                                documentId = doc.giniApiDocumentId,
-//                                infoTextLines = infoTextLines
-//                            )
-//                        )
+                        parent.findNavController().navigate(
+                            ExtractionsFragmentDirections.actionExtractionsFragmentToTransactionDocInvoicePreviewContainerFragment(
+                                doc.giniApiDocumentId,
+                                doc.documentFileName,
+                                infoTextLines.toTypedArray()
+                            )
+                        )
                     }
                 }
             }
