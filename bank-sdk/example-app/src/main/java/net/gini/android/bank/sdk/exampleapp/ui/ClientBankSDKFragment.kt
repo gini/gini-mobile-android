@@ -8,7 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,7 +31,7 @@ class ClientBankSDKFragment :
     CaptureFlowFragmentListener {
 
     private lateinit var permissionHandler: PermissionHandler
-    private val configurationViewModel: ConfigurationViewModel by viewModels()
+    private val configurationViewModel: ConfigurationViewModel by activityViewModels()
     private var wasCameraPermissionGranted = false
 
     fun onNewIntentReceived(intent: Intent?) {

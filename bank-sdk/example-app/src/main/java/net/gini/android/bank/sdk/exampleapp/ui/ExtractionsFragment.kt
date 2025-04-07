@@ -9,7 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -36,7 +36,7 @@ class ExtractionsFragment : Fragment(),  ExtractionsAdapter.ExtractionsAdapterIn
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
 
-    private val configurationViewModel: ConfigurationViewModel by viewModels()
+    private val configurationViewModel: ConfigurationViewModel by activityViewModels()
 
     // {extraction name} to it's {entity name}
     private val editableSpecificExtractions = hashMapOf(
