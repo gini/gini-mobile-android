@@ -256,6 +256,3 @@ private class ExtractionsViewHolder(itemView: View) : ViewHolder(itemView) {
 private class ExtractionsDocsViewHolder(itemView: View) : ViewHolder(itemView) {
     val transactionDocView: TransactionDocsView = itemView.findViewById(R.id.transaction_docs_view)
 }
-
-
-

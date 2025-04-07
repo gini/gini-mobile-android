@@ -51,7 +51,4 @@ class TransactionDocInvoicePreviewContainerFragment : Fragment() {
 
     }
 
-
-
-
 }

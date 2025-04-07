@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -96,7 +95,7 @@ class ClientBankSDKFragment :
     private fun handleOnBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                findNavController().navigate(R.id.mainFragment)
+                openMainFragment()
             }
         })
     }
@@ -221,7 +220,6 @@ class ClientBankSDKFragment :
     }
 
     private fun openMainFragment() {
-        requireActivity().supportFragmentManager.popBackStackImmediate() // Removes SDK fragment
         findNavController().navigate(R.id.mainFragment)
     }
 

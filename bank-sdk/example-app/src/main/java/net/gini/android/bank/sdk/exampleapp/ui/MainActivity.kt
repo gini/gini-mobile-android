@@ -8,6 +8,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
 
 /**
@@ -37,23 +38,17 @@ class MainActivity : AppCompatActivity() {
         val navInflater = navController.navInflater
         val graph = navInflater.inflate(R.navigation.nav_graph)
 
-        val isFileIntent = intent?.action == Intent.ACTION_VIEW ||
-                intent?.action == Intent.ACTION_SEND ||
-                intent?.action == Intent.ACTION_SEND_MULTIPLE
-
-
-
-        if (isFileIntent) {
+        if (intent != null && isIntentActionViewOrSend(intent)) {
             graph.setStartDestination(R.id.clientBankSDKFragment)
             navController.setGraph(
                 graph, bundleOf(
-                    "fileIntent" to intent  // Pass full intent or extract Uri & pass
+                    "fileIntent" to intent
                 )
             )
             navController.navigate(
                 R.id.clientBankSDKFragment,
                 bundleOf(
-                    "fileIntent" to intent  // Pass full intent or extract Uri & pass
+                    "fileIntent" to intent
                 ),
                 NavOptions.Builder().apply {
                     setPopUpTo(R.id.clientBankSDKFragment, false)
