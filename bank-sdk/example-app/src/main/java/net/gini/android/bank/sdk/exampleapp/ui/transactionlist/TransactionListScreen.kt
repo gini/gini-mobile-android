@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.exampleapp.ui.ConfigurationViewModel
-import net.gini.android.bank.sdk.exampleapp.ui.TransactionDocInvoicePreviewActivity
+import net.gini.android.bank.sdk.exampleapp.ui.InvoicePreviewActivity
 import net.gini.android.bank.sdk.exampleapp.ui.transactionlist.ui.TransactionListItem
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.ui.theme.typography.bold
@@ -35,7 +35,7 @@ internal fun TransactionListScreen(
                 configurationViewModel.configureGiniBank(context)
 
                 context.startActivity(
-                    TransactionDocInvoicePreviewActivity.newIntent(
+                    InvoicePreviewActivity.newIntent(
                         context = context,
                         screenTitle = "Invoice Preview",
                         documentId = it.documentId,

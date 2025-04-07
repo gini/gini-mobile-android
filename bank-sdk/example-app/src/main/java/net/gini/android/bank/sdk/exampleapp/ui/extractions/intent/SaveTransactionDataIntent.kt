@@ -16,7 +16,7 @@ internal class SaveTransactionDataIntent @Inject constructor(
         amountToPay: String,
         paymentRecipient: String,
         paymentPurpose: String,
-    ) = intent {
+    ) = blockingIntent {
         val list = transactionListStorage.get() ?: emptyList()
         val attachments =
             GiniBank.transactionDocs.extractionDocumentsFlow.firstOrNull() ?: emptyList()

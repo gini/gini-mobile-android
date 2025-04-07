@@ -248,7 +248,7 @@ object GiniBank {
             skontoPercentageDiscountedCalculated,
             skontoDueDateCalculated,
 
-        )
+            )
 
     }
 
