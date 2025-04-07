@@ -22,6 +22,7 @@ interface FlowBottomSheetsManager {
 
     private fun getFileAsByteArray(
         externalCacheDir: File?,
+        fileName: String,
         coroutineScope: CoroutineScope,
         paymentRequest: PaymentRequest?
     ) {
@@ -42,7 +43,7 @@ interface FlowBottomSheetsManager {
                         giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(byteArrayResource.exception ?: Exception("Error")))
                     }
                     is Resource.Success -> {
-                        val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, "payment-request")
+                        val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, fileName)
                         newFile?.let {
                             emitPaymentNextStep(PaymentNextStep.OpenSharePdf(file = it))
                         }
@@ -82,9 +83,9 @@ interface FlowBottomSheetsManager {
         emitPaymentNextStep(PaymentNextStep.ShowOpenWithSheet)
     }
 
-    fun sharePdf(paymentProviderApp: PaymentProviderApp?, externalCacheDir: File?, coroutineScope: CoroutineScope, paymentRequest: PaymentRequest?) {
+    fun sharePdf(paymentProviderApp: PaymentProviderApp?, externalCacheDir: File?, fileName: String, coroutineScope: CoroutineScope, paymentRequest: PaymentRequest?) {
         paymentNextStepFlow.tryEmit(PaymentNextStep.SetLoadingVisibility(true))
-        getFileAsByteArray(externalCacheDir, coroutineScope, paymentRequest)
+        getFileAsByteArray(externalCacheDir, fileName, coroutineScope, paymentRequest)
     }
 
 
