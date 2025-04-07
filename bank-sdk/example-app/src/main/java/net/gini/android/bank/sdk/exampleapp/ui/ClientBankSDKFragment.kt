@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -33,11 +35,6 @@ class ClientBankSDKFragment :
     private lateinit var permissionHandler: PermissionHandler
     private val configurationViewModel: ConfigurationViewModel by activityViewModels()
     private var wasCameraPermissionGranted = false
-
-    fun onNewIntentReceived(intent: Intent?) {
-        intent ?: return
-        handleOpenWithIntent(intent)
-    }
 
     private fun handleOpenWithIntent(intent: Intent?) {
         val captureFlowFragment =
@@ -83,6 +80,9 @@ class ClientBankSDKFragment :
         } else {
             showNoCameraPermissionMessage()
         }
+
+        handleOnBackPressed()
+
     }
 
     private fun showNoCameraPermissionMessage() {
@@ -91,6 +91,14 @@ class ClientBankSDKFragment :
 
     private fun hideNoCameraPermissionMessage() {
         view?.findViewById<TextView>(R.id.no_camera_permission_message)?.visibility = View.GONE
+    }
+
+    private fun handleOnBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().navigate(R.id.mainFragment)
+            }
+        })
     }
 
     private fun overrideBankSDKConfiguration() {

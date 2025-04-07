@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity.RESULT_CANCELED
@@ -44,6 +45,7 @@ class MainFragment : Fragment() {
         setupActivityResultLauncher()
         addInputHandlers()
 
+        handleOnBackPressed()
     }
 
 
@@ -96,6 +98,14 @@ class MainFragment : Fragment() {
                     )
             )
         }
+    }
+
+    private fun handleOnBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                requireActivity().finish()
+            }
+        })
     }
 
     @SuppressLint("SetTextI18n")
