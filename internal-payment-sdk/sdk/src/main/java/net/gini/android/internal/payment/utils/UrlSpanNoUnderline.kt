@@ -10,6 +10,9 @@ import android.view.View
 
 class UrlSpanNoUnderline(private val context: Context, url: String) : URLSpan(url) {
     override fun onClick(widget: View) {
+        if (url.isNullOrEmpty()) {
+            return
+        }
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         // Check if the context is an Activity
         if (context is Activity) {
