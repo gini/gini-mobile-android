@@ -53,7 +53,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         "paymentPurpose" to "text",
         "iban" to "iban",
         "bic" to "bic",
-        "amountToPay" to "amount"
+        "amountToPay" to "amount",
+        "instantPayment" to "text"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
