@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -20,13 +21,14 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewComponent
 import org.slf4j.LoggerFactory
+import kotlin.time.Duration.Companion.seconds
 
 internal class ReviewViewModel(
     val giniHealth: GiniHealth,
     val configuration: ReviewConfiguration,
     val paymentComponent: PaymentComponent,
     val documentId: String,
-    val shouldShowCloseButton: Boolean,
+    val paymentFlowConfiguration: PaymentFlowConfiguration,
     val reviewFragmentListener: ReviewFragmentListener
 ) : ViewModel() {
 
@@ -38,6 +40,10 @@ internal class ReviewViewModel(
         giniInternalPaymentModule = giniHealth.giniInternalPaymentModule,
         coroutineScope = viewModelScope
     )
+
+
+    private val _showInfoBarDurationMs = paymentFlowConfiguration.popupDurationPaymentReview.coerceIn(0, 10).seconds.inWholeMilliseconds
+    val showInfoBarDurationMs: Long get() = _showInfoBarDurationMs
 
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
@@ -63,7 +69,7 @@ internal class ReviewViewModel(
             }
         }
         viewModelScope.launch {
-            delay(SHOW_INFO_BAR_MS)
+            delay(showInfoBarDurationMs)
             _isInfoBarVisible.value = false
         }
         viewModelScope.launch {
@@ -103,18 +109,17 @@ internal class ReviewViewModel(
         private val configuration: ReviewConfiguration,
         private val paymentComponent: PaymentComponent,
         private val documentId: String,
-        private val shouldShowCloseButton: Boolean,
+        private val paymentFlowConfiguration: PaymentFlowConfiguration,
         private val reviewFragmentListener: ReviewFragmentListener
     ) :
         ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, reviewFragmentListener) as T
+            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId, paymentFlowConfiguration, reviewFragmentListener) as T
         }
     }
 
     companion object {
-        const val SHOW_INFO_BAR_MS = 3000L
         private val LOG = LoggerFactory.getLogger(ReviewViewModel::class.java)
     }
 }

@@ -84,9 +84,23 @@ data class PaymentFlowConfiguration(
      *
      * Note: Only taken into consideration for payments initiated with [documentId]
      */
-    val showCloseButtonOnReviewFragment: Boolean = false
+    val showCloseButtonOnReviewFragment: Boolean = false,
+    /**
+     * Specifies the duration (in seconds) for which the payment review popup will be displayed before automatically closing.
+     *
+     * This value must be between `0` (min) and `10` (max) seconds to ensure a smooth user experience.
+     *
+     * Default value is `3` seconds.
+     */
+    val popupDurationPaymentReview: Int = DEFAULT_POPUP_DURATION
 
-): Parcelable
+) : Parcelable {
+
+    companion object {
+        /** Default duration (in seconds) for the payment review popup. */
+        const val DEFAULT_POPUP_DURATION = 3
+    }
+}
 
 /**
  * The [PaymentFragment] provides a container for all screens that should be displayed for the user
@@ -385,7 +399,9 @@ class PaymentFragment private constructor(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
                 selectBankButtonVisible = true,
             ),
-            shouldShowCloseButton = viewModel.paymentFlowConfiguration?.showCloseButtonOnReviewFragment ?: false
+            paymentFlowConfiguration = viewModel.paymentFlowConfiguration
+                ?: PaymentFlowConfiguration()
+
         )
         childFragmentManager.beginTransaction()
             .add(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)

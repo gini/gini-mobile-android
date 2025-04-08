@@ -234,6 +234,7 @@ The ``PaymentFlowConfiguration`` class contains the following options:
 - ``shouldShowReviewBottomDialog``: If set to ``true``, the ``PaymentFragment`` will show a bottom sheet dialog containing the payment details. If set to ``false``, the payment details will not be visible during the payment flow. They will be available to be reviewed after redirecting to the selected payment provider,
     before finalizing the payment. This parameter is only used in the case of payment flows started without ``documentId``.
     Default value is ``false``
+- ``popupDurationPaymentReview``: Defines the duration (in seconds) for which the payment review popup will be displayed before automatically closing. This value must be between `0` (min) and `10` (max) seconds to ensure a smooth user experience, with a default of `3` seconds.
 
 .. warning::
     As the SDK is not responsible for navigation flows outside of it, removing the payment fragment from the hierarchy is the responsibility of implementers at ``PaymentState.Success(paymentRequest)`` or ``PaymentState.Cancel()`` events.
