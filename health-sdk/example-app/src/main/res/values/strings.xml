@@ -14,8 +14,6 @@
     <string name="no_invoices">No invoices</string>
     <string name="upload_test_invoices">Upload Invoices</string>
     <string name="create_payment_order">Create payment order</string>
-    <string name="popup_duration_label">Popup Duration for Payment Review:</string>
-    <string name="popup_duration_value">Current: %1$d sec</string>
     <string name="batch_delete_documents">Batch delete documents</string>
     <string name="delete_payment_request">Delete Payment Request</string>
     <string name="popup_duration_label">Popup Duration for Payment Review:</string>
