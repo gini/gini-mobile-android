@@ -18,4 +18,7 @@ sealed class UserAnalyticsUserProperty(key: String, value: String) :
 
     data class CaptureSdkVersionName(val versionName: String) :
         UserAnalyticsUserProperty("capture_sdk_version", versionName)
+
+    data class InstantPaymentEnabled(val isEnabled: Boolean) :
+        UserAnalyticsUserProperty("instant_payment_enabled", isEnabled.mapToAnalyticsValue())
 }

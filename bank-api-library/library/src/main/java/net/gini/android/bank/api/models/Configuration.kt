@@ -7,4 +7,5 @@ data class Configuration(
     val isReturnAssistantEnabled: Boolean,
     val amplitudeApiKey: String?,
     val transactionDocsEnabled: Boolean,
+    val instantPaymentEnabled: Boolean,
 )
