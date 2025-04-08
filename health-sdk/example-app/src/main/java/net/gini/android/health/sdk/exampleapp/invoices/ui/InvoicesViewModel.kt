@@ -67,6 +67,7 @@ class InvoicesViewModel(
         }
     }
 
+    fun getPaymentReviewFragment(documentId: String?, paymentFlowConfiguration: PaymentFlowConfiguration?): Result<PaymentFragment> {
     fun batchDelete(documentIds: List<String>) {
         viewModelScope.launch {
             val deleteDocumentsRequest = giniHealth.deleteDocuments(documentIds)
