@@ -18,6 +18,7 @@ import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.response.DeleteDocumentErrorResponse
+import net.gini.android.health.api.response.DeletePaymentRequestErrorResponse
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.error.NoPaymentDataExtracted
@@ -390,4 +391,75 @@ class GiniHealthTest {
 
         assertEquals("Request cancelled", result)
     }
+
+    @Test
+    fun `Returns null when batch delete payment requests was successful`() = runTest {
+        coEvery { documentManager.deletePaymentRequests(any()) } returns Resource.Success(Unit)
+
+        val result = giniHealth.deletePaymentRequests(listOf())
+        assertTrue(result == null)
+    }
+
+    @Test
+    fun `Returns DeletePaymentRequestErrorResponse with message field when batch delete with empty list`() = runTest {
+        coEvery { documentManager.deletePaymentRequests(emptyList()) } returns Resource.Error(
+            "{ \"message\": \"No payment requests to delete\" }"
+        )
+
+        val result = giniHealth.deletePaymentRequests(emptyList())
+        Truth.assertThat(result).isInstanceOf(DeletePaymentRequestErrorResponse::class.java)
+        Truth.assertThat(result?.message).isEqualTo("No payment requests to delete")
+    }
+
+    @Test
+    fun `Returns DeletePaymentRequestErrorResponse with unauthorizedPaymentRequests field when batch delete payment requests that do not belong to the user`() = runTest {
+        coEvery { documentManager.deletePaymentRequests(emptyList()) } returns Resource.Error(
+            "{ \"unauthorizedPaymentRequests\": [\"0eb26fec-4a7f-4376-b5d5-5155adf8adca\", \"8f434c37-7167-4c42-ac10-02e0826bba98\"] }"
+        )
+
+        val result = giniHealth.deletePaymentRequests(emptyList())
+        Truth.assertThat(result).isInstanceOf(DeletePaymentRequestErrorResponse::class.java)
+        Truth.assertThat(result?.message).isNull()
+        Truth.assertThat(result?.unauthorizedPaymentRequests).isNotNull()
+        Truth.assertThat(result?.unauthorizedPaymentRequests).hasSize(2)
+    }
+
+    @Test
+    fun `Returns DeletePaymentRequestErrorResponse with notFoundPaymentRequests field when batch delete payment requests that do not exist anymore`() = runTest {
+        coEvery { documentManager.deletePaymentRequests(emptyList()) } returns Resource.Error(
+            "{ \"notFoundPaymentRequests\": [\"0eb26fec-4a7f-4376-b5d5-5155adf8adca\", \"8f434c37-7167-4c42-ac10-02e0826bba98\"] }"
+        )
+
+        val result = giniHealth.deletePaymentRequests(emptyList())
+        Truth.assertThat(result).isInstanceOf(DeletePaymentRequestErrorResponse::class.java)
+        Truth.assertThat(result?.message).isNull()
+        Truth.assertThat(result?.notFoundPaymentRequests).isNotNull()
+        Truth.assertThat(result?.notFoundPaymentRequests).hasSize(2)
+    }
+
+    @Test
+    fun `Returns DeletePaymentRequestErrorResponse with notFoundPaymentRequests and unauthorizedPaymentRequests fields when batch delete contains both cases`() = runTest {
+        coEvery { documentManager.deletePaymentRequests(emptyList()) } returns Resource.Error(
+            "{ \"notFoundPaymentRequests\": [\"0eb26fec-4a7f-4376-b5d5-5155adf8adca\", \"8f434c37-7167-4c42-ac10-02e0826bba98\"], \"unauthorizedPaymentRequests\": [\"0eb26fec-4a7f-4376-b5d5-5155adf8adca\", \"8f434c37-7167-4c42-ac10-02e0826bba98\"] }"
+        )
+
+        val result = giniHealth.deletePaymentRequests(emptyList())
+        Truth.assertThat(result).isInstanceOf(DeletePaymentRequestErrorResponse::class.java)
+        Truth.assertThat(result?.message).isNull()
+        Truth.assertThat(result?.notFoundPaymentRequests).isNotNull()
+        Truth.assertThat(result?.notFoundPaymentRequests).hasSize(2)
+        Truth.assertThat(result?.unauthorizedPaymentRequests).isNotNull()
+        Truth.assertThat(result?.unauthorizedPaymentRequests).hasSize(2)
+    }
+
+
+    @Test
+    fun `Returns DeletePaymentRequestErrorResponse with cancellation message when batch delete is cancelled`() = runTest {
+        coEvery { documentManager.deletePaymentRequests(any()) } returns Resource.Cancelled()
+
+        val result = giniHealth.deletePaymentRequests(listOf())
+        Truth.assertThat(result).isInstanceOf(DeletePaymentRequestErrorResponse::class.java)
+        Truth.assertThat(result?.message).isEqualTo("Delete payment requests request was cancelled")
+    }
+
 }
