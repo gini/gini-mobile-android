@@ -86,6 +86,23 @@ class OrdersLocalDataSource(private val context: Context, val hardcodedOrdersLoc
         writeOrdersToPreferences(documentsList)
     }
 
+    suspend fun deletePaymentRequestIdsAndExpiryDates(paymentRequestIds: List<String>) {
+        val documentsList = readOrdersFromPreferences()
+
+        val updatedDocumentsList = documentsList.map { order ->
+            if (paymentRequestIds.contains(order.id)) {
+                order.copy(requestId = null, expiryDate = null)
+            } else {
+                order
+            }
+        }
+
+        writeOrdersToPreferences(updatedDocumentsList)
+
+        _ordersFlow.value = updatedDocumentsList
+    }
+
+
     private suspend fun readOrdersFromPreferences(): List<Order> {
         return context.dataStore.data.map { preferences ->
             val invoicesJson = preferences[KEY_ORDERS] ?: ""

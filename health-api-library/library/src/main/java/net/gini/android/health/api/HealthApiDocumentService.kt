@@ -44,4 +44,7 @@ internal interface HealthApiDocumentService: DocumentService {
 
     @HTTP(method = "DELETE", path = "/documents", hasBody = true)
     suspend fun batchDeleteDocuments(@HeaderMap bearer: Map<String, String>, @Body body: List<String>): Response<Void>
+
+    @HTTP(method = "DELETE", path = "/paymentRequests", hasBody = true)
+    suspend fun batchDeletePaymentRequests(@HeaderMap bearer: Map<String, String>, @Body body: List<String>): Response<Unit>
 }
