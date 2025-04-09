@@ -84,6 +84,26 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/expiration_date"
+            style="@style/GiniPaymentTheme.Typography.Body2"
+            android:gravity="center_horizontal"
+            android:textColor="@color/gps_accent_01"
+            />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/create_payment_request_btn"
+            style="@style/GiniPaymentTheme.Widget.Button.UnelevatedButton"
+            android:backgroundTint="@color/gps_accent_01"
+            android:textColor="@color/white"
+            android:text="@string/create_payment_request"
+            android:layout_marginTop="@dimen/gps_medium"
+            />
+
     </LinearLayout>
 
     <Button
@@ -94,5 +114,6 @@
         android:layout_marginBottom="@dimen/gps_large"
         android:text="@string/pay_now"
         android:backgroundTint="@color/ghs_accent_01"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

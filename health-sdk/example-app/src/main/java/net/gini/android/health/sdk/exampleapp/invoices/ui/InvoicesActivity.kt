@@ -29,7 +29,6 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBindin
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
-import net.gini.android.health.sdk.exampleapp.orders.OrderDetailsFragment
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -221,7 +220,8 @@ open class InvoicesActivity : AppCompatActivity() {
     }
 
     private fun startPaymentFlowForDocumentId(documentId: String) {
-        viewModel.getPaymentReviewFragment(documentId)
+        val paymentFlowConfiguration = IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java)
+        viewModel.getPaymentReviewFragment(documentId,paymentFlowConfiguration)
             .onSuccess { reviewFragment ->
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, reviewFragment, REVIEW_FRAGMENT_TAG)
@@ -249,13 +249,6 @@ open class InvoicesActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.upload_test_invoices -> {
                 viewModel.uploadHardcodedInvoices()
-                true
-            }
-            R.id.create_payment_order -> {
-                supportFragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, OrderDetailsFragment.newInstance(), OrderDetailsFragment::class.java.name)
-                    .addToBackStack(OrderDetailsFragment::class.java.name)
-                    .commit()
                 true
             }
             R.id.batch_delete -> {

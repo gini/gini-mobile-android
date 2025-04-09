@@ -228,7 +228,21 @@ class HealthApiDocumentRemoteSourceTest {
             return Response.success(null)
         }
 
+        override suspend fun deletePaymentRequest(
+            bearer: Map<String, String>,
+            paymentRequestId: String
+        ): Response<ResponseBody> {
+            return Response.success(null)
+        }
+
         override suspend fun getConfigurations(bearer: Map<String, String>): Response<ConfigurationResponse> {
+            return Response.success(null)
+        }
+
+        override suspend fun batchDeletePaymentRequests(
+            bearer: Map<String, String>,
+            body: List<String>
+        ): Response<Unit> {
             return Response.success(null)
         }
 

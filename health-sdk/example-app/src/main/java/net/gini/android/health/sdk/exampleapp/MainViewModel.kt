@@ -70,7 +70,8 @@ class MainViewModel(
 
     fun getPaymentFlowConfiguration() = paymentFlowConfiguration
 
-    fun setPaymentFlowConfiguration(paymentFlowConfiguration: PaymentFlowConfiguration) {
-        this.paymentFlowConfiguration = paymentFlowConfiguration
+    fun updatePaymentFlowConfiguration(update: PaymentFlowConfiguration.() -> PaymentFlowConfiguration) {
+        val currentConfig = paymentFlowConfiguration ?: PaymentFlowConfiguration()
+        paymentFlowConfiguration = currentConfig.update()
     }
 }
