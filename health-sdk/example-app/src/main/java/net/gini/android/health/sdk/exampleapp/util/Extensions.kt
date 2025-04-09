@@ -32,6 +32,8 @@ fun InputStream.getBytes(): ByteArray {
 
 @RequiresApi(Build.VERSION_CODES.N)
 fun String.prettifyDate(): String {
+    if (this.isEmpty()) return ""
+
     val format = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS")
     val localDateFormat = SimpleDateFormat("dd MMM yyyy")
 
