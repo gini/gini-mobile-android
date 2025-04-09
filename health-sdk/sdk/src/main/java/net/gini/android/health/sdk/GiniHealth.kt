@@ -26,6 +26,7 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.models.Payment
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.response.DeleteDocumentErrorResponse
 import net.gini.android.health.api.response.DeletePaymentRequestErrorResponse
@@ -264,6 +265,27 @@ class GiniHealth(
         return when (val extractions = getExtractionsForDocument(documentId)) {
             null -> false
             else -> (extractions.specificExtractions["payment_state"]?.value ?: "") == PAYABLE
+        }
+    }
+
+    /**
+     * Fetches the payment details for the provided id.
+     *
+     * @param id the id of the payment request to retrieve the payment details
+     * @return the [Payment] object containing the payment details
+     * @throws Exception if the request fails or is cancelled, with the error message
+     *
+     */
+    suspend fun getPayment(id: String): Payment {
+        return when (val response = documentManager.getPayment(id)) {
+            is Resource.Success -> response.data
+            is Resource.Error -> {
+                LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
+                    .error("Failed to get payment with id: ${response.exception}")
+
+                throw Exception(response.message ?: "Error")
+            }
+            is Resource.Cancelled -> throw Exception("Request cancelled")
         }
     }
 
