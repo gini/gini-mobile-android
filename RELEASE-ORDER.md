@@ -1,8 +1,8 @@
 DO NOT EDIT MANUALLY!
 Automatically created by the updateReleaseOrderFile task.
 
-Release order for :capture-sdk:sdk 3.13.0:
- 1. :capture-sdk:sdk 3.13.0
+Release order for :capture-sdk:sdk 3.14.0:
+ 1. :capture-sdk:sdk 3.14.0
 
 Release order for :core-api-library:library 2.4.1:
  1. :core-api-library:library 2.4.1
@@ -29,7 +29,7 @@ Release order for :health-sdk:sdk 5.3.0:
 Release order for :capture-sdk:default-network 3.13.0:
  1. :core-api-library:library 2.4.1
  2. :bank-api-library:library 3.4.0
- 3. :capture-sdk:sdk 3.13.0
+ 3. :capture-sdk:sdk 3.14.0
  4. :capture-sdk:default-network 3.13.0
 
 Release order for :merchant-sdk:sdk 1.0.0:
@@ -41,7 +41,7 @@ Release order for :merchant-sdk:sdk 1.0.0:
 Release order for :bank-sdk:sdk 3.16.0:
  1. :core-api-library:library 2.4.1
  2. :bank-api-library:library 3.4.0
- 3. :capture-sdk:sdk 3.13.0
+ 3. :capture-sdk:sdk 3.14.0
  4. :capture-sdk:default-network 3.13.0
  5. :bank-sdk:sdk 3.16.0
 
