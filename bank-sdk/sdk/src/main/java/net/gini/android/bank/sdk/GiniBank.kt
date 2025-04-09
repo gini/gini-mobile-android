@@ -229,10 +229,11 @@ object GiniBank {
         paymentPurpose: String,
         iban: String,
         bic: String,
-        amount: Amount
+        amount: Amount,
+        instantPayment: String = ""
     ) {
         GiniCapture.sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
+            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount, instantPayment
         )
     }
 

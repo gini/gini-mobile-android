@@ -148,15 +148,22 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
         val iban = mExtractions["iban"]?.value ?: ""
         val bic = mExtractions["bic"]?.value ?: ""
+        val instantPayment = mExtractions["instantPayment"]?.value ?: ""
 
         if (amount.isEmpty()) {
             amount = Amount.EMPTY.amountToPay()
         }
 
         GiniBank.sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            Amount(
                 BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
-            )
+            ),
+            instantPayment
         )
 
         GiniBank.cleanupCapture(applicationContext)
