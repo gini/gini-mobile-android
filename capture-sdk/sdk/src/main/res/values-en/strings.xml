@@ -150,6 +150,7 @@
     <string name="gc_scan">Scan</string>
     <string name="gc_take_a_picture">Take a picture</string>
     <string name="gc_flash_button">Flash</string>
+    <string name="gc_photo_review_content_description">Photo review</string>
     <string name="gc_delete_page">Delete page</string>
     <string name="gc_document_page">Document page</string>
     <string name="gc_useful_tips">Useful tips</string>
