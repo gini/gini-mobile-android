@@ -197,6 +197,29 @@ Delete payment request
         }
     }
 
+Delete multiple payment requests
+---------------------------------
+
+``GiniHealthSDK`` provides a  method to delete multiple payment request at once. You can do this by calling ``giniHealth.deletePaymentRequests(...)`` with a list of payment request IDs. The call will only succeed if all payment request were successfully deleted. If any payment request is invalid, unauthorized, or not found, the entire deletion request will fail, and no payment requests will be deleted. In the case of failures, an error or type ``DeletePaymentRequestErrorResponse`` will be provided, with more insight into why the deletion failed.
+
+.. code-block:: kotlin
+
+    // Assuming `paymentRequestIds` is a list of `String` which
+    // representing the IDs of the payment requests to be deleted
+
+    coroutineScope.launch {
+        // Delete multiple payment requests at once
+        val deletePaymentRequests = giniHealth.deletePaymentRequests(paymentRequestIds)
+
+        when (deletePaymentRequests) {
+            is Resource.Success -> {
+                // `null` will be returned here
+            }
+            is Resource.Error -> // Handle `DeletePaymentRequestErrorResponse`
+            is Resource.Cancelled -> // Handle `DeletePaymentRequestErrorResponse`
+        }
+    }
+
 Delete multiple documents at once
 ---------------------------------
 
