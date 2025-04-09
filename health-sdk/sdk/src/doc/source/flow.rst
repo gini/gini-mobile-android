@@ -105,28 +105,6 @@ Health API. You can then store the ``isPayable`` state in your own data model.
         }
     }
 
-get Payment Details
-------------------------
-
-Call ``giniHealth.getPayment()`` with the payment request ID to retrieve the details of a specific payment.
-The method returns a ``Payment`` object containing the relevant payment information.
-
-If the request fails or is canceled, an exception will be thrown with an error message.
-
-.. code-block:: kotlin
-
-    // Assuming paymentId is the ID of the payment request
-
-    coroutineScope.launch {
-        try {
-            // Retrieve payment details
-            val paymentDetails = giniHealth.getPayment(paymentId)
-        } catch (e: Exception) {
-            // Handle error
-        }
-    }
-
-
 Check if document has multiple invoices
 ---------------------------------------
 
