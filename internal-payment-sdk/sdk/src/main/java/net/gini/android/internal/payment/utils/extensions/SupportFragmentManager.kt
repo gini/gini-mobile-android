@@ -50,3 +50,10 @@ fun FragmentManager.add(@IdRes containerId: Int, fragment: Fragment, addToBackSt
         .apply { if (addToBackStack) addToBackStack(fragment::class.java.name) }
         .commit()
 }
+
+fun FragmentManager.replace(@IdRes containerId: Int, fragment: Fragment, addToBackStack: Boolean) {
+    beginTransaction()
+        .replace(containerId, fragment, fragment::class.java.name)
+        .apply { if (addToBackStack) addToBackStack(fragment::class.java.name) }
+        .commit()
+}

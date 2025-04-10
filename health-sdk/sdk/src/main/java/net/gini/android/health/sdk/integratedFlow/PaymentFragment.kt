@@ -43,9 +43,9 @@ import net.gini.android.internal.payment.review.reviewComponent.ReviewFields
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.internal.payment.utils.PaymentNextStep
 import net.gini.android.internal.payment.utils.autoCleared
-import net.gini.android.internal.payment.utils.extensions.add
 import net.gini.android.internal.payment.utils.extensions.createShareWithPendingIntent
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.replace
 import net.gini.android.internal.payment.utils.extensions.showInstallAppBottomSheet
 import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomSheet
 import net.gini.android.internal.payment.utils.extensions.startSharePdfIntent
@@ -156,7 +156,7 @@ class PaymentFragment private constructor(
     private val paymentComponentListener = object: PaymentComponent.Listener {
         override fun onMoreInformationClicked() {
             viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
-            childFragmentManager.add(
+            childFragmentManager.replace(
                 containerId = binding.ghsFragmentContainerView.id,
                 fragment = MoreInformationFragment.newInstance(viewModel.paymentComponent, viewModel),
                 addToBackStack = true
@@ -386,7 +386,7 @@ class PaymentFragment private constructor(
             shouldShowCloseButton = viewModel.paymentFlowConfiguration?.showCloseButtonOnReviewFragment ?: false
         )
         childFragmentManager.beginTransaction()
-            .add(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
+            .replace(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
             .addToBackStack(reviewFragment::class.java.name)
             .commit()
     }

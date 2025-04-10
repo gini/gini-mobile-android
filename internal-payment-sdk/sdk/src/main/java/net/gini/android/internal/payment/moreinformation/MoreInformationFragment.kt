@@ -125,6 +125,11 @@ class MoreInformationFragment private constructor(
                     }
                 }
             }
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                launch {
+                    binding.root.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+                }
+            }
         }
     }
 

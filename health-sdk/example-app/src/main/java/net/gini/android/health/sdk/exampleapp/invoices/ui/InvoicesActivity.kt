@@ -121,7 +121,7 @@ open class InvoicesActivity : AppCompatActivity() {
                         viewModel.getPaymentFragmentForPaymentDetails(result, IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java))
                             .onSuccess { paymentFragment ->
                                 supportFragmentManager.beginTransaction()
-                                    .add(R.id.fragment_container, paymentFragment, REVIEW_FRAGMENT_TAG)
+                                    .replace(R.id.fragment_container, paymentFragment, REVIEW_FRAGMENT_TAG)
                                     .addToBackStack(paymentFragment::class.java.name)
                                     .commit()
                             }

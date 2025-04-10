@@ -137,12 +137,24 @@ class ReviewFragment private constructor(
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
             bottomMargin = -resources.getDimensionPixelSize(net.gini.android.internal.payment.R.dimen.gps_medium_12)
         }
+//        binding.root.requestFocus()
     }
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
+                launch {
+                    viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
+                }
+
+//                launch {
+//                    binding.ghsPaymentDetails.findViewById<TextInputEditText>(net.gini.android.internal.payment.R.id.amount)
+//                        .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+//                }
+
+                launch {
+                    binding.root.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+                }
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -225,6 +237,8 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.setActionListeners() {
         ghsPaymentDetails.listener = reviewViewListener
         close.setOnClickListener { view ->
+            binding.root.findFocus()?.clearFocus()
+            binding.ghsPaymentDetails.clearFocus()
             if (isKeyboardShown) {
                 view.hideKeyboard()
             } else {
