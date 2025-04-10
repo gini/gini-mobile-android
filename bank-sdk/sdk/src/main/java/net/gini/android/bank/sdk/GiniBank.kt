@@ -232,9 +232,26 @@ object GiniBank {
         amount: Amount,
         instantPayment: String = ""
     ) {
-        GiniCapture.sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount, instantPayment
-        )
+        if (instantPayment.isNotBlank()) {
+            GiniCapture.sendTransferSummary(
+                paymentRecipient,
+                paymentReference,
+                paymentPurpose,
+                iban,
+                bic,
+                amount,
+                instantPayment
+            )
+        } else {
+            GiniCapture.sendTransferSummary(
+                paymentRecipient,
+                paymentReference,
+                paymentPurpose,
+                iban,
+                bic,
+                amount
+            )
+        }
     }
 
     internal fun sendTransferSummaryForSkonto(
