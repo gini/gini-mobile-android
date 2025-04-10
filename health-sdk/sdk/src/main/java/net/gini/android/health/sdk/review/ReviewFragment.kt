@@ -43,6 +43,7 @@ import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getFontScale
@@ -390,7 +391,10 @@ class ReviewFragment private constructor(
 
             dragHandle?.setOnTouchListener { _, _ ->
                 fieldsLayout.alpha = if (isVisible) 0f else 1f
-                fieldsLayout.isVisible = !fieldsLayout.isVisible
+                val currentState = binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode()
+                binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(
+                    if (currentState == ReviewViewStateLandscape.EXPANDED) ReviewViewStateLandscape.COLLAPSED else ReviewViewStateLandscape.EXPANDED
+                )
                 false
             }
         }

@@ -22,6 +22,7 @@ import net.gini.android.internal.payment.databinding.GpsReviewBinding
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.PaymentField
+import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.amountWatcher
 import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
@@ -104,6 +105,11 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                     binding.paymentProgress.isVisible = isLoading
                     binding.amountLayout.isEnabled = !isLoading &&
                             (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.AMOUNT) ?: false)
+                }
+            }
+            launch {
+                reviewComponent?.reviewViewStateInLandscapeMode?.collect { reviewViewState ->
+                    binding.gpsFieldsLayout?.isVisible = reviewViewState == ReviewViewStateLandscape.EXPANDED
                 }
             }
         }

@@ -15,6 +15,7 @@ import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.review.validate
 import net.gini.android.internal.payment.review.validateIban
@@ -50,6 +51,9 @@ class ReviewComponent(
             val isLoading = (paymentState is ResultWrapper.Loading)
             !isLoading && noEmptyFields
         }
+
+    private val _reviewViewStateInLandscapeMode = MutableStateFlow<ReviewViewStateLandscape>(ReviewViewStateLandscape.EXPANDED)
+    val reviewViewStateInLandscapeMode: Flow<ReviewViewStateLandscape> = _reviewViewStateInLandscapeMode
     init {
         coroutineScope.launch {
             _paymentDetails
@@ -136,6 +140,12 @@ class ReviewComponent(
         _lastFullyValidatedPaymentDetails.tryEmit(paymentDetails)
         return items.isEmpty()
     }
+
+    fun setReviewViewModeInLandscapeMode(state: ReviewViewStateLandscape) {
+        _reviewViewStateInLandscapeMode.value = state
+    }
+
+    fun getReviewViewStateInLandscapeMode() = _reviewViewStateInLandscapeMode.value
 
     companion object {
         private val LOG = LoggerFactory.getLogger(ReviewComponent::class.java)
