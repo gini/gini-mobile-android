@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,6 +39,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsAdapterInterface {
+
     private lateinit var binding: ActivityExtractionsBinding
 
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
@@ -45,6 +47,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     @Inject
     internal lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
+
+    private val viewModel: ExtractionsViewModel by viewModels()
 
     // {extraction name} to it's {entity name}
     private val editableSpecificExtractions = hashMapOf(
@@ -151,6 +155,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         if (amount.isEmpty()) {
             amount = Amount.EMPTY.amountToPay()
         }
+
+        viewModel.saveTransactionData(amount, paymentRecipient, paymentReference)
 
         GiniBank.sendTransferSummary(
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
