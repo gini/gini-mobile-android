@@ -18,12 +18,12 @@ To publish releases follow these steps:
    for Health SDK and Health API Library in the Insurance's [project](https://ginis.atlassian.net/projects/IPC?selectedItem=com.atlassian.jira.jira-projects-plugin:release-page). 
    1. Connect tickets to each release: for each to-be-released ticket add the release to its "Fix versions" field.
    2. Add release notes in markdown format to each release's description (you can copy and update the release notes of a previous release).  
-      Markdown formatting is needed because these release notes will be published on GitHub's [releases page](https://github.com/gini/gini-mobile-android/releases).
+      Markdown formatting is needed because these release notes will be published on GitHub's [releases page](https://github.com/gini/gini-mobile-android/releases).  
       Sample release notes for each project:
-         [Capture SDK](https://github.com/gini/gini-mobile-android/releases/tag/capture-sdk%3B3.14.0)
-         [Bank API Library](https://github.com/gini/gini-mobile-android/releases/tag/bank-api-library%3B3.5.0)
-         [Bank SDK](https://github.com/gini/gini-mobile-android/releases/tag/bank-sdk%3B3.17.0)
-         [Health API Library](https://github.com/gini/gini-mobile-android/releases/tag/health-api-library%3B5.3.0)
+         [Capture SDK](https://github.com/gini/gini-mobile-android/releases/tag/capture-sdk%3B3.14.0) - 
+         [Bank API Library](https://github.com/gini/gini-mobile-android/releases/tag/bank-api-library%3B3.5.0) - 
+         [Bank SDK](https://github.com/gini/gini-mobile-android/releases/tag/bank-sdk%3B3.17.0) - 
+         [Health API Library](https://github.com/gini/gini-mobile-android/releases/tag/health-api-library%3B5.3.0) - 
          [Health SDK](https://github.com/gini/gini-mobile-android/releases/tag/health-sdk%3B5.3.0)
          
 2. Read this [wiki](https://ginis.atlassian.net/wiki/spaces/PLMO/pages/83787798/Support+multiple+Android+SDK+and+library+versions+parallely) page to determine which branch to use because we support three main version (1.x.x, 2.x.x and 3.x.x).
@@ -38,19 +38,19 @@ To publish releases follow these steps:
    2. Update the `RELEASE-ORDER.md` file by running: `./gradlew updateReleaseOrderFile`.
    3. Check `RELEASE-ORDER.md` to find out which projects contain the to-be-released modules in their release order.  
       These will be the dependent modules.
-   4. Commit the version bump changes using this commit message template and the RC ticket number for getting the build from GitHub Actions: 
-      `feat(<project>): Bump version to <version number>`.  
+   4. Commit the version bump changes using this commit message template and the RC ticket number for getting the build from GitHub Actions:   
+         `feat(<project>): Bump version to <version number>`.  
       Complete example: 
-      `feat(bank-sdk): Bump version to 4.3.1 
-                PP-467`
-      Samples for each project (please add the RC ticket number to the commit message):
-      `feat(capture-sdk): Bump version to 3.13.0`
-      `feat(core-api-library): Bump version to 2.2.2`
-      `feat(bank-api-library): Bump version to 3.3.1`
-      `feat(default-network): Bump version to 3.12.1`
-      `feat(bank-sdk): Bump version to 3.15.0`
-      `feat(health-api-library): Bump version to 4.4.0`
-      `feat(health-sdk): Bump version to 4.4.0`
+         `feat(bank-sdk): Bump version to 4.3.1  
+          PP-467`    
+      Samples for each project (please add the RC ticket number to the commit message):    
+         `feat(capture-sdk): Bump version to 3.13.0`    
+         `feat(core-api-library): Bump version to 2.2.2`  
+         `feat(bank-api-library): Bump version to 3.3.1`  
+         `feat(default-network): Bump version to 3.12.1`  
+         `feat(bank-sdk): Bump version to 3.15.0`  
+         `feat(health-api-library): Bump version to 4.4.0`  
+         `feat(health-sdk): Bump version to 4.4.0`  
    5. For each dependent module:
       1. Bump the version in each module's:
           1. `gradle.properties` file,
