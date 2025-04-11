@@ -38,6 +38,7 @@ import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.logging.ErrorLoggerListener
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.onboarding.DefaultPages
 import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.tracking.AnalysisScreenEvent
@@ -56,7 +57,7 @@ class ConfigurationViewModel @Inject constructor(
 
     private val _disableCameraPermissionFlow = MutableStateFlow(false)
     val disableCameraPermissionFlow: StateFlow<Boolean> = _disableCameraPermissionFlow
-
+    var extractionsBundle: Map<String, GiniCaptureSpecificExtraction> = mapOf()
     private val _configurationFlow = MutableStateFlow(Configuration())
 
     fun getAlwaysAttachSetting(context: Context): Boolean {
