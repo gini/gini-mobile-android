@@ -222,6 +222,7 @@ object GiniBank {
      * @param iban international bank account
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
+     * @param instantPayment based on the user's preference to have the payment as instant payment
      */
     fun sendTransferSummary(
         paymentRecipient: String,
@@ -230,28 +231,17 @@ object GiniBank {
         iban: String,
         bic: String,
         amount: Amount,
-        instantPayment: String = ""
+        instantPayment: Boolean? = null
     ) {
-        if (instantPayment.isNotBlank()) {
-            GiniCapture.sendTransferSummary(
-                paymentRecipient,
-                paymentReference,
-                paymentPurpose,
-                iban,
-                bic,
-                amount,
-                instantPayment
-            )
-        } else {
-            GiniCapture.sendTransferSummary(
-                paymentRecipient,
-                paymentReference,
-                paymentPurpose,
-                iban,
-                bic,
-                amount
-            )
-        }
+        GiniCapture.sendTransferSummary(
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            amount,
+            instantPayment
+        )
     }
 
     internal fun sendTransferSummaryForSkonto(
@@ -266,7 +256,7 @@ object GiniBank {
             skontoPercentageDiscountedCalculated,
             skontoDueDateCalculated,
 
-        )
+            )
 
     }
 

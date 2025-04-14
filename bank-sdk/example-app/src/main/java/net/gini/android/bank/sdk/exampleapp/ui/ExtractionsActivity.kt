@@ -163,7 +163,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             Amount(
                 BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
             ),
-            instantPayment
+            instantPayment.toBooleanStrictOrNull()
         )
 
         GiniBank.cleanupCapture(applicationContext)
