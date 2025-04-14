@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.exampleapp.ui.transactionlist.ui
+package net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.exampleapp.ui.transactionlist.model.Attachment
+import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Attachment
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
 

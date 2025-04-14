@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.exampleapp.ui.transactionlist.ui
+package net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,9 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
-import net.gini.android.bank.sdk.exampleapp.ui.transactionlist.model.Attachment
-import net.gini.android.bank.sdk.exampleapp.ui.transactionlist.model.Transaction
+import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.formatter.DateFormatter
+import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Attachment
+import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Transaction
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenu
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenuItem
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
@@ -33,10 +36,17 @@ internal fun TransactionListItem(
     modifier: Modifier = Modifier,
     onAttachmentClick: (Attachment) -> Unit,
     onDeleteClicked: () -> Unit,
+    onClick: (Transaction) -> Unit,
 ) {
     var menuVisible by remember { mutableStateOf(false) }
+    val formatter = remember { DateFormatter() }
+
     Column(
-        modifier = modifier.padding(16.dp)
+        modifier = modifier
+            .padding(16.dp)
+            .clickable(
+                onClick = { onClick(transaction) }
+            )
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -44,7 +54,7 @@ internal fun TransactionListItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = transaction.title,
+                text = transaction.paymentRecipient,
                 style = GiniTheme.typography.subtitle1
             )
             Row(
@@ -52,7 +62,7 @@ internal fun TransactionListItem(
             ) {
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    text = transaction.amount,
+                    text = "-${transaction.amount.replace(":", " ")}",
                     style = GiniTheme.typography.subtitle1.bold()
                 )
 
@@ -86,7 +96,15 @@ internal fun TransactionListItem(
             }
         }
         Text(
-            text = transaction.description,
+            text = formatter.format(transaction.timestamp).capitalize(Locale.current),
+            style = GiniTheme.typography.caption1
+        )
+        Text(
+            text = transaction.paymentPurpose,
+            style = GiniTheme.typography.caption1
+        )
+        Text(
+            text = transaction.paymentReference,
             style = GiniTheme.typography.caption1
         )
         transaction.attachments.firstOrNull()?.let {
@@ -105,17 +123,23 @@ private fun TransactionListItemPreview() {
         Surface {
             TransactionListItem(
                 Transaction(
-                    title = "Some title",
-                    description = "Description",
+                    paymentRecipient = "Payment Recipient",
+                    paymentPurpose = "Payment Purpose",
                     amount = "197 EUR",
                     attachments = listOf(
                         Attachment(
-                            id = "id", filename = "File Name.pdf"
+                            id = "id",
+                            filename = "File Name.pdf",
                         )
-                    )
+                    ),
+                    iban = "IBAN",
+                    bic = "BIC",
+                    paymentReference = "Reference",
+                    timestamp = System.currentTimeMillis()
                 ),
                 onAttachmentClick = {},
-                onDeleteClicked = {}
+                onDeleteClicked = {},
+                onClick = {}
             )
         }
     }

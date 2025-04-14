@@ -156,7 +156,14 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             amount = Amount.EMPTY.amountToPay()
         }
 
-        viewModel.saveTransactionData(amount, paymentRecipient, paymentReference)
+        viewModel.saveTransactionData(
+            iban,
+            bic,
+            amount,
+            paymentRecipient,
+            paymentPurpose,
+            paymentReference,
+        )
 
         GiniBank.sendTransferSummary(
             paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(

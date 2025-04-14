@@ -2,29 +2,33 @@ package net.gini.android.bank.sdk.exampleapp.ui.extractions.intent
 
 import kotlinx.coroutines.flow.firstOrNull
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.exampleapp.data.storage.TransactionListStorage
+import net.gini.android.bank.sdk.exampleapp.data.storage.TransactionDocsStorage
 import net.gini.android.bank.sdk.exampleapp.ui.extractions.ExtractionsContainerHost
-import net.gini.android.bank.sdk.exampleapp.ui.transactionlist.model.Attachment
-import net.gini.android.bank.sdk.exampleapp.ui.transactionlist.model.Transaction
+import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Attachment
+import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Transaction
 import javax.inject.Inject
 
 internal class SaveTransactionDataIntent @Inject constructor(
-    private val transactionListStorage: TransactionListStorage,
+    private val transactionDocsStorage: TransactionDocsStorage,
 ) {
 
     fun ExtractionsContainerHost.run(
+        iban: String,
+        bic: String,
         amountToPay: String,
         paymentRecipient: String,
         paymentPurpose: String,
+        paymentReference: String,
     ) = blockingIntent {
-        val list = transactionListStorage.get() ?: emptyList()
+
+        val list = transactionDocsStorage.get() ?: emptyList()
         val attachments =
             GiniBank.transactionDocs.extractionDocumentsFlow.firstOrNull() ?: emptyList()
 
-        transactionListStorage.update(
+        transactionDocsStorage.update(
             list + Transaction(
-                title = paymentRecipient,
-                description = paymentPurpose,
+                paymentRecipient = paymentRecipient,
+                paymentPurpose = paymentPurpose,
                 amount = amountToPay,
                 attachments = listOf(
                     attachments.map {
@@ -33,7 +37,11 @@ internal class SaveTransactionDataIntent @Inject constructor(
                             filename = it.documentFileName
                         )
                     }
-                ).firstOrNull() ?: emptyList()
+                ).firstOrNull() ?: emptyList(),
+                iban = iban,
+                bic = bic,
+                timestamp = System.currentTimeMillis(),
+                paymentReference = paymentReference,
             )
         )
     }

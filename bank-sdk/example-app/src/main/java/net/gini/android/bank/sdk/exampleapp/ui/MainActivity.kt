@@ -25,7 +25,7 @@ import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewO
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
-import net.gini.android.bank.sdk.exampleapp.ui.transactionlist.TransactionListActivity
+import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.TransactionDocsActivity
 import net.gini.android.capture.Document
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.util.CancellationToken
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonOpenTlDemo.setOnClickListener {
-            startActivity(Intent(this, TransactionListActivity::class.java))
+            startActivity(Intent(this, TransactionDocsActivity::class.java))
         }
 
         binding.buttonStartSingleActivity.setOnClickListener {

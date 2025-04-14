@@ -16,10 +16,13 @@ internal class ExtractionsViewModel @Inject constructor(
     override val container: Container<Unit, Nothing> = container(Unit)
 
     fun saveTransactionData(
+        iban: String,
+        bic: String,
         amountToPay: String,
         paymentRecipient: String,
         paymentPurpose: String,
+        paymentReference: String,
     ) = with(saveTransactionDataIntent) {
-        run(amountToPay, paymentRecipient, paymentPurpose)
+        run(iban, bic, amountToPay, paymentRecipient, paymentPurpose, paymentReference)
     }
 }

@@ -6,7 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import net.gini.android.bank.sdk.exampleapp.data.storage.TransactionListStorage
+import net.gini.android.bank.sdk.exampleapp.data.storage.TransactionDocsStorage
 import javax.inject.Singleton
 
 @Module
@@ -17,7 +17,7 @@ class StorageModule {
     @Provides
     internal fun provideTransactionListStorage(
         @ApplicationContext context: Context,
-    ): TransactionListStorage {
-        return TransactionListStorage(context)
+    ): TransactionDocsStorage {
+        return TransactionDocsStorage(context)
     }
 }
