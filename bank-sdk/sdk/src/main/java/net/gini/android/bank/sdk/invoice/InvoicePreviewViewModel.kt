@@ -27,7 +27,7 @@ internal class InvoicePreviewViewModel(
     )
 
     private fun createInitalState() =
-        InvoicePreviewFragmentState(
+        InvoicePreviewFragmentState.Ready(
             screenTitle = screenTitle,
             isLoading = true,
             images = emptyList(),
@@ -56,7 +56,7 @@ internal class InvoicePreviewViewModel(
         )
     }
 
-    private fun init() = intent {
+    internal fun init() = intent {
         analyticsTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             setOf(
@@ -64,14 +64,20 @@ internal class InvoicePreviewViewModel(
             )
         )
 
-        val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
-
-        if (bitmaps != null) {
+        runCatching {
+            reduce { createInitalState() }
+            val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
             reduce {
-                state.copy(
+                InvoicePreviewFragmentState.Ready(
                     isLoading = false,
-                    images = bitmaps
+                    images = bitmaps,
+                    screenTitle = screenTitle,
+                    infoTextLines = infoTextLines,
                 )
+            }
+        }.onFailure {
+            reduce {
+                InvoicePreviewFragmentState.Error
             }
         }
     }

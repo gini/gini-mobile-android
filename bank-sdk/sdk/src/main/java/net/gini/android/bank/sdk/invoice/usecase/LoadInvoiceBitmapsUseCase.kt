@@ -15,15 +15,13 @@ internal class LoadInvoiceBitmapsUseCase(
     private val invoicePreviewPageImageProcessor: InvoicePreviewPageImageProcessor
 ) {
 
-    suspend operator fun invoke(documentId: String, highlightBoxes: List<GiniCaptureBox>) : List<Bitmap>? {
+    suspend operator fun invoke(documentId: String, highlightBoxes: List<GiniCaptureBox>) : List<Bitmap> {
         val layout = runCatching {
             invoicePreviewDocumentLayoutNetworkService.getLayout(documentId)
         }.getOrNull()
-        val pages = kotlin.runCatching {
-            invoicePreviewDocumentPagesNetworkService.getDocumentPages(documentId)
-        }.getOrNull()
+        val pages = invoicePreviewDocumentPagesNetworkService.getDocumentPages(documentId)
 
-        val bitmaps = pages?.map { documentPage ->
+        val bitmaps = pages.map { documentPage ->
             val bitmapBytes =
                 invoicePreviewFileNetworkService.getFile(documentPage.getSmallestImage()!!)
             val bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.size)

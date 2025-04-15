@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.invoice.InvoiceScreenContent
+import net.gini.android.bank.sdk.invoice.InvoiceScreenReadyContent
 import net.gini.android.bank.sdk.invoice.colors.InvoicePreviewScreenColors
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenu
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenuItem
@@ -31,7 +31,7 @@ internal fun TransactionDocInvoicePreviewScreen(
 ) {
     val state by viewModel.stateFlow.collectAsState()
 
-    InvoiceScreenContent(
+    InvoiceScreenReadyContent(
         modifier = modifier,
         onCloseClicked = navigateBack,
         colors = colors,
@@ -106,7 +106,7 @@ private fun TransactionDocTopBarActions(
 @Composable
 private fun InvoiceScreenContentPreview() {
     GiniTheme {
-        InvoiceScreenContent(
+        InvoiceScreenReadyContent(
             screenTitle = "Screen Title",
             isLoading = true,
             images = emptyList(),
