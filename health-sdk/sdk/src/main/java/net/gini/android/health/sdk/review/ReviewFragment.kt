@@ -7,7 +7,6 @@ import android.transition.Transition
 import android.transition.TransitionListenerAdapter
 import android.transition.TransitionManager
 import android.transition.TransitionSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +33,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
 import kotlinx.coroutines.launch
-import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
@@ -45,6 +43,7 @@ import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getFontScale
@@ -115,7 +114,9 @@ class ReviewFragment private constructor(
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        documentPageAdapter = DocumentPageAdapter(viewModel.giniHealth)
+        documentPageAdapter = DocumentPageAdapter { pageNumber ->
+            viewModel.reloadImage(pageNumber)
+        }
         binding = GhsFragmentReviewBinding.inflate(inflater).apply {
             configureViews()
             configureOrientation()
@@ -155,7 +156,7 @@ class ReviewFragment private constructor(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.giniHealth.documentFlow.collect { handleDocumentResult(it) }
+                    viewModel.documentPages.collect { handleDocumentPagesResult(it) }
                 }
                 launch {
                     viewModel.giniHealth.paymentFlow.collect { handlePaymentResult(it) }
@@ -172,27 +173,33 @@ class ReviewFragment private constructor(
                         }
                     }
                 }
+                launch {
+                    viewModel.showLoading.collect { isLoading ->
+                        binding.loading.isVisible = isLoading
+                    }
+                }
             }
         }
     }
 
-    private fun GhsFragmentReviewBinding.handleDocumentResult(documentResult: ResultWrapper<Document>) {
-        when (documentResult) {
-            is ResultWrapper.Success -> {
-                documentPageAdapter.submitList(viewModel.getPages(documentResult.value).also { pages ->
+    private fun GhsFragmentReviewBinding.handleDocumentPagesResult(documentPagesResult: DocumentPagesResult) {
+        when (documentPagesResult) {
+            is DocumentPagesResult.Success -> {
+                documentPageAdapter.submitList(documentPagesResult.pagesList.also { pages ->
                     indicator.isVisible = pages.size > 1
                     pager.isUserInputEnabled = pages.size > 1
                 })
             }
-
-            is ResultWrapper.Error -> handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
-            else -> { // Loading state handled by payment details
+            is DocumentPagesResult.Error -> {
+                handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
+            }
+            else -> {
+                //do nothing, loading is handled separately
             }
         }
     }
 
     private fun GhsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
-        binding.loading.isVisible = paymentResult is ResultWrapper.Loading
         if (paymentResult is ResultWrapper.Error) {
             handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
         }
@@ -251,6 +258,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.removePagerConstraintAndSetPreviousHeightIfNeeded(savedHeight: Int) {
         if (resources.isLandscapeOrientation()) return
         root.post {
+            if (savedHeight == 0) return@post
             ConstraintSet().apply {
                 clone(constraintRoot)
                 constrainHeight(R.id.pager, pager.height)
@@ -384,7 +392,10 @@ class ReviewFragment private constructor(
 
             dragHandle?.setOnTouchListener { _, _ ->
                 fieldsLayout.alpha = if (isVisible) 0f else 1f
-                fieldsLayout.isVisible = !fieldsLayout.isVisible
+                val currentState = binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode()
+                binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(
+                    if (currentState == ReviewViewStateLandscape.EXPANDED) ReviewViewStateLandscape.COLLAPSED else ReviewViewStateLandscape.EXPANDED
+                )
                 false
             }
         }
