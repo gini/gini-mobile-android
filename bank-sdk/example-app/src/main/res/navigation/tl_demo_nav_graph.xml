@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tl_demo_nav_graph"
+    app:startDestination="@id/transactionListDemo">
+
+
+    <fragment
+        android:id="@+id/transactionListDemo"
+        android:name="net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.TransactionDocsFragment"
+        android:label="transactionListFragment">
+        <action
+            android:id="@+id/action_transactionListDemo_to_transactionDetailsFragment"
+            app:destination="@id/transactionDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/transactionDetailsFragment"
+        android:name="net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.details.TransactionDetailsFragment"
+        android:label="TransactionDetailsFragment">
+
+        <argument
+            android:name="transaction"
+            app:argType="net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Transaction" />
+
+    </fragment>
+</navigation>

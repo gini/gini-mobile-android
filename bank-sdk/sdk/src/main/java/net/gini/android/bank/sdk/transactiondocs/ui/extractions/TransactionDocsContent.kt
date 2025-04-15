@@ -40,7 +40,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
 private val imageExtensions = listOf(".jpg", ".jpeg", ".png", ".gif")
 
 @Composable
-internal fun TransactionDocsContent(
+fun TransactionDocsContent(
     documents: List<TransactionDoc>,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
