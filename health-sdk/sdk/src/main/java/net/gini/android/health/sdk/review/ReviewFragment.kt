@@ -258,6 +258,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.removePagerConstraintAndSetPreviousHeightIfNeeded(savedHeight: Int) {
         if (resources.isLandscapeOrientation()) return
         root.post {
+            if (savedHeight == 0) return@post
             ConstraintSet().apply {
                 clone(constraintRoot)
                 constrainHeight(R.id.pager, pager.height)
