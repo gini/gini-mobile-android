@@ -72,7 +72,9 @@ class ReviewBottomSheet private constructor(
             }
 
             if (resources.isLandscapeOrientation()
-                && binding.gpsReviewLayout.reviewComponent?.getReviewViewStateInLandscapeMode() == ReviewViewStateLandscape.COLLAPSED) {
+                && binding.gpsReviewLayout.reviewComponent?.getReviewViewStateInLandscapeMode()
+                == ReviewViewStateLandscape.COLLAPSED)
+            {
                 val layoutParams = bottomSheet.layoutParams as LayoutParams
                 layoutParams.gravity = Gravity.BOTTOM
             }
@@ -98,7 +100,9 @@ class ReviewBottomSheet private constructor(
                 layoutParams.gravity = Gravity.BOTTOM
                 val currentState = binding.gpsReviewLayout.reviewComponent?.getReviewViewStateInLandscapeMode()
                 binding.gpsReviewLayout.reviewComponent?.setReviewViewModeInLandscapeMode(
-                    if (currentState == ReviewViewStateLandscape.EXPANDED) ReviewViewStateLandscape.COLLAPSED else ReviewViewStateLandscape.EXPANDED)
+                    if (currentState == ReviewViewStateLandscape.EXPANDED) ReviewViewStateLandscape.COLLAPSED
+                        else ReviewViewStateLandscape.EXPANDED
+                )
                 false
             }
         }

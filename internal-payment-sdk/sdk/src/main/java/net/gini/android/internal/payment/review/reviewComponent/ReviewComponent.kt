@@ -52,7 +52,8 @@ class ReviewComponent(
             !isLoading && noEmptyFields
         }
 
-    private val _reviewViewStateInLandscapeMode = MutableStateFlow<ReviewViewStateLandscape>(ReviewViewStateLandscape.EXPANDED)
+    private val _reviewViewStateInLandscapeMode =
+        MutableStateFlow<ReviewViewStateLandscape>(ReviewViewStateLandscape.EXPANDED)
     val reviewViewStateInLandscapeMode: Flow<ReviewViewStateLandscape> = _reviewViewStateInLandscapeMode
     init {
         coroutineScope.launch {
