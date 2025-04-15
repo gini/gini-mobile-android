@@ -88,18 +88,19 @@
         android:layout_marginBottom="@dimen/gc_large_24">
 
         <Button
-            android:id="@+id/gc_button_error_enter_manually"
-            style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/gc_error_enter_manually" />
-
-        <Button
             android:id="@+id/gc_button_error_retake_images"
             style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/gc_medium"
             android:text="@string/gc_error_back_to_camera" />
+
+        <Button
+            android:id="@+id/gc_button_error_enter_manually"
+            style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/gc_error_enter_manually" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
