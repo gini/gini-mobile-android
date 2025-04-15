@@ -26,6 +26,9 @@ import net.gini.android.internal.payment.utils.GiniPaymentManager
 import net.gini.android.internal.payment.utils.PaymentEventListener
 import org.slf4j.LoggerFactory
 
+/**
+ * Entrypoint to common functionality for HealthSDK and MerchantSDK.
+ */
 class GiniInternalPaymentModule(private val context: Context,
                                 private val clientId: String = "",
                                 private val clientSecret: String = "",
@@ -69,7 +72,7 @@ class GiniInternalPaymentModule(private val context: Context,
     }
 
 
-    internal val giniPaymentManager: GiniPaymentManager
+    private val giniPaymentManager: GiniPaymentManager
         get() {
             _giniPaymentManager?.let { return it }
                 ?: return GiniPaymentManager(this.giniHealthAPI, object: PaymentEventListener {
@@ -210,9 +213,9 @@ class GiniInternalPaymentModule(private val context: Context,
         GiniPaymentPreferences(context).saveIngredientBrandVisibility(visibility.name)
     }
 
-    fun getIngredientBrandVisibility() = GiniPaymentPreferences(context).getIngredientBrandVisibility()
+    internal fun getIngredientBrandVisibility() = GiniPaymentPreferences(context).getIngredientBrandVisibility()
 
-    fun saveSDKCommunicationTone(tone: String) =
+    private fun saveSDKCommunicationTone(tone: String) =
         GiniPaymentPreferences(context).saveSDKCommunicationTone(tone)
 
     internal class GiniPaymentPreferences(context: Context) {
@@ -325,17 +328,17 @@ class GiniInternalPaymentModule(private val context: Context,
      * Different events that can be emitted by the GiniInternalPaymentModule.
      */
     sealed class InternalPaymentEvents {
-        object NoAction : InternalPaymentEvents()
+        data object NoAction : InternalPaymentEvents()
 
         /**
          * Signal loading started.
          */
-        object OnLoading : InternalPaymentEvents()
+        data object OnLoading : InternalPaymentEvents()
 
         /**
          * Payment flow was cancelled.
          */
-        object OnCancelled : InternalPaymentEvents()
+        data object OnCancelled : InternalPaymentEvents()
 
         /**
          * A change of screens within the [PaymentFragment].

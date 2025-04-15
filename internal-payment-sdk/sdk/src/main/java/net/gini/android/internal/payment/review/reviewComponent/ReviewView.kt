@@ -41,6 +41,10 @@ interface ReviewViewListener {
 
     fun onSelectBankButtonTapped()
 }
+
+/**
+ * Represents the view with all the fields which hold the payment details.
+ */
 class ReviewView(private val context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
 
