@@ -215,7 +215,7 @@ class GiniInternalPaymentModule(private val context: Context,
 
     internal fun getIngredientBrandVisibility() = GiniPaymentPreferences(context).getIngredientBrandVisibility()
 
-    private fun saveSDKCommunicationTone(tone: String) =
+    internal fun saveSDKCommunicationTone(tone: String) =
         GiniPaymentPreferences(context).saveSDKCommunicationTone(tone)
 
     internal class GiniPaymentPreferences(context: Context) {

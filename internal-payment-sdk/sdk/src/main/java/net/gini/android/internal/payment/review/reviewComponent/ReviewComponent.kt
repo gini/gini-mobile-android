@@ -24,7 +24,8 @@ import net.gini.android.internal.payment.utils.withPrev
 import org.slf4j.LoggerFactory
 
 /**
- * Holds the state for [ReviewView]. Handles the validation of payment details, the [ReviewViewStateLandscape] of the view on orientation change,
+ * Holds the state for [ReviewView]. Handles the validation of payment details,
+ * the [ReviewViewStateLandscape] of the view on orientation change,
  * the selected payment provider and the enabled state of the pay button.
  */
 class ReviewComponent(
