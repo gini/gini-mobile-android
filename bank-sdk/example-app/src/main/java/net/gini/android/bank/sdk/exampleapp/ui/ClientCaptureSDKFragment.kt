@@ -140,7 +140,8 @@ class ClientCaptureSDKFragment :
             paymentPurpose,
             iban,
             bic,
-            amount
+            amount,
+            null
         )
 
         // cleanup the capture SDK after sending the transfer summary
