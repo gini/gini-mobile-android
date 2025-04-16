@@ -1,134 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/GiniCaptureTheme"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.fragment.app.FragmentContainerView
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/nav_graph"
+        app:defaultNavHost="true"
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        tools:context=".ui.MainActivity">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingBottom="@dimen/activity_horizontal_margin">
-
-            <Button
-                android:id="@+id/button_startScanner"
-                style="@style/PhotoPaymentButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large"
-                android:paddingVertical="@dimen/gc_medium_12"
-                android:text="@string/start_gini_photo_payment"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_orUseLabel" />
-
-            <Button
-                android:id="@+id/button_startSingleActivity"
-                style="@style/PhotoPaymentButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large"
-                android:paddingVertical="@dimen/gc_medium_12"
-                android:text="@string/start_gini_single_activity"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/button_startScanner" />
+        android:layout_height="match_parent" />
 
 
-            <ImageView
-                android:id="@+id/iv_giniLogo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large_64"
-                android:src="@drawable/gini_logo"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_exampleOfPhotoPayment"
-                style="@style/Body1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/gc_large_48"
-                android:layout_marginTop="@dimen/gc_medium_12"
-                android:gravity="center"
-                android:text="@string/example_of_photo_payment"
-                android:textAlignment="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_welcomeToGini" />
-
-            <TextView
-                android:id="@+id/tv_orUseLabel"
-                style="@style/Body1Gray"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large"
-                android:text="@string/or_use_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/til_fieldEntryPoint" />
-
-            <TextView
-                android:id="@+id/tv_welcomeToGini"
-                style="@style/Headline5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large_32"
-                android:text="@string/welcome_to_gini"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_giniLogo" />
-
-            <TextView
-                android:id="@+id/text_giniBankVersion"
-                style="@style/GiniCaptureTheme.Typography.Overline"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large_48"
-                android:gravity="center"
-                android:padding="@dimen/gc_medium"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/button_startScanner"
-                tools:text="Gini Capture SDK v2.0.0-stub1" />
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_fieldEntryPoint"
-                style="@style/TextInputLayoutStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large_48"
-                android:hint="@string/enter_your_iban_code"
-                app:endIconDrawable="@drawable/ic_camera"
-                app:endIconMode="custom"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_exampleOfPhotoPayment">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/gc_medium"
-                    android:paddingBottom="@dimen/gc_medium"
-                     />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

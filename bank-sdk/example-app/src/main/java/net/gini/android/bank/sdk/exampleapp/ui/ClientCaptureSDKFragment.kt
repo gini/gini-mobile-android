@@ -22,7 +22,7 @@ import net.gini.android.capture.util.CancellationToken
 import net.gini.android.core.api.DocumentMetadata
 
 class ClientCaptureSDKFragment :
-    Fragment(R.layout.fragment_client),
+    Fragment(R.layout.fragment_client_bank_sdk),
     GiniCaptureFragmentListener {
 
     private lateinit var permissionHandler: PermissionHandler
@@ -41,7 +41,7 @@ class ClientCaptureSDKFragment :
     }
 
     private fun checkCameraPermission() {
-        permissionHandler = PermissionHandler(requireActivity())
+        permissionHandler = PermissionHandler(this)
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
                 configureCaptureSDK()
@@ -150,13 +150,7 @@ class ClientCaptureSDKFragment :
     override fun onFinishedWithResult(result: CaptureSDKResult) {
         when (result) {
             is CaptureSDKResult.Success -> {
-                startActivity(
-                    ExtractionsActivity.getStartIntent(
-                        requireContext(),
-                        result.specificExtractions
-                    )
-                )
-                requireActivity().finish()
+                // TODO: navigate to ExtractionsFragment if needed
             }
 
             is CaptureSDKResult.Error -> {
