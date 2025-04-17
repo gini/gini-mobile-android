@@ -49,7 +49,7 @@ class ErrorFragmentImpl(
 
     private var enterManuallyButtonListener: EnterManuallyButtonListener? = null
     private lateinit var retakeImagesButton: Button
-    private var mUserAnalyticsEventTracker : UserAnalyticsEventTracker? = null
+    private var mUserAnalyticsEventTracker: UserAnalyticsEventTracker? = null
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Error
 
     fun onCreate(savedInstanceState: Bundle?) {
@@ -81,8 +81,7 @@ class ErrorFragmentImpl(
                     setOf(UserAnalyticsEventProperty.Screen(screenName))
                 )
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
-                fragmentCallback.findNavController()
-                    .navigate(ErrorFragmentDirections.toCameraFragment())
+                navigateToCameraScreen()
             }
         } else {
             retakeImagesButton.visibility = View.GONE
@@ -114,8 +113,9 @@ class ErrorFragmentImpl(
     }
 
     private fun addUserAnalyticEvents() {
-        val errorMessage = customError ?:
-        fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0).toString()
+        val errorMessage =
+            customError ?: fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0)
+                .toString()
         mUserAnalyticsEventTracker?.setEventSuperProperty(
             UserAnalyticsEventSuperProperty.DocumentType(document.mapToAnalyticsDocumentType())
         )
@@ -140,13 +140,13 @@ class ErrorFragmentImpl(
             ) { injectedViewAdapter ->
                 injectedViewAdapter.apply {
                     setTitle(fragmentCallback.activity?.getString(R.string.gc_title_error) ?: "")
-                    setNavButtonType(NavButtonType.CLOSE)
+                    setNavButtonType(NavButtonType.BACK)
                     setOnNavButtonClickListener(IntervalClickListener {
                         mUserAnalyticsEventTracker?.trackEvent(
                             UserAnalyticsEvent.CLOSE_TAPPED,
                             setOf(UserAnalyticsEventProperty.Screen(screenName))
                         )
-                        cancelListener.onCancelFlow()
+                        navigateToCameraScreen()
                     })
                 }
             }
@@ -167,6 +167,11 @@ class ErrorFragmentImpl(
                         cancelListener.onCancelFlow()
                     }
                 })
+    }
+
+    private fun navigateToCameraScreen() {
+        fragmentCallback.findNavController()
+            .navigate(ErrorFragmentDirections.toCameraFragment())
     }
 
     fun setListener(enterManuallyButtonListener: EnterManuallyButtonListener?) {
