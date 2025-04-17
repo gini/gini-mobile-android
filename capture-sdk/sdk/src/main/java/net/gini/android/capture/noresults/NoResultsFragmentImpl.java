@@ -119,7 +119,7 @@ class NoResultsFragmentImpl {
                             });
                 }
                 trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
-                mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
+                navigateToCameraScreen();
             });
         } else {
             retakeImagesButton.setVisibility(GONE);
@@ -217,7 +217,7 @@ class NoResultsFragmentImpl {
 
                         injectedViewAdapter.setTitle(mFragment.getActivity().getResources().getString(R.string.gc_title_no_results));
 
-                        injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
+                        injectedViewAdapter.setNavButtonType(NavButtonType.BACK);
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(view -> {
                             if (mFragment.getActivity() != null) {
                                 if (mUserAnalyticsEventTracker != null) {
@@ -228,12 +228,16 @@ class NoResultsFragmentImpl {
                                                 }
                                             });
                                 }
-                                mCancelListener.onCancelFlow();
+                                navigateToCameraScreen();
                             }
                         }));
                     })
             );
         }
+    }
+
+    private void navigateToCameraScreen() {
+        mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
     }
 
     private void bindViews(@NonNull final View view) {
