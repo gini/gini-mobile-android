@@ -41,6 +41,7 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
 class ErrorFragmentImpl(
     private val fragmentCallback: FragmentImplCallback,
     // CancelListener should be removed in the next major version - not a breaking change but better to keep it for now
+    @Suppress("UnusedPrivateProperty")
     private val cancelListener: CancelListener,
     private val document: Document?,
     private val errorType: ErrorType?,
@@ -151,7 +152,9 @@ class ErrorFragmentImpl(
 
     private fun setupBottomBarNavigation() {
         val topBarContainer =
-            view.findViewById<InjectedViewContainer<ErrorNavigationBarBottomAdapter>>(R.id.gc_injected_navigation_bar_container_bottom)
+            view.findViewById<InjectedViewContainer<ErrorNavigationBarBottomAdapter>>(
+                R.id.gc_injected_navigation_bar_container_bottom
+            )
 
         if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
             topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(

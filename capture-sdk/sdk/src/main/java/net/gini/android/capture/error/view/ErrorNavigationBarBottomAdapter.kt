@@ -24,7 +24,7 @@ interface ErrorNavigationBarBottomAdapter : InjectedViewAdapter {
 /**
  * Internal use only.
  */
-internal class DefaultErrorNavigationBarBottomAdapter: ErrorNavigationBarBottomAdapter {
+internal class DefaultErrorNavigationBarBottomAdapter : ErrorNavigationBarBottomAdapter {
 
     var binding: GcErrorNavigationBarBottomBinding? = null
 
@@ -34,7 +34,9 @@ internal class DefaultErrorNavigationBarBottomAdapter: ErrorNavigationBarBottomA
 
     override fun onCreateView(container: ViewGroup): View {
 
-        val viewBinding = GcErrorNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)
+        val viewBinding = GcErrorNavigationBarBottomBinding.inflate(
+            LayoutInflater.from(container.context), container, false
+        )
         binding = viewBinding
 
         return viewBinding.root
