@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat
  * like the top or bottom bars. It also adds a small extra space (3dp) at the
  * top for better visual breathing room.
  */
-
+@Suppress("MagicNumber")
 fun View.protectViewFromInsets() {
     val safeTopPaddingDp = 3
     ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
