@@ -12,9 +12,10 @@ import androidx.core.view.WindowInsetsCompat
  */
 
 fun View.protectViewFromInsets() {
+    val safeTopPaddingDp = 3
     ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
         val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-        val safeThreshold = (3 * view.resources.displayMetrics.density).toInt()
+        val safeThreshold = (safeTopPaddingDp * view.resources.displayMetrics.density).toInt()
         view.setPadding(
             view.paddingLeft,
             systemBarsInsets.top + safeThreshold,
