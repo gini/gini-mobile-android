@@ -40,6 +40,7 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
  */
 class ErrorFragmentImpl(
     private val fragmentCallback: FragmentImplCallback,
+    // CancelListener should be removed in the next major version - not a breaking change but better to keep it for now
     private val cancelListener: CancelListener,
     private val document: Document?,
     private val errorType: ErrorType?,
@@ -77,12 +78,8 @@ class ErrorFragmentImpl(
         setupBottomBarNavigation()
         if (shouldAllowRetakeImages()) {
             retakeImagesButton.setIntervalClickListener {
-                mUserAnalyticsEventTracker?.trackEvent(
-                    UserAnalyticsEvent.BACK_TO_CAMERA_TAPPED,
-                    setOf(UserAnalyticsEventProperty.Screen(screenName))
-                )
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
-                navigateToCameraScreen()
+                navigateToCameraScreen(UserAnalyticsEvent.BACK_TO_CAMERA_TAPPED)
             }
         } else {
             retakeImagesButton.visibility = View.GONE
@@ -146,7 +143,7 @@ class ErrorFragmentImpl(
                         fragmentCallback.activity?.getString(R.string.gc_title_error) ?: ""
                     )
                     injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
-                        navigateToCameraScreen()
+                        navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)
                     })
                 }
         }
@@ -161,7 +158,7 @@ class ErrorFragmentImpl(
                 GiniCapture.getInstance().internal().errorNavigationBarBottomAdapterInstance
             ) { injectedViewAdapter ->
                 injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
-                    navigateToCameraScreen()
+                    navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)
                 })
             }
         }
@@ -173,19 +170,14 @@ class ErrorFragmentImpl(
                 fragmentCallback.getViewLifecycleOwner(),
                 object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
-                        mUserAnalyticsEventTracker?.trackEvent(
-                            UserAnalyticsEvent.CLOSE_TAPPED,
-                            setOf(UserAnalyticsEventProperty.Screen(screenName))
-                        )
-                        remove()
-                        cancelListener.onCancelFlow()
+                        navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)
                     }
                 })
     }
 
-    private fun navigateToCameraScreen() {
+    private fun navigateToCameraScreen(event: UserAnalyticsEvent) {
         mUserAnalyticsEventTracker?.trackEvent(
-            UserAnalyticsEvent.CLOSE_TAPPED,
+            event,
             setOf(UserAnalyticsEventProperty.Screen(screenName))
         )
         fragmentCallback.findNavController()
