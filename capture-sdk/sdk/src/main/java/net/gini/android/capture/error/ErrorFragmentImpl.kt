@@ -13,6 +13,7 @@ import net.gini.android.capture.EnterManuallyButtonListener
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.document.ImageMultiPageDocument
+import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.ui.setIntervalClickListener
@@ -46,7 +47,7 @@ class ErrorFragmentImpl(
 ) {
 
     private val defaultListener: EnterManuallyButtonListener = EnterManuallyButtonListener { }
-
+    private lateinit var view: View
     private var enterManuallyButtonListener: EnterManuallyButtonListener? = null
     private lateinit var retakeImagesButton: Button
     private var mUserAnalyticsEventTracker: UserAnalyticsEventTracker? = null
@@ -67,13 +68,13 @@ class ErrorFragmentImpl(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view: View = inflater.inflate(R.layout.gc_fragment_error, container, false)
+        view = inflater.inflate(R.layout.gc_fragment_error, container, false)
         retakeImagesButton = view.findViewById(R.id.gc_button_error_retake_images)
         handleOnBackPressed()
         addUserAnalyticEvents()
 
-        setInjectedTopBarContainer(view)
-
+        setupTopBarNavigation()
+        setupBottomBarNavigation()
         if (shouldAllowRetakeImages()) {
             retakeImagesButton.setIntervalClickListener {
                 mUserAnalyticsEventTracker?.trackEvent(
@@ -128,27 +129,40 @@ class ErrorFragmentImpl(
                 UserAnalyticsEventProperty.ErrorMessage(errorMessage)
             ),
         )
-
     }
 
-    private fun setInjectedTopBarContainer(view: View) {
+    private fun setupTopBarNavigation() {
         val topBarContainer =
             view.findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
         if (GiniCapture.hasInstance()) {
-            topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
-                GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
-            ) { injectedViewAdapter ->
-                injectedViewAdapter.apply {
-                    setTitle(fragmentCallback.activity?.getString(R.string.gc_title_error) ?: "")
-                    setNavButtonType(NavButtonType.BACK)
-                    setOnNavButtonClickListener(IntervalClickListener {
-                        mUserAnalyticsEventTracker?.trackEvent(
-                            UserAnalyticsEvent.CLOSE_TAPPED,
-                            setOf(UserAnalyticsEventProperty.Screen(screenName))
-                        )
+            topBarContainer.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(
+                    GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
+                ) { injectedViewAdapter ->
+                    val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
+                        NavButtonType.NONE else NavButtonType.BACK
+                    injectedViewAdapter.setNavButtonType(navType)
+                    injectedViewAdapter.setTitle(
+                        fragmentCallback.activity?.getString(R.string.gc_title_error) ?: ""
+                    )
+                    injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
                         navigateToCameraScreen()
                     })
                 }
+        }
+    }
+
+    private fun setupBottomBarNavigation() {
+        val topBarContainer =
+            view.findViewById<InjectedViewContainer<ErrorNavigationBarBottomAdapter>>(R.id.gc_injected_navigation_bar_container_bottom)
+
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+            topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
+                GiniCapture.getInstance().internal().errorNavigationBarBottomAdapterInstance
+            ) { injectedViewAdapter ->
+                injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
+                    navigateToCameraScreen()
+                })
             }
         }
     }
@@ -170,6 +184,10 @@ class ErrorFragmentImpl(
     }
 
     private fun navigateToCameraScreen() {
+        mUserAnalyticsEventTracker?.trackEvent(
+            UserAnalyticsEvent.CLOSE_TAPPED,
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
+        )
         fragmentCallback.findNavController()
             .navigate(ErrorFragmentDirections.toCameraFragment())
     }
