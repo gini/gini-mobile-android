@@ -122,7 +122,7 @@
                 android:id="@+id/gc_document_import_button_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:constraint_referenced_ids="gc_button_import_wrapper, gc_button_import"
                 tools:visibility="visible" />
 
