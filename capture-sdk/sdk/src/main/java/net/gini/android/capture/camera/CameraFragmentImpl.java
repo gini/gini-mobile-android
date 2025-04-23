@@ -1461,12 +1461,14 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                 new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
                                         lastDocument.getRotationForDisplay()));
                         mPhotoThumbnail.setImageCount(documents.size());
+                        mPhotoThumbnail.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onError(final Exception exception) {
                         mPhotoThumbnail.setImage(null);
                         mPhotoThumbnail.setImageCount(documents.size());
+                        if (!documents.isEmpty()) mPhotoThumbnail.setVisibility(View.VISIBLE);
                     }
 
                     @Override
