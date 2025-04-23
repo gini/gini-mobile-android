@@ -111,6 +111,7 @@
                 android:id="@+id/gc_photo_thumbnail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:src="@color/cardview_dark_background"
                 app:layout_constraintBottom_toTopOf="@+id/gc_button_import_wrapper"
                 app:layout_constraintEnd_toEndOf="parent"
