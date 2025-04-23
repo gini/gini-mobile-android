@@ -6,6 +6,7 @@ import net.gini.android.bank.sdk.exampleapp.data.storage.TransactionDocsStorage
 import net.gini.android.bank.sdk.exampleapp.ui.extractions.ExtractionsContainerHost
 import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Attachment
 import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Transaction
+import java.util.UUID
 import javax.inject.Inject
 
 internal class SaveTransactionDataIntent @Inject constructor(
@@ -23,10 +24,11 @@ internal class SaveTransactionDataIntent @Inject constructor(
 
         val list = transactionDocsStorage.get() ?: emptyList()
         val attachments =
-            GiniBank.transactionDocs.extractionDocumentsFlow.firstOrNull() ?: emptyList()
+            GiniBank.giniTransactionDocs.giniTransactionDocsFlow.firstOrNull() ?: emptyList()
 
         transactionDocsStorage.update(
             list + Transaction(
+                id = UUID.randomUUID().toString(),
                 paymentRecipient = paymentRecipient,
                 paymentPurpose = paymentPurpose,
                 amount = amountToPay,

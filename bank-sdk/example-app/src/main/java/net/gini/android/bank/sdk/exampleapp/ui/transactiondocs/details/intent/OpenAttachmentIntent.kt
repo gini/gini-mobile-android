@@ -10,6 +10,11 @@ internal class OpenAttachmentIntent @Inject constructor() {
     fun TransactionDetailsContainerHost.run(
         attachment: Attachment,
     ) = intent {
-        postSideEffect(TransactionDetailsSideEffect.OpenTransactionDocInvoiceScreen(attachment.id))
+        postSideEffect(
+            TransactionDetailsSideEffect.OpenTransactionDocInvoiceScreen(
+                state.transaction,
+                attachment.id
+            )
+        )
     }
 }

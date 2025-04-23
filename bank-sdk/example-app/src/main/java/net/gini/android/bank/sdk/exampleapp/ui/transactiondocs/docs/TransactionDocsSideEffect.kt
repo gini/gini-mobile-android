@@ -4,6 +4,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Transa
 
 internal sealed interface TransactionDocsSideEffect {
     data class OpenTransactionDocInvoiceScreen(
+        val transaction: Transaction,
         val documentId: String,
     ) : TransactionDocsSideEffect
 

@@ -52,7 +52,10 @@ internal fun TransactionDetailsScreen(
                         context = context,
                         screenTitle = "Invoice Preview",
                         documentId = it.documentId,
-                        infoTextLines = listOf()
+                        infoTextLines = listOf(
+                            "Amount to Pay: ${it.transaction.amount}",
+                            "IBAN: ${it.transaction.iban}"
+                        )
                     )
                 )
             }
@@ -87,7 +90,9 @@ internal fun TransactionDetailsScreen(
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).padding(vertical = 8.dp)) {
+        Column(modifier = Modifier
+            .padding(padding)
+            .padding(vertical = 8.dp)) {
             LazyColumn {
                 items(fields) {
                     Field(placeholder = it.first, text = it.second())
@@ -97,14 +102,16 @@ internal fun TransactionDetailsScreen(
                 modifier = Modifier.padding(16.dp),
                 documents = state.transaction.attachments.map { it.toTransactionDoc() },
                 onDocumentClick = { doc ->
-                    state.transaction.attachments.firstOrNull { it.id == doc.giniApiDocumentId }?.let {
-                        viewModel.openAttachment(it)
-                    }
+                    state.transaction.attachments.firstOrNull { it.id == doc.giniApiDocumentId }
+                        ?.let {
+                            viewModel.openAttachment(it)
+                        }
                 },
                 onDocumentDelete = { doc ->
-                    state.transaction.attachments.firstOrNull { it.id == doc.giniApiDocumentId }?.let {
-                        viewModel.deleteAttachment(it)
-                    }
+                    state.transaction.attachments.firstOrNull { it.id == doc.giniApiDocumentId }
+                        ?.let {
+                            viewModel.deleteAttachment(it)
+                        }
                 }
             )
         }
@@ -120,7 +127,9 @@ private fun Field(
     modifier: Modifier = Modifier,
 ) {
     GiniTextInput(
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth(),
+        modifier = modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxWidth(),
         text = text,
         onValueChange = {},
         label = {

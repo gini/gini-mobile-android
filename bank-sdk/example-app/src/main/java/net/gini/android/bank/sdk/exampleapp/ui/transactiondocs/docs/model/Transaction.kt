@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Parcelize
- data class Transaction(
+data class Transaction(
+    val id: String,
     val paymentRecipient: String,
     val paymentPurpose: String,
     val paymentReference: String,

@@ -43,7 +43,10 @@ internal fun TransactionDocsScreen(
                         context = context,
                         screenTitle = "Invoice Preview",
                         documentId = it.documentId,
-                        infoTextLines = listOf()
+                        infoTextLines = listOf(
+                            "Amount to Pay: ${it.transaction.amount}",
+                            "IBAN: ${it.transaction.iban}"
+                        )
                     )
                 )
             }
@@ -71,14 +74,11 @@ internal fun TransactionDocsScreen(
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
             LazyColumn {
-                items(state.transactions) {
+                items(state.transactions) { transaction ->
                     TransactionListItem(
-                        it,
+                        transaction,
                         onAttachmentClick = {
-                            transactionDocsViewModel.openAttachment(it)
-                        },
-                        onDeleteClicked = {
-                            transactionDocsViewModel.deleteTransaction(it)
+                            transactionDocsViewModel.openAttachment(transaction, it)
                         },
                         onClick = openTransactionDetails
                     )

@@ -62,14 +62,14 @@ class ConfigurationViewModel @Inject constructor(
     fun getAlwaysAttachSetting(context: Context): Boolean {
         configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
         return runBlocking {
-            GiniBank.transactionDocs.transactionDocsSettings.getAlwaysAttachSetting().first()
+            GiniBank.giniTransactionDocs.transactionDocsSettings.getAlwaysAttachSetting().first()
         }
     }
 
     fun setAlwaysAttachSetting(context: Context, isChecked: Boolean) {
         configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
         viewModelScope.launch {
-            GiniBank.transactionDocs.transactionDocsSettings.setAlwaysAttachSetting(
+            GiniBank.giniTransactionDocs.transactionDocsSettings.setAlwaysAttachSetting(
                 isChecked
             )
         }
