@@ -1,6 +1,5 @@
 package net.gini.android.capture.onboarding;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.GET_STARTED;
 import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.NEXT;
