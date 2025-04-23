@@ -49,7 +49,8 @@ class FileImportHelpFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        waitForHalfSecondAndShowSnackBar()
+        if (!FileImportHelpFragmentPreferences.isIllustrationSnackBarAlreadyShown(requireContext()))
+            waitForHalfSecondAndShowSnackBar()
     }
 
     override fun onDestroy() {
@@ -97,6 +98,7 @@ class FileImportHelpFragment : Fragment() {
     }
 
     private fun showCustomSnackBar() {
+        FileImportHelpFragmentPreferences.saveIllustrationSnackBarShown(requireContext())
         val constraintLayout: ConstraintLayout = binding.gcFileImportConstraintLayout
 
         snackbar = Snackbar.make(constraintLayout, getString(R.string.gc_snackbar_illustrations), Snackbar.LENGTH_INDEFINITE).apply {
