@@ -38,6 +38,8 @@ import net.gini.android.internal.payment.utils.PaymentNextStep
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.add
 import net.gini.android.internal.payment.utils.extensions.createShareWithPendingIntent
+import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isValidPdfName
 import net.gini.android.internal.payment.utils.extensions.showInstallAppBottomSheet
 import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomSheet
 import net.gini.android.internal.payment.utils.extensions.startSharePdfIntent
@@ -48,6 +50,8 @@ import net.gini.android.merchant.sdk.util.DisplayedScreen
 import net.gini.android.merchant.sdk.util.getLayoutInflaterWithGiniMerchantTheme
 import net.gini.android.merchant.sdk.util.wrappedWithGiniMerchantTheme
 import org.jetbrains.annotations.VisibleForTesting
+
+import net.gini.android.internal.payment.R.string as internalStringRes
 
 /**
  * Configuration for the payment flow.
@@ -394,7 +398,15 @@ class PaymentFragment private constructor(
             paymentDetails = viewModel.paymentDetails,
             paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
-            viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir)
+            val paymentModule = viewModel.giniInternalPaymentModule
+            val overriddenPdfName =
+                getLocaleStringResource(internalStringRes.gps_payment_request_pdf_name, paymentModule)
+            val pdfName = if (overriddenPdfName.isValidPdfName()) {
+                overriddenPdfName
+            } else {
+                getLocaleStringResource(internalStringRes.gps_payment_request_pdf_name_default, paymentModule)
+            }
+            viewModel.onForwardToSharePdfTapped(requireContext().externalCacheDir, fileName = pdfName)
         }
         viewModel.addToBackStack(DisplayedScreen.OpenWithBottomSheet)
     }

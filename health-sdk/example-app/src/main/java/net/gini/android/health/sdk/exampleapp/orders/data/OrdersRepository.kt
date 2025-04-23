@@ -17,4 +17,6 @@ class OrdersRepository(
 
     suspend fun convertToPaymentRequest(order: Order, id: String) = ordersLocalDataSource.convertToPaymentRequest(order, id)
 
+    suspend fun deleteRequestIdsAndExpiryDates(orderIds: List<String>) = ordersLocalDataSource.deletePaymentRequestIdsAndExpiryDates(orderIds)
+
 }

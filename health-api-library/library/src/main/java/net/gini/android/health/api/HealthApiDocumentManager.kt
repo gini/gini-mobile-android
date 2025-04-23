@@ -47,6 +47,18 @@ class HealthApiDocumentManager(private val documentRepository: HealthApiDocument
         documentRepository.deleteDocuments(documentIds)
 
     /**
+     * Delete multiple payment requests in one go.
+     *
+     * @param paymentRequestIds the list of payment request ids to be deleted
+     * @return [Resource] with the status of the deletion, success or failure - if at least one payment request could not
+     * be deleted, the call will not return Success
+     */
+    suspend fun deletePaymentRequests(
+        paymentRequestIds: List<String>
+    ): Resource<Unit> =
+        documentRepository.deletePaymentRequests(paymentRequestIds)
+
+    /**
      * A payment provider is a Gini partner which integrated the GiniPay for Banks SDK into their mobile apps.
      *
      * @return [Resource] with a list of [PaymentProvider] instances or information about the error

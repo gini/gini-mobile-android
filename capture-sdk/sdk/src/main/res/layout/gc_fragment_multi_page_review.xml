@@ -22,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
+            android:focusable="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,6 +34,7 @@
             android:layout_marginStart="@dimen/gc_large_24"
             android:layout_marginEnd="@dimen/gc_large_24"
             android:layout_marginBottom="@dimen/gc_large"
+            android:focusable="true"
             android:layout_marginTop="@dimen/gc_large_24"
             android:gravity="center"
             android:text="@string/gc_payment_details_visible"

@@ -36,6 +36,7 @@ import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -192,7 +193,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.configureViews() {
-        close.isGone = !viewModel.shouldShowCloseButton
+        close.isGone = !viewModel.paymentFlowConfiguration.showCloseButtonOnReviewFragment
     }
 
     private fun GhsFragmentReviewBinding.configureOrientation() {
@@ -376,8 +377,8 @@ class ReviewFragment private constructor(
             listener: ReviewFragmentListener,
             paymentComponent: PaymentComponent,
             documentId: String,
-            shouldShowCloseButton: Boolean,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, listener),
+            paymentFlowConfiguration: PaymentFlowConfiguration,
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, paymentFlowConfiguration, listener),
         ): ReviewFragment = ReviewFragment(viewModelFactory)
     }
 }
