@@ -27,6 +27,7 @@ import net.gini.android.bank.sdk.transactiondocs.ui.extractions.view.Transaction
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.util.protectViewFromInsets
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -59,6 +60,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExtractionsBinding.inflate(layoutInflater)
+        binding.root.protectViewFromInsets()
         setContentView(binding.root)
         readExtras()
         showAnalyzedDocumentId()
@@ -130,6 +132,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 val inputMethodManager =
                     getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+                false
             }
         }
     }
