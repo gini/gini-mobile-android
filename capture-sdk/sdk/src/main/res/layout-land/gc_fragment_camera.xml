@@ -112,12 +112,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                android:layout_marginTop="@dimen/gc_medium"
                 android:src="@color/cardview_dark_background"
                 app:layout_constraintBottom_toTopOf="@+id/gc_button_import_wrapper"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintVertical_chainStyle="spread" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/gc_document_import_button_group"
@@ -131,7 +132,6 @@
                 android:id="@+id/gc_button_import_wrapper"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large_32"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="visible"
@@ -139,7 +139,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/gc_photo_thumbnail"
-                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintVertical_chainStyle="spread"
                 tools:visibility="visible">
 
                 <ImageButton
@@ -186,13 +186,12 @@
                 android:id="@+id/gc_flash_group_wrapper"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gc_large_32"
                 android:layout_marginBottom="@dimen/gc_medium"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/gc_button_import_wrapper"
-                app:layout_constraintVertical_chainStyle="packed">
+                app:layout_constraintVertical_chainStyle="spread">
 
                 <ImageButton
                     android:id="@+id/gc_button_camera_flash"
