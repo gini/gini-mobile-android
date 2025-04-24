@@ -34,6 +34,7 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
 import net.gini.android.capture.util.safeNavigate
+import net.gini.android.capture.util.protectViewFromInsets
 import java.util.UUID
 
 
@@ -148,6 +149,7 @@ class GiniCaptureFragment(
         navController = (childFragmentManager.fragments[0]).findNavController()
         oncePerInstallEventStore = OncePerInstallEventStore(requireContext())
         setAnalyticsEntryPointProperty(openWithDocument != null)
+        view.protectViewFromInsets()
         if (openWithDocument != null) {
             navController.navigate(
                 CameraFragmentDirections.toAnalysisFragment(
