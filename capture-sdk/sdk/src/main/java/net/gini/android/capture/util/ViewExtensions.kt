@@ -15,11 +15,14 @@ fun View.protectViewFromInsets() {
     val safeTopPaddingDp = 3
     ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
         val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val displayCutoutLeft = insets.displayCutout?.safeInsetLeft ?: 0
+        val displayCutoutRight = insets.displayCutout?.safeInsetRight ?: 0
         val safeThreshold = (safeTopPaddingDp * view.resources.displayMetrics.density).toInt()
+
         view.setPadding(
-            view.paddingLeft,
+            systemBarsInsets.left + displayCutoutLeft ,
             systemBarsInsets.top + safeThreshold,
-            view.paddingRight,
+            systemBarsInsets.right + displayCutoutRight,
             systemBarsInsets.bottom
         )
 
