@@ -146,7 +146,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     private void handleSkipButtonMultipleLines() {
         buttonSkip.post(() -> {
             int lines = buttonSkip.getLineCount();
-            if (lines != 2)
+            if (lines < 2 )
                 return;
 
             buttonSkip.setText(getString(R.string.gc_skip_two_lines));
