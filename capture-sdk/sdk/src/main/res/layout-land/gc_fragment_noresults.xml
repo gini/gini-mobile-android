@@ -27,7 +27,7 @@
     <RelativeLayout
         android:id="@+id/gc_no_results_header_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/gc_large_48"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
