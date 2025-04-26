@@ -1,8 +1,10 @@
 package net.gini.android.internal.payment.review.reviewComponent
 
 import android.content.Context
+import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.ImageSpan
 import android.util.AttributeSet
 import android.view.View
@@ -34,6 +36,7 @@ import net.gini.android.internal.payment.utils.extensions.showErrorMessage
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import net.gini.android.internal.payment.utils.setTextIfDifferent
 import org.slf4j.LoggerFactory
+import java.util.Locale
 
 interface ReviewViewListener {
     fun onPaymentButtonTapped(paymentDetails: PaymentDetails)
@@ -165,7 +168,23 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     private fun setInputListeners() {
         with(binding) {
             recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setRecipient(text.toString()) })
-            iban.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setIban(text.toString()) })
+            iban.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val upperCaseText = s.toString().uppercase(Locale.getDefault())
+                    if (s.toString() != upperCaseText) {
+                        val cursorPosition = iban.selectionStart
+                        iban.removeTextChangedListener(this)
+                        iban.setText(upperCaseText)
+                        iban.setSelection(cursorPosition)
+                        iban.addTextChangedListener(this)
+                    }
+                    reviewComponent?.setIban(upperCaseText)
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
             amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setAmount(text.toString()) })
             amount.addTextChangedListener(amountWatcher)
             purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setPurpose(text.toString()) })
