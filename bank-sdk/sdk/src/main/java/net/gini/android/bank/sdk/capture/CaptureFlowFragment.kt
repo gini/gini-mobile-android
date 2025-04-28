@@ -51,6 +51,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.util.protectViewFromInsets
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -121,6 +122,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         super.onViewCreated(view, savedInstanceState)
         composeView = view.findViewById(R.id.gbs_compose_view)
         setReturnReasonsEventProperty()
+        view.protectViewFromInsets()
         userAnalyticsEventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
     }
