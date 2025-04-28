@@ -169,7 +169,9 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         with(binding) {
             recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setRecipient(text.toString()) })
             iban.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    // No action needed before the text changes
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val upperCaseText = s.toString().uppercase(Locale.getDefault())
@@ -183,7 +185,9 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                     reviewComponent?.setIban(upperCaseText)
                 }
 
-                override fun afterTextChanged(s: Editable?) {}
+                override fun afterTextChanged(s: Editable?) {
+                    // No action needed after the text changes
+                }
             })
             amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setAmount(text.toString()) })
             amount.addTextChangedListener(amountWatcher)
