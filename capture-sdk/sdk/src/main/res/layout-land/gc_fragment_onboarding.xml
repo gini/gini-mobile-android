@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gc_large_80"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="@dimen/gc_large_32"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/gc_barrier_for_indicator"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,21 +84,21 @@
         app:layout_constraintEnd_toStartOf="@id/gc_next"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/gc_guideline_image_start"
-        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_max="220dp"
         app:layout_constraintWidth_min="120dp" />
 
     <Button
         android:id="@+id/gc_next"
         style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginEnd="@dimen/gc_large_64"
         android:text="@string/gc_next"
         app:layout_constraintBottom_toBottomOf="@id/gc_skip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/gc_skip"
         app:layout_constraintTop_toTopOf="@id/gc_skip"
-        app:layout_constraintWidth_max="160dp"
+        app:layout_constraintWidth_max="220dp"
         app:layout_constraintWidth_min="120dp" />
 
     <androidx.constraintlayout.widget.Group
@@ -111,14 +111,13 @@
     <Button
         android:id="@+id/gc_get_started"
         style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
         android:text="@string/gc_get_started"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/gc_guideline_image_start"
         app:layout_constraintTop_toTopOf="@id/gc_skip"
-        app:layout_constraintWidth_max="160dp"
         app:layout_constraintWidth_min="120dp" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -132,7 +131,7 @@
         android:id="@+id/gc_injected_navigation_bar_container_bottom"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/gc_onboarding_viewpager"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/gc_guideline_image_start" />
 
