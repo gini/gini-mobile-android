@@ -15,6 +15,8 @@ import androidx.annotation.VisibleForTesting;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
+import net.gini.android.capture.error.view.DefaultErrorNavigationBarBottomAdapter;
+import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.help.view.DefaultHelpNavigationBarBottomAdapter;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
@@ -115,6 +117,7 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> onboardingNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance;
+    private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance;
     private final boolean isBottomNavigationBarEnabled;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
@@ -406,6 +409,7 @@ public class GiniCapture {
         navigationBarTopAdapterInstance = builder.getNavigationBarTopAdapterInstance();
         onboardingNavigationBarBottomAdapterInstance = builder.getOnboardingNavigationBarBottomAdapterInstance();
         helpNavigationBarBottomAdapterInstance = builder.getHelpNavigationBarBottomAdapterInstance();
+        errorNavigationBarBottomAdapterInstance = builder.getErrorNavigationBarBottomAdapterInstance();
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
         onboardingAlignCornersIllustrationAdapterInstance = builder.getOnboardingAlignCornersIllustrationAdapterInstance();
         onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
@@ -681,6 +685,11 @@ public class GiniCapture {
     }
 
     @NonNull
+    public ErrorNavigationBarBottomAdapter getErrorNavigationBarBottomAdapter() {
+        return errorNavigationBarBottomAdapterInstance.getViewAdapter();
+    }
+
+    @NonNull
     public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
         return cameraNavigationBarBottomAdapterInstance.getViewAdapter();
     }
@@ -876,6 +885,7 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultNavigationBarTopAdapter());
         private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
+        private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultErrorNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private boolean isBottomNavigationBarEnabled = false;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
@@ -1255,6 +1265,22 @@ public class GiniCapture {
         }
 
         /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
+         *
+         * @param adapter a {@link ErrorNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setErrorNavigationBarBottomAdapter(@NonNull final ErrorNavigationBarBottomAdapter adapter) {
+            errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> getErrorNavigationBarBottomAdapterInstance() {
+            return errorNavigationBarBottomAdapterInstance;
+        }
+
+        /**
          * Set an adapter implementation to show a custom bottom navigation bar on the camera screen.
          *
          * @param adapter a {@link CameraNavigationBarBottomAdapter} interface implementation
@@ -1528,6 +1554,10 @@ public class GiniCapture {
 
         public InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> getHelpNavigationBarBottomAdapterInstance() {
             return mGiniCapture.helpNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> getErrorNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.errorNavigationBarBottomAdapterInstance;
         }
 
         public InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> getLoadingIndicatorAdapterInstance() {
