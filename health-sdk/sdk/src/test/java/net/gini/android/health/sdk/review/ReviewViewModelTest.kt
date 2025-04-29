@@ -55,6 +55,7 @@ class ReviewViewModelTest {
         every { giniInternalPaymentModule!!.giniHealthAPI } returns mockk(relaxed = true)
         every { giniInternalPaymentModule!!.giniHealthAPI.documentManager } returns mockk(relaxed = true)
         every { giniHealth!!.giniInternalPaymentModule } returns giniInternalPaymentModule!!
+        every { giniHealth!!.documentFlow } returns MutableStateFlow(ResultWrapper.Loading())
         userPreferences = mockk(relaxed = true)
         context = getApplicationContext()
     }
