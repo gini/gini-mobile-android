@@ -170,14 +170,20 @@ class GiniCaptureFragment(
             )
             resetOpenWithDocument()
         } else {
-            if ((shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(
+            if (shouldShowOnboarding() || (shouldShowOnboardingAtFirstRun() && !oncePerInstallEventStore.containsEvent(
                     OncePerInstallEvent.SHOW_ONBOARDING
-                ))) && !onBoardingShown
+                ))
             ) {
-                onBoardingShown = true
-                oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
-                safeNavigate(navController, CameraFragmentDirections.toOnboardingFragment())
+                showOnboardingScreen()
             }
+        }
+    }
+
+    private fun showOnboardingScreen() {
+        if (!onBoardingShown) {
+            onBoardingShown = true
+            oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
+            safeNavigate(navController, CameraFragmentDirections.toOnboardingFragment())
         }
     }
 
