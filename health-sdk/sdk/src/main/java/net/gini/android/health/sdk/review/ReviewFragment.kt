@@ -1,5 +1,6 @@
 package net.gini.android.health.sdk.review
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.transition.ChangeBounds
@@ -140,7 +141,6 @@ class ReviewFragment private constructor(
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
             bottomMargin = -resources.getDimensionPixelSize(net.gini.android.internal.payment.R.dimen.gps_medium_12)
         }
-//        binding.root.requestFocus()
 
         if (resources.isLandscapeOrientation()) {
             setupLandscapeBehavior()
@@ -153,11 +153,6 @@ class ReviewFragment private constructor(
                 launch {
                     viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
                 }
-
-//                launch {
-//                    binding.ghsPaymentDetails.findViewById<TextInputEditText>(net.gini.android.internal.payment.R.id.amount)
-//                        .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
-//                }
 
                 launch {
                     binding.root.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
@@ -305,6 +300,7 @@ class ReviewFragment private constructor(
                     return bounds
                 }
 
+                @SuppressLint("RestrictedApi")
                 override fun onProgress(
                     insets: WindowInsetsCompat,
                     runningAnimations: MutableList<WindowInsetsAnimationCompat>
