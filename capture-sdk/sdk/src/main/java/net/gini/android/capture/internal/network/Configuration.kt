@@ -9,5 +9,6 @@ data class Configuration(
     val isSkontoEnabled: Boolean,
     val isReturnAssistantEnabled: Boolean,
     val isTransactionDocsEnabled: Boolean,
+    val isQrCodeEducationEnabled: Boolean,
     val amplitudeApiKey: String
 )
