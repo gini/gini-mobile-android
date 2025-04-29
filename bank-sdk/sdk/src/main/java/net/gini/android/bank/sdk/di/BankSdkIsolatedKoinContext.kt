@@ -31,10 +31,13 @@ object BankSdkIsolatedKoinContext {
 
             modules(
                 screenModules
+                    .asSequence()
                     .plus(useCaseModules)
+                    .plus(analyticsModule)
                     .plus(commonModules)
                     .plus(handlerModule)
                     .plus(transactionListModule)
+                    .toList()
             )
         }.koin
     }

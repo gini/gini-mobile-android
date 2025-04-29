@@ -2,7 +2,7 @@ package net.gini.android.capture.tracking.useranalytics
 
 import net.gini.android.capture.Document
 import net.gini.android.capture.error.ErrorType
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty.DocumentType.Type as AnalyticsDocumentType
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty.DocumentType.Type as AnalyticsDocumentType
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty.ErrorType.Type as AnalyticsErrorType
 
 fun Boolean.mapToAnalyticsValue() = if (this) "yes" else "no"

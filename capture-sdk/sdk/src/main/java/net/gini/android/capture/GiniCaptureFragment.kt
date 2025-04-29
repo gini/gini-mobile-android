@@ -57,9 +57,9 @@ class GiniCaptureFragment(
     private var didFinishWithResult = false
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
-    private val lastExtractionsProvider : LastExtractionsProvider by getGiniCaptureKoin().inject()
+    private val lastExtractionsProvider: LastExtractionsProvider by getGiniCaptureKoin().inject()
     private val giniBankConfigurationProvider: GiniBankConfigurationProvider by
-            getGiniCaptureKoin().inject()
+    getGiniCaptureKoin().inject()
 
 
     fun setListener(listener: GiniCaptureFragmentListener) {
@@ -98,6 +98,7 @@ class GiniCaptureFragment(
                 )
                 // set if return assistant is enabled for the client
                 res.configuration.let {
+                    setEventSuperProperties(it)
                     setUserEventProperties(it)
                 }
             }
@@ -117,6 +118,12 @@ class GiniCaptureFragment(
                     BuildConfig.VERSION_NAME
                 )
             )
+        )
+    }
+
+    private fun setEventSuperProperties(configuration: Configuration) {
+        userAnalyticsEventTracker?.setEventSuperProperty(
+            UserAnalyticsEventSuperProperty.GiniClientId(configuration.clientID)
         )
     }
 

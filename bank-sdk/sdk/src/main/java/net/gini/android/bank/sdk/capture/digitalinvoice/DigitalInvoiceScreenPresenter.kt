@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoInfoBannerTextFactory
+import net.gini.android.bank.sdk.capture.skonto.mapper.toAnalyticsModel
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
 import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
@@ -17,6 +19,8 @@ import net.gini.android.bank.sdk.capture.util.OncePerInstallEvent
 import net.gini.android.bank.sdk.capture.util.OncePerInstallEventStore
 import net.gini.android.bank.sdk.capture.util.SimpleBusEventStore
 import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.capture.Amount
+import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -56,7 +60,8 @@ internal class DigitalInvoiceScreenPresenter(
         DigitalInvoiceScreenContract.FooterDetails(inaccurateExtraction = isInaccurateExtraction)
 
     private fun shouldDisplayOnboarding(): Boolean = !onboardingDisplayed &&
-            !oncePerInstallEventStore.containsEvent(OncePerInstallEvent.SHOW_DIGITAL_INVOICE_ONBOARDING)
+            !oncePerInstallEventStore
+                .containsEvent(OncePerInstallEvent.SHOW_DIGITAL_INVOICE_ONBOARDING)
 
     private val digitalInvoice: DigitalInvoice
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
@@ -73,7 +78,7 @@ internal class DigitalInvoiceScreenPresenter(
 
     private val skontoInfoBannerTextFactory: SkontoInfoBannerTextFactory
             by getGiniBankKoin().inject()
-
+    private var skontoEdgeCase: SkontoEdgeCase? = null
 
     init {
         view.setPresenter(this)
@@ -165,15 +170,59 @@ internal class DigitalInvoiceScreenPresenter(
     }
 
     private fun skipOrPay() {
+        trackProceedTapped()
         digitalInvoice.updateLineItemExtractionsWithReviewedLineItems()
         digitalInvoice.updateAmountToPayExtractionWithTotalPrice()
+        digitalInvoice.updateSkontoExtractions()
+
         if (GiniCapture.hasInstance()) {
             GiniCapture.getInstance().internal().setUpdatedCompoundExtractions(
                 digitalInvoice.compoundExtractions
             )
         }
+        if (digitalInvoice.skontoData != null && digitalInvoice.skontoEnabled) {
+            sendTransferSummary()
+        }
         listener?.onPayInvoice(digitalInvoice.extractions, digitalInvoice.compoundExtractions)
     }
+
+
+    private fun sendTransferSummary() {
+        val amount =
+            Amount(digitalInvoice.extractions["amountToPay"]?.let { parsePriceString(it.value).first }
+                ?: BigDecimal.ZERO, AmountCurrency.EUR)
+
+        var skontoPercentageDiscountedCalculated: String? = null
+        var skontoAmountToPayCalculated: String? = null
+        var skontoDueDateCalculated: String? = null
+
+        compoundExtractions["skontoDiscounts"]?.specificExtractionMaps?.map { skontoDiscountData ->
+            skontoPercentageDiscountedCalculated = skontoDiscountData.getDataByKeys(
+                "skontoPercentageDiscountedCalculated",
+            ) ?: throw NoSuchElementException("Data for `PercentageDiscounted` is missing")
+
+            skontoAmountToPayCalculated = skontoDiscountData.getDataByKeys(
+                "skontoAmountToPayCalculated"
+            ) ?: ""
+
+            skontoDueDateCalculated = skontoDiscountData.getDataByKeys(
+                "skontoDueDateCalculated"
+            ) ?: ""
+
+        }
+        GiniBank.sendTransferSummaryForSkonto(
+            amount,
+            skontoAmountToPayCalculated ?: "",
+            skontoPercentageDiscountedCalculated ?: "",
+            skontoDueDateCalculated ?: ""
+        )
+
+    }
+
+    private fun MutableMap<String, GiniCaptureSpecificExtraction>.getDataByKeys(
+        vararg keys: String
+    ) = keys.firstNotNullOfOrNull { this[it]?.value }
+
 
     override fun updateLineItem(selectableLineItem: SelectableLineItem) {
         digitalInvoice.updateLineItem(selectableLineItem)
@@ -207,7 +256,7 @@ internal class DigitalInvoiceScreenPresenter(
     @VisibleForTesting
     internal fun updateView() {
         val skontoSavedAmount = digitalInvoice.getSkontoSavedAmount()
-        val skontoEdgeCase = digitalInvoice.skontoData?.let { skontoData ->
+        skontoEdgeCase = digitalInvoice.skontoData?.let { skontoData ->
             getSkontoEdgeCaseUseCase.execute(
                 skontoData.skontoDueDate,
                 skontoData.skontoPaymentMethod
@@ -234,7 +283,8 @@ internal class DigitalInvoiceScreenPresenter(
             digitalInvoice.selectedAndTotalLineItemsCount().let { (selected, total) ->
                 footerDetails = footerDetails
                     .copy(
-                        totalGrossPriceIntegralAndFractionalParts = digitalInvoice.totalPriceIntegralAndFractionalParts(),
+                        totalGrossPriceIntegralAndFractionalParts =
+                        digitalInvoice.totalPriceIntegralAndFractionalParts(),
                         buttonEnabled = digitalInvoice.getAmountToPay() > BigDecimal.ZERO,
                         count = selected,
                         total = total,
@@ -262,7 +312,28 @@ internal class DigitalInvoiceScreenPresenter(
     private fun trackScreenShownEvent() = runCatching {
         userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
+            setOf(
+                UserAnalyticsEventProperty.Screen(screenName)
+            ) + if (skontoData != null) setOf(
+                UserAnalyticsEventProperty
+                    .SwitchActive(digitalInvoice.skontoEnabled)
+            )
+            else emptySet()
+        )
+    }
+
+    private fun trackProceedTapped() = runCatching {
+        val skontoEdgeCase = skontoEdgeCase
+        userAnalyticsEventTracker?.trackEvent(
+            UserAnalyticsEvent.PROCEED_TAPPED,
             setOf(UserAnalyticsEventProperty.Screen(screenName))
+                    + if (skontoEdgeCase != null) {
+                setOf(
+                    UserAnalyticsEventProperty.EdgeCaseType(
+                        skontoEdgeCase.toAnalyticsModel()
+                    )
+                )
+            } else emptySet()
         )
     }
 }

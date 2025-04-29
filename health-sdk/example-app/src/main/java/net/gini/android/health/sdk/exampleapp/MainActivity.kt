@@ -16,6 +16,7 @@ import net.gini.android.health.sdk.exampleapp.configuration.ConfigurationFragmen
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.health.sdk.exampleapp.invoices.ui.AppCompatThemeInvoicesActivity
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity
+import net.gini.android.health.sdk.exampleapp.orders.OrdersActivity
 import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
@@ -85,6 +86,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.appcompatThemeInvoicesScreen.setOnClickListener {
             startActivity(Intent(this, AppCompatThemeInvoicesActivity::class.java).apply {
+                viewModel.getPaymentFlowConfiguration()?.let {
+                    putExtra(PAYMENT_FLOW_CONFIGURATION, it)
+                }
+            })
+        }
+
+        binding.ordersScreen.setOnClickListener {
+            startActivity(Intent(this, OrdersActivity::class.java).apply {
                 viewModel.getPaymentFlowConfiguration()?.let {
                     putExtra(PAYMENT_FLOW_CONFIGURATION, it)
                 }

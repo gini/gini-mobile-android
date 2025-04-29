@@ -236,6 +236,22 @@ object GiniBank {
         )
     }
 
+    internal fun sendTransferSummaryForSkonto(
+        amount: Amount,
+        skontoAmountToPayCalculated: String,
+        skontoPercentageDiscountedCalculated: String,
+        skontoDueDateCalculated: String
+    ) {
+        GiniCapture.sendTransferSummaryForSkonto(
+            amount,
+            skontoAmountToPayCalculated,
+            skontoPercentageDiscountedCalculated,
+            skontoDueDateCalculated,
+
+        )
+
+    }
+
     /**
      * Frees up resources used by the capture flow.
      *

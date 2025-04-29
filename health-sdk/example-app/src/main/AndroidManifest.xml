@@ -31,24 +31,26 @@
         </activity>
         <activity
             android:name=".upload.UploadActivity"
-            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".review.ReviewActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:exported="false" />
         <activity
             android:name=".invoices.ui.InvoicesActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_invoices"
             android:exported="false" />
         <activity
             android:name=".invoices.ui.AppCompatThemeInvoicesActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_invoices"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity android:name=".orders.OrdersActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:label="@string/button_orders_list"
+            android:windowSoftInputMode="adjustNothing"
+            />
 
         <provider
             android:name="androidx.core.content.FileProvider"

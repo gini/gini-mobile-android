@@ -25,7 +25,7 @@ internal typealias SkontoScreenContainerHost = ContainerHost<SkontoScreenState, 
 internal class SkontoFragmentViewModel(
     data: SkontoData,
     skontoScreenInitialStateFactory: SkontoScreenInitialStateFactory,
-
+    private val skontoScreenAnalytics: SkontoScreenAnalytics,
     private val proceedClickedIntent: ProceedClickedIntent,
     private val skontoActiveChangeIntent: SkontoActiveChangeIntent,
     private val keyboardStateChangeIntent: KeyboardStateChangeIntent,
@@ -39,7 +39,12 @@ internal class SkontoFragmentViewModel(
 
     override val container: Container<SkontoScreenState, SkontoScreenSideEffect> = container(
         skontoScreenInitialStateFactory.create(data)
-    )
+    ) {
+        (state as? SkontoScreenState.Ready)?.let {
+            skontoScreenAnalytics.logScreenShownEvent(it.isSkontoSectionActive, it.edgeCase)
+        }
+
+    }
 
     private var listener: SkontoFragmentListener? = null
 
@@ -79,4 +84,26 @@ internal class SkontoFragmentViewModel(
 
     fun onInvoiceClicked() =
         with(invoiceClickIntent) { run() }
+
+    fun onHelpClicked() = intent {
+        skontoScreenAnalytics.logHelpClicked()
+        postSideEffect(SkontoScreenSideEffect.OpenHelpScreen)
+    }
+
+    fun onBackClicked() = intent {
+        skontoScreenAnalytics.logBackClicked()
+        postSideEffect(SkontoScreenSideEffect.NavigateBack)
+    }
+
+    fun onSkontoAmountFieldFocused() {
+        skontoScreenAnalytics.logSkontoAmountTapped()
+    }
+
+    fun onFullAmountFieldFocused() {
+        skontoScreenAnalytics.logFullAmountTapped()
+    }
+
+    fun onDueDateFieldFocused() {
+        skontoScreenAnalytics.logDueDateTapped()
+    }
 }

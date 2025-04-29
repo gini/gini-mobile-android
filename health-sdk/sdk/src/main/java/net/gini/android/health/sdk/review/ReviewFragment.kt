@@ -2,9 +2,16 @@ package net.gini.android.health.sdk.review
 
 import android.os.Build
 import android.os.Bundle
+import android.transition.ChangeBounds
+import android.transition.Transition
+import android.transition.TransitionListenerAdapter
+import android.transition.TransitionManager
+import android.transition.TransitionSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.ViewCompat
@@ -21,12 +28,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.transition.ChangeBounds
-import androidx.transition.Transition
-import androidx.transition.TransitionListenerAdapter
-import androidx.transition.TransitionManager
-import androidx.transition.TransitionSet
-import com.google.android.material.math.MathUtils.lerp
+import com.google.android.material.animation.AnimationUtils.lerp
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
@@ -48,6 +50,7 @@ import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getFontScale
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -138,6 +141,10 @@ class ReviewFragment private constructor(
             bottomMargin = -resources.getDimensionPixelSize(net.gini.android.internal.payment.R.dimen.gps_medium_12)
         }
 //        binding.root.requestFocus()
+
+        if (resources.isLandscapeOrientation()) {
+            setupLandscapeBehavior()
+        }
     }
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
@@ -256,6 +263,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.removePagerConstraintAndSetPreviousHeightIfNeeded(savedHeight: Int) {
+        if (resources.isLandscapeOrientation()) return
         root.post {
             ConstraintSet().apply {
                 clone(constraintRoot)
@@ -263,7 +271,7 @@ class ReviewFragment private constructor(
                 clear(R.id.pager, ConstraintSet.BOTTOM)
                 applyTo(constraintRoot)
             }
-            if (savedHeight != -1) {
+            if (savedHeight > 0) {
                 val pagerLayoutParams = binding.pager.layoutParams
                 pagerLayoutParams.height = savedHeight
                 binding.pager.layoutParams = pagerLayoutParams
@@ -333,6 +341,9 @@ class ReviewFragment private constructor(
 
     private fun GhsFragmentReviewBinding.showInfoBar() {
         root.doOnLayout {
+            if (resources.isLandscapeOrientation()) {
+                paymentDetailsInfoBar.isVisible = true
+            }
             // paymentDetailsInfoBar visibility should never be GONE, otherwise the animation won't work
             if (paymentDetailsInfoBar.isInvisible) {
                 TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
@@ -352,24 +363,50 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.hideInfoBarAnimated() {
-        root.doOnLayout {
-            if (paymentDetailsInfoBar.isVisible) {
-                TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
-                    addTransition(ChangeBounds())
-                    addListener(object : TransitionListenerAdapter() {
-                        override fun onTransitionEnd(transition: Transition) {
-                            super.onTransitionEnd(transition)
-                            paymentDetailsInfoBar.isInvisible = true
+        private fun GhsFragmentReviewBinding.hideInfoBarAnimated() {
+            root.doOnLayout {
+                if (!resources.isLandscapeOrientation()) {
+                    if (paymentDetailsInfoBar.isVisible) {
+                        TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
+                            addTransition(ChangeBounds())
+                            addListener(object : TransitionListenerAdapter() {
+                                override fun onTransitionEnd(transition: Transition) {
+                                    super.onTransitionEnd(transition)
+                                    paymentDetailsInfoBar.isInvisible = true
+                                }
+                            })
+                        })
+                        paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                            topToTop = paymentDetailsScrollview.id
+                            bottomToTop = ConstraintLayout.LayoutParams.UNSET
                         }
-                    })
-                })
-                paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    topToTop = paymentDetailsScrollview.id
-                    bottomToTop = ConstraintLayout.LayoutParams.UNSET
+                    }
+                } else {
+                    paymentInfoLabel?.isVisible = false
                 }
             }
         }
+
+        private fun setupLandscapeBehavior() {
+            val dragHandle = binding.dragHandle
+            val fieldsLayout = binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_fields_layout)
+            val bottomLayout = binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_bottom_layout)
+
+            binding.root.post {
+                setupConstraintsForTabLayout((dragHandle?.height ?: 0) + bottomLayout.height)
+            }
+
+            dragHandle?.setOnTouchListener { _, _ ->
+                fieldsLayout.alpha = if (isVisible) 0f else 1f
+                fieldsLayout.isVisible = !fieldsLayout.isVisible
+                false
+            }
+        }
+
+    private fun setupConstraintsForTabLayout(collapsedBottomSheetHeight: Int) {
+        val layoutParams = binding.indicator.layoutParams as MarginLayoutParams
+        layoutParams.bottomMargin = collapsedBottomSheetHeight + 20
+        binding.indicator.layoutParams = layoutParams
     }
 
     private fun getLocaleStringResource(resourceId: Int): String {

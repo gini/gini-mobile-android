@@ -17,16 +17,17 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.UserAnalytics.getAnalyticsEventTracker
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsDocumentType
 import net.gini.android.capture.tracking.useranalytics.mapToAnalyticsErrorType
-import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.InjectedViewContainer
 import net.gini.android.capture.view.NavButtonType
@@ -115,16 +116,19 @@ class ErrorFragmentImpl(
     private fun addUserAnalyticEvents() {
         val errorMessage = customError ?:
         fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0).toString()
+        mUserAnalyticsEventTracker?.setEventSuperProperty(
+            UserAnalyticsEventSuperProperty.DocumentType(document.mapToAnalyticsDocumentType())
+        )
         mUserAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             setOf(
                 UserAnalyticsEventProperty.Screen(screenName),
-                UserAnalyticsEventProperty.DocumentType(document.mapToAnalyticsDocumentType()),
                 UserAnalyticsEventProperty.DocumentId(document?.id.toString()),
                 UserAnalyticsEventProperty.ErrorType(errorType.mapToAnalyticsErrorType()),
                 UserAnalyticsEventProperty.ErrorMessage(errorMessage)
             ),
         )
+
     }
 
     private fun setInjectedTopBarContainer(view: View) {

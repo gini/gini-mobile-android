@@ -1,11 +1,17 @@
 package net.gini.android.bank.sdk.invoice
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.invoice.usecase.LoadInvoiceBitmapsUseCase
 import net.gini.android.capture.network.model.GiniCaptureBox
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.viewmodel.container
+
+internal typealias InvoicePreviewHost = ContainerHost<InvoicePreviewFragmentState, Unit>
 
 internal class InvoicePreviewViewModel(
     private val screenTitle: String,
@@ -13,10 +19,12 @@ internal class InvoicePreviewViewModel(
     private val highlightBoxes: List<GiniCaptureBox>,
     private val infoTextLines: List<String>,
     private val loadInvoiceBitmapsUseCase: LoadInvoiceBitmapsUseCase,
-) : ViewModel() {
+    private val analyticsTracker: UserAnalyticsEventTracker,
+) : ViewModel(), InvoicePreviewHost {
 
-    val stateFlow: MutableStateFlow<InvoicePreviewFragmentState> =
-        MutableStateFlow(createInitalState())
+    override val container: Container<InvoicePreviewFragmentState, Unit> = container(
+        createInitalState()
+    )
 
     private fun createInitalState() =
         InvoicePreviewFragmentState(
@@ -30,17 +38,41 @@ internal class InvoicePreviewViewModel(
         init()
     }
 
-    private fun init() = viewModelScope.launch {
+    fun onUserZoomedImage() {
+        analyticsTracker.trackEvent(
+            UserAnalyticsEvent.PREVIEW_ZOOMED,
+            setOf(
+                UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoInvoicePreview)
+            )
+        )
+    }
+
+    fun onUserNavigatesBack() {
+        analyticsTracker.trackEvent(
+            UserAnalyticsEvent.CLOSE_TAPPED,
+            setOf(
+                UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoInvoicePreview)
+            )
+        )
+    }
+
+    private fun init() = intent {
+        analyticsTracker.trackEvent(
+            UserAnalyticsEvent.SCREEN_SHOWN,
+            setOf(
+                UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoInvoicePreview)
+            )
+        )
+
         val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
 
-        val currentState = stateFlow.value
         if (bitmaps != null) {
-            stateFlow.emit(
-                currentState.copy(
+            reduce {
+                state.copy(
                     isLoading = false,
                     images = bitmaps
                 )
-            )
+            }
         }
     }
 }

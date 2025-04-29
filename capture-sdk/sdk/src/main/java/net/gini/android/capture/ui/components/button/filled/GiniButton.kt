@@ -3,7 +3,6 @@ package net.gini.android.capture.ui.components.button.filled
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -44,7 +43,7 @@ fun GiniButton(
     content: @Composable () -> Unit,
 ) {
     Button(
-        modifier = modifier.padding(vertical = 16.dp),
+        modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(4.dp),
         colors = ButtonDefaults.buttonColors(
