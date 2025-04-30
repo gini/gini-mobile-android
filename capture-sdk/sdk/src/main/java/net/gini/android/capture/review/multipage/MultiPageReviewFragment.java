@@ -297,6 +297,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         if (mMultiPageDocument != null) {
             updateNextButtonVisibility();
             initRecyclerView();
+            delayWithBlueRect();
         }
     }
 
@@ -325,6 +326,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     //Look for the page in the middle
     //Make it blue
     private View showHideBlueRect(int visibility) {
+        // First clear all the already selected tabs
+        if (visibility == View.VISIBLE) clearAllBlueRect();
         View mChild = mSnapHelper.findSnapView(mSnapManager);
 
         if (mChild != null) {
