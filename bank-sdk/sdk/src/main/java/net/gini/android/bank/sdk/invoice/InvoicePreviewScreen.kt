@@ -125,7 +125,7 @@ internal fun InvoiceScreenErrorContent(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.gbs_cloud_off),
+                        painter = painterResource(CaptureR.drawable.gc_error_server_icon),
                         contentDescription = null,
                         tint = colors.errorMessage.errorHint.iconColor
                     )
