@@ -555,7 +555,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         for (int i = 0; i < mPreviewPagesAdapter.getItemCount(); i++) {
             View child = mSnapManager.getChildAt(i);
             if (child != null) {
-                ConstraintLayout c = child.findViewById(R.id.gc_image_wrapper);
+                View c = child.findViewById(R.id.gc_image_preview_root);
                 if (c != null) {
                     c.findViewById(R.id.gc_image_selected_rect)
                             .setVisibility(View.INVISIBLE);
