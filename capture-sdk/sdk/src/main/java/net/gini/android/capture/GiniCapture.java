@@ -75,10 +75,10 @@ import java.util.Map;
  * <p> To create and configure a singleton instance use the {@link #newInstance(Context)} method and the
  * returned {@link Builder}.
  *
- * <p> Please first provide the transfer summary via the {@link #sendTransferSummary(String, String, String, String, String, Amount)} method.
+ * <p> Please first provide the transfer summary via the {@link #sendTransferSummary(String, String, String, String, String, Amount, Boolean)} method.
  * The transfer summary is used to improve the future extraction accuracy.
  * Then, use the {@link #cleanup(Context)} method to clean up the SDK.
- *
+ * <p>
  * Please follow the recommendations below:
  *
  * <ul>
@@ -195,6 +195,7 @@ public class GiniCapture {
         return new Builder();
     }
 
+
     /**
      * Provides transfer summary to Gini.
      *
@@ -213,8 +214,16 @@ public class GiniCapture {
      * @param iban             international bank account
      * @param bic              bank identification code
      * @param amount           accepts extracted amount and currency
+     * @param instantPayment   based on the user's preference to have the payment as instant payment
      */
-    public static synchronized void sendTransferSummary(@NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
+    public static synchronized void sendTransferSummary(
+            @NonNull final String paymentRecipient,
+            @NonNull final String paymentReference,
+            @NonNull final String paymentPurpose,
+            @NonNull final String iban,
+            @NonNull final String bic,
+            @NonNull final Amount amount,
+            @Nullable final Boolean instantPayment) {
 
         if (sInstance == null) {
             return;
@@ -236,6 +245,9 @@ public class GiniCapture {
 
         extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic, "bic", null, emptyList()));
 
+        if (instantPayment != null) {
+            extractionMap.put("instantPayment", new GiniCaptureSpecificExtraction("instantPayment", instantPayment.toString(), "instantPayment", null, emptyList()));
+        }
         // We should remove skonto from compound extractions as we don't want to override them by clients when sending normal feedback!
         sInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
 
@@ -313,6 +325,7 @@ public class GiniCapture {
             oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, compoundExtractionMap, new GiniCaptureNetworkCallback<Void, Error>() {
                 //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
                 private int retryCount = 0;
+
                 @Override
                 public void failure(Error error) {
                     int maxRetries = 3;
@@ -321,10 +334,12 @@ public class GiniCapture {
                         oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, compoundExtractionMap, this);
                     }
                 }
+
                 @Override
                 public void success(Void result) {
                     //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
                 }
+
                 @Override
                 public void cancelled() {
                     //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
@@ -354,13 +369,12 @@ public class GiniCapture {
      * @param iban             international bank account
      * @param bic              bank identification code
      * @param amount           accepts extracted amount and currency
-     * @deprecated Use {@link #sendTransferSummary(String, String, String, String, String, Amount)} to provide the required transfer summary first (if the user has completed TAN verification) and then {@link #cleanup(Context)} to let the SDK free up used resources.
-     *
+     * @deprecated Use {@link #sendTransferSummary(String, String, String, String, String, Amount, Boolean)} to provide the required transfer summary first (if the user has completed TAN verification) and then {@link #cleanup(Context)} to let the SDK free up used resources.
      */
 
     @Deprecated
     public static synchronized void cleanup(@NonNull final Context context, @NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
-        sendTransferSummary(paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount);
+        sendTransferSummary(paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount, null);
         cleanup(context);
     }
 
@@ -783,7 +797,9 @@ public class GiniCapture {
      * @return the map of custom metadata
      */
     @Nullable
-    public Map<String, String> getCustomUploadMetadata() { return mCustomUploadMetadata; }
+    public Map<String, String> getCustomUploadMetadata() {
+        return mCustomUploadMetadata;
+    }
 
     public static GiniCaptureFragment createGiniCaptureFragment() {
         if (!GiniCapture.hasInstance()) {
@@ -819,7 +835,8 @@ public class GiniCapture {
     }
 
     public static class CreateGiniCaptureFragmentForIntentResult {
-        public static class Cancelled extends CreateGiniCaptureFragmentForIntentResult {}
+        public static class Cancelled extends CreateGiniCaptureFragmentForIntentResult {
+        }
 
         public static class Success extends CreateGiniCaptureFragmentForIntentResult {
             @NonNull
@@ -829,6 +846,7 @@ public class GiniCapture {
                 this.fragment = fragment;
             }
         }
+
         public static class Error extends CreateGiniCaptureFragmentForIntentResult {
             @NonNull
             Exception exception;
@@ -1442,7 +1460,6 @@ public class GiniCapture {
          * on your activity's window after the SDK has finished to allow users to take screenshots of your app again.
          *
          * @param allowScreenshots pass {@code true} to allow screenshots or {@code false} otherwise.
-         *
          * @return the {@link Builder} instance
          */
         public Builder setAllowScreenshots(boolean allowScreenshots) {

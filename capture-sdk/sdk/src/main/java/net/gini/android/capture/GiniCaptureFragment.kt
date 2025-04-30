@@ -117,6 +117,9 @@ class GiniCaptureFragment(
                 ),
                 UserAnalyticsUserProperty.CaptureSdkVersionName(
                     BuildConfig.VERSION_NAME
+                ),
+                UserAnalyticsUserProperty.InstantPaymentEnabled(
+                    configuration.isInstantPaymentEnabled
                 )
             )
         )

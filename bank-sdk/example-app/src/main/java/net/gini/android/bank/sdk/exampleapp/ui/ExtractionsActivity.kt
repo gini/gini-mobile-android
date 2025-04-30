@@ -54,7 +54,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         "paymentPurpose" to "text",
         "iban" to "iban",
         "bic" to "bic",
-        "amountToPay" to "amount"
+        "amountToPay" to "amount",
+        "instantPayment" to "text"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -150,15 +151,22 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
         val iban = mExtractions["iban"]?.value ?: ""
         val bic = mExtractions["bic"]?.value ?: ""
+        val instantPayment = mExtractions["instantPayment"]?.value ?: ""
 
         if (amount.isEmpty()) {
             amount = Amount.EMPTY.amountToPay()
         }
 
         GiniBank.sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            Amount(
                 BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
-            )
+            ),
+            instantPayment.toBooleanStrictOrNull()
         )
 
         GiniBank.cleanupCapture(applicationContext)
