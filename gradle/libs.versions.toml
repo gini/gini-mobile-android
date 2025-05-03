@@ -25,6 +25,7 @@ accompanist-themeAdapter = "1.1.1"
 compose-activity = "1.9.0"
 koin-bom = "3.5.6"
 orbitMvi = "9.0.0"
+kotlinxSerialization = "1.6.3"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
@@ -129,3 +130,4 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 orbitmvi-compose = { group = "org.orbit-mvi", name = "orbit-compose", version.ref = "orbitMvi" }
 orbitmvi-test = { group = "org.orbit-mvi", name = "orbit-test", version.ref = "orbitMvi" }
 orbitmvi-viewmodel = { group = "org.orbit-mvi", name = "orbit-viewmodel", version.ref = "orbitMvi" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }

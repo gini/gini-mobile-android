@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.TransactionDocsWidgetColors
-import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
+import net.gini.android.bank.sdk.transactiondocs.model.extractions.GiniTransactionDoc
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenu
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenuItem
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -40,12 +40,12 @@ import net.gini.android.capture.ui.theme.GiniTheme
 private val imageExtensions = listOf(".jpg", ".jpeg", ".png", ".gif")
 
 @Composable
-internal fun TransactionDocsContent(
-    documents: List<TransactionDoc>,
+fun TransactionDocsContent(
+    documents: List<GiniTransactionDoc>,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
-    onDocumentClick: (document: TransactionDoc) -> Unit = {},
-    onDocumentDelete: (TransactionDoc) -> Unit = {},
+    onDocumentClick: (document: GiniTransactionDoc) -> Unit = {},
+    onDocumentDelete: (GiniTransactionDoc) -> Unit = {},
 ) {
     AnimatedVisibility(visible = documents.isNotEmpty()) {
         Card(
@@ -78,9 +78,9 @@ internal fun TransactionDocsContent(
 
 @Composable
 private fun DocumentList(
-    documents: List<TransactionDoc>,
-    onDocumentClick: (TransactionDoc) -> Unit,
-    onDocumentDelete: (TransactionDoc) -> Unit,
+    documents: List<GiniTransactionDoc>,
+    onDocumentClick: (GiniTransactionDoc) -> Unit,
+    onDocumentDelete: (GiniTransactionDoc) -> Unit,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors,
 ) {
@@ -101,9 +101,9 @@ private fun DocumentList(
 
 @Composable
 private fun Document(
-    document: TransactionDoc,
-    onDocumentClick: (TransactionDoc) -> Unit,
-    onDocumentDelete: (TransactionDoc) -> Unit,
+    document: GiniTransactionDoc,
+    onDocumentClick: (GiniTransactionDoc) -> Unit,
+    onDocumentDelete: (GiniTransactionDoc) -> Unit,
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors.DocumentItemColors,
 ) {
@@ -249,9 +249,9 @@ private fun PreviewContent() {
         Surface(modifier = Modifier.fillMaxSize()) {
             TransactionDocsContent(
                 documents = listOf(
-                    TransactionDoc("id", "document1.jpg"),
-                    TransactionDoc("id", "document2.jpg"),
-                    TransactionDoc("id", "document3.pdf"),
+                    GiniTransactionDoc("id", "document1.jpg"),
+                    GiniTransactionDoc("id", "document2.jpg"),
+                    GiniTransactionDoc("id", "document3.pdf"),
                 ),
                 onDocumentClick = {},
                 onDocumentDelete = {},

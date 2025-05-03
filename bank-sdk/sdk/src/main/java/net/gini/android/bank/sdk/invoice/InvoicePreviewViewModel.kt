@@ -19,7 +19,7 @@ internal class InvoicePreviewViewModel(
     private val highlightBoxes: List<GiniCaptureBox>,
     private val infoTextLines: List<String>,
     private val loadInvoiceBitmapsUseCase: LoadInvoiceBitmapsUseCase,
-    private val analyticsTracker: UserAnalyticsEventTracker,
+    private val analyticsTracker: UserAnalyticsEventTracker?,
 ) : ViewModel(), InvoicePreviewHost {
 
     override val container: Container<InvoicePreviewFragmentState, Unit> = container(
@@ -39,7 +39,7 @@ internal class InvoicePreviewViewModel(
     }
 
     fun onUserZoomedImage() {
-        analyticsTracker.trackEvent(
+        analyticsTracker?.trackEvent(
             UserAnalyticsEvent.PREVIEW_ZOOMED,
             setOf(
                 UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoInvoicePreview)
@@ -48,7 +48,7 @@ internal class InvoicePreviewViewModel(
     }
 
     fun onUserNavigatesBack() {
-        analyticsTracker.trackEvent(
+        analyticsTracker?.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
             setOf(
                 UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoInvoicePreview)
@@ -57,7 +57,7 @@ internal class InvoicePreviewViewModel(
     }
 
     private fun init() = intent {
-        analyticsTracker.trackEvent(
+        analyticsTracker?.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             setOf(
                 UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoInvoicePreview)
