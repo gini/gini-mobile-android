@@ -26,6 +26,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
+import net.gini.android.capture.GiniCaptureFragmentKt;
 import net.gini.android.capture.R;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -184,6 +185,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     void showBitmap(@Nullable final Bitmap bitmap, final int rotationForDisplay) {
         rotateDocumentImageView(rotationForDisplay);
         mImageDocumentView.setImageBitmap(bitmap);
+        GiniCaptureFragmentKt.saveImageToGallery(mFragment.getActivity(), bitmap, "Gini Photos");
     }
 
     @Override

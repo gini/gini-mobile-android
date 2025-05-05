@@ -1,6 +1,12 @@
 package net.gini.android.capture
 
+import android.content.ContentValues
+import android.content.Context
+import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,8 +40,35 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
 import net.gini.android.capture.util.protectViewFromInsets
+import java.io.IOException
 import java.util.UUID
 
+fun saveImageToGallery(context: Context, bitmap: Bitmap, albumName: String = "Gini Photos"): Boolean {
+    val filename = "IMG_${System.currentTimeMillis()}.jpg"
+    val contentValues = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/$albumName")
+        }
+    }
+
+    val contentResolver = context.contentResolver
+    val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+    imageUri?.let { uri ->
+        try {
+            contentResolver.openOutputStream(uri)?.use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                return true
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    return false
+}
 
 class GiniCaptureFragment(
     private val openWithDocument: Document? = null,
