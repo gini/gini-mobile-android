@@ -50,6 +50,7 @@ import net.gini.android.internal.payment.utils.extensions.showInstallAppBottomSh
 import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomSheet
 import net.gini.android.internal.payment.utils.extensions.startSharePdfIntent
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.restoreFocusIfEscaped
 import org.jetbrains.annotations.VisibleForTesting
 
 /**
@@ -241,6 +242,11 @@ class PaymentFragment private constructor(
                 handleBackFlow()
             }
         })
+
+        restoreFocusIfEscaped(view) { fallback ->
+            val firstFocusable = view.focusSearch(View.FOCUS_UP)
+            firstFocusable?.requestFocus()
+        }
     }
 
     override fun onDetach() {

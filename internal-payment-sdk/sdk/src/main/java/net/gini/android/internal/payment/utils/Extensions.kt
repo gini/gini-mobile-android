@@ -4,6 +4,7 @@ import android.R
 import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.Button
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
@@ -83,4 +84,26 @@ internal suspend fun <T> Flow<T>.withPrev() = flow {
         emit(prev to it)
         prev = it
     }
+}
+
+fun restoreFocusIfEscaped(
+    rootView: View,
+    onFocusEscaped: (View) -> Unit = { fallback -> fallback.requestFocus() }
+) {
+    rootView.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
+        if (!isViewInside(newFocus, rootView)) {
+            val fallback = rootView.focusSearch(View.FOCUS_DOWN)
+            fallback?.let { onFocusEscaped(it) }
+        }
+    }
+}
+
+fun isViewInside(viewToTest: View?, containerRoot: View?): Boolean {
+    if (viewToTest == null || containerRoot == null) return false
+    var current: View? = viewToTest
+    while (current != null && current != containerRoot) {
+        val parent = current.parent
+        current = if (parent is View) parent else null
+    }
+    return current == containerRoot
 }

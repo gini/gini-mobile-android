@@ -10,8 +10,6 @@ import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ExpandableListAdapter
-import android.widget.ExpandableListView
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.core.text.buildSpannedString
@@ -20,20 +18,19 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import net.gini.android.health.api.response.IngredientBrandType
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsFragmentPaymentMoreInformationBinding
-import net.gini.android.internal.payment.databinding.GpsPaymentProviderIconHolderBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
-import java.util.Locale
+import net.gini.android.internal.payment.utils.restoreFocusIfEscaped
 
 /**
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
@@ -80,9 +77,12 @@ class MoreInformationFragment private constructor(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
         binding = GpsFragmentPaymentMoreInformationBinding.inflate(inflater, container, false)
-        return binding.root
+        return binding.root.apply {
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+            isFocusableInTouchMode = true
+            isFocusable = true
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -93,21 +93,24 @@ class MoreInformationFragment private constructor(
             append(createSpanForLink(R.string.gps_gini_link, R.string.gps_gini_link_url))
             append(".")
         }
-
         binding.gpsMoreInformationDetails.movementMethod = LinkMovementMethod.getInstance()
         binding.gpsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf(), viewModel.getLocale())
-        binding.gpsFaqList.apply {
-            setAdapter(FaqExpandableListAdapter(faqList, viewModel.getLocale()))
-            setOnGroupClickListener { expandableListView, _, group, _ ->
-                setListViewHeight(listView = expandableListView, group = group, isReload = false)
-                return@setOnGroupClickListener false
-            }
+        binding.gpsPaymentProvidersIconsList.apply {
+            isFocusable = true
+            isFocusableInTouchMode = true
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+            requestFocus() // You can use this optionally if you want it to take initial focus.
         }
 
-        //Set initial list view height so we can scroll full page
-        binding.gpsFaqList.postDelayed({
-            setListViewHeight(listView = binding.gpsFaqList, group = getExpandedGroupPosition(), isReload = true)
-        }, 100)
+        restoreFocusIfEscaped(view) { fallback ->
+            val firstFocusable = view.focusSearch(View.FOCUS_DOWN)
+            firstFocusable?.requestFocus()
+        }
+
+        val faqAdapter = FaqRecyclerAdapter(viewModel.getLocale(), faqList)
+        binding.gpsFaqRecycler?.layoutManager = LinearLayoutManager(requireContext())
+        binding.gpsFaqRecycler?.adapter = faqAdapter
+
         binding.gpsPoweredByGini.root.visibility =
             if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
                 View.VISIBLE else View.INVISIBLE
@@ -133,20 +136,12 @@ class MoreInformationFragment private constructor(
         }
     }
 
-    private fun getExpandedGroupPosition(): Int {
-        for (i in faqList.indices) {
-            if (binding.gpsFaqList.isGroupExpanded(i)) return i
-        }
-        return -1
-    }
-
     private fun updatePaymentProviderIconsAdapter(paymentProviderApps: List<PaymentProviderApp>) {
         (binding.gpsPaymentProvidersIconsList.adapter as PaymentProvidersIconsAdapter).apply {
             dataSet = paymentProviderApps
             notifyDataSetChanged()
         }
     }
-
     private fun createSpanForLink(@StringRes placeholder: Int, @StringRes urlResource: Int) =
         SpannableString(getLocaleStringResource(placeholder)).apply {
             setSpan(
@@ -172,63 +167,6 @@ class MoreInformationFragment private constructor(
             replace(indexOf("%p"), indexOf("%p") + 2, privacyPolicyString)
         }
         return span
-    }
-
-    private fun setListViewHeight(
-        listView: ExpandableListView,
-        group: Int,
-        isReload: Boolean
-    ) {
-        val listAdapter = listView.expandableListAdapter as ExpandableListAdapter
-        var totalHeight = 0
-        val desiredWidth = View.MeasureSpec.makeMeasureSpec(
-            listView.width,
-            View.MeasureSpec.EXACTLY
-        )
-        for (i in 0 until listAdapter.groupCount) {
-            val groupItem = listAdapter.getGroupView(i, false, null, listView)
-            groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED)
-            totalHeight += groupItem.measuredHeight
-            if (group == -1) continue
-            if ((listView.isGroupExpanded(i) && (i != group || isReload)) || !listView.isGroupExpanded(i) && i == group) {
-                for (j in 0 until listAdapter.getChildrenCount(i)) {
-                    val listItem = listAdapter.getChildView(
-                        i, j, false, null,
-                        listView
-                    )
-                    listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED)
-                    totalHeight += listItem.measuredHeight
-                }
-            }
-        }
-        val params = listView.layoutParams
-        params.height = totalHeight + listView.dividerHeight * (listAdapter.groupCount - 1)
-        listView.layoutParams = params
-        listView.requestLayout()
-    }
-
-    internal class PaymentProvidersIconsAdapter(var dataSet: List<PaymentProviderApp?>, var locale: Locale?) :
-        RecyclerView.Adapter<PaymentProvidersIconsAdapter.ViewHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = GpsPaymentProviderIconHolderBinding.inflate(
-                parent.getLayoutInflaterWithGiniPaymentThemeAndLocale(locale),
-                parent,
-                false
-            )
-            return ViewHolder(view)
-        }
-
-        override fun getItemCount(): Int = dataSet.size
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val context = holder.binding.root.context
-            holder.binding.gpsPaymentProviderIcon.setImageDrawable(dataSet[position]?.icon)
-            holder.binding.gpsPaymentProviderIcon.contentDescription = dataSet[position]?.paymentProvider?.name + " ${context.getString(R.string.gps_payment_provider_logo_content_description)}"
-        }
-
-        class ViewHolder(val binding: GpsPaymentProviderIconHolderBinding) :
-            RecyclerView.ViewHolder(binding.root)
     }
 
     companion object {

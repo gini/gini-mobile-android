@@ -28,6 +28,7 @@ import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
 import net.gini.android.internal.payment.utils.extensions.hideKeyboard
+import net.gini.android.internal.payment.utils.extensions.hideKeyboardFully
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
@@ -127,6 +128,13 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                 }
             }
         }
+
+        binding.payment.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                clearInputFieldsFocus()
+                view.hideKeyboardFully()
+            }
+        }
     }
 
     private fun setSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
@@ -139,6 +147,13 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             if (reviewComponent?.shouldShowBankSelectionButton() == true) {
                 binding.gpsPaymentProviderAppIconHolder.gpsPaymentProviderIcon.setImageDrawable(roundedDrawable)
                 binding.gpsSelectBankButton.setOnClickListener { listener?.onSelectBankButtonTapped() }
+                binding.gpsSelectBankButton.setOnFocusChangeListener{
+                    view, hasFocus ->
+                    if (hasFocus) {
+                        clearInputFieldsFocus()
+                        view.hideKeyboardFully()
+                    }
+                }
             } else {
                 binding.payment.setCompoundDrawablesWithIntrinsicBounds(
                     roundedDrawable,
@@ -217,6 +232,13 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         PaymentField.Iban -> binding.ibanLayout
         PaymentField.Amount -> binding.amountLayout
         PaymentField.Purpose -> binding.purposeLayout
+    }
+
+    private fun clearInputFieldsFocus() {
+        binding.recipient.clearFocus()
+        binding.iban.clearFocus()
+        binding.amount.clearFocus()
+        binding.purpose.clearFocus()
     }
 
     private fun setEditableFields() {

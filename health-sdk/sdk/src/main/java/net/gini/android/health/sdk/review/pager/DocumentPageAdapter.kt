@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsItemPageHorizontalBinding
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.wrapToResult
@@ -33,7 +34,12 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
         HorizontalViewHolder(giniHealth, GhsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
-        holder.onBind(currentList[position])
+        val page = currentList[position]
+        holder.onBind(page)
+
+        if (holder is HorizontalViewHolder) {
+            holder.binding.root.contentDescription = "Document page ${page.number}"
+        }
     }
 
     abstract class PageViewHolder(private val giniHealth: GiniHealth, view: View) : RecyclerView.ViewHolder(view) {
@@ -73,7 +79,7 @@ internal class DocumentPageAdapter(private val giniHealth: GiniHealth) :
 
     class HorizontalViewHolder(
         giniHealth: GiniHealth,
-        private val binding: GhsItemPageHorizontalBinding,
+        val binding: GhsItemPageHorizontalBinding,
         override val loadingView: ProgressBar = binding.loading,
         override val imageView: PhotoView = binding.image,
         override val errorView: FrameLayout = binding.error.root,

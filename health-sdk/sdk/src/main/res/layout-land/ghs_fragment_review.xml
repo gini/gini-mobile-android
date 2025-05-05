@@ -4,18 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:screenReaderFocusable="true"
+    android:clickable="true"
+    android:importantForAccessibility="yes"
+    android:nextFocusForward="@id/close"
+    android:nextFocusDown="@id/close"
+    android:nextFocusRight="@id/close"
+    android:nextFocusLeft="@id/close"
+    android:nextFocusUp="@id/close"
     android:background="@color/ghs_light_07">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/constraint_root">
+        android:id="@+id/constraint_root"
+        android:nextFocusForward="@id/close"
+        android:nextFocusDown="@id/close"
+        android:nextFocusRight="@id/close"
+        android:nextFocusLeft="@id/close"
+        android:nextFocusUp="@id/close">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="gone"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:nextFocusDown="@id/drag_handle"
+            android:nextFocusForward="@id/drag_handle"
             app:layout_constraintBottom_toTopOf="@id/indicator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +74,13 @@
             android:layout_marginTop="@dimen/gps_small"
             android:layout_marginEnd="@dimen/gps_large"
             android:nextFocusForward="@id/recipient_layout"
+            android:descendantFocusability="blocksDescendants"
             android:contentDescription="@string/gps_close_content_description"
+            android:focusable="true"
+            android:nextFocusUp="@id/pager"
+            android:nextFocusDown="@id/payment_details_scrollview"
+            android:nextFocusLeft="@id/indicator"
+            android:nextFocusRight="@id/indicator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -75,6 +101,9 @@
                     android:id="@+id/drag_handle"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:importantForAccessibility="yes"
                     android:padding="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

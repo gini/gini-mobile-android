@@ -1,14 +1,8 @@
 package net.gini.android.health.sdk.review
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.Transition
-import android.transition.TransitionListenerAdapter
-import android.transition.TransitionManager
-import android.transition.TransitionSet
-import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +23,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.material.animation.AnimationUtils.lerp
+import androidx.transition.ChangeBounds
+import androidx.transition.Transition
+import androidx.transition.TransitionListenerAdapter
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
@@ -52,7 +50,9 @@ import net.gini.android.internal.payment.utils.extensions.getFontScale
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.restoreFocusIfEscaped
 import org.jetbrains.annotations.VisibleForTesting
 
 /**
@@ -129,6 +129,37 @@ class ReviewFragment private constructor(
         super.onViewCreated(view, savedInstanceState)
         val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
         viewModel.userPreferences = UserPreferences(requireContext())
+        binding.pager.apply {
+            isFocusableInTouchMode = true
+            isFocusable = true
+            requestFocus()
+            setOnKeyListener { view, keyCode, event ->
+                if (event.action == KeyEvent.ACTION_DOWN) {
+                    when (keyCode) {
+                        KeyEvent.KEYCODE_DPAD_LEFT -> {
+                            if (currentItem > 0) {
+                                currentItem -= 1
+                                view.requestFocus() // Keep focus on pager
+                                return@setOnKeyListener true
+                            }
+                        }
+                        KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                            val itemCount = documentPageAdapter.itemCount
+                            if (currentItem < itemCount - 1) {
+                                currentItem += 1
+                                view.requestFocus() // Keep focus on pager
+                                return@setOnKeyListener true
+                            }
+                        }
+                    }
+                }
+                false
+            }
+        }
+
+        restoreFocusIfEscaped(view) { fallback ->
+            focusCurrentPageInPagerSafe()
+        }
 
         with(binding) {
             ghsPaymentDetails.reviewComponent = viewModel.reviewComponent
@@ -136,7 +167,6 @@ class ReviewFragment private constructor(
             setKeyboardAnimation()
             removePagerConstraintAndSetPreviousHeightIfNeeded(documentPagerHeight)
         }
-
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
             bottomMargin = -resources.getDimensionPixelSize(net.gini.android.internal.payment.R.dimen.gps_medium_12)
@@ -146,6 +176,12 @@ class ReviewFragment private constructor(
             setupLandscapeBehavior()
         }
     }
+
+    private fun focusCurrentPageInPagerSafe() {
+        if (view != null && viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
+            binding.close.requestFocus()
+    }
+
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -212,7 +248,10 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.configureOrientation() {
         pager.isVisible = true
         pager.adapter = documentPageAdapter
-        TabLayoutMediator(indicator, pager) { tab, _ -> tab.view.isClickable = false }.attach()
+        val mediator = TabLayoutMediator(indicator, pager) { tab, _ ->
+            tab.view.isFocusable = true
+        }
+        mediator.attach()
     }
 
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
@@ -300,7 +339,6 @@ class ReviewFragment private constructor(
                     return bounds
                 }
 
-                @SuppressLint("RestrictedApi")
                 override fun onProgress(
                     insets: WindowInsetsCompat,
                     runningAnimations: MutableList<WindowInsetsAnimationCompat>
@@ -308,7 +346,7 @@ class ReviewFragment private constructor(
                     if (Build.VERSION.SDK_INT >= 30) {
                         runningAnimations.find { it.typeMask == windowInsetTypesOf(ime = true) }?.let { animation ->
                             ghsPaymentDetails.translationY =
-                                lerp((endBottom - startBottom).toFloat(), 0f, animation.interpolatedFraction)
+                                com.google.android.material.math.MathUtils.lerp((endBottom - startBottom).toFloat(), 0f, animation.interpolatedFraction)
                             paymentDetailsInfoBar.translationY = ghsPaymentDetails.translationY
                         }
                     }
@@ -387,7 +425,10 @@ class ReviewFragment private constructor(
             val dragHandle = binding.dragHandle
             val fieldsLayout = binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_fields_layout)
             val bottomLayout = binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_bottom_layout)
-
+            dragHandle?.onKeyboardAction {
+                fieldsLayout.alpha = if (isVisible) 0f else 1f
+                fieldsLayout.isVisible = !fieldsLayout.isVisible
+            }
             binding.root.post {
                 setupConstraintsForTabLayout((dragHandle?.height ?: 0) + bottomLayout.height)
             }

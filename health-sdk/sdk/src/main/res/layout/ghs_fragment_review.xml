@@ -6,39 +6,41 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:screenReaderFocusable="true"
     android:clickable="true"
-    android:focusedByDefault="true"
-    android:nextFocusForward="@id/pager"
-    android:nextFocusDown="@id/pager"
-    android:nextFocusRight="@id/pager"
-    android:nextFocusLeft="@id/pager"
-    android:nextFocusUp="@id/pager"
+    android:importantForAccessibility="yes"
+    android:nextFocusForward="@id/close"
+    android:nextFocusDown="@id/close"
+    android:nextFocusRight="@id/close"
+    android:nextFocusLeft="@id/close"
+    android:nextFocusUp="@id/close"
     android:background="@color/ghs_light_07">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:nextFocusForward="@id/pager"
-        android:nextFocusDown="@id/pager"
-        android:nextFocusRight="@id/pager"
-        android:nextFocusLeft="@id/pager"
-        android:nextFocusUp="@id/pager">
+        android:nextFocusForward="@id/close"
+        android:nextFocusDown="@id/close"
+        android:nextFocusRight="@id/close"
+        android:nextFocusLeft="@id/close"
+        android:nextFocusUp="@id/close">
 
+
+        <!-- PAGER -->
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
             android:visibility="gone"
+            android:descendantFocusability="blocksDescendants"
             app:layout_constraintBottom_toBottomOf="@id/pager_negative_space"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:nextFocusRight="@id/close"
-            android:nextFocusDown="@id/ghs_payment_details"
-            android:nextFocusForward="@id/close"
-            android:nextFocusLeft="@id/ghs_payment_details"
-            android:nextFocusUp="@id/ghs_payment_details"
             tools:visibility="visible" />
 
         <ImageButton
@@ -48,23 +50,25 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/gps_small"
             android:layout_marginEnd="@dimen/gps_large"
-            android:nextFocusForward="@id/payment_details_scrollview"
-            android:nextFocusDown="@id/payment_details_scrollview"
-            android:nextFocusRight="@id/payment_details_scrollview"
-            android:nextFocusLeft="@id/pager"
-            android:nextFocusUp="@id/pager"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
+            android:descendantFocusability="blocksDescendants"
             android:contentDescription="@string/gps_close_content_description"
-            android:defaultFocusHighlightEnabled="true"
+            android:focusable="true"
+            android:nextFocusUp="@id/pager"
+            android:nextFocusDown="@id/payment_details_scrollview"
+            android:nextFocusLeft="@id/indicator"
+            android:nextFocusRight="@id/indicator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- CLOSE BUTTON -->
+
+        <!-- INDICATOR (UNCHANGED) -->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/indicator"
             android:layout_width="0dp"
             android:layout_height="@dimen/gps_large"
             android:background="@color/ghs_light_07"
+            android:nextFocusDown="@id/payment_details_scrollview"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/payment_details_scrollview"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,9 +78,9 @@
             app:tabIndicatorHeight="0dp"
             app:tabMaxWidth="@dimen/gps_large"
             app:tabMode="fixed"
-            tools:visibility="visible"
-            android:nextFocusDown="@id/payment_details_scrollview"/>
+            tools:visibility="visible" />
 
+        <!-- NEGATIVE SPACE (UNCHANGED) -->
         <Space
             android:id="@+id/pager_negative_space"
             android:layout_width="0dp"
@@ -85,6 +89,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/indicator" />
 
+        <!-- INFO BAR (UNCHANGED) -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/payment_details_info_bar"
             style="@style/GiniPaymentTheme.PaymentDetails.InfoBar"
@@ -105,43 +110,37 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- BOTTOM SHEET (ScrollView) -->
         <ScrollView
+            android:id="@+id/payment_details_scrollview"
             style="@style/GiniPaymentTheme.PaymentDetailsCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/payment_details_scrollview"
+            android:nextFocusUp="@id/close"
+            android:nextFocusDown="@id/ghs_payment_details"
+            android:nextFocusForward="@id/ghs_payment_details"
             android:paddingHorizontal="@dimen/gps_large"
             android:paddingTop="@dimen/gps_medium_12"
             android:paddingBottom="@dimen/gps_zero"
-            android:nextFocusDown="@id/pager"
-            android:nextFocusLeft="@id/pager"
-            android:nextFocusRight="@id/pager"
-            android:nextFocusForward="@id/pager"
-            android:nextFocusUp="@id/pager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nextFocusDown="@id/pager"
-                android:nextFocusLeft="@id/pager"
-                android:nextFocusRight="@id/pager"
-                android:nextFocusForward="@id/pager"
-                android:nextFocusUp="@id/pager">
+                android:layout_height="wrap_content">
+
                 <net.gini.android.internal.payment.review.reviewComponent.ReviewView
+                    android:id="@+id/ghs_payment_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/ghs_payment_details"
-                    android:nextFocusDown="@id/pager"
-                    android:nextFocusLeft="@id/pager"
-                    android:nextFocusRight="@id/pager"
-                    android:nextFocusForward="@id/pager"
-                    android:nextFocusUp="@id/pager"
+                    android:nextFocusDown="@id/close"
+                    android:nextFocusLeft="@id/close"
+                    android:nextFocusRight="@id/close"
+                    android:nextFocusForward="@id/close"
+                    android:nextFocusUp="@id/close"
                     app:layout_constraintBottom_toBottomOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

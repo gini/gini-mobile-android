@@ -1,8 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/gps_faq_label"
-    style="@style/GiniPaymentTheme.Typography.Body1"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/faq_item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="@dimen/gps_large_24"
-    android:paddingVertical="@dimen/gps_large_24"/>
+    android:orientation="vertical"
+    android:background="?attr/selectableItemBackground"
+    android:descendantFocusability="afterDescendants">
+
+    <!-- Container that acts as button (NOT focusable) -->
+    <LinearLayout
+        android:id="@+id/faq_question_clickable_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/gps_large_24"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/gps_faq_label"
+            style="@style/GiniPaymentTheme.Typography.Body1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:paddingStart="@dimen/gps_large"
+            android:textColor="?android:textColorPrimary"
+            android:importantForAccessibility="yes" />
+
+        <ImageView
+            android:id="@+id/gps_expand_icon"
+            android:layout_width="@dimen/gps_large_24"
+            android:layout_height="@dimen/gps_large_24"
+            android:layout_marginEnd="@dimen/gps_large"
+            android:contentDescription=""
+            android:src="@drawable/gps_faq_closed" />
+    </LinearLayout>
+
+    <!-- Expandable answer area -->
+    <LinearLayout
+        android:id="@+id/faq_answer_clickable_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:background="?attr/selectableItemBackground"
+        android:nextFocusUp="@+id/faq_question_clickable_area">
+
+        <TextView
+            android:id="@+id/gps_faq_answer_label"
+            style="@style/GiniPaymentTheme.Typography.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:paddingHorizontal="@dimen/gps_large"
+            android:paddingBottom="@dimen/gps_large"
+            android:focusableInTouchMode="true"
+            android:clickable="false"
+            android:importantForAccessibility="yes"
+            android:textColor="?android:textColorPrimary" />
+    </LinearLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/gps_small_1"
+        app:dividerColor="@color/gps_faq_divider"
+        android:visibility="visible" />
+</LinearLayout>

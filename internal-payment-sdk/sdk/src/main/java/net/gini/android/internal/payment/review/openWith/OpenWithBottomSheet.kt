@@ -25,6 +25,7 @@ import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
 
@@ -34,9 +35,17 @@ import net.gini.android.internal.payment.utils.setBackgroundTint
 interface OpenWithForwardListener {
     fun onForwardSelected()
 }
-class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProviderApp?, private val listener: OpenWithForwardListener?, private val backListener: BackListener?, paymentComponent: PaymentComponent?, paymentDetails: PaymentDetails?, paymentRequestId: String?) : GpsBottomSheetDialogFragment() {
 
-    constructor(): this(null, null, null, null, null, null)
+class OpenWithBottomSheet private constructor(
+    paymentProviderApp: PaymentProviderApp?,
+    private val listener: OpenWithForwardListener?,
+    private val backListener: BackListener?,
+    paymentComponent: PaymentComponent?,
+    paymentDetails: PaymentDetails?,
+    paymentRequestId: String?
+) : GpsBottomSheetDialogFragment() {
+
+    constructor() : this(null, null, null, null, null, null)
 
     private val viewModel by viewModels<OpenWithViewModel> {
         OpenWithViewModel.Factory(
@@ -86,6 +95,9 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
                 }
             }
         }
+        binding.dragHandle.onKeyboardAction {
+            dismiss()
+        }
         viewModel.paymentDetails?.let {
             binding.gpsIbanValue.text = it.iban
             binding.gpsAmountValue.text = it.amount
@@ -101,16 +113,28 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
                 setBackgroundTint(paymentProviderApp.colors.backgroundColor, 255)
                 setTextColor(paymentProviderApp.colors.textColor)
             }
+            binding.gpsForwardButton.setBackgroundTint(
+                paymentProviderApp.colors.backgroundColor,
+                255
+            )
+            binding.gpsForwardButton.setTextColor(paymentProviderApp.colors.textColor)
             binding.gpsOpenWithTitle.text =
-                String.format(getLocaleStringResource(R.string.gps_open_with_title), paymentProviderApp.name)
+                String.format(
+                    getLocaleStringResource(R.string.gps_open_with_title),
+                    paymentProviderApp.name
+                )
             binding.gpsOpenWithDetails.text =
-                String.format(getLocaleStringResource(R.string.gps_open_with_details), paymentProviderApp.name)
+                String.format(
+                    getLocaleStringResource(R.string.gps_open_with_details),
+                    paymentProviderApp.name
+                )
 
             paymentProviderApp.icon?.let { appIcon ->
                 val roundedDrawable =
-                    RoundedBitmapDrawableFactory.create(requireContext().resources, appIcon.bitmap).apply {
-                        cornerRadius = resources.getDimension(R.dimen.gps_small_2)
-                    }
+                    RoundedBitmapDrawableFactory.create(requireContext().resources, appIcon.bitmap)
+                        .apply {
+                            cornerRadius = resources.getDimension(R.dimen.gps_small_2)
+                        }
 
                 binding.gpsForwardButton.setCompoundDrawablesWithIntrinsicBounds(
                     null,
@@ -120,7 +144,10 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
                 )
             }
             binding.gpsForwardButton.text =
-                String.format(getLocaleStringResource(R.string.gps_open_with_button_text), paymentProviderApp.name)
+                String.format(
+                    getLocaleStringResource(R.string.gps_open_with_button_text),
+                    paymentProviderApp.name
+                )
 
             binding.gpsForwardButton.contentDescription =
                 String.format(
@@ -151,6 +178,20 @@ class OpenWithBottomSheet private constructor(paymentProviderApp: PaymentProvide
          * @param listener the [OpenWithForwardListener] which will forward requests
          * @param backListener the [BackListener] which will forward back events
          */
-        fun newInstance(paymentProviderApp: PaymentProviderApp, listener: OpenWithForwardListener, paymentComponent: PaymentComponent?, backListener: BackListener? = null, paymentDetails: PaymentDetails?, paymentRequestId: String?) = OpenWithBottomSheet(paymentProviderApp = paymentProviderApp, listener = listener, backListener = backListener, paymentComponent = paymentComponent, paymentDetails = paymentDetails, paymentRequestId = paymentRequestId)
+        fun newInstance(
+            paymentProviderApp: PaymentProviderApp,
+            listener: OpenWithForwardListener,
+            paymentComponent: PaymentComponent?,
+            backListener: BackListener? = null,
+            paymentDetails: PaymentDetails?,
+            paymentRequestId: String?
+        ) = OpenWithBottomSheet(
+            paymentProviderApp = paymentProviderApp,
+            listener = listener,
+            backListener = backListener,
+            paymentComponent = paymentComponent,
+            paymentDetails = paymentDetails,
+            paymentRequestId = paymentRequestId
+        )
     }
 }
