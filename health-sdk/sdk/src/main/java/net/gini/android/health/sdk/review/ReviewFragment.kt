@@ -186,8 +186,10 @@ class ReviewFragment private constructor(
         when (documentPagesResult) {
             is DocumentPagesResult.Success -> {
                 documentPageAdapter.submitList(documentPagesResult.pagesList.also { pages ->
-                    indicator.isVisible = pages.size > 1
+                    indicator.isVisible = true // Keep it visible to apply layout params
                     pager.isUserInputEnabled = pages.size > 1
+                    indicator.isEnabled = pages.size > 1
+                    indicator.alpha = if (pages.size > 1) 1f else 0f // visually hide it if needed
                 })
             }
             is DocumentPagesResult.Error -> {
