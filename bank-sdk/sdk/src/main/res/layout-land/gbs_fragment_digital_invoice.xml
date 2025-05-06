@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/backgroundColor"
+    tools:context="net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceFragment">
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gbs_top_bar_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Using a nested scroll view with a recycler view is not ideal,
+    but necessary here. In mobile landscape, the bottom button should not
+    be sticky, while in other layouts (portrait & tablet), it must be.
+    A recycler view footer approach could work, but we already have one
+    footer for other layouts, and adding another footer just for mobile
+    landscape would require complex handling and increase the risk of errors.
+    Since this list won’t have hundreds of items, performance won’t be
+    an issue. -->
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/gbs_scroll_view_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/gbs_bottom_bar_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_top_bar_navigation">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/gc_large">
+
+            <TextView
+                android:id="@+id/gbs_article_txt"
+                style="@style/GiniCaptureTheme.Typography.Subtitle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/gc_large"
+                android:text="@string/gbs_articles"
+                app:layout_constraintStart_toStartOf="@+id/line_items"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/line_items"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_large"
+                android:background="?attr/backgroundColor"
+                android:scrollbars="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gbs_article_txt"
+                app:layout_constraintVertical_bias="0.0"
+                tools:itemCount="25"
+                tools:listitem="@layout/gbs_item_digital_invoice_line_item" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/gbs_bottom_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_large_40"
+                android:background="?attr/colorSurface"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/line_items">
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    app:dividerColor="?attr/dividerColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:id="@+id/gross_price_total_fractional_part"
+                        style="@style/GiniCaptureTheme.Typography.Headline5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/gc_large_24"
+                        app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
+                        app:layout_constraintStart_toEndOf="@id/gross_price_total_integral_part"
+                        app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part"
+                        tools:text=".99" />
+
+                    <TextView
+                        android:id="@+id/gross_price_total_integral_part"
+                        style="@style/GiniCaptureTheme.Typography.Headline5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/gc_small"
+                        app:layout_constraintStart_toStartOf="@id/total_label"
+                        app:layout_constraintTop_toBottomOf="@id/total_label"
+                        tools:text="€242" />
+
+
+                    <TextView
+                        android:id="@+id/total_label"
+                        style="@style/GiniCaptureTheme.Typography.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/gc_large_24"
+                        android:layout_marginTop="@dimen/gc_large_24"
+                        android:layout_marginEnd="@dimen/gc_large_24"
+                        android:text="@string/gbs_digital_invoice_footer_total_label"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/gbs_barrier_footer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="bottom"
+                        app:constraint_referenced_ids="gross_price_total_integral_part,skonto_saved_amount" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/gbs_pay"
+                        style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/gc_large_20"
+                        android:layout_marginTop="@dimen/gc_large"
+                        android:layout_marginBottom="@dimen/gc_large_32"
+                        android:text="@string/gbs_proceed"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/gbs_barrier_footer" />
+
+                    <TextView
+                        android:id="@+id/skonto_saved_amount"
+                        style="@style/GiniCaptureTheme.Typography.Caption1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/gc_large_24"
+                        android:layout_marginTop="@dimen/gc_extra_small"
+                        android:textColor="@color/gc_success_01"
+                        app:layout_constraintBottom_toTopOf="@+id/gbs_pay"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/gross_price_total_integral_part"
+                        app:layout_constraintVertical_bias="0.0"
+                        tools:text="Save 0,55 EUR" />
+
+                    <TextView
+                        android:id="@+id/skonto_discount_label"
+                        style="@style/GiniCaptureTheme.Typography.Caption1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/gc_large_24"
+                        android:background="@drawable/gbs_success_01_rectangle_rounded_4dp"
+                        android:paddingHorizontal="@dimen/gc_medium"
+                        android:paddingVertical="@dimen/gc_small"
+                        android:textColor="@color/gc_light_01"
+                        app:layout_constraintBaseline_toBaselineOf="@+id/total_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toEndOf="@+id/total_label"
+                        tools:text="3% Skonto discount " />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gbs_bottom_bar_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gbs_scroll_view_container" />
+
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/gbs_compose_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
