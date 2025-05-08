@@ -125,7 +125,7 @@ enum class ErrorType(
                     return AUTH
                 }
 
-                if (it == 400 || (it in 402..498)) {
+                if (it == 400 || (it in 402..498) && it != 404) {
                     return UPLOAD
                 }
 

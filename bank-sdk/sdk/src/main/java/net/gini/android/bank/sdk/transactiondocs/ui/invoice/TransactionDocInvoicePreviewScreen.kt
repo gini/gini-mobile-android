@@ -33,12 +33,13 @@ internal fun TransactionDocInvoicePreviewScreen(
     val state by viewModel.collectAsState()
 
     when (val state = state) {
-        TransactionDocInvoicePreviewFragmentState.Error -> InvoiceScreenErrorContent(
+        is TransactionDocInvoicePreviewFragmentState.Error -> InvoiceScreenErrorContent(
             modifier = modifier,
             onCloseClicked = {
                 navigateBack()
             },
-            onRetryClicked = viewModel::init
+            onRetryClicked = viewModel::init,
+            errorType = state.errorType,
         )
 
         is TransactionDocInvoicePreviewFragmentState.Ready -> InvoiceScreenReadyContent(

@@ -3,6 +3,8 @@ package net.gini.android.bank.sdk.transactiondocs.ui.invoice
 import androidx.lifecycle.ViewModel
 import net.gini.android.bank.sdk.invoice.usecase.LoadInvoiceBitmapsUseCase
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
+import net.gini.android.capture.error.ErrorType
+import net.gini.android.capture.internal.network.FailureException
 import net.gini.android.capture.network.model.GiniCaptureBox
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -47,7 +49,15 @@ internal class TransactionDocInvoicePreviewViewModel(
             }
         }.onFailure {
             reduce {
-                TransactionDocInvoicePreviewFragmentState.Error
+                if (it is FailureException) {
+                    TransactionDocInvoicePreviewFragmentState.Error(
+                        errorType = it.errorType
+                    )
+                } else {
+                    TransactionDocInvoicePreviewFragmentState.Error(
+                        errorType = ErrorType.GENERAL
+                    )
+                }
             }
         }
 

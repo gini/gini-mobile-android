@@ -2,6 +2,8 @@ package net.gini.android.bank.sdk.invoice
 
 import androidx.lifecycle.ViewModel
 import net.gini.android.bank.sdk.invoice.usecase.LoadInvoiceBitmapsUseCase
+import net.gini.android.capture.error.ErrorType
+import net.gini.android.capture.internal.network.FailureException
 import net.gini.android.capture.network.model.GiniCaptureBox
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
@@ -77,7 +79,17 @@ internal class InvoicePreviewViewModel(
             }
         }.onFailure {
             reduce {
-                InvoicePreviewFragmentState.Error
+                if (it is FailureException) {
+                    InvoicePreviewFragmentState.Error(
+                        errorType = it.errorType
+                    )
+                } else {
+                    InvoicePreviewFragmentState.Error(
+                        errorType = ErrorType.GENERAL
+                    )
+                }
+
+
             }
         }
     }

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.invoice.colors.InvoicePreviewScreenColors
 import net.gini.android.bank.sdk.invoice.colors.section.InvoicePreviewScreenFooterColors
+import net.gini.android.capture.error.ErrorType
 import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.list.ZoomableLazyColumn
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
@@ -55,13 +56,14 @@ internal fun InvoicePreviewScreen(
     val state by viewModel.collectAsState()
 
     when (val state = state) {
-        InvoicePreviewFragmentState.Error -> InvoiceScreenErrorContent(
+        is InvoicePreviewFragmentState.Error -> InvoiceScreenErrorContent(
             modifier = modifier,
             onCloseClicked = {
                 navigateBack()
                 viewModel.onUserNavigatesBack()
             },
-            onRetryClicked = viewModel::init
+            onRetryClicked = viewModel::init,
+            errorType = state.errorType
         )
 
         is InvoicePreviewFragmentState.Ready -> InvoiceScreenReadyContent(
@@ -86,6 +88,7 @@ internal fun InvoiceScreenErrorContent(
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
     onCloseClicked: () -> Unit,
     onRetryClicked: () -> Unit,
+    errorType: ErrorType
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -125,12 +128,12 @@ internal fun InvoiceScreenErrorContent(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Icon(
-                        painter = painterResource(CaptureR.drawable.gc_error_server_icon),
+                        painter = painterResource(errorType.drawableResource),
                         contentDescription = null,
                         tint = colors.errorMessage.errorHint.iconColor
                     )
                     Text(
-                        text = stringResource(CaptureR.string.gc_error_server_title),
+                        text = stringResource(errorType.titleTextResource),
                         style = GiniTheme.typography.body2,
                         color = colors.errorMessage.errorHint.textColor
                     )
@@ -141,7 +144,7 @@ internal fun InvoiceScreenErrorContent(
                 )
 
                 Text(
-                    text = stringResource(CaptureR.string.gc_error_server_text),
+                    text = stringResource(errorType.descriptionTextResource),
                     style = GiniTheme.typography.body2,
                     color = colors.errorMessage.messageColor,
                     modifier = Modifier
@@ -330,7 +333,8 @@ private fun InvoiceScreenErrorContentPreview() {
     GiniTheme {
         InvoiceScreenErrorContent(
             onCloseClicked = {},
-            onRetryClicked = {}
+            onRetryClicked = {},
+            errorType = ErrorType.GENERAL
         )
     }
 }

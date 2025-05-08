@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.transactiondocs.ui.invoice
 
 import android.graphics.Bitmap
+import net.gini.android.capture.error.ErrorType
 
 sealed interface TransactionDocInvoicePreviewFragmentState {
 
@@ -11,6 +12,6 @@ sealed interface TransactionDocInvoicePreviewFragmentState {
         val infoTextLines: List<String>,
     ) : TransactionDocInvoicePreviewFragmentState
 
-    data object Error : TransactionDocInvoicePreviewFragmentState
+    data class Error(val errorType: ErrorType) : TransactionDocInvoicePreviewFragmentState
 }
 
