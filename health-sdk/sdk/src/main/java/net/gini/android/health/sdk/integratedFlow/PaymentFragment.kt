@@ -404,7 +404,7 @@ class PaymentFragment private constructor(
             shouldShowCloseButton = viewModel.paymentFlowConfiguration?.showCloseButtonOnReviewFragment ?: false
         )
         childFragmentManager.beginTransaction()
-            .add(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
+            .replace(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
             .addToBackStack(reviewFragment::class.java.name)
             .commit()
     }

@@ -9,6 +9,9 @@
         style="@style/GiniPaymentTheme.Typography.Body2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
         android:layout_marginBottom="@dimen/gps_large"/>
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider2"

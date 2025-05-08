@@ -14,6 +14,7 @@ import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -49,6 +50,9 @@ class PaymentComponentBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetPaymentComponentBinding.inflate(inflater, container, false)
+        binding.dragHandle.onKeyboardAction {
+            dismiss()
+        }
         binding.gpsPaymentComponent.paymentComponent = viewModel.paymentComponent
         binding.gpsPaymentComponent.dismissListener = object : PaymentComponentView.ButtonClickListener {
             override fun onButtonClick(button: PaymentComponentView.Buttons) {

@@ -24,7 +24,7 @@ internal class DocumentPageAdapter(private val onRetryPage: (Int) -> Unit) :
     ListAdapter<DocumentPageAdapter.Page, DocumentPageAdapter.PageViewHolder>(DiffUtilCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder =
-        HorizontalViewHolder(GhsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false), onRetryPage)
+        HorizontalViewHolder(GhsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false), onRetryPage = onRetryPage)
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
         holder.onBind(currentList[position])
@@ -60,7 +60,7 @@ internal class DocumentPageAdapter(private val onRetryPage: (Int) -> Unit) :
     }
 
     class HorizontalViewHolder(
-        private val binding: GhsItemPageHorizontalBinding,
+         val binding: GhsItemPageHorizontalBinding,
         onRetryPage: (Int) -> Unit,
         override val loadingView: ProgressBar = binding.loading,
         override val imageView: PhotoView = binding.image,
