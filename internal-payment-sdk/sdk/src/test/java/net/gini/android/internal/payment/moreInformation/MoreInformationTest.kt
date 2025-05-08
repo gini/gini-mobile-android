@@ -26,6 +26,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColor
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
 import net.gini.android.internal.payment.utils.GiniLocalization
+import org.hamcrest.Matchers.notNullValue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -120,8 +121,14 @@ class MoreInformationTest {
             fragment
         }
 
-        // Then
-        onView(withId(R.id.gps_faq_list)).check { view, _ -> assertThat ((view as ExpandableListView).adapter!!.count).isEqualTo(fragment.faqList.size) }
+        // Wait for RecyclerView to load and validate item count
+        onView(withId(R.id.gps_faq_recycler))
+            .check { view, _ ->
+                val recyclerView = view as RecyclerView
+                val adapter = recyclerView.adapter
+                assertThat(adapter).isNotNull()
+                assertThat(adapter!!.itemCount).isEqualTo(fragment.faqList.size)
+            }
     }
 
     @Test
