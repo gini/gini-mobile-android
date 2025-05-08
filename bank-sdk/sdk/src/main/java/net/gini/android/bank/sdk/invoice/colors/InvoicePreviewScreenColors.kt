@@ -15,6 +15,7 @@ data class InvoicePreviewScreenColors(
     val topBarOverflowMenuColors: GiniContextMenuColors,
     val closeButton: CloseButton,
     val footerColors: InvoicePreviewScreenFooterColors,
+    val errorMessage: ErrorMessage,
 ) {
 
     data class CloseButton(
@@ -37,6 +38,18 @@ data class InvoicePreviewScreenColors(
             )
         }
     }
+
+    data class ErrorMessage(
+        val messageColor: Color,
+        val errorHint: ErrorHint,
+    )
+
+    data class ErrorHint(
+        val iconColor: Color,
+        val textColor: Color,
+        val containerColor: Color,
+        val containerStrokeColor: Color,
+    )
 
     companion object {
 
@@ -71,12 +84,24 @@ data class InvoicePreviewScreenColors(
                     iconTint = GiniColorPrimitives().light01,
                 )
             ),
+            // IMPORTANT! Use GiniColorPrimitives carefully!
+            // Using of this class skips adaptation to light/dark modes!
+            errorMessage: ErrorMessage = ErrorMessage(
+                messageColor = GiniColorPrimitives().light06,
+                errorHint = ErrorHint(
+                    iconColor = GiniColorPrimitives().error01,
+                    textColor = GiniColorPrimitives().light01,
+                    containerColor = GiniColorPrimitives().light01.copy(alpha = 0.15f),
+                    containerStrokeColor = GiniColorPrimitives().error04.copy(alpha = 0.15f),
+                )
+            ),
         ) = InvoicePreviewScreenColors(
             background = background,
             closeButton = CloseButton.colors(),
             footerColors = footerColors,
             topBarColors = topBarColors,
             topBarOverflowMenuColors = topBarOverflowMenuColors,
+            errorMessage = errorMessage
         )
     }
 }

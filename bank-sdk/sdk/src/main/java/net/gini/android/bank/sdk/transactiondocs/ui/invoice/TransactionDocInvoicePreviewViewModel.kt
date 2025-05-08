@@ -1,12 +1,14 @@
 package net.gini.android.bank.sdk.transactiondocs.ui.invoice
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.invoice.usecase.LoadInvoiceBitmapsUseCase
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
+import net.gini.android.capture.error.ErrorType
+import net.gini.android.capture.internal.network.FailureException
 import net.gini.android.capture.network.model.GiniCaptureBox
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.viewmodel.container
 
 internal class TransactionDocInvoicePreviewViewModel(
     private val screenTitle: String,
@@ -15,13 +17,14 @@ internal class TransactionDocInvoicePreviewViewModel(
     private val infoTextLines: List<String>,
     private val loadInvoiceBitmapsUseCase: LoadInvoiceBitmapsUseCase,
     private val attachedToTransactionDocumentProvider: AttachedToTransactionDocumentProvider,
-) : ViewModel() {
+) : ViewModel(), ContainerHost<TransactionDocInvoicePreviewFragmentState, Unit> {
 
-    val stateFlow: MutableStateFlow<TransactionDocInvoicePreviewFragmentState> =
-        MutableStateFlow(createInitalState())
+    override val container: Container<TransactionDocInvoicePreviewFragmentState, Unit> = container(
+        initialState = createInitalState()
+    )
 
     private fun createInitalState() =
-        TransactionDocInvoicePreviewFragmentState(
+        TransactionDocInvoicePreviewFragmentState.Ready(
             screenTitle = screenTitle,
             isLoading = true,
             images = emptyList(),
@@ -32,18 +35,32 @@ internal class TransactionDocInvoicePreviewViewModel(
         init()
     }
 
-    private fun init() = viewModelScope.launch {
-        val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
-
-        val currentState = stateFlow.value
-        if (bitmaps != null) {
-            stateFlow.emit(
-                currentState.copy(
+    internal fun init() = intent {
+        runCatching {
+            reduce { createInitalState() }
+            val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
+            reduce {
+                TransactionDocInvoicePreviewFragmentState.Ready(
                     isLoading = false,
-                    images = bitmaps
+                    images = bitmaps,
+                    screenTitle = screenTitle,
+                    infoTextLines = infoTextLines,
                 )
-            )
+            }
+        }.onFailure {
+            reduce {
+                if (it is FailureException) {
+                    TransactionDocInvoicePreviewFragmentState.Error(
+                        errorType = it.errorType
+                    )
+                } else {
+                    TransactionDocInvoicePreviewFragmentState.Error(
+                        errorType = ErrorType.GENERAL
+                    )
+                }
+            }
         }
+
     }
 
     fun onDeleteClicked() {
