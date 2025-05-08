@@ -43,12 +43,19 @@ fun FragmentManager.showOpenWithBottomSheet(
     }, paymentComponent, backListener, paymentDetails, paymentRequestId)
     dialog.show(this, OpenWithBottomSheet::class.java.name)
 }
-
 fun FragmentManager.add(@IdRes containerId: Int, fragment: Fragment, addToBackStack: Boolean) {
-    beginTransaction()
-        .add(containerId, fragment, fragment::class.java.name)
-        .apply { if (addToBackStack) addToBackStack(fragment::class.java.name) }
-        .commit()
+    val currentFragment = findFragmentById(containerId)
+
+    beginTransaction().apply {
+        if (currentFragment != null) {
+            hide(currentFragment)
+        }
+        add(containerId, fragment, fragment::class.java.name)
+        if (addToBackStack) {
+            addToBackStack(fragment::class.java.name)
+        }
+        commit()
+    }
 }
 
 fun FragmentManager.replace(@IdRes containerId: Int, fragment: Fragment, addToBackStack: Boolean) {

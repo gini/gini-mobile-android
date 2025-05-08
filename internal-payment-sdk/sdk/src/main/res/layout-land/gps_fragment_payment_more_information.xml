@@ -67,18 +67,13 @@
                 android:text="@string/gps_frequently_asked_questions"/>
 
             <!-- Setting RTL direction is least hacky way to set indicator on the right side   -->
-            <ExpandableListView
-                android:id="@+id/gps_faq_list"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gps_faq_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/gps_large"
-                android:layoutDirection="rtl"
+                android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                android:divider="@color/gps_faq_divider"
-                android:dividerHeight="@dimen/gps_small_1"
-                android:groupIndicator="@drawable/gps_expandable_list_icon"
-                android:scrollbars="none"
-                tools:listitem="@layout/gps_item_faq_label"/>
+                android:overScrollMode="never"
+                tools:listitem="@layout/gps_item_faq_label" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

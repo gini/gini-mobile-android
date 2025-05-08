@@ -29,6 +29,7 @@ import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
@@ -62,7 +63,9 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = GpsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
-
+        binding.dragHandle.onKeyboardAction {
+            dismiss()
+        }
         binding.gpsPaymentProviderAppsList.setHasFixedSize(false)
         binding.gpsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
         binding.gpsPaymentProviderAppsList.adapter =

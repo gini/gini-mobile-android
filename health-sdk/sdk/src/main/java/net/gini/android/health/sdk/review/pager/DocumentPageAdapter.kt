@@ -17,12 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.chrisbanes.photoview.PhotoView
 import dev.chrisbanes.insetter.applyInsetter
 import net.gini.android.core.api.Resource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.launch
-import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.R
 import net.gini.android.health.sdk.databinding.GhsItemPageHorizontalBinding
 import net.gini.android.health.sdk.util.hideKeyboard
 
@@ -30,15 +24,10 @@ internal class DocumentPageAdapter(private val onRetryPage: (Int) -> Unit) :
     ListAdapter<DocumentPageAdapter.Page, DocumentPageAdapter.PageViewHolder>(DiffUtilCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder =
-        HorizontalViewHolder(GhsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false), onRetryPage)
+        HorizontalViewHolder(GhsItemPageHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false), onRetryPage = onRetryPage)
 
     override fun onBindViewHolder(holder: PageViewHolder, position: Int) {
-        val page = currentList[position]
-        holder.onBind(page)
-
-        if (holder is HorizontalViewHolder) {
-            holder.binding.root.contentDescription = "Document page ${page.number}"
-        }
+        holder.onBind(currentList[position])
     }
 
     abstract class PageViewHolder(view: View, private val onRetryPage: (Int) -> Unit) : RecyclerView.ViewHolder(view) {
@@ -71,10 +60,8 @@ internal class DocumentPageAdapter(private val onRetryPage: (Int) -> Unit) :
     }
 
     class HorizontalViewHolder(
-        private val binding: GhsItemPageHorizontalBinding,
+         val binding: GhsItemPageHorizontalBinding,
         onRetryPage: (Int) -> Unit,
-        giniHealth: GiniHealth,
-        val binding: GhsItemPageHorizontalBinding,
         override val loadingView: ProgressBar = binding.loading,
         override val imageView: PhotoView = binding.image,
         override val errorView: FrameLayout = binding.error.root,

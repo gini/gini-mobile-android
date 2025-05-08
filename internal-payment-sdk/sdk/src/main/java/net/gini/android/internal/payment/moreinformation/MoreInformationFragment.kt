@@ -30,7 +30,6 @@ import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
-import net.gini.android.internal.payment.utils.restoreFocusIfEscaped
 
 /**
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
@@ -77,12 +76,9 @@ class MoreInformationFragment private constructor(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
         binding = GpsFragmentPaymentMoreInformationBinding.inflate(inflater, container, false)
-        return binding.root.apply {
-            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
-            isFocusableInTouchMode = true
-            isFocusable = true
-        }
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,21 +91,10 @@ class MoreInformationFragment private constructor(
         }
         binding.gpsMoreInformationDetails.movementMethod = LinkMovementMethod.getInstance()
         binding.gpsPaymentProvidersIconsList.adapter = PaymentProvidersIconsAdapter(listOf(), viewModel.getLocale())
-        binding.gpsPaymentProvidersIconsList.apply {
-            isFocusable = true
-            isFocusableInTouchMode = true
-            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
-            requestFocus() // You can use this optionally if you want it to take initial focus.
-        }
-
-        restoreFocusIfEscaped(view) { fallback ->
-            val firstFocusable = view.focusSearch(View.FOCUS_DOWN)
-            firstFocusable?.requestFocus()
-        }
 
         val faqAdapter = FaqRecyclerAdapter(viewModel.getLocale(), faqList)
-        binding.gpsFaqRecycler?.layoutManager = LinearLayoutManager(requireContext())
-        binding.gpsFaqRecycler?.adapter = faqAdapter
+        binding.gpsFaqRecycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.gpsFaqRecycler.adapter = faqAdapter
 
         binding.gpsPoweredByGini.root.visibility =
             if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)

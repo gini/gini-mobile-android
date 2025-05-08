@@ -48,6 +48,20 @@ open class InvoicesActivity : AppCompatActivity() {
         setContentView(binding.root)
         setActivityTitle(DisplayedScreen.Nothing)
 
+        supportFragmentManager.addOnBackStackChangedListener {
+            val fragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
+            val isFragmentVisible = fragment?.isVisible == true
+
+            // Disable siblings if the fragment is shown
+            setSiblingViewsEnabled(!isFragmentVisible)
+
+            if (!isFragmentVisible) {
+                title = resources.getString(R.string.title_activity_invoices)
+            }
+
+            invalidateOptionsMenu()
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -235,6 +249,34 @@ open class InvoicesActivity : AppCompatActivity() {
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
             }
+    }
+
+
+    private fun setSiblingViewsEnabled(enabled: Boolean) {
+        // Disable interaction with RecyclerView and No Invoices label when fragment is visible
+        binding.invoicesList.apply {
+            // i want to make focusable the first item of invoices list
+            (getChildAt(0) as? View)?.apply {
+                isFocusable = enabled
+                isEnabled = enabled
+                isClickable = enabled
+            }
+            isFocusable = false
+            isEnabled = false
+            isClickable = false
+        }
+
+        binding.noInvoicesLabel.apply {
+            isFocusable = enabled
+            isEnabled = enabled
+            isClickable = enabled
+        }
+        // Optionally, also disable loading indicator if needed
+        binding.loadingIndicatorContainer.apply {
+            isFocusable = enabled
+            isEnabled = enabled
+            isClickable = enabled
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

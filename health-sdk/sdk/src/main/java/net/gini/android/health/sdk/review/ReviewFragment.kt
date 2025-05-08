@@ -7,7 +7,6 @@ import android.transition.Transition
 import android.transition.TransitionListenerAdapter
 import android.transition.TransitionManager
 import android.transition.TransitionSet
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,11 +27,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.transition.ChangeBounds
-import androidx.transition.Transition
-import androidx.transition.TransitionListenerAdapter
-import androidx.transition.TransitionManager
-import androidx.transition.TransitionSet
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
@@ -57,7 +51,6 @@ import net.gini.android.internal.payment.utils.extensions.getLocaleStringResourc
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
-import net.gini.android.internal.payment.utils.restoreFocusIfEscaped
 import org.jetbrains.annotations.VisibleForTesting
 
 /**
@@ -131,42 +124,18 @@ class ReviewFragment private constructor(
         }
         return binding.root
     }
-
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        binding.root.importantForAccessibility = if (hidden) {
+            View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+        } else {
+            View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
         viewModel.userPreferences = UserPreferences(requireContext())
-        binding.pager.apply {
-            isFocusableInTouchMode = true
-            isFocusable = true
-            requestFocus()
-            setOnKeyListener { view, keyCode, event ->
-                if (event.action == KeyEvent.ACTION_DOWN) {
-                    when (keyCode) {
-                        KeyEvent.KEYCODE_DPAD_LEFT -> {
-                            if (currentItem > 0) {
-                                currentItem -= 1
-                                view.requestFocus() // Keep focus on pager
-                                return@setOnKeyListener true
-                            }
-                        }
-                        KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                            val itemCount = documentPageAdapter.itemCount
-                            if (currentItem < itemCount - 1) {
-                                currentItem += 1
-                                view.requestFocus() // Keep focus on pager
-                                return@setOnKeyListener true
-                            }
-                        }
-                    }
-                }
-                false
-            }
-        }
-
-        restoreFocusIfEscaped(view) { fallback ->
-            focusCurrentPageInPagerSafe()
-        }
 
         with(binding) {
             ghsPaymentDetails.reviewComponent = viewModel.reviewComponent
@@ -184,21 +153,12 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun focusCurrentPageInPagerSafe() {
-        if (view != null && viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
-            binding.close.requestFocus()
-    }
-
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
                     viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
-                }
-
-                launch {
-                    binding.root.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
                 }
             }
         }
@@ -261,7 +221,7 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.configureOrientation() {
         pager.isVisible = true
         pager.adapter = documentPageAdapter
-        val mediator = TabLayoutMediator(indicator, pager) { tab, _ ->
+      val mediator = TabLayoutMediator(indicator, pager) { tab, _ ->
             tab.view.isFocusable = true
         }
         mediator.attach()
@@ -441,7 +401,10 @@ class ReviewFragment private constructor(
             val bottomLayout = binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_bottom_layout)
             dragHandle?.onKeyboardAction {
                 fieldsLayout.alpha = if (isVisible) 0f else 1f
-                fieldsLayout.isVisible = !fieldsLayout.isVisible
+                val currentState = binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode()
+                binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(
+                    if (currentState == ReviewViewStateLandscape.EXPANDED) ReviewViewStateLandscape.COLLAPSED else ReviewViewStateLandscape.EXPANDED
+                )
             }
             binding.root.post {
                 setupConstraintsForTabLayout((dragHandle?.height ?: 0) + bottomLayout.height)
