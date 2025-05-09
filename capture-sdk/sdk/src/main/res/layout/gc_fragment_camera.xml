@@ -30,10 +30,10 @@
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="@id/gc_camera_preview_container"
+        app:layout_constraintBottom_toBottomOf="@id/gc_camera_preview_container"
         app:layout_constraintEnd_toEndOf="@id/gc_camera_preview_container"
-        app:layout_constraintTop_toTopOf="@id/gc_camera_preview_container"
-        app:layout_constraintBottom_toBottomOf="@id/gc_camera_preview_container">
+        app:layout_constraintStart_toStartOf="@id/gc_camera_preview_container"
+        app:layout_constraintTop_toTopOf="@id/gc_camera_preview_container">
 
         <ImageView
             android:id="@+id/gc_camera_focus_indicator"
@@ -48,8 +48,8 @@
         android:id="@+id/gc_pane_wrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -60,10 +60,10 @@
             android:alpha="0.4"
             android:background="@color/gc_dark_01"
             android:paddingTop="@dimen/gc_large"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
@@ -85,8 +85,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/gc_large_24"
             android:background="@null"
-            android:src="@drawable/gc_camera_trigger"
             android:contentDescription="@string/gc_take_a_picture"
+            android:src="@drawable/gc_camera_trigger"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -96,18 +96,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            tools:visibility="gone"
-            app:constraint_referenced_ids="gc_flash_group_wrapper, gc_button_flash" />
+            app:constraint_referenced_ids="gc_flash_group_wrapper, gc_button_flash"
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_flash_group_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:descendantFocusability="blocksDescendants"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:importantForAccessibility="no"
-            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@+id/gc_button_camera_trigger"
             app:layout_constraintEnd_toStartOf="@id/gc_button_camera_trigger"
             app:layout_constraintStart_toEndOf="@+id/gc_button_import_wrapper"
@@ -149,10 +149,10 @@
             android:background="@android:color/transparent"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            app:layout_constraintTop_toTopOf="@id/gc_flash_group_wrapper"
             app:layout_constraintBottom_toBottomOf="@id/gc_flash_group_wrapper"
+            app:layout_constraintEnd_toEndOf="@id/gc_flash_group_wrapper"
             app:layout_constraintStart_toStartOf="@id/gc_flash_group_wrapper"
-            app:layout_constraintEnd_toEndOf="@id/gc_flash_group_wrapper" />
+            app:layout_constraintTop_toTopOf="@id/gc_flash_group_wrapper" />
 
         <net.gini.android.capture.camera.PhotoThumbnail
             android:id="@+id/gc_photo_thumbnail"
@@ -170,20 +170,20 @@
         <androidx.constraintlayout.widget.Group
             android:id="@+id/gc_document_import_button_group"
             android:layout_width="wrap_content"
-            android:visibility="gone"
-            tools:visibility="gone"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="gc_button_import_wrapper, gc_button_import" />
+            android:visibility="gone"
+            app:constraint_referenced_ids="gc_button_import_wrapper, gc_button_import"
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_button_import_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:descendantFocusability="blocksDescendants"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:importantForAccessibility="no"
-            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@+id/gc_button_camera_trigger"
             app:layout_constraintEnd_toStartOf="@+id/gc_flash_group_wrapper"
             app:layout_constraintStart_toStartOf="parent"
@@ -219,14 +219,14 @@
             android:id="@+id/gc_button_import"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:background="@android:color/transparent"
             android:contentDescription="@string/gc_camera_document_import_subtitle"
-            app:layout_constraintTop_toTopOf="@id/gc_button_import_wrapper"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             app:layout_constraintBottom_toBottomOf="@id/gc_button_import_wrapper"
+            app:layout_constraintEnd_toEndOf="@id/gc_button_import_wrapper"
             app:layout_constraintStart_toStartOf="@id/gc_button_import_wrapper"
-            app:layout_constraintEnd_toEndOf="@id/gc_button_import_wrapper" />
+            app:layout_constraintTop_toTopOf="@id/gc_button_import_wrapper" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -234,12 +234,12 @@
         android:id="@+id/gc_activity_indicator_background"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
+        android:background="@color/gc_camera_preview_shade"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/gc_camera_preview_shade"
-        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
         tools:visibility="invisible" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -251,19 +251,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
 
-
         <TextView
             android:id="@+id/gc_qr_code_status"
+            style="@style/GiniCaptureTheme.Typography.Caption1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/gc_qr_code_detected_background"
             android:paddingStart="@dimen/gc_medium"
-            android:paddingEnd="@dimen/gc_medium"
             android:paddingTop="@dimen/gc_small"
+            android:paddingEnd="@dimen/gc_medium"
             android:paddingBottom="@dimen/gc_small"
             android:text="@string/gc_qr_code_detected"
             android:textColor="@color/gc_light_01"
-            style="@style/GiniCaptureTheme.Typography.Caption1"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/gc_camera_frame"
             app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
@@ -271,20 +270,21 @@
             app:layout_constraintTop_toTopOf="@+id/gc_camera_frame" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gc_unknown_qr_wrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/gc_large"
             android:layout_marginTop="@dimen/gc_medium"
             android:layout_marginEnd="@dimen/gc_large"
-            android:id="@+id/gc_unknown_qr_wrapper"
-            android:visibility="gone"
             android:background="@drawable/gc_qr_code_warning_background"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
             app:layout_constraintStart_toStartOf="@+id/gc_camera_frame"
             app:layout_constraintTop_toTopOf="@+id/gc_camera_frame">
 
             <TextView
                 android:id="@+id/gc_unknown_qr_txt"
+                style="@style/GiniCaptureTheme.Typography.Caption1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/gc_large"
@@ -292,19 +292,18 @@
                 android:text="@string/gc_unknown_qr_code"
                 android:textColor="@color/gc_dark_01"
                 android:textStyle="bold"
-                style="@style/GiniCaptureTheme.Typography.Caption1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/gc_unknown_qr_txt_desc"
+                style="@style/GiniCaptureTheme.Typography.Caption1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/gc_large"
                 android:layout_marginTop="@dimen/gc_small"
                 android:layout_marginEnd="@dimen/gc_large"
                 android:layout_marginBottom="@dimen/gc_large"
-                style="@style/GiniCaptureTheme.Typography.Caption1"
                 android:text="@string/gc_unknown_qr_code_description"
                 android:textColor="@color/gc_dark_01"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -347,13 +346,13 @@
             style="@style/GiniCaptureTheme.Typography.Caption1"
             android:layout_width="190dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/gc_on_device_iban_detected_background"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/gc_medium"
+            android:paddingVertical="@dimen/gc_medium_12"
             android:text="@string/gc_iban_detected_please_take_picture"
             android:textColor="@color/gc_light_01"
-            android:gravity="center"
-            android:paddingVertical="@dimen/gc_medium_12"
-            android:paddingHorizontal="@dimen/gc_medium"
             android:visibility="gone"
-            android:background="@drawable/gc_on_device_iban_detected_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/gc_camera_frame" />
@@ -383,17 +382,17 @@
 
 
         <include
-            layout="@layout/gc_detection_error_layout"
             android:id="@+id/gc_detection_error_layout"
+            layout="@layout/gc_detection_error_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginHorizontal="@dimen/gc_large_32"
             android:layout_marginBottom="@dimen/gc_medium"
-            app:layout_constraintTop_toTopOf="parent"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -417,5 +416,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/gc_qr_code_education_compose_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

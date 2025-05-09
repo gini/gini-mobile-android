@@ -5,7 +5,7 @@ import org.koin.dsl.koinApplication
 object CaptureSdkIsolatedKoinContext {
 
     private val koinApp = koinApplication {
-        modules(providerModule, analyticsModule)
+        modules(providerModule, analyticsModule, qrEducationModule)
     }
 
     val koin = koinApp.koin
