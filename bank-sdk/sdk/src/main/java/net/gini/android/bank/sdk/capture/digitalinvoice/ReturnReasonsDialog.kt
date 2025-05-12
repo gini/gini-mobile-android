@@ -131,7 +131,7 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
                     val screenHeight = metrics.bounds.height()
                     window.setLayout(screenWidth / 2, screenHeight)
                     val params = window.attributes
-                    params.gravity = Gravity.END or Gravity.TOP
+                    params.gravity = Gravity.END
                     window.attributes = params
                     mBehavior.isDraggable = false
                 }

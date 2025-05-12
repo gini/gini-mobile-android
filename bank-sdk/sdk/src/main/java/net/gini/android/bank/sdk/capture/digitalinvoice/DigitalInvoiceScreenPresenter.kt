@@ -38,6 +38,8 @@ import java.math.BigDecimal
  */
 
 private const val KEY_SELECTABLE_ITEMS = "SELECTABLE_ITEMS"
+private const val KEY_SKONTO_STATE = "SKONTO_STATE"
+private const val KEY_SKONTO_DATA = "SKONTO_DATA"
 
 internal class DigitalInvoiceScreenPresenter(
     activity: Activity,
@@ -45,7 +47,7 @@ internal class DigitalInvoiceScreenPresenter(
     val extractions: Map<String, GiniCaptureSpecificExtraction> = emptyMap(),
     val compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
     val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
-    private val skontoData: SkontoData? = null,
+    private var skontoData: SkontoData? = null,
     private val isInaccurateExtraction: Boolean = false,
     savedInstanceBundle: Bundle?,
     private val oncePerInstallEventStore: OncePerInstallEventStore = OncePerInstallEventStore(
@@ -82,6 +84,7 @@ internal class DigitalInvoiceScreenPresenter(
 
     init {
         view.setPresenter(this)
+        skontoData = savedInstanceBundle?.getParcelable(KEY_SKONTO_DATA, SkontoData::class.java) ?: skontoData
         digitalInvoice = DigitalInvoice(
             extractions = extractions,
             compoundExtractions = compoundExtractions,
@@ -94,12 +97,25 @@ internal class DigitalInvoiceScreenPresenter(
             getSkontoEdgeCaseUseCase = getSkontoEdgeCaseUseCase,
             getSkontoSavedAmountUseCase = getSkontoSavedAmountUseCase
         )
+        savedInstanceBundle?.let {
+            digitalInvoice.updateSkontoEnabled(it.getBoolean(KEY_SKONTO_STATE, false))
+        }
     }
 
     override fun saveState(outState: Bundle) {
         outState.putParcelableArray(
             KEY_SELECTABLE_ITEMS,
             digitalInvoice.selectableLineItems.toTypedArray()
+        )
+
+        outState.putParcelable(
+            KEY_SKONTO_DATA,
+            digitalInvoice.skontoData
+        )
+
+        outState.putBoolean(
+            KEY_SKONTO_STATE,
+            digitalInvoice.skontoEnabled
         )
     }
 
