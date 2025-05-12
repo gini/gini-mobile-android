@@ -99,6 +99,7 @@ enum class ErrorType(
         const val ERROR_KEY = "error"
         const val GRANT_VALUE = "invalid_grant"
 
+        @Suppress("MagicNumber", "CyclomaticComplexMethod", "ReturnCount")
         @JvmStatic
         fun typeFromError(error: Error): ErrorType {
 

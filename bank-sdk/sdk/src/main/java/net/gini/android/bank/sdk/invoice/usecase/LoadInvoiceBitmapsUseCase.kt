@@ -39,8 +39,10 @@ internal class LoadInvoiceBitmapsUseCase(
             val bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.size)
             val pageHighlights = highlightBoxes.filter { it.pageNumber == documentPage.pageNumber }
 
-            val skontoPageLayout = layout?.pages?.find { documentPage.pageNumber == it.number }
-                ?: throw IllegalStateException("Layout for page #${documentPage.pageNumber} not found")
+            val skontoPageLayout =
+                checkNotNull(layout?.pages?.find { documentPage.pageNumber == it.number }) {
+                    "Layout for page #${documentPage.pageNumber} not found"
+                }
 
             invoicePreviewPageImageProcessor.processImage(
                 image = bitmap,
@@ -60,7 +62,7 @@ internal class LoadInvoiceBitmapsUseCase(
             fetcher()
         } catch (failureException: FailureException) {
             throw failureException
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
             throw IllegalStateException(errorMessage, e)
         }
     }
