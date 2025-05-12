@@ -174,7 +174,6 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     }
 
     private fun restoreKeyboardState(savedInstanceState: Bundle?) {
-        if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) return
         savedInstanceState?.let { bundle ->
             if (bundle.getBoolean(isKeyboardShowingStateKey)) {
                 val viewId = savedInstanceState.getInt(focusedViewIdKey, View.NO_ID)
@@ -198,7 +197,6 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
 
     private fun addGlobalViewTreeObserver() {
-        if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) return
         globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
             val r = Rect()
             binding.root.getWindowVisibleDisplayFrame(r)
