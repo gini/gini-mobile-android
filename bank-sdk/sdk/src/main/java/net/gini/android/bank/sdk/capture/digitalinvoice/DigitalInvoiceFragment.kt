@@ -78,6 +78,8 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     private var binding by autoCleared<GbsFragmentDigitalInvoiceBinding>()
     private var lineItemsAdapter by autoCleared<LineItemsAdapter>()
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.ReturnAssistant
+    private var isAttachToTransactionDialogWasShowing = false
+    private val attachToTransactionDialogStateKey = "attach_to_transaction_Dialog_state"
 
     var listener: DigitalInvoiceFragmentListener? = null
         set(value) {
@@ -195,6 +197,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
     override fun onSaveInstanceState(outState: Bundle) {
         presenter?.saveState(outState)
+        outState.putBoolean(attachToTransactionDialogStateKey , isAttachToTransactionDialogWasShowing)
         super.onSaveInstanceState(outState)
     }
 
@@ -230,7 +233,18 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         initBottomBar()
         changeMarginAccordingToFontOversize()
         presenter?.onViewCreated()
+        handleIfShowAttachDialogWasShowing(savedInstanceState)
     }
+
+    private fun handleIfShowAttachDialogWasShowing(savedInstanceState: Bundle?) =
+        savedInstanceState?.let {
+            if (it.getBoolean(attachToTransactionDialogStateKey, false)) {
+                tryShowAttachDocToTransactionDialog {
+                    presenter?.pay()
+                }
+            }
+        }
+
 
     override fun onResume() {
         super.onResume()
@@ -390,10 +404,13 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         binding.gbsComposeView.setContent {
             GiniTheme {
                 if (!autoAttachDoc) {
+                    isAttachToTransactionDialogWasShowing = true
                     AttachDocumentToTransactionDialog(onDismiss = {
+                        isAttachToTransactionDialogWasShowing = false
                         lifecycleScope.launch { transactionDocDialogCancelAttachUseCase() }
                         continueFlow()
                     }, onConfirm = {
+                        isAttachToTransactionDialogWasShowing = false
                         lifecycleScope.launch { transactionDocDialogConfirmAttachUseCase(it) }
                         continueFlow()
                     })

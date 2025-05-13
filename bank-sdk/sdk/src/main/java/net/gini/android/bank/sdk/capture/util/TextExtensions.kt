@@ -59,3 +59,10 @@ internal fun View.hideKeyboard() {
         }
     }
 }
+
+internal fun View.showKeyboard() {
+    if (requestFocus()) {
+        ContextCompat.getSystemService(context, InputMethodManager::class.java)
+            ?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+    }
+}
