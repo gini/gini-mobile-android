@@ -94,7 +94,7 @@ internal fun InvoiceScreenErrorContent(
         modifier = modifier.fillMaxSize(),
         topBar = {
             GiniTopBar(
-                title = "Error",
+                title = stringResource(id = CaptureR.string.gc_title_error),
                 colors = colors.topBarColors.copy(containerColor = GiniColorPrimitives().dark01),
                 navigationIcon = {
                     NavigationActionBack(
@@ -156,7 +156,7 @@ internal fun InvoiceScreenErrorContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp),
-                text = "Try again", onClick = onRetryClicked
+                text = stringResource(R.string.gbs_skonto_invoice_preview_try_again), onClick = onRetryClicked
             )
         }
     }
