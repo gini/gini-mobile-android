@@ -51,6 +51,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private lateinit var binding: GbsEditItemBottomSheetBinding
     private var selectableLineItem: SelectableLineItem? = null
     private var originalSelectableLineItem: SelectableLineItem? = null
+    private val keyboardThresholdRatio = 0.15
     private var quantity: Int = 1
     private val editorListener = TextView.OnEditorActionListener { v, actionId, event ->
         v.clearFocus()
@@ -202,7 +203,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             binding.root.getWindowVisibleDisplayFrame(r)
             val screenHeight = binding.root.rootView?.height ?: 0
             val keypadHeight = screenHeight - r.bottom
-            val imeVisible = keypadHeight > screenHeight * 0.15
+            val imeVisible = keypadHeight > screenHeight * keyboardThresholdRatio
             isKeyboardShowing = imeVisible
         }
         binding.root.viewTreeObserver?.addOnGlobalLayoutListener(globalLayoutListener)
