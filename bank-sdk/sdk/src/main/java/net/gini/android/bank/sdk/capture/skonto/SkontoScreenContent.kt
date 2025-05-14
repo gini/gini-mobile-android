@@ -48,6 +48,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -595,7 +596,7 @@ private fun SkontoSection(
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
 
-    var isDatePickerVisible by remember { mutableStateOf(false) }
+    var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
         modifier = modifier,
         shape = RectangleShape,
@@ -1053,54 +1054,60 @@ private fun FooterSectionWithoutCustomBottomBar(
                     .padding(start = 20.dp, end = 20.dp, top = 20.dp)
             ) {
                 Row {
-                    Text(
-                        modifier = Modifier.weight(0.1f),
-                        text = stringResource(id = R.string.gbs_skonto_section_footer_title),
-                        style = GiniTheme.typography.body1,
-                        color = colors.titleTextColor,
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = stringResource(id = R.string.gbs_skonto_section_footer_title),
+                            style = GiniTheme.typography.body1,
+                            color = colors.titleTextColor,
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = totalPriceText,
+                            style = GiniTheme.typography.headline5.bold(),
+                            color = colors.amountTextColor,
+                        )
+                    }
+
                     AnimatedVisibility(
                         visible = isSkontoSectionActive
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .height(IntrinsicSize.Min)
-
-                                .background(
-                                    colors.discountLabelColorScheme.backgroundColor,
-                                    RoundedCornerShape(4.dp)
-                                ),
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.End
                         ) {
-                            Text(
-                                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
-                                text = discountLabelText,
-                                style = GiniTheme.typography.caption1,
-                                color = colors.discountLabelColorScheme.textColor,
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .height(IntrinsicSize.Min)
+                                    .background(
+                                        colors.discountLabelColorScheme.backgroundColor,
+                                        RoundedCornerShape(4.dp)
+                                    )
+                                    .align(Alignment.End),
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(vertical = 4.dp, horizontal = 8.dp),
+                                    text = discountLabelText,
+                                    style = GiniTheme.typography.caption1,
+                                    color = colors.discountLabelColorScheme.textColor,
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            AnimatedVisibility(
+                                visible = isSkontoSectionActive
+                            ) {
+                                Text(
+                                    text = savedAmountText,
+                                    style = GiniTheme.typography.caption1,
+                                    color = colors.savedAmountTextColor,
+                                )
+                            }
                         }
                     }
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = totalPriceText,
-                        style = GiniTheme.typography.headline5.bold(),
-                        color = colors.amountTextColor,
-                    )
-                }
-                AnimatedVisibility(
-                    visible = isSkontoSectionActive
-                ) {
-                    Text(
-                        text = savedAmountText,
-                        style = GiniTheme.typography.caption1,
-                        color = colors.savedAmountTextColor,
-                    )
                 }
             }
 
@@ -1109,7 +1116,8 @@ private fun FooterSectionWithoutCustomBottomBar(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(vertical = 16.dp)
             ) {
                 if (!isLandScape) {
                     AnimatedVisibility(visible = isBottomNavigationBarEnabled) {

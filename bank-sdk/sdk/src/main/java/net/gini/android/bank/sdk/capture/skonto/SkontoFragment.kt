@@ -15,6 +15,7 @@ import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel
 import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.CancelListener
@@ -27,7 +28,7 @@ class SkontoFragment : Fragment() {
 
     private val args: SkontoFragmentArgs by navArgs<SkontoFragmentArgs>()
 
-    private val viewModel: SkontoFragmentViewModel by getGiniBankKoin().inject {
+    private val viewModel: SkontoFragmentViewModel by giniBankViewModel {
         parametersOf(args.data)
     }
     private val amountFormatter : AmountFormatter by getGiniBankKoin().inject()
