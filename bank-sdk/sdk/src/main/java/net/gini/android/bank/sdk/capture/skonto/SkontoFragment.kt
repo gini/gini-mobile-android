@@ -96,7 +96,8 @@ class SkontoFragment : Fragment() {
                         },
                         amountFormatter = amountFormatter,
                         isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
-                        shouldFieldShowKeyboard = viewModel.isKeyboardVisible
+                        shouldFieldShowKeyboard = viewModel.isKeyboardVisible,
+                        isTablet = ContextHelper.isTablet(requireContext())
                     )
                 }
             }

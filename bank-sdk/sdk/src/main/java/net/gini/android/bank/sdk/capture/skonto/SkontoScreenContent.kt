@@ -114,7 +114,8 @@ internal fun SkontoScreenContent(
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
     isLandScape: Boolean,
-    shouldFieldShowKeyboard: Boolean = false
+    shouldFieldShowKeyboard: Boolean = false,
+    isTablet: Boolean = false
 ) {
 
     BackHandler { viewModel.onBackClicked() }
@@ -159,7 +160,8 @@ internal fun SkontoScreenContent(
         onDueDateFieldFocused = viewModel::onDueDateFieldFocused,
         onFullAmountFieldFocused = viewModel::onFullAmountFieldFocused,
         isLandScape = isLandScape,
-        shouldFieldShowKeyboard = shouldFieldShowKeyboard
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+        isTablet = isTablet
     )
 }
 
@@ -187,7 +189,8 @@ private fun ScreenStateContent(
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
     isLandScape: Boolean,
-    shouldFieldShowKeyboard: Boolean = false
+    shouldFieldShowKeyboard: Boolean = false,
+    isTablet: Boolean = false
 ) {
     when (state) {
         is SkontoScreenState.Ready -> ScreenReadyState(
@@ -213,7 +216,8 @@ private fun ScreenStateContent(
             onDueDateFieldFocused = onDueDateFieldFocused,
             onFullAmountFieldFocused = onFullAmountFieldFocused,
             isLandScape = isLandScape,
-            shouldFieldShowKeyboard = shouldFieldShowKeyboard
+            shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+            isTablet = isTablet
         )
     }
 
@@ -244,10 +248,12 @@ private fun ScreenReadyState(
     discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
     isLandScape: Boolean,
-    shouldFieldShowKeyboard: Boolean = false
+    shouldFieldShowKeyboard: Boolean = false,
+    isTablet: Boolean = false
 ) {
     val scrollState = rememberScrollState()
-    val keyboardPadding by keyboardPadding(108.dp, scrollState)
+    val padding = if (isTablet && isLandScape) 208.dp else 108.dp
+    val keyboardPadding by keyboardPadding(padding, scrollState)
 
     Scaffold(
         modifier = modifier,
