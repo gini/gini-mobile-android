@@ -51,7 +51,6 @@ android {
 
     buildFeatures {
         viewBinding = true
-        compose = true
     }
 
     composeOptions {
@@ -151,12 +150,7 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.android.compat)
 
-    implementation(libs.orbitmvi.compose)
-    implementation(libs.orbitmvi.viewmodel)
-    implementation(libs.orbitmvi.test)
-
     implementation(platform(libs.compose.bom))
-    implementation(libs.compose.activity)
     implementation(libs.compose.material3)
     implementation(libs.compose.tools.uiToolingPreview)
     implementation(libs.accompanist.themeAdapter)
