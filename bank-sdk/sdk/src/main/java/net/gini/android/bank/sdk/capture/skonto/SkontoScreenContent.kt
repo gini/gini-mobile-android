@@ -4,6 +4,8 @@
     ExperimentalMaterial3Api::class
 )
 
+@file:Suppress("TooManyFunctions")
+
 package net.gini.android.bank.sdk.capture.skonto
 
 import android.icu.util.Calendar
