@@ -8,8 +8,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +34,7 @@ fun GiniTextInput(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     supportingText: @Composable (() -> Unit)? = null,
+    shouldFieldShowKeyboard :Boolean = false
 ) {
     GiniTextInput(
         modifier = modifier,
@@ -50,6 +55,7 @@ fun GiniTextInput(
         colors = colors,
         visualTransformation = visualTransformation,
         supportingText = supportingText,
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard
     )
 }
 
@@ -68,9 +74,15 @@ fun GiniTextInput(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     supportingText: @Composable (() -> Unit)? = null,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+    
+    
     TextField(
-        modifier = modifier,
+        modifier = modifier.then(Modifier.focusRequester(focusRequester)),
         value = text,
         enabled = enabled,
         keyboardOptions = keyboardOptions,
@@ -108,6 +120,13 @@ fun GiniTextInput(
         trailingIcon = trailingContent,
         supportingText = supportingText,
     )
+
+    LaunchedEffect(shouldFieldShowKeyboard) {
+        if (shouldFieldShowKeyboard) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
 }
 
 @Preview(showBackground = true)
