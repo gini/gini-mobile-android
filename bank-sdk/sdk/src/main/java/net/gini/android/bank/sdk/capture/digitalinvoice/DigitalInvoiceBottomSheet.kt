@@ -60,6 +60,9 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     }
     private var isKeyboardShowing = false
     private val isKeyboardShowingStateKey = "keyboard_showing_state_key"
+    private val priceKey = "price_key"
+    private val quantityKey = "quantity_key"
+    private val descriptionKey = "description_key"
     private var focusedViewId = View.NO_ID
     private val focusedViewIdKey = "focused_view_id_key"
 
@@ -68,6 +71,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
+    private var restoringFromOrientationChange = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +122,9 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         super.onSaveInstanceState(outState)
         outState.putBoolean(isKeyboardShowingStateKey, isKeyboardShowing)
         if (isKeyboardShowing) outState.putInt(focusedViewIdKey, focusedViewId)
+        outState.putString(priceKey, binding.gbsUnitPriceEditTxt.text.toString())
+        outState.putString(quantityKey, binding.gbsQuantityEditTxt.text.toString())
+        outState.putString(descriptionKey, binding.gbsArticleNameEditTxt.text.toString())
     }
 
     override fun onCreateView(
@@ -162,7 +169,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        restoringFromOrientationChange = savedInstanceState != null
         setUpBindings()
 
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
@@ -172,6 +179,21 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         restoreKeyboardState(savedInstanceState)
         trackScreenShownEvent()
         addGlobalViewTreeObserver()
+        restoreTextIfChanged(savedInstanceState)
+    }
+
+    private fun restoreTextIfChanged(savedInstanceState: Bundle?) {
+        savedInstanceState?.let { bundle ->
+            binding.gbsArticleNameEditTxt.setText(bundle.getString(descriptionKey) ?: "")
+            val quantity = try {
+                bundle.getString(quantityKey)?.toInt() ?: MIN_QUANTITY
+            } catch (_: NumberFormatException) {
+                MIN_QUANTITY
+            }
+            this.quantity = quantity
+            binding.gbsQuantityEditTxt.setText("${this.quantity}")
+            binding.gbsUnitPriceEditTxt.setText(bundle.getString(priceKey) ?: "")
+        }
     }
 
     private fun restoreKeyboardState(savedInstanceState: Bundle?) {
@@ -413,15 +435,18 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private var presenter: LineItemDetailsScreenContract.Presenter? = null
 
     override fun showDescription(description: String) {
+        if (restoringFromOrientationChange) return
         binding.gbsArticleNameEditTxt.setText(description)
     }
 
     override fun showQuantity(quantity: Int) {
+        if (restoringFromOrientationChange) return
         this.quantity = quantity
         binding.gbsQuantityEditTxt.setText("${this.quantity}")
     }
 
     override fun showGrossPrice(displayedGrossPrice: String, currency: String) {
+        if (restoringFromOrientationChange) return
         binding.gbsUnitPriceEditTxt.setText(displayedGrossPrice)
     }
 
