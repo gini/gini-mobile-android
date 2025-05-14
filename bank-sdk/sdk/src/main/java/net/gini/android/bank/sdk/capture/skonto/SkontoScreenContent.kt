@@ -113,7 +113,8 @@ internal fun SkontoScreenContent(
     navigateToInvoiceScreen: (documentId: String, infoTextLines: List<String>) -> Unit,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
-    isLandScape: Boolean
+    isLandScape: Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
 
     BackHandler { viewModel.onBackClicked() }
@@ -157,7 +158,8 @@ internal fun SkontoScreenContent(
         onSkontoAmountFieldFocused = viewModel::onSkontoAmountFieldFocused,
         onDueDateFieldFocused = viewModel::onDueDateFieldFocused,
         onFullAmountFieldFocused = viewModel::onFullAmountFieldFocused,
-        isLandScape = isLandScape
+        isLandScape = isLandScape,
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard
     )
 }
 
@@ -184,7 +186,8 @@ private fun ScreenStateContent(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
-    isLandScape: Boolean
+    isLandScape: Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     when (state) {
         is SkontoScreenState.Ready -> ScreenReadyState(
@@ -209,7 +212,8 @@ private fun ScreenStateContent(
             onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
             onDueDateFieldFocused = onDueDateFieldFocused,
             onFullAmountFieldFocused = onFullAmountFieldFocused,
-            isLandScape = isLandScape
+            isLandScape = isLandScape,
+            shouldFieldShowKeyboard = shouldFieldShowKeyboard
         )
     }
 
@@ -239,7 +243,8 @@ private fun ScreenReadyState(
     modifier: Modifier = Modifier,
     discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
     screenColorScheme: SkontoScreenColors = SkontoScreenColors.colors(),
-    isLandScape: Boolean
+    isLandScape: Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     val scrollState = rememberScrollState()
     val keyboardPadding by keyboardPadding(108.dp, scrollState)
@@ -310,6 +315,7 @@ private fun ScreenReadyState(
                     isLandScape = isLandScape,
                     onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
                     onDueDateFieldFocued = onDueDateFieldFocused,
+                    shouldFieldShowKeyboard = shouldFieldShowKeyboard
 
                 )
                 WithoutSkontoSection(
@@ -321,6 +327,7 @@ private fun ScreenReadyState(
                     amountFormatter = amountFormatter,
                     fullAmountValidationError = state.fullAmountValidationError,
                     onFullAmountFieldFocused = onFullAmountFieldFocused,
+                    shouldFieldShowKeyboard = shouldFieldShowKeyboard
                 )
 
                 if (isLandScape && customBottomNavBarAdapter == null) {
@@ -591,7 +598,8 @@ private fun SkontoSection(
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
     discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
-    isLandScape: Boolean
+    isLandScape: Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
@@ -726,7 +734,8 @@ private fun SkontoSection(
                 supportingText = skontoAmountValidationError?.toErrorMessage(
                     resources = resources,
                     amountFormatter = amountFormatter
-                )
+                ),
+                shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive)
             )
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
@@ -758,7 +767,7 @@ private fun SkontoSection(
                             contentDescription = null,
                         )
                     }
-                },
+                }
             )
         }
     }
@@ -886,6 +895,7 @@ private fun WithoutSkontoSection(
     amountFormatter: AmountFormatter,
     fullAmountValidationError: SkontoScreenState.Ready.FullAmountValidationError?,
     modifier: Modifier = Modifier,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     val resources = LocalContext.current.resources
 
@@ -950,7 +960,8 @@ private fun WithoutSkontoSection(
                 supportingText = fullAmountValidationError?.toErrorMessage(
                     resources = resources,
                     amountFormatter = amountFormatter
-                )
+                ),
+                shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive)
             )
         }
     }

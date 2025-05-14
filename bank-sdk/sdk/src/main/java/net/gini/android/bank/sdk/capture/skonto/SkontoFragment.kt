@@ -95,7 +95,8 @@ class SkontoFragment : Fragment() {
                             findNavController().navigate(SkontoFragmentDirections.toSkontoHelpFragment())
                         },
                         amountFormatter = amountFormatter,
-                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext())
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                        shouldFieldShowKeyboard = viewModel.isKeyboardVisible
                     )
                 }
             }
