@@ -1038,6 +1038,40 @@ private fun FooterSectionWithoutCustomBottomBar(
     onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
 ) {
+
+    if (isLandScape) {
+        FooterSectionWithoutCustomBottomBarLandScape(
+            colors, isBottomNavigationBarEnabled, modifier,
+            isSkontoSectionActive, discountLabelText, totalPriceText,
+            savedAmountText, onBackClicked
+        )
+    } else {
+        FooterSectionWithoutCustomBottomBarPortrait(
+            colors, isBottomNavigationBarEnabled, modifier,
+            isSkontoSectionActive, discountLabelText, totalPriceText,
+            savedAmountText, onBackClicked, onHelpClicked, onProceedClicked
+        )
+    }
+}
+
+@Composable
+@GiniScreenPreviewUiModes
+@GiniScreenPreviewSizes
+private fun ScreenReadyStatePreviewLight() {
+    ScreenReadyStatePreview()
+}
+
+@Composable
+private fun FooterSectionWithoutCustomBottomBarLandScape(
+    colors: SkontoFooterSectionColors,
+    isBottomNavigationBarEnabled: Boolean,
+    modifier: Modifier = Modifier,
+    isSkontoSectionActive: Boolean,
+    discountLabelText: String,
+    totalPriceText: String,
+    savedAmountText: String,
+    onProceedClicked: () -> Unit,
+) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RectangleShape,
@@ -1111,21 +1145,120 @@ private fun FooterSectionWithoutCustomBottomBar(
                 }
             }
 
-            val buttonPadding = if (isBottomNavigationBarEnabled && !isLandScape)
-                16.dp else 20.dp
+            val buttonPadding = if (isBottomNavigationBarEnabled) 16.dp else 20.dp
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(vertical = 16.dp)
             ) {
-                if (!isLandScape) {
-                    AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
-                        NavigationActionBack(
-                            modifier = Modifier.padding(start = 16.dp),
-                            onClick = onBackClicked
-                        )
+                GiniButton(
+                    modifier = Modifier
+                        .weight(0.1f)
+                        .padding(start = buttonPadding, end = buttonPadding),
+                    text = stringResource(id = R.string.gbs_skonto_section_footer_continue_button_text),
+                    onClick = onProceedClicked,
+                    giniButtonColors = colors.continueButtonColors
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun FooterSectionWithoutCustomBottomBarPortrait(
+    colors: SkontoFooterSectionColors,
+    isBottomNavigationBarEnabled: Boolean,
+    modifier: Modifier = Modifier,
+    isSkontoSectionActive: Boolean,
+    discountLabelText: String,
+    totalPriceText: String,
+    savedAmountText: String,
+    onBackClicked: () -> Unit,
+    onHelpClicked: () -> Unit,
+    onProceedClicked: () -> Unit,
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RectangleShape,
+        colors = CardDefaults.cardColors(containerColor = colors.cardBackgroundColor),
+    ) {
+        Column(
+            modifier = Modifier
+                .tabletMaxWidth()
+                .align(Alignment.CenterHorizontally),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+            ) {
+                Row {
+                    Text(
+                        modifier = Modifier.weight(0.1f),
+                        text = stringResource(id = R.string.gbs_skonto_section_footer_title),
+                        style = GiniTheme.typography.body1,
+                        color = colors.titleTextColor,
+                    )
+                    AnimatedVisibility(
+                        visible = isSkontoSectionActive
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .height(IntrinsicSize.Min)
+
+                                .background(
+                                    colors.discountLabelColorScheme.backgroundColor,
+                                    RoundedCornerShape(4.dp)
+                                ),
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+                                text = discountLabelText,
+                                style = GiniTheme.typography.caption1,
+                                color = colors.discountLabelColorScheme.textColor,
+                            )
+                        }
                     }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = totalPriceText,
+                        style = GiniTheme.typography.headline5.bold(),
+                        color = colors.amountTextColor,
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = isSkontoSectionActive
+                ) {
+                    Text(
+                        text = savedAmountText,
+                        style = GiniTheme.typography.caption1,
+                        color = colors.savedAmountTextColor,
+                    )
+                }
+            }
+
+            val buttonPadding = if (isBottomNavigationBarEnabled)
+                16.dp else 20.dp
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
+                    NavigationActionBack(
+                        modifier = Modifier.padding(start = 16.dp),
+                        onClick = onBackClicked
+                    )
                 }
 
                 GiniButton(
@@ -1137,24 +1270,15 @@ private fun FooterSectionWithoutCustomBottomBar(
                     giniButtonColors = colors.continueButtonColors
                 )
 
-                if (!isLandScape) {
-                    AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
-                        NavigationActionHelp(
-                            modifier = Modifier.padding(end = 20.dp),
-                            onClick = onHelpClicked
-                        )
-                    }
+                AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
+                    NavigationActionHelp(
+                        modifier = Modifier.padding(end = 20.dp),
+                        onClick = onHelpClicked
+                    )
                 }
             }
         }
     }
-}
-
-@Composable
-@GiniScreenPreviewUiModes
-@GiniScreenPreviewSizes
-private fun ScreenReadyStatePreviewLight() {
-    ScreenReadyStatePreview()
 }
 
 @Composable
