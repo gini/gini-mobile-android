@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
@@ -98,7 +99,21 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
                 builder.setView(binding.root)
                 setUpBindings()
 
-                return builder.create()
+                val alertDialog = builder.create()
+
+                alertDialog.window
+                    ?.decorView
+                    ?.setOnApplyWindowInsetsListener { _, insets ->
+                        val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+                        isKeyboardShowing = imeVisible
+                        insets
+                    }
+
+                alertDialog.setOnShowListener {
+                    restoreKeyboardState(savedInstanceState)
+                }
+
+                return alertDialog
             }
         }
 
