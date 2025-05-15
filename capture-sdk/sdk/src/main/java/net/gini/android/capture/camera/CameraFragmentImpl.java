@@ -181,10 +181,18 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private static final String IN_MULTI_PAGE_STATE_KEY = "IN_MULTI_PAGE_STATE_KEY";
     private static final String IS_FLASH_ENABLED_KEY = "IS_FLASH_ENABLED_KEY";
     private static final String IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY = "IS_ARGS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY";
+    private static final String GENERIC_ERROR_SHOWING_STATE_KEY = "GENERIC_ERROR_SHOWING_STATE_KEY";
+    private static final String GENERIC_ERROR_TYPE_KEY = "GENERIC_ERROR_TYPE_KEY";
+    private static final String GENERIC_ERROR_MESSAGE_KEY = "GENERIC_ERROR_MESSAGE_KEY";
+    private static final String ERROR_TYPE_MULTI_PAGE = "ERROR_TYPE_MULTI_PAGE";
+    private static final String ERROR_TYPE_INVALID_FILE = "ERROR_TYPE_INVALID_FILE";
 
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
     private final boolean addPages;
+    private boolean isGenericErrorShowing = false;
+    private String currentGenericErrorMessage = "";
+    private String genericErrorType = "";
 
     @VisibleForTesting
     QRCodePopup<PaymentQRCodeData> mPaymentQRCodePopup;
@@ -399,6 +407,23 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (!ContextHelper.isTablet(mFragment.getActivity()))
             setNavigationBarVisibility(ContextHelper.isPortraitOrientation(mFragment.getActivity()), mFragment.getActivity());
 
+        showGenericErrorIfNeeded(savedInstanceState);
+    }
+
+    private void showGenericErrorIfNeeded(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            isGenericErrorShowing = savedInstanceState.getBoolean(GENERIC_ERROR_SHOWING_STATE_KEY, false);
+            currentGenericErrorMessage = savedInstanceState.getString(GENERIC_ERROR_MESSAGE_KEY, "");
+            genericErrorType = savedInstanceState.getString(GENERIC_ERROR_TYPE_KEY, "");
+
+            if (isGenericErrorShowing && !genericErrorType.isEmpty()) {
+                if (genericErrorType.equalsIgnoreCase(ERROR_TYPE_INVALID_FILE) && !currentGenericErrorMessage.isEmpty()) {
+                    showInvalidFileAlert(currentGenericErrorMessage);
+                } else if (genericErrorType.equalsIgnoreCase(ERROR_TYPE_MULTI_PAGE)) {
+                    showMultiPageLimitError();
+                }
+            }
+        }
     }
 
     private void handleOnBackPressed() {
@@ -688,6 +713,9 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         outState.putBoolean(IN_MULTI_PAGE_STATE_KEY, mInMultiPageState);
         outState.putBoolean(IS_FLASH_ENABLED_KEY, mIsFlashEnabled);
         outState.putBoolean(IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY, mIsDetectionErrorPopupShowed);
+        outState.putString(GENERIC_ERROR_MESSAGE_KEY, currentGenericErrorMessage);
+        outState.putBoolean(GENERIC_ERROR_SHOWING_STATE_KEY, isGenericErrorShowing);
+        outState.putString(GENERIC_ERROR_TYPE_KEY, genericErrorType);
     }
 
     void onStop() {
@@ -1536,10 +1564,26 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (activity == null) {
             return;
         }
-
+        currentGenericErrorMessage = message;
+        isGenericErrorShowing = true;
+        genericErrorType = ERROR_TYPE_INVALID_FILE;
         mFragment.showAlertDialog(message,
                 activity.getString(R.string.gc_document_import_close_error),
-                (dialogInterface, i) -> dialogInterface.dismiss(), null, null, null);
+                (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    resetGenericDialogState();
+                },
+                null,
+                null,
+                (dialogInterface -> {
+                    resetGenericDialogState();
+                }));
+    }
+
+    private void resetGenericDialogState() {
+        currentGenericErrorMessage = "";
+        isGenericErrorShowing = false;
+        genericErrorType = "";
     }
 
     @UiThread
@@ -1659,12 +1703,22 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (activity == null) {
             return;
         }
+        isGenericErrorShowing = true;
+        genericErrorType = ERROR_TYPE_MULTI_PAGE;
         mFragment.showAlertDialog(activity.getString(R.string.gc_document_error_too_many_pages),
                 activity.getString(R.string.gc_document_error_multi_page_limit_review_pages_button),
                 (dialogInterface, i) -> {
                     proceedToMultiPageReviewScreen(true);
+                    dialogInterface.dismiss();
+                    resetGenericDialogState();
                 }, activity.getString(R.string.gc_document_error_multi_page_limit_cancel_button),
-                null, null);
+                (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    resetGenericDialogState();
+                }, (dialogInterface) -> {
+                    dialogInterface.dismiss();
+                    resetGenericDialogState();
+                });
     }
 
     @Nullable
