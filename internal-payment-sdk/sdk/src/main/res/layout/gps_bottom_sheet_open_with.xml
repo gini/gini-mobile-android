@@ -8,6 +8,9 @@
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
         android:id="@+id/drag_handle"
+        android:focusable="true"
+        android:nextFocusDown="@id/gps_forward_button"
+        android:importantForAccessibility="yes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gps_medium"/>
@@ -51,6 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/gps_forward_button"
+                android:nextFocusUp="@id/drag_handle"
                 android:layout_marginHorizontal="@dimen/gps_large"
                 android:layout_marginTop="@dimen/gps_medium_12"
                 style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"

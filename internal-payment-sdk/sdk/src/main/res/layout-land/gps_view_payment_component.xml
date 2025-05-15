@@ -85,6 +85,7 @@
         android:id="@+id/gps_more_information"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:focusable="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/gps_powered_by_gini"
         app:layout_constraintTop_toTopOf="@id/gps_powered_by_gini"
