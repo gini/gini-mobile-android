@@ -27,6 +27,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
@@ -114,7 +116,7 @@ class ReviewFragment private constructor(
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        documentPageAdapter = DocumentPageAdapter { pageNumber ->
+        documentPageAdapter = DocumentPageAdapter(0) { pageNumber ->
             viewModel.reloadImage(pageNumber)
         }
         binding = GhsFragmentReviewBinding.inflate(inflater).apply {
@@ -136,13 +138,26 @@ class ReviewFragment private constructor(
         super.onViewCreated(view, savedInstanceState)
         val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
         viewModel.userPreferences = UserPreferences(requireContext())
-
         with(binding) {
             ghsPaymentDetails.reviewComponent = viewModel.reviewComponent
             setStateListeners()
             setKeyboardAnimation()
             removePagerConstraintAndSetPreviousHeightIfNeeded(documentPagerHeight)
+
         }
+        binding.pager.getInternalRecyclerView()?.apply {
+            isFocusable = false
+            isFocusableInTouchMode = false
+            descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+        }
+
+        binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                documentPageAdapter.updateCurrentPage(position, binding.pager.getInternalRecyclerView())
+
+            }
+        })
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
             bottomMargin = -resources.getDimensionPixelSize(net.gini.android.internal.payment.R.dimen.gps_medium_12)
@@ -195,8 +210,12 @@ class ReviewFragment private constructor(
         when (documentPagesResult) {
             is DocumentPagesResult.Success -> {
                 documentPageAdapter.submitList(documentPagesResult.pagesList.also { pages ->
-                    indicator.isVisible = pages.size > 1
+                    indicator.isVisible = true
+                    indicator.importantForAccessibility = if (pages.size > 1) View.IMPORTANT_FOR_ACCESSIBILITY_YES else View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                    indicator.focusable = if (pages.size > 1) View.FOCUSABLE else View.NOT_FOCUSABLE
                     pager.isUserInputEnabled = pages.size > 1
+                    indicator.isEnabled = pages.size > 1
+                    indicator.alpha = if (pages.size > 1) 1f else 0f
                 })
             }
             is DocumentPagesResult.Error -> {
@@ -222,11 +241,10 @@ class ReviewFragment private constructor(
         pager.isVisible = true
         pager.adapter = documentPageAdapter
       val mediator = TabLayoutMediator(indicator, pager) { tab, _ ->
-            tab.view.isFocusable = true
+          tab.view.isFocusable = documentPageAdapter.itemCount > 1
         }
         mediator.attach()
     }
-
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
         if (viewModel.configuration.handleErrorsInternally) {
             showSnackbar(text, onRetry)
@@ -433,6 +451,14 @@ class ReviewFragment private constructor(
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
         super.onSaveInstanceState(outState)
+    }
+
+    private fun ViewPager2.getInternalRecyclerView(): RecyclerView? {
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
+            if (child is RecyclerView) return child
+        }
+        return null
     }
 
     internal companion object {

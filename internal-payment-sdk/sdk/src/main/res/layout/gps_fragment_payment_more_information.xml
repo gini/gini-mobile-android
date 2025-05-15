@@ -58,6 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gps_large"
+                android:accessibilityHeading="true"
                 android:text="@string/gps_more_information_title" />
 
             <TextView
@@ -73,6 +74,7 @@
                 style="@style/GiniPaymentTheme.Typography.Subtitle1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:accessibilityHeading="true"
                 android:layout_marginTop="@dimen/gps_large_24"
                 android:text="@string/gps_frequently_asked_questions" />
 

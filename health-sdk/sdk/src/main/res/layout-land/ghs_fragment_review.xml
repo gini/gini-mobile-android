@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="false"
     android:background="@color/ghs_light_07">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:focusable="false"
         android:id="@+id/constraint_root">
 
         <androidx.viewpager2.widget.ViewPager2
@@ -17,6 +19,9 @@
             android:layout_height="0dp"
             android:visibility="gone"
             android:focusable="false"
+            android:focusableInTouchMode="true"
+            android:importantForAccessibility="yes"
+            android:descendantFocusability="afterDescendants"
             app:layout_constraintBottom_toTopOf="@id/indicator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,6 +68,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/payment_details_scrollview"
+            android:importantForAccessibility="yes"
+            android:focusable="true"
+            android:descendantFocusability="blocksDescendants"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -71,22 +79,39 @@
                 android:layout_height="wrap_content"
                 style="@style/GiniPaymentTheme.PaymentDetailsCard"
                 android:clipToOutline="true">
-                <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+                <FrameLayout
                     style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
-                    android:id="@+id/drag_handle"
+                    android:id="@+id/drag_handle_container"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:focusable="true"
                     android:padding="0dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:clickable="true"
+                    android:descendantFocusability="blocksDescendants"
+                    android:importantForAccessibility="yes"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent" >
+
+                    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+                        style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
+                        android:id="@+id/drag_handle"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:focusable="false"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="0dp"
+                       />
+
+                </FrameLayout>
+
                 <net.gini.android.internal.payment.review.reviewComponent.ReviewView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/ghs_payment_details"
                     android:paddingHorizontal="@dimen/gps_large_72"
-                    app:layout_constraintTop_toBottomOf="@id/drag_handle"
+                    app:layout_constraintTop_toBottomOf="@id/drag_handle_container"
                     app:layout_constraintBottom_toBottomOf="parent"/>
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/payment_details_info_bar"
@@ -96,7 +121,7 @@
                     android:elevation="12dp"
                     android:animateLayoutChanges="true"
                     android:visibility="invisible"
-                    app:layout_constraintTop_toTopOf="@id/drag_handle"
+                    app:layout_constraintTop_toTopOf="@id/drag_handle_container"
                     >
                     <TextView
                         style="@style/GiniPaymentTheme.PaymentDetails.InfoBar.TextView"

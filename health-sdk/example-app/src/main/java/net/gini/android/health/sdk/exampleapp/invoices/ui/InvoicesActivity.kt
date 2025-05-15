@@ -48,19 +48,29 @@ open class InvoicesActivity : AppCompatActivity() {
         setContentView(binding.root)
         setActivityTitle(DisplayedScreen.Nothing)
 
+        // Check if fragment is already visible on recreation
+        val fragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
+        val isFragmentInBackStack = fragment != null && fragment.isAdded
+
+        setSiblingViewsEnabled(!isFragmentInBackStack)
+        if (isFragmentInBackStack) {
+            setActivityTitle(DisplayedScreen.ReviewScreen)
+        }
+
         supportFragmentManager.addOnBackStackChangedListener {
-            val fragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
-            val isFragmentVisible = fragment?.isVisible == true
 
-            // Disable siblings if the fragment is shown
-            setSiblingViewsEnabled(!isFragmentVisible)
+            val findFragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
+            val isFragmentInBackStackChanged = findFragment != null && findFragment.isAdded
 
-            if (!isFragmentVisible) {
+            setSiblingViewsEnabled(!isFragmentInBackStackChanged)
+
+            if (!isFragmentInBackStackChanged) {
                 title = resources.getString(R.string.title_activity_invoices)
             }
 
             invalidateOptionsMenu()
         }
+
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -251,31 +261,42 @@ open class InvoicesActivity : AppCompatActivity() {
             }
     }
 
-
     private fun setSiblingViewsEnabled(enabled: Boolean) {
-        // Disable interaction with RecyclerView and No Invoices label when fragment is visible
-        binding.invoicesList.apply {
-            // i want to make focusable the first item of invoices list
-            (getChildAt(0) as? View)?.apply {
+        val accessibilityFlag = if (enabled) {
+            View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+        } else {
+            View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+        }
+
+        // Apply to all visible items in the RecyclerView
+        for (i in 0 until binding.invoicesList.childCount) {
+            binding.invoicesList.getChildAt(i)?.apply {
                 isFocusable = enabled
                 isEnabled = enabled
                 isClickable = enabled
+                importantForAccessibility = accessibilityFlag
             }
-            isFocusable = false
-            isEnabled = false
-            isClickable = false
+        }
+
+        binding.invoicesList.apply {
+            isFocusable = enabled
+            isEnabled = enabled
+            isClickable = enabled
+            importantForAccessibility = accessibilityFlag
         }
 
         binding.noInvoicesLabel.apply {
             isFocusable = enabled
             isEnabled = enabled
             isClickable = enabled
+            importantForAccessibility = accessibilityFlag
         }
-        // Optionally, also disable loading indicator if needed
+
         binding.loadingIndicatorContainer.apply {
             isFocusable = enabled
             isEnabled = enabled
             isClickable = enabled
+            importantForAccessibility = accessibilityFlag
         }
     }
 

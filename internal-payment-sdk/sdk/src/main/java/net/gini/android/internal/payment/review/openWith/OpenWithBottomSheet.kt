@@ -23,6 +23,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.addEuroSymbol
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
@@ -118,35 +119,70 @@ class OpenWithBottomSheet private constructor(
     private fun populatePaymentDetails() {
         viewModel.paymentDetails?.let {
             binding.gpsIbanValue.text = it.iban
-            binding.gpsAmountValue.text = it.amount
+            binding.gpsAmountValue.text = it.amount.addEuroSymbol()
             binding.gpsRecipientValue.text = it.recipient
             binding.gpsReferenceValue.text = it.purpose
         }
     }
 
+
     private fun configureForwardButton() {
         viewModel.paymentProviderApp?.let { app ->
-            with(binding.gpsForwardButton) {
-                setOnClickListener {
-                    viewModel.openWithForwardListener?.onForwardSelected()
-                    dismiss()
-                }
-                setBackgroundTint(app.colors.backgroundColor, 255)
-                setTextColor(app.colors.textColor)
-                text = getString(R.string.gps_open_with_button_text, app.name)
-                contentDescription = getString(R.string.gps_share_with_button_content_description, app.name)
-
-                app.icon?.let { icon ->
-                    val drawable = RoundedBitmapDrawableFactory.create(resources, icon.bitmap).apply {
-                        cornerRadius = resources.getDimension(R.dimen.gps_small_2)
-                    }
-                    setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
-                }
-            }
-
-            binding.gpsOpenWithTitle.text = getString(R.string.gps_open_with_title, app.name)
-            binding.gpsOpenWithDetails.text = getString(R.string.gps_open_with_details, app.name)
+            setupForwardButtonClickListener(app)
+            styleForwardButton(app)
+            updateOpenWithTexts(app)
+            setAppIcon(app)
+            setForwardButtonTextAndContentDescription(app)
         }
+    }
+
+    private fun setupForwardButtonClickListener(app: PaymentProviderApp) {
+        binding.gpsForwardButton.setOnClickListener {
+            viewModel.openWithForwardListener?.onForwardSelected()
+            dismiss()
+        }
+    }
+
+    private fun styleForwardButton(app: PaymentProviderApp) {
+        binding.gpsForwardButton.setBackgroundTint(app.colors.backgroundColor, 255)
+        binding.gpsForwardButton.setTextColor(app.colors.textColor)
+    }
+
+    private fun updateOpenWithTexts(app: PaymentProviderApp) {
+        binding.gpsOpenWithTitle.text = String.format(
+            getLocaleStringResource(R.string.gps_open_with_title),
+            app.name
+        )
+        binding.gpsOpenWithDetails.text = String.format(
+            getLocaleStringResource(R.string.gps_open_with_details),
+            app.name
+        )
+    }
+
+    private fun setAppIcon(app: PaymentProviderApp) {
+        app.icon?.let { icon ->
+            val roundedDrawable = RoundedBitmapDrawableFactory
+                .create(requireContext().resources, icon.bitmap)
+                .apply {
+                    cornerRadius = resources.getDimension(R.dimen.gps_small_2)
+                }
+
+            binding.gpsForwardButton.setCompoundDrawablesWithIntrinsicBounds(
+                null, null, roundedDrawable, null
+            )
+        }
+    }
+
+    private fun setForwardButtonTextAndContentDescription(app: PaymentProviderApp) {
+        binding.gpsForwardButton.text = String.format(
+            getLocaleStringResource(R.string.gps_open_with_button_text),
+            app.name
+        )
+
+        binding.gpsForwardButton.contentDescription = String.format(
+            getLocaleStringResource(R.string.gps_share_with_button_content_description),
+            app.name
+        )
     }
 
     private fun configureBrandVisibility() {
