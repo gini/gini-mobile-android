@@ -45,6 +45,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -175,7 +176,8 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                                 DigitalInvoiceSkontoFragmentDirections.toSkontoHelpFragment()
                             )
                         },
-                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext())
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                        shouldFieldShowKeyboard = viewModel.isKeyboardVisible
                     )
                 }
             }
@@ -194,7 +196,8 @@ private fun ScreenContent(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
-    isLandScape: Boolean
+    isLandScape: Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
 
     BackHandler { viewModel.onBackClicked() }
@@ -234,7 +237,8 @@ private fun ScreenContent(
         onHelpClicked = viewModel::onHelpClicked,
         isLandScape = isLandScape,
         onSkontoAmountFieldFocused = viewModel::onSkontoAmountFieldFocused,
-        onDueDateFieldFocused = viewModel::onDueDateFieldFocused
+        onDueDateFieldFocused = viewModel::onDueDateFieldFocused,
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard
     )
 }
 
@@ -254,7 +258,8 @@ private fun ScreenStateContent(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
-    isLandScape : Boolean
+    isLandScape : Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     when (state) {
         is SkontoScreenState.Ready -> ScreenReadyState(
@@ -272,7 +277,8 @@ private fun ScreenStateContent(
             onHelpClicked = onHelpClicked,
             onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
             onDueDateFieldFocused = onDueDateFieldFocused,
-            isLandScape = isLandScape
+            isLandScape = isLandScape,
+            shouldFieldShowKeyboard = shouldFieldShowKeyboard
         )
     }
 
@@ -294,7 +300,8 @@ private fun ScreenReadyState(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
-    isLandScape : Boolean
+    isLandScape : Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
 
     val scrollState = rememberScrollState()
@@ -364,7 +371,8 @@ private fun ScreenReadyState(
                     skontoAmountValidationError = state.skontoAmountValidationError,
                     onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
                     onDueDateFieldFocued = onDueDateFieldFocused,
-                    isLandScape = isLandScape
+                    isLandScape = isLandScape,
+                    shouldFieldShowKeyboard = shouldFieldShowKeyboard
                 )
             }
         }
@@ -552,11 +560,12 @@ private fun SkontoSection(
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
     isLandScape : Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
 
-    var isDatePickerVisible by remember { mutableStateOf(false) }
+    var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
         modifier = modifier,
         shape = RectangleShape,
@@ -678,7 +687,8 @@ private fun SkontoSection(
                 isError = skontoAmountValidationError != null,
                 supportingText = skontoAmountValidationError?.toErrorMessage(
                     resources = resources,
-                )
+                ),
+                shouldFieldShowKeyboard = shouldFieldShowKeyboard
             )
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }

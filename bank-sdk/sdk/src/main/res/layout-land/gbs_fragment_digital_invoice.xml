@@ -150,13 +150,12 @@
                         style="@style/GiniCaptureTheme.Typography.Caption1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/gc_large_24"
-                        android:layout_marginTop="@dimen/gc_extra_small"
+                        android:layout_marginTop="@dimen/gc_medium"
                         android:textColor="@color/gc_success_01"
-                        app:layout_constraintBottom_toTopOf="@+id/gbs_pay"
+                        app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
                         app:layout_constraintHorizontal_chainStyle="spread_inside"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/gross_price_total_integral_part"
+                        app:layout_constraintEnd_toEndOf="@+id/skonto_discount_label"
+                        app:layout_constraintTop_toBottomOf="@+id/skonto_discount_label"
                         app:layout_constraintVertical_bias="0.0"
                         tools:text="Save 0,55 EUR" />
 

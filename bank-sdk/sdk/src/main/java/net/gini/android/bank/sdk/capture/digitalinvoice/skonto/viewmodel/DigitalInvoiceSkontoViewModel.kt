@@ -36,6 +36,7 @@ internal class DigitalInvoiceSkontoViewModel(
     private val skontoAmountFieldChangeIntent: SkontoAmountFieldChangeIntent,
 ) : ViewModel(), SkontoContainerHost {
 
+    var isKeyboardVisible: Boolean = false
     override val container: Container<SkontoScreenState, SkontoSideEffect> =
         container(skontoScreenInitialStateFactory.create(args.data, args.isSkontoSectionActive)) {
             logScreenShownEvent()
@@ -47,8 +48,10 @@ internal class DigitalInvoiceSkontoViewModel(
     fun onSkontoDueDateChanged(newDate: LocalDate) =
         with(skontoDueDateChangeIntent) { run(newDate) }
 
-    fun onKeyboardStateChanged(isVisible: Boolean) =
+    fun onKeyboardStateChanged(isVisible: Boolean)  {
+        this.isKeyboardVisible = isVisible
         with(keyboardStateChangeIntent) { run(isVisible) }
+    }
 
     fun onInfoBannerClicked() =
         with(infoBannerInteractionIntent) { runClick() }
