@@ -47,7 +47,6 @@ import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpFo
 import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpItemsSectionColors
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.util.ActivityHelper
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
@@ -71,7 +70,6 @@ class SkontoHelpFragment : Fragment() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-        ActivityHelper.forcePortraitOrientationOnPhones(activity)
 
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -229,7 +227,7 @@ private fun HelpCustomNavBarSection(
         ) {
             AnimatedVisibility(visible = isBottomNavigationBarEnabled) {
                 NavigationActionBack(
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(16.dp),
                     onClick = onBackClicked
                 )
             }

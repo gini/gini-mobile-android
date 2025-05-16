@@ -32,6 +32,7 @@ fun GiniAmountTextInput(
     decimalFormatter: DecimalFormatter = DecimalFormatter(),
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
     supportingText: String? = null,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     val parsedAmount = decimalFormatter.parseAmount(amount)
 
@@ -71,7 +72,8 @@ fun GiniAmountTextInput(
                     style = GiniTheme.typography.caption1,
                 )
             }
-        }
+        },
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard,
     )
 }
 

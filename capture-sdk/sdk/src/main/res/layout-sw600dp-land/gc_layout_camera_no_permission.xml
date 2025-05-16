@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gc_layout_camera_no_permission"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="?attr/backgroundColor"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/gc_image_camera_no_permission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/gc_no_camera"
+        android:layout_marginTop="@dimen/gc_large_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/gc_no_camera_title"
+        app:layout_constraintStart_toStartOf="@+id/gc_no_camera_title" />
+
+    <TextView
+        android:id="@+id/gc_no_camera_title"
+        style="@style/GiniCaptureTheme.Typography.Headline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_large_24"
+        android:text="@string/gc_camera_access"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gc_image_camera_no_permission"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--suppress AndroidDomInspection -->
+
+    <!--suppress AndroidDomInspection -->
+    <TextView
+        android:id="@+id/gc_text_camera_no_permission"
+        style="@style/GiniCaptureTheme.Typography.Body1"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_large"
+        android:gravity="center"
+        android:lineSpacingExtra="5sp"
+        android:text="@string/gc_camera_error_no_permission"
+        android:textColor="@color/gc_dark_06"
+
+        app:layout_constraintBottom_toTopOf="@id/gc_button_camera_no_permission"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_no_camera_title"
+        app:layout_constraintVertical_bias="0" />
+
+    <Button
+        android:id="@+id/gc_button_camera_no_permission"
+        style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/gc_large_32"
+        android:minWidth="@dimen/gc_give_permission_button_width"
+        android:text="@string/gc_camera_error_no_permission_button_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

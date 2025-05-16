@@ -52,6 +52,7 @@ internal fun InvoicePreviewScreen(
     viewModel: InvoicePreviewViewModel,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
+    isLandScape : Boolean
 ) {
     val state by viewModel.collectAsState()
 
@@ -77,9 +78,9 @@ internal fun InvoicePreviewScreen(
             screenTitle = state.screenTitle,
             infoTextLines = state.infoTextLines,
             images = state.images,
-            onUserZoomedScreenOnce = viewModel::onUserZoomedImage
-        )
-    }
+            onUserZoomedScreenOnce = viewModel::onUserZoomedImage,
+        isLandScape = isLandScape
+    )}
 }
 
 @Composable
@@ -175,6 +176,7 @@ internal fun InvoiceScreenReadyContent(
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
     topBarActions: @Composable RowScope.() -> Unit = {},
+    isLandScape: Boolean = false
 ) {
     var isUserZoomedOnce = false
     Scaffold(
@@ -207,7 +209,8 @@ internal fun InvoiceScreenReadyContent(
                             onUserZoomedScreenOnce()
                             isUserZoomedOnce = true
                         }
-                    }
+                    },
+                    isLandScape = isLandScape
                 )
             }
 
@@ -292,6 +295,7 @@ private fun ImagesList(
     modifier: Modifier = Modifier,
     minZoom: Float = DEFAULT_ZOOM,
     onScaleChanged: (Float) -> Unit = {},
+    isLandScape: Boolean
 ) {
     ZoomableLazyColumn(
         modifier = modifier,
@@ -306,9 +310,27 @@ private fun ImagesList(
                     .fillMaxWidth(),
                 bitmap = it.asImageBitmap(),
                 contentDescription = null,
-                contentScale = ContentScale.FillWidth
+                contentScale =
+                    if (isLandScape)
+                        ContentScale.FillHeight
+                    else ContentScale.FillWidth
             )
         }
+    }
+}
+
+@Preview(name = "Landscape", device = "spec:width=891dp,height=411dp", showBackground = true)
+@Composable
+private fun InvoiceScreenContentPreviewLandscape() {
+    GiniTheme {
+        InvoiceScreenReadyContent(
+            onCloseClicked = {},
+            screenTitle = "Screen Title",
+            isLoading = true,
+            images = emptyList(),
+            infoTextLines = listOf("Line 1", "Line 2"),
+            onUserZoomedScreenOnce = {}
+        )
     }
 }
 

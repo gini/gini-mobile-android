@@ -29,6 +29,7 @@ internal fun TransactionDocInvoicePreviewScreen(
     viewModel: TransactionDocInvoicePreviewViewModel,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
+    isLandScape : Boolean
 ) {
     val state by viewModel.collectAsState()
 
@@ -43,25 +44,26 @@ internal fun TransactionDocInvoicePreviewScreen(
         )
 
         is TransactionDocInvoicePreviewFragmentState.Ready -> InvoiceScreenReadyContent(
-            modifier = modifier,
-            onCloseClicked = navigateBack,
-            colors = colors,
-            topBarActions = {
-                TransactionDocTopBarActions(
-                    onDeleteClicked = {
-                        viewModel.onDeleteClicked()
-                        navigateBack()
-                    },
-                    colors = colors
-                )
-            },
-            infoTextLines = state.infoTextLines,
-            images = state.images,
-            screenTitle = state.screenTitle,
-            isLoading = state.isLoading,
-            onUserZoomedScreenOnce = { /* No Action needed on TD */ },
-        )
-    }
+        modifier = modifier,
+        onCloseClicked = navigateBack,
+        colors = colors,
+        topBarActions = {
+            TransactionDocTopBarActions(
+                onDeleteClicked = {
+                    viewModel.onDeleteClicked()
+                    navigateBack()
+                },
+                colors = colors
+            )
+        },
+        infoTextLines = state.infoTextLines,
+        images = state.images,
+        screenTitle = state.screenTitle,
+        isLoading = state.isLoading,
+        onUserZoomedScreenOnce = { /* No Action needed on TD */ },
+        isLandScape = isLandScape
+    )
+}
 
 
 }
