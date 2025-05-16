@@ -323,7 +323,7 @@ private fun ImagesList(
 @Composable
 private fun InvoiceScreenContentPreviewLandscape() {
     GiniTheme {
-        InvoiceScreenContent(
+        InvoiceScreenReadyContent(
             onCloseClicked = {},
             screenTitle = "Screen Title",
             isLoading = true,
