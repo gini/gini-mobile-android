@@ -96,6 +96,7 @@
     <string name="gbs_skonto_invoice_preview_expire_date">Ablaufdatum Skonto: %1$s</string>
     <string name="gbs_skonto_invoice_preview_final_amount">Betrag nach Abzug: %1$s</string>
     <string name="gbs_skonto_invoice_preview_full_amount">Betrag ohne Abzug: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_try_again">Versuch\'s Nochmal</string>
     <!--   endregion -->
 
     <!--   region Transaction Docs. Attach Document Dialog -->

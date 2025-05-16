@@ -13,6 +13,7 @@ import net.gini.android.capture.EnterManuallyButtonListener
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.document.ImageMultiPageDocument
+import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.ui.setIntervalClickListener
@@ -38,6 +39,8 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
  */
 class ErrorFragmentImpl(
     private val fragmentCallback: FragmentImplCallback,
+    // CancelListener should be removed in the next major version - not a breaking change but better to keep it for now
+    @Suppress("UnusedPrivateProperty")
     private val cancelListener: CancelListener,
     private val document: Document?,
     private val errorType: ErrorType?,
@@ -45,10 +48,10 @@ class ErrorFragmentImpl(
 ) {
 
     private val defaultListener: EnterManuallyButtonListener = EnterManuallyButtonListener { }
-
+    private lateinit var view: View
     private var enterManuallyButtonListener: EnterManuallyButtonListener? = null
     private lateinit var retakeImagesButton: Button
-    private var mUserAnalyticsEventTracker : UserAnalyticsEventTracker? = null
+    private var mUserAnalyticsEventTracker: UserAnalyticsEventTracker? = null
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Error
 
     fun onCreate(savedInstanceState: Bundle?) {
@@ -65,22 +68,17 @@ class ErrorFragmentImpl(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view: View = inflater.inflate(R.layout.gc_fragment_error, container, false)
+        view = inflater.inflate(R.layout.gc_fragment_error, container, false)
         retakeImagesButton = view.findViewById(R.id.gc_button_error_retake_images)
         handleOnBackPressed()
         addUserAnalyticEvents()
 
-        setInjectedTopBarContainer(view)
-
+        setupTopBarNavigation()
+        setupBottomBarNavigation()
         if (shouldAllowRetakeImages()) {
             retakeImagesButton.setIntervalClickListener {
-                mUserAnalyticsEventTracker?.trackEvent(
-                    UserAnalyticsEvent.BACK_TO_CAMERA_TAPPED,
-                    setOf(UserAnalyticsEventProperty.Screen(screenName))
-                )
                 EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY)
-                fragmentCallback.findNavController()
-                    .navigate(ErrorFragmentDirections.toCameraFragment())
+                navigateToCameraScreen(UserAnalyticsEvent.BACK_TO_CAMERA_TAPPED)
             }
         } else {
             retakeImagesButton.visibility = View.GONE
@@ -112,8 +110,9 @@ class ErrorFragmentImpl(
     }
 
     private fun addUserAnalyticEvents() {
-        val errorMessage = customError ?:
-        fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0).toString()
+        val errorMessage =
+            customError ?: fragmentCallback.activity?.getString(errorType?.titleTextResource ?: 0)
+                .toString()
         mUserAnalyticsEventTracker?.setEventSuperProperty(
             UserAnalyticsEventSuperProperty.DocumentType(document.mapToAnalyticsDocumentType())
         )
@@ -126,27 +125,42 @@ class ErrorFragmentImpl(
                 UserAnalyticsEventProperty.ErrorMessage(errorMessage)
             ),
         )
-
     }
 
-    private fun setInjectedTopBarContainer(view: View) {
+    private fun setupTopBarNavigation() {
         val topBarContainer =
             view.findViewById<InjectedViewContainer<NavigationBarTopAdapter>>(R.id.gc_injected_navigation_bar_container_top)
         if (GiniCapture.hasInstance()) {
-            topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
-                GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
-            ) { injectedViewAdapter ->
-                injectedViewAdapter.apply {
-                    setTitle(fragmentCallback.activity?.getString(R.string.gc_title_error) ?: "")
-                    setNavButtonType(NavButtonType.CLOSE)
-                    setOnNavButtonClickListener(IntervalClickListener {
-                        mUserAnalyticsEventTracker?.trackEvent(
-                            UserAnalyticsEvent.CLOSE_TAPPED,
-                            setOf(UserAnalyticsEventProperty.Screen(screenName))
-                        )
-                        cancelListener.onCancelFlow()
+            topBarContainer.injectedViewAdapterHolder =
+                InjectedViewAdapterHolder(
+                    GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
+                ) { injectedViewAdapter ->
+                    val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
+                        NavButtonType.NONE else NavButtonType.BACK
+                    injectedViewAdapter.setNavButtonType(navType)
+                    injectedViewAdapter.setTitle(
+                        fragmentCallback.activity?.getString(R.string.gc_title_error) ?: ""
+                    )
+                    injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
+                        navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)
                     })
                 }
+        }
+    }
+
+    private fun setupBottomBarNavigation() {
+        val topBarContainer =
+            view.findViewById<InjectedViewContainer<ErrorNavigationBarBottomAdapter>>(
+                R.id.gc_injected_navigation_bar_container_bottom
+            )
+
+        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+            topBarContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
+                GiniCapture.getInstance().internal().errorNavigationBarBottomAdapterInstance
+            ) { injectedViewAdapter ->
+                injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
+                    navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)
+                })
             }
         }
     }
@@ -157,14 +171,18 @@ class ErrorFragmentImpl(
                 fragmentCallback.getViewLifecycleOwner(),
                 object : OnBackPressedCallback(true) {
                     override fun handleOnBackPressed() {
-                        mUserAnalyticsEventTracker?.trackEvent(
-                            UserAnalyticsEvent.CLOSE_TAPPED,
-                            setOf(UserAnalyticsEventProperty.Screen(screenName))
-                        )
-                        remove()
-                        cancelListener.onCancelFlow()
+                        navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED)
                     }
                 })
+    }
+
+    private fun navigateToCameraScreen(event: UserAnalyticsEvent) {
+        mUserAnalyticsEventTracker?.trackEvent(
+            event,
+            setOf(UserAnalyticsEventProperty.Screen(screenName))
+        )
+        fragmentCallback.findNavController()
+            .navigate(ErrorFragmentDirections.toCameraFragment())
     }
 
     fun setListener(enterManuallyButtonListener: EnterManuallyButtonListener?) {

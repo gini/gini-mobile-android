@@ -7,14 +7,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -33,11 +36,15 @@ import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.invoice.colors.InvoicePreviewScreenColors
 import net.gini.android.bank.sdk.invoice.colors.section.InvoicePreviewScreenFooterColors
+import net.gini.android.capture.error.ErrorType
+import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.list.ZoomableLazyColumn
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 import org.orbitmvi.orbit.compose.collectAsState
+import net.gini.android.capture.R as CaptureR
 
 @Composable
 internal fun InvoicePreviewScreen(
@@ -49,26 +56,117 @@ internal fun InvoicePreviewScreen(
 ) {
     val state by viewModel.collectAsState()
 
-    InvoiceScreenContent(
-        modifier = modifier,
-        onCloseClicked = {
-            navigateBack()
-            viewModel.onUserNavigatesBack()
-        },
-        colors = colors,
-        isLoading = state.isLoading,
-        screenTitle = state.screenTitle,
-        infoTextLines = state.infoTextLines,
-        images = state.images,
-        onUserZoomedScreenOnce = viewModel::onUserZoomedImage,
+    when (val state = state) {
+        is InvoicePreviewFragmentState.Error -> InvoiceScreenErrorContent(
+            modifier = modifier,
+            onCloseClicked = {
+                navigateBack()
+                viewModel.onUserNavigatesBack()
+            },
+            onRetryClicked = viewModel::init,
+            errorType = state.errorType
+        )
+
+        is InvoicePreviewFragmentState.Ready -> InvoiceScreenReadyContent(
+            modifier = modifier,
+            onCloseClicked = {
+                navigateBack()
+                viewModel.onUserNavigatesBack()
+            },
+            colors = colors,
+            isLoading = state.isLoading,
+            screenTitle = state.screenTitle,
+            infoTextLines = state.infoTextLines,
+            images = state.images,
+            onUserZoomedScreenOnce = viewModel::onUserZoomedImage,
         isLandScape = isLandScape
-    )
+    )}
+}
+
+@Composable
+internal fun InvoiceScreenErrorContent(
+    modifier: Modifier = Modifier,
+    colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
+    onCloseClicked: () -> Unit,
+    onRetryClicked: () -> Unit,
+    errorType: ErrorType
+) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            GiniTopBar(
+                title = stringResource(id = CaptureR.string.gc_title_error),
+                colors = colors.topBarColors.copy(containerColor = GiniColorPrimitives().dark01),
+                navigationIcon = {
+                    NavigationActionBack(
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 32.dp),
+                        onClick = onCloseClicked,
+                        tint = colors.topBarColors.navigationContentColor
+                    )
+                },
+            )
+        }
+    ) { paddings ->
+        Column(
+            modifier = modifier
+                .padding(paddings)
+                .fillMaxSize()
+                .background(colors.background),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                HorizontalDivider(
+                    color = colors.errorMessage.errorHint.iconColor.copy(alpha = 0.15f),
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(colors.errorMessage.errorHint.containerColor)
+                        .heightIn(min = 56.dp)
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(errorType.drawableResource),
+                        contentDescription = null,
+                        tint = colors.errorMessage.errorHint.iconColor
+                    )
+                    Text(
+                        text = stringResource(errorType.titleTextResource),
+                        style = GiniTheme.typography.body2,
+                        color = colors.errorMessage.errorHint.textColor
+                    )
+                }
+
+                HorizontalDivider(
+                    color = colors.errorMessage.errorHint.iconColor.copy(alpha = 0.15f),
+                )
+
+                Text(
+                    text = stringResource(errorType.descriptionTextResource),
+                    style = GiniTheme.typography.body2,
+                    color = colors.errorMessage.messageColor,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(vertical = 16.dp)
+                )
+            }
+            GiniButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                text = stringResource(R.string.gbs_skonto_invoice_preview_try_again), onClick = onRetryClicked
+            )
+        }
+    }
 }
 
 private const val DEFAULT_ZOOM = 1f
 
 @Composable
-internal fun InvoiceScreenContent(
+internal fun InvoiceScreenReadyContent(
     isLoading: Boolean,
     screenTitle: String,
     infoTextLines: List<String>,
@@ -157,7 +255,7 @@ private fun NavigationActionBack(
             onClick = onClick
         ) {
             Icon(
-                painter = painterResource(id = net.gini.android.capture.R.drawable.gc_close),
+                painter = painterResource(id = CaptureR.drawable.gc_close),
                 contentDescription = stringResource(
                     id = R.string.gbs_skonto_screen_content_description_close
                 ),
@@ -240,13 +338,25 @@ private fun InvoiceScreenContentPreviewLandscape() {
 @Composable
 private fun InvoiceScreenContentPreview() {
     GiniTheme {
-        InvoiceScreenContent(
+        InvoiceScreenReadyContent(
             onCloseClicked = {},
             screenTitle = "Screen Title",
             isLoading = true,
             images = emptyList(),
             infoTextLines = listOf("Line 1", "Line 2"),
             onUserZoomedScreenOnce = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun InvoiceScreenErrorContentPreview() {
+    GiniTheme {
+        InvoiceScreenErrorContent(
+            onCloseClicked = {},
+            onRetryClicked = {},
+            errorType = ErrorType.GENERAL
         )
     }
 }
