@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,10 +19,13 @@ import android.widget.Space;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -29,6 +33,7 @@ import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
+import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter;
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
@@ -62,6 +67,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     private Button buttonSkip;
     private Button buttonGetStarted;
     private Group groupNextAndSkipButtons;
+    private ConstraintLayout bottomButtonsContainer;
     private OnboardingNavigationBarBottomButton[] navigationBarBottomButtons = new OnboardingNavigationBarBottomButton[]{};
 
     /**
@@ -138,18 +144,27 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         buttonSkip = view.findViewById(R.id.gc_skip);
         buttonGetStarted = view.findViewById(R.id.gc_get_started);
         groupNextAndSkipButtons = view.findViewById(R.id.gc_next_skip_group);
+        if (!ContextHelper.isPortraitOrTablet(requireContext())) {
+            bottomButtonsContainer = view.findViewById(R.id.gc_bottom_container);
+        }
+        buttonSkip.setText(getString(R.string.gc_skip_two_lines));
         handleSkipButtonMultipleLines();
     }
 
     //Wait for view to be inflated
     //Check how many lines
     private void handleSkipButtonMultipleLines() {
-        buttonSkip.post(() -> {
-            int lines = buttonSkip.getLineCount();
-            if (lines < 2 )
-                return;
-
-            buttonSkip.setText(getString(R.string.gc_skip_two_lines));
+        buttonSkip.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v,
+                                       int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                v.removeOnLayoutChangeListener(this);
+                int lines = ((Button)v).getLineCount();
+                if (lines >= 2) {
+                    ((Button)v).setText(getString(R.string.gc_skip_two_lines));
+                }
+            }
         });
 
     }
@@ -170,10 +185,40 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         setUpViewPager(pages);
     }
 
-    private void setUpViewPager(@NonNull final List<OnboardingPage> pages) {
-        final ViewPagerAdapterCompat viewPagerAdapter = new ViewPagerAdapterCompat(getChildFragmentManager(), pages);
+    private void setViewPagerAdapterForLandscape(@NonNull final List<OnboardingPage> pages) {
+        handleViewPagerContentOnRunTime(pages);
+    }
+    private void setViewPagerAdapterForPortrait(@NonNull final List<OnboardingPage> pages) {
+        final ViewPagerAdapterCompat viewPagerAdapter =
+                new ViewPagerAdapterCompat(getChildFragmentManager(), pages, Integer.MIN_VALUE);
+        clearViewPagerAdapter(viewPagerAdapter);
         mViewPager.setAdapter(viewPagerAdapter);
+        viewPagerAdapter.notifyDataSetChanged();
+    }
 
+    private void clearViewPagerAdapter(ViewPagerAdapterCompat viewPagerAdapter) {
+        requireActivity().runOnUiThread(() -> {
+            FragmentManager fm = getChildFragmentManager();
+            FragmentTransaction tx = fm.beginTransaction().setReorderingAllowed(true);
+            for (int i = 0; i < viewPagerAdapter.getCount(); i++) {
+                String tag = "android:switcher:" + R.id.gc_onboarding_viewpager + ":" + i;
+                Fragment fragment = fm.findFragmentByTag(tag);
+                if (fragment != null) {
+                    tx.remove(fragment);
+                }
+            }
+            tx.commitNowAllowingStateLoss();
+        });
+    }
+
+    private void setUpViewPager(@NonNull final List<OnboardingPage> pages) {
+
+        if (!ContextHelper.isPortraitOrTablet(requireContext()) && bottomButtonsContainer != null)
+            setViewPagerAdapterForLandscape(pages);
+        else
+            setViewPagerAdapterForPortrait(pages);
+
+        mViewPager.setOffscreenPageLimit(1);
         final int numberOfPageIndicators = pages.size();
         mPageIndicators = new PageIndicators(getActivity(), numberOfPageIndicators, mLayoutPageIndicators);
         mPageIndicators.create();
@@ -181,6 +226,22 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         mViewPager.addOnPageChangeListener(new PageChangeListener(mPresenter));
     }
 
+    private void handleViewPagerContentOnRunTime(@NonNull final List<OnboardingPage> pages) {
+        bottomButtonsContainer.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        int safeThreshold = 15;
+                        bottomButtonsContainer.getViewTreeObserver().removeOnPreDrawListener(this);
+                        final ViewPagerAdapterCompat viewPagerAdapter = new ViewPagerAdapterCompat(getChildFragmentManager(), pages,
+                                bottomButtonsContainer.getHeight() + safeThreshold);
+                        clearViewPagerAdapter(viewPagerAdapter);
+                        mViewPager.setAdapter(viewPagerAdapter);
+                        viewPagerAdapter.notifyDataSetChanged();
+                        return true;
+                    }
+                });
+    }
     @Override
     public void scrollToPage(int pageIndex) {
         mViewPager.setCurrentItem(pageIndex);

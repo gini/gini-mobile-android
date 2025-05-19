@@ -48,6 +48,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.BundleCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavDestination;
 
@@ -782,6 +783,17 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         if (!ContextHelper.isTablet(mFragment.getActivity())) {
             mScanTextView = view.findViewById(R.id.gc_camera_title);
+        }
+        adjustHeightToErrorDetectionLayout();
+    }
+
+    private void adjustHeightToErrorDetectionLayout() {
+        final Activity activity = mFragment.getActivity();
+        if (activity != null && ContextHelper.isFontScaled(activity)) {
+            NestedScrollView scrollView = mDetectionErrorLayout.findViewById(R.id.gc_scroll_container);
+            ViewGroup.LayoutParams params = scrollView.getLayoutParams();
+            params.height = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.gc_large_100);
+            scrollView.setLayoutParams(params);
         }
     }
 
