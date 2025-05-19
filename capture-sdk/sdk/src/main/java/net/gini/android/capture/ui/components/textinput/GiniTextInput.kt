@@ -9,11 +9,14 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,11 +82,19 @@ fun GiniTextInput(
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
-    
+
+    val fieldState = remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = text,
+                selection = TextRange(text.length)
+            )
+        )
+    }
     
     TextField(
         modifier = modifier.then(Modifier.focusRequester(focusRequester)),
-        value = text,
+        value = fieldState.value,
         enabled = enabled,
         keyboardOptions = keyboardOptions,
         textStyle = GiniTheme.typography.subtitle1,
@@ -116,7 +127,10 @@ fun GiniTextInput(
                 errorContainerColor = containerUnfocused,
             )
         },
-        onValueChange = onValueChange,
+        onValueChange = { newValue ->
+            fieldState.value = newValue
+            onValueChange(newValue.text)
+        },
         trailingIcon = trailingContent,
         supportingText = supportingText,
     )
@@ -125,6 +139,9 @@ fun GiniTextInput(
         if (shouldFieldShowKeyboard) {
             focusRequester.requestFocus()
             keyboardController?.show()
+            fieldState.value = fieldState.value.copy(
+                selection = TextRange(fieldState.value.text.length)
+            )
         }
     }
 }

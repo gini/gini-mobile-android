@@ -59,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -1057,12 +1058,13 @@ private fun FooterSectionWithoutCustomBottomBar(
     onHelpClicked: () -> Unit,
     onProceedClicked: () -> Unit,
 ) {
+    val isTablet: Boolean = booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet)
 
-    if (isLandScape) {
+    if (isLandScape && !isTablet) {
         FooterSectionWithoutCustomBottomBarLandScape(
             colors, isBottomNavigationBarEnabled, modifier,
             isSkontoSectionActive, discountLabelText, totalPriceText,
-            savedAmountText, onBackClicked
+            savedAmountText, onProceedClicked
         )
     } else {
         FooterSectionWithoutCustomBottomBarPortrait(
