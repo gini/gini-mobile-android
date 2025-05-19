@@ -1062,7 +1062,7 @@ private fun FooterSectionWithoutCustomBottomBar(
         FooterSectionWithoutCustomBottomBarLandScape(
             colors, isBottomNavigationBarEnabled, modifier,
             isSkontoSectionActive, discountLabelText, totalPriceText,
-            savedAmountText, onBackClicked
+            savedAmountText, onProceedClicked
         )
     } else {
         FooterSectionWithoutCustomBottomBarPortrait(
