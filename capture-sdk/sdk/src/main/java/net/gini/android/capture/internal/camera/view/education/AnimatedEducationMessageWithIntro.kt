@@ -1,4 +1,4 @@
-package net.gini.android.capture.internal.camera.view
+package net.gini.android.capture.internal.camera.view.education
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,15 +25,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.R
-import net.gini.android.capture.internal.qreducation.model.QrEducationType
 import net.gini.android.capture.ui.theme.GiniTheme
 
 @Composable
-internal fun QrCodeEducationPopupContent(
+internal fun AnimatedEducationMessageWithIntro(
+    message: String,
+    imagePainter: Painter,
     modifier: Modifier = Modifier,
-    qrEducationType: QrEducationType,
     introductionMessageDelay: Long = 1500L,
     mainMessageDuration: Long = 3000L,
+    animationKey: Any,
     onComplete: () -> Unit,
 ) {
     val duration = introductionMessageDelay + mainMessageDuration
@@ -44,12 +44,6 @@ internal fun QrCodeEducationPopupContent(
             .background(Color.Black.copy(alpha = 0.75f))
             .fillMaxSize()
     ) {
-        QrCodeStatusBadge(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 32.dp)
-        )
-
         val value = remember {
             androidx.compose.animation.core.Animatable(
                 initialValue = 0f,
@@ -57,7 +51,7 @@ internal fun QrCodeEducationPopupContent(
             )
         }
 
-        LaunchedEffect(qrEducationType) {
+        LaunchedEffect(animationKey) {
             value.animateTo(duration.toFloat(), tween(duration.toInt()))
             onComplete()
         }
@@ -68,7 +62,7 @@ internal fun QrCodeEducationPopupContent(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Message(
+            EducationMessage(
                 message = stringResource(R.string.gc_qr_education_intro_message),
                 imagePainter = painterResource(R.drawable.gc_qr_code_education_intro_image)
             )
@@ -80,48 +74,17 @@ internal fun QrCodeEducationPopupContent(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            when (qrEducationType) {
-                QrEducationType.PHOTO_DOC -> {
-                    Message(
-                        modifier = Modifier.align(Alignment.Center),
-                        message = stringResource(R.string.gc_qr_education_photo_doc_message),
-                        imagePainter = painterResource(R.drawable.gc_qr_code_education_photo_doc_image)
-                    )
-                }
-
-                QrEducationType.UPLOAD_PICTURE -> {
-                    Message(
-                        modifier = Modifier.align(Alignment.Center),
-                        message = stringResource(R.string.gc_qr_education_upload_picture_message),
-                        imagePainter = painterResource(R.drawable.gc_qr_code_education_upload_picture_image)
-                    )
-                }
-            }
-
+            EducationMessage(
+                modifier = Modifier.align(Alignment.Center),
+                message = message,
+                imagePainter = imagePainter
+            )
         }
     }
 }
 
 @Composable
-private fun QrCodeStatusBadge(
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
-    Text(
-        modifier = modifier
-            .background(
-                Color(context.getColor(R.color.gc_success_05)),
-                shape = RoundedCornerShape(4.dp)
-            )
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        text = stringResource(R.string.gc_qr_code_detected),
-        color = Color(context.getColor(R.color.gc_light_01)),
-        style = GiniTheme.typography.caption1
-    )
-}
-
-@Composable
-private fun Message(
+internal fun EducationMessage(
     modifier: Modifier = Modifier,
     message: String,
     imagePainter: Painter,
@@ -146,12 +109,11 @@ private fun Message(
 
 @Composable
 @Preview
-private fun QrCodeEducationPopupPreview(
-) {
-    GiniTheme {
-        QrCodeEducationPopupContent(
-            qrEducationType = QrEducationType.PHOTO_DOC,
-            onComplete = { /* no-op */ }
-        )
-    }
+private fun AnimatedEducationMessageWithIntroductionPreview() {
+    AnimatedEducationMessageWithIntro(
+        message = stringResource(R.string.gc_qr_education_photo_doc_message),
+        imagePainter = painterResource(R.drawable.gc_qr_code_education_photo_doc_image),
+        onComplete = { /* no-op */ },
+        animationKey = Unit,
+    )
 }

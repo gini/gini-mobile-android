@@ -21,12 +21,14 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
+import net.gini.android.capture.analysis.education.EducationCompleteListener;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
@@ -75,6 +77,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private boolean isScanAnimationActive;
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
     UserAnalyticsEventTracker userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
+    AnalysisFragmentExtension fragmentExtension = new AnalysisFragmentExtension();
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
@@ -142,6 +145,18 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             });
         if (mAnalysisMessageTextView != null)
             mAnalysisMessageTextView.setVisibility(View.GONE);
+    }
+
+    void showEducation(EducationCompleteListener listener) {
+        fragmentExtension.showEducation(() -> {
+            hideEducation();
+            listener.onComplete();
+            return Unit.INSTANCE;
+        });
+    }
+
+    void hideEducation() {
+        fragmentExtension.hideEducation();
     }
 
     @Override
@@ -250,6 +265,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                              final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_analysis, container, false);
         bindViews(view);
+        fragmentExtension.bindViews(view);
         setTopBarInjectedViewContainer();
         setLoadingIndicatorViewContainer();
         createHintsAnimator(view);

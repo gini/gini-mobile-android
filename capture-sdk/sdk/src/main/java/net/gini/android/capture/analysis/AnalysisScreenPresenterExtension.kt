@@ -1,9 +1,31 @@
 package net.gini.android.capture.analysis
 
+import kotlinx.coroutines.runBlocking
+import net.gini.android.capture.Document
+import net.gini.android.capture.GiniCaptureError
+import net.gini.android.capture.analysis.AnalysisScreenContract.View
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.document.GiniCaptureDocument
+import net.gini.android.capture.document.GiniCaptureDocumentError
+import net.gini.android.capture.document.GiniCaptureMultiPageDocument
+import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseCase
+import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
+import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType.UPLOAD_PICTURE
+import net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty
+import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.tracking.AnalysisScreenEvent
+import net.gini.android.capture.tracking.EventTrackingHelper
 
-internal open class AnalysisScreenPresenterExtension {
+internal class AnalysisScreenPresenterExtension(
+    private val view: View
+) {
+
+    var listener: AnalysisFragmentListener? = null
+
 
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()
@@ -11,4 +33,70 @@ internal open class AnalysisScreenPresenterExtension {
     val attachDocToTransactionDialogProvider: AttachedToTransactionDocumentProvider
             by getGiniCaptureKoin().inject()
 
+    private val getInvoiceEducationTypeUseCase: GetInvoiceEducationTypeUseCase
+            by getGiniCaptureKoin().inject()
+    private val incrementInvoiceRecognizedCounterUseCase: IncrementInvoiceRecognizedCounterUseCase
+            by getGiniCaptureKoin().inject()
+
+    fun getAnalysisFragmentListenerOrNoOp(): AnalysisFragmentListener {
+        return listener ?: noOpListener
+    }
+
+    fun proceedSuccessNoExtractions(
+        document: GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
+    ) {
+        showEducationIfNeeded {
+            EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS)
+            getAnalysisFragmentListenerOrNoOp()
+                .onProceedToNoExtractionsScreen(document)
+        }
+    }
+
+    fun proceedWithExtractions(resultHolder: AnalysisInteractor.ResultHolder) {
+        showEducationIfNeeded {
+            getAnalysisFragmentListenerOrNoOp()
+                .onExtractionsAvailable(
+                    getMapOrEmpty(resultHolder.extractions),
+                    getMapOrEmpty(resultHolder.compoundExtractions),
+                    getListOrEmpty(resultHolder.returnReasons)
+                )
+        }
+    }
+
+    private fun showEducationIfNeeded(onComplete: () -> Unit) = runBlocking {
+        val type = getInvoiceEducationTypeUseCase.execute()
+        when (type) {
+            UPLOAD_PICTURE -> {
+                view.showEducation {
+                    runBlocking { incrementInvoiceRecognizedCounterUseCase.execute() }
+                    onComplete.invoke()
+                }
+            }
+
+            null -> onComplete.invoke()
+        }
+    }
+
+    private val noOpListener: AnalysisFragmentListener = object : AnalysisFragmentListener {
+
+        override fun onError(error: GiniCaptureError) {
+            /* no-op */
+        }
+
+        override fun onExtractionsAvailable(
+            extractions: Map<String, GiniCaptureSpecificExtraction>,
+            compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
+            returnReasons: List<GiniCaptureReturnReason>
+        ) {
+            /* no-op */
+        }
+
+        override fun onProceedToNoExtractionsScreen(document: Document) {
+            /* no-op */
+        }
+
+        override fun onDefaultPDFAppAlertDialogCancelled() {
+            /* no-op */
+        }
+    }
 }

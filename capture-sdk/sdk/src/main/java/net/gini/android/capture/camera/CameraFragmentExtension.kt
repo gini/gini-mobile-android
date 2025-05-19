@@ -2,7 +2,7 @@ package net.gini.android.capture.camera
 
 import kotlinx.coroutines.runBlocking
 import net.gini.android.capture.di.getGiniCaptureKoin
-import net.gini.android.capture.internal.camera.view.QRCodeEducationPopup
+import net.gini.android.capture.internal.camera.view.education.qrcode.QRCodeEducationPopup
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData
 import net.gini.android.capture.internal.qreducation.GetQrEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementQrCodeRecognizedCounterUseCase
