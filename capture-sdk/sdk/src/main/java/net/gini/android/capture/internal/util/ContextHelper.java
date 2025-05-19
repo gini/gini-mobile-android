@@ -51,4 +51,11 @@ public final class ContextHelper {
 
     private ContextHelper() {
     }
+
+    /**
+     * This method tells us if the fonts are more OR equal to 150% of scale.
+     */
+    public static boolean isFontScaled(Context context) {
+        return context.getResources().getConfiguration().fontScale >= 1.5;
+    }
 }
