@@ -38,7 +38,7 @@
             <net.gini.android.capture.view.InjectedViewContainer
                 android:id="@+id/digital_invoice_image_container"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_large_96"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.5"
