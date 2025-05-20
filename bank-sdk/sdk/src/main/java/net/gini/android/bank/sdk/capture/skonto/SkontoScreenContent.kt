@@ -62,6 +62,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -944,6 +947,9 @@ private fun WithoutSkontoSection(
             }
             GiniAmountTextInput(
                 modifier = Modifier
+                    .semantics { 
+                        liveRegion = LiveRegionMode.Assertive
+                    }
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .onFocusChanged {
