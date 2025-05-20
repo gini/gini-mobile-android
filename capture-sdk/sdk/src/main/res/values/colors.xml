@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="gc_accent_01">#007BFF</color>
+    <color name="gc_accent_01">#006ECF</color>
     <color name="gc_accent_02">#3193FD</color>
     <color name="gc_accent_03">#62ACFB</color>
     <color name="gc_accent_04">#93C4F9</color>
