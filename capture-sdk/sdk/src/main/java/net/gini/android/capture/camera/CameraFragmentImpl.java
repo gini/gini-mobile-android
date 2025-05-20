@@ -296,6 +296,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         } else {
             showQRCodeViewWithDelay(paymentQRCodeData, qrCodeContent);
         }
+
+        mInterfaceHidden = true;
     }
 
     private boolean isPaymentQRCodeDetectionInProgress() {
