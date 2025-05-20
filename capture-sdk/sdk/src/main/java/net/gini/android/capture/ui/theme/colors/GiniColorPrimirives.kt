@@ -20,7 +20,7 @@ data class GiniColorPrimitives(
     val accent05: Color = Color(0xFFC4DDF7),
 
     val dark01: Color = Color(0xFF000000),
-    val dark02: Color = Color(0xFF121212),
+    val dark02: Color = Color(0xFF161616),
     val dark03: Color = Color(0xFF313131),
     val dark04: Color = Color(0xFF4A4A4A),
     val dark05: Color = Color(0xFF626262),
