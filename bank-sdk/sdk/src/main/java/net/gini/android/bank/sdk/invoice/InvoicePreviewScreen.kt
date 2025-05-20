@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -303,13 +303,18 @@ private fun ImagesList(
         onScaleChanged = onScaleChanged,
         minScale = minZoom,
     ) {
-        items(pages) {
+        itemsIndexed(pages) { index, page ->
+            val pageNumberText = stringResource(
+                id = R.string.page_number_invoice_preview_description,
+                index + 1
+            )
+
             Image(
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .fillMaxWidth(),
-                bitmap = it.asImageBitmap(),
-                contentDescription = null,
+                bitmap = page.asImageBitmap(),
+                contentDescription = pageNumberText,
                 contentScale =
                     if (isLandScape)
                         ContentScale.FillHeight
