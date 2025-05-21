@@ -73,7 +73,7 @@ import net.gini.android.capture.internal.camera.api.UIExecutor;
 import net.gini.android.capture.internal.camera.api.camerax.CameraXController;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoEdit;
-import net.gini.android.capture.internal.camera.view.QRCodeEducationPopup;
+import net.gini.android.capture.internal.camera.view.education.qrcode.QRCodeEducationPopup;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
 import net.gini.android.capture.internal.fileimport.FileChooserFragment;
 import net.gini.android.capture.internal.fileimport.FileChooserResult;

@@ -1,4 +1,4 @@
-package net.gini.android.capture.internal.camera.view
+package net.gini.android.capture.internal.camera.view.education.qrcode
 
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.isVisible
