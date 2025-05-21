@@ -179,9 +179,9 @@
     <!--   region Qr Education -->
     <string name="gc_qr_education_intro_message">In case you didn’t know...</string>
     <string name="gc_qr_education_photo_doc_message">You can take photos of receipts or remittance slips – even without a QR code</string>
-    <string name="gc_qr_education_upload_picture_message">Upload PDFs, images, or GIFs.</string>
+    <string name="gc_qr_education_upload_picture_message">You can upload PDFs, images, or GIFs</string>
     <!--   endregion -->
     <!--   region Invoice Education -->
-    <string name="gc_invoice_education_message">Upload PDFs, images, or GIFs.</string>
+    <string name="gc_invoice_education_message">You can upload PDFs, images, or GIFs</string>
     <!--   endregion -->
 </resources>
