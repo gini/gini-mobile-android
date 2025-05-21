@@ -192,6 +192,7 @@ internal constructor(
             isSkontoEnabled = configuration.isSkontoEnabled,
             isReturnAssistantEnabled = configuration.isReturnAssistantEnabled,
             isTransactionDocsEnabled = configuration.transactionDocsEnabled,
+            isQrCodeEducationEnabled = configuration.qrCodeEducationEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
         )
 
