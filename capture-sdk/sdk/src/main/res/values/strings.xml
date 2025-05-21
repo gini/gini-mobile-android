@@ -195,12 +195,11 @@
     <string name="gc_qr_engagement_btn_next">Weiter</string>
     <!--   endregion -->
     <string name="gc_detection_error_layout_description">QR-Code scannen ist derzeit nicht verfügbar. Bitte fotografieren Sie stattdessen Ihre Rechnung.</string>
-    <!--   region Qr Education -->
+    <!--   region Education -->
+    <string name="gc_education_loading">analysieren</string>
     <string name="gc_qr_education_intro_message">Falls Sie es nicht wussten...</string>
     <string name="gc_qr_education_photo_doc_message">Fotografieren Sie direkt ein Zahlungsformular oder eine Rechnung - auch ohne QR-Code</string>
     <string name="gc_qr_education_upload_picture_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
-    <!--   endregion -->
-    <!--   region Invoice Education -->
     <string name="gc_invoice_education_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
     <!--   endregion -->
 </resources>
