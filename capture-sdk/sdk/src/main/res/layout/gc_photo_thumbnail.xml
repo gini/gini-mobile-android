@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="47dp"
         android:adjustViewBounds="true"
+        android:maxWidth="@dimen/gc_large_80"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

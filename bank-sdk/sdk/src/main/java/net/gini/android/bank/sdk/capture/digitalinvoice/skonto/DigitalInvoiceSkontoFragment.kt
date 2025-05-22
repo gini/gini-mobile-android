@@ -45,6 +45,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,7 +84,7 @@ import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.ui.keyboardAsState
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
 import net.gini.android.capture.ui.components.textinput.GiniTextInput
 import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInput
@@ -130,7 +131,6 @@ class DigitalInvoiceSkontoFragment : Fragment() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-        ActivityHelper.forcePortraitOrientationOnPhones(activity)
 
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -175,7 +175,9 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                             findNavController().navigate(
                                 DigitalInvoiceSkontoFragmentDirections.toSkontoHelpFragment()
                             )
-                        }
+                        },
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                        shouldFieldShowKeyboard = viewModel.isKeyboardVisible
                     )
                 }
             }
@@ -194,6 +196,8 @@ private fun ScreenContent(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
+    isLandScape: Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
 
     BackHandler { viewModel.onBackClicked() }
@@ -231,8 +235,10 @@ private fun ScreenContent(
         onInvoiceClicked = viewModel::onInvoiceClicked,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onHelpClicked = viewModel::onHelpClicked,
+        isLandScape = isLandScape,
         onSkontoAmountFieldFocused = viewModel::onSkontoAmountFieldFocused,
-        onDueDateFieldFocused = viewModel::onDueDateFieldFocused
+        onDueDateFieldFocused = viewModel::onDueDateFieldFocused,
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard
     )
 }
 
@@ -251,7 +257,9 @@ private fun ScreenStateContent(
     onDueDateFieldFocused: () -> Unit,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
-    screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors()
+    screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
+    isLandScape : Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     when (state) {
         is SkontoScreenState.Ready -> ScreenReadyState(
@@ -268,7 +276,9 @@ private fun ScreenStateContent(
             customBottomNavBarAdapter = customBottomNavBarAdapter,
             onHelpClicked = onHelpClicked,
             onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
-            onDueDateFieldFocused = onDueDateFieldFocused
+            onDueDateFieldFocused = onDueDateFieldFocused,
+            isLandScape = isLandScape,
+            shouldFieldShowKeyboard = shouldFieldShowKeyboard
         )
     }
 
@@ -290,6 +300,8 @@ private fun ScreenReadyState(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
+    isLandScape : Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
 
     val scrollState = rememberScrollState()
@@ -359,6 +371,8 @@ private fun ScreenReadyState(
                     skontoAmountValidationError = state.skontoAmountValidationError,
                     onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
                     onDueDateFieldFocued = onDueDateFieldFocused,
+                    isLandScape = isLandScape,
+                    shouldFieldShowKeyboard = shouldFieldShowKeyboard
                 )
             }
         }
@@ -545,11 +559,13 @@ private fun SkontoSection(
     colors: DigitalInvoiceSkontoSectionColors,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
+    isLandScape : Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
 
-    var isDatePickerVisible by remember { mutableStateOf(false) }
+    var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
         modifier = modifier,
         shape = RectangleShape,
@@ -671,7 +687,8 @@ private fun SkontoSection(
                 isError = skontoAmountValidationError != null,
                 supportingText = skontoAmountValidationError?.toErrorMessage(
                     resources = resources,
-                )
+                ),
+                shouldFieldShowKeyboard = shouldFieldShowKeyboard
             )
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
@@ -716,7 +733,8 @@ private fun SkontoSection(
                 onDueDateChanged(it)
             },
             date = dueDate,
-            selectableDates = getSkontoSelectableDates()
+            selectableDates = getSkontoSelectableDates(),
+            isLandScape = isLandScape
         )
     }
 }
@@ -900,7 +918,8 @@ private fun ScreenReadyStatePreview() {
             onHelpClicked = {},
             customBottomNavBarAdapter = null,
             onSkontoAmountFieldFocused = {},
-            onDueDateFieldFocused = {}
+            onDueDateFieldFocused = {},
+            isLandScape = false
         )
     }
 }

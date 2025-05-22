@@ -1,6 +1,5 @@
 package net.gini.android.capture.review.multipage;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
@@ -49,6 +48,7 @@ import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.CancelListener;
+import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
@@ -146,7 +146,6 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        forcePortraitOrientationOnPhones(getActivity());
         mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
@@ -298,6 +297,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         if (mMultiPageDocument != null) {
             updateNextButtonVisibility();
             initRecyclerView();
+            delayWithBlueRect();
         }
     }
 
@@ -326,6 +326,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     //Look for the page in the middle
     //Make it blue
     private View showHideBlueRect(int visibility) {
+        // First clear all the already selected tabs
+        if (visibility == View.VISIBLE) clearAllBlueRect();
         View mChild = mSnapHelper.findSnapView(mSnapManager);
 
         if (mChild != null) {
@@ -445,7 +447,12 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         mRecyclerView = view.findViewById(R.id.gc_pager_recycler_view);
         injectedLoadingIndicatorContainer = view.findViewById(R.id.gc_injected_loading_indicator_container);
         mProcessDocumentsWrapper = view.findViewById(R.id.gc_process_documents_wrapper);
-        setReviewNavigationBarBottomAdapter(view);
+
+        // Please Do not remove the below check [ContextHelper.isPortraitOrTablet(requireContext())], as we have different
+        // layouts for landscape, we don't need bottom bar in landscape mode only because of repositioning related to buttons.
+        // In phones and tablets regardless of orientation this bottom bar is needed.
+        if (ContextHelper.isPortraitOrTablet(requireContext()))
+            setReviewNavigationBarBottomAdapter(view);
     }
 
     private void setInjectedLoadingIndicatorContainer() {
@@ -505,7 +512,10 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void hideViewsIfBottomBarEnabled() {
-        mProcessDocumentsWrapper.setVisibility(View.GONE);
+        // Please Do not remove the below check [ContextHelper.isPortraitOrTablet(requireContext())], as we have different
+        // layouts for landscape in phone only!!  and in landscape (phone only) these buttons should not be hidden.
+        if (ContextHelper.isPortraitOrTablet(requireContext()))
+            mProcessDocumentsWrapper.setVisibility(View.GONE);
     }
 
     //Add empty tabs to present dots on the screen
@@ -545,7 +555,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         for (int i = 0; i < mPreviewPagesAdapter.getItemCount(); i++) {
             View child = mSnapManager.getChildAt(i);
             if (child != null) {
-                ConstraintLayout c = child.findViewById(R.id.gc_image_wrapper);
+                View c = child.findViewById(R.id.gc_image_preview_root);
                 if (c != null) {
                     c.findViewById(R.id.gc_image_selected_rect)
                             .setVisibility(View.INVISIBLE);
@@ -714,6 +724,9 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             }
         } else {
             isBottomNavigationBarContinueButtonEnabled = enabled;
+            if (mReviewNavigationBarBottomAdapter == null) {
+                return;
+            }
             mReviewNavigationBarBottomAdapter.modifyAdapterIfOwned(injectedViewAdapter -> {
                 injectedViewAdapter.setContinueButtonEnabled(enabled);
                 return Unit.INSTANCE;
