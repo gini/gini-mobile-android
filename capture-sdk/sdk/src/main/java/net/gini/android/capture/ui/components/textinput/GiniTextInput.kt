@@ -9,7 +9,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -82,19 +81,13 @@ fun GiniTextInput(
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
-
-    val fieldState = remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = text,
-                selection = TextRange(text.length)
-            )
-        )
-    }
     
     TextField(
         modifier = modifier.then(Modifier.focusRequester(focusRequester)),
-        value = fieldState.value,
+        value = TextFieldValue(
+            text = text,
+            selection = TextRange(text.length)
+        ),
         enabled = enabled,
         keyboardOptions = keyboardOptions,
         textStyle = GiniTheme.typography.subtitle1,
@@ -128,7 +121,6 @@ fun GiniTextInput(
             )
         },
         onValueChange = { newValue ->
-            fieldState.value = newValue
             onValueChange(newValue.text)
         },
         trailingIcon = trailingContent,
@@ -139,9 +131,6 @@ fun GiniTextInput(
         if (shouldFieldShowKeyboard) {
             focusRequester.requestFocus()
             keyboardController?.show()
-            fieldState.value = fieldState.value.copy(
-                selection = TextRange(fieldState.value.text.length)
-            )
         }
     }
 }
