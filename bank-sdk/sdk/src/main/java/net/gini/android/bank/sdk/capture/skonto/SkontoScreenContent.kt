@@ -9,6 +9,7 @@
 package net.gini.android.bank.sdk.capture.skonto
 
 import android.icu.util.Calendar
+import android.view.KeyEvent
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -54,11 +55,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -615,6 +619,7 @@ private fun SkontoSection(
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
+    val focusManager = LocalFocusManager.current
 
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
@@ -724,6 +729,19 @@ private fun SkontoSection(
                 currencyCode = amount.currency.name,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .onPreviewKeyEvent { keyEvent ->
+                        if (keyEvent.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_TAB &&
+                            keyEvent.nativeKeyEvent.action == KeyEvent.ACTION_DOWN
+                        ) {
+
+                            if (keyEvent.nativeKeyEvent.isShiftPressed) {
+                                focusManager.moveFocus(FocusDirection.Previous)
+                            } else {
+                                focusManager.moveFocus(FocusDirection.Next)
+                            }
+                            true
+                        } else false
+                    }
                     .padding(top = 16.dp)
                     .onFocusChanged {
                         if (it.isFocused) {
@@ -762,6 +780,7 @@ private fun SkontoSection(
 
             GiniTextInput(
                 modifier = Modifier
+                    .focusable()
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .focusable(false),
@@ -910,6 +929,7 @@ private fun WithoutSkontoSection(
     shouldFieldShowKeyboard: Boolean = false
 ) {
     val resources = LocalContext.current.resources
+    val focusManager = LocalFocusManager.current
 
     Card(
         modifier = modifier,
@@ -956,7 +976,20 @@ private fun WithoutSkontoSection(
                         if (it.isFocused) {
                             onFullAmountFieldFocused()
                         }
-                    },
+                    }.onPreviewKeyEvent { keyEvent ->
+                        if (keyEvent.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_TAB &&
+                            keyEvent.nativeKeyEvent.action == KeyEvent.ACTION_DOWN
+                        ) {
+
+                            if (keyEvent.nativeKeyEvent.isShiftPressed) {
+                                focusManager.moveFocus(FocusDirection.Previous)
+                            } else {
+                                focusManager.moveFocus(FocusDirection.Next)
+                            }
+                            true
+                        } else false
+                    }
+                ,
                 enabled = isActive,
                 colors = colors.amountFieldColors,
                 amount = amount.value,
