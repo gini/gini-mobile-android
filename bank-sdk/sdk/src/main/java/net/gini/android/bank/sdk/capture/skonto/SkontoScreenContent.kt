@@ -56,6 +56,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -730,17 +731,7 @@ private fun SkontoSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .onPreviewKeyEvent { keyEvent ->
-                        if (keyEvent.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_TAB &&
-                            keyEvent.nativeKeyEvent.action == KeyEvent.ACTION_DOWN
-                        ) {
-
-                            if (keyEvent.nativeKeyEvent.isShiftPressed) {
-                                focusManager.moveFocus(FocusDirection.Previous)
-                            } else {
-                                focusManager.moveFocus(FocusDirection.Next)
-                            }
-                            true
-                        } else false
+                        handleTabKeyEvent(keyEvent, focusManager)
                     }
                     .padding(top = 16.dp)
                     .onFocusChanged {
@@ -976,18 +967,9 @@ private fun WithoutSkontoSection(
                         if (it.isFocused) {
                             onFullAmountFieldFocused()
                         }
-                    }.onPreviewKeyEvent { keyEvent ->
-                        if (keyEvent.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_TAB &&
-                            keyEvent.nativeKeyEvent.action == KeyEvent.ACTION_DOWN
-                        ) {
-
-                            if (keyEvent.nativeKeyEvent.isShiftPressed) {
-                                focusManager.moveFocus(FocusDirection.Previous)
-                            } else {
-                                focusManager.moveFocus(FocusDirection.Next)
-                            }
-                            true
-                        } else false
+                    }
+                    .onPreviewKeyEvent { keyEvent ->
+                        handleTabKeyEvent(keyEvent, focusManager)
                     }
                 ,
                 enabled = isActive,
@@ -1225,6 +1207,25 @@ private fun FooterSectionWithoutCustomBottomBarLandScape(
     }
 }
 
+private fun handleTabKeyEvent(
+    event: androidx.compose.ui.input.key.KeyEvent,
+    focusManager: FocusManager
+): Boolean {
+    val nativeEvent = event.nativeKeyEvent
+    val isTab = nativeEvent.keyCode == KeyEvent.KEYCODE_TAB
+    val isDown = nativeEvent.action == KeyEvent.ACTION_DOWN
+
+    if (!isTab || !isDown) return false
+
+    val direction = if (nativeEvent.isShiftPressed) {
+        FocusDirection.Previous
+    } else {
+        FocusDirection.Next
+    }
+
+    focusManager.moveFocus(direction)
+    return true
+}
 
 @Composable
 private fun FooterSectionWithoutCustomBottomBarPortrait(
