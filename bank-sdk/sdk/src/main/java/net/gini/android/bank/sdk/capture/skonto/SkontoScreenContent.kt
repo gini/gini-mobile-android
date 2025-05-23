@@ -69,7 +69,6 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -627,7 +626,6 @@ private fun SkontoSection(
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
     val focusManager = LocalFocusManager.current
-    val currentView = LocalView.current
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
         modifier = modifier,
@@ -682,38 +680,13 @@ private fun SkontoSection(
 
             val remainingDaysText = getSkontoRemainingDays(infoPaymentInDays)
 
-            val infoBannerText = when (edgeCase) {
-                SkontoEdgeCase.PayByCashOnly ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_message,
-                        discountPercentageFormatter.format(animatedDiscountAmount),
-                        remainingDaysText
-                    )
-
-                SkontoEdgeCase.PayByCashToday ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
-                        discountPercentageFormatter.format(animatedDiscountAmount)
-                    )
-
-                SkontoEdgeCase.SkontoExpired ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_date_expired_message,
-                        discountPercentageFormatter.format(animatedDiscountAmount)
-                    )
-
-                SkontoEdgeCase.SkontoLastDay ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_pay_today_message,
-                        discountPercentageFormatter.format(animatedDiscountAmount)
-                    )
-
-                else -> stringResource(
-                    id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
-                    remainingDaysText,
-                    discountPercentageFormatter.format(animatedDiscountAmount)
-                )
-            }
+            // Use the helper function to get the info banner text
+            val infoBannerText = getInfoBannerText(
+                edgeCase = edgeCase,
+                discountPercentageFormatter = discountPercentageFormatter,
+                animatedDiscountAmount = animatedDiscountAmount,
+                remainingDaysText = remainingDaysText
+            )
 
             InfoBanner(
                 text = infoBannerText,
@@ -844,6 +817,47 @@ private fun getSkontoSelectableDates() = object : SelectableDates {
     override fun isSelectableYear(year: Int): Boolean {
         return (minDateCalendar.get(Calendar.YEAR)..maxDateCalendar.get(Calendar.YEAR))
             .contains(year)
+    }
+}
+
+@Composable
+private fun getInfoBannerText(
+    edgeCase: SkontoEdgeCase?,
+    discountPercentageFormatter: SkontoDiscountPercentageFormatter,
+    animatedDiscountAmount: Float,
+    remainingDaysText: String
+): String {
+    return when (edgeCase) {
+        SkontoEdgeCase.PayByCashOnly ->
+            stringResource(
+                id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_message,
+                discountPercentageFormatter.format(animatedDiscountAmount),
+                remainingDaysText
+            )
+
+        SkontoEdgeCase.PayByCashToday ->
+            stringResource(
+                id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
+                discountPercentageFormatter.format(animatedDiscountAmount)
+            )
+
+        SkontoEdgeCase.SkontoExpired ->
+            stringResource(
+                id = R.string.gbs_skonto_section_discount_info_banner_date_expired_message,
+                discountPercentageFormatter.format(animatedDiscountAmount)
+            )
+
+        SkontoEdgeCase.SkontoLastDay ->
+            stringResource(
+                id = R.string.gbs_skonto_section_discount_info_banner_pay_today_message,
+                discountPercentageFormatter.format(animatedDiscountAmount)
+            )
+
+        else -> stringResource(
+            id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
+            remainingDaysText,
+            discountPercentageFormatter.format(animatedDiscountAmount)
+        )
     }
 }
 
