@@ -95,6 +95,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         if (supported) {
             qrStatusTxt.visibility = View.VISIBLE
             qrStatusTxt.text = popupView.context.getString(R.string.gc_qr_code_detected)
+            qrStatusTxt.announceForAccessibility(qrStatusTxt.text)
             qrStatusTxt.background = ContextCompat.getDrawable(
                 popupView.context,
                 R.drawable.gc_qr_code_detected_background

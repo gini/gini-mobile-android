@@ -9,6 +9,7 @@
 package net.gini.android.bank.sdk.capture.skonto
 
 import android.icu.util.Calendar
+import android.view.KeyEvent
 import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -54,14 +55,26 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -612,7 +625,7 @@ private fun SkontoSection(
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
-
+    val focusManager = LocalFocusManager.current
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
         modifier = modifier,
@@ -667,38 +680,13 @@ private fun SkontoSection(
 
             val remainingDaysText = getSkontoRemainingDays(infoPaymentInDays)
 
-            val infoBannerText = when (edgeCase) {
-                SkontoEdgeCase.PayByCashOnly ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_message,
-                        discountPercentageFormatter.format(animatedDiscountAmount),
-                        remainingDaysText
-                    )
-
-                SkontoEdgeCase.PayByCashToday ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
-                        discountPercentageFormatter.format(animatedDiscountAmount)
-                    )
-
-                SkontoEdgeCase.SkontoExpired ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_date_expired_message,
-                        discountPercentageFormatter.format(animatedDiscountAmount)
-                    )
-
-                SkontoEdgeCase.SkontoLastDay ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_pay_today_message,
-                        discountPercentageFormatter.format(animatedDiscountAmount)
-                    )
-
-                else -> stringResource(
-                    id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
-                    remainingDaysText,
-                    discountPercentageFormatter.format(animatedDiscountAmount)
-                )
-            }
+            // Use the helper function to get the info banner text
+            val infoBannerText = getInfoBannerText(
+                edgeCase = edgeCase,
+                discountPercentageFormatter = discountPercentageFormatter,
+                animatedDiscountAmount = animatedDiscountAmount,
+                remainingDaysText = remainingDaysText
+            )
 
             InfoBanner(
                 text = infoBannerText,
@@ -721,6 +709,9 @@ private fun SkontoSection(
                 currencyCode = amount.currency.name,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .onPreviewKeyEvent { keyEvent ->
+                        handleTabKeyEvent(keyEvent, focusManager)
+                    }
                     .padding(top = 16.dp)
                     .onFocusChanged {
                         if (it.isFocused) {
@@ -759,6 +750,17 @@ private fun SkontoSection(
 
             GiniTextInput(
                 modifier = Modifier
+                    .onKeyEvent { keyEvent ->
+                        if (keyEvent.type == KeyEventType.KeyUp &&
+                            (keyEvent.key == Key.Enter || keyEvent.key == Key.DirectionCenter)
+                        ) {
+                            isDatePickerVisible = true
+                            onDueDateFieldFocued()
+                            true
+                        } else {
+                            false
+                        }
+                    }
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .focusable(false),
@@ -815,6 +817,47 @@ private fun getSkontoSelectableDates() = object : SelectableDates {
     override fun isSelectableYear(year: Int): Boolean {
         return (minDateCalendar.get(Calendar.YEAR)..maxDateCalendar.get(Calendar.YEAR))
             .contains(year)
+    }
+}
+
+@Composable
+private fun getInfoBannerText(
+    edgeCase: SkontoEdgeCase?,
+    discountPercentageFormatter: SkontoDiscountPercentageFormatter,
+    animatedDiscountAmount: Float,
+    remainingDaysText: String
+): String {
+    return when (edgeCase) {
+        SkontoEdgeCase.PayByCashOnly ->
+            stringResource(
+                id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_message,
+                discountPercentageFormatter.format(animatedDiscountAmount),
+                remainingDaysText
+            )
+
+        SkontoEdgeCase.PayByCashToday ->
+            stringResource(
+                id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
+                discountPercentageFormatter.format(animatedDiscountAmount)
+            )
+
+        SkontoEdgeCase.SkontoExpired ->
+            stringResource(
+                id = R.string.gbs_skonto_section_discount_info_banner_date_expired_message,
+                discountPercentageFormatter.format(animatedDiscountAmount)
+            )
+
+        SkontoEdgeCase.SkontoLastDay ->
+            stringResource(
+                id = R.string.gbs_skonto_section_discount_info_banner_pay_today_message,
+                discountPercentageFormatter.format(animatedDiscountAmount)
+            )
+
+        else -> stringResource(
+            id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
+            remainingDaysText,
+            discountPercentageFormatter.format(animatedDiscountAmount)
+        )
     }
 }
 
@@ -907,6 +950,7 @@ private fun WithoutSkontoSection(
     shouldFieldShowKeyboard: Boolean = false
 ) {
     val resources = LocalContext.current.resources
+    val focusManager = LocalFocusManager.current
 
     Card(
         modifier = modifier,
@@ -944,13 +988,20 @@ private fun WithoutSkontoSection(
             }
             GiniAmountTextInput(
                 modifier = Modifier
+                    .semantics {
+                        liveRegion = LiveRegionMode.Assertive
+                    }
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .onFocusChanged {
                         if (it.isFocused) {
                             onFullAmountFieldFocused()
                         }
-                    },
+                    }
+                    .onPreviewKeyEvent { keyEvent ->
+                        handleTabKeyEvent(keyEvent, focusManager)
+                    }
+                ,
                 enabled = isActive,
                 colors = colors.amountFieldColors,
                 amount = amount.value,
@@ -1186,6 +1237,25 @@ private fun FooterSectionWithoutCustomBottomBarLandScape(
     }
 }
 
+private fun handleTabKeyEvent(
+    event: androidx.compose.ui.input.key.KeyEvent,
+    focusManager: FocusManager
+): Boolean {
+    val nativeEvent = event.nativeKeyEvent
+    val isTab = nativeEvent.keyCode == KeyEvent.KEYCODE_TAB
+    val isDown = nativeEvent.action == KeyEvent.ACTION_DOWN
+
+    if (!isTab || !isDown) return false
+
+    val direction = if (nativeEvent.isShiftPressed) {
+        FocusDirection.Previous
+    } else {
+        FocusDirection.Next
+    }
+
+    focusManager.moveFocus(direction)
+    return true
+}
 
 @Composable
 private fun FooterSectionWithoutCustomBottomBarPortrait(
