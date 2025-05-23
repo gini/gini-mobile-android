@@ -61,9 +61,15 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -621,7 +627,7 @@ private fun SkontoSection(
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
     val focusManager = LocalFocusManager.current
-
+    val currentView = LocalView.current
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
         modifier = modifier,
@@ -771,7 +777,17 @@ private fun SkontoSection(
 
             GiniTextInput(
                 modifier = Modifier
-                    .focusable()
+                    .onKeyEvent { keyEvent ->
+                        if (keyEvent.type == KeyEventType.KeyUp &&
+                            (keyEvent.key == Key.Enter || keyEvent.key == Key.DirectionCenter)
+                        ) {
+                            isDatePickerVisible = true
+                            onDueDateFieldFocued()
+                            true
+                        } else {
+                            false
+                        }
+                    }
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .focusable(false),
@@ -958,7 +974,7 @@ private fun WithoutSkontoSection(
             }
             GiniAmountTextInput(
                 modifier = Modifier
-                    .semantics { 
+                    .semantics {
                         liveRegion = LiveRegionMode.Assertive
                     }
                     .fillMaxWidth()
