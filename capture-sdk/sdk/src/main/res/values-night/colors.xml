@@ -2,4 +2,5 @@
 <resources>
     <color name="gc_accent_01">#007FEE</color>
     <color name="gc_dark_05">#CCCCCC</color>
+    <color name="gc_error_02">#FF3B30</color>
 </resources>

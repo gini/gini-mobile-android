@@ -25,10 +25,10 @@
     <color name="gc_success_03">#D0ECD4</color>
     <color name="gc_success_04">#DEEEE1</color>
     <color name="gc_success_05">#048016</color>
-    <color name="gc_error_01">#D9190E</color>
-    <color name="gc_error_02">#FF453A</color>
-    <color name="gc_error_03">#ECD0D0</color>
-    <color name="gc_error_04">#EEDEDE</color>
+    <color name="gc_error_01">#6C2121</color>
+    <color name="gc_error_02">#DD0000</color>
+    <color name="gc_error_03">#EEDEDE</color>
+    <color name="gc_error_04">#F6EEEE</color>
     <color name="gc_error_05">#830801</color>
     <color name="gc_warning_01">#D9A00E</color>
     <color name="gc_warning_02">#FFC73A</color>
