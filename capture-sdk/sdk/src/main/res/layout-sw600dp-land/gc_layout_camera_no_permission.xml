@@ -42,7 +42,7 @@
         android:gravity="center"
         android:lineSpacingExtra="5sp"
         android:text="@string/gc_camera_error_no_permission"
-        android:textColor="@color/gc_dark_06"
+        android:textColor="@color/gc_dark_05"
 
         app:layout_constraintBottom_toTopOf="@id/gc_button_camera_no_permission"
         app:layout_constraintEnd_toEndOf="parent"

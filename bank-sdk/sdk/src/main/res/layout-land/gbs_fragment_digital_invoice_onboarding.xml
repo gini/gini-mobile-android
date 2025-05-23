@@ -54,7 +54,7 @@
                     android:gravity="center"
                     android:lineSpacingExtra="5sp"
                     android:text="@string/gbs_digital_invoice_onboarding_text_2"
-                    android:textColor="@color/gc_dark_06"
+                    android:textColor="@color/gc_dark_05"
                     android:translationY="-2.62sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"

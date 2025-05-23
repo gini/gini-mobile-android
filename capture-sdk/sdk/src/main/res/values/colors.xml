@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="gc_accent_01">#007BFF</color>
+    <color name="gc_accent_01">#006ECF</color>
     <color name="gc_accent_02">#3193FD</color>
     <color name="gc_accent_03">#62ACFB</color>
     <color name="gc_accent_04">#93C4F9</color>
@@ -9,7 +9,7 @@
     <color name="gc_accent_06">#40007BFF</color>
 
     <color name="gc_dark_01">#000000</color>
-    <color name="gc_dark_02">#121212</color>
+    <color name="gc_dark_02">#161616</color>
     <color name="gc_dark_03">#313131</color>
     <color name="gc_dark_04">#4A4A4A</color>
     <color name="gc_dark_05">#626262</color>
