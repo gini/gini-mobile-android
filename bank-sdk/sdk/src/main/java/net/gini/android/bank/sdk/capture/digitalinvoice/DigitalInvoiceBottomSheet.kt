@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -92,6 +93,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+            restoringFromOrientationChange = savedInstanceState != null
             activity?.let {
                 binding = GbsEditItemBottomSheetBinding.inflate(getLayoutInflaterWithGiniCaptureTheme(it.layoutInflater), null, false)
 
@@ -101,13 +103,13 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
                 val alertDialog = builder.create()
 
-                alertDialog.window
-                    ?.decorView
-                    ?.setOnApplyWindowInsetsListener { _, insets ->
-                        val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+                activity?.window?.decorView?.let { view ->
+                    ViewCompat.setOnApplyWindowInsetsListener(view) { _, insetsCompat ->
+                        val imeVisible = insetsCompat.isVisible(WindowInsetsCompat.Type.ime())
                         isKeyboardShowing = imeVisible
-                        insets
+                        insetsCompat
                     }
+                }
 
                 alertDialog.setOnShowListener {
                     restoreKeyboardState(savedInstanceState)
@@ -228,8 +230,10 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     override fun onDestroyView() {
         super.onDestroyView()
-        globalLayoutListener?.let {
-            view?.viewTreeObserver?.removeOnGlobalLayoutListener(it)
+        if (!resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+            globalLayoutListener?.let {
+                binding.root.viewTreeObserver?.removeOnGlobalLayoutListener(it)
+            }
         }
     }
 
