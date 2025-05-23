@@ -20,11 +20,11 @@
     <color name="gc_light_04">#D9D9D9</color>
     <color name="gc_light_05">#CCCCCC</color>
     <color name="gc_light_06">#BFBFBF</color>
-    <color name="gc_success_01">#09B523</color>
-    <color name="gc_success_02">#32D74B</color>
-    <color name="gc_success_03">#D0ECD4</color>
-    <color name="gc_success_04">#DEEEE1</color>
-    <color name="gc_success_05">#048016</color>
+    <color name="gc_success_01">#13822F</color>
+    <color name="gc_success_02">#5DD27A</color>
+    <color name="gc_success_03">#C0EECC</color>
+    <color name="gc_success_04">#EBF9EE</color>
+    <color name="gc_success_05">#165425</color>
     <color name="gc_error_01">#6C2121</color>
     <color name="gc_error_02">#DD0000</color>
     <color name="gc_error_03">#EEDEDE</color>

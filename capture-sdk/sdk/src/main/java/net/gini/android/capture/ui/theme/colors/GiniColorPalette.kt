@@ -259,7 +259,7 @@ internal fun giniLightColorScheme(
             secondary = dark05,
             tertiary = light06,
             accent = accent01,
-            success = success01
+            success = success02
         ),
         card = GiniColorScheme.Card(
             container = light01,
@@ -271,7 +271,7 @@ internal fun giniLightColorScheme(
             contentError = error01
         ),
         badge = GiniColorScheme.Badge(
-            container = success01,
+            container = success02,
             content = light01
         ),
         button = GiniColorScheme.Button(
@@ -388,7 +388,7 @@ internal fun giniDarkColorScheme(
             secondary = dark05,
             tertiary = dark06,
             accent = accent01,
-            success = success01
+            success = success02
         ),
         card = GiniColorScheme.Card(
             container = dark02,
@@ -400,7 +400,7 @@ internal fun giniDarkColorScheme(
             contentError = error01
         ),
         badge = GiniColorScheme.Badge(
-            container = success01,
+            container = success02,
             content = light01
         ),
         button = GiniColorScheme.Button(
