@@ -1,6 +1,11 @@
 package net.gini.android.capture.analysis
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
@@ -38,6 +43,8 @@ internal class AnalysisScreenPresenterExtension(
     private val incrementInvoiceRecognizedCounterUseCase: IncrementInvoiceRecognizedCounterUseCase
             by getGiniCaptureKoin().inject()
 
+    private val educationMutex = Mutex()
+
     fun getAnalysisFragmentListenerOrNoOp(): AnalysisFragmentListener {
         return listener ?: noOpListener
     }
@@ -45,7 +52,7 @@ internal class AnalysisScreenPresenterExtension(
     fun proceedSuccessNoExtractions(
         document: GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
     ) {
-        showEducationIfNeeded {
+        doWhenEducationFinished {
             EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS)
             getAnalysisFragmentListenerOrNoOp()
                 .onProceedToNoExtractionsScreen(document)
@@ -53,7 +60,7 @@ internal class AnalysisScreenPresenterExtension(
     }
 
     fun proceedWithExtractions(resultHolder: AnalysisInteractor.ResultHolder) {
-        showEducationIfNeeded {
+        doWhenEducationFinished {
             getAnalysisFragmentListenerOrNoOp()
                 .onExtractionsAvailable(
                     getMapOrEmpty(resultHolder.extractions),
@@ -63,17 +70,27 @@ internal class AnalysisScreenPresenterExtension(
         }
     }
 
-    private fun showEducationIfNeeded(onComplete: () -> Unit) = runBlocking {
+    fun showLoadingIndicator(
+        onEducationFlowTriggered: () -> Unit
+    ) = runBlocking {
         val type = getInvoiceEducationTypeUseCase.execute()
-        when (type) {
-            UPLOAD_PICTURE -> {
-                view.showEducation {
-                    runBlocking { incrementInvoiceRecognizedCounterUseCase.execute() }
-                    onComplete.invoke()
-                }
+        if (type != null) {
+            view.showEducation {
+                runBlocking { incrementInvoiceRecognizedCounterUseCase.execute() }
+                educationMutex.unlock()
             }
+            educationMutex.lock()
+            onEducationFlowTriggered()
+        } else {
 
-            null -> onComplete.invoke()
+        }
+    }
+
+    private fun doWhenEducationFinished(action: () -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            educationMutex.withLock {
+                action()
+            }
         }
     }
 
