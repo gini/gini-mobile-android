@@ -16,7 +16,7 @@ internal class QRCodeEducationPopup<T> @JvmOverloads constructor(
     var qrCodeContent: T? = null
         private set
 
-    var isShown = false
+    private var isShown = false
         private set
 
     fun show(type: QrEducationType, onComplete: () -> Unit) {
