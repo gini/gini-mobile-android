@@ -1,18 +1,5 @@
 package net.gini.android.capture.camera;
 
-import static net.gini.android.capture.camera.CameraFragment.REQUEST_KEY;
-import static net.gini.android.capture.camera.CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE;
-import static net.gini.android.capture.document.ImageDocument.ImportMethod;
-import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
-import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
-import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
-import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
-import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -23,7 +10,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.Image;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,9 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -119,8 +102,8 @@ import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
@@ -141,6 +124,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+
+import static net.gini.android.capture.camera.CameraFragment.REQUEST_KEY;
+import static net.gini.android.capture.camera.CameraFragment.RESULT_KEY_SHOULD_SCROLL_TO_LAST_PAGE;
+import static net.gini.android.capture.document.ImageDocument.ImportMethod;
+import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
+import static net.gini.android.capture.internal.qrcode.EPSPaymentParser.EXTRACTION_ENTITY_NAME;
+import static net.gini.android.capture.internal.util.AndroidHelper.isMarshmallowOrLater;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.getDocumentImportEnabledFileTypes;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.isMultiPageEnabled;
+import static net.gini.android.capture.internal.util.FeatureConfiguration.isQRCodeScanningEnabled;
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraScreenEvent;
 
 /**
  * Internal use only.
@@ -405,9 +401,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         handleOnBackPressed();
-        if (!ContextHelper.isTablet(mFragment.getActivity()))
-            setNavigationBarVisibility(ContextHelper.isPortraitOrientation(mFragment.getActivity()), mFragment.getActivity());
-
         showGenericErrorIfNeeded(savedInstanceState);
     }
 
@@ -1828,31 +1821,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void hidePaneAnimated() {
         mPaneWrapper.animate().alpha(0.0f);
-    }
-
-    private void setNavigationBarVisibility(boolean shouldShow, Activity activity) {
-        Window window = activity.getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowInsetsController controller = window.getInsetsController();
-            if (controller != null) {
-                if (shouldShow) {
-                    controller.show(WindowInsets.Type.navigationBars());
-                } else {
-                    controller.hide(WindowInsets.Type.navigationBars());
-                    controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-                }
-            }
-        } else {
-            View decorView = window.getDecorView();
-            if (shouldShow) {
-                decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-            } else {
-                decorView.setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                );
-            }
-        }
     }
 
     private void showNoPermissionView() {
