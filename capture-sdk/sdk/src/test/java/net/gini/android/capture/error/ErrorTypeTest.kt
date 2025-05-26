@@ -96,7 +96,7 @@ class ErrorTypeTest {
     @Test
     fun `typeFromError should return UPLOAD when error status is 400 and larger excluding 401 and 499`() {
         for (i in 400..498) {
-            if (i == 401) {
+            if (i == 401 || i == 404) {
                 continue
             }
             // Given
@@ -108,6 +108,17 @@ class ErrorTypeTest {
             // Then
             assertThat(errorType).isEqualTo(ErrorType.UPLOAD)
         }
+    }
+    @Test
+    fun `typeFromError should return GENERAL when error status is 404`() {
+        // Given
+        val error = GiniError(404, null, null)
+
+        // When
+        val errorType = ErrorType.typeFromError(error)
+
+        // Then
+        assertThat(errorType).isEqualTo(ErrorType.GENERAL)
     }
 
     @Test

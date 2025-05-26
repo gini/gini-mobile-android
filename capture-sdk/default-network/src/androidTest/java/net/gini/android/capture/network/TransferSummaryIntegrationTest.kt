@@ -110,7 +110,8 @@ class TransferSummaryIntegrationTest {
             extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("paymentPurpose")!!.value,
             extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("iban")!!.value,
             extractionsBundle.getParcelable<GiniCaptureSpecificExtraction>("bic")!!.value,
-            Amount(BigDecimal("950.00"), AmountCurrency.EUR)
+            Amount(BigDecimal("950.00"), AmountCurrency.EUR),
+            null
         )
 
         // Now we can clean up the capture

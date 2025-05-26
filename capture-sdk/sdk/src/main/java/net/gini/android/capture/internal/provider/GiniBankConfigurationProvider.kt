@@ -12,6 +12,7 @@ class GiniBankConfigurationProvider {
         amplitudeApiKey = "",
         isTransactionDocsEnabled = false,
         isQrCodeEducationEnabled = false,
+        isInstantPaymentEnabled = false
     )
 
     fun provide(): Configuration = configuration

@@ -57,6 +57,13 @@
         android:layout_height="wrap_content"
         android:text="@string/help_screens_bottom_navbar_switch_label" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_showErrorScreenCustomBottomNavbar"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/error_screens_bottom_navbar_switch_label" />
+
     <TextView
         android:id="@+id/tv_showHelpScreenCustomBottomNavbarDescription"
         style="@style/TextAppearance.MaterialComponents.Caption"
