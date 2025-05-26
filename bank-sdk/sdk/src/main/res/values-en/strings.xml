@@ -96,6 +96,7 @@
     <string name="gbs_skonto_invoice_preview_expire_date">Expiry date: %1$s</string>
     <string name="gbs_skonto_invoice_preview_final_amount">Final amount: %1$s</string>
     <string name="gbs_skonto_invoice_preview_full_amount">Full amount: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_try_again">Try Again</string>
     <!--   endregion -->
     <!-- endregion -->
     <!--   region Transaction Docs. Attach Document Dialog TODO-->

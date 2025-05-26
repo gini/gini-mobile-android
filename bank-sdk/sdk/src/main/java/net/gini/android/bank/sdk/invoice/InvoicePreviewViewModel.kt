@@ -2,6 +2,8 @@ package net.gini.android.bank.sdk.invoice
 
 import androidx.lifecycle.ViewModel
 import net.gini.android.bank.sdk.invoice.usecase.LoadInvoiceBitmapsUseCase
+import net.gini.android.capture.error.ErrorType
+import net.gini.android.capture.internal.network.FailureException
 import net.gini.android.capture.network.model.GiniCaptureBox
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
@@ -27,7 +29,7 @@ internal class InvoicePreviewViewModel(
     )
 
     private fun createInitalState() =
-        InvoicePreviewFragmentState(
+        InvoicePreviewFragmentState.Ready(
             screenTitle = screenTitle,
             isLoading = true,
             images = emptyList(),
@@ -56,7 +58,7 @@ internal class InvoicePreviewViewModel(
         )
     }
 
-    private fun init() = intent {
+    internal fun init() = intent {
         analyticsTracker.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             setOf(
@@ -64,14 +66,30 @@ internal class InvoicePreviewViewModel(
             )
         )
 
-        val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
-
-        if (bitmaps != null) {
+        runCatching {
+            reduce { createInitalState() }
+            val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
             reduce {
-                state.copy(
+                InvoicePreviewFragmentState.Ready(
                     isLoading = false,
-                    images = bitmaps
+                    images = bitmaps,
+                    screenTitle = screenTitle,
+                    infoTextLines = infoTextLines,
                 )
+            }
+        }.onFailure {
+            reduce {
+                if (it is FailureException) {
+                    InvoicePreviewFragmentState.Error(
+                        errorType = it.errorType
+                    )
+                } else {
+                    InvoicePreviewFragmentState.Error(
+                        errorType = ErrorType.GENERAL
+                    )
+                }
+
+
             }
         }
     }
