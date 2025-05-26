@@ -256,10 +256,10 @@ internal fun giniLightColorScheme(
         ),
         text = GiniColorScheme.Text(
             primary = dark02,
-            secondary = dark06,
+            secondary = dark05,
             tertiary = light06,
             accent = accent01,
-            success = success01
+            success = success02
         ),
         card = GiniColorScheme.Card(
             container = light01,
@@ -271,7 +271,7 @@ internal fun giniLightColorScheme(
             contentError = error01
         ),
         badge = GiniColorScheme.Badge(
-            container = success01,
+            container = success02,
             content = light01
         ),
         button = GiniColorScheme.Button(
@@ -292,8 +292,8 @@ internal fun giniLightColorScheme(
                 error = error02
             ), label = GiniColorScheme.TextField.Label(
                 focused = accent01,
-                unfocused = dark06,
-                disabled = dark06,
+                unfocused = dark05,
+                disabled = dark05,
                 error = error02
             ), indicator = GiniColorScheme.TextField.Indicator(
                 focused = accent01,
@@ -304,7 +304,7 @@ internal fun giniLightColorScheme(
                 enabled = accent01,
                 error = error02
             ), content = GiniColorScheme.TextField.Content(
-                trailing = dark06
+                trailing = dark05
             )
         ),
         toggles = GiniColorScheme.Toggles(
@@ -385,10 +385,10 @@ internal fun giniDarkColorScheme(
         ),
         text = GiniColorScheme.Text(
             primary = light01,
-            secondary = light06,
+            secondary = dark05,
             tertiary = dark06,
             accent = accent01,
-            success = success01
+            success = success02
         ),
         card = GiniColorScheme.Card(
             container = dark02,
@@ -400,7 +400,7 @@ internal fun giniDarkColorScheme(
             contentError = error01
         ),
         badge = GiniColorScheme.Badge(
-            container = success01,
+            container = success02,
             content = light01
         ),
         button = GiniColorScheme.Button(
@@ -422,8 +422,8 @@ internal fun giniDarkColorScheme(
             ),
             label = GiniColorScheme.TextField.Label(
                 focused = accent01,
-                unfocused = light06,
-                disabled = light06,
+                unfocused = dark05,
+                disabled = dark05,
                 error = error02
             ),
             indicator = GiniColorScheme.TextField.Indicator(
@@ -437,7 +437,7 @@ internal fun giniDarkColorScheme(
                 error = error02
             ),
             content = GiniColorScheme.TextField.Content(
-                trailing = light06
+                trailing = dark05
             )
         ),
         toggles = GiniColorScheme.Toggles(

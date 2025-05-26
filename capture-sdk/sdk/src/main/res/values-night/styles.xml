@@ -12,7 +12,7 @@
         <item name="colorSurfaceInverse">@color/gc_light_04</item>
         <item name="colorOnSurfaceInverse">@color/gc_dark_02</item>
         <item name="gcPageItemBackground">@color/gc_dark_01</item>
-        <item name="gcErrorScreenSubtitle">@color/gc_dark_06</item>
+        <item name="gcErrorScreenSubtitle">@color/gc_dark_05</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 

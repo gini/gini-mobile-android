@@ -13,14 +13,14 @@ import net.gini.android.capture.R
  * resource colors and this class
  */
 data class GiniColorPrimitives(
-    val accent01: Color = Color(0xFF0A84FF),
+    val accent01: Color = Color(0xFF006ECF),
     val accent02: Color = Color(0xFF3193FD),
     val accent03: Color = Color(0xFF62ACFB),
     val accent04: Color = Color(0xFF93C4F9),
     val accent05: Color = Color(0xFFC4DDF7),
 
     val dark01: Color = Color(0xFF000000),
-    val dark02: Color = Color(0xFF121212),
+    val dark02: Color = Color(0xFF161616),
     val dark03: Color = Color(0xFF313131),
     val dark04: Color = Color(0xFF4A4A4A),
     val dark05: Color = Color(0xFF626262),
