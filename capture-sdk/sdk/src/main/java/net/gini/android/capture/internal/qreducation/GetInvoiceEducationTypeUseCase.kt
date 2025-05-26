@@ -1,14 +1,20 @@
 package net.gini.android.capture.internal.qreducation
 
 import kotlinx.coroutines.flow.first
+import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType
 import net.gini.android.capture.internal.storage.InvoiceEducationStorage
 
 internal class GetInvoiceEducationTypeUseCase(
     private val invoiceEducationStorage: InvoiceEducationStorage,
+    private val documentImportEnabledFileTypesProvider: () -> DocumentImportEnabledFileTypes?,
 ) {
 
     suspend fun execute(): InvoiceEducationType? {
+        if (documentImportEnabledFileTypesProvider() == DocumentImportEnabledFileTypes.NONE) {
+            return null
+        }
+
         val count = invoiceEducationStorage.getInvoiceRecognitionCount().first()
         return when {
             UPLOAD_PICTURE_TYPE_VALUE.contains(count) -> InvoiceEducationType.UPLOAD_PICTURE

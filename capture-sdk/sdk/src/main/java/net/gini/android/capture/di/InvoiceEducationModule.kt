@@ -1,5 +1,6 @@
 package net.gini.android.capture.di
 
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
 import net.gini.android.capture.internal.storage.InvoiceEducationStorage
@@ -14,7 +15,10 @@ internal val invoiceEducationModule = module {
     }
     factory {
         GetInvoiceEducationTypeUseCase(
-            invoiceEducationStorage = get()
+            invoiceEducationStorage = get(),
+            documentImportEnabledFileTypesProvider = {
+                runCatching { GiniCapture.getInstance().documentImportEnabledFileTypes }.getOrNull()
+            }
         )
     }
     factory {
