@@ -184,8 +184,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private final CancelListener mCancelListener;
     private final boolean addPages;
 
-    @VisibleForTesting
-    QRCodePopup<PaymentQRCodeData> mPaymentQRCodePopup;
     private QRCodePopup<String> mUnsupportedQRCodePopup;
 
     private View mImageCorners;
@@ -311,7 +309,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                         mQRCodeContent = qrCodeContent;
                         showUnsupportedQRCodePopup();
                     } else {
-                        mPaymentQRCodePopup.show(data);
+                        showQrCodePopup(data, () -> {
+                            handlePaymentQRCodeData(data);
+                            return Unit.INSTANCE;
+                        });
                     }
                 }, 1000);
     }
@@ -321,7 +322,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             mQRCodeContent = qrCodeContent;
             showUnsupportedQRCodePopup();
         } else {
-            mPaymentQRCodePopup.show(data);
+            showQrCodePopup(data, () -> {
+                handlePaymentQRCodeData(data);
+                return Unit.INSTANCE;
+            });
         }
     }
 
