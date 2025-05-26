@@ -341,7 +341,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
             pageIndicator.setImageDrawable(
                     ResourcesCompat.getDrawable(mContext.getResources(),
                             R.drawable.gc_onboarding_page_indicator, mContext.getTheme()));
-            pageIndicator.setImageAlpha(77);
+            pageIndicator.setImageAlpha(102);
             pageIndicator.setTag("pageIndicator");
             return pageIndicator;
         }
@@ -370,7 +370,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         private void deactivatePageIndicators() {
             for (int i = 0; i < mPageIndicators.size(); i++) {
                 final ImageView pageIndicator = mPageIndicators.get(i);
-                pageIndicator.setImageAlpha(77);
+                pageIndicator.setImageAlpha(102);
                 pageIndicator.setContentDescription(mContext.getString(R.string.gc_onboarding_page_indicator_inactive_content_description, i + 1));
             }
         }
