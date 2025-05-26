@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,7 +53,7 @@ internal fun InvoicePreviewScreen(
     viewModel: InvoicePreviewViewModel,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
-    isLandScape : Boolean
+    isLandScape: Boolean
 ) {
     val state by viewModel.collectAsState()
 
@@ -79,8 +80,9 @@ internal fun InvoicePreviewScreen(
             infoTextLines = state.infoTextLines,
             images = state.images,
             onUserZoomedScreenOnce = viewModel::onUserZoomedImage,
-        isLandScape = isLandScape
-    )}
+            isLandScape = isLandScape
+        )
+    }
 }
 
 @Composable
@@ -157,7 +159,8 @@ internal fun InvoiceScreenErrorContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp),
-                text = stringResource(R.string.gbs_skonto_invoice_preview_try_again), onClick = onRetryClicked
+                text = stringResource(R.string.gbs_skonto_invoice_preview_try_again),
+                onClick = onRetryClicked
             )
         }
     }
@@ -184,6 +187,7 @@ internal fun InvoiceScreenReadyContent(
     ) { paddings ->
         Box(
             modifier = modifier
+                .focusable()
                 .padding(paddings)
                 .fillMaxSize()
                 .background(colors.background)
@@ -311,6 +315,7 @@ private fun ImagesList(
 
             Image(
                 modifier = Modifier
+                    .focusable()
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .fillMaxWidth(),
                 bitmap = page.asImageBitmap(),

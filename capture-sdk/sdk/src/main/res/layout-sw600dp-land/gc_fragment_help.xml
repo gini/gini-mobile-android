@@ -40,6 +40,7 @@
                 android:id="@+id/gc_help_items"
                 android:layout_width="@dimen/gc_tablet_width"
                 android:layout_height="wrap_content"
+                android:focusable="true"
                 android:layout_gravity="center_horizontal"
                 android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/gc_item_help" />

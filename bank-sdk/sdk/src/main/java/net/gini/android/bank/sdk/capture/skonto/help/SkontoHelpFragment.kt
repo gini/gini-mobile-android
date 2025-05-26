@@ -11,6 +11,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -186,16 +187,19 @@ private fun ScreenStateContent(
             ) {
                 HelpDescriptionSection(
                     modifier = Modifier
+                        .focusable()
                         .tabletMaxWidth(),
                     colors = screenColorScheme.skontoHelpDescriptionSectionColors,
                 )
                 HelpItemsSection(
                     modifier = Modifier
+                        .focusable()
                         .tabletMaxWidth(),
                     colors = screenColorScheme.skontoHelpItemsSectionColors,
                 )
                 HelpFooterSection(
                     modifier = Modifier
+                        .focusable()
                         .tabletMaxWidth(),
                     colors = screenColorScheme.skontoHelpFooterSectionColors,
                 )
