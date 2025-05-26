@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <net.gini.android.capture.view.InjectedViewContainer
-        android:id="@+id/gc_navigation_top_bar"
+        android:id="@+id/gc_injected_navigation_bar_container_top"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +30,7 @@
         android:id="@+id/gc_no_results_header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar"
+        app:layout_constraintTop_toBottomOf="@id/gc_injected_navigation_bar_container_top"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_alignParentTop="true"
@@ -88,7 +88,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="@dimen/gc_large_48"
         android:layout_marginEnd="@dimen/gc_large_48"
@@ -110,5 +110,14 @@
             android:text="@string/gc_noresults_enter_manually" />
 
     </LinearLayout>
+
+    <net.gini.android.capture.view.InjectedViewContainer
+        android:id="@+id/gc_injected_navigation_bar_container_bottom"
+        android:layout_width="0dp"
+        android:focusable="true"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
