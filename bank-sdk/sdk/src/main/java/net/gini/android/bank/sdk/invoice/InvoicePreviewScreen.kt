@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -52,6 +52,7 @@ internal fun InvoicePreviewScreen(
     viewModel: InvoicePreviewViewModel,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
+    isLandScape : Boolean
 ) {
     val state by viewModel.collectAsState()
 
@@ -77,9 +78,9 @@ internal fun InvoicePreviewScreen(
             screenTitle = state.screenTitle,
             infoTextLines = state.infoTextLines,
             images = state.images,
-            onUserZoomedScreenOnce = viewModel::onUserZoomedImage
-        )
-    }
+            onUserZoomedScreenOnce = viewModel::onUserZoomedImage,
+        isLandScape = isLandScape
+    )}
 }
 
 @Composable
@@ -175,6 +176,7 @@ internal fun InvoiceScreenReadyContent(
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
     topBarActions: @Composable RowScope.() -> Unit = {},
+    isLandScape: Boolean = false
 ) {
     var isUserZoomedOnce = false
     Scaffold(
@@ -207,7 +209,8 @@ internal fun InvoiceScreenReadyContent(
                             onUserZoomedScreenOnce()
                             isUserZoomedOnce = true
                         }
-                    }
+                    },
+                    isLandScape = isLandScape
                 )
             }
 
@@ -292,6 +295,7 @@ private fun ImagesList(
     modifier: Modifier = Modifier,
     minZoom: Float = DEFAULT_ZOOM,
     onScaleChanged: (Float) -> Unit = {},
+    isLandScape: Boolean
 ) {
     ZoomableLazyColumn(
         modifier = modifier,
@@ -299,16 +303,39 @@ private fun ImagesList(
         onScaleChanged = onScaleChanged,
         minScale = minZoom,
     ) {
-        items(pages) {
+        itemsIndexed(pages) { index, page ->
+            val pageNumberText = stringResource(
+                id = R.string.page_number_invoice_preview_description,
+                index + 1
+            )
+
             Image(
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .fillMaxWidth(),
-                bitmap = it.asImageBitmap(),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth
+                bitmap = page.asImageBitmap(),
+                contentDescription = pageNumberText,
+                contentScale =
+                    if (isLandScape)
+                        ContentScale.FillHeight
+                    else ContentScale.FillWidth
             )
         }
+    }
+}
+
+@Preview(name = "Landscape", device = "spec:width=891dp,height=411dp", showBackground = true)
+@Composable
+private fun InvoiceScreenContentPreviewLandscape() {
+    GiniTheme {
+        InvoiceScreenReadyContent(
+            onCloseClicked = {},
+            screenTitle = "Screen Title",
+            isLoading = true,
+            images = emptyList(),
+            infoTextLines = listOf("Line 1", "Line 2"),
+            onUserZoomedScreenOnce = {}
+        )
     }
 }
 

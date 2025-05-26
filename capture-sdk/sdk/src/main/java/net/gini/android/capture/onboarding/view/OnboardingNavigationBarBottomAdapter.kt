@@ -99,12 +99,19 @@ internal class DefaultOnboardingNavigationBarBottomAdapter : OnboardingNavigatio
     //Wait for view to be inflated
     //Check how many lines
     private fun handleSkipButtonMultipleLines() {
-        viewBinding?.gcSkip?.post {
-            val buttonSkip = viewBinding?.gcSkip
-            when (buttonSkip?.lineCount) {
-                2 -> buttonSkip.text = buttonSkip.context.getString(R.string.gc_skip_two_lines)
+        viewBinding?.gcSkip?.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+            override fun onLayoutChange(
+                v: View,
+                left: Int, top: Int, right: Int, bottom: Int,
+                oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int
+            ) {
+                v.removeOnLayoutChangeListener(this)
+                val buttonSkip = viewBinding?.gcSkip
+                if (buttonSkip != null && buttonSkip.lineCount >= 2) {
+                    buttonSkip.text = buttonSkip.context.getString(R.string.gc_skip_two_lines)
+                }
             }
-        }
+        })
     }
 
     override fun onDestroy() {

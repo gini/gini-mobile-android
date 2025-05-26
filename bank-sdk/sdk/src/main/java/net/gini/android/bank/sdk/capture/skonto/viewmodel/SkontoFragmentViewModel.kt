@@ -46,6 +46,8 @@ internal class SkontoFragmentViewModel(
 
     }
 
+    var isKeyboardVisible: Boolean = false
+
     private var listener: SkontoFragmentListener? = null
 
     fun setListener(listener: SkontoFragmentListener?) {
@@ -64,8 +66,10 @@ internal class SkontoFragmentViewModel(
     fun onSkontoActiveChanged(newValue: Boolean) =
         with(skontoActiveChangeIntent) { run(newValue) }
 
-    fun onKeyboardStateChanged(isVisible: Boolean) =
+    fun onKeyboardStateChanged(isVisible: Boolean) {
+        isKeyboardVisible = isVisible
         with(keyboardStateChangeIntent) { run(isVisible) }
+    }
 
     fun onSkontoAmountFieldChanged(newValue: BigDecimal) =
         with(skontoAmountFieldChangeIntent) { run(newValue) }

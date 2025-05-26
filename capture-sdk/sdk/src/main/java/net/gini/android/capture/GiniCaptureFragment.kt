@@ -33,6 +33,7 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.tracking.useranalytics.tracker.AmplitudeUserAnalyticsEventTracker
+import net.gini.android.capture.util.safeNavigate
 import net.gini.android.capture.util.protectViewFromInsets
 import java.util.UUID
 
@@ -50,6 +51,17 @@ class GiniCaptureFragment(
     private lateinit var navController: NavController
     private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
     private lateinit var oncePerInstallEventStore: OncePerInstallEventStore
+
+    /**
+     * we have a case, that we need to show the onboarding with every launch of capture
+     * if our clients mark shouldShowOnboardingAtFirstRun as true, but when we
+     * were rotating the screen, it was shown again with every orientation change.
+     * To tackle this we need to store [onBoardingShown] in the savedInstanceState,
+     * and retrieve it in onCreate.
+     * */
+
+    private var onBoardingShown = false
+    private val onBoardingShownKey = "has_onboarding_shown"
 
     // Remember the original primary navigation fragment so that we can restore it when this fragment is detached
     private var originalPrimaryNavigationFragment: Fragment? = null
@@ -78,7 +90,7 @@ class GiniCaptureFragment(
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-
+        onBoardingShown = savedInstanceState?.getBoolean(onBoardingShownKey, false) ?: false
         setupUserAnalytics()
     }
 
@@ -165,14 +177,22 @@ class GiniCaptureFragment(
                     OncePerInstallEvent.SHOW_ONBOARDING
                 ))
             ) {
-                oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
-                navController.navigate(CameraFragmentDirections.toOnboardingFragment())
+                showOnboardingScreen()
             }
+        }
+    }
+
+    private fun showOnboardingScreen() {
+        if (!onBoardingShown) {
+            onBoardingShown = true
+            oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SHOW_ONBOARDING)
+            safeNavigate(navController, CameraFragmentDirections.toOnboardingFragment())
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        outState.putBoolean(onBoardingShownKey, onBoardingShown)
         willBeRestored = true
     }
 

@@ -1,33 +1,51 @@
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="@dimen/gc_large"
-    android:padding="@dimen/gc_inner_padding_detection_error_layout"
-    android:background="@drawable/gc_detection_error_background"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView
-        style="@style/GiniCaptureTheme.Typography.Body2"
-        android:layout_width="0dp"
+    android:elevation="@dimen/gc_large">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/gc_scroll_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/gc_detection_error_popup_dismiss_button"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-        android:textColor="@color/gc_dark_02"
-        android:text="@string/gc_detection_error_layout_description"/>
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent">
 
 
-    <TextView
-        style="@style/GiniCaptureTheme.Typography.Body2"
-        android:id="@+id/gc_detection_error_popup_dismiss_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:textColor="@color/gc_accent_01"
-        android:padding="@dimen/gc_large"
-        android:text="@string/gc_snackbar_dismiss"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/gc_detection_error_background"
+            android:elevation="@dimen/gc_large"
+            android:padding="@dimen/gc_inner_padding_detection_error_layout">
+
+            <TextView
+                android:id="@+id/gc_error_description"
+                style="@style/GiniCaptureTheme.Typography.Body2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/gc_detection_error_layout_description"
+                android:textColor="@color/gc_dark_02"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/gc_detection_error_popup_dismiss_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/gc_detection_error_popup_dismiss_button"
+                style="@style/GiniCaptureTheme.Typography.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/gc_large"
+                android:text="@string/gc_snackbar_dismiss"
+                android:textColor="@color/gc_accent_01"
+                app:layout_constraintBottom_toBottomOf="@+id/gc_error_description"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/gc_error_description" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
