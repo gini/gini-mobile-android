@@ -16,7 +16,6 @@ import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
 import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
-import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType.UPLOAD_PICTURE
 import net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty
 import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
