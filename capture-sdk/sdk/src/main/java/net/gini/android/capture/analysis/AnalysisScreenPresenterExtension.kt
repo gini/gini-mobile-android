@@ -81,8 +81,6 @@ internal class AnalysisScreenPresenterExtension(
             }
             educationMutex.lock()
             onEducationFlowTriggered()
-        } else {
-
         }
     }
 
