@@ -176,12 +176,11 @@
     <string name="gc_qr_engagement_btn_next">Next</string>
     <!--   endregion -->
     <string name="gc_detection_error_layout_description">QR code scanning is currently unavailable. Please take a picture of your invoice instead.</string>
-    <!--   region Qr Education -->
+    <!--   region Education -->
+    <string name="gc_education_loading">analyzing</string>
     <string name="gc_qr_education_intro_message">In case you didn’t know...</string>
     <string name="gc_qr_education_photo_doc_message">You can take photos of receipts or remittance slips – even without a QR code</string>
     <string name="gc_qr_education_upload_picture_message">You can upload PDFs, images, or GIFs</string>
-    <!--   endregion -->
-    <!--   region Invoice Education -->
     <string name="gc_invoice_education_message">You can upload PDFs, images, or GIFs</string>
     <!--   endregion -->
 </resources>
