@@ -1,1 +1,5 @@
 mockPaymentProviderApps.toml
+/devExampleApp
+/qaExampleApp
+/prodExampleApp
+/exampleApp

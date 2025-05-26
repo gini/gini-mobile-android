@@ -193,6 +193,7 @@ internal constructor(
             isReturnAssistantEnabled = configuration.isReturnAssistantEnabled,
             isTransactionDocsEnabled = configuration.transactionDocsEnabled,
             isQrCodeEducationEnabled = configuration.qrCodeEducationEnabled,
+            isInstantPaymentEnabled = configuration.instantPaymentEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
         )
 
@@ -404,13 +405,18 @@ internal constructor(
                 }
 
                 is Resource.Error -> {
-                    val errorMessage = Error(resource.formattedErrorMessage)
+                    val error = Error(
+                        resource.responseStatusCode,
+                        resource.responseHeaders,
+                        resource.exception
+                    )
                     LOG.error(
                         "Getting layout for document {} failed. {}",
                         documentId,
-                        errorMessage
+                        error.message
                     )
-                    callback.failure(errorMessage)
+
+                    callback.failure(error)
                 }
 
                 is Resource.Success -> {
@@ -437,13 +443,17 @@ internal constructor(
                 }
 
                 is Resource.Error -> {
-                    val errorMessage = Error(resource.formattedErrorMessage)
+                    val error = Error(
+                        resource.responseStatusCode,
+                        resource.responseHeaders,
+                        resource.exception
+                    )
                     LOG.error(
                         "Getting pages for document {} failed. {}",
                         documentId,
-                        errorMessage
+                        error.message
                     )
-                    callback.failure(errorMessage)
+                    callback.failure(error)
                 }
 
                 is Resource.Success -> {
@@ -470,13 +480,17 @@ internal constructor(
                 }
 
                 is Resource.Error -> {
-                    val errorMessage = Error(resource.formattedErrorMessage)
+                    val error = Error(
+                        resource.responseStatusCode,
+                        resource.responseHeaders, resource.exception
+                    )
                     LOG.error(
                         "Getting file for document {} failed. {}",
                         fileUrl,
-                        errorMessage
+                        error.message
                     )
-                    callback.failure(errorMessage)
+
+                    callback.failure(error)
                 }
 
                 is Resource.Success -> {

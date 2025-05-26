@@ -13,6 +13,7 @@ data class ConfigurationResponse(
     @Json(name = "amplitudeApiKey") val amplitudeApiKey: String?,
     @Json(name = "transactionDocsEnabled") val transactionDocsEnabled: Boolean?,
     @Json(name = "qrCodeEducationEnabled") val qrCodeEducationEnabled: Boolean?,
+    @Json(name = "instantPaymentEnabled") val instantPaymentEnabled: Boolean?,
 )
 
 internal fun ConfigurationResponse.toConfiguration() = Configuration(
@@ -23,5 +24,6 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     amplitudeApiKey = amplitudeApiKey,
     transactionDocsEnabled = transactionDocsEnabled ?: false,
     qrCodeEducationEnabled = qrCodeEducationEnabled ?: false,
+    instantPaymentEnabled = instantPaymentEnabled ?: false,
 )
 

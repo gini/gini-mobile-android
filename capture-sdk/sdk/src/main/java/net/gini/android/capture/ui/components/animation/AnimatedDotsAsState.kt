@@ -49,7 +49,7 @@ fun animatedCharsLoadingIndicatorAsState(
     val placeholderCount = targetCount + 1 - count
 
     return produceState(initialValue = "", count) {
-        value = "$symbol".repeat(count) + " ".repeat(placeholderCount - 1)
+        value = "$symbol".repeat(count) + " ".repeat((placeholderCount - 1).coerceAtLeast(0))
     }
 }
 
