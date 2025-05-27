@@ -30,10 +30,10 @@
     <color name="gc_error_03">#EEDEDE</color>
     <color name="gc_error_04">#F6EEEE</color>
     <color name="gc_error_05">#830801</color>
-    <color name="gc_warning_01">#D9A00E</color>
-    <color name="gc_warning_02">#FFC73A</color>
-    <color name="gc_warning_03">#ECE4D0</color>
-    <color name="gc_warning_04">#EEEADE</color>
+    <color name="gc_warning_01">#966B17</color>
+    <color name="gc_warning_02">#FFE20C</color>
+    <color name="gc_warning_03">#FFFAC5</color>
+    <color name="gc_warning_04">#FDFBE7</color>
 
     <color name="gc_camera_preview_shade">#aa000000</color>
 </resources>

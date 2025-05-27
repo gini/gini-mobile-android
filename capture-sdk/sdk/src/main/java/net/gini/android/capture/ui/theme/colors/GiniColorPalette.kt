@@ -266,7 +266,7 @@ internal fun giniLightColorScheme(
             containerSuccess = success04,
             contentSuccess = success01,
             containerWarning = warning04,
-            contentWarning = warning05,
+            contentWarning = warning01,
             containerError = error04,
             contentError = error01
         ),
@@ -395,13 +395,13 @@ internal fun giniDarkColorScheme(
             containerSuccess = success04,
             contentSuccess = success01,
             containerWarning = warning04,
-            contentWarning = warning05,
+            contentWarning = warning01,
             containerError = error04,
             contentError = error01
         ),
         badge = GiniColorScheme.Badge(
             container = success02,
-            content = light01
+            content = dark01
         ),
         button = GiniColorScheme.Button(
             container = accent01,

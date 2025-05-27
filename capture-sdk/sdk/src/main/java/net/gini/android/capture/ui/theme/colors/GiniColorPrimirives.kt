@@ -45,10 +45,10 @@ data class GiniColorPrimitives(
     val error04: Color = Color(0xFFF6EEEE),
     val error05: Color = Color(0xFF830801),
 
-    val warning01: Color = Color(0xFFD9A00E),
-    val warning02: Color = Color(0xFFFFC73A),
-    val warning03: Color = Color(0xFFECE4D0),
-    val warning04: Color = Color(0xFFEEEADE),
+    val warning01: Color = Color(0xFF966B17),
+    val warning02: Color = Color(0xFFFFE20C),
+    val warning03: Color = Color(0xFFFFFAC5),
+    val warning04: Color = Color(0xFFFDFBE7),
     val warning05: Color = Color(0xFFA17503),
 ) {
     companion object {
