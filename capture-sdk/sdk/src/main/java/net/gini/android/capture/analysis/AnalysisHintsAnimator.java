@@ -113,6 +113,7 @@ class AnalysisHintsAnimator {
                 ContextCompat.getDrawable(mContext, nextHint.getDrawableResource()));
         mHintTextView.setText(nextHint.getTextResource());
         mHintHeadlineTextView.setText(mContext.getString(R.string.gc_tip) + mContext.getString(nextHint.getTitleTextResource()));
+        mHintImageView.setContentDescription(mContext.getString(nextHint.getTitleTextResource()));
     }
 
     private AnalysisHint getNextHint() {

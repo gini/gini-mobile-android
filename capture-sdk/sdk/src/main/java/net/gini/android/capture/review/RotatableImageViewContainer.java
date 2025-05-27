@@ -86,6 +86,7 @@ public class RotatableImageViewContainer extends FrameLayout {
             } else {
                 mImageView.measure(widthMeasureSpec, heightMeasureSpec);
             }
+            mImageView.setClickable(false);
         }
     }
 

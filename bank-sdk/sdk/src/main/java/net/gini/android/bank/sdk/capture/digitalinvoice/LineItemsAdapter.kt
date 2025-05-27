@@ -392,7 +392,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                     listener?.onSkontoEditClicked(data)
                 }
             } else {
-                gbsEditButton.setTextColor(gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_dark_06))
+                gbsEditButton.setTextColor(gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_dark_05))
                 gbsEditButton.setOnClickListener(null)
             }
 

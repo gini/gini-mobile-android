@@ -12,12 +12,14 @@ import androidx.fragment.app.FragmentPagerAdapter;
 class ViewPagerAdapterCompat extends FragmentPagerAdapter {
 
     private final List<OnboardingPage> mPages;
-
+    private final int bottomPaddingPx;
     @SuppressLint("WrongConstant")
     public ViewPagerAdapterCompat(@NonNull final FragmentManager fm,
-                                  @NonNull final List<OnboardingPage> pages) {
+                                  @NonNull final List<OnboardingPage> pages,
+                                  final int bottomPaddingPx) {
         super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mPages = pages;
+        this.bottomPaddingPx = bottomPaddingPx;
     }
 
     @NonNull
@@ -26,6 +28,10 @@ class ViewPagerAdapterCompat extends FragmentPagerAdapter {
     }
 
     @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
+    }
+    @Override
     public int getCount() {
         return mPages.size();
     }
@@ -33,6 +39,8 @@ class ViewPagerAdapterCompat extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(final int position) {
         final boolean isLastPage = position == getCount() - 1;
-        return OnboardingPageFragment.createInstance(getPages().get(position), isLastPage);
+        return OnboardingPageFragment.createInstance(getPages().get(position),
+                isLastPage,
+                bottomPaddingPx);
     }
 }

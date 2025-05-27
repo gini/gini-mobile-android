@@ -2,9 +2,13 @@ package net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,6 +33,7 @@ import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.colors.Atta
 import net.gini.android.capture.ui.components.checkbox.GiniCheckbox
 import net.gini.android.capture.ui.theme.GiniTheme
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AttachDocumentToTransactionDialog(
     onDismiss: () -> Unit,
@@ -54,7 +59,8 @@ fun AttachDocumentToTransactionDialog(
             ),
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(16.dp).
+                verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Icon(
@@ -83,14 +89,12 @@ fun AttachDocumentToTransactionDialog(
                         colors = colors.checkableContentColors
                     )
                 }
-                Row(
+                FlowRow (
                     modifier = Modifier
                         .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(
-                        modifier = Modifier.padding(start = 52.dp),
                         onClick = { onDismiss() }) {
                         Text(
                             text = stringResource(id = R.string.gbs_td_attach_document_dialog_cancel_button_text),
