@@ -750,15 +750,10 @@ private fun SkontoSection(
 
             GiniTextInput(
                 modifier = Modifier
-                    .onKeyEvent { keyEvent ->
-                        if (keyEvent.type == KeyEventType.KeyUp &&
-                            (keyEvent.key == Key.Enter || keyEvent.key == Key.DirectionCenter)
-                        ) {
+                    .clickable(isActive) {
+                        if (isActive) {
                             isDatePickerVisible = true
                             onDueDateFieldFocued()
-                            true
-                        } else {
-                            false
                         }
                     }
                     .fillMaxWidth()
