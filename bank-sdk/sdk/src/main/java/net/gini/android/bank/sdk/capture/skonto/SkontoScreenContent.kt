@@ -61,12 +61,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.booleanResource
@@ -750,15 +745,10 @@ private fun SkontoSection(
 
             GiniTextInput(
                 modifier = Modifier
-                    .onKeyEvent { keyEvent ->
-                        if (keyEvent.type == KeyEventType.KeyUp &&
-                            (keyEvent.key == Key.Enter || keyEvent.key == Key.DirectionCenter)
-                        ) {
+                    .clickable(isActive) {
+                        if (isActive) {
                             isDatePickerVisible = true
                             onDueDateFieldFocued()
-                            true
-                        } else {
-                            false
                         }
                     }
                     .fillMaxWidth()
