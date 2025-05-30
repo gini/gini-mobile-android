@@ -2,6 +2,8 @@
 
 package net.gini.android.bank.sdk.capture.skonto.viewmodel.subintent
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
 import net.gini.android.bank.sdk.capture.skonto.SkontoScreenState
@@ -24,9 +26,11 @@ internal class OpenExtractionsScreenSubIntent(
             discountDueDate = state.discountDueDate.toString(),
         )
         lastExtractionsProvider.update(skontoExtractionsHandler.getExtractions().toMutableMap())
-        listener?.onPayInvoiceWithSkonto(
-            skontoExtractionsHandler.getExtractions(),
-            skontoExtractionsHandler.getCompoundExtractions()
-        )
+        withContext(Dispatchers.Main) {
+            listener?.onPayInvoiceWithSkonto(
+                skontoExtractionsHandler.getExtractions(),
+                skontoExtractionsHandler.getCompoundExtractions()
+            )
+        }
     }
 }
