@@ -40,6 +40,22 @@ public final class ContextHelper {
         return context.getResources().getBoolean(R.bool.gc_is_portrait);
     }
 
+    /**
+     * Internal use only.
+     *
+     * @suppress
+     */
+    public static boolean isPortraitOrTablet(@NonNull final Context context) {
+        return isPortraitOrientation(context) || isTablet(context);
+    }
+
     private ContextHelper() {
+    }
+
+    /**
+     * This method tells us if the fonts are more OR equal to 150% of scale.
+     */
+    public static boolean isFontScaled(Context context) {
+        return context.getResources().getConfiguration().fontScale >= 1.5;
     }
 }

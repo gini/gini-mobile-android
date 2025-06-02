@@ -13,14 +13,14 @@ import net.gini.android.capture.R
  * resource colors and this class
  */
 data class GiniColorPrimitives(
-    val accent01: Color = Color(0xFF0A84FF),
+    val accent01: Color = Color(0xFF006ECF),
     val accent02: Color = Color(0xFF3193FD),
     val accent03: Color = Color(0xFF62ACFB),
     val accent04: Color = Color(0xFF93C4F9),
     val accent05: Color = Color(0xFFC4DDF7),
 
     val dark01: Color = Color(0xFF000000),
-    val dark02: Color = Color(0xFF121212),
+    val dark02: Color = Color(0xFF161616),
     val dark03: Color = Color(0xFF313131),
     val dark04: Color = Color(0xFF4A4A4A),
     val dark05: Color = Color(0xFF626262),
@@ -33,22 +33,22 @@ data class GiniColorPrimitives(
     val light05: Color = Color(0xFFCCCCCC),
     val light06: Color = Color(0xFFBFBFBF),
 
-    val success01: Color = Color(0xFF09B523),
-    val success02: Color = Color(0xFF32D74B),
-    val success03: Color = Color(0xFFD0ECD4),
-    val success04: Color = Color(0xFFDEEEE1),
-    val success05: Color = Color(0xFF048016),
+    val success01: Color = Color(0xFF13822F),
+    val success02: Color = Color(0xFF5DD27A),
+    val success03: Color = Color(0xFFC0EECC),
+    val success04: Color = Color(0xFFEBF9EE),
+    val success05: Color = Color(0xFF165425),
 
-    val error01: Color = Color(0xFFD9190E),
-    val error02: Color = Color(0xFFFF453A),
-    val error03: Color = Color(0xFFECD0D0),
-    val error04: Color = Color(0xFFEEDEDE),
+    val error01: Color = Color(0xFF6C2121),
+    val error02: Color = Color(0xFFDD0000),
+    val error03: Color = Color(0xFFEEDEDE),
+    val error04: Color = Color(0xFFF6EEEE),
     val error05: Color = Color(0xFF830801),
 
-    val warning01: Color = Color(0xFFD9A00E),
-    val warning02: Color = Color(0xFFFFC73A),
-    val warning03: Color = Color(0xFFECE4D0),
-    val warning04: Color = Color(0xFFEEEADE),
+    val warning01: Color = Color(0xFF966B17),
+    val warning02: Color = Color(0xFFFFE20C),
+    val warning03: Color = Color(0xFFFFFAC5),
+    val warning04: Color = Color(0xFFFDFBE7),
     val warning05: Color = Color(0xFFA17503),
 ) {
     companion object {

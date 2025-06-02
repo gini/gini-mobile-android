@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlin.collections.ArrayList
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.util.autoCleared
@@ -17,6 +17,7 @@ import net.gini.android.bank.sdk.databinding.GbsFragmentReturnReasonDialogBindin
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.internal.util.ContextHelper
 
 /**
@@ -81,10 +82,22 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListView()
+        handleCloseButton()
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             dialog?.window?.disallowScreenshots()
         }
     }
+
+    private fun handleCloseButton() {
+        if (isPhoneLandscapeMode()) {
+            binding.gbsCloseBottomSheet?.visibility = View.VISIBLE
+            binding.gbsCloseBottomSheet?.setIntervalClickListener {
+                dismissAllowingStateLoss()
+            }
+        }
+    }
+
+    private fun isPhoneLandscapeMode() = !ContextHelper.isPortraitOrTablet(requireContext())
 
     private fun initListView() {
         activity?.let {
@@ -106,10 +119,22 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
     override fun onStart() {
         super.onStart()
         view?.let {
+            val mBehavior = BottomSheetBehavior.from(it.parent as View)
+            mBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             if (ContextHelper.isTablet(requireContext())) {
-                val mBehavior = BottomSheetBehavior.from(it.parent as View)
-                mBehavior.maxWidth = resources.getDimension(net.gini.android.capture.R.dimen.gc_tablet_width).toInt()
-                mBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                mBehavior.maxWidth =
+                    resources.getDimension(net.gini.android.capture.R.dimen.gc_tablet_width).toInt()
+            } else if (isPhoneLandscapeMode()) {
+                dialog?.window?.let { window ->
+                    val metrics = window.windowManager.currentWindowMetrics
+                    val screenWidth = metrics.bounds.width()
+                    val screenHeight = metrics.bounds.height()
+                    window.setLayout(screenWidth / 2, screenHeight)
+                    val params = window.attributes
+                    params.gravity = Gravity.END
+                    window.attributes = params
+                    mBehavior.isDraggable = false
+                }
             }
         }
     }

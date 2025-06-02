@@ -43,6 +43,8 @@
     <!-- region Skonto -->
     <string name="gbs_skonto_screen_title">Skonto</string>
     <string name="gbs_skonto_screen_content_description_close">Schließen</string>
+    <string name="page_number_invoice_preview_description">Rechnungsvorschau - Seite %1$d</string>
+
     <string name="gbs_skonto_screen_content_description_help">Hilfe</string>
     <string name="gbs_skonto_screen_content_description_back">Zurück</string>
     <!--   region Section Invoice Scan -->

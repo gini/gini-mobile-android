@@ -15,10 +15,11 @@ import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.formatter.AmountFormatter
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.SkontoFragmentViewModel
 import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones
 import net.gini.android.capture.internal.util.CancelListener
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import org.koin.core.parameter.parametersOf
@@ -27,7 +28,7 @@ class SkontoFragment : Fragment() {
 
     private val args: SkontoFragmentArgs by navArgs<SkontoFragmentArgs>()
 
-    private val viewModel: SkontoFragmentViewModel by getGiniBankKoin().inject {
+    private val viewModel: SkontoFragmentViewModel by giniBankViewModel {
         parametersOf(args.data)
     }
     private val amountFormatter : AmountFormatter by getGiniBankKoin().inject()
@@ -52,7 +53,6 @@ class SkontoFragment : Fragment() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-        forcePortraitOrientationOnPhones(activity)
 
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -95,6 +95,9 @@ class SkontoFragment : Fragment() {
                             findNavController().navigate(SkontoFragmentDirections.toSkontoHelpFragment())
                         },
                         amountFormatter = amountFormatter,
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                        shouldFieldShowKeyboard = viewModel.isKeyboardVisible,
+                        isTablet = ContextHelper.isTablet(requireContext())
                     )
                 }
             }
