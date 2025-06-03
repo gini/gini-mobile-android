@@ -145,6 +145,7 @@
     <ID>NewLineAtEndOfFile:SkontoSectionColors.kt$net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoSectionColors.kt</ID>
     <ID>NewLineAtEndOfFile:WithoutSkontoSectionColors.kt$net.gini.android.bank.sdk.capture.skonto.colors.section.WithoutSkontoSectionColors.kt</ID>
     <ID>ReturnCount:CaptureFlowFragment.kt$CaptureFlowFragment$override fun onFinishedWithResult(result: CaptureSDKResult)</ID>
+    <ID>ReturnCount:CaptureFlowFragment.kt$CaptureFlowFragment$private fun processOnFinishedResultSuccessState(result: CaptureSDKResult.Success)</ID>
     <ID>SerialVersionUIDInSerializableClass:SkontoData.kt$SkontoData : Serializable</ID>
     <ID>SerialVersionUIDInSerializableClass:SkontoData.kt$SkontoData$Amount : Serializable</ID>
     <ID>SerialVersionUIDInSerializableClass:SkontoData.kt$SkontoData$SkontoPaymentMethod : Serializable</ID>
