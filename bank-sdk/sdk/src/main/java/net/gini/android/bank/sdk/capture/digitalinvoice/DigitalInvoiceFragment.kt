@@ -432,7 +432,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     ) {
         lineItemsAdapter.apply {
             this.isInaccurateExtraction = isInaccurateExtraction
-            this.lineItems = lineItems
+            lineItemsAdapter.updateLineItems(lineItems)
         }
     }
 
@@ -676,6 +676,14 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      * @suppress
      */
     override fun onLineItemSelected(lineItem: SelectableLineItem) {
+        val updatedItems = lineItemsAdapter.lineItems.map {
+            if (it.lineItem.id == lineItem.lineItem.id) {
+                it.copy(selected = true)
+            } else {
+                it
+            }
+        }
+        lineItemsAdapter.updateLineItems(updatedItems)
         presenter?.selectLineItem(lineItem)
         trackItemSwitchTappedTappedEvent(lineItem.selected)
     }
@@ -686,6 +694,14 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      * @suppress
      */
     override fun onLineItemDeselected(lineItem: SelectableLineItem) {
+        val updatedItems = lineItemsAdapter.lineItems.map {
+            if (it.lineItem.id == lineItem.lineItem.id) {
+                it.copy(selected = false)
+            } else {
+                it
+            }
+        }
+        lineItemsAdapter.updateLineItems(updatedItems)
         presenter?.deselectLineItem(lineItem)
         trackItemSwitchTappedTappedEvent(lineItem.selected)
     }

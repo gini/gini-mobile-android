@@ -31,6 +31,7 @@
         android:id="@+id/line_items"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:focusable="true"
         android:layout_marginTop="@dimen/gc_medium_12"
         android:background="?attr/backgroundColor"
         android:scrollbars="vertical"

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isInvisible
 import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.Addon
@@ -72,12 +73,11 @@ internal class LineItemsAdapter(
     var lineItems: List<SelectableLineItem> = emptyList()
         set(value) {
             field = value
-            notifyDataSetChanged()
         }
+
     var addons: List<DigitalInvoiceAddon> = emptyList()
         set(value) {
             field = value
-            notifyDataSetChanged()
         }
 
     var skontoDiscount: List<DigitalInvoiceSkontoListItem> = emptyList()
@@ -93,6 +93,31 @@ internal class LineItemsAdapter(
             field = value
             notifyDataSetChanged()
         }
+    fun updateLineItems(newItems: List<SelectableLineItem>) {
+        val diffCallback = LineItemsDiffCallback(lineItems, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        lineItems = newItems
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    class LineItemsDiffCallback(
+        private val oldList: List<SelectableLineItem>,
+        private val newList: List<SelectableLineItem>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize() = oldList.size
+        override fun getNewListSize() = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val old = oldList[oldItemPosition].lineItem
+            val new = newList[newItemPosition].lineItem
+            return old.id == new.id
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewTypeId: Int): ViewHolder<*> {
         val layoutInflater = LayoutInflater.from(parent.context)
