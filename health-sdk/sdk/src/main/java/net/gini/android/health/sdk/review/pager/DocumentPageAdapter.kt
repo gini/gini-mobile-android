@@ -17,49 +17,12 @@ import com.github.chrisbanes.photoview.PhotoView
 import dev.chrisbanes.insetter.applyInsetter
 import net.gini.android.core.api.Resource
 import android.view.View
-import android.view.accessibility.AccessibilityEvent
 import net.gini.android.health.sdk.databinding.GhsItemPageHorizontalBinding
 import net.gini.android.health.sdk.util.hideKeyboard
 
 internal class DocumentPageAdapter(
-    private var currentPage: Int,
     private val onRetryPage: (Int) -> Unit) :
     ListAdapter<DocumentPageAdapter.Page, DocumentPageAdapter.PageViewHolder>(DiffUtilCallback) {
-    fun updateCurrentPage(newPage: Int, recyclerView: RecyclerView?) {
-        val oldPage = currentPage
-        currentPage = newPage
-
-        val oldView = recyclerView?.findViewHolderForAdapterPosition(oldPage) as? DocumentPageAdapter.PageViewHolder
-        val newView = recyclerView?.findViewHolderForAdapterPosition(newPage) as? DocumentPageAdapter.PageViewHolder
-
-        oldView?.itemView?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
-        oldView?.imageView?.apply {
-            isFocusable = false
-            contentDescription = null
-            sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED)
-        }
-
-        if (newView == null) {
-            // Retry once view is attached
-            recyclerView?.postDelayed({
-                val attachedView = recyclerView.findViewHolderForAdapterPosition(newPage) as? DocumentPageAdapter.PageViewHolder
-                attachedView?.let { setPageAccessible(it, newPage) }
-            }, 100)
-        } else {
-            setPageAccessible(newView, newPage)
-        }
-    }
-
-    private fun setPageAccessible(viewHolder: DocumentPageAdapter.PageViewHolder, page: Int) {
-        viewHolder.itemView.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
-        viewHolder.imageView.apply {
-            isFocusable = true
-            isFocusableInTouchMode = true
-            contentDescription = "Page ${page + 1}"
-            sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED)
-        }
-    }
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder =

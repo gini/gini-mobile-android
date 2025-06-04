@@ -27,8 +27,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
@@ -116,7 +114,7 @@ class ReviewFragment private constructor(
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        documentPageAdapter = DocumentPageAdapter(0) { pageNumber ->
+        documentPageAdapter = DocumentPageAdapter{ pageNumber ->
             viewModel.reloadImage(pageNumber)
         }
         binding = GhsFragmentReviewBinding.inflate(inflater).apply {
@@ -125,14 +123,6 @@ class ReviewFragment private constructor(
             applyInsets()
         }
         return binding.root
-    }
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        binding.root.importantForAccessibility = if (hidden) {
-            View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
-        } else {
-            View.IMPORTANT_FOR_ACCESSIBILITY_YES
-        }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -143,21 +133,7 @@ class ReviewFragment private constructor(
             setStateListeners()
             setKeyboardAnimation()
             removePagerConstraintAndSetPreviousHeightIfNeeded(documentPagerHeight)
-
         }
-        binding.pager.getInternalRecyclerView()?.apply {
-            isFocusable = false
-            isFocusableInTouchMode = false
-            descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
-        }
-
-        binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                documentPageAdapter.updateCurrentPage(position, binding.pager.getInternalRecyclerView())
-
-            }
-        })
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
             bottomMargin = -resources.getDimensionPixelSize(net.gini.android.internal.payment.R.dimen.gps_medium_12)
@@ -167,7 +143,6 @@ class ReviewFragment private constructor(
             setupLandscapeBehavior()
         }
     }
-
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -417,7 +392,7 @@ class ReviewFragment private constructor(
             val dragHandle = binding.dragHandle
             val fieldsLayout = binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_fields_layout)
             val bottomLayout = binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_bottom_layout)
-            dragHandle?.onKeyboardAction {
+            binding.dragHandleContainer?.onKeyboardAction {
                 fieldsLayout.alpha = if (isVisible) 0f else 1f
                 val currentState = binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode()
                 binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(
@@ -428,7 +403,7 @@ class ReviewFragment private constructor(
                 setupConstraintsForTabLayout((dragHandle?.height ?: 0) + bottomLayout.height)
             }
 
-            dragHandle?.setOnTouchListener { _, _ ->
+            binding.dragHandleContainer?.setOnTouchListener { _, _ ->
                 fieldsLayout.alpha = if (isVisible) 0f else 1f
                 val currentState = binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode()
                 binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(
@@ -453,13 +428,6 @@ class ReviewFragment private constructor(
         super.onSaveInstanceState(outState)
     }
 
-    private fun ViewPager2.getInternalRecyclerView(): RecyclerView? {
-        for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            if (child is RecyclerView) return child
-        }
-        return null
-    }
 
     internal companion object {
         private const val PAGER_HEIGHT = "pager_height"

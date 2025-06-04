@@ -128,7 +128,7 @@ class OpenWithBottomSheet private constructor(
 
     private fun configureForwardButton() {
         viewModel.paymentProviderApp?.let { app ->
-            setupForwardButtonClickListener(app)
+            setupForwardButtonClickListener()
             styleForwardButton(app)
             updateOpenWithTexts(app)
             setAppIcon(app)
@@ -136,7 +136,7 @@ class OpenWithBottomSheet private constructor(
         }
     }
 
-    private fun setupForwardButtonClickListener(app: PaymentProviderApp) {
+    private fun setupForwardButtonClickListener() {
         binding.gpsForwardButton.setOnClickListener {
             viewModel.openWithForwardListener?.onForwardSelected()
             dismiss()
