@@ -1,5 +1,6 @@
 package net.gini.android.capture.di
 
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.qreducation.GetQrEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementQrCodeRecognizedCounterUseCase
 import net.gini.android.capture.internal.storage.QrCodeEducationStorage
@@ -14,7 +15,13 @@ internal val qrEducationModule = module {
     }
     factory {
         GetQrEducationTypeUseCase(
-            qrCodeEducationStorage = get()
+            qrCodeEducationStorage = get(),
+            isOnlyQrCodeScanningEnabledProvider = {
+                runCatching { GiniCapture.getInstance().isOnlyQRCodeScanning }.getOrNull()
+            },
+            documentImportEnabledFileTypesProvider = {
+                runCatching { GiniCapture.getInstance().documentImportEnabledFileTypes }.getOrNull()
+            },
         )
     }
     factory {
