@@ -140,7 +140,7 @@ class MoreInformationTest {
 
         // When
         launchFragmentInContainer {
-            MoreInformationFragment.newInstance(paymentComponentWithLocale!!)
+            MoreInformationFragment.newInstance(paymentComponentWithLocale)
         }
 
         // Then
