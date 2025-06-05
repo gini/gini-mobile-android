@@ -28,6 +28,7 @@ import net.gini.android.bank.sdk.transactiondocs.ui.extractions.view.Transaction
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.util.protectViewFromInsets
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -57,12 +58,14 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         "paymentPurpose" to "text",
         "iban" to "iban",
         "bic" to "bic",
-        "amountToPay" to "amount"
+        "amountToPay" to "amount",
+        "instantPayment" to "text"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExtractionsBinding.inflate(layoutInflater)
+        binding.root.protectViewFromInsets()
         setContentView(binding.root)
         readExtras()
         showAnalyzedDocumentId()
@@ -134,6 +137,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 val inputMethodManager =
                     getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+                false
             }
         }
     }
@@ -151,6 +155,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
         val iban = mExtractions["iban"]?.value ?: ""
         val bic = mExtractions["bic"]?.value ?: ""
+        val instantPayment = mExtractions["instantPayment"]?.value ?: ""
 
         if (amount.isEmpty()) {
             amount = Amount.EMPTY.amountToPay()
@@ -166,9 +171,15 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         )
 
         GiniBank.sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            Amount(
                 BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
-            )
+            ),
+            instantPayment.toBooleanStrictOrNull()
         )
 
         GiniBank.cleanupCapture(applicationContext)

@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/gc_large"
-        android:paddingTop="@dimen/gc_large"
-        android:paddingEnd="@dimen/gc_large"
-        android:paddingBottom="@dimen/gc_large"
-        android:text="@string/gbs_digital_invoice_return_reason_dialog_title"
-        android:textColor="?attr/gbsReturnDialogTitle"
-        style="@style/GiniCaptureTheme.Typography.Subtitle1" />
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/gbs_close_bottom_sheet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/gc_close"
+            android:padding="@dimen/gc_medium_12"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/gc_close"
+            app:tint="?attr/colorOnBackground" />
+
+        <TextView
+            style="@style/GiniCaptureTheme.Typography.Subtitle1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/gc_large"
+            android:paddingTop="@dimen/gc_large"
+            android:paddingEnd="@dimen/gc_large"
+            android:paddingBottom="@dimen/gc_large"
+            android:text="@string/gbs_digital_invoice_return_reason_dialog_title"
+            android:textColor="?attr/gbsReturnDialogTitle" />
+
+    </LinearLayout>
+
 
     <View
         android:layout_width="match_parent"

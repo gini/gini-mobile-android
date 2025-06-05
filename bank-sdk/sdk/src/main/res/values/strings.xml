@@ -43,6 +43,8 @@
     <!-- region Skonto -->
     <string name="gbs_skonto_screen_title">Skonto</string>
     <string name="gbs_skonto_screen_content_description_close">Schließen</string>
+    <string name="page_number_invoice_preview_description">Rechnungsvorschau - Seite %1$d</string>
+
     <string name="gbs_skonto_screen_content_description_help">Hilfe</string>
     <string name="gbs_skonto_screen_content_description_back">Zurück</string>
     <!--   region Section Invoice Scan -->
@@ -96,6 +98,7 @@
     <string name="gbs_skonto_invoice_preview_expire_date">Ablaufdatum Skonto: %1$s</string>
     <string name="gbs_skonto_invoice_preview_final_amount">Betrag nach Abzug: %1$s</string>
     <string name="gbs_skonto_invoice_preview_full_amount">Betrag ohne Abzug: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_try_again">Versuch\'s Nochmal</string>
     <!--   endregion -->
 
     <!--   region Transaction Docs. Attach Document Dialog -->

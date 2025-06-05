@@ -15,6 +15,8 @@ import androidx.annotation.VisibleForTesting;
 import net.gini.android.capture.camera.CameraActivity;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.camera.view.DefaultCameraNavigationBarBottomAdapter;
+import net.gini.android.capture.error.view.DefaultErrorNavigationBarBottomAdapter;
+import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter;
 import net.gini.android.capture.help.HelpItem;
 import net.gini.android.capture.help.view.DefaultHelpNavigationBarBottomAdapter;
 import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter;
@@ -73,10 +75,10 @@ import java.util.Map;
  * <p> To create and configure a singleton instance use the {@link #newInstance(Context)} method and the
  * returned {@link Builder}.
  *
- * <p> Please first provide the transfer summary via the {@link #sendTransferSummary(String, String, String, String, String, Amount)} method.
+ * <p> Please first provide the transfer summary via the {@link #sendTransferSummary(String, String, String, String, String, Amount, Boolean)} method.
  * The transfer summary is used to improve the future extraction accuracy.
  * Then, use the {@link #cleanup(Context)} method to clean up the SDK.
- *
+ * <p>
  * Please follow the recommendations below:
  *
  * <ul>
@@ -115,6 +117,7 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> onboardingNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance;
+    private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance;
     private final boolean isBottomNavigationBarEnabled;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
@@ -192,6 +195,7 @@ public class GiniCapture {
         return new Builder();
     }
 
+
     /**
      * Provides transfer summary to Gini.
      *
@@ -210,8 +214,16 @@ public class GiniCapture {
      * @param iban             international bank account
      * @param bic              bank identification code
      * @param amount           accepts extracted amount and currency
+     * @param instantPayment   based on the user's preference to have the payment as instant payment
      */
-    public static synchronized void sendTransferSummary(@NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
+    public static synchronized void sendTransferSummary(
+            @NonNull final String paymentRecipient,
+            @NonNull final String paymentReference,
+            @NonNull final String paymentPurpose,
+            @NonNull final String iban,
+            @NonNull final String bic,
+            @NonNull final Amount amount,
+            @Nullable final Boolean instantPayment) {
 
         if (sInstance == null) {
             return;
@@ -233,6 +245,9 @@ public class GiniCapture {
 
         extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic, "bic", null, emptyList()));
 
+        if (instantPayment != null) {
+            extractionMap.put("instantPayment", new GiniCaptureSpecificExtraction("instantPayment", instantPayment.toString(), "instantPayment", null, emptyList()));
+        }
         // We should remove skonto from compound extractions as we don't want to override them by clients when sending normal feedback!
         sInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
 
@@ -310,6 +325,7 @@ public class GiniCapture {
             oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, compoundExtractionMap, new GiniCaptureNetworkCallback<Void, Error>() {
                 //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
                 private int retryCount = 0;
+
                 @Override
                 public void failure(Error error) {
                     int maxRetries = 3;
@@ -318,10 +334,12 @@ public class GiniCapture {
                         oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, compoundExtractionMap, this);
                     }
                 }
+
                 @Override
                 public void success(Void result) {
                     //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
                 }
+
                 @Override
                 public void cancelled() {
                     //No cleanup needed here as it will be handled by the normal transfer summary implemented by clients! See sendTransferSummary function above
@@ -351,13 +369,12 @@ public class GiniCapture {
      * @param iban             international bank account
      * @param bic              bank identification code
      * @param amount           accepts extracted amount and currency
-     * @deprecated Use {@link #sendTransferSummary(String, String, String, String, String, Amount)} to provide the required transfer summary first (if the user has completed TAN verification) and then {@link #cleanup(Context)} to let the SDK free up used resources.
-     *
+     * @deprecated Use {@link #sendTransferSummary(String, String, String, String, String, Amount, Boolean)} to provide the required transfer summary first (if the user has completed TAN verification) and then {@link #cleanup(Context)} to let the SDK free up used resources.
      */
 
     @Deprecated
     public static synchronized void cleanup(@NonNull final Context context, @NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
-        sendTransferSummary(paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount);
+        sendTransferSummary(paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount, null);
         cleanup(context);
     }
 
@@ -406,6 +423,7 @@ public class GiniCapture {
         navigationBarTopAdapterInstance = builder.getNavigationBarTopAdapterInstance();
         onboardingNavigationBarBottomAdapterInstance = builder.getOnboardingNavigationBarBottomAdapterInstance();
         helpNavigationBarBottomAdapterInstance = builder.getHelpNavigationBarBottomAdapterInstance();
+        errorNavigationBarBottomAdapterInstance = builder.getErrorNavigationBarBottomAdapterInstance();
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
         onboardingAlignCornersIllustrationAdapterInstance = builder.getOnboardingAlignCornersIllustrationAdapterInstance();
         onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
@@ -681,6 +699,11 @@ public class GiniCapture {
     }
 
     @NonNull
+    public ErrorNavigationBarBottomAdapter getErrorNavigationBarBottomAdapter() {
+        return errorNavigationBarBottomAdapterInstance.getViewAdapter();
+    }
+
+    @NonNull
     public CameraNavigationBarBottomAdapter getCameraNavigationBarBottomAdapter() {
         return cameraNavigationBarBottomAdapterInstance.getViewAdapter();
     }
@@ -774,7 +797,9 @@ public class GiniCapture {
      * @return the map of custom metadata
      */
     @Nullable
-    public Map<String, String> getCustomUploadMetadata() { return mCustomUploadMetadata; }
+    public Map<String, String> getCustomUploadMetadata() {
+        return mCustomUploadMetadata;
+    }
 
     public static GiniCaptureFragment createGiniCaptureFragment() {
         if (!GiniCapture.hasInstance()) {
@@ -810,7 +835,8 @@ public class GiniCapture {
     }
 
     public static class CreateGiniCaptureFragmentForIntentResult {
-        public static class Cancelled extends CreateGiniCaptureFragmentForIntentResult {}
+        public static class Cancelled extends CreateGiniCaptureFragmentForIntentResult {
+        }
 
         public static class Success extends CreateGiniCaptureFragmentForIntentResult {
             @NonNull
@@ -820,6 +846,7 @@ public class GiniCapture {
                 this.fragment = fragment;
             }
         }
+
         public static class Error extends CreateGiniCaptureFragmentForIntentResult {
             @NonNull
             Exception exception;
@@ -876,6 +903,7 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultNavigationBarTopAdapter());
         private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
+        private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultErrorNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private boolean isBottomNavigationBarEnabled = false;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
@@ -1255,6 +1283,22 @@ public class GiniCapture {
         }
 
         /**
+         * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
+         *
+         * @param adapter a {@link ErrorNavigationBarBottomAdapter} interface implementation
+         * @return the {@link Builder} instance
+         */
+        public Builder setErrorNavigationBarBottomAdapter(@NonNull final ErrorNavigationBarBottomAdapter adapter) {
+            errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
+            return this;
+        }
+
+        @NonNull
+        private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> getErrorNavigationBarBottomAdapterInstance() {
+            return errorNavigationBarBottomAdapterInstance;
+        }
+
+        /**
          * Set an adapter implementation to show a custom bottom navigation bar on the camera screen.
          *
          * @param adapter a {@link CameraNavigationBarBottomAdapter} interface implementation
@@ -1416,7 +1460,6 @@ public class GiniCapture {
          * on your activity's window after the SDK has finished to allow users to take screenshots of your app again.
          *
          * @param allowScreenshots pass {@code true} to allow screenshots or {@code false} otherwise.
-         *
          * @return the {@link Builder} instance
          */
         public Builder setAllowScreenshots(boolean allowScreenshots) {
@@ -1528,6 +1571,10 @@ public class GiniCapture {
 
         public InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> getHelpNavigationBarBottomAdapterInstance() {
             return mGiniCapture.helpNavigationBarBottomAdapterInstance;
+        }
+
+        public InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> getErrorNavigationBarBottomAdapterInstance() {
+            return mGiniCapture.errorNavigationBarBottomAdapterInstance;
         }
 
         public InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> getLoadingIndicatorAdapterInstance() {
