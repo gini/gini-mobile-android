@@ -189,5 +189,6 @@
     <ID>WildcardImport:LineItemsAdapter.kt$import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.*</ID>
     <ID>WildcardImport:LineItemsValidator.kt$import net.gini.android.bank.sdk.capture.digitalinvoice.DigitalInvoiceException.*</ID>
     <ID>WildcardImport:SimpleBusEventStore.kt$import kotlinx.coroutines.flow.*</ID>
+    <ID>NestedBlockDepth:ReturnReasonsDialog.kt$ReturnReasonDialog$override fun onStart()</ID>
   </CurrentIssues>
 </SmellBaseline>
