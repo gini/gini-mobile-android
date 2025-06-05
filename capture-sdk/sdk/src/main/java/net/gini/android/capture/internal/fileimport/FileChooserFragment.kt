@@ -119,8 +119,9 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupFileChooserListener() {
-        chooseFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            findNavController().popBackStack()
+        chooseFileLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                findNavController().popBackStack()
                 when (result.resultCode) {
                     RESULT_OK -> {
                         result.data?.let { data ->
@@ -156,7 +157,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                         )
                     })
                 }
-        }
+            }
 
         val photoPickType =
             if (FeatureConfiguration.isMultiPageEnabled()) {
@@ -179,7 +180,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             FileChooserResult.Cancelled
         } else {
             try {
-                val uriList = when(activityResultUriList){
+                val uriList = when (activityResultUriList) {
                     is Uri -> listOf(activityResultUriList)
                     is List<*> -> {
                         activityResultUriList.filterIsInstance<Uri>().takeIf {
@@ -194,7 +195,12 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                     FileChooserResult.Cancelled
                 }
             } catch (e: IllegalArgumentException) {
-                FileChooserResult.Error(GiniCaptureError(GiniCaptureError.ErrorCode.DOCUMENT_IMPORT, e.message))
+                FileChooserResult.Error(
+                    GiniCaptureError(
+                        GiniCaptureError.ErrorCode.DOCUMENT_IMPORT,
+                        e.message
+                    )
+                )
             }
         }
     }
@@ -319,7 +325,11 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             if (pdfProviderResolveInfos.isNotEmpty()) {
                 add(ProvidersSectionItem(getString(R.string.gc_file_chooser_pdfs_section_header)))
 
-                val getPdfDocumentIntent = createGetPdfDocumentIntent()
+                val getPdfDocumentIntent = if (isEInvoiceEnabled) {
+                    createGetPdfAndXmlDocumentIntent()
+                } else {
+                    createGetPdfDocumentIntent()
+                }
                 for (pdfProviderResolveInfo in pdfProviderResolveInfos) {
                     add(ProvidersAppItem(getPdfDocumentIntent, pdfProviderResolveInfo))
                 }
@@ -339,6 +349,9 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     companion object {
         const val REQUEST_KEY = "GC_FILE_CHOOSER_REQUEST_KEY"
         const val RESULT_KEY = "GC_FILE_CHOOSER_RESULT_BUNDLE_KEY"
+
+        //TODO: should use the response from configuration endpoint!
+        private val isEInvoiceEnabled = false
 
         @JvmStatic
         fun newInstance(docImportEnabledFileTypes: DocumentImportEnabledFileTypes) =
@@ -402,7 +415,12 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             "SDK documentation informs clients to declare the <queries> element in their manifest"
         )
         private fun queryPdfProviders(context: Context): List<ResolveInfo> {
-            val intent = createGetPdfDocumentIntent()
+            val intent =
+                if (isEInvoiceEnabled) {
+                    createGetPdfAndXmlDocumentIntent()
+                } else {
+                    createGetPdfDocumentIntent()
+                }
             return context.packageManager.queryIntentActivities(intent, 0)
         }
 
@@ -410,6 +428,19 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = MimeType.APPLICATION_PDF.asString()
+                if (FeatureConfiguration.isMultiPageEnabled()) {
+                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                }
+            }
+
+        private fun createGetPdfAndXmlDocumentIntent(): Intent =
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "*/*"
+                putExtra(
+                    Intent.EXTRA_MIME_TYPES,
+                    arrayOf("application/pdf", "text/xml", "application/xml")
+                )
                 if (FeatureConfiguration.isMultiPageEnabled()) {
                     putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                 }
