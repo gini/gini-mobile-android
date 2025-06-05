@@ -32,11 +32,9 @@ class GiniBankTransactions : GiniTransactions {
      */
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun setSelectedTransaction(identifier: GiniTransactionIdentifier) {
-        if (transactions.isEmpty()) {
-            throw IllegalStateException(
-                "Transactions list is empty. " +
-                        "Make sure you set the transactions list first by calling `setTransactions(...)`"
-            )
+        check(transactions.isNotEmpty()) {
+            "Transactions list is not empty. " +
+                    "Make sure you call `setTransactions(...)` before calling `setSelectedTransaction(...)`"
         }
         val selectedTransaction = transactions.firstOrNull { it.identifier == identifier }
         require(selectedTransaction != null) {
