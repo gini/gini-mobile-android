@@ -323,11 +323,12 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     private fun getPdfProviderItems(pdfProviderResolveInfos: List<ResolveInfo>): List<ProvidersItem> =
         mutableListOf<ProvidersItem>().apply {
             if (pdfProviderResolveInfos.isNotEmpty()) {
-                add(ProvidersSectionItem(getString(R.string.gc_file_chooser_pdfs_section_header)))
 
                 val getPdfDocumentIntent = if (isEInvoiceEnabled) {
+                    add(ProvidersSectionItem(getString(R.string.gc_file_chooser_pdfs_xmls_section_header)))
                     createGetPdfAndXmlDocumentIntent()
                 } else {
+                    add(ProvidersSectionItem(getString(R.string.gc_file_chooser_pdfs_section_header)))
                     createGetPdfDocumentIntent()
                 }
                 for (pdfProviderResolveInfo in pdfProviderResolveInfos) {
@@ -351,7 +352,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         const val RESULT_KEY = "GC_FILE_CHOOSER_RESULT_BUNDLE_KEY"
 
         //TODO: should use the response from configuration endpoint!
-        private val isEInvoiceEnabled = false
+        private val isEInvoiceEnabled = true
 
         @JvmStatic
         fun newInstance(docImportEnabledFileTypes: DocumentImportEnabledFileTypes) =

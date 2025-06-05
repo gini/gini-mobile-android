@@ -93,6 +93,7 @@
 
     <string name="gc_file_chooser_fotos_section_header">Fotos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
+    <string name="gc_file_chooser_pdfs_xmls_section_header">Rechnungen: PDF &amp; XML</string>
     <string name="gc_help_item_photo_tips_title">Tipps für beste Ergebnisse</string>
     <string name="gc_help_item_file_import_guide_title">Dokumente von anderen Apps importieren</string>
     <string name="gc_help_item_supported_formats_title">Unterstützte Formate</string>

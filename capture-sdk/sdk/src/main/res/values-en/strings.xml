@@ -87,6 +87,7 @@
     <string name="gc_document_import_close_error">Cancel</string>
     <string name="gc_file_chooser_fotos_section_header">Photos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
+    <string name="gc_file_chooser_pdfs_xmls_section_header">Invoices: PDF &amp; XML</string>
     <string name="gc_help_item_photo_tips_title">Tips for best results from photos</string>
     <string name="gc_help_item_file_import_guide_title">Import documents from other apps</string>
     <string name="gc_help_item_supported_formats_title">Supported formats</string>
