@@ -1,7 +1,9 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -126,9 +128,17 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
                     resources.getDimension(net.gini.android.capture.R.dimen.gc_tablet_width).toInt()
             } else if (isPhoneLandscapeMode()) {
                 dialog?.window?.let { window ->
-                    val metrics = window.windowManager.currentWindowMetrics
-                    val screenWidth = metrics.bounds.width()
-                    val screenHeight = metrics.bounds.height()
+                    val (screenWidth, screenHeight) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        val metrics = window.windowManager.currentWindowMetrics
+                        val bounds = metrics.bounds
+                        bounds.width() to bounds.height()
+                    } else {
+                        val displayMetrics = DisplayMetrics()
+                        @Suppress("DEPRECATION")
+                        window.windowManager.defaultDisplay.getMetrics(displayMetrics)
+                        displayMetrics.widthPixels to displayMetrics.heightPixels
+                    }
+
                     window.setLayout(screenWidth / 2, screenHeight)
                     val params = window.attributes
                     params.gravity = Gravity.END
