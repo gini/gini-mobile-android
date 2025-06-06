@@ -193,6 +193,7 @@ internal constructor(
             isReturnAssistantEnabled = configuration.isReturnAssistantEnabled,
             isTransactionDocsEnabled = configuration.transactionDocsEnabled,
             isInstantPaymentEnabled = configuration.instantPaymentEnabled,
+            isEInvoiceEnabled = configuration.isEInvoiceEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
         )
 

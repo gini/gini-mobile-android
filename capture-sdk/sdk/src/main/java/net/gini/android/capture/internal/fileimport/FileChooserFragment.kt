@@ -31,6 +31,8 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcFragmentFileChooserBinding
+import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersAdapter
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersAppItem
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersAppWrapperItem
@@ -324,7 +326,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         mutableListOf<ProvidersItem>().apply {
             if (pdfProviderResolveInfos.isNotEmpty()) {
 
-                val getPdfDocumentIntent = if (isEInvoiceEnabled) {
+                val getPdfDocumentIntent = if (getEInvoiceFeatureEnabledUseCase.invoke()) {
                     add(ProvidersSectionItem(getString(R.string.gc_file_chooser_pdfs_xmls_section_header)))
                     createGetPdfAndXmlDocumentIntent()
                 } else {
@@ -350,9 +352,8 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     companion object {
         const val REQUEST_KEY = "GC_FILE_CHOOSER_REQUEST_KEY"
         const val RESULT_KEY = "GC_FILE_CHOOSER_RESULT_BUNDLE_KEY"
-
-        //TODO: should use the response from configuration endpoint!
-        private val isEInvoiceEnabled = true
+        private val getEInvoiceFeatureEnabledUseCase: GetEInvoiceFeatureEnabledUseCase
+                by getGiniCaptureKoin().inject()
 
         @JvmStatic
         fun newInstance(docImportEnabledFileTypes: DocumentImportEnabledFileTypes) =
@@ -417,7 +418,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         )
         private fun queryPdfProviders(context: Context): List<ResolveInfo> {
             val intent =
-                if (isEInvoiceEnabled) {
+                if (getEInvoiceFeatureEnabledUseCase.invoke()) {
                     createGetPdfAndXmlDocumentIntent()
                 } else {
                     createGetPdfDocumentIntent()
