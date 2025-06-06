@@ -12,7 +12,7 @@
     <string name="gps_error_input_amount_format">Invalid format</string>
     <string name="gps_error_input_recipient_empty">Recipient is required.</string>
     <string name="gps_error_input_iban_empty">IBAN is required.</string>
-    <string name="gps_error_input_amount_empty">Invalid.</string>
+    <string name="gps_error_input_amount_empty">Amount is required.</string>
     <string name="gps_error_input_reference_number_empty">Reference number is required.</string>
     <string name="gps_snackbar_retry">Retry</string>
     <string name="gps_payment_details_info_bar_text">Please check the prefilled values</string>
