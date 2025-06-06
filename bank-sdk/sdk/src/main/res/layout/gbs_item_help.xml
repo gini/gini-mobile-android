@@ -11,6 +11,7 @@
         android:layout_width="@dimen/gbs_digital_invoice_help_icon_width"
         android:layout_height="@dimen/gbs_digital_invoice_help_icon_height"
         android:src="@drawable/gbs_help_edit_icon"
+        android:importantForAccessibility="yes"
         android:layout_marginStart="@dimen/gc_large_24"
         android:layout_marginTop="@dimen/gc_large_32"
         app:layout_constraintStart_toStartOf="parent"

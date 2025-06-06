@@ -198,6 +198,8 @@
                     android:gravity="center_vertical|end"
                     android:paddingTop="@dimen/gc_small"
                     android:paddingEnd="@dimen/gc_medium"
+                    android:clickable="false"
+                    android:focusable="false"
                     android:paddingBottom="@dimen/gc_small"
                     app:layout_constraintBottom_toBottomOf="@+id/gbs_currencies_drop_down"
                     app:layout_constraintEnd_toStartOf="@+id/gbs_drop_down_arrow"

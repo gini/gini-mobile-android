@@ -369,12 +369,13 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     }
 
     private fun initRecyclerView() {
-        lineItemsAdapter = LineItemsAdapter(this, skontoAdapterListener, requireContext())
         activity?.let {
             binding.lineItems.apply {
                 layoutManager = LinearLayoutManager(it)
-                adapter = lineItemsAdapter
                 setHasFixedSize(true)
+                itemAnimator = null
+                lineItemsAdapter = LineItemsAdapter(this@DigitalInvoiceFragment, skontoAdapterListener, requireContext(), this)
+                adapter = lineItemsAdapter
             }
         }
     }
@@ -511,6 +512,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
         binding.grossPriceTotalIntegralPart.text = integral
         binding.grossPriceTotalFractionalPart.text = fractional
+        binding.totalPriceGroup?.contentDescription = integral + fractional
         binding.gbsPay.isEnabled = data.buttonEnabled
 
         val isSkontoSavedAmountVisible = data.skontoSavedAmount != null
