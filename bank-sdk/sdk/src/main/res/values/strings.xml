@@ -36,6 +36,7 @@
     <string name="gbs_help_invoice_title">Wie funktioniert die Digitale Rechnung?</string>
     <string name="gbs_help_invoice_text">Wir lesen alle Artikel aus der Rechnung aus und listen diese für Sie auf. Falls Sie einige Artikel zurücksenden oder die Rechnung nur teilweise bezahlen möchten, wählen Sie einfach die Artikel ab, die Sie zurücksenden und wir berechnen den zu zahlenden Betrag für Sie neu.</string>
     <string name="gbs_help_edit_title">Wie kann ich Artikel bearbeiten?</string>
+    <string name="image_content_description_suffix">%1$s Bild</string>
     <string name="gbs_help_edit_text">Mit einem Klick auf “Bearbeiten” neben dem entsprechenden Artikel haben Sie anschließend die Möglichkeit die Beschreibung, Anzahl und Preis zu bearbeiten. Bitte beachten Sie, dass der Preis pro Stück die Mehrwertsteuer bereits enthält.</string>
     <string name="gbs_help_online_shops_title">Welche Onlineshops werden unterstützt?</string>
     <string name="gbs_help_online_shops_text">Wir konzentrieren uns derzeit auf die beliebtesten Online-Händler auf dem Markt. Weitere Einzelhändler werden in Zukunft hinzukommen.</string>

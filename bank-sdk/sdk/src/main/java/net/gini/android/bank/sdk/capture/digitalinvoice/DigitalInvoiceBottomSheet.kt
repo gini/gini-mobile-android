@@ -186,6 +186,8 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gbs_edit_article))
+
         restoringFromOrientationChange = savedInstanceState != null
         setUpBindings()
 

@@ -6,8 +6,8 @@
     android:background="?attr/colorSurface"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:focusable="true">
+    android:clickable="false"
+    android:focusable="false">
 
     <TextView
         android:id="@+id/gbs_description"
@@ -66,8 +66,8 @@
         style="@style/GiniCaptureTheme.Typography.Body1"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:clickable="false"
-        android:focusable="false"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="top"
         android:layout_marginTop="@dimen/gc_small"
         android:minHeight="0dp"
