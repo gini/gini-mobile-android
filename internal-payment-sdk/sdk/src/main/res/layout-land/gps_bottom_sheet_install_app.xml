@@ -60,7 +60,6 @@
         android:layout_height="wrap_content"
         style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"
         android:text="@string/gps_forward"
-        android:focusable="true"
         android:visibility="gone"
         android:layout_marginBottom="@dimen/gps_medium_12"
         android:layout_marginTop="@dimen/gps_large_36"

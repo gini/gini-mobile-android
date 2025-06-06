@@ -17,7 +17,6 @@
         android:orientation="horizontal"
         android:paddingVertical="@dimen/gps_large_24"
         android:focusable="true"
-        android:focusableInTouchMode="false"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical">
 
