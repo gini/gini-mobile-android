@@ -84,18 +84,24 @@ internal class LineItemsAdapter(
     var skontoDiscount: List<DigitalInvoiceSkontoListItem> = emptyList()
         set(value) {
                 recyclerView.post {
-                    val oldSize = field.size
-                    field = value
-
-                    val position = lineItems.size + addons.size
-                    if (oldSize == 0 && value.isNotEmpty()) {
-                        notifyItemInserted(position)
-                    } else if (oldSize == 1 && value.isEmpty()) {
-                        notifyItemRemoved(position)
-                    } else if (oldSize == 1 && value.size == 1) {
-                        notifyItemChanged(position)
-                    } else {
-                        notifyDataSetChanged()
+                    recyclerView.post {
+                        val oldSize = field.size
+                        field = value
+                        val position = lineItems.size + addons.size
+                        when {
+                            oldSize == 0 && value.isNotEmpty() -> {
+                                notifyItemInserted(position)
+                            }
+                            oldSize == 1 && value.isEmpty() -> {
+                                notifyItemRemoved(position)
+                            }
+                            oldSize == 1 && value.size == 1 -> {
+                                notifyItemChanged(position)
+                            }
+                            else -> {
+                                notifyDataSetChanged()
+                            }
+                        }
                     }
                 }
         }
