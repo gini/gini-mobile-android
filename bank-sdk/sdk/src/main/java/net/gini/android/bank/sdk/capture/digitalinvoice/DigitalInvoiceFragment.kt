@@ -374,7 +374,12 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
                 layoutManager = LinearLayoutManager(it)
                 setHasFixedSize(true)
                 itemAnimator = null
-                lineItemsAdapter = LineItemsAdapter(this@DigitalInvoiceFragment, skontoAdapterListener, requireContext(), this)
+                lineItemsAdapter = LineItemsAdapter(
+                    this@DigitalInvoiceFragment,
+                    skontoAdapterListener,
+                    requireContext(),
+                    this
+                )
                 adapter = lineItemsAdapter
             }
         }
@@ -512,7 +517,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
         binding.grossPriceTotalIntegralPart.text = integral
         binding.grossPriceTotalFractionalPart.text = fractional
-        binding.totalPriceGroup?.contentDescription = integral + fractional
+        binding.totalPriceGroup.contentDescription = integral + fractional
         binding.gbsPay.isEnabled = data.buttonEnabled
 
         val isSkontoSavedAmountVisible = data.skontoSavedAmount != null
