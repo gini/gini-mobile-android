@@ -22,14 +22,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/gc_large_64"
-            android:layout_marginEnd="@dimen/gc_large_64"
             android:layout_marginBottom="@dimen/gc_large"
             android:gravity="center"
             android:text="@string/gbs_digital_invoice_onboarding_text_1"
             app:layout_constraintBottom_toTopOf="@+id/onboarding_text_2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="@+id/digital_invoice_image_container"
+            app:layout_constraintStart_toStartOf="@+id/digital_invoice_image_container" />
 
         <net.gini.android.capture.view.InjectedViewContainer
             android:id="@+id/digital_invoice_image_container"
@@ -47,17 +45,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/gc_large_64"
-            android:layout_marginEnd="@dimen/gc_large_64"
             android:layout_marginBottom="@dimen/gc_large_48"
             android:gravity="center"
             android:lineSpacingExtra="5sp"
             android:text="@string/gbs_digital_invoice_onboarding_text_2"
-            android:textColor="@color/gc_dark_06"
+            android:textColor="@color/gc_dark_05"
             android:translationY="-2.62sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="@+id/digital_invoice_image_container"
+            app:layout_constraintStart_toStartOf="@+id/digital_invoice_image_container" /> />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

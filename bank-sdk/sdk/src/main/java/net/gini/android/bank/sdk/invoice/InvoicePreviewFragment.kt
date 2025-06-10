@@ -10,11 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.ui.theme.GiniTheme
 import org.koin.core.parameter.parametersOf
 
@@ -31,7 +32,6 @@ class InvoicePreviewFragment : Fragment() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-        ActivityHelper.forcePortraitOrientationOnPhones(activity)
 
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -42,8 +42,6 @@ class InvoicePreviewFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
-        val navigateBack = { requireActivity().onBackPressedDispatcher.onBackPressed() }
-
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -51,7 +49,8 @@ class InvoicePreviewFragment : Fragment() {
                     InvoicePreviewScreen(
                         modifier = Modifier.fillMaxSize(),
                         viewModel = viewModel,
-                        navigateBack = navigateBack
+                        navigateBack = { findNavController().navigateUp() },
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext())
                     )
                 }
             }
