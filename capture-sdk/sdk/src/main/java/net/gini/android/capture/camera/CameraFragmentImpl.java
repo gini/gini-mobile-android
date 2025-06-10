@@ -86,6 +86,7 @@ import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
+import net.gini.android.capture.internal.qreducation.model.FlowType;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.textrecognition.CropToCameraFrameTextRecognizer;
 import net.gini.android.capture.internal.textrecognition.MLKitTextRecognizer;
@@ -458,6 +459,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
      * @suppress
      */
     public void onStart() {
+        getUpdateFlowTypeUseCase().execute(null);
         checkGiniCaptureInstance();
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
@@ -1549,6 +1551,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         } else {
             if (photo != null) {
                 LOG.info("Picture taken");
+                getUpdateFlowTypeUseCase().execute(FlowType.Photo.INSTANCE);
                 showActivityIndicatorAndDisableInteraction();
                 photo.edit()
                         .crop(mCameraPreview, getRectForCroppingFromImageFrame())

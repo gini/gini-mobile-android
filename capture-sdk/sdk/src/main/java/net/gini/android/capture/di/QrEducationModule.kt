@@ -14,7 +14,8 @@ internal val qrEducationModule = module {
     }
     factory {
         GetQrEducationTypeUseCase(
-            qrCodeEducationStorage = get()
+            qrCodeEducationStorage = get(),
+            flowTypeStorage = get()
         )
     }
     factory {
