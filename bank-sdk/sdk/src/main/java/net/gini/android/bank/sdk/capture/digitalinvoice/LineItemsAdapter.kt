@@ -364,25 +364,23 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             if (data.enabled) {
                 gbsSkontoAmount.visibility = View.VISIBLE
                 gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
-                if (ContextHelper.isDarkTheme(gbsSkontoAmount.context)) {
-                    gbsSkontoAmount.setTextColor(
+                gbsSkontoAmount.setTextColor(
+                    if (ContextHelper.isDarkTheme(gbsSkontoAmount.context)) {
                         ContextCompat.getColor(
                             gbsSkontoAmount.context,
                             net.gini.android.capture.R.color.gc_success_02
                         )
-                    )
-                } else {
-                    gbsSkontoAmount.setTextColor(
+                    } else {
                         ContextCompat.getColor(
                             gbsSkontoAmount.context,
                             net.gini.android.capture.R.color.gc_success_01
                         )
-                    )
-                }
+
+                    }
+                )
             } else {
                 gbsSkontoAmount.visibility = View.GONE
             }
-
             // message should be visible if it is an edgeCase or if the skonto is disabled
             if (data.isEdgeCase || !data.enabled) {
                 gbsMessage.visibility = View.VISIBLE
