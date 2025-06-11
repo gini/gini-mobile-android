@@ -10,6 +10,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
 }
 
 // TODO: construct version code and name in fastlane and inject them
@@ -78,6 +79,12 @@ android {
 
     buildFeatures {
         viewBinding = true
+        dataBinding = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     signingConfigs {
@@ -183,6 +190,17 @@ dependencies {
         // workaround issue #73
         exclude(group = "com.google.android", module = "android")
     }
+    
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.material3)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.tools.uiToolingPreview)
+    implementation(libs.accompanist.themeAdapter)
+    debugImplementation(libs.compose.tools.uiTooling)
+
+    implementation(libs.orbitmvi.test)
+    implementation(libs.orbitmvi.compose)
+    implementation(libs.orbitmvi.viewmodel)
 
     implementation(libs.lottie)
 
@@ -193,6 +211,8 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.test.espresso.idlingresource)
+
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
 

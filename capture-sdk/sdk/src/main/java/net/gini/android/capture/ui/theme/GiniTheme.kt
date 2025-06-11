@@ -25,13 +25,14 @@ internal val LocalGiniTypography = staticCompositionLocalOf {
 
 @Composable
 fun GiniTheme(
+    darkMode: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
     val giniPrimitives =
         remember { GiniColorPrimitives.buildColorPrimitivesBasedOnResources(context) }
 
-    val colors = if (isSystemInDarkTheme()) {
+    val colors = if (darkMode) {
         giniDarkColorScheme(giniPrimitives)
     } else {
         giniLightColorScheme(giniPrimitives)

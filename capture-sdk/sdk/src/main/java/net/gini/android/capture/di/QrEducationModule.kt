@@ -16,6 +16,7 @@ internal val qrEducationModule = module {
     factory {
         GetQrEducationTypeUseCase(
             qrCodeEducationStorage = get(),
+            flowTypeStorage = get(),
             isOnlyQrCodeScanningEnabledProvider = {
                 runCatching { GiniCapture.getInstance().isOnlyQRCodeScanning }.getOrNull()
             },

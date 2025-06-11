@@ -38,6 +38,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gc_help_items"
                 android:layout_width="@dimen/gc_tablet_width"
+                android:focusable="true"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:nestedScrollingEnabled="false"

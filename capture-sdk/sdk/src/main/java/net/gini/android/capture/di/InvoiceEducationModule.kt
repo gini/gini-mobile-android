@@ -14,7 +14,8 @@ internal val invoiceEducationModule = module {
     }
     factory {
         GetInvoiceEducationTypeUseCase(
-            invoiceEducationStorage = get()
+            invoiceEducationStorage = get(),
+            flowTypeStorage = get()
         )
     }
     factory {

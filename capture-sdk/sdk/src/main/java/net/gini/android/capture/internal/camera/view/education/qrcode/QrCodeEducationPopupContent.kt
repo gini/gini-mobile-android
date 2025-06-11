@@ -31,25 +31,29 @@ internal fun QrCodeEducationPopupContent(
             .background(Color.Black.copy(alpha = 0.75f))
             .fillMaxSize()
     ) {
-        when (qrEducationType) {
-            QrEducationType.PHOTO_DOC -> {
-                AnimatedEducationMessageWithIntro(
-                    modifier = modifier.align(Alignment.Center),
-                    message = stringResource(R.string.gc_qr_education_photo_doc_message),
-                    imagePainter = painterResource(R.drawable.gc_qr_code_education_photo_doc_image),
-                    onComplete = onComplete,
-                    animationKey = qrEducationType
-                )
-            }
+        GiniTheme(
+            darkMode = true
+        ) {
+            when (qrEducationType) {
+                QrEducationType.PHOTO_DOC -> {
+                    AnimatedEducationMessageWithIntro(
+                        modifier = modifier.align(Alignment.Center),
+                        message = stringResource(R.string.gc_qr_education_photo_doc_message),
+                        imagePainter = painterResource(R.drawable.gc_qr_code_education_photo_doc_image),
+                        onComplete = onComplete,
+                        animationKey = qrEducationType
+                    )
+                }
 
-            QrEducationType.UPLOAD_PICTURE -> {
-                AnimatedEducationMessageWithIntro(
-                    modifier = modifier.align(Alignment.Center),
-                    message = stringResource(R.string.gc_qr_education_upload_picture_message),
-                    imagePainter = painterResource(R.drawable.gc_qr_code_education_upload_picture_image),
-                    onComplete = onComplete,
-                    animationKey = qrEducationType
-                )
+                QrEducationType.UPLOAD_PICTURE -> {
+                    AnimatedEducationMessageWithIntro(
+                        modifier = modifier.align(Alignment.Center),
+                        message = stringResource(R.string.gc_qr_education_upload_picture_message),
+                        imagePainter = painterResource(R.drawable.gc_qr_code_education_upload_picture_image),
+                        onComplete = onComplete,
+                        animationKey = qrEducationType
+                    )
+                }
             }
         }
 
