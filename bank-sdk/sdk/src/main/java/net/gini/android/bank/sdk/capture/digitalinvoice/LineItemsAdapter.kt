@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceLineItemBindin
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceSkontoBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
@@ -363,6 +365,21 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             if (data.enabled) {
                 gbsSkontoAmount.visibility = View.VISIBLE
                 gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
+                if (ContextHelper.isDarkTheme(gbsSkontoAmount.context)) {
+                    gbsSkontoAmount.setTextColor(
+                        ContextCompat.getColor(
+                            gbsSkontoAmount.context,
+                            net.gini.android.capture.R.color.gc_success_02
+                        )
+                    )
+                } else {
+                    gbsSkontoAmount.setTextColor(
+                        ContextCompat.getColor(
+                            gbsSkontoAmount.context,
+                            net.gini.android.capture.R.color.gc_success_01
+                        )
+                    )
+                }
             } else {
                 gbsSkontoAmount.visibility = View.GONE
             }

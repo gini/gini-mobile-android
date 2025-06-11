@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -234,6 +235,25 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         changeMarginAccordingToFontOversize()
         presenter?.onViewCreated()
         handleIfShowAttachDialogWasShowing(savedInstanceState)
+        handleSkontoSavedAmountColour()
+    }
+
+    private fun handleSkontoSavedAmountColour() {
+        if (ContextHelper.isDarkTheme(requireContext())) {
+            binding.skontoSavedAmount.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    net.gini.android.capture.R.color.gc_success_02
+                )
+            )
+        } else {
+            binding.skontoSavedAmount.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    net.gini.android.capture.R.color.gc_success_01
+                )
+            )
+        }
     }
 
     private fun handleIfShowAttachDialogWasShowing(savedInstanceState: Bundle?) =
