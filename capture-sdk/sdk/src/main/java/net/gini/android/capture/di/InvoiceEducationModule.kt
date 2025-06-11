@@ -18,7 +18,8 @@ internal val invoiceEducationModule = module {
             invoiceEducationStorage = get(),
             documentImportEnabledFileTypesProvider = {
                 runCatching { GiniCapture.getInstance().documentImportEnabledFileTypes }.getOrNull()
-            }
+            },
+            flowTypeStorage = get()
         )
     }
     factory {

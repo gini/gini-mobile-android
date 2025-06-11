@@ -34,7 +34,7 @@
         android:layout_marginTop="@dimen/gc_small"
         android:text="@string/gbs_digital_invoice_line_item_quantity"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
-        android:textColor="@color/gc_dark_06"
+        android:textColor="@color/gc_dark_05"
         app:layout_constraintStart_toStartOf="@+id/gbs_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gbs_description"

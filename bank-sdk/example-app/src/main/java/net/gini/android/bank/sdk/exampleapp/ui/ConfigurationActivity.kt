@@ -399,13 +399,14 @@ class ConfigurationActivity : AppCompatActivity() {
 
         // enable Error screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles
-            .switchShowErrorScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isErrorScreensCustomBottomNavBarEnabled = isChecked
+            .switchShowErrorScreenCustomBottomNavbar
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isErrorScreensCustomBottomNavBarEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // enable camera screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchCameraScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->

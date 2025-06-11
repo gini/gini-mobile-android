@@ -6,7 +6,7 @@
             android:shape="ring"
             android:thickness="4dp"
             android:useLevel="false"
-            android:tint="#4dffffff"
+            android:tint="#66FFFFFF"
             android:tintMode="multiply">
             <!-- Using the multiply tint mode and the white-->
             <!-- tint color with the alpha value we can -->

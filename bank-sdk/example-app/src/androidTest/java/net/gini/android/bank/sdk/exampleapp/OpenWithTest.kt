@@ -106,7 +106,7 @@ class OpenWithTest {
         // Simulate PermissionDenied scenario by deleting the file before the Bank SDK is launched (revoke permission)
         Thread.sleep(200)
         storageUris.forEach { it.toFile().delete() }
-        runBlocking { GiniBank.transactionDocs.transactionDocsSettings.setAlwaysAttachSetting(true) }
+        runBlocking { GiniBank.giniTransactionDocs.transactionDocsSettings.setAlwaysAttachSetting(true) }
 
         // Then
         onView(withId(R.id.recyclerview_extractions)).check(matches(isDisplayed()))
