@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
@@ -86,7 +87,9 @@ internal class AnalysisScreenPresenterExtension(
     private fun doWhenEducationFinished(action: () -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             educationMutex.withLock {
-                action()
+                withContext(Dispatchers.Main) {
+                    action()
+                }
             }
         }
     }
