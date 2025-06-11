@@ -54,6 +54,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
@@ -64,16 +65,20 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.invisibleToUser
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kotlinx.coroutines.delay
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
 import net.gini.android.bank.sdk.capture.skonto.colors.section.SkontoFooterSectionColors
@@ -95,6 +100,7 @@ import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
 import net.gini.android.capture.ui.components.switcher.GiniSwitch
 import net.gini.android.capture.ui.components.textinput.GiniTextInput
+import net.gini.android.capture.ui.components.textinput.amount.DecimalFormatter
 import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInput
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
@@ -265,6 +271,7 @@ private fun ScreenReadyState(
     val scrollState = rememberScrollState()
     val padding = if (isTablet && isLandScape) 208.dp else 108.dp
     val keyboardPadding by keyboardPadding(padding, scrollState)
+    var hideFieldsForTalkBack by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -321,6 +328,8 @@ private fun ScreenReadyState(
                     dueDate = state.discountDueDate,
                     infoPaymentInDays = state.paymentInDays,
                     infoDiscountValue = state.skontoPercentage,
+                    hideFieldsForTalkBack = hideFieldsForTalkBack,
+                    setHideFieldsForTalkBack = { hideFieldsForTalkBack = it },
                     onActiveChange = onDiscountSectionActiveChange,
                     isActive = state.isSkontoSectionActive,
                     onSkontoAmountChange = onDiscountAmountChange,
@@ -340,6 +349,7 @@ private fun ScreenReadyState(
                     colors = screenColorScheme.withoutSkontoSectionColors,
                     isActive = !state.isSkontoSectionActive,
                     amount = state.fullAmount,
+                    hideFieldsForTalkBack = hideFieldsForTalkBack,
                     onFullAmountChange = onFullAmountChange,
                     amountFormatter = amountFormatter,
                     fullAmountValidationError = state.fullAmountValidationError,
@@ -596,6 +606,7 @@ private fun InvoicePreviewSection(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SkontoSection(
     isActive: Boolean,
@@ -616,12 +627,30 @@ private fun SkontoSection(
     modifier: Modifier = Modifier,
     discountPercentageFormatter: SkontoDiscountPercentageFormatter = SkontoDiscountPercentageFormatter(),
     isLandScape: Boolean,
-    shouldFieldShowKeyboard: Boolean = false
+    shouldFieldShowKeyboard: Boolean = false,
+    hideFieldsForTalkBack: Boolean,
+    setHideFieldsForTalkBack: (Boolean) -> Unit
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
     val focusManager = LocalFocusManager.current
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
+    var triggerRestore by remember { mutableStateOf(false) }
+
+    val handleSwitchToggle: (Boolean) -> Unit = { newState ->
+        onActiveChange(newState)
+        setHideFieldsForTalkBack(true)
+        triggerRestore = true
+    }
+
+    if (triggerRestore) {
+        LaunchedEffect(Unit) {
+            delay(1000)
+            setHideFieldsForTalkBack(false)
+            triggerRestore = false
+        }
+    }
+
     Card(
         modifier = modifier,
         shape = RectangleShape,
@@ -665,7 +694,7 @@ private fun SkontoSection(
                 GiniSwitch(
                     modifier = Modifier.padding(start = 8.dp),
                     checked = isActive,
-                    onCheckedChange = onActiveChange,
+                    onCheckedChange = handleSwitchToggle
                 )
             }
             val animatedDiscountAmount by animateFloatAsState(
@@ -703,6 +732,15 @@ private fun SkontoSection(
                 amount = amount.value,
                 currencyCode = amount.currency.name,
                 modifier = Modifier
+                    .then(
+                        if (hideFieldsForTalkBack)
+                            Modifier.semantics(mergeDescendants = true) {
+                                invisibleToUser()
+                            }
+                        else Modifier.semantics {
+                            liveRegion = LiveRegionMode.Polite
+                        }
+                    )
                     .fillMaxWidth()
                     .onPreviewKeyEvent { keyEvent ->
                         handleTabKeyEvent(keyEvent, focusManager)
@@ -927,6 +965,7 @@ private fun InfoDialog(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun WithoutSkontoSection(
     isActive: Boolean,
@@ -937,10 +976,23 @@ private fun WithoutSkontoSection(
     amountFormatter: AmountFormatter,
     fullAmountValidationError: SkontoScreenState.Ready.FullAmountValidationError?,
     modifier: Modifier = Modifier,
-    shouldFieldShowKeyboard: Boolean = false
+    shouldFieldShowKeyboard: Boolean = false,
+    hideFieldsForTalkBack: Boolean
 ) {
     val resources = LocalContext.current.resources
     val focusManager = LocalFocusManager.current
+    val view = LocalView.current
+    val decimalFormatter = DecimalFormatter()
+    var newAmount by remember { mutableStateOf("") }
+    val newText = decimalFormatter.textToDigits(newAmount)
+
+    val accessibilityText = stringResource(
+        id = R.string.gbs_Skonto_section_without_full_amount_entered_accessibility,
+        decimalFormatter.parseDigits(newText)
+    )
+    LaunchedEffect(amount.value) {
+        view.announceForAccessibility(accessibilityText)
+    }
 
     Card(
         modifier = modifier,
@@ -978,9 +1030,12 @@ private fun WithoutSkontoSection(
             }
             GiniAmountTextInput(
                 modifier = Modifier
-                    .semantics {
-                        liveRegion = LiveRegionMode.Assertive
-                    }
+                    .then(
+                        if (hideFieldsForTalkBack)Modifier.semantics(mergeDescendants = true) {
+                            invisibleToUser()
+                        }
+                        else Modifier
+                    )
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .onFocusChanged {
@@ -990,17 +1045,17 @@ private fun WithoutSkontoSection(
                     }
                     .onPreviewKeyEvent { keyEvent ->
                         handleTabKeyEvent(keyEvent, focusManager)
-                    }
-                ,
+                    },
                 enabled = isActive,
                 colors = colors.amountFieldColors,
                 amount = amount.value,
                 currencyCode = amount.currency.name,
-                onValueChange = onFullAmountChange,
+                onValueChange = { onFullAmountChange(it) },
                 label = stringResource(id = R.string.gbs_skonto_section_without_discount_field_amount_hint),
                 trailingContent = {
                     AnimatedVisibility(visible = isActive) {
                         Text(
+                            modifier = Modifier.clearAndSetSemantics { },
                             text = amount.currency.name,
                             style = GiniTheme.typography.subtitle1,
                         )
@@ -1011,7 +1066,10 @@ private fun WithoutSkontoSection(
                     resources = resources,
                     amountFormatter = amountFormatter
                 ),
-                shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive)
+                shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive),
+                onNewValue = {
+                    newAmount = it
+                }
             )
         }
     }

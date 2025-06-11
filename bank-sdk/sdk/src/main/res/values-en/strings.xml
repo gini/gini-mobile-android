@@ -64,6 +64,7 @@
     <string name="gbs_skonto_section_discount_field_amount_validation_error_skonto_amount_more_than_full_amount">Discounted value cannot exceed initial value</string>
     <!--   endregion -->
     <!--   region Section Without Discount -->
+    <string name="gbs_Skonto_section_without_full_amount_entered_accessibility">%1$s entered</string>
     <string name="gbs_skonto_section_without_discount_title">Without Skonto discount</string>
     <string name="gbs_skonto_section_without_discount_hint_label_enabled">  •  Active</string>
     <string name="gbs_skonto_section_without_discount_field_amount_hint">Full amount</string>
