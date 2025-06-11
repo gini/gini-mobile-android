@@ -311,7 +311,6 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             binding.gbsDescription.alpha = alpha
             binding.gbsEditButton.isEnabled = false
             binding.gbsEditButton.alpha = alpha
-            binding.gbsPerUnit.alpha = alpha
             binding.gbsGrossPriceIntegralPart.alpha = alpha
             binding.gbsGrossPriceFractionalPart.alpha = alpha
         }
