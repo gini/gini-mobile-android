@@ -95,6 +95,7 @@
     <string name="gc_supported_format_single_page_as_jpeg_png_gif">1-sided photos of format jpeg, png or gif</string>
     <string name="gc_supported_format_pdf">PDF documents of up to 10 pages</string>
     <string name="gc_supported_format_qr_code">QR codes</string>
+    <string name="gc_supported_format_e_invoices">E-Invoices: XRechnung (XML), ZUGFeRD (PDF)</string>
     <string name="gc_unsupported_format_handwriting">Handwriting</string>
     <string name="gc_unsupported_format_photos_of_screens">Photos of monitors or screens</string>
     <string name="gc_supported_format_section_header">Supported formats</string>

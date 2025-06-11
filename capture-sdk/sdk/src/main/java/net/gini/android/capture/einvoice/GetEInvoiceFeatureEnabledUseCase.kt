@@ -1,8 +1,11 @@
 package net.gini.android.capture.einvoice
 
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
-
-internal class GetEInvoiceFeatureEnabledUseCase(
+/**
+ * Internal use only.
+ *
+ */
+class GetEInvoiceFeatureEnabledUseCase(
     private val giniBankConfigurationProvider: GiniBankConfigurationProvider,
 ) {
 
