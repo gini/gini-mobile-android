@@ -31,6 +31,7 @@
         android:id="@+id/line_items"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:focusable="true"
         android:layout_marginTop="@dimen/gc_medium_12"
         android:background="?attr/backgroundColor"
         android:scrollbars="vertical"
@@ -67,26 +68,34 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/gross_price_total_fractional_part"
-            style="@style/GiniCaptureTheme.Typography.Headline5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/gc_large_24"
-            app:layout_constraintBottom_toBottomOf="@+id/gross_price_total_integral_part"
-            app:layout_constraintStart_toEndOf="@id/gross_price_total_integral_part"
-            app:layout_constraintTop_toTopOf="@+id/gross_price_total_integral_part"
-            tools:text=".99" />
-
-        <TextView
-            android:id="@+id/gross_price_total_integral_part"
-            style="@style/GiniCaptureTheme.Typography.Headline5"
+        <LinearLayout
+            android:id="@+id/total_price_group"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:importantForAccessibility="yes"
             android:layout_marginTop="@dimen/gc_small"
             app:layout_constraintStart_toStartOf="@id/gbs_total_and_skonto_container"
-            app:layout_constraintTop_toBottomOf="@id/gbs_total_and_skonto_container"
-            tools:text="€242" />
+            app:layout_constraintTop_toBottomOf="@id/gbs_total_and_skonto_container">
+
+            <TextView
+                android:id="@+id/gross_price_total_integral_part"
+                style="@style/GiniCaptureTheme.Typography.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                tools:text="€242" />
+
+            <TextView
+                android:id="@+id/gross_price_total_fractional_part"
+                style="@style/GiniCaptureTheme.Typography.Headline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:importantForAccessibility="no"
+                tools:text=".99" />
+
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -95,7 +104,6 @@
             android:layout_marginStart="@dimen/gc_large_24"
             app:layout_constraintTop_toBottomOf="@id/gbs_bottom_divider"
             android:layout_height="wrap_content">
-
             <TextView
                 android:id="@+id/total_label"
                 style="@style/GiniCaptureTheme.Typography.Body1"
@@ -149,7 +157,7 @@
             app:layout_constraintBottom_toTopOf="@+id/gbs_pay"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gross_price_total_integral_part"
+            app:layout_constraintTop_toBottomOf="@+id/total_price_group"
             app:layout_constraintVertical_bias="0.0"
             tools:text="Save 0,55 EUR" />
 
@@ -158,7 +166,7 @@
             app:barrierDirection="bottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="gross_price_total_integral_part,skonto_saved_amount"/>
+            app:constraint_referenced_ids="total_price_group,skonto_saved_amount"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/gbs_pay"

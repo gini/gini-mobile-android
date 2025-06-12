@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isInvisible
 import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.Addon
@@ -63,7 +64,8 @@ internal interface SkontoListItemAdapterListener {
 internal class LineItemsAdapter(
     private val listener: LineItemsAdapterListener,
     private val skontoListener: SkontoListItemAdapterListener,
-    private val context: Context
+    private val context: Context,
+    private val recyclerView: RecyclerView
 ) : RecyclerView.Adapter<ViewHolder<*>>() {
 
     private val amountFormatter: AmountFormatter by getGiniBankKoin().inject()
@@ -72,18 +74,36 @@ internal class LineItemsAdapter(
     var lineItems: List<SelectableLineItem> = emptyList()
         set(value) {
             field = value
-            notifyDataSetChanged()
         }
+
     var addons: List<DigitalInvoiceAddon> = emptyList()
         set(value) {
             field = value
-            notifyDataSetChanged()
         }
 
     var skontoDiscount: List<DigitalInvoiceSkontoListItem> = emptyList()
         set(value) {
-            field = value
-            notifyDataSetChanged()
+                recyclerView.post {
+                    recyclerView.post {
+                        val oldSize = field.size
+                        field = value
+                        val position = lineItems.size + addons.size
+                        when {
+                            oldSize == 0 && value.isNotEmpty() -> {
+                                notifyItemInserted(position)
+                            }
+                            oldSize == 1 && value.isEmpty() -> {
+                                notifyItemRemoved(position)
+                            }
+                            oldSize == 1 && value.size == 1 -> {
+                                notifyItemChanged(position)
+                            }
+                            else -> {
+                                notifyDataSetChanged()
+                            }
+                        }
+                    }
+                }
         }
 
     var isInaccurateExtraction: Boolean = false
@@ -93,6 +113,33 @@ internal class LineItemsAdapter(
             field = value
             notifyDataSetChanged()
         }
+
+    fun updateLineItems(newItems: List<SelectableLineItem>) {
+        val diffCallback = LineItemsDiffCallback(lineItems, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        lineItems = newItems
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+
+    class LineItemsDiffCallback(
+        private val oldList: List<SelectableLineItem>,
+        private val newList: List<SelectableLineItem>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize() = oldList.size
+        override fun getNewListSize() = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val old = oldList[oldItemPosition].lineItem
+            val new = newList[newItemPosition].lineItem
+            return old.id == new.id
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewTypeId: Int): ViewHolder<*> {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -259,7 +306,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                         )
                     }
             }
-            itemView.setOnClickListener(IntervalClickListener {
+            binding.gbsEditButton.setOnClickListener(
+                IntervalClickListener {
                 allData?.getOrNull(dataIndex ?: -1)?.let {
                     listener?.onLineItemClicked(it)
                 }
@@ -379,6 +427,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
 
             // Disable edit button when Skonto switch is disabled
             if (data.enabled) {
+                gbsEditButton.isClickable = true
+                gbsEditButton.focusable = View.FOCUSABLE
                 gbsEditButton.setTextColor(
                     gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
                 )
@@ -394,6 +444,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             } else {
                 gbsEditButton.setTextColor(gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_dark_05))
                 gbsEditButton.setOnClickListener(null)
+                gbsEditButton.focusable = View.NOT_FOCUSABLE
+                gbsEditButton.isClickable = false
             }
 
             gbsEnableSwitch.setOnClickListener {
