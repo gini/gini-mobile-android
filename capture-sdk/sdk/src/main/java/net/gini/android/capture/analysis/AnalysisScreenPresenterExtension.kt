@@ -73,16 +73,16 @@ internal class AnalysisScreenPresenterExtension(
     fun showLoadingIndicator(
         onEducationFlowTriggered: () -> Unit
     ) = runBlocking {
-        val type = getInvoiceEducationTypeUseCase.execute()
-        if (type != null) {
-            view.showEducation {
-                runBlocking { incrementInvoiceRecognizedCounterUseCase.execute() }
-                educationMutex.unlock()
+            val type = runCatching { getInvoiceEducationTypeUseCase.execute() }.getOrNull()
+            if (type != null) {
+                view.showEducation {
+                    runBlocking { incrementInvoiceRecognizedCounterUseCase.execute() }
+                    educationMutex.unlock()
+                }
+                educationMutex.lock()
+                onEducationFlowTriggered()
             }
-            educationMutex.lock()
-            onEducationFlowTriggered()
         }
-    }
 
     private fun doWhenEducationFinished(action: () -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
