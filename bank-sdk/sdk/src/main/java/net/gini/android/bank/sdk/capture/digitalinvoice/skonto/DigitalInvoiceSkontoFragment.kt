@@ -4,6 +4,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice.skonto
 
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,11 +50,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -564,6 +569,7 @@ private fun SkontoSection(
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
+    val focusManager = LocalFocusManager.current
 
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
@@ -667,6 +673,12 @@ private fun SkontoSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
+                    .onPreviewKeyEvent { keyEvent ->
+                        handleTabKeyEvent(
+                            keyEvent,
+                            focusManager
+                        )
+                    }
                     .onFocusChanged {
                         if (it.isFocused) {
                             onSkontoAmountFieldFocused()
@@ -703,6 +715,12 @@ private fun SkontoSection(
 
             GiniTextInput(
                 modifier = Modifier
+                    .clickable(isActive) {
+                        if (isActive) {
+                            isDatePickerVisible = true
+                            onDueDateFieldFocued()
+                        }
+                    }
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .focusable(false),
@@ -738,6 +756,26 @@ private fun SkontoSection(
         )
     }
 }
+private fun handleTabKeyEvent(
+    event: androidx.compose.ui.input.key.KeyEvent,
+    focusManager: FocusManager
+): Boolean {
+    val nativeEvent = event.nativeKeyEvent
+    val isTab = nativeEvent.keyCode == KeyEvent.KEYCODE_TAB
+    val isDown = nativeEvent.action == KeyEvent.ACTION_DOWN
+
+    if (!isTab || !isDown) return false
+
+    val direction = if (nativeEvent.isShiftPressed) {
+        FocusDirection.Previous
+    } else {
+        FocusDirection.Next
+    }
+
+    focusManager.moveFocus(direction)
+    return true
+}
+
 
 @Composable
 private fun FooterSection(
