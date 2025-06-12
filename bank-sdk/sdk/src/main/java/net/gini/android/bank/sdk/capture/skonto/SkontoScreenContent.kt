@@ -1031,7 +1031,8 @@ private fun WithoutSkontoSection(
             GiniAmountTextInput(
                 modifier = Modifier
                     .then(
-                        if (hideFieldsForTalkBack)Modifier.semantics(mergeDescendants = true) {
+                        if (hideFieldsForTalkBack)
+                            Modifier.semantics(mergeDescendants = true) {
                             invisibleToUser()
                         }
                         else Modifier
@@ -1050,7 +1051,7 @@ private fun WithoutSkontoSection(
                 colors = colors.amountFieldColors,
                 amount = amount.value,
                 currencyCode = amount.currency.name,
-                onValueChange = { onFullAmountChange(it) },
+                onValueChange = onFullAmountChange,
                 label = stringResource(id = R.string.gbs_skonto_section_without_discount_field_amount_hint),
                 trailingContent = {
                     AnimatedVisibility(visible = isActive) {
