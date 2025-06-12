@@ -56,6 +56,10 @@
             android:exported="false"
             android:theme="@style/Root.GiniCaptureTheme.Internal" />
         <activity
+            android:name=".ui.transactiondocs.TransactionDocsActivity"
+            android:exported="false"
+            android:theme="@style/Root.GiniCaptureTheme.Internal" />
+        <activity
             android:name=".ui.MainActivity"
             android:exported="true"
             android:launchMode="singleTask">

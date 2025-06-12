@@ -50,8 +50,8 @@ data class Configuration(
     val isHelpScreensCustomBottomNavBarEnabled: Boolean = false,
 
     // enable Error screens custom bottom navigation bar
-    // net.gini.android.capture.GiniCapture.Builder#setErrorNavigationBarBottomAdapter
-    // →  on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setErrorNavigationBarBottomAdapter →
+    // on/off switch to show a custom adapter implementation
     val isErrorScreensCustomBottomNavBarEnabled: Boolean = false,
 
     // enable camera screens custom bottom navigation bar
