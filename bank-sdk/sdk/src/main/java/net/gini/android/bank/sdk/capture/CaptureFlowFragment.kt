@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.capture
 
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -83,6 +84,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private var willBeRestored = false
     private var didFinishWithResult = false
+    private var attachDocumentDialogShowing = false
+    private var captureResult: CaptureSDKResult.Success? = null
+    private val attachToTransactionDialogStateKey = "attach_to_transaction_dialog_state_key"
+    private val activityResultKey = "activity_result_key"
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
@@ -125,6 +130,28 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         view.protectViewFromInsets()
         userAnalyticsEventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
+        restoreCaptureResultIfNeeded(savedInstanceState)
+    }
+
+    private fun restoreCaptureResultIfNeeded(savedInstanceState: Bundle?) {
+        attachDocumentDialogShowing =
+            savedInstanceState?.getBoolean(attachToTransactionDialogStateKey, false) ?: false
+        if (attachDocumentDialogShowing.not()) return
+        savedInstanceState?.let {
+            captureResult =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    savedInstanceState.getParcelable(
+                        activityResultKey,
+                        CaptureSDKResult.Success::class.java
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    savedInstanceState.getParcelable(activityResultKey)
+                }
+        }
+        captureResult?.let {
+            processOnFinishedResultSuccessState(it)
+        }
     }
 
 
@@ -142,6 +169,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        outState.putBoolean(attachToTransactionDialogStateKey , attachDocumentDialogShowing)
+        outState.putParcelable(activityResultKey , captureResult)
         willBeRestored = true
     }
 
@@ -178,46 +207,56 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
     }
 
-    override fun onFinishedWithResult(result: CaptureSDKResult) {
-        when (result) {
-            is CaptureSDKResult.Success -> {
-                when {
-                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true -> {
-                        try {
-                            tryShowingReturnAssistant(result)
-                            return
-                        } catch (notUsed: DigitalInvoiceException) {
-                            tryShowingSkontoScreen(result) {
-                                tryShowAttachDocToTransactionDialog {
-                                    finishWithResult(interceptSuccessResult(result).toCaptureResult())
-                                }
-                            }
-                            return
-                        }
-                    }
-
-                    GiniBank.getCaptureConfiguration()?.skontoEnabled == true -> {
-                        tryShowingSkontoScreen(result) {
-                            tryShowAttachDocToTransactionDialog {
-                                finishWithResult(interceptSuccessResult(result).toCaptureResult())
-                            }
-                        }
-                        return
-                    }
-
-                    else -> {
+    private fun processOnFinishedResultSuccessState(result: CaptureSDKResult.Success) {
+        when {
+            GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true -> {
+                try {
+                    tryShowingReturnAssistant(result)
+                    return
+                } catch (notUsed: DigitalInvoiceException) {
+                    tryShowingSkontoScreen(result) {
                         tryShowAttachDocToTransactionDialog {
                             finishWithResult(interceptSuccessResult(result).toCaptureResult())
                         }
+                    }
+                    return
+                }
+            }
 
+            GiniBank.getCaptureConfiguration()?.skontoEnabled == true -> {
+                tryShowingSkontoScreen(result) {
+                    tryShowAttachDocToTransactionDialog {
+                        finishWithResult(interceptSuccessResult(result).toCaptureResult())
                     }
                 }
+                return
+            }
+
+            else -> {
+                tryShowAttachDocToTransactionDialog {
+                    finishWithResult(interceptSuccessResult(result).toCaptureResult())
+                }
+
+            }
+        }
+    }
+
+    override fun onFinishedWithResult(result: CaptureSDKResult) {
+        when (result) {
+            is CaptureSDKResult.Success -> {
+                captureResult = result
+                processOnFinishedResultSuccessState(result)
             }
 
             else -> {
                 finishWithResult(result.toCaptureResult())
             }
         }
+    }
+
+    private fun resetValuesForDialogState() {
+        attachDocumentDialogShowing = false
+        captureResult = null
     }
 
     private fun tryShowAttachDocToTransactionDialog(continueFlow: () -> Unit) {
@@ -229,15 +268,19 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         composeView.setContent {
             GiniTheme {
                 if (!autoAttachDoc) {
+                    attachDocumentDialogShowing = true
                     AttachDocumentToTransactionDialog(onDismiss = {
                         lifecycleScope.launch { transactionDocDialogCancelAttachUseCase() }
                         continueFlow()
+                        resetValuesForDialogState()
                     }, onConfirm = {
                         lifecycleScope.launch { transactionDocDialogConfirmAttachUseCase(it) }
                         continueFlow()
+                        resetValuesForDialogState()
                     })
                 } else {
                     continueFlow()
+                    resetValuesForDialogState()
                 }
             }
         }

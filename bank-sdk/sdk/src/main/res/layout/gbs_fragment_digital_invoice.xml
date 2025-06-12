@@ -71,12 +71,12 @@
         <LinearLayout
             android:id="@+id/total_price_group"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
             android:importantForAccessibility="yes"
             android:layout_marginTop="@dimen/gc_small"
-            app:layout_constraintStart_toStartOf="@id/total_label"
-            app:layout_constraintTop_toBottomOf="@id/total_label">
+            app:layout_constraintStart_toStartOf="@id/gbs_total_and_skonto_container"
+            app:layout_constraintTop_toBottomOf="@id/gbs_total_and_skonto_container">
 
             <TextView
                 android:id="@+id/gross_price_total_integral_part"
@@ -97,19 +97,54 @@
 
         </LinearLayout>
 
-
-        <TextView
-            android:id="@+id/total_label"
-            style="@style/GiniCaptureTheme.Typography.Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/gc_large_24"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_marginTop="@dimen/gc_large_24"
-            android:layout_marginEnd="@dimen/gc_large_24"
-            android:text="@string/gbs_digital_invoice_footer_total_label"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/gbs_bottom_divider" />
+            android:id="@+id/gbs_total_and_skonto_container"
+            android:layout_marginStart="@dimen/gc_large_24"
+            app:layout_constraintTop_toBottomOf="@id/gbs_bottom_divider"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/total_label"
+                style="@style/GiniCaptureTheme.Typography.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/gc_medium_12"
+                android:text="@string/gbs_digital_invoice_footer_total_label"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/gbs_skonto_discount_label_container"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                app:layout_constraintTop_toTopOf="@id/total_label"
+                app:layout_constraintBottom_toBottomOf="@id/total_label"
+                app:layout_constraintStart_toEndOf="@+id/total_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:id="@+id/gbs_skonto_discount_label_container"
+                android:layout_marginEnd="@dimen/gc_large_24"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                android:layout_marginStart="@dimen/gc_medium_12"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/skonto_discount_label"
+                    style="@style/GiniCaptureTheme.Typography.Caption1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:background="@drawable/gbs_success_01_rectangle_rounded_4dp"
+                    android:paddingHorizontal="@dimen/gc_medium"
+                    android:paddingVertical="@dimen/gc_small"
+                    android:textColor="@color/gc_light_01"
+                    tools:text="3% Skonto discount"/>
+
+            </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <TextView
             android:id="@+id/skonto_saved_amount"
@@ -125,23 +160,6 @@
             app:layout_constraintTop_toBottomOf="@+id/total_price_group"
             app:layout_constraintVertical_bias="0.0"
             tools:text="Save 0,55 EUR" />
-
-        <TextView
-            android:id="@+id/skonto_discount_label"
-            style="@style/GiniCaptureTheme.Typography.Caption1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/gbs_success_01_rectangle_rounded_4dp"
-            android:paddingHorizontal="@dimen/gc_medium"
-            android:paddingVertical="@dimen/gc_small"
-            android:layout_marginHorizontal="@dimen/gc_large_24"
-            android:textColor="@color/gc_light_01"
-            app:layout_constraintBaseline_toBaselineOf="@+id/total_label"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toEndOf="@+id/total_label"
-            tools:text="3% Skonto discount " />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/gbs_barrier_footer"

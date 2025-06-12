@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.GiniCapture
@@ -58,7 +57,7 @@ class PreviewPagesAdapter(
 
         val mDocument = multiPageDocument.documents[position]
 
-        if (shouldShowPreviewImage(mDocument, holder.mImageViewContainer?.imageView)) {
+        if (shouldShowPreviewImage(mDocument)) {
             if (GiniCapture.hasInstance()) {
                 GiniCapture.getInstance()
                     .internal().photoMemoryCache[holder.view.context, mDocument, object :
@@ -84,11 +83,9 @@ class PreviewPagesAdapter(
     }
 
     private fun shouldShowPreviewImage(
-        mDocument: ImageDocument?,
-        mImageViewContainer: ImageView?
+        mDocument: ImageDocument?
     ): Boolean {
-        return (mDocument != null
-                && mImageViewContainer?.drawable == null)
+        return (mDocument != null)
     }
 
 

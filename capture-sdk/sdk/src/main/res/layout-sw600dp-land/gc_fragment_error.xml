@@ -25,39 +25,70 @@
         android:alpha="0.15"
         android:background="@color/gc_error_01"/>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gc_error_header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/gc_injected_navigation_bar_container_top"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_alignParentTop="true"
         android:focusable="true"
-        android:orientation="horizontal"
         android:layout_marginTop="@dimen/gc_large"
-        android:minHeight="@dimen/gc_large_42"
-        android:paddingStart="@dimen/gc_large_48"
-        android:paddingEnd="@dimen/gc_large_48">
+        android:paddingVertical="@dimen/gc_medium_12"
+        android:minHeight="@dimen/gc_large_42">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gc_guideline_start_error_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.25"
+            android:orientation="vertical"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gc_guideline_end_error_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.75"
+            android:orientation="vertical"/>
 
         <ImageView
             android:id="@+id/gc_error_header_icon"
             android:layout_width="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/gc_guideline_start_error_header"
             android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/gc_error_header"
-            android:layout_marginEnd="@dimen/gc_large_24"
             android:contentDescription="@string/gc_title_error"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/gc_alert_triangle_icon"/>
 
         <TextView
             android:id="@+id/gc_error_header"
+            app:layout_constraintStart_toEndOf="@+id/gc_error_header_icon"
+            android:layout_marginStart="@dimen/gc_large_24"
             style="@style/GiniCaptureTheme.Typography.Body2"
-            android:layout_width="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/gc_guideline_end_error_header"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:text="@string/gc_error_upload_title" />
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gc_guideline_start_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintGuide_percent="0.25"
+        android:orientation="vertical"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gc_guideline_end_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintGuide_percent="0.75"
+        android:orientation="vertical"/>
+
 
     <TextView
         android:id="@+id/gc_error_textview"
@@ -68,10 +99,8 @@
         android:focusable="true"
         android:textColor="@color/gc_dark_05"
         android:text="@string/gc_error_upload_text"
-        android:layout_marginStart="@dimen/gc_large_48"
-        android:layout_marginEnd="@dimen/gc_large_48"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/gc_guideline_end_error"
+        app:layout_constraintStart_toStartOf="@id/gc_guideline_start_error"
         app:layout_constraintBottom_toTopOf="@id/gc_error_button_container"
         app:layout_constraintTop_toBottomOf="@id/gc_error_header_layout"/>
 

@@ -25,7 +25,7 @@
     <string name="gbs_digital_invoice_onboarding_text_2">Deselect the products you want to return and we will recalculate the price for you.</string>
     <string name="gbs_digital_invoice_onboarding_done_button_title">Get Started</string>
 
-    <string name="gbs_proceed">Proceed</string>
+    <string name="gbs_proceed">Confirm and proceed</string>
     <string name="gbs_edit_article">Edit Article</string>
     <string name="gbs_name">Name</string>
     <string name="gbs_unit_price">Unit price</string>
@@ -74,7 +74,7 @@
     <string name="gbs_skonto_section_footer_title">Total</string>
     <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto discount</string>
     <string name="gbs_skonto_section_footer_label_save">Save %1$s</string>
-    <string name="gbs_skonto_section_footer_continue_button_text">Proceed</string>
+    <string name="gbs_skonto_section_footer_continue_button_text">Confirm and proceed</string>
     <!--   endregion -->
     <!--   region InfoDialog -->
     <string name="gbs_skonto_section_info_dialog_pay_today_message">A Skonto discount can be applied to this invoice, it will expire after today.</string>

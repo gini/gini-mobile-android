@@ -27,7 +27,7 @@
     <string name="gbs_digital_invoice_name_validation_error">Bitte geben Sie den Artikelnamen ein.</string>
     <string name="gbs_digital_invoice_price_validation_error">Bitte geben Sie den Artikelpreis ein.</string>
 
-    <string name="gbs_proceed">Weiter</string>
+    <string name="gbs_proceed">Bestätigen und weiter</string>
     <string name="gbs_edit_article">Artikel bearbeiten</string>
     <string name="gbs_name">Name</string>
     <string name="gbs_unit_price">Einzelpreis</string>
@@ -75,7 +75,7 @@
     <string name="gbs_skonto_section_footer_title">Gesamtpreis</string>
     <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto</string>
     <string name="gbs_skonto_section_footer_label_save">%1$s sparen</string>
-    <string name="gbs_skonto_section_footer_continue_button_text">Zahlung fortsetzen</string>
+    <string name="gbs_skonto_section_footer_continue_button_text">Bestätigen und weiter</string>
     <!--   endregion -->
     <!--   region InfoDialog -->
     <string name="gbs_skonto_section_info_dialog_pay_today_message">Von dieser Rechnung kann ein Skontobetrag abgezogen werden – die Frist läuft heute ab.</string>
