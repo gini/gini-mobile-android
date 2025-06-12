@@ -22,7 +22,7 @@ internal val qrEducationModule = module {
             documentImportEnabledFileTypesProvider = {
                 runCatching { GiniCapture.getInstance().documentImportEnabledFileTypes }.getOrNull()
             },
-            flowTypeStorage = get()
+            flowTypeStorage = get(),
         )
     }
     factory {

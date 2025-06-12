@@ -22,8 +22,8 @@ internal abstract class CameraFragmentExtension {
     @VisibleForTesting
     lateinit var qrCodeEducationPopup: QRCodeEducationPopup<PaymentQRCodeData>
     lateinit var fragmentListener: CameraFragmentListener
-    lateinit var mPaymentQRCodePopup: QRCodePopup<PaymentQRCodeData>
     val updateFlowTypeUseCase : UpdateFlowTypeUseCase by getGiniCaptureKoin().inject()
+    lateinit var mPaymentQRCodePopup: QRCodePopup<PaymentQRCodeData>
 
     private val getQrEducationTypeUseCase:
             GetQrEducationTypeUseCase by getGiniCaptureKoin().inject()
@@ -33,6 +33,7 @@ internal abstract class CameraFragmentExtension {
 
     fun showQrCodePopup(data: PaymentQRCodeData, onEducationFlowTriggered: () -> Unit) =
         runBlocking {
+            updateFlowTypeUseCase.execute(FlowType.QrCode)
             val type = getQrEducationTypeUseCase.execute()
             if (type != null) {
                 qrCodeEducationPopup.show(type) {
@@ -51,7 +52,6 @@ internal abstract class CameraFragmentExtension {
     fun onQrCodeRecognized(
         extractions: Map<String, GiniCaptureSpecificExtraction>
     ) {
-        updateFlowTypeUseCase.execute(FlowType.QrCode)
         hideImageCorners()
         CoroutineScope(Dispatchers.IO).launch {
             educationMutex.withLock {
