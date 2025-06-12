@@ -70,7 +70,6 @@ import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.invisibleToUser
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
