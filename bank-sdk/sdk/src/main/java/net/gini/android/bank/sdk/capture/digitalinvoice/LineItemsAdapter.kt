@@ -427,6 +427,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
 
             // Disable edit button when Skonto switch is disabled
             if (data.enabled) {
+                gbsEditButton.isClickable = true
+                gbsEditButton.focusable = View.FOCUSABLE
                 gbsEditButton.setTextColor(
                     gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
                 )
@@ -442,6 +444,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             } else {
                 gbsEditButton.setTextColor(gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_dark_05))
                 gbsEditButton.setOnClickListener(null)
+                gbsEditButton.focusable = View.NOT_FOCUSABLE
+                gbsEditButton.isClickable = false
             }
 
             gbsEnableSwitch.setOnClickListener {
