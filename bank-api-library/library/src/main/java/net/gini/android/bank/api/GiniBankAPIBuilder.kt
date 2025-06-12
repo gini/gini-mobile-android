@@ -15,7 +15,8 @@ import net.gini.android.core.api.internal.GiniCoreAPIBuilder
  * @param clientId your application's client ID for the Gini Bank API
  * @param clientSecret your application's client secret for the Gini Bank API
  * @param emailDomain  the email domain which is used for created Gini users
- * @param sessionManager if not null, then the [SessionManager] instance will be used for session management. If null, then anonymous Gini users will be used.
+ * @param sessionManager if not null, then the [SessionManager] instance will be used for session management.
+ * If null, then anonymous Gini users will be used.
  */
 class GiniBankAPIBuilder @JvmOverloads constructor(
     context: Context,
@@ -23,7 +24,8 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
     clientSecret: String = "",
     emailDomain: String = "",
     sessionManager: SessionManager? = null
-) : GiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
+) : GiniCoreAPIBuilder<BankApiDocumentManager, GiniBankAPI, BankApiDocumentRepository,
+        ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
 
     private val bankApiType = GiniBankApiType(1)
 
@@ -45,14 +47,27 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
     }
 
     private fun createDocumentRemoteSource(): BankApiDocumentRemoteSource {
-        return BankApiDocumentRemoteSource(Dispatchers.IO, getApiRetrofit().create(BankApiDocumentService::class.java), bankApiType, getApiBaseUrl() ?: "")
+        return BankApiDocumentRemoteSource(
+            Dispatchers.IO,
+            getApiRetrofit().create(BankApiDocumentService::class.java),
+            bankApiType,
+            getApiBaseUrl() ?: ""
+        )
     }
 
     private fun createTrackingAnalysisRemoteSource(): TrackingAnalysisRemoteSource {
-        return TrackingAnalysisRemoteSource(Dispatchers.IO,getTrackingAnalyticsApiRetrofit().create(TrackingAnalysisService::class.java))
+        return TrackingAnalysisRemoteSource(
+            Dispatchers.IO,
+            getTrackingAnalyticsApiRetrofit().create(TrackingAnalysisService::class.java)
+        )
     }
 
     override fun createDocumentRepository(): BankApiDocumentRepository {
-        return BankApiDocumentRepository(createDocumentRemoteSource(), getSessionManager(), bankApiType, createTrackingAnalysisRemoteSource())
+        return BankApiDocumentRepository(
+            createDocumentRemoteSource(),
+            getSessionManager(),
+            bankApiType,
+            createTrackingAnalysisRemoteSource()
+        )
     }
 }
