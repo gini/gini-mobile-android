@@ -2,20 +2,30 @@ package net.gini.android.capture.internal.qreducation
 
 import kotlinx.coroutines.flow.first
 import net.gini.android.capture.internal.qreducation.model.FlowType
+import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.qreducation.model.QrEducationType
 import net.gini.android.capture.internal.storage.FlowTypeStorage
 import net.gini.android.capture.internal.storage.QrCodeEducationStorage
 
 internal class GetQrEducationTypeUseCase(
     private val qrCodeEducationStorage: QrCodeEducationStorage,
+    private val isOnlyQrCodeScanningEnabledProvider: () -> Boolean?,
+    private val documentImportEnabledFileTypesProvider: () -> DocumentImportEnabledFileTypes?,
     private val flowTypeStorage: FlowTypeStorage,
 ) {
 
     suspend fun execute(): QrEducationType? {
-
         val flowType = flowTypeStorage.get()
+        val qrCodeScanningOnly = isOnlyQrCodeScanningEnabledProvider() == true
+        val documentImportDisabled =
+            documentImportEnabledFileTypesProvider() == DocumentImportEnabledFileTypes.NONE
+        val wrongFlowType = flowType == null || !ALLOWED_FLOW_TYPES.contains(flowType)
 
-        if (flowType == null || !ALLOWED_FLOW_TYPES.contains(flowType)) {
+        val skipEducationConditions = listOf(
+            qrCodeScanningOnly, documentImportDisabled, wrongFlowType
+        )
+
+        if (skipEducationConditions.any { it }) {
             return null
         }
 
