@@ -20,9 +20,10 @@ import net.gini.android.core.api.models.PaymentRequest
  * The [BankApiDocumentManager] is a high level API on top of the Gini Bank API. It
  * provides high level methods to handle document and payment request related tasks easily.
  */
-class BankApiDocumentManager internal constructor(private val documentRepository: BankApiDocumentRepository) : DocumentManager<BankApiDocumentRepository, ExtractionsContainer>(
-    documentRepository
-) {
+class BankApiDocumentManager internal constructor(private val documentRepository: BankApiDocumentRepository) :
+    DocumentManager<BankApiDocumentRepository, ExtractionsContainer>(
+        documentRepository
+    ) {
 
     /**
      * Mark a [PaymentRequest] as paid.

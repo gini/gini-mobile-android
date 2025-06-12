@@ -75,7 +75,7 @@ public class NetworkRequestsManager {
     }
 
 
-    public CompletableFuture<String> sendEvents(AmplitudeRoot amplitudeRoot, UUID id) {
+    public CompletableFuture<String> sendEvents(AmplitudeRootModel amplitudeRootModel, UUID id) {
 
         final CompletableFuture<String> userJourneyEventsFutures =
                 mUserJourneyEventsFutures.get(id);
@@ -88,7 +88,7 @@ public class NetworkRequestsManager {
         mUserJourneyEventsFutures.put(id, future);
 
         final CancellationToken cancellationToken =
-                mGiniCaptureNetworkService.sendEvents(amplitudeRoot,
+                mGiniCaptureNetworkService.sendEvents(amplitudeRootModel,
                         new GiniCaptureNetworkCallback<Void, Error>() {
                             @Override
                             public void failure(final Error error) {

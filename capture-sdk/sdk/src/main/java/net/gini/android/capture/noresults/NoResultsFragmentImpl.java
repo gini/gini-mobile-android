@@ -1,8 +1,5 @@
 package net.gini.android.capture.noresults;
 
-import static android.view.View.GONE;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +39,9 @@ import net.gini.android.capture.view.NavigationBarTopAdapter;
 
 import java.util.HashSet;
 
+import static android.view.View.GONE;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+
 /**
  * Main logic implementation for no results UI presented by {@link NoResultsFragment}.
  * Internal use only.
@@ -60,7 +60,6 @@ class NoResultsFragmentImpl {
     private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
     private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
-
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.NoResults.INSTANCE;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,

@@ -9,7 +9,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import net.gini.android.capture.BuildConfig
 import net.gini.android.capture.internal.network.AmplitudeEventModel
-import net.gini.android.capture.internal.network.AmplitudeRoot
+import net.gini.android.capture.internal.network.AmplitudeRootModel
 import net.gini.android.capture.internal.network.NetworkRequestsManager
 import net.gini.android.capture.internal.provider.UniqueIdProvider
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
@@ -121,7 +121,7 @@ internal class AmplitudeUserAnalyticsEventTracker(
 
     private fun sendEventsToAmplitudeApi() {
         if (events.isNotEmpty()) {
-            val reqBody = AmplitudeRoot(apiKey = apiKey.key, events.toList())
+            val reqBody = AmplitudeRootModel(apiKey = apiKey.key, events.toList())
             networkRequestsManager.sendEvents(reqBody, UUID.randomUUID())
             events.clear()
         }

@@ -13,6 +13,7 @@ data class ConfigurationResponse(
     @Json(name = "amplitudeApiKey") val amplitudeApiKey: String?,
     @Json(name = "transactionDocsEnabled") val transactionDocsEnabled: Boolean?,
     @Json(name = "instantPaymentEnabled") val instantPaymentEnabled: Boolean?,
+    @Json(name = "eInvoiceEnabled") val eInvoiceEnabled: Boolean?,
 )
 
 internal fun ConfigurationResponse.toConfiguration() = Configuration(
@@ -23,5 +24,6 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     amplitudeApiKey = amplitudeApiKey,
     transactionDocsEnabled = transactionDocsEnabled ?: false,
     instantPaymentEnabled = instantPaymentEnabled ?: false,
+    isEInvoiceEnabled = eInvoiceEnabled ?: false
 )
 

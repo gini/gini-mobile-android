@@ -23,6 +23,7 @@ sealed class UserAnalyticsEventSuperProperty(key: String, value: String) :
         enum class Type(val analyticsValue: String) {
             Image("image"),
             Pdf("pdf"),
+            Xml("xml"),
             QrCode("qrcode"),
             Unknown("unknown")
         }

@@ -8,4 +8,5 @@ data class Configuration(
     val amplitudeApiKey: String?,
     val transactionDocsEnabled: Boolean,
     val instantPaymentEnabled: Boolean,
+    val isEInvoiceEnabled: Boolean
 )

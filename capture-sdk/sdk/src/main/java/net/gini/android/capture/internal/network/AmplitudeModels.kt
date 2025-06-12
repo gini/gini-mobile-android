@@ -1,6 +1,6 @@
 package net.gini.android.capture.internal.network
 
-data class AmplitudeRoot(
+data class AmplitudeRootModel(
     val apiKey: String,
     val events: List<AmplitudeEventModel>,
 )
