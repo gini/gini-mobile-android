@@ -2,10 +2,13 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.updateLayoutParams
@@ -294,25 +297,77 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         }
 
         private fun enable() {
-            val alpha = 1.0f
             itemView.isEnabled = true
             binding.gbsEditButton.isEnabled = true
-            binding.gbsEditButton.alpha = alpha
-            binding.gbsDescription.alpha = alpha
-            binding.gbsPerUnit.alpha = alpha
-            binding.gbsGrossPriceFractionalPart.alpha = alpha
-            binding.gbsGrossPriceIntegralPart.alpha = alpha
+
+            binding.gbsEditButton.setTextColor(
+                resolveColor(
+                    net.gini.android.capture.R.color.gc_accent_01,
+                    binding
+                )
+            )
+            binding.gbsPerUnit.setTextColor(
+                resolveColor(
+                    net.gini.android.capture.R.color.gc_dark_05,
+                    binding
+                )
+            )
+
+            resolveAttrColor(
+                R.attr.colorOnBackground,
+                net.gini.android.capture.R.color.gc_light_05,
+                binding
+            ).let { color ->
+                listOf(
+                    binding.gbsDescription,
+                    binding.gbsGrossPriceFractionalPart,
+                    binding.gbsGrossPriceIntegralPart
+                ).forEach { it.setTextColor(color) }
+            }
         }
 
-
         private fun disable() {
-            val alpha = 0.5f
             itemView.isEnabled = false
-            binding.gbsDescription.alpha = alpha
             binding.gbsEditButton.isEnabled = false
-            binding.gbsEditButton.alpha = alpha
-            binding.gbsGrossPriceIntegralPart.alpha = alpha
-            binding.gbsGrossPriceFractionalPart.alpha = alpha
+
+            val color = if (ContextHelper.isDarkTheme(binding.gbsEditButton.context)) {
+                resolveColor(net.gini.android.capture.R.color.gc_light_05, binding)
+            } else {
+                resolveColor(net.gini.android.capture.R.color.gc_dark_05, binding)
+            }
+
+            listOf(
+                binding.gbsEditButton,
+                binding.gbsPerUnit,
+                binding.gbsDescription,
+                binding.gbsGrossPriceFractionalPart,
+                binding.gbsGrossPriceIntegralPart
+            ).forEach { it.setTextColor(color) }
+        }
+
+        /**
+         * Separating the util functions to fetch colors
+         * */
+
+        private fun resolveAttrColor(
+            @AttrRes attrRes: Int,
+            fallbackColorRes: Int,
+            binding: GbsItemDigitalInvoiceLineItemBinding
+        ): Int {
+            val context = binding.root.context
+            val typedValue = TypedValue()
+            return if (context.theme.resolveAttribute(attrRes, typedValue, true)) {
+                typedValue.data
+            } else {
+                ContextCompat.getColor(context, fallbackColorRes)
+            }
+        }
+
+        private fun resolveColor(
+            @ColorRes colorRes: Int,
+            binding: GbsItemDigitalInvoiceLineItemBinding
+        ): Int {
+            return ContextCompat.getColor(binding.root.context, colorRes)
         }
     }
 
