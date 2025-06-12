@@ -1056,7 +1056,6 @@ private fun WithoutSkontoSection(
                 trailingContent = {
                     AnimatedVisibility(visible = isActive) {
                         Text(
-                            modifier = Modifier.clearAndSetSemantics { },
                             text = amount.currency.name,
                             style = GiniTheme.typography.subtitle1,
                         )
