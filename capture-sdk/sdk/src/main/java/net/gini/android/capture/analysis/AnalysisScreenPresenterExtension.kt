@@ -1,6 +1,12 @@
 package net.gini.android.capture.analysis
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
@@ -11,7 +17,6 @@ import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
 import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
-import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType.UPLOAD_PICTURE
 import net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty
 import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
@@ -38,6 +43,8 @@ internal class AnalysisScreenPresenterExtension(
     private val incrementInvoiceRecognizedCounterUseCase: IncrementInvoiceRecognizedCounterUseCase
             by getGiniCaptureKoin().inject()
 
+    private val educationMutex = Mutex()
+
     fun getAnalysisFragmentListenerOrNoOp(): AnalysisFragmentListener {
         return listener ?: noOpListener
     }
@@ -45,7 +52,7 @@ internal class AnalysisScreenPresenterExtension(
     fun proceedSuccessNoExtractions(
         document: GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
     ) {
-        showEducationIfNeeded {
+        doWhenEducationFinished {
             EventTrackingHelper.trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS)
             getAnalysisFragmentListenerOrNoOp()
                 .onProceedToNoExtractionsScreen(document)
@@ -53,7 +60,7 @@ internal class AnalysisScreenPresenterExtension(
     }
 
     fun proceedWithExtractions(resultHolder: AnalysisInteractor.ResultHolder) {
-        showEducationIfNeeded {
+        doWhenEducationFinished {
             getAnalysisFragmentListenerOrNoOp()
                 .onExtractionsAvailable(
                     getMapOrEmpty(resultHolder.extractions),
@@ -63,17 +70,27 @@ internal class AnalysisScreenPresenterExtension(
         }
     }
 
-    private fun showEducationIfNeeded(onComplete: () -> Unit) = runBlocking {
-        val type = getInvoiceEducationTypeUseCase.execute()
-        when (type) {
-            UPLOAD_PICTURE -> {
+    fun showLoadingIndicator(
+        onEducationFlowTriggered: () -> Unit
+    ) = runBlocking {
+            val type = runCatching { getInvoiceEducationTypeUseCase.execute() }.getOrNull()
+            if (type != null) {
                 view.showEducation {
                     runBlocking { incrementInvoiceRecognizedCounterUseCase.execute() }
-                    onComplete.invoke()
+                    educationMutex.unlock()
+                }
+                educationMutex.lock()
+                onEducationFlowTriggered()
+            }
+        }
+
+    private fun doWhenEducationFinished(action: () -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            educationMutex.withLock {
+                withContext(Dispatchers.Main) {
+                    action()
                 }
             }
-
-            null -> onComplete.invoke()
         }
     }
 

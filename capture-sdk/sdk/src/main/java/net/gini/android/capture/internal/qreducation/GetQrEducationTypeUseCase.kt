@@ -7,11 +7,12 @@ import net.gini.android.capture.internal.qreducation.model.QrEducationType
 import net.gini.android.capture.internal.storage.FlowTypeStorage
 import net.gini.android.capture.internal.storage.QrCodeEducationStorage
 
+@Suppress("ReturnCount") // TODO Remove after https://github.com/gini/gini-mobile-android/pull/751/files will be merged
 internal class GetQrEducationTypeUseCase(
     private val qrCodeEducationStorage: QrCodeEducationStorage,
+    private val flowTypeStorage: FlowTypeStorage,
     private val isOnlyQrCodeScanningEnabledProvider: () -> Boolean?,
     private val documentImportEnabledFileTypesProvider: () -> DocumentImportEnabledFileTypes?,
-    private val flowTypeStorage: FlowTypeStorage,
 ) {
 
     suspend fun execute(): QrEducationType? {

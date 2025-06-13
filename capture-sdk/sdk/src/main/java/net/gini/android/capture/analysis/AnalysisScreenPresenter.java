@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Random;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Unit;
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.
@@ -263,6 +264,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @VisibleForTesting
     void doAnalyzeDocument() {
         startScanAnimation();
+        extension.showLoadingIndicator(() -> {
+            stopScanAnimation();
+            return Unit.INSTANCE;
+        });
         mAnalysisInteractor.analyzeMultiPageDocument(mMultiPageDocument)
                 .handle(new CompletableFuture.BiFun<
                         AnalysisInteractor.ResultHolder, Throwable, Void>() {

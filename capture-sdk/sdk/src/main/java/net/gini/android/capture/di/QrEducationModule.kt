@@ -16,13 +16,13 @@ internal val qrEducationModule = module {
     factory {
         GetQrEducationTypeUseCase(
             qrCodeEducationStorage = get(),
-            flowTypeStorage = get(),
             isOnlyQrCodeScanningEnabledProvider = {
                 runCatching { GiniCapture.getInstance().isOnlyQRCodeScanning }.getOrNull()
             },
             documentImportEnabledFileTypesProvider = {
                 runCatching { GiniCapture.getInstance().documentImportEnabledFileTypes }.getOrNull()
             },
+            flowTypeStorage = get(),
         )
     }
     factory {
