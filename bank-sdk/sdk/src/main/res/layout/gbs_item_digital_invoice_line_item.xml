@@ -9,6 +9,11 @@
     android:clickable="false"
     android:focusable="false">
 
+    <!-- Colors are dynamically managed in the LineItemsAdapter for
+       the below views, because of accessibility color contrast
+       Please check the enable(), disable() method in the
+       LineItemsAdapter.kt for more understanding when changing
+       colors-->
     <TextView
         android:id="@+id/gbs_description"
         android:layout_width="0dp"
