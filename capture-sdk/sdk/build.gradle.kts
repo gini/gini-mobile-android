@@ -162,6 +162,8 @@ dependencies {
     implementation(libs.accompanist.themeAdapter)
     debugImplementation(libs.compose.tools.uiTooling)
 
+    implementation(libs.datastore.preferences)
+
     testImplementation(libs.junit)
     testImplementation(libs.truth)
     testImplementation(libs.mockito.core)
