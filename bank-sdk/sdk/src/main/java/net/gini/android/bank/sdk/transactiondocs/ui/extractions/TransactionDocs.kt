@@ -17,7 +17,7 @@ import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.factory.TransactionDocInvoicePreviewInfoLinesFactory
-import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
+import net.gini.android.bank.sdk.transactiondocs.model.extractions.GiniTransactionDoc
 import net.gini.android.bank.sdk.transactiondocs.ui.extractions.colors.TransactionDocsWidgetColors
 import net.gini.android.capture.ui.theme.GiniTheme
 
@@ -25,7 +25,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
 fun TransactionDocs(
     modifier: Modifier = Modifier,
     colors: TransactionDocsWidgetColors = TransactionDocsWidgetColors.colors(),
-    onDocumentClick: (TransactionDoc, infoTextLines: List<String>) -> Unit = { _, _ -> },
+    onDocumentClick: (GiniTransactionDoc, infoTextLines: List<String>) -> Unit = { _, _ -> },
 ) {
     val transactionDocs: GiniBankTransactionDocs? = remember { GiniBank.giniBankTransactionDocs }
     val transactionDocInvoicePreviewInfoLinesFactory: TransactionDocInvoicePreviewInfoLinesFactory =
@@ -45,7 +45,7 @@ fun TransactionDocs(
                 style = GiniTheme.typography.headline6,
             )
         } else {
-            val documents by transactionDocs.extractionDocumentsFlow.collectAsState(listOf())
+            val documents by transactionDocs.giniTransactionDocsFlow.collectAsState(listOf())
             TransactionDocsContent(
                 documents = documents,
                 colors = colors,

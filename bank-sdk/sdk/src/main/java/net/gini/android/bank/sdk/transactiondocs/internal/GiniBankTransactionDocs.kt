@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import net.gini.android.bank.sdk.di.getGiniBankKoin
-import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.GiniTransactionDocs
 import net.gini.android.bank.sdk.transactiondocs.internal.repository.GiniAttachTransactionDocDialogDecisionRepository
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
-import net.gini.android.bank.sdk.transactiondocs.model.extractions.TransactionDoc
+import net.gini.android.bank.sdk.transactiondocs.model.extractions.GiniTransactionDoc
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 
 internal class GiniBankTransactionDocs internal constructor(
@@ -22,15 +22,15 @@ internal class GiniBankTransactionDocs internal constructor(
         getGiniBankKoin().get(),
     private val getTransactionDocsFeatureEnabledUseCase: GetTransactionDocsFeatureEnabledUseCase =
         getGiniBankKoin().get()
-) : TransactionDocs {
+) : GiniTransactionDocs {
 
     @Suppress("UnusedParameter")
-    fun deleteDocument(document: TransactionDoc) {
+    fun deleteDocument(document: GiniTransactionDoc) {
         attachedToTransactionDocumentProvider.clear()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val extractionDocumentsFlow: Flow<List<TransactionDoc>>
+    override val giniTransactionDocsFlow: Flow<List<GiniTransactionDoc>>
         get() = flowOf(attachTransactionDocDialogDecisionRepository.getAttachDocToTransaction())
             .flatMapLatest { docShouldBeAttached ->
                 if ((docShouldBeAttached || transactionDocsSettings.getAlwaysAttachSetting()
@@ -42,7 +42,7 @@ internal class GiniBankTransactionDocs internal constructor(
                 }
             }.map {
                 listOfNotNull(it?.let {
-                    TransactionDoc(
+                    GiniTransactionDoc(
                         giniApiDocumentId = it.giniApiDocumentId,
                         documentFileName = it.filename
                     )
