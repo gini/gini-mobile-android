@@ -2,12 +2,17 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.digitalinvoice.ViewType.Addon
@@ -19,6 +24,7 @@ import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceLineItemBindin
 import net.gini.android.bank.sdk.databinding.GbsItemDigitalInvoiceSkontoBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.capture.internal.ui.IntervalClickListener
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
@@ -63,7 +69,8 @@ internal interface SkontoListItemAdapterListener {
 internal class LineItemsAdapter(
     private val listener: LineItemsAdapterListener,
     private val skontoListener: SkontoListItemAdapterListener,
-    private val context: Context
+    private val context: Context,
+    private val recyclerView: RecyclerView
 ) : RecyclerView.Adapter<ViewHolder<*>>() {
 
     private val amountFormatter: AmountFormatter by getGiniBankKoin().inject()
@@ -72,18 +79,36 @@ internal class LineItemsAdapter(
     var lineItems: List<SelectableLineItem> = emptyList()
         set(value) {
             field = value
-            notifyDataSetChanged()
         }
+
     var addons: List<DigitalInvoiceAddon> = emptyList()
         set(value) {
             field = value
-            notifyDataSetChanged()
         }
 
     var skontoDiscount: List<DigitalInvoiceSkontoListItem> = emptyList()
         set(value) {
-            field = value
-            notifyDataSetChanged()
+                recyclerView.post {
+                    recyclerView.post {
+                        val oldSize = field.size
+                        field = value
+                        val position = lineItems.size + addons.size
+                        when {
+                            oldSize == 0 && value.isNotEmpty() -> {
+                                notifyItemInserted(position)
+                            }
+                            oldSize == 1 && value.isEmpty() -> {
+                                notifyItemRemoved(position)
+                            }
+                            oldSize == 1 && value.size == 1 -> {
+                                notifyItemChanged(position)
+                            }
+                            else -> {
+                                notifyDataSetChanged()
+                            }
+                        }
+                    }
+                }
         }
 
     var isInaccurateExtraction: Boolean = false
@@ -93,6 +118,33 @@ internal class LineItemsAdapter(
             field = value
             notifyDataSetChanged()
         }
+
+    fun updateLineItems(newItems: List<SelectableLineItem>) {
+        val diffCallback = LineItemsDiffCallback(lineItems, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        lineItems = newItems
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+
+    class LineItemsDiffCallback(
+        private val oldList: List<SelectableLineItem>,
+        private val newList: List<SelectableLineItem>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize() = oldList.size
+        override fun getNewListSize() = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val old = oldList[oldItemPosition].lineItem
+            val new = newList[newItemPosition].lineItem
+            return old.id == new.id
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewTypeId: Int): ViewHolder<*> {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -259,7 +311,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                         )
                     }
             }
-            itemView.setOnClickListener(IntervalClickListener {
+            binding.gbsEditButton.setOnClickListener(
+                IntervalClickListener {
                 allData?.getOrNull(dataIndex ?: -1)?.let {
                     listener?.onLineItemClicked(it)
                 }
@@ -292,26 +345,77 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         }
 
         private fun enable() {
-            val alpha = 1.0f
             itemView.isEnabled = true
             binding.gbsEditButton.isEnabled = true
-            binding.gbsEditButton.alpha = alpha
-            binding.gbsDescription.alpha = alpha
-            binding.gbsPerUnit.alpha = alpha
-            binding.gbsGrossPriceFractionalPart.alpha = alpha
-            binding.gbsGrossPriceIntegralPart.alpha = alpha
+
+            binding.gbsEditButton.setTextColor(
+                resolveColor(
+                    net.gini.android.capture.R.color.gc_accent_01,
+                    binding
+                )
+            )
+            binding.gbsPerUnit.setTextColor(
+                resolveColor(
+                    net.gini.android.capture.R.color.gc_dark_05,
+                    binding
+                )
+            )
+
+            resolveAttrColor(
+                R.attr.colorOnBackground,
+                net.gini.android.capture.R.color.gc_light_05,
+                binding
+            ).let { color ->
+                listOf(
+                    binding.gbsDescription,
+                    binding.gbsGrossPriceFractionalPart,
+                    binding.gbsGrossPriceIntegralPart
+                ).forEach { it.setTextColor(color) }
+            }
         }
 
-
         private fun disable() {
-            val alpha = 0.5f
             itemView.isEnabled = false
-            binding.gbsDescription.alpha = alpha
             binding.gbsEditButton.isEnabled = false
-            binding.gbsEditButton.alpha = alpha
-            binding.gbsPerUnit.alpha = alpha
-            binding.gbsGrossPriceIntegralPart.alpha = alpha
-            binding.gbsGrossPriceFractionalPart.alpha = alpha
+
+            val color = if (ContextHelper.isDarkTheme(binding.gbsEditButton.context)) {
+                resolveColor(net.gini.android.capture.R.color.gc_light_05, binding)
+            } else {
+                resolveColor(net.gini.android.capture.R.color.gc_dark_05, binding)
+            }
+
+            listOf(
+                binding.gbsEditButton,
+                binding.gbsPerUnit,
+                binding.gbsDescription,
+                binding.gbsGrossPriceFractionalPart,
+                binding.gbsGrossPriceIntegralPart
+            ).forEach { it.setTextColor(color) }
+        }
+
+        /**
+         * Separating the util functions to fetch colors
+         * */
+
+        private fun resolveAttrColor(
+            @AttrRes attrRes: Int,
+            fallbackColorRes: Int,
+            binding: GbsItemDigitalInvoiceLineItemBinding
+        ): Int {
+            val context = binding.root.context
+            val typedValue = TypedValue()
+            return if (context.theme.resolveAttribute(attrRes, typedValue, true)) {
+                typedValue.data
+            } else {
+                ContextCompat.getColor(context, fallbackColorRes)
+            }
+        }
+
+        private fun resolveColor(
+            @ColorRes colorRes: Int,
+            binding: GbsItemDigitalInvoiceLineItemBinding
+        ): Int {
+            return ContextCompat.getColor(binding.root.context, colorRes)
         }
     }
 
@@ -360,42 +464,15 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             dataIndex: Int?
         ) = with(binding) {
             // amount should be visible if the skonto is enabled
-            if (data.enabled) {
-                gbsSkontoAmount.visibility = View.VISIBLE
-                gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
-            } else {
-                gbsSkontoAmount.visibility = View.GONE
-            }
-
+            setupSkontoAmount(data)
             // message should be visible if it is an edgeCase or if the skonto is disabled
-            if (data.isEdgeCase || !data.enabled) {
-                gbsMessage.visibility = View.VISIBLE
-                gbsMessage.text = data.message
-            } else {
-                gbsMessage.visibility = View.GONE
-            }
-
-            gbsEnableSwitch.isChecked = data.enabled
-
+            setupMessage(data)
             // Disable edit button when Skonto switch is disabled
-            if (data.enabled) {
-                gbsEditButton.setTextColor(
-                    gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
-                )
-                gbsEditButton.setOnClickListener {
-                    analyticsEventTracker?.trackEvent(
-                        UserAnalyticsEvent.EDIT_TAPPED,
-                        setOf(
-                            UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.ReturnAssistant),
-                        )
-                    )
-                    listener?.onSkontoEditClicked(data)
-                }
-            } else {
-                gbsEditButton.setTextColor(gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_dark_05))
-                gbsEditButton.setOnClickListener(null)
-            }
-
+            setupEditButton(data)
+            setupEnableSwitch(data)
+        }
+        private fun GbsItemDigitalInvoiceSkontoBinding.setupEnableSwitch(data: DigitalInvoiceSkontoListItem) {
+            gbsEnableSwitch.isChecked = data.enabled
             gbsEnableSwitch.setOnClickListener {
                 analyticsEventTracker?.trackEvent(
                     UserAnalyticsEvent.SKONTO_SWITCH_TAPPED,
@@ -409,6 +486,57 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                 } else {
                     listener?.onSkontoDisabled(data)
                 }
+            }
+        }
+        @SuppressLint("SetTextI18n")
+        private fun GbsItemDigitalInvoiceSkontoBinding.setupSkontoAmount(data: DigitalInvoiceSkontoListItem) {
+            if (data.enabled) {
+                gbsSkontoAmount.visibility = View.VISIBLE
+                gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
+                gbsSkontoAmount.setTextColor(
+                    ContextCompat.getColor(
+                        gbsSkontoAmount.context,
+                        if (ContextHelper.isDarkTheme(gbsSkontoAmount.context)) {
+                            net.gini.android.capture.R.color.gc_success_02
+                        } else {
+                            net.gini.android.capture.R.color.gc_success_01
+                        }
+                    )
+                )
+            } else {
+                gbsSkontoAmount.visibility = View.GONE
+            }
+        }
+
+        private fun GbsItemDigitalInvoiceSkontoBinding.setupMessage(data: DigitalInvoiceSkontoListItem) {
+            if (data.isEdgeCase || !data.enabled) {
+                gbsMessage.visibility = View.VISIBLE
+                gbsMessage.text = data.message
+            } else {
+                gbsMessage.visibility = View.GONE
+            }
+        }
+        private fun GbsItemDigitalInvoiceSkontoBinding.setupEditButton(data: DigitalInvoiceSkontoListItem) {
+            if (data.enabled) {
+                gbsEditButton.isClickable = true
+                gbsEditButton.focusable = View.FOCUSABLE
+                gbsEditButton.setTextColor(
+                    gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
+                )
+                gbsEditButton.setOnClickListener {
+                    analyticsEventTracker?.trackEvent(
+                        UserAnalyticsEvent.EDIT_TAPPED,
+                        setOf(UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.ReturnAssistant))
+                    )
+                    listener?.onSkontoEditClicked(data)
+                }
+            } else {
+                gbsEditButton.setTextColor(
+                    gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_dark_05)
+                )
+                gbsEditButton.setOnClickListener(null)
+                gbsEditButton.focusable = View.NOT_FOCUSABLE
+                gbsEditButton.isClickable = false
             }
         }
 

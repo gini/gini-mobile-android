@@ -338,7 +338,7 @@ private fun HelpItem(
                 .height(48.dp)
                 .width(48.dp),
             painter = icon,
-            contentDescription = null
+            contentDescription = text
         )
 
         Text(

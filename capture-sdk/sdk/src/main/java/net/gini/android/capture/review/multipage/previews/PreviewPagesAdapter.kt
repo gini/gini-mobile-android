@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.GiniCapture
@@ -58,37 +57,33 @@ class PreviewPagesAdapter(
 
         val mDocument = multiPageDocument.documents[position]
 
-        if (shouldShowPreviewImage(mDocument, holder.mImageViewContainer?.imageView)) {
-            if (GiniCapture.hasInstance()) {
-                GiniCapture.getInstance()
-                    .internal().photoMemoryCache[holder.view.context, mDocument, object :
-                    AsyncCallback<Photo?, Exception?> {
+        if (shouldShowPreviewImage(mDocument) && GiniCapture.hasInstance()) {
+            GiniCapture.getInstance()
+                .internal().photoMemoryCache[holder.view.context, mDocument, object :
+                AsyncCallback<Photo?, Exception?> {
 
-                    override fun onCancelled() {
-                        // Not used
-                    }
+                override fun onCancelled() {
+                    // Not used
+                }
 
-                    override fun onSuccess(result: Photo?) {
-                        holder.mImageViewContainer?.imageView?.setImageBitmap(result?.bitmapPreview)
-                        holder.mImageViewContainer?.rotateImageView(
-                            result?.rotationForDisplay ?: 0,
-                            false
-                        )
-                    }
+                override fun onSuccess(result: Photo?) {
+                    holder.mImageViewContainer?.imageView?.setImageBitmap(result?.bitmapPreview)
+                    holder.mImageViewContainer?.rotateImageView(
+                        result?.rotationForDisplay ?: 0,
+                        false
+                    )
+                }
 
-                    override fun onError(exception: Exception?) {
-                    }
-                }]
-            }
+                override fun onError(exception: Exception?) {
+                }
+            }]
         }
     }
 
     private fun shouldShowPreviewImage(
-        mDocument: ImageDocument?,
-        mImageViewContainer: ImageView?
+        mDocument: ImageDocument?
     ): Boolean {
-        return (mDocument != null
-                && mImageViewContainer?.drawable == null)
+        return (mDocument != null)
     }
 
 
