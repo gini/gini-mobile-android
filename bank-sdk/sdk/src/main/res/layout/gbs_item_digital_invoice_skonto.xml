@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorSurface"
-    android:clickable="true"
-    android:focusable="true">
+    android:clickable="false"
+    android:focusable="false">
 
     <TextView
         android:id="@+id/gbs_message"
@@ -58,8 +58,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gc_small"
         android:layout_marginBottom="@dimen/gc_medium"
-        android:clickable="false"
-        android:focusable="false"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="top"
         android:minHeight="0dp"
         android:text="@string/gbs_digital_invoice_line_item_edit"
