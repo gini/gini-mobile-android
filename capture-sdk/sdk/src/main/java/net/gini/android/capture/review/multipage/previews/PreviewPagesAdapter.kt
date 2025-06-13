@@ -57,28 +57,26 @@ class PreviewPagesAdapter(
 
         val mDocument = multiPageDocument.documents[position]
 
-        if (shouldShowPreviewImage(mDocument)) {
-            if (GiniCapture.hasInstance()) {
-                GiniCapture.getInstance()
-                    .internal().photoMemoryCache[holder.view.context, mDocument, object :
-                    AsyncCallback<Photo?, Exception?> {
+        if (shouldShowPreviewImage(mDocument) && GiniCapture.hasInstance()) {
+            GiniCapture.getInstance()
+                .internal().photoMemoryCache[holder.view.context, mDocument, object :
+                AsyncCallback<Photo?, Exception?> {
 
-                    override fun onCancelled() {
-                        // Not used
-                    }
+                override fun onCancelled() {
+                    // Not used
+                }
 
-                    override fun onSuccess(result: Photo?) {
-                        holder.mImageViewContainer?.imageView?.setImageBitmap(result?.bitmapPreview)
-                        holder.mImageViewContainer?.rotateImageView(
-                            result?.rotationForDisplay ?: 0,
-                            false
-                        )
-                    }
+                override fun onSuccess(result: Photo?) {
+                    holder.mImageViewContainer?.imageView?.setImageBitmap(result?.bitmapPreview)
+                    holder.mImageViewContainer?.rotateImageView(
+                        result?.rotationForDisplay ?: 0,
+                        false
+                    )
+                }
 
-                    override fun onError(exception: Exception?) {
-                    }
-                }]
-            }
+                override fun onError(exception: Exception?) {
+                }
+            }]
         }
     }
 
