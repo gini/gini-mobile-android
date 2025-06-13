@@ -416,55 +416,15 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
             dataIndex: Int?
         ) = with(binding) {
             // amount should be visible if the skonto is enabled
-            if (data.enabled) {
-                gbsSkontoAmount.visibility = View.VISIBLE
-                gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
-                gbsSkontoAmount.setTextColor(
-                    if (ContextHelper.isDarkTheme(gbsSkontoAmount.context)) {
-                        ContextCompat.getColor(
-                            gbsSkontoAmount.context,
-                            net.gini.android.capture.R.color.gc_success_02
-                        )
-                    } else {
-                        ContextCompat.getColor(
-                            gbsSkontoAmount.context,
-                            net.gini.android.capture.R.color.gc_success_01
-                        )
-
-                    }
-                )
-            } else {
-                gbsSkontoAmount.visibility = View.GONE
-            }
+            setupSkontoAmount(data)
             // message should be visible if it is an edgeCase or if the skonto is disabled
-            if (data.isEdgeCase || !data.enabled) {
-                gbsMessage.visibility = View.VISIBLE
-                gbsMessage.text = data.message
-            } else {
-                gbsMessage.visibility = View.GONE
-            }
-
-            gbsEnableSwitch.isChecked = data.enabled
-
+            setupMessage(data)
             // Disable edit button when Skonto switch is disabled
-            if (data.enabled) {
-                gbsEditButton.setTextColor(
-                    gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
-                )
-                gbsEditButton.setOnClickListener {
-                    analyticsEventTracker?.trackEvent(
-                        UserAnalyticsEvent.EDIT_TAPPED,
-                        setOf(
-                            UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.ReturnAssistant),
-                        )
-                    )
-                    listener?.onSkontoEditClicked(data)
-                }
-            } else {
-                gbsEditButton.setTextColor(gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_dark_05))
-                gbsEditButton.setOnClickListener(null)
-            }
-
+            setupEditButton(data)
+            setupEnableSwitch(data)
+        }
+        private fun GbsItemDigitalInvoiceSkontoBinding.setupEnableSwitch(data: DigitalInvoiceSkontoListItem) {
+            gbsEnableSwitch.isChecked = data.enabled
             gbsEnableSwitch.setOnClickListener {
                 analyticsEventTracker?.trackEvent(
                     UserAnalyticsEvent.SKONTO_SWITCH_TAPPED,
@@ -478,6 +438,53 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                 } else {
                     listener?.onSkontoDisabled(data)
                 }
+            }
+        }
+        @SuppressLint("SetTextI18n")
+        private fun GbsItemDigitalInvoiceSkontoBinding.setupSkontoAmount(data: DigitalInvoiceSkontoListItem) {
+            if (data.enabled) {
+                gbsSkontoAmount.visibility = View.VISIBLE
+                gbsSkontoAmount.text = "-${amountFormatter.format(data.savedAmount)}"
+                gbsSkontoAmount.setTextColor(
+                    ContextCompat.getColor(
+                        gbsSkontoAmount.context,
+                        if (ContextHelper.isDarkTheme(gbsSkontoAmount.context)) {
+                            net.gini.android.capture.R.color.gc_success_02
+                        } else {
+                            net.gini.android.capture.R.color.gc_success_01
+                        }
+                    )
+                )
+            } else {
+                gbsSkontoAmount.visibility = View.GONE
+            }
+        }
+
+        private fun GbsItemDigitalInvoiceSkontoBinding.setupMessage(data: DigitalInvoiceSkontoListItem) {
+            if (data.isEdgeCase || !data.enabled) {
+                gbsMessage.visibility = View.VISIBLE
+                gbsMessage.text = data.message
+            } else {
+                gbsMessage.visibility = View.GONE
+            }
+        }
+        private fun GbsItemDigitalInvoiceSkontoBinding.setupEditButton(data: DigitalInvoiceSkontoListItem) {
+            if (data.enabled) {
+                gbsEditButton.setTextColor(
+                    gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
+                )
+                gbsEditButton.setOnClickListener {
+                    analyticsEventTracker?.trackEvent(
+                        UserAnalyticsEvent.EDIT_TAPPED,
+                        setOf(UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.ReturnAssistant))
+                    )
+                    listener?.onSkontoEditClicked(data)
+                }
+            } else {
+                gbsEditButton.setTextColor(
+                    gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_dark_05)
+                )
+                gbsEditButton.setOnClickListener(null)
             }
         }
 
