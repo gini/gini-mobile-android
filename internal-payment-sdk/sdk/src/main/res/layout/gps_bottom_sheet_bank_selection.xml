@@ -9,6 +9,7 @@
         style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
         android:id="@+id/drag_handle"
         android:layout_width="match_parent"
+        android:focusable="true"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gps_medium"
         app:layout_constraintEnd_toEndOf="parent"

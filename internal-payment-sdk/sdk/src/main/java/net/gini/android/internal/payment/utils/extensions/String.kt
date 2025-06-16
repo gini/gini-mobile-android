@@ -28,3 +28,7 @@ fun String.toBackendFormat(): String {
 }
 
 fun String.sanitizeAmount(): String = formatCurrency(this)
+
+fun String.addEuroSymbol(): String {
+    return "$this €"
+}

@@ -1,83 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    android:background="@color/gps_more_information_fragment_background">
+
+    <!-- Bank Icons RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gps_payment_providers_icons_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gps_large"
+        android:layout_marginStart="@dimen/gps_large"
+        android:layout_marginEnd="@dimen/gps_large"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
+        android:clipToPadding="true" />
+
+    <!-- Powered by Gini -->
+    <include
+        android:id="@+id/gps_powered_by_gini"
+        layout="@layout/gps_powered_by_gini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gps_medium"
+        app:layout_constraintTop_toBottomOf="@id/gps_payment_providers_icons_list"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:fillViewport="true"
-        android:scrollbars="none">
+        android:overScrollMode="ifContentScrolls"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/gps_powered_by_gini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/gps_more_information_fragment_background"
-            android:clickable="true">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/gps_payment_providers_icons_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/gps_large"
-                android:layout_marginHorizontal="@dimen/gps_large"
-                android:clipToPadding="true"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
-
-            <include layout="@layout/gps_powered_by_gini"
-                android:id="@+id/gps_powered_by_gini"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/gps_medium"/>
+            android:paddingHorizontal="@dimen/gps_large">
 
             <TextView
                 android:id="@+id/gps_more_information_title"
                 style="@style/GiniPaymentTheme.Typography.Subtitle1"
-                android:text="@string/gps_more_information_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gps_large"
-                android:layout_marginHorizontal="@dimen/gps_large"/>
+                android:accessibilityHeading="true"
+                android:text="@string/gps_more_information_title" />
 
             <TextView
                 android:id="@+id/gps_more_information_details"
                 style="@style/GiniPaymentTheme.Typography.Body2"
-                android:text="@string/gps_more_information_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gps_medium"
-                android:layout_marginHorizontal="@dimen/gps_large"/>
+                android:text="@string/gps_more_information_details" />
 
             <TextView
                 android:id="@+id/gps_faq_title"
                 style="@style/GiniPaymentTheme.Typography.Subtitle1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/gps_large"
+                android:accessibilityHeading="true"
                 android:layout_marginTop="@dimen/gps_large_24"
-                android:text="@string/gps_frequently_asked_questions"/>
+                android:text="@string/gps_frequently_asked_questions" />
 
-            <!-- Setting RTL direction is least hacky way to set indicator on the right side   -->
-            <ExpandableListView
-                android:id="@+id/gps_faq_list"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gps_faq_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/gps_large"
-                android:layoutDirection="rtl"
+                android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                android:divider="@color/gps_faq_divider"
-                android:dividerHeight="@dimen/gps_small_1"
-                android:groupIndicator="@drawable/gps_expandable_list_icon"
-                android:scrollbars="none"
-                tools:listitem="@layout/gps_item_faq_label"/>
+                android:overScrollMode="never"
+                tools:listitem="@layout/gps_item_faq_label" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

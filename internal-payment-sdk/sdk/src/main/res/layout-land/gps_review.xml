@@ -152,6 +152,11 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/gps_select_bank_layout"
                 android:paddingEnd="@dimen/gps_medium"
+                android:nextFocusForward="@id/payment"
+                android:nextFocusDown="@id/payment"
+                android:nextFocusRight="@id/payment"
+                android:nextFocusUp="@id/purpose_layout"
+                android:nextFocusLeft="@id/purpose_layout"
                 app:layout_constraintTop_toTopOf="@id/payment"
                 app:layout_constraintStart_toStartOf="parent"
                 >
