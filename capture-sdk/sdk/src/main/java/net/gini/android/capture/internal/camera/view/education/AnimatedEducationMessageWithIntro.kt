@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.R
@@ -86,16 +89,25 @@ internal fun EducationMessage(
     modifier: Modifier = Modifier,
     colors: EducationMessageColors = EducationMessageColors.default()
 ) {
+    val contentDescriptionMessage =
+        message + "\n" + stringResource(R.string.gc_invoice_education_content_description)
     Column(
-        modifier = modifier.padding(horizontal = 64.dp),
+        modifier = modifier
+            .semantics {
+                contentDescription = contentDescriptionMessage
+            }
+            .padding(horizontal = 64.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
+            modifier = Modifier.clearAndSetSemantics { },
             painter = imagePainter,
             contentDescription = null
         )
         Text(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .clearAndSetSemantics { },
             text = message,
             style = GiniTheme.typography.body2,
             color = colors.text,
@@ -103,7 +115,9 @@ internal fun EducationMessage(
         )
         val dots by animatedCharsLoadingIndicatorAsState()
         Text(
-            modifier = Modifier.padding(top = 40.dp),
+            modifier = Modifier
+                .padding(top = 40.dp)
+                .clearAndSetSemantics { },
             text = stringResource(R.string.gc_education_loading) + dots,
             style = GiniTheme.typography.caption1,
             color = colors.text,

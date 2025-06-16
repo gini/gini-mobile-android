@@ -434,4 +434,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/gc_qr_code_education_compose_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
