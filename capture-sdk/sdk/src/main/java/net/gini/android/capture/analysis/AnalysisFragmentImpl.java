@@ -357,10 +357,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onDestroy() {
-        getPresenter().stop();
         final Activity activity = mFragment.getActivity();
-        if (activity != null && activity.isFinishing()) {
-            getPresenter().finish();
+        if (activity != null) {
+            if (!activity.isChangingConfigurations()) getPresenter().stop();
+            if (activity.isFinishing()) getPresenter().finish();
         }
     }
 

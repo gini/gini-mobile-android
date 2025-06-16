@@ -186,6 +186,8 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gbs_edit_article))
+
         restoringFromOrientationChange = savedInstanceState != null
         setUpBindings()
 
@@ -269,6 +271,13 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     override fun onStop() {
         super.onStop()
         presenter?.stop()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+            ViewCompat.setAccessibilityPaneTitle(binding.root, getString(R.string.gbs_edit_article))
+        }
     }
 
     private fun bindUI(lineItem: LineItem) {

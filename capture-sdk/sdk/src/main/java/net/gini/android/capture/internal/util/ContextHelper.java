@@ -1,6 +1,7 @@
 package net.gini.android.capture.internal.util;
 
 import android.content.Context;
+import android.content.res.Configuration;
 
 import net.gini.android.capture.R;
 
@@ -57,5 +58,11 @@ public final class ContextHelper {
      */
     public static boolean isFontScaled(Context context) {
         return context.getResources().getConfiguration().fontScale >= 1.5;
+    }
+
+    public static boolean isDarkTheme(Context context) {
+        int currentNightMode = context.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES;
     }
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -234,6 +235,25 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         changeMarginAccordingToFontOversize()
         presenter?.onViewCreated()
         handleIfShowAttachDialogWasShowing(savedInstanceState)
+        handleSkontoSavedAmountColour()
+    }
+
+    private fun handleSkontoSavedAmountColour() {
+        if (ContextHelper.isDarkTheme(requireContext())) {
+            binding.skontoSavedAmount.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    net.gini.android.capture.R.color.gc_success_02
+                )
+            )
+        } else {
+            binding.skontoSavedAmount.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    net.gini.android.capture.R.color.gc_success_01
+                )
+            )
+        }
     }
 
     private fun handleIfShowAttachDialogWasShowing(savedInstanceState: Bundle?) =
@@ -369,12 +389,18 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     }
 
     private fun initRecyclerView() {
-        lineItemsAdapter = LineItemsAdapter(this, skontoAdapterListener, requireContext())
         activity?.let {
             binding.lineItems.apply {
                 layoutManager = LinearLayoutManager(it)
-                adapter = lineItemsAdapter
                 setHasFixedSize(true)
+                itemAnimator = null
+                lineItemsAdapter = LineItemsAdapter(
+                    this@DigitalInvoiceFragment,
+                    skontoAdapterListener,
+                    requireContext(),
+                    this
+                )
+                adapter = lineItemsAdapter
             }
         }
     }
@@ -432,7 +458,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     ) {
         lineItemsAdapter.apply {
             this.isInaccurateExtraction = isInaccurateExtraction
-            this.lineItems = lineItems
+            lineItemsAdapter.updateLineItems(lineItems)
         }
     }
 
@@ -511,6 +537,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
         binding.grossPriceTotalIntegralPart.text = integral
         binding.grossPriceTotalFractionalPart.text = fractional
+        binding.totalPriceGroup.contentDescription = integral + fractional
         binding.gbsPay.isEnabled = data.buttonEnabled
 
         val isSkontoSavedAmountVisible = data.skontoSavedAmount != null
@@ -676,6 +703,14 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      * @suppress
      */
     override fun onLineItemSelected(lineItem: SelectableLineItem) {
+        val updatedItems = lineItemsAdapter.lineItems.map {
+            if (it.lineItem.id == lineItem.lineItem.id) {
+                it.copy(selected = true)
+            } else {
+                it
+            }
+        }
+        lineItemsAdapter.updateLineItems(updatedItems)
         presenter?.selectLineItem(lineItem)
         trackItemSwitchTappedTappedEvent(lineItem.selected)
     }
@@ -686,6 +721,14 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      * @suppress
      */
     override fun onLineItemDeselected(lineItem: SelectableLineItem) {
+        val updatedItems = lineItemsAdapter.lineItems.map {
+            if (it.lineItem.id == lineItem.lineItem.id) {
+                it.copy(selected = false)
+            } else {
+                it
+            }
+        }
+        lineItemsAdapter.updateLineItems(updatedItems)
         presenter?.deselectLineItem(lineItem)
         trackItemSwitchTappedTappedEvent(lineItem.selected)
     }

@@ -11,4 +11,5 @@
     <attr name="gbsTextInputLayout" format="reference|color"/>
     <attr name="gbsReturnDialogTitle" format="reference|color"/>
     <attr name="gbsAddonTextColor" format="reference|color"/>
+    <attr name="colorOnBackground" format="color" />
 </resources>
