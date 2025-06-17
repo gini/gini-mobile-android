@@ -25,6 +25,8 @@
     <string name="gps_pay_invoice_button">Rechnung bezahlen</string>
     <string name="gps_payment_powered_by_label">Powered by</string>
     <string name="gps_payment_provider_apps_list_description">Du kannst die Rechnung nur bezahlen, wenn du ein Konto bei einer der unten aufgeführten Banken hast.</string>
+    <string name="gps_drag_handle_expanded">Expanded</string>
+    <string name="gps_drag_handle_collapsed">Collapsed</string>
 
     <!--  More Information & FAQ  -->
     <string name="gps_more_information_title">Rechnungen ganz einfach mit der Banking-App bezahlen.</string>

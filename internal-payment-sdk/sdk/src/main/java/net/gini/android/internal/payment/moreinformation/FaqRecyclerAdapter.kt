@@ -30,7 +30,7 @@ class FaqRecyclerAdapter(
         resetItems()
     }
 
-    fun resetItems() {
+    private fun resetItems() {
         items.clear()
         originalData.forEach { (question, answer) ->
             items.add(FaqItem.Entry(question, answer))
@@ -84,15 +84,6 @@ class FaqRecyclerAdapter(
                 item.isExpanded = !item.isExpanded
                 notifyItemChanged(position)
             }
-
-            questionClickableArea.setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus && v.isPressed) v.performClick()
-            }
-
-            answerClickableArea.setOnFocusChangeListener { v, hasFocus ->
-                if (hasFocus && v.isPressed) v.performClick()
-            }
-
             itemView.setOnClickListener(null)
         }
 
