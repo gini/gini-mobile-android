@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Page</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../../index.html">
+                            Gini Bank API Library for Android
+                    </a>
+            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":core-api-library:library:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="Gini Bank API Library for Android::net.gini.android.core.api.models/DocumentLayout.Page///PointingToDeclaration//1426029261">
+  <div class="breadcrumbs"><a href="../../../../index.html">Gini Bank API Library for Android</a><span class="delimiter">/</span><a href="../../index.html">net.gini.android.core.api.models</a><span class="delimiter">/</span><a href="../index.html">DocumentLayout</a><span class="delimiter">/</span><span class="current">Page</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Page</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span class="token keyword">class </span><a href="index.html">Page</a></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="567161654%2FConstructors%2F1426029261" anchor-label="DocumentLayout.Page" id="567161654%2FConstructors%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-document-layout.-page.html"><span>Document</span><wbr></wbr><span>Layout.</span><wbr></wbr><span>Page</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="567161654%2FConstructors%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword"></span><a href="index.html">DocumentLayout.Page</a> <a href="-document-layout.-page.html"><span class="token function">DocumentLayout.Page</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Integer.html">Integer</a> number<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Float.html">Float</a> sizeX<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Float.html">Float</a> sizeY<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-text-zone/index.html">DocumentLayout.Page.TextZone</a><span class="token operator">&gt;</span> textZones<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-region/index.html">DocumentLayout.Page.Region</a><span class="token operator">&gt;</span> regions</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-954798682%2FClasslikes%2F1426029261" anchor-label="Region" id="-954798682%2FClasslikes%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-region/index.html"><span><span>Region</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-954798682%2FClasslikes%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span class="token keyword">class </span><a href="-region/index.html">Region</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2109034369%2FClasslikes%2F1426029261" anchor-label="TextZone" id="2109034369%2FClasslikes%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-text-zone/index.html"><span>Text</span><wbr></wbr><span><span>Zone</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2109034369%2FClasslikes%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><span class="token keyword">class </span><a href="-text-zone/index.html">TextZone</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-2627460%2FProperties%2F1426029261" anchor-label="number" id="-2627460%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-2627460%2FProperties%2F1426029261"><span><span>number</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2627460%2FProperties%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Integer.html">Integer</a> <a href="index.html#-2627460%2FProperties%2F1426029261">number</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-893515338%2FProperties%2F1426029261" anchor-label="regions" id="-893515338%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-893515338%2FProperties%2F1426029261"><span><span>regions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-893515338%2FProperties%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-region/index.html">DocumentLayout.Page.Region</a><span class="token operator">&gt;</span> <a href="index.html#-893515338%2FProperties%2F1426029261">regions</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1527905854%2FProperties%2F1426029261" anchor-label="sizeX" id="1527905854%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1527905854%2FProperties%2F1426029261"><span>size</span><wbr></wbr><span><span>X</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1527905854%2FProperties%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Float.html">Float</a> <a href="index.html#1527905854%2FProperties%2F1426029261">sizeX</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1558925661%2FProperties%2F1426029261" anchor-label="sizeY" id="1558925661%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1558925661%2FProperties%2F1426029261"><span>size</span><wbr></wbr><span><span>Y</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1558925661%2FProperties%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Float.html">Float</a> <a href="index.html#1558925661%2FProperties%2F1426029261">sizeY</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1860005627%2FProperties%2F1426029261" anchor-label="textZones" id="1860005627%2FProperties%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1860005627%2FProperties%2F1426029261"><span>text</span><wbr></wbr><span><span>Zones</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1860005627%2FProperties%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">private </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-text-zone/index.html">DocumentLayout.Page.TextZone</a><span class="token operator">&gt;</span> <a href="index.html#1860005627%2FProperties%2F1426029261">textZones</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1931319946%2FFunctions%2F1426029261" anchor-label="getNumber" id="-1931319946%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-number.html"><span>get</span><wbr></wbr><span><span>Number</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1931319946%2FFunctions%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Integer.html">Integer</a> <a href="get-number.html"><span class="token function">getNumber</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-553440260%2FFunctions%2F1426029261" anchor-label="getRegions" id="-553440260%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-regions.html"><span>get</span><wbr></wbr><span><span>Regions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-553440260%2FFunctions%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-region/index.html">DocumentLayout.Page.Region</a><span class="token operator">&gt;</span> <a href="get-regions.html"><span class="token function">getRegions</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2136540668%2FFunctions%2F1426029261" anchor-label="getSizeX" id="-2136540668%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-size-x.html"><span>get</span><wbr></wbr><span>Size</span><wbr></wbr><span><span>X</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2136540668%2FFunctions%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Float.html">Float</a> <a href="get-size-x.html"><span class="token function">getSizeX</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2105520861%2FFunctions%2F1426029261" anchor-label="getSizeY" id="-2105520861%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-size-y.html"><span>get</span><wbr></wbr><span>Size</span><wbr></wbr><span><span>Y</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2105520861%2FFunctions%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Float.html">Float</a> <a href="get-size-y.html"><span class="token function">getSizeY</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2040326207%2FFunctions%2F1426029261" anchor-label="getTextZones" id="-2040326207%2FFunctions%2F1426029261" data-filterable-set=":core-api-library:library:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":core-api-library:library:dokkaHtml/release" data-filterable-set=":core-api-library:library:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-text-zones.html"><span>get</span><wbr></wbr><span>Text</span><wbr></wbr><span><span>Zones</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2040326207%2FFunctions%2F1426029261"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":core-api-library:library:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="-text-zone/index.html">DocumentLayout.Page.TextZone</a><span class="token operator">&gt;</span> <a href="get-text-zones.html"><span class="token function">getTextZones</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
