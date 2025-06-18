@@ -11,7 +11,6 @@
    It's main purpose is to gather common classes for the mentioned libraries without exposing them, 
    but some parts of it should be accessible from libraries which are using it.
 
-
 # How to release
 To publish releases follow these steps:
 1. For Capture SDK, Bank SDK and Bank API Library create releases in Jira in Bank's [project](https://ginis.atlassian.net/projects/PP?orderField=RANK&selectedItem=com.atlassian.jira.jira-projects-plugin:release-page&status=released-unreleased) and 

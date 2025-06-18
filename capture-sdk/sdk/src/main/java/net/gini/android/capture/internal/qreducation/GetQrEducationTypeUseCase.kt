@@ -22,9 +22,11 @@ internal class GetQrEducationTypeUseCase(
         val wrongFlowType = flowType == null || !ALLOWED_FLOW_TYPES.contains(flowType)
 
         val qrCodeRecognitionCount = qrCodeEducationStorage.getQrCodeRecognitionCount().first() + 1
-        val maximumNumberOfQrCodeEducationMessageReached = qrCodeRecognitionCount > MAX_NUMBER_OF_QR_CODE_EDUCATION_MESSAGE
+        val maximumNumberOfQrCodeEducationMessageReached =
+            qrCodeRecognitionCount > MAX_NUMBER_OF_QR_CODE_EDUCATION_MESSAGE
         val skipEducationConditions = listOf(
-            qrCodeScanningOnly, documentImportDisabled, wrongFlowType, maximumNumberOfQrCodeEducationMessageReached
+            qrCodeScanningOnly,
+            documentImportDisabled, wrongFlowType, maximumNumberOfQrCodeEducationMessageReached
         )
 
         if (skipEducationConditions.any { it }) {
