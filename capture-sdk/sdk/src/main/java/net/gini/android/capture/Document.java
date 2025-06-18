@@ -144,6 +144,10 @@ public interface Document extends Parcelable {
          */
         QRCode,
         /**
+         * The document contains XML.
+         */
+        XML,
+        /**
          * The document contains multiple images.
          */
         IMAGE_MULTI_PAGE,
@@ -154,7 +158,11 @@ public interface Document extends Parcelable {
         /**
          * The document contains multiple PDFs.
          */
-        PDF_MULTI_PAGE
+        PDF_MULTI_PAGE,
+        /**
+         * The document contains multiple XMLs.
+         */
+        XML_MULTI_PAGE,
     }
 
     /**

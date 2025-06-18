@@ -75,8 +75,11 @@ public final class GiniCaptureFileImport {
                     new ImportedFileValidationException("Intent data did not contain Uris"));
             return new NoOpCancellationToken();
         }
-        if (uris.size() == 1 && UriHelper.hasMimeType(uris.get(0), context,
-                MimeType.APPLICATION_PDF.asString())) {
+        if (uris.size() == 1 && (
+                UriHelper.hasMimeType(uris.get(0), context, MimeType.APPLICATION_PDF.asString()) ||
+                UriHelper.hasMimeType(uris.get(0), context, MimeType.TEXT_XML.asString()) ||
+                UriHelper.hasMimeType(uris.get(0), context, MimeType.APPLICATION_XML.asString())
+        )) {
             try {
                 final GiniCaptureDocument document = createDocumentForImportedFile(intent,
                         context);

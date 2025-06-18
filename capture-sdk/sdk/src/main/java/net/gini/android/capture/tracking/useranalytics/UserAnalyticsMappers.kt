@@ -11,6 +11,7 @@ fun Document?.mapToAnalyticsDocumentType(): AnalyticsDocumentType {
     return when (this?.getType()) {
         Document.Type.IMAGE, Document.Type.IMAGE_MULTI_PAGE -> AnalyticsDocumentType.Image
         Document.Type.PDF, Document.Type.PDF_MULTI_PAGE -> AnalyticsDocumentType.Pdf
+        Document.Type.XML, Document.Type.XML_MULTI_PAGE -> AnalyticsDocumentType.Xml
         Document.Type.QRCode, Document.Type.QR_CODE_MULTI_PAGE -> AnalyticsDocumentType.QrCode
         null -> AnalyticsDocumentType.Unknown
     }
