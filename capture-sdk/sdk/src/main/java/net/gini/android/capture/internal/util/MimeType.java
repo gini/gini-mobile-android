@@ -1,9 +1,9 @@
 package net.gini.android.capture.internal.util;
 
+import androidx.annotation.NonNull;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by Alpar Szotyori on 27.03.2018.
@@ -23,6 +23,8 @@ public enum MimeType {
     IMAGE_PNG("image/png"),
     IMAGE_GIF("image/gif"),
     APPLICATION_PDF("application/pdf"),
+    APPLICATION_XML("application/xhtml+xml"),
+    TEXT_XML("text/xml"),
     APPLICATION_JSON("application/json"),
     UNKNOWN("");
 

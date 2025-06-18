@@ -1,9 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty;
-import static net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-
 import android.app.Activity;
 
 import androidx.annotation.NonNull;
@@ -44,6 +40,10 @@ import java.util.Map;
 import java.util.Random;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+
+import static net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty;
+import static net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.
@@ -191,7 +191,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     public void start() {
         mStopped = false;
         checkGiniCaptureInstance();
-        createDocumentRenderer();
+        if (mMultiPageDocument.getType() != Document.Type.XML && mMultiPageDocument.getType() != Document.Type.XML_MULTI_PAGE){
+            createDocumentRenderer();
+        }
         clearParcelableMemoryCache();
         getView().showScanAnimation();
         loadDocumentData();
@@ -435,6 +437,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     private void showDocument() {
         LOG.debug("Rendering the document");
+        if (mDocumentRenderer == null)
+            return;
         mDocumentRenderer.toBitmap(getActivity(), getView().getPdfPreviewSize(),
                 (bitmap, rotationForDisplay) -> {
                     LOG.debug("Document rendered");
