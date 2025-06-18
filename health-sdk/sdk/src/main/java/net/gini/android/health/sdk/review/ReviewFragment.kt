@@ -413,7 +413,6 @@ class ReviewFragment private constructor(
 
                 binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(nextState)
 
-                // 💬 Announce the new state for TalkBack
                 val announcement = when (nextState) {
                     ReviewViewStateLandscape.EXPANDED -> getString(InternalPaymentR.string.gps_drag_handle_expanded)
                     ReviewViewStateLandscape.COLLAPSED -> getString(InternalPaymentR.string.gps_drag_handle_collapsed)
