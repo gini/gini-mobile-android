@@ -21,6 +21,8 @@ import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityOrdersBinding
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import net.gini.android.health.sdk.exampleapp.util.add
+import net.gini.android.health.sdk.exampleapp.util.isInTheFuture
+import net.gini.android.health.sdk.exampleapp.util.showAlertDialog
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.internal.payment.utils.DisplayedScreen
@@ -30,58 +32,22 @@ import org.slf4j.LoggerFactory
 class OrdersActivity : AppCompatActivity() {
 
     private val viewModel: OrdersViewModel by viewModel()
+    private lateinit var binding: ActivityOrdersBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityOrdersBinding.inflate(layoutInflater)
+        binding = ActivityOrdersBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setActivityTitle(DisplayedScreen.Nothing)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.ordersFlow.collect { orders ->
-                        (binding.ordersList.adapter as OrdersAdapter).apply {
-                            dataSet = orders
-                            notifyDataSetChanged()
-                        }
-                        binding.noOrdersLabel.visibility =
-                            if (orders.isEmpty()) View.VISIBLE else View.GONE
-                    }
-                }
-                launch {
-                    viewModel.startIntegratedPaymentFlow.collect { paymentDetails ->
-                        startIntegratedPaymentFlow(paymentDetails)
-                    }
-                }
-                launch {
-                    viewModel.giniHealth.displayedScreen.collect { screen ->
-                        setActivityTitle(screen)
-                    }
-                }
-                launch {
-                    viewModel.errorsFlow.collect {
-                        Toast.makeText(this@OrdersActivity, it, Toast.LENGTH_LONG).show()
-                    }
-                }
-                launch {
-                    viewModel.openBankState.collect { paymentState ->
-                        when (paymentState) {
-                            is GiniHealth.PaymentState.Success -> {
-                                SharedPreferencesUtil.saveStringToSharedPreferences(
-                                    SharedPreferencesUtil.PAYMENTREQUEST_KEY,
-                                    paymentState.paymentRequest.id,
-                                    this@OrdersActivity
-                                )
-                                supportFragmentManager.popBackStack()
-                            }
-                            is GiniHealth.PaymentState.Cancel -> {
-                                supportFragmentManager.popBackStack()
-                            }
-                            else -> Unit
-                        }
-                    }
-                }
+                launch { observeOrders() }
+                launch { observeStartIntegratedPaymentFlow() }
+                launch { observeDisplayedScreen() }
+                launch { observeErrors() }
+                launch { observeDeletePaymentErrors() }
+                launch { observeBankState() }
             }
         }
 
@@ -111,6 +77,84 @@ class OrdersActivity : AppCompatActivity() {
                 title = resources.getString(R.string.button_orders_list)
             }
             invalidateOptionsMenu()
+        }
+    }
+
+    private suspend fun observeStartIntegratedPaymentFlow() {
+        viewModel.startIntegratedPaymentFlow.collect { paymentDetails ->
+            startIntegratedPaymentFlow(paymentDetails)
+        }
+    }
+
+    private suspend fun observeOrders() {
+        viewModel.ordersFlow.collect { orders ->
+            (binding.ordersList.adapter as OrdersAdapter).apply {
+                dataSet = orders
+                notifyDataSetChanged()
+            }
+            binding.noOrdersLabel.visibility =
+                if (orders.isEmpty()) View.VISIBLE else View.GONE
+        }
+    }
+
+
+    private suspend fun observeDisplayedScreen() {
+        viewModel.giniHealth.displayedScreen.collect { screen ->
+            setActivityTitle(screen)
+        }
+    }
+
+    private suspend fun observeErrors() {
+        viewModel.errorsFlow.collect { error ->
+            Toast.makeText(this@OrdersActivity, error, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private suspend fun observeDeletePaymentErrors() {
+        viewModel.deletePaymentRequestErrorsFlow.collect { error ->
+            error?.let { deletePaymentRequestErrorResponse ->
+                if (deletePaymentRequestErrorResponse.message != null) {
+                    this@OrdersActivity.showAlertDialog(
+                        getString(R.string.payment_request_error_deleting),
+                        deletePaymentRequestErrorResponse.message ?: ""
+                    )
+                    return@collect
+                }
+
+                var errorMessage = ""
+
+                deletePaymentRequestErrorResponse.unauthorizedPaymentRequests?.let {
+                    errorMessage += "${getString(R.string.payment_requests_unauthorized)} $it"
+                }
+
+                deletePaymentRequestErrorResponse.notFoundPaymentRequests?.let {
+                    errorMessage += "\n${getString(R.string.payment_requests_not_found)} $it"
+                }
+                this@OrdersActivity.showAlertDialog(
+                    getString(R.string.payment_request_error_deleting),
+                    errorMessage
+                )
+            }
+
+        }
+    }
+
+    private suspend fun observeBankState() {
+        viewModel.openBankState.collect { paymentState ->
+            when (paymentState) {
+                is GiniHealth.PaymentState.Success -> {
+                    SharedPreferencesUtil.saveStringToSharedPreferences(
+                        SharedPreferencesUtil.PAYMENTREQUEST_KEY,
+                        paymentState.paymentRequest.id,
+                        this@OrdersActivity
+                    )
+                    supportFragmentManager.popBackStack()
+                }
+                is GiniHealth.PaymentState.Cancel -> {
+                    supportFragmentManager.popBackStack()
+                }
+                else -> Unit
+            }
         }
     }
 
@@ -152,6 +196,19 @@ class OrdersActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.delete_orders -> {
+                val orders = (binding.ordersList.adapter as OrdersAdapter).dataSet
+                var orderIds: List<String> = emptyList()
+                for (order in orders) {
+                    if (order.order.requestId != null && order.order.expiryDate.isInTheFuture()) {
+                        orderIds = orderIds.plus(order.order.requestId ?: "")
+                    }
+                }
+                viewModel.deletePaymentRequests(orderIds)
+
+                true
+            }
+
             R.id.custom_order -> {
                 viewModel.setSelectedOrderItem(null)
                 showOrderDetailsFragment()

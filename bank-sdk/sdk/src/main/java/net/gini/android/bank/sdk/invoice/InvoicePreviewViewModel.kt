@@ -2,6 +2,8 @@ package net.gini.android.bank.sdk.invoice
 
 import androidx.lifecycle.ViewModel
 import net.gini.android.bank.sdk.invoice.usecase.LoadInvoiceBitmapsUseCase
+import net.gini.android.capture.error.ErrorType
+import net.gini.android.capture.internal.network.FailureException
 import net.gini.android.capture.network.model.GiniCaptureBox
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
@@ -19,7 +21,7 @@ internal class InvoicePreviewViewModel(
     private val highlightBoxes: List<GiniCaptureBox>,
     private val infoTextLines: List<String>,
     private val loadInvoiceBitmapsUseCase: LoadInvoiceBitmapsUseCase,
-    private val analyticsTracker: UserAnalyticsEventTracker,
+    private val analyticsTracker: UserAnalyticsEventTracker?,
 ) : ViewModel(), InvoicePreviewHost {
 
     override val container: Container<InvoicePreviewFragmentState, Unit> = container(
@@ -27,7 +29,7 @@ internal class InvoicePreviewViewModel(
     )
 
     private fun createInitalState() =
-        InvoicePreviewFragmentState(
+        InvoicePreviewFragmentState.Ready(
             screenTitle = screenTitle,
             isLoading = true,
             images = emptyList(),
@@ -39,7 +41,7 @@ internal class InvoicePreviewViewModel(
     }
 
     fun onUserZoomedImage() {
-        analyticsTracker.trackEvent(
+        analyticsTracker?.trackEvent(
             UserAnalyticsEvent.PREVIEW_ZOOMED,
             setOf(
                 UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoInvoicePreview)
@@ -48,7 +50,7 @@ internal class InvoicePreviewViewModel(
     }
 
     fun onUserNavigatesBack() {
-        analyticsTracker.trackEvent(
+        analyticsTracker?.trackEvent(
             UserAnalyticsEvent.CLOSE_TAPPED,
             setOf(
                 UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoInvoicePreview)
@@ -56,22 +58,36 @@ internal class InvoicePreviewViewModel(
         )
     }
 
-    private fun init() = intent {
-        analyticsTracker.trackEvent(
+    internal fun init() = intent {
+        analyticsTracker?.trackEvent(
             UserAnalyticsEvent.SCREEN_SHOWN,
             setOf(
                 UserAnalyticsEventProperty.Screen(UserAnalyticsScreen.SkontoInvoicePreview)
             )
         )
 
-        val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
-
-        if (bitmaps != null) {
+        runCatching {
+            reduce { createInitalState() }
+            val bitmaps = loadInvoiceBitmapsUseCase.invoke(documentId, highlightBoxes)
             reduce {
-                state.copy(
+                InvoicePreviewFragmentState.Ready(
                     isLoading = false,
-                    images = bitmaps
+                    images = bitmaps,
+                    screenTitle = screenTitle,
+                    infoTextLines = infoTextLines,
                 )
+            }
+        }.onFailure {
+            reduce {
+                if (it is FailureException) {
+                    InvoicePreviewFragmentState.Error(
+                        errorType = it.errorType
+                    )
+                } else {
+                    InvoicePreviewFragmentState.Error(
+                        errorType = ErrorType.GENERAL
+                    )
+                }
             }
         }
     }

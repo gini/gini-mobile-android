@@ -73,6 +73,8 @@
     <string name="gps_open_with_button_text">Mit der %s-App teilen</string>
     <string name="gps_sharing_file">Sharing 1 file</string>
     <string name="gps_reference_number">Verwendungszweck</string>
+    <string name="gps_payment_request_pdf_name"></string>
+    <string name="gps_payment_request_pdf_name_default">Zahlungsinformationen</string>
     <string name="gps_qr_image_content_description">QR-Code zur Einleitung einer SEPA-Überweisung.</string>
     <string name="gps_share_with_button_content_description">Schaltfläche “Mit der %s-App teilen”</string>
 

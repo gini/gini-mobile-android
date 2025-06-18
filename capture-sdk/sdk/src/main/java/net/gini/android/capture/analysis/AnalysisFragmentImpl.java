@@ -1,6 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 import android.app.Activity;
@@ -239,12 +238,9 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onCreate(final Bundle savedInstanceState) {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        forcePortraitOrientationOnPhones(activity);
+        // Required by superclass, no changes need to remove it.
     }
+
 
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
@@ -345,10 +341,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onDestroy() {
-        getPresenter().stop();
         final Activity activity = mFragment.getActivity();
-        if (activity != null && activity.isFinishing()) {
-            getPresenter().finish();
+        if (activity != null) {
+            if (!activity.isChangingConfigurations()) getPresenter().stop();
+            if (activity.isFinishing()) getPresenter().finish();
         }
     }
 

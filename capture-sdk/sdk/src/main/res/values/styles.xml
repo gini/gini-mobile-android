@@ -70,6 +70,10 @@
 ˇ
     <style name="GiniCaptureTheme.Widget.Button.OutlinedButton" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton"/>
 
+    <style name="GiniCaptureTheme.Widget.Button.OutlinedButton.DefaultBackground" parent="Root.GiniCaptureTheme.Widget.Button.OutlinedButton">
+        <item name="backgroundTint">?attr/backgroundColor</item>
+    </style>
+
     <style name="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Widget.Material3.Button.UnelevatedButton">
         <item name="cornerRadius">4dp</item>
         <item name="android:textAllCaps">false</item>

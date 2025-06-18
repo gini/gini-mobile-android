@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +28,7 @@ import net.gini.android.bank.sdk.transactiondocs.ui.extractions.view.Transaction
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.util.protectViewFromInsets
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -38,6 +40,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsAdapterInterface {
+
     private lateinit var binding: ActivityExtractionsBinding
 
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
@@ -46,6 +49,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     @Inject
     internal lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
 
+    private val viewModel: ExtractionsViewModel by viewModels()
+
     // {extraction name} to it's {entity name}
     private val editableSpecificExtractions = hashMapOf(
         "paymentRecipient" to "companyname",
@@ -53,12 +58,14 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         "paymentPurpose" to "text",
         "iban" to "iban",
         "bic" to "bic",
-        "amountToPay" to "amount"
+        "amountToPay" to "amount",
+        "instantPayment" to "text"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExtractionsBinding.inflate(layoutInflater)
+        binding.root.protectViewFromInsets()
         setContentView(binding.root)
         readExtras()
         showAnalyzedDocumentId()
@@ -130,6 +137,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 val inputMethodManager =
                     getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+                false
             }
         }
     }
@@ -147,15 +155,31 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
         val iban = mExtractions["iban"]?.value ?: ""
         val bic = mExtractions["bic"]?.value ?: ""
+        val instantPayment = mExtractions["instantPayment"]?.value ?: ""
 
         if (amount.isEmpty()) {
             amount = Amount.EMPTY.amountToPay()
         }
 
+        viewModel.saveTransactionData(
+            iban,
+            bic,
+            amount,
+            paymentRecipient,
+            paymentPurpose,
+            paymentReference,
+        )
+
         GiniBank.sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, Amount(
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            Amount(
                 BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
-            )
+            ),
+            instantPayment.toBooleanStrictOrNull()
         )
 
         GiniBank.cleanupCapture(applicationContext)

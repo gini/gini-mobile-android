@@ -23,7 +23,6 @@ class DecimalInputVisualTransformation(
             source = source,
             formatted = formatted,
         )
-
         return TransformedText(AnnotatedString(formatted), offsetMapping)
     }
 
@@ -56,7 +55,6 @@ class DecimalInputVisualTransformation(
                 7 -> 9
                 else -> formatted.length
             }
-
             return lastIndex
         }
 
@@ -72,9 +70,6 @@ class DecimalInputVisualTransformation(
 
 
         override fun transformedToOriginal(offset: Int): Int {
-            val thousandSeparatorCount =
-                formatted.count { it == formattingSymbols.groupingSeparator }
-
             val lastIndex = when (formatted.length) {
                 in 1..4 -> source.length
                 5 -> 4
@@ -83,7 +78,7 @@ class DecimalInputVisualTransformation(
                 9 -> 7
                 else -> source.length
             }
-            return lastIndex
+            return lastIndex.coerceAtMost(source.lastIndex).coerceAtLeast(0)
         }
     }
 }
