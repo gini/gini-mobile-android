@@ -11,6 +11,7 @@ class GiniBankConfigurationProvider {
         isReturnAssistantEnabled = false,
         amplitudeApiKey = "",
         isTransactionDocsEnabled = false,
+        isQrCodeEducationEnabled = false,
         isInstantPaymentEnabled = false,
         isEInvoiceEnabled = false,
     )

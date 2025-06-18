@@ -200,6 +200,7 @@ internal constructor(
             isSkontoEnabled = configuration.isSkontoEnabled,
             isReturnAssistantEnabled = configuration.isReturnAssistantEnabled,
             isTransactionDocsEnabled = configuration.transactionDocsEnabled,
+            isQrCodeEducationEnabled = configuration.qrCodeEducationEnabled,
             isInstantPaymentEnabled = configuration.instantPaymentEnabled,
             isEInvoiceEnabled = configuration.isEInvoiceEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",

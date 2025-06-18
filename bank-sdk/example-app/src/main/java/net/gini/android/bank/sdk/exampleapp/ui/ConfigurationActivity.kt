@@ -398,7 +398,8 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         // enable Error screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowErrorScreenCustomBottomNavbar
+        binding.layoutBottomNavigationToggles
+            .switchShowErrorScreenCustomBottomNavbar
             .setOnCheckedChangeListener { _, isChecked ->
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
