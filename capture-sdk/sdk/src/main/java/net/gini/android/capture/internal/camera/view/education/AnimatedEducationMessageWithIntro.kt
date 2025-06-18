@@ -33,7 +33,8 @@ import net.gini.android.capture.ui.theme.GiniTheme
 @Composable
 internal fun AnimatedEducationMessageWithIntro(
     message: String,
-    imagePainter: Painter,
+    introImagePainter: Painter,
+    mainImagePainter: Painter,
     modifier: Modifier = Modifier,
     introductionMessageDelay: Long = 1500L,
     mainMessageDuration: Long = 3000L,
@@ -63,7 +64,7 @@ internal fun AnimatedEducationMessageWithIntro(
         ) {
             EducationMessage(
                 message = stringResource(R.string.gc_qr_education_intro_message),
-                imagePainter = painterResource(R.drawable.gc_qr_code_education_intro_image)
+                imagePainter = introImagePainter
             )
         }
 
@@ -76,7 +77,7 @@ internal fun AnimatedEducationMessageWithIntro(
             EducationMessage(
                 modifier = Modifier.align(Alignment.Center),
                 message = message,
-                imagePainter = imagePainter
+                imagePainter = mainImagePainter
             )
         }
     }
@@ -131,7 +132,8 @@ internal fun EducationMessage(
 private fun AnimatedEducationMessageWithIntroductionPreview() {
     AnimatedEducationMessageWithIntro(
         message = stringResource(R.string.gc_qr_education_photo_doc_message),
-        imagePainter = painterResource(R.drawable.gc_qr_code_education_photo_doc_image),
+        introImagePainter = painterResource(R.drawable.gc_qr_code_education_intro_image),
+        mainImagePainter = painterResource(R.drawable.gc_qr_code_education_photo_doc_image),
         onComplete = { /* no-op */ },
         animationKey = Unit,
     )

@@ -39,7 +39,8 @@ internal fun QrCodeEducationPopupContent(
                     AnimatedEducationMessageWithIntro(
                         modifier = modifier.align(Alignment.Center),
                         message = stringResource(R.string.gc_qr_education_photo_doc_message),
-                        imagePainter = painterResource(R.drawable.gc_qr_code_education_photo_doc_image),
+                        introImagePainter = painterResource(R.drawable.gc_qr_code_education_intro_image),
+                        mainImagePainter = painterResource(R.drawable.gc_qr_code_education_photo_doc_image),
                         onComplete = onComplete,
                         animationKey = qrEducationType
                     )
@@ -49,7 +50,8 @@ internal fun QrCodeEducationPopupContent(
                     AnimatedEducationMessageWithIntro(
                         modifier = modifier.align(Alignment.Center),
                         message = stringResource(R.string.gc_qr_education_upload_picture_message),
-                        imagePainter = painterResource(R.drawable.gc_qr_code_education_upload_picture_image),
+                        introImagePainter = painterResource(R.drawable.gc_qr_code_education_intro_image),
+                        mainImagePainter = painterResource(R.drawable.gc_qr_code_education_upload_picture_image),
                         onComplete = onComplete,
                         animationKey = qrEducationType
                     )

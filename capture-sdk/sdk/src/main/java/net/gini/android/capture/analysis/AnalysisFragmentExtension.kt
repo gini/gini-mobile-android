@@ -23,7 +23,8 @@ class AnalysisFragmentExtension {
                 AnimatedEducationMessageWithIntro(
                     message = stringResource(R.string.gc_invoice_education_message),
                     animationKey = Unit,
-                    imagePainter = painterResource(R.drawable.gc_invoice_education_upload_picture_image),
+                    introImagePainter = painterResource(R.drawable.gc_invoice_education_intro_image),
+                    mainImagePainter = painterResource(R.drawable.gc_invoice_education_upload_picture_image),
                     onComplete = onComplete
                 )
             }
