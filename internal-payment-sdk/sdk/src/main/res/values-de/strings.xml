@@ -25,6 +25,8 @@
     <string name="gps_pay_invoice_button">Rechnung bezahlen</string>
     <string name="gps_payment_powered_by_label">Powered by</string>
     <string name="gps_payment_provider_apps_list_description">Du kannst die Rechnung nur bezahlen, wenn du ein Konto bei einer der unten aufgeführten Banken hast.</string>
+    <string name="gps_drag_handle_expanded">Erweitert</string>
+    <string name="gps_drag_handle_collapsed">Reduziert</string>
 
     <!--  More Information & FAQ  -->
     <string name="gps_more_information_title">Rechnungen ganz einfach mit der Banking-App bezahlen.</string>
@@ -56,6 +58,7 @@
     <string name="gps_invalid_amount_content_description">Ungültiger Zahlbetrag</string>
     <string name="gps_powered_by_gini_content_description">Powered by Gini</string>
     <string name="gps_select_bank_content_description">Bank Auswählen</string>
+    <string name="gps_invoice_image_content_description">Rechnungsdokument</string>
 
     <!--  Install App  -->
     <string name="gps_install_app_detail">Hinweis: Bitte aktualisiere oder installiere zunächst die %s-App aus dem Google Play Store.</string>

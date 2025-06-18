@@ -56,6 +56,4 @@
 
     <!-- Style for the progress indicator that is displayed on top of the Pay button in ReviewFragment -->
     <style name="GiniHealth.PaymentButtonProgressStyle" parent="Root.GiniHealthTheme.PaymentButtonProgressStyle" />
-
-
 </resources>

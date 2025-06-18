@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -29,6 +30,7 @@ import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
@@ -62,7 +64,10 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = GpsBottomSheetBankSelectionBinding.inflate(inflater, container, false)
-
+        binding.dragHandle.onKeyboardAction {
+            dismiss()
+        }
+        binding.gpsPaymentProviderAppsList.setHasFixedSize(false)
         binding.gpsPaymentProviderAppsList.layoutManager = LinearLayoutManager(requireContext())
         binding.gpsPaymentProviderAppsList.adapter =
             PaymentProviderAppsAdapter(emptyList(),
@@ -76,11 +81,6 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
                         viewModel.backListener?.backCalled()
                     }
             })
-
-        binding.gpsCloseButton.setOnClickListener {
-            viewModel.backListener?.backCalled()
-            dismiss()
-        }
 
         binding.gpsMoreInformationLabel.apply {
             paintFlags = binding.gpsMoreInformationLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
@@ -97,6 +97,7 @@ class BankSelectionBottomSheet private constructor(private val paymentComponent:
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gps_select_bank))
 
         viewModel.start()
 

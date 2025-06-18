@@ -2,7 +2,7 @@
 <resources>
 
     <color name="gps_payment_component_caption">@color/gps_light_04</color>
-    <color name="gps_bank_selection_bottom_sheet_caption">@color/gps_light_03</color>
+    <color name="gps_bank_selection_bottom_sheet_caption">@color/gps_light_04</color>
     <color name="gps_bank_selection_bottom_sheet_title">@color/gps_light_02</color>
     <color name="gps_more_information_fragment_background">@color/gps_light_07</color>
     <color name="gps_payment_provider_border_color">@color/gps_light_05</color>

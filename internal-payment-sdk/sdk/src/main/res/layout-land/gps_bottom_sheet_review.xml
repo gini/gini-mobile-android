@@ -2,27 +2,24 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         android:id="@+id/drag_handle"
+        android:focusable="true"
         style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
         android:layout_width="match_parent"
-        android:focusable="true"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/gps_medium"
+        app:layout_constraintBottom_toTopOf="@id/gps_review_layout"
         />
 
-    // In the Figma design the height of the drag handle component is 36dp
-    // In Material3 the height of the BottomSheetDragHandleView is 44dp - this is where the margin difference came from.
-    // Switched to constraint to top of the view, not the drag handle, and set marginTop to 36dp.
     <net.gini.android.internal.payment.review.reviewComponent.ReviewView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/gps_review_layout"
-        android:layout_marginHorizontal="@dimen/gps_large"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/gps_large_36"/>
+        android:layout_marginHorizontal="@dimen/gps_large_72"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
