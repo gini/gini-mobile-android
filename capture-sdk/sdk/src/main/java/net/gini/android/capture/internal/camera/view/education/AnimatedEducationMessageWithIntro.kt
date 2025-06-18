@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -90,6 +91,10 @@ internal fun EducationMessage(
     modifier: Modifier = Modifier,
     colors: EducationMessageColors = EducationMessageColors.default()
 ) {
+    val density = LocalDensity.current
+    val fontScale = density.fontScale
+    val isMaxFontScale = fontScale >= 1.9f
+
     val contentDescriptionMessage =
         message + "\n" + stringResource(R.string.gc_invoice_education_content_description)
     Column(
@@ -100,11 +105,15 @@ internal fun EducationMessage(
             .padding(horizontal = 64.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            modifier = Modifier.clearAndSetSemantics { },
-            painter = imagePainter,
-            contentDescription = null
-        )
+        // we don't want to show the icon in case the font size is too big to avoid
+        // overlapping in small devices
+        if (!isMaxFontScale) {
+            Image(
+                modifier = Modifier.clearAndSetSemantics { },
+                painter = imagePainter,
+                contentDescription = null
+            )
+        }
         Text(
             modifier = Modifier
                 .padding(top = 16.dp)
