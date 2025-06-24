@@ -67,6 +67,7 @@
     <string name="gc_error_file_import_page_count_title">Das Dokument darf nicht mehr als 10 Seiten haben.</string>
     <string name="gc_error_file_import_page_count_text"></string>
     <string name="gc_error_file_import_unsupported_title">Nur Dateien vom Format jpg, png, gif oder PDF können analysiert werden.</string>
+    <string name="gc_error_file_import_unsupported_with_e_invoice_title">Nur Dateien vom Format jpg, png, gif, PDF oder XML können analysiert werden.</string>
     <string name="gc_error_file_import_unsupported_text"></string>
     <string name="gc_error_file_import_password_title">Passwortgeschützte Dokumente können nicht analysiert werden.</string>
     <string name="gc_error_file_import_password_text"></string>

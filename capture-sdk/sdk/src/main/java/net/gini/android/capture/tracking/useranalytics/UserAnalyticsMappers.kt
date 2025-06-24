@@ -30,6 +30,7 @@ fun ErrorType?.mapToAnalyticsErrorType(): AnalyticsErrorType {
         ErrorType.FILE_IMPORT_SIZE -> AnalyticsErrorType.FileImportSize
         ErrorType.FILE_IMPORT_PAGE_COUNT -> AnalyticsErrorType.FileImportPageCount
         ErrorType.FILE_IMPORT_UNSUPPORTED -> AnalyticsErrorType.FileImportUnsupported
+        ErrorType.FILE_IMPORT_UNSUPPORTED_WITH_EINVOICE -> AnalyticsErrorType.FileImportUnsupported
         ErrorType.FILE_IMPORT_PASSWORD -> AnalyticsErrorType.FileImportPassword
     }
 }

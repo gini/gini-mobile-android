@@ -3,7 +3,9 @@ package net.gini.android.capture.error
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import net.gini.android.capture.R
+import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.GiniCaptureDocumentError
+import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.network.Error
 import org.json.JSONObject
@@ -70,6 +72,11 @@ enum class ErrorType(
         R.string.gc_error_file_import_unsupported_title,
         R.string.gc_error_file_import_unsupported_text
     ),
+    FILE_IMPORT_UNSUPPORTED_WITH_EINVOICE(
+        R.drawable.gc_alert_triangle_icon,
+        R.string.gc_error_file_import_unsupported_with_e_invoice_title,
+        R.string.gc_error_file_import_unsupported_text
+    ),
     FILE_IMPORT_PASSWORD(
         R.drawable.gc_alert_triangle_icon,
         R.string.gc_error_file_import_password_title,
@@ -133,6 +140,8 @@ enum class ErrorType(
                 return GENERAL
             }
 
+            val getEInvoiceFeatureEnabledUseCase: GetEInvoiceFeatureEnabledUseCase by getGiniCaptureKoin().inject()
+            val isEInvoiceEnabled = getEInvoiceFeatureEnabledUseCase.invoke()
             if (error.statusCode == null) {
                 (error.cause as? SocketTimeoutException)?.let {
                     return UPLOAD
@@ -140,7 +149,12 @@ enum class ErrorType(
 
                 return when (error.fileImportErrors) {
                     FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
-                    FileImportValidator.Error.TYPE_NOT_SUPPORTED -> FILE_IMPORT_UNSUPPORTED
+                    FileImportValidator.Error.TYPE_NOT_SUPPORTED -> if (isEInvoiceEnabled) {
+                        FILE_IMPORT_UNSUPPORTED_WITH_EINVOICE
+                    } else {
+                        FILE_IMPORT_UNSUPPORTED
+                    }
+
                     FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
                     FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
                     FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT

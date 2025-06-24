@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -93,10 +94,18 @@ internal fun EducationMessage(
 ) {
     val density = LocalDensity.current
     val fontScale = density.fontScale
-    val isMaxFontScale = fontScale >= 1.9f
+    val isMaxFontScale = fontScale >= 1.7f
 
     val contentDescriptionMessage =
         message + "\n" + stringResource(R.string.gc_invoice_education_content_description)
+
+    val view = LocalView.current
+
+    // reads aloud the text when talkback is active
+    LaunchedEffect(Unit) {
+        view.announceForAccessibility(message)
+    }
+
     Column(
         modifier = modifier
             .semantics {

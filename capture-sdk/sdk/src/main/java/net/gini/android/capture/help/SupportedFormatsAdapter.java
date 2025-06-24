@@ -36,10 +36,12 @@ public class SupportedFormatsAdapter extends
     private final List<Enum> mItems;
     private Boolean isQRDocument;
     private GetEInvoiceFeatureEnabledUseCase getEInvoiceFeatureEnabledUseCase;
+    private Boolean isEInvoiceEnabled;
 
     public SupportedFormatsAdapter(Boolean isQrCodeDocument) {
         isQRDocument = isQrCodeDocument;
         getEInvoiceFeatureEnabledUseCase = CaptureSdkJavaInterop.getEInvoiceFeatureEnabledUseCase();
+        isEInvoiceEnabled = getEInvoiceFeatureEnabledUseCase.invoke();
         mItems = setUpItems();
     }
 
@@ -70,7 +72,7 @@ public class SupportedFormatsAdapter extends
         }
         items.add(SupportedFormat.PHOTOS_OF_MONITORS);
 
-        if (getEInvoiceFeatureEnabledUseCase.invoke()) {
+        if (isEInvoiceEnabled) {
             items.add(SupportedFormat.E_INVOICES);
         }
         items.add(SectionHeader.UNSUPPORTED_FORMATS);
@@ -118,7 +120,9 @@ public class SupportedFormatsAdapter extends
             viewHolder.icon.setImageResource(formatInfo.getIcon());
 
             //Remove last dividers
-            if (formatInfo.getLabel() == SupportedFormat.PHOTOS_OF_MONITORS.getLabel()) {
+            if (!isEInvoiceEnabled && formatInfo.getLabel() == SupportedFormat.PHOTOS_OF_MONITORS.getLabel()) {
+                viewHolder.dividerView.setVisibility(View.INVISIBLE);
+            } else if (isEInvoiceEnabled && formatInfo.getLabel() == SupportedFormat.E_INVOICES.getLabel()) {
                 viewHolder.dividerView.setVisibility(View.INVISIBLE);
             } else {
                 viewHolder.dividerView.setVisibility(View.VISIBLE);
