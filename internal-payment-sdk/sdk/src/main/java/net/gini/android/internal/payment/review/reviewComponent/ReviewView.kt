@@ -22,12 +22,14 @@ import net.gini.android.internal.payment.databinding.GpsReviewBinding
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.PaymentField
+import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.ValidationMessage
 import net.gini.android.internal.payment.utils.amountWatcher
 import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
 import net.gini.android.internal.payment.utils.extensions.hideKeyboard
+import net.gini.android.internal.payment.utils.extensions.hideKeyboardFully
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
@@ -40,6 +42,10 @@ interface ReviewViewListener {
 
     fun onSelectBankButtonTapped()
 }
+
+/**
+ * Represents the view with all the fields which hold the payment details.
+ */
 class ReviewView(private val context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
 
@@ -106,6 +112,11 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                             (reviewComponent?.reviewConfig?.editableFields?.contains(ReviewFields.AMOUNT) ?: false)
                 }
             }
+            launch {
+                reviewComponent?.reviewViewStateInLandscapeMode?.collect { reviewViewState ->
+                    binding.gpsFieldsLayout?.isVisible = reviewViewState == ReviewViewStateLandscape.EXPANDED
+                }
+            }
         }
     }
 
@@ -127,6 +138,13 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                 }
             }
         }
+
+        binding.payment.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                clearInputFieldsFocus()
+                view.hideKeyboardFully()
+            }
+        }
     }
 
     private fun setSelectedPaymentProviderApp(paymentProviderApp: PaymentProviderApp) {
@@ -139,6 +157,13 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             if (reviewComponent?.shouldShowBankSelectionButton() == true) {
                 binding.gpsPaymentProviderAppIconHolder.gpsPaymentProviderIcon.setImageDrawable(roundedDrawable)
                 binding.gpsSelectBankButton.setOnClickListener { listener?.onSelectBankButtonTapped() }
+                binding.gpsSelectBankButton.setOnFocusChangeListener{
+                    view, hasFocus ->
+                    if (hasFocus) {
+                        clearInputFieldsFocus()
+                        view.hideKeyboardFully()
+                    }
+                }
             } else {
                 binding.payment.setCompoundDrawablesWithIntrinsicBounds(
                     roundedDrawable,
@@ -217,6 +242,13 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         PaymentField.Iban -> binding.ibanLayout
         PaymentField.Amount -> binding.amountLayout
         PaymentField.Purpose -> binding.purposeLayout
+    }
+
+    private fun clearInputFieldsFocus() {
+        binding.recipient.clearFocus()
+        binding.iban.clearFocus()
+        binding.amount.clearFocus()
+        binding.purpose.clearFocus()
     }
 
     private fun setEditableFields() {

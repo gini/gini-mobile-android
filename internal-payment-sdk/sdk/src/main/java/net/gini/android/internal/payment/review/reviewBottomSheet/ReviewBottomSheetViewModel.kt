@@ -11,17 +11,14 @@ import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListen
 import net.gini.android.internal.payment.utils.BackListener
 
 
-internal class ReviewBottomSheetViewModel private constructor(private val paymentComponent: PaymentComponent, private val reviewConfiguration: ReviewConfiguration, private val giniPaymentModule: GiniInternalPaymentModule, val backListener: BackListener?, val reviewViewListener: ReviewViewListener?): ViewModel() {
-    val reviewComponent: ReviewComponent
+internal class ReviewBottomSheetViewModel private constructor(paymentComponent: PaymentComponent, reviewConfiguration: ReviewConfiguration, giniPaymentModule: GiniInternalPaymentModule, val backListener: BackListener?, val reviewViewListener: ReviewViewListener?): ViewModel() {
 
-    init {
-        reviewComponent = ReviewComponent(
-            paymentComponent = paymentComponent,
-            reviewConfig= reviewConfiguration,
-            giniInternalPaymentModule = giniPaymentModule,
-            coroutineScope = viewModelScope
-        )
-    }
+    val reviewComponent: ReviewComponent = ReviewComponent(
+        paymentComponent = paymentComponent,
+        reviewConfig= reviewConfiguration,
+        giniInternalPaymentModule = giniPaymentModule,
+        coroutineScope = viewModelScope
+    )
 
     class Factory(private val paymentComponent: PaymentComponent, private val giniPaymentModule: GiniInternalPaymentModule, private val reviewConfiguration: ReviewConfiguration, private val backListener: BackListener?, private val reviewViewListener: ReviewViewListener) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")

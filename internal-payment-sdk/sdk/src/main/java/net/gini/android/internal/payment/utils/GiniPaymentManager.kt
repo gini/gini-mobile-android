@@ -11,7 +11,7 @@ import net.gini.android.internal.payment.utils.extensions.toBackendFormat
 import org.slf4j.LoggerFactory
 
 /**
- * Handles the validation of payment details, creation of payment request, sending feedback and emitting open bank event.
+ * Handles onPayment event from Pay button and the creation of payment request.
  */
 internal class GiniPaymentManager(
     val giniHealthAPI: GiniHealthAPI?,
