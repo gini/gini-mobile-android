@@ -36,7 +36,7 @@ public class SupportedFormatsAdapter extends
     private final List<Enum> mItems;
     private Boolean isQRDocument;
     private GetEInvoiceFeatureEnabledUseCase getEInvoiceFeatureEnabledUseCase;
-    private Boolean isEInvoiceEnabled;
+    private boolean isEInvoiceEnabled;
 
     public SupportedFormatsAdapter(Boolean isQrCodeDocument) {
         isQRDocument = isQrCodeDocument;
