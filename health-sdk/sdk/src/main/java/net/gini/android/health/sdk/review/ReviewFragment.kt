@@ -235,7 +235,7 @@ class ReviewFragment private constructor(
             if (context.getFontScale() < 1.5) {
                 anchorView = paymentDetailsScrollview
             }
-            setTextMaxLines(2)
+            setTextMaxLines(3)
             setAction(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) {
                 onRetry()
             }

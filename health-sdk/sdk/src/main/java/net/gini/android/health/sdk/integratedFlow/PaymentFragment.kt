@@ -313,7 +313,7 @@ class PaymentFragment private constructor(
     private fun GhsFragmentHealthBinding.showSnackbar(text: String, onRetry: () -> Unit) {
         val context = requireContext().wrappedWithGiniPaymentThemeAndLocale(viewModel.paymentComponent.getGiniPaymentLanguage(requireContext()))
         snackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
-            setTextMaxLines(2)
+            setTextMaxLines(3)
             setAction(getString(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) { onRetry() }
             show()
         }

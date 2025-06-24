@@ -149,15 +149,24 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/gps_iban_label" />
 
-                        <TextView
+
+                        <androidx.constraintlayout.widget.Barrier
+                            android:id="@+id/barrier"
+                            app:barrierDirection="bottom"
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:constraint_referenced_ids="gps_iban_value,gps_recipient_value"/>
+
+                        <TextView
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:id="@+id/gps_amount_label"
                             style="@style/GiniPaymentTheme.Typography.Caption2"
                             android:text="@string/gps_amount_hint"
+                            app:layout_constraintEnd_toStartOf="@+id/guideline"
                             android:textColor="@color/gps_disabled_field_text_color"
                             android:layout_marginTop="@dimen/gps_large"
-                            app:layout_constraintTop_toBottomOf="@id/gps_iban_value"
+                            app:layout_constraintTop_toBottomOf="@id/barrier"
                             app:layout_constraintStart_toStartOf="parent"
                             />
 
@@ -180,11 +189,12 @@
                             app:layout_constraintGuide_percent="0.5" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:id="@+id/gps_reference_label"
                             style="@style/GiniPaymentTheme.Typography.Caption2"
                             android:text="@string/gps_reference_number"
+                            app:layout_constraintEnd_toEndOf="parent"
                             android:textColor="@color/gps_disabled_field_text_color"
                             app:layout_constraintStart_toEndOf="@id/guideline"
                             android:layout_marginStart="@dimen/gps_small"
