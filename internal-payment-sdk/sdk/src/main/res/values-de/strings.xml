@@ -69,7 +69,7 @@
 
     <!--  Open With bottom sheet  -->
     <string name="gps_open_with_title">Teile diesen QR-Zahlungscode mit deiner Banking-App</string>
-    <string name="gps_open_with_details">Alternativ kannst du ein Screenshot von dieser Seite machen und mit der Fotoüberweisung Funktion der %s öffnen.</string>
+    <string name="gps_open_with_details">Alternativ kannst du einen Screenshot von dieser Seite machen und mit der Fotoüberweisung Funktion der %s öffnen.</string>
     <string name="gps_open_with_app">App</string>
     <string name="gps_open_with_button_text">Mit der %s-App teilen</string>
     <string name="gps_sharing_file">Sharing 1 file</string>
