@@ -140,8 +140,7 @@ enum class ErrorType(
                 return GENERAL
             }
 
-            val getEInvoiceFeatureEnabledUseCase: GetEInvoiceFeatureEnabledUseCase by getGiniCaptureKoin().inject()
-            val isEInvoiceEnabled = getEInvoiceFeatureEnabledUseCase.invoke()
+            val isEInvoiceEnabled = EInvoiceFeatureHelper.isEInvoiceEnabled()
             if (error.statusCode == null) {
                 (error.cause as? SocketTimeoutException)?.let {
                     return UPLOAD
@@ -177,3 +176,11 @@ enum class ErrorType(
 
 
 }
+
+object EInvoiceFeatureHelper {
+    fun isEInvoiceEnabled(): Boolean {
+        val getEInvoiceFeatureEnabledUseCase: GetEInvoiceFeatureEnabledUseCase by getGiniCaptureKoin().inject()
+        return getEInvoiceFeatureEnabledUseCase.invoke()
+    }
+}
+
