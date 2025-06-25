@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -92,10 +91,9 @@ internal fun EducationMessage(
     modifier: Modifier = Modifier,
     colors: EducationMessageColors = EducationMessageColors.default()
 ) {
-    val density = LocalDensity.current
-    val fontScale = density.fontScale
+    val context = LocalView.current.context
+    val fontScale = context.resources.configuration.fontScale
     val isMaxFontScale = fontScale >= 1.7f
-
     val contentDescriptionMessage =
         message + "\n" + stringResource(R.string.gc_invoice_education_content_description)
 
