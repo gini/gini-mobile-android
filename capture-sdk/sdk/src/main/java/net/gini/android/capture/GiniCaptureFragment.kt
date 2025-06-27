@@ -103,17 +103,21 @@ class GiniCaptureFragment(
                 ?.getConfigurations(UUID.randomUUID())
             response?.thenAcceptAsync { res ->
                 giniBankConfigurationProvider.update(res.configuration)
+                /**
+                 * Initialize the user property and set if
+                 * return assistant is enabled for the client or not
+                 * */
+                res.configuration.let {
+                    setEventSuperProperties(it)
+                    setUserEventProperties(it)
+                }
+
                 UserAnalytics.setPlatformTokens(
                     AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(
                         res.configuration.amplitudeApiKey
                     ),
                     networkRequestsManager = networkRequestsManager
                 )
-                // set if return assistant is enabled for the client
-                res.configuration.let {
-                    setEventSuperProperties(it)
-                    setUserEventProperties(it)
-                }
             }
         }
     }
