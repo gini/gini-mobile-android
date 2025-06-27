@@ -1,5 +1,6 @@
 package net.gini.android.capture.internal.camera.view.education
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.camera.view.education.colors.EducationMessageColors
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.ui.components.animation.animatedCharsLoadingIndicatorAsState
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -91,9 +93,6 @@ internal fun EducationMessage(
     modifier: Modifier = Modifier,
     colors: EducationMessageColors = EducationMessageColors.default()
 ) {
-    val context = LocalView.current.context
-    val fontScale = context.resources.configuration.fontScale
-    val isMaxFontScale = fontScale >= 1.7f
     val contentDescriptionMessage =
         message + "\n" + stringResource(R.string.gc_invoice_education_content_description)
 
@@ -114,7 +113,7 @@ internal fun EducationMessage(
     ) {
         // we don't want to show the icon in case the font size is too big to avoid
         // overlapping in small devices
-        if (!isMaxFontScale) {
+        if (!isOverMaxSupportedFontScale(LocalView.current.context)) {
             Image(
                 modifier = Modifier.clearAndSetSemantics { },
                 painter = imagePainter,
@@ -141,6 +140,12 @@ internal fun EducationMessage(
             textAlign = TextAlign.Center
         )
     }
+}
+
+private fun isOverMaxSupportedFontScale(context: Context): Boolean {
+    val fontScale = context.resources.configuration.fontScale
+    val isLandScape = !ContextHelper.isPortraitOrientation(context)
+    return if (isLandScape) fontScale > 1.0f else fontScale >= 1.7f
 }
 
 @Composable
