@@ -46,7 +46,7 @@
         android:text="@string/gps_install_app_detail"
         android:drawableLeft="@drawable/gps_info_circle_icon"
         android:drawablePadding="@dimen/gps_large"
-        android:drawableTint="@color/gps_install_app_details_color"
+        android:drawableTint="@color/gps_install_app_details_button_tint"
         android:textColor="@color/gps_install_app_details_color"
         style="@style/GiniPaymentTheme.Typography.Caption1"
         android:layout_marginHorizontal="@dimen/gps_large"
