@@ -60,8 +60,8 @@ import net.gini.android.capture.internal.camera.api.UIExecutor;
 import net.gini.android.capture.internal.camera.api.camerax.CameraXController;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoEdit;
-import net.gini.android.capture.internal.camera.view.education.qrcode.QRCodeEducationPopup;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
+import net.gini.android.capture.internal.camera.view.education.qrcode.QRCodeEducationPopup;
 import net.gini.android.capture.internal.fileimport.FileChooserFragment;
 import net.gini.android.capture.internal.fileimport.FileChooserResult;
 import net.gini.android.capture.internal.iban.IBANRecognizerFilter;
@@ -369,7 +369,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
         }
-
     }
 
     private void initFlashState() {
@@ -1284,7 +1283,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     final FileImportValidator.Error error = fileImportValidator.getError();
                     if (error != null) {
                         Error errorClass = new Error(error);
-                        ErrorType errorType = ErrorType.typeFromError(errorClass);
+                        ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
                         showGenericInvalidFileError(errorType);
                     }
                 }
@@ -1435,7 +1434,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                         final FileImportValidator.Error error = exception.getValidationError();
                         if (error != null && mFragment.getActivity() != null) {
                             Error errorClass = new Error(error);
-                            ErrorType errorType = ErrorType.typeFromError(errorClass);
+                            ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
                             showGenericInvalidFileError(errorType);
                         }
                     }

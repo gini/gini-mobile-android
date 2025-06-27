@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase
 import net.gini.android.capture.internal.camera.view.QRCodePopup
 import net.gini.android.capture.internal.camera.view.education.qrcode.QRCodeEducationPopup
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeData
@@ -29,6 +30,8 @@ internal abstract class CameraFragmentExtension {
             GetQrEducationTypeUseCase by getGiniCaptureKoin().inject()
     private val incrementQrCodeRecognizedCounterUseCase:
             IncrementQrCodeRecognizedCounterUseCase by getGiniCaptureKoin().inject()
+    val getEInvoiceFeatureEnabledUseCase:
+            GetEInvoiceFeatureEnabledUseCase by getGiniCaptureKoin().inject()
     private val educationMutex = Mutex()
 
     fun showQrCodePopup(data: PaymentQRCodeData, onEducationFlowTriggered: () -> Unit) =

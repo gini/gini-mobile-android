@@ -94,7 +94,7 @@ public class NetworkRequestsManager {
                             public void failure(final Error error) {
                                 LOG.error("Send events failed for {}",
                                         error.getMessage());
-                                ErrorType errorType = ErrorType.typeFromError(error);
+                                ErrorType errorType = ErrorType.typeFromError(error, false);
                                 future.completeExceptionally(new FailureException(errorType));
                             }
 
@@ -151,7 +151,7 @@ public class NetworkRequestsManager {
                                 LOG.error("Get configuration failed for {}: {}",
                                         id,
                                         error.getMessage());
-                                ErrorType errorType = ErrorType.typeFromError(error);
+                                ErrorType errorType = ErrorType.typeFromError(error, false);
                                 future.completeExceptionally(new FailureException(errorType));
                             }
 
@@ -221,7 +221,7 @@ public class NetworkRequestsManager {
                                         LOG.error("Document upload failed for {}: {}",
                                                 document.getId(),
                                                 error.getMessage());
-                                        ErrorType errorType = ErrorType.typeFromError(error);
+                                        ErrorType errorType = ErrorType.typeFromError(error, false);
                                         future.completeExceptionally(new FailureException(errorType));
                                     }
 
@@ -394,7 +394,7 @@ public class NetworkRequestsManager {
                                         "Document deletion failed for {}: {}",
                                         document.getId(),
                                         error.getMessage());
-                                ErrorType errorType = ErrorType.typeFromError(error);
+                                ErrorType errorType = ErrorType.typeFromError(error, false);
                                 future.completeExceptionally(new FailureException(errorType));
                             }
 
@@ -509,7 +509,7 @@ public class NetworkRequestsManager {
                             public void failure(final Error error) {
                                 LOG.error("Document analysis failed for {}: {}",
                                         multiPageDocument.getId(), error.getMessage());
-                                ErrorType errorType = ErrorType.typeFromError(error);
+                                ErrorType errorType = ErrorType.typeFromError(error, false);
                                 future.completeExceptionally(new FailureException(errorType));
                             }
 

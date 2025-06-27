@@ -1,16 +1,33 @@
 package net.gini.android.capture.error
 
 import com.google.common.truth.Truth.assertThat
+import io.mockk.every
+import io.mockk.mockk
+import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.GiniCaptureDocumentError
+import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase
 import net.gini.android.capture.internal.util.FileImportValidator
+import org.junit.Before
 import org.junit.Test
-import java.lang.Exception
+import org.koin.dsl.module
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import net.gini.android.capture.network.Error as GiniError
 
-
 class ErrorTypeTest {
+
+    val mockGetEInvoiceFeatureEnabledUseCase = mockk<GetEInvoiceFeatureEnabledUseCase> {
+        every { this@mockk.invoke() } returns false
+    }
+
+    val testModule = module {
+        factory<GetEInvoiceFeatureEnabledUseCase> { mockGetEInvoiceFeatureEnabledUseCase }
+    }
+
+    @Before
+    fun setup() {
+        getGiniCaptureKoin().loadModules(listOf(testModule))
+    }
 
     @Test
     fun `typeFromError should return NO_CONNECTION when error cause is UnknownHostException`() {
@@ -83,14 +100,14 @@ class ErrorTypeTest {
     @Test
     fun `typeFromError should return AUTH when error status is 400 and error has response body of error invalid_grant`() {
 
-            // Given
-            val error = GiniError(400, null, Exception("{\"error\":\"invalid_grant\"}") )
+        // Given
+        val error = GiniError(400, null, Exception("{\"error\":\"invalid_grant\"}"))
 
-            // When
-            val errorType = ErrorType.typeFromError(error)
+        // When
+        val errorType = ErrorType.typeFromError(error)
 
-            // Then
-            assertThat(errorType).isEqualTo(ErrorType.AUTH)
+        // Then
+        assertThat(errorType).isEqualTo(ErrorType.AUTH)
     }
 
     @Test
@@ -109,6 +126,7 @@ class ErrorTypeTest {
             assertThat(errorType).isEqualTo(ErrorType.UPLOAD)
         }
     }
+
     @Test
     fun `typeFromError should return GENERAL when error status is 404`() {
         // Given
@@ -246,7 +264,7 @@ class ErrorTypeTest {
     @Test
     fun `typeFromError should return UPLOAD when status code is 400 and error message is blank - to cover the isInvalidUserError method`() {
         // Given
-        val error = GiniError(400,null, Throwable(""))
+        val error = GiniError(400, null, Throwable(""))
 
         // When
         val errorType = ErrorType.typeFromError(error)
@@ -258,7 +276,7 @@ class ErrorTypeTest {
     @Test
     fun `typeFromError should return UPLOAD when status code is 400 and error message is not JSON - to cover the isInvalidUserError method`() {
         // Given
-        val error = GiniError(400,null, Throwable("sdf"))
+        val error = GiniError(400, null, Throwable("sdf"))
 
         // When
         val errorType = ErrorType.typeFromError(error)
