@@ -45,12 +45,14 @@ import net.gini.android.capture.ImportImageFileUrisAsyncTask;
 import net.gini.android.capture.ImportedFileValidationException;
 import net.gini.android.capture.R;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
+import net.gini.android.capture.di.CaptureSdkJavaInterop;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.document.QRCodeDocument;
+import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.camera.api.CameraException;
@@ -252,6 +254,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Camera.INSTANCE;
     private View mDetectionErrorDismissButton;
 
+    private GetEInvoiceFeatureEnabledUseCase getEInvoiceFeatureEnabledUseCase;
+    private boolean isEInvoiceEnabled;
+
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, final boolean addPages) {
         mFragment = fragment;
         mCancelListener = cancelListener;
@@ -369,7 +374,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
         }
-
+        getEInvoiceFeatureEnabledUseCase = CaptureSdkJavaInterop.getEInvoiceFeatureEnabledUseCase();
+        isEInvoiceEnabled = getEInvoiceFeatureEnabledUseCase.invoke();
     }
 
     private void initFlashState() {
@@ -1284,7 +1290,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     final FileImportValidator.Error error = fileImportValidator.getError();
                     if (error != null) {
                         Error errorClass = new Error(error);
-                        ErrorType errorType = ErrorType.typeFromError(errorClass);
+                        ErrorType errorType = ErrorType.typeFromError(errorClass, isEInvoiceEnabled);
                         showGenericInvalidFileError(errorType);
                     }
                 }
@@ -1435,7 +1441,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                         final FileImportValidator.Error error = exception.getValidationError();
                         if (error != null && mFragment.getActivity() != null) {
                             Error errorClass = new Error(error);
-                            ErrorType errorType = ErrorType.typeFromError(errorClass);
+                            ErrorType errorType = ErrorType.typeFromError(errorClass, isEInvoiceEnabled);
                             showGenericInvalidFileError(errorType);
                         }
                     }

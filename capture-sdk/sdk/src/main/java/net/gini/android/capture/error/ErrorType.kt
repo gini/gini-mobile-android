@@ -3,9 +3,7 @@ package net.gini.android.capture.error
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import net.gini.android.capture.R
-import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.GiniCaptureDocumentError
-import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase
 import net.gini.android.capture.internal.util.FileImportValidator
 import net.gini.android.capture.network.Error
 import org.json.JSONObject
@@ -108,7 +106,7 @@ enum class ErrorType(
 
         @Suppress("MagicNumber", "CyclomaticComplexMethod", "ReturnCount")
         @JvmStatic
-        fun typeFromError(error: Error): ErrorType {
+        fun typeFromError(error: Error, isEInvoiceEnabled: Boolean = false): ErrorType {
 
             if (error.cause != null && (error.cause is UnknownHostException)) {
                 return NO_CONNECTION
@@ -140,7 +138,6 @@ enum class ErrorType(
                 return GENERAL
             }
 
-            val isEInvoiceEnabled = EInvoiceFeatureHelper.isEInvoiceEnabled()
             if (error.statusCode == null) {
                 (error.cause as? SocketTimeoutException)?.let {
                     return UPLOAD
@@ -148,11 +145,12 @@ enum class ErrorType(
 
                 return when (error.fileImportErrors) {
                     FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
-                    FileImportValidator.Error.TYPE_NOT_SUPPORTED -> if (isEInvoiceEnabled) {
-                        FILE_IMPORT_UNSUPPORTED_WITH_EINVOICE
-                    } else {
-                        FILE_IMPORT_UNSUPPORTED
-                    }
+                    FileImportValidator.Error.TYPE_NOT_SUPPORTED ->
+                        if (isEInvoiceEnabled) {
+                            FILE_IMPORT_UNSUPPORTED_WITH_EINVOICE
+                        } else {
+                            FILE_IMPORT_UNSUPPORTED
+                        }
 
                     FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
                     FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
@@ -176,11 +174,3 @@ enum class ErrorType(
 
 
 }
-
-object EInvoiceFeatureHelper {
-    fun isEInvoiceEnabled(): Boolean {
-        val getEInvoiceFeatureEnabledUseCase: GetEInvoiceFeatureEnabledUseCase by getGiniCaptureKoin().inject()
-        return getEInvoiceFeatureEnabledUseCase.invoke()
-    }
-}
-
