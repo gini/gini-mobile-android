@@ -142,6 +142,7 @@ internal fun EducationMessage(
     }
 }
 
+@Suppress("MagicNumber")
 private fun isOverMaxSupportedFontScale(context: Context): Boolean {
     val fontScale = context.resources.configuration.fontScale
     val isLandScape = !ContextHelper.isPortraitOrientation(context)
