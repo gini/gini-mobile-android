@@ -75,11 +75,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/gps_large"
                 android:layout_marginBottom="@dimen/gps_small"
+                android:layout_marginTop="@dimen/gps_medium"
                 android:text="@string/gps_forward"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/gps_powered_by_gini_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/gps_powered_by_gini_layout"
                 app:layout_constraintTop_toBottomOf="@id/gps_install_app_details" />
 
             <ImageButton
@@ -91,10 +92,18 @@
                 android:contentDescription="@string/gps_play_store_content_description"
                 android:src="@drawable/gps_play_store_logo"
                 android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/gps_powered_by_gini"
+                app:layout_constraintBottom_toTopOf="@+id/gps_powered_by_gini_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/gps_install_app_details" />
+
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/gps_barrier_for_powered_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="gps_play_store_logo,gps_forward_button" />
 
 
             <include
@@ -106,7 +115,7 @@
                 android:layout_marginEnd="@dimen/gps_large"
                 android:layout_marginBottom="@dimen/gps_large"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gps_play_store_logo" />
+                app:layout_constraintTop_toBottomOf="@+id/gps_barrier_for_powered_layout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
