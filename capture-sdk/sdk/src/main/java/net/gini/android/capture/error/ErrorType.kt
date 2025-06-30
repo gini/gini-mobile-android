@@ -70,6 +70,11 @@ enum class ErrorType(
         R.string.gc_error_file_import_unsupported_title,
         R.string.gc_error_file_import_unsupported_text
     ),
+    FILE_IMPORT_UNSUPPORTED_WITH_EINVOICE(
+        R.drawable.gc_alert_triangle_icon,
+        R.string.gc_error_file_import_unsupported_with_e_invoice_title,
+        R.string.gc_error_file_import_unsupported_text
+    ),
     FILE_IMPORT_PASSWORD(
         R.drawable.gc_alert_triangle_icon,
         R.string.gc_error_file_import_password_title,
@@ -101,7 +106,7 @@ enum class ErrorType(
 
         @Suppress("MagicNumber", "CyclomaticComplexMethod", "ReturnCount")
         @JvmStatic
-        fun typeFromError(error: Error): ErrorType {
+        fun typeFromError(error: Error, isEInvoiceEnabled: Boolean = false): ErrorType {
 
             if (error.cause != null && (error.cause is UnknownHostException)) {
                 return NO_CONNECTION
@@ -140,7 +145,13 @@ enum class ErrorType(
 
                 return when (error.fileImportErrors) {
                     FileImportValidator.Error.SIZE_TOO_LARGE -> FILE_IMPORT_SIZE
-                    FileImportValidator.Error.TYPE_NOT_SUPPORTED -> FILE_IMPORT_UNSUPPORTED
+                    FileImportValidator.Error.TYPE_NOT_SUPPORTED ->
+                        if (isEInvoiceEnabled) {
+                            FILE_IMPORT_UNSUPPORTED_WITH_EINVOICE
+                        } else {
+                            FILE_IMPORT_UNSUPPORTED
+                        }
+
                     FileImportValidator.Error.PASSWORD_PROTECTED_PDF -> FILE_IMPORT_PASSWORD
                     FileImportValidator.Error.TOO_MANY_PDF_PAGES -> FILE_IMPORT_PAGE_COUNT
                     FileImportValidator.Error.TOO_MANY_DOCUMENT_PAGES -> FILE_IMPORT_PAGE_COUNT

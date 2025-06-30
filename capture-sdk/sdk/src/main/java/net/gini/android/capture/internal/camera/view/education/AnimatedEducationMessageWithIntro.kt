@@ -1,5 +1,6 @@
 package net.gini.android.capture.internal.camera.view.education
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -17,7 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.camera.view.education.colors.EducationMessageColors
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.ui.components.animation.animatedCharsLoadingIndicatorAsState
 import net.gini.android.capture.ui.compose.GiniScreenPreviewUiModes
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -91,12 +93,16 @@ internal fun EducationMessage(
     modifier: Modifier = Modifier,
     colors: EducationMessageColors = EducationMessageColors.default()
 ) {
-    val density = LocalDensity.current
-    val fontScale = density.fontScale
-    val isMaxFontScale = fontScale >= 1.9f
-
     val contentDescriptionMessage =
         message + "\n" + stringResource(R.string.gc_invoice_education_content_description)
+
+    val view = LocalView.current
+
+    // reads aloud the text when talkback is active
+    LaunchedEffect(Unit) {
+        view.announceForAccessibility(message)
+    }
+
     Column(
         modifier = modifier
             .semantics {
@@ -107,7 +113,7 @@ internal fun EducationMessage(
     ) {
         // we don't want to show the icon in case the font size is too big to avoid
         // overlapping in small devices
-        if (!isMaxFontScale) {
+        if (!isOverMaxSupportedFontScale(LocalView.current.context)) {
             Image(
                 modifier = Modifier.clearAndSetSemantics { },
                 painter = imagePainter,
@@ -134,6 +140,13 @@ internal fun EducationMessage(
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Suppress("MagicNumber")
+private fun isOverMaxSupportedFontScale(context: Context): Boolean {
+    val fontScale = context.resources.configuration.fontScale
+    val isLandScape = !ContextHelper.isPortraitOrientation(context)
+    return if (isLandScape) fontScale > 1.0f else fontScale >= 1.7f
 }
 
 @Composable
