@@ -132,11 +132,13 @@
                     />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/gps_amount_value"
                     android:textColor="@color/gps_open_with_review_value"
                     android:layout_marginTop="@dimen/gps_small"
+                    android:layout_marginEnd="@dimen/gps_small"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
                     style="@style/GiniPaymentTheme.Typography.Body2"
                     app:layout_constraintTop_toBottomOf="@id/gps_amount_label"
                     app:layout_constraintStart_toStartOf="parent"/>
@@ -166,8 +168,6 @@
                     android:layout_marginTop="@dimen/gps_small"
                     style="@style/GiniPaymentTheme.Typography.Body2"
                     android:textColor="@color/gps_open_with_review_value"
-                    android:ellipsize="marquee"
-                    android:singleLine="true"
                     app:layout_constraintStart_toEndOf="@id/guideline"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/gps_reference_label"/>
