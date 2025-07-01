@@ -193,6 +193,9 @@ internal class PaymentProviderAppsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val paymentProviderAppListItem = dataSet[position]
+        holder.itemView.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        holder.itemView.contentDescription = paymentProviderAppListItem.paymentProviderApp.name
+        holder.button.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         holder.itemView.context.wrappedWithGiniPaymentThemeAndLocale(locale).let { context ->
             holder.button.text = paymentProviderAppListItem.paymentProviderApp.name
             holder.iconView.setImageDrawable(paymentProviderAppListItem.paymentProviderApp.icon)

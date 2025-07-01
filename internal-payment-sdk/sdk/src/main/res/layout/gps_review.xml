@@ -4,11 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:importantForAccessibility="no"
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gps_payment_details"
         android:layout_width="match_parent"
+        android:importantForAccessibility="no"
         android:layout_height="wrap_content">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -95,7 +97,7 @@
             android:paddingTop="@dimen/gps_large_28"
             android:paddingBottom="@dimen/gps_medium"
             android:paddingEnd="@dimen/gps_medium"
-            android:digits="0123456789.,"
+            android:digits="0123456789.,€"
             android:hint="@string/gps_amount_hint"
             android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -189,8 +191,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gps_medium"
-        android:focusable="true"
         android:importantForAccessibility="yes"
+        android:contentDescription="@string/gps_to_banking_app_content_description"
         android:enabled="false"
         android:text="@string/gps_pay_button"
         android:gravity="center"
