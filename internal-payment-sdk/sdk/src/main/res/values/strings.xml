@@ -80,7 +80,7 @@
 
     <!--  Payment component  -->
     <string name="gps_bank_selection_dropdown_content_description">Wählen Sie Ihre Bank aus der Dropdown-Liste aus. Verwenden Sie die Pfeiltasten, um durch die Optionen zu navigieren, und drücken Sie die Eingabetaste, um Ihre Bank auszuwählen. Diese Auswahl ist erforderlich, um fortzufahren.</string>
-    <string name="gps_to_banking_app_content_description">Zur Banking App. Es öffnet  die Banking-App, um die Zahlung abzuschließen.</string>
+    <string name="gps_to_banking_app_content_description">Zur Banking App. Es öffnet die Banking-App, um die Zahlung abzuschließen.</string>
 
     <string name="gps_generic_error_message">Oh da ist was schief gelaufen. Probieren Sie es bitte noch einmal.</string>
 </resources>
