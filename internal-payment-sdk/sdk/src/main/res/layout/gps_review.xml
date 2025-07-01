@@ -86,8 +86,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="@dimen/gps_float_0.3"
         app:layout_constraintStart_toEndOf="@id/iban_layout"
-        app:layout_constraintTop_toTopOf="@id/iban_layout"
-        app:suffixText="€">
+        app:layout_constraintTop_toTopOf="@id/iban_layout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/amount"

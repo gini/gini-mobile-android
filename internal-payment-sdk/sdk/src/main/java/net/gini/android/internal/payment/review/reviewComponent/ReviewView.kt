@@ -24,7 +24,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.PaymentField
 import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.ValidationMessage
-import net.gini.android.internal.payment.utils.amountWatcher
+import net.gini.android.internal.payment.utils.createAmountWatcher
 import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
@@ -192,7 +192,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setRecipient(text.toString()) })
             iban.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setIban(text.toString()) })
             amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setAmount(text.toString()) })
-            amount.addTextChangedListener(amountWatcher)
+            amount.addTextChangedListener(createAmountWatcher(amount))
             purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setPurpose(text.toString()) })
             recipient.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, recipientLayout) }
             iban.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, ibanLayout) }
