@@ -346,23 +346,6 @@ class PaymentFragment private constructor(
                         return
                     }
 
-                    // When coming back to Payment Component bottom sheet, if the bank was selected at a previous step and review is enabled, we don't show the Payment component bottom sheet
-                    // instead, we go directly to review (fragment or bottom sheet).
-                    if (!viewModel.giniInternalPaymentModule.getReturningUser() &&
-                        viewModel.paymentComponent.selectedPaymentProviderAppFlow.value is SelectedPaymentProviderAppState.AppSelected &&
-                        (viewModel.documentId != null || (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true))) {
-                            viewModel.giniInternalPaymentModule.saveReturningUser()
-                            viewModel.popBackStack()
-                            if (viewModel.documentId != null) {
-                                showReviewFragment()
-                                return
-                            }
-                            else if (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true) {
-                                showReviewBottomDialog()
-                                return
-                            }
-                    }
-
                     PaymentComponentBottomSheet.newInstance(
                         viewModel.paymentComponent,
                         if (viewModel.documentId != null) true else viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false,
