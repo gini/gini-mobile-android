@@ -203,6 +203,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gps_medium"
                 android:enabled="false"
+                android:contentDescription="@string/gps_to_banking_app_content_description"
                 android:text="@string/gps_pay_button"
                 android:gravity="center"
                 app:layout_constraintHorizontal_weight="2.8"
