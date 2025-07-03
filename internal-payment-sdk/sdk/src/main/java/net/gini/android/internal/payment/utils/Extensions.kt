@@ -11,38 +11,43 @@ import androidx.core.graphics.ColorUtils
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import net.gini.android.internal.payment.utils.extensions.addEuroSymbol
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
 
-internal val amountWatcher = object : TextWatcher {
+internal fun createAmountWatcher(amountField: TextInputEditText): TextWatcher {
+    return object : TextWatcher {
 
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-    }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            // No action needed before text change
+        }
 
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            // No action needed on text change
+        }
 
-    }
+        override fun afterTextChanged(s: Editable?) {
+            s?.let { input ->
+                val onlyDigits = input.toString().trim()
+                    .filter { it != '.' && it != ',' && it != '€' && it != ' ' }
+                    .take(7)
+                    .trimStart('0')
 
-    override fun afterTextChanged(s: Editable?) {
-        s?.let { input ->
-            // Take only the first 7 digits (without leading zeros)
-            val onlyDigits = input.toString().trim()
-                .filter { it != '.' && it != ',' }
-                .take(7)
-                .trimStart('0')
+                val newString = try {
+                    val decimal = BigDecimal(onlyDigits).divide(BigDecimal(100))
+                    val formatted = currencyFormatterWithoutSymbol().format(decimal).trim()
+                    formatted.addEuroSymbol()
+                } catch (e: NumberFormatException) {
+                    ""
+                }
 
-            val newString = try {
-                // Parse to a decimal with two decimal places
-                val decimal = BigDecimal(onlyDigits).divide(BigDecimal(100))
-                // Format to a currency string
-                currencyFormatterWithoutSymbol().format(decimal).trim()
-            } catch (e: NumberFormatException) {
-                ""
-            }
-            if (newString != input.toString()) {
-                input.replace(0, input.length, newString)
+                if (newString != input.toString()) {
+                    amountField.removeTextChangedListener(this)
+                    input.replace(0, input.length, newString)
+                    amountField.addTextChangedListener(this)
+                }
             }
         }
     }

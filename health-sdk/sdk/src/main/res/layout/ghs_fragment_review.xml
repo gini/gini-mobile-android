@@ -121,6 +121,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:nextFocusUp="@id/close"
+            android:importantForAccessibility="no"
             android:nextFocusDown="@id/ghs_payment_details"
             android:nextFocusForward="@id/ghs_payment_details"
             android:paddingHorizontal="@dimen/gps_large"
