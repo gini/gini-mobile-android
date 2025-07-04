@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/gps_large_72"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <TextView
@@ -11,7 +12,6 @@
         style="@style/GiniPaymentTheme.Typography.Subtitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/gps_large"
         android:text="@string/gps_select_bank_label"
         android:textColor="@color/gps_select_bank_and_pay_color"
         app:layout_constraintTop_toTopOf="parent"
@@ -42,7 +42,6 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/gps_large"
                 android:layout_marginBottom="@dimen/gps_medium"
                 android:background="@drawable/gps_bordered_background"
                 android:id="@+id/gps_two_rows_container"
@@ -60,7 +59,6 @@
                 style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/gps_large"
                 android:layout_marginBottom="@dimen/gps_small"
                 android:layout_marginTop="@dimen/gps_medium"
                 android:text="@string/gps_pay_invoice_button"
@@ -77,7 +75,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gps_medium"
         android:layout_marginBottom="@dimen/gps_medium"
-        android:layout_marginEnd="@dimen/gps_large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gps_select_bank_picker_layout">
@@ -88,12 +85,12 @@
         android:id="@+id/gps_more_information"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:focusable="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/gps_powered_by_gini"
         app:layout_constraintTop_toTopOf="@id/gps_powered_by_gini"
         app:layout_constraintBottom_toBottomOf="@id/gps_powered_by_gini"
         style="@style/GiniPaymentTheme.Typography.Caption2"
-        android:layout_marginStart="@dimen/gps_large"
         android:drawableStart="@drawable/gps_info_circle_icon"
         android:drawablePadding="@dimen/gps_medium"
         android:drawableTint="@color/gps_info_button_tint"
@@ -102,6 +99,6 @@
         android:gravity="center_vertical"
         android:visibility="visible"
         android:ellipsize="end"
-        android:maxLines="3"
+        android:lines="1"
         />
 </merge>

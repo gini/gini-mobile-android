@@ -3,22 +3,29 @@ package net.gini.android.internal.payment.review.reviewBottomSheet
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.databinding.GpsBottomSheetReviewBinding
 import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.setBackListener
+
 
 class ReviewBottomSheet private constructor(
     private val viewModelFactory: ViewModelProvider.Factory?
@@ -28,6 +35,7 @@ class ReviewBottomSheet private constructor(
 
     private val viewModel: ReviewBottomSheetViewModel by viewModels { viewModelFactory ?: object : ViewModelProvider.Factory {} }
     private var binding: GpsBottomSheetReviewBinding by autoCleared()
+    private lateinit var bottomSheet: FrameLayout
     private val listener = object: ReviewViewListener {
         override fun onPaymentButtonTapped(paymentDetails: PaymentDetails) {
             viewModel.reviewViewListener?.onPaymentButtonTapped(paymentDetails)
@@ -52,6 +60,25 @@ class ReviewBottomSheet private constructor(
         viewModel.backListener?.let {
             (dialog as BottomSheetDialog).setBackListener(it)
         }
+
+        // For the sake of consistency with the review flow WITH document, disable
+        // default draggable behavior on the bottom sheet when in landscape mode
+        dialog.setOnShowListener {
+            bottomSheet = dialog
+                .findViewById(com.google.android.material.R.id.design_bottom_sheet)
+            BottomSheetBehavior.from(bottomSheet).apply {
+                isDraggable = !resources.isLandscapeOrientation()
+                isCancelable = !resources.isLandscapeOrientation()
+            }
+
+            if (resources.isLandscapeOrientation()
+                && binding.gpsReviewLayout.reviewComponent?.getReviewViewStateInLandscapeMode()
+                == ReviewViewStateLandscape.COLLAPSED)
+            {
+                val layoutParams = bottomSheet.layoutParams as LayoutParams
+                layoutParams.gravity = Gravity.BOTTOM
+            }
+        }
         return dialog
     }
 
@@ -61,8 +88,24 @@ class ReviewBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetReviewBinding.inflate(inflater, container, false)
-        binding.gpsReviewLayout.reviewComponent = viewModel.reviewComponent
-        binding.gpsReviewLayout.listener = listener
+        with(binding.gpsReviewLayout) {
+            reviewComponent = viewModel.reviewComponent
+            listener = this@ReviewBottomSheet.listener
+        }
+        if (resources.isLandscapeOrientation()) {
+            binding.dragHandle.setOnTouchListener { _, _ ->
+                // By default, bottom sheet has gravity TOP - layout changes make it jump to the top of the screen
+                // set layoutGravity = Gravity.BOTTOM prevents that.
+                val layoutParams = bottomSheet.layoutParams as LayoutParams
+                layoutParams.gravity = Gravity.BOTTOM
+                val currentState = binding.gpsReviewLayout.reviewComponent?.getReviewViewStateInLandscapeMode()
+                binding.gpsReviewLayout.reviewComponent?.setReviewViewModeInLandscapeMode(
+                    if (currentState == ReviewViewStateLandscape.EXPANDED) ReviewViewStateLandscape.COLLAPSED
+                        else ReviewViewStateLandscape.EXPANDED
+                )
+                false
+            }
+        }
         return binding.root
     }
 

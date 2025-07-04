@@ -71,8 +71,6 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
      */
     var documentId: String? = null
 
-    var reviewFragmentWillBeShown: Boolean = false
-
     var dismissListener: ButtonClickListener? = null
 
     private val binding = GpsViewPaymentComponentBinding.inflate(
@@ -179,7 +177,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             payInvoiceButton.visibility = View.GONE
             paymentProviderAppIconHolder.root.visibility = View.GONE
-            selectBankButton.text = context.getString(R.string.gps_select_bank)
+            selectBankButton.text = context.getString(R.string.gps_your_bank)
             selectBankButton.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
@@ -269,12 +267,14 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun initViews() {
         context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             selectBankButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsSelectBankButton else binding.gpsSingleRowBankSelection.gpsSelectBankButton
+            selectBankButton.contentDescription =
+                context.getString(R.string.gps_bank_selection_dropdown_content_description)
+
             payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
             paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
 
-            payInvoiceButton.text =
-                if (reviewFragmentWillBeShown) context.getString(R.string.gps_continue_to_overview)
-                else context.getString(R.string.gps_pay_button)
+            payInvoiceButton.text = context.getString(R.string.gps_pay_button)
+            payInvoiceButton.contentDescription = context.getString(R.string.gps_to_banking_app_content_description)
         }
     }
 
@@ -314,7 +314,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun setIngredientBrandVisibility() {
         binding.gpsPoweredByGini.visibility =
             if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.INVISIBLE)
-                View.INVISIBLE else View.VISIBLE
+                View.GONE else View.VISIBLE
     }
 
     private companion object {

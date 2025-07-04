@@ -10,6 +10,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
+import net.gini.android.internal.payment.utils.extensions.getWidthPixels
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
 
 open class GpsBottomSheetDialogFragment: BottomSheetDialogFragment() {
@@ -29,6 +31,9 @@ open class GpsBottomSheetDialogFragment: BottomSheetDialogFragment() {
         dialog.behavior.isFitToContents = true
         dialog.behavior.skipCollapsed = true
         dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        if (resources.isLandscapeOrientation()) {
+            dialog.behavior.maxWidth = resources.getWidthPixels()
+        }
 
         return dialog
     }

@@ -4,14 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:importantForAccessibility="no"
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gps_payment_details"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:importantForAccessibility="no"
+        android:layout_height="wrap_content">
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/recipient_layout"
         style="@style/GiniPaymentTheme.PaymentInputLayout"
@@ -19,6 +20,10 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/gps_medium"
         android:nextFocusForward="@id/iban_layout"
+        android:nextFocusDown="@id/iban_layout"
+        android:nextFocusUp="@id/gps_select_bank_button"
+        android:nextFocusRight="@id/recipient_layout"
+        android:nextFocusLeft="@id/gps_select_bank_button"
         android:hint="@string/gps_recipient_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,6 +50,10 @@
         android:layout_marginEnd="@dimen/gps_medium"
         android:paddingTop="@dimen/gps_medium"
         android:hint="@string/gps_iban_hint"
+        android:nextFocusUp="@id/recipient_layout"
+        android:nextFocusRight="@id/amount_layout"
+        android:nextFocusForward="@id/amount_layout"
+        android:nextFocusDown="@id/purpose_layout"
         app:layout_constraintEnd_toStartOf="@id/amount_layout"
         app:layout_constraintHorizontal_weight="@dimen/gps_float_0.7"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,12 +77,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/gps_medium"
+        android:nextFocusDown="@id/purpose_layout"
+        android:nextFocusUp="@id/recipient_layout"
+        android:nextFocusForward="@id/purpose_layout"
+        android:nextFocusLeft="@id/iban_layout"
+        android:nextFocusRight="@id/purpose_layout"
         app:errorContentDescription="@string/gps_invalid_amount_content_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="@dimen/gps_float_0.3"
         app:layout_constraintStart_toEndOf="@id/iban_layout"
-        app:layout_constraintTop_toTopOf="@id/iban_layout"
-        app:suffixText="€">
+        app:layout_constraintTop_toTopOf="@id/iban_layout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/amount"
@@ -83,7 +96,7 @@
             android:paddingTop="@dimen/gps_large_28"
             android:paddingBottom="@dimen/gps_medium"
             android:paddingEnd="@dimen/gps_medium"
-            android:digits="0123456789.,"
+            android:digits="0123456789.,€"
             android:hint="@string/gps_amount_hint"
             android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -112,6 +125,11 @@
             style="@style/GiniPaymentTheme.PaymentInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:nextFocusLeft="@id/amount_layout"
+            android:nextFocusRight="@id/payment"
+            android:nextFocusForward="@id/payment"
+            android:nextFocusDown="@id/payment"
+            android:nextFocusUp="@id/iban"
             android:paddingTop="@dimen/gps_large_28"
             android:paddingBottom="@dimen/gps_medium"
             android:paddingStart="@dimen/gps_medium_12"
@@ -123,6 +141,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/gps_select_bank_layout"
         android:paddingEnd="@dimen/gps_medium"
+        android:nextFocusForward="@id/payment"
+        android:nextFocusDown="@id/payment"
+        android:nextFocusRight="@id/payment"
+        android:nextFocusUp="@id/purpose_layout"
+        android:nextFocusLeft="@id/purpose_layout"
         app:layout_constraintTop_toTopOf="@id/payment"
         >
         <View
@@ -167,6 +190,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gps_medium"
+        android:importantForAccessibility="yes"
+        android:contentDescription="@string/gps_to_banking_app_content_description"
         android:enabled="false"
         android:text="@string/gps_pay_button"
         android:gravity="center"

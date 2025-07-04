@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/gps_large">
+    android:paddingHorizontal="@dimen/gps_large_72"
+    android:paddingVertical="@dimen/gps_large">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         android:id="@+id/drag_handle"
@@ -11,18 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusable="true"
-        android:importantForAccessibility="yes"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/gps_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
+        android:layout_marginTop="@dimen/gps_large_20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/drag_handle">
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -33,8 +32,7 @@
                 style="@style/GiniPaymentTheme.Typography.Subtitle1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/gps_large"
-                android:nextFocusDown="@id/gps_payment_provider_icon"
+                android:gravity="center_horizontal"
                 android:text="@string/gps_install_app_title"
                 android:textColor="@color/gps_install_app_title_color"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +45,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gps_medium_12"
-                app:layout_constraintBottom_toTopOf="@id/gps_install_app_details"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/gps_install_app_title" />
@@ -57,11 +54,11 @@
                 style="@style/GiniPaymentTheme.Typography.Caption1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/gps_large"
                 android:layout_marginTop="@dimen/gps_large"
                 android:drawableLeft="@drawable/gps_info_circle_icon"
                 android:drawablePadding="@dimen/gps_large"
                 android:drawableTint="@color/gps_install_app_details_color"
+                android:gravity="center_vertical"
                 android:text="@string/gps_install_app_detail"
                 android:textColor="@color/gps_install_app_details_color"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -73,54 +70,42 @@
                 style="@style/GiniPaymentTheme.Widget.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/gps_large"
-                android:layout_marginBottom="@dimen/gps_small"
-                android:layout_marginTop="@dimen/gps_medium"
+                android:layout_marginTop="@dimen/gps_large_36"
+                android:layout_marginBottom="@dimen/gps_medium_12"
                 android:text="@string/gps_forward"
                 android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/gps_powered_by_gini_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/gps_powered_by_gini_layout"
-                app:layout_constraintTop_toBottomOf="@id/gps_install_app_details" />
+                app:layout_constraintTop_toBottomOf="@id/gps_install_app_details"
+                app:layout_constraintWidth_percent=".4" />
 
             <ImageButton
                 android:id="@+id/gps_play_store_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gps_large"
+                android:layout_marginTop="@dimen/gps_large_36"
                 android:background="@null"
                 android:contentDescription="@string/gps_play_store_content_description"
                 android:src="@drawable/gps_play_store_logo"
                 android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/gps_powered_by_gini_layout"
+                app:layout_constraintBottom_toTopOf="@id/gps_powered_by_gini_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/gps_install_app_details" />
-
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/gps_barrier_for_powered_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="gps_play_store_logo,gps_forward_button" />
-
 
             <include
                 android:id="@+id/gps_powered_by_gini_layout"
                 layout="@layout/gps_powered_by_gini"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gps_large"
-                android:layout_marginEnd="@dimen/gps_large"
-                android:layout_marginBottom="@dimen/gps_large"
+                android:layout_marginTop="@dimen/gps_medium_12"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gps_barrier_for_powered_layout" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/gps_play_store_logo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     </androidx.core.widget.NestedScrollView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

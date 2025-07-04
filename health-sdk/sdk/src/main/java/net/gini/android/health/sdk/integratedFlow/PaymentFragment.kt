@@ -313,7 +313,7 @@ class PaymentFragment private constructor(
     private fun GhsFragmentHealthBinding.showSnackbar(text: String, onRetry: () -> Unit) {
         val context = requireContext().wrappedWithGiniPaymentThemeAndLocale(viewModel.paymentComponent.getGiniPaymentLanguage(requireContext()))
         snackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
-            setTextMaxLines(2)
+            setTextMaxLines(3)
             setAction(getString(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) { onRetry() }
             show()
         }
@@ -345,6 +345,24 @@ class PaymentFragment private constructor(
                     if (childFragmentManager.fragments.any { it is PaymentComponentBottomSheet }) {
                         return
                     }
+
+                    // When coming back to Payment Component bottom sheet, if the bank was selected at a previous step and review is enabled, we don't show the Payment component bottom sheet
+                    // instead, we go directly to review (fragment or bottom sheet).
+                    if (!viewModel.giniInternalPaymentModule.getReturningUser() &&
+                        viewModel.paymentComponent.selectedPaymentProviderAppFlow.value is SelectedPaymentProviderAppState.AppSelected &&
+                        (viewModel.documentId != null || (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true))) {
+                            viewModel.giniInternalPaymentModule.saveReturningUser()
+                            viewModel.popBackStack()
+                            if (viewModel.documentId != null) {
+                                showReviewFragment()
+                                return
+                            }
+                            else if (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true) {
+                                showReviewBottomDialog()
+                                return
+                            }
+                    }
+
                     PaymentComponentBottomSheet.newInstance(
                         viewModel.paymentComponent,
                         if (viewModel.documentId != null) true else viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false,
@@ -404,7 +422,7 @@ class PaymentFragment private constructor(
 
         )
         childFragmentManager.beginTransaction()
-            .add(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
+            .replace(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
             .addToBackStack(reviewFragment::class.java.name)
             .commit()
     }
@@ -413,7 +431,7 @@ class PaymentFragment private constructor(
     internal fun showPaymentComponentBottomSheet() {
         val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
             viewModel.paymentComponent,
-            reviewFragmentShown = if (viewModel.documentId != null) true else viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false,
+            reviewFragmentShown = viewModel.documentId != null,
             backListener = viewModel
         )
         paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
