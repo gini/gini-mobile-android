@@ -34,6 +34,7 @@ import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.utils.DisplayedScreen
+import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -47,7 +48,7 @@ open class InvoicesActivity : AppCompatActivity() {
         binding = ActivityInvoicesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setActivityTitle(DisplayedScreen.Nothing)
-
+        binding.root.applyWindowInsetsWithTopPadding(binding.mainContainer)
         // Check if fragment is already visible on recreation
         val fragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
         val isFragmentInBackStack = fragment != null && fragment.isAdded
