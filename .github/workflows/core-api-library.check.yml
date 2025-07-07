@@ -67,7 +67,7 @@ jobs:
           disable-animations: true
           script: >
             adb uninstall net.gini.android.core.api.test ;
-            ./gradlew core-api-library:library:connectedCheck
+            ./gradlew core-api-library:library:connectedCheck && killall -INT crashpad_handler || true
 
       - name: archive instrumented test results
         if: always()

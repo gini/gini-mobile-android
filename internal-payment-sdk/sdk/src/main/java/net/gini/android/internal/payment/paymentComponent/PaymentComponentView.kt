@@ -177,7 +177,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             payInvoiceButton.visibility = View.GONE
             paymentProviderAppIconHolder.root.visibility = View.GONE
-            selectBankButton.text = context.getString(R.string.gps_select_bank)
+            selectBankButton.text = context.getString(R.string.gps_your_bank)
             selectBankButton.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
@@ -314,7 +314,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
     private fun setIngredientBrandVisibility() {
         binding.gpsPoweredByGini.visibility =
             if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.INVISIBLE)
-                View.INVISIBLE else View.VISIBLE
+                View.GONE else View.VISIBLE
     }
 
     private companion object {

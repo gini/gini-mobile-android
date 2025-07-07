@@ -6,9 +6,14 @@
     android:background="?attr/colorSurface"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:focusable="true">
+    android:clickable="false"
+    android:focusable="false">
 
+    <!-- Colors are dynamically managed in the LineItemsAdapter for
+       the below views, because of accessibility color contrast
+       Please check the enable(), disable() method in the
+       LineItemsAdapter.kt for more understanding when changing
+       colors-->
     <TextView
         android:id="@+id/gbs_description"
         android:layout_width="0dp"
@@ -34,7 +39,7 @@
         android:layout_marginTop="@dimen/gc_small"
         android:text="@string/gbs_digital_invoice_line_item_quantity"
         android:textAppearance="@style/GiniCaptureTheme.Typography.Body1"
-        android:textColor="@color/gc_dark_06"
+        android:textColor="@color/gc_dark_05"
         app:layout_constraintStart_toStartOf="@+id/gbs_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gbs_description"
@@ -66,8 +71,8 @@
         style="@style/GiniCaptureTheme.Typography.Body1"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:clickable="false"
-        android:focusable="false"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="top"
         android:layout_marginTop="@dimen/gc_small"
         android:minHeight="0dp"

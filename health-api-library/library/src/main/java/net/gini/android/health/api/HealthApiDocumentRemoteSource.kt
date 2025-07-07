@@ -109,4 +109,15 @@ class HealthApiDocumentRemoteSource internal constructor(
         }
         response.body()
     }
+
+    suspend fun deletePaymentRequests(accessToken: String, paymentRequestIds: List<String>): Unit = withContext(coroutineContext) {
+        val response =
+            SafeApiRequest.apiRequest {
+            documentService.batchDeletePaymentRequests(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
+                paymentRequestIds
+            )
+        }
+        response.body()
+    }
 }

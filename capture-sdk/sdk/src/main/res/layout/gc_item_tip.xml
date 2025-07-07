@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:focusable="true"
     android:background="?attr/colorSurface"
     android:minHeight="@dimen/gc_photo_tips_row_min_height">
 
@@ -38,7 +39,7 @@
         android:gravity="center_vertical"
         android:maxWidth="@dimen/gc_photo_tips_tip_text_max_width"
         android:text="@string/gc_photo_tip_flat"
-        android:textColor="@color/gc_dark_06"
+        android:textColor="@color/gc_dark_05"
         app:layout_constraintEnd_toEndOf="@+id/gc_tip_title"
         app:layout_constraintStart_toStartOf="@+id/gc_tip_title"
         app:layout_constraintTop_toBottomOf="@+id/gc_tip_title" />

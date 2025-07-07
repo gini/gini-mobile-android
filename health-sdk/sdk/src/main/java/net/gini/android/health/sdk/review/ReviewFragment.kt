@@ -33,8 +33,10 @@ import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.R
+import net.gini.android.health.sdk.R as HealthR
+import net.gini.android.internal.payment.R as InternalPaymentR
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -209,7 +211,7 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.configureViews() {
-        close.isGone = !viewModel.shouldShowCloseButton
+        close.isGone = !viewModel.paymentFlowConfiguration.showCloseButtonOnReviewFragment
     }
 
     private fun GhsFragmentReviewBinding.configureOrientation() {
@@ -233,7 +235,7 @@ class ReviewFragment private constructor(
             if (context.getFontScale() < 1.5) {
                 anchorView = paymentDetailsScrollview
             }
-            setTextMaxLines(2)
+            setTextMaxLines(3)
             setAction(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) {
                 onRetry()
             }
@@ -268,8 +270,8 @@ class ReviewFragment private constructor(
             if (savedHeight == 0) return@post
             ConstraintSet().apply {
                 clone(constraintRoot)
-                constrainHeight(R.id.pager, pager.height)
-                clear(R.id.pager, ConstraintSet.BOTTOM)
+                constrainHeight(HealthR.id.pager, pager.height)
+                clear(HealthR.id.pager, ConstraintSet.BOTTOM)
                 applyTo(constraintRoot)
             }
             if (savedHeight > 0) {
@@ -389,10 +391,10 @@ class ReviewFragment private constructor(
         }
 
         private fun setupLandscapeBehavior() {
-            val dragHandle = binding.dragHandle
+            val dragHandle = binding.dragHandleContainer
             val fieldsLayout = binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_fields_layout)
             val bottomLayout = binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_bottom_layout)
-            binding.dragHandleContainer?.onKeyboardAction {
+            dragHandle?.onKeyboardAction {
                 fieldsLayout.alpha = if (isVisible) 0f else 1f
                 val currentState = binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode()
                 binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(
@@ -402,15 +404,26 @@ class ReviewFragment private constructor(
             binding.root.post {
                 setupConstraintsForTabLayout((dragHandle?.height ?: 0) + bottomLayout.height)
             }
-
-            binding.dragHandleContainer?.setOnTouchListener { _, _ ->
-                fieldsLayout.alpha = if (isVisible) 0f else 1f
+            dragHandle?.setOnClickListener {
+                fieldsLayout.alpha = if (it.isVisible) 0f else 1f
                 val currentState = binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode()
-                binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(
-                    if (currentState == ReviewViewStateLandscape.EXPANDED) ReviewViewStateLandscape.COLLAPSED else ReviewViewStateLandscape.EXPANDED
-                )
-                false
+                val nextState = if (currentState == ReviewViewStateLandscape.EXPANDED)
+                    ReviewViewStateLandscape.COLLAPSED
+                else
+                    ReviewViewStateLandscape.EXPANDED
+
+                binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(nextState)
+
+                val announcement = when (nextState) {
+                    ReviewViewStateLandscape.EXPANDED -> getString(InternalPaymentR.string.gps_drag_handle_expanded)
+                    ReviewViewStateLandscape.COLLAPSED -> getString(InternalPaymentR.string.gps_drag_handle_collapsed)
+                    else -> null
+                }
+                announcement?.let {
+                    dragHandle.announceForAccessibility(it)
+                }
             }
+
         }
 
     private fun setupConstraintsForTabLayout(collapsedBottomSheetHeight: Int) {
@@ -438,8 +451,8 @@ class ReviewFragment private constructor(
             listener: ReviewFragmentListener,
             paymentComponent: PaymentComponent,
             documentId: String,
-            shouldShowCloseButton: Boolean,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, listener),
+            paymentFlowConfiguration: PaymentFlowConfiguration,
+            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, paymentFlowConfiguration, listener),
         ): ReviewFragment = ReviewFragment(viewModelFactory)
     }
 }

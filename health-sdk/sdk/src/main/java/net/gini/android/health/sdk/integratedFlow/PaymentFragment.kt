@@ -46,6 +46,8 @@ import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.add
 import net.gini.android.internal.payment.utils.extensions.createShareWithPendingIntent
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isValidPdfName
 import net.gini.android.internal.payment.utils.extensions.showInstallAppBottomSheet
 import net.gini.android.internal.payment.utils.extensions.showOpenWithBottomSheet
 import net.gini.android.internal.payment.utils.extensions.startSharePdfIntent
@@ -82,9 +84,23 @@ data class PaymentFlowConfiguration(
      *
      * Note: Only taken into consideration for payments initiated with [documentId]
      */
-    val showCloseButtonOnReviewFragment: Boolean = false
+    val showCloseButtonOnReviewFragment: Boolean = false,
+    /**
+     * Specifies the duration (in seconds) for which the payment review popup will be displayed before automatically closing.
+     *
+     * This value must be between `0` (min) and `10` (max) seconds to ensure a smooth user experience.
+     *
+     * Default value is `3` seconds.
+     */
+    val popupDurationPaymentReview: Int = DEFAULT_POPUP_DURATION
 
-): Parcelable
+) : Parcelable {
+
+    companion object {
+        /** Default duration (in seconds) for the payment review popup. */
+        const val DEFAULT_POPUP_DURATION = 3
+    }
+}
 
 /**
  * The [PaymentFragment] provides a container for all screens that should be displayed for the user
@@ -297,7 +313,7 @@ class PaymentFragment private constructor(
     private fun GhsFragmentHealthBinding.showSnackbar(text: String, onRetry: () -> Unit) {
         val context = requireContext().wrappedWithGiniPaymentThemeAndLocale(viewModel.paymentComponent.getGiniPaymentLanguage(requireContext()))
         snackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
-            setTextMaxLines(2)
+            setTextMaxLines(3)
             setAction(getString(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) { onRetry() }
             show()
         }
@@ -401,7 +417,9 @@ class PaymentFragment private constructor(
                 handleErrorsInternally = viewModel.paymentFlowConfiguration?.shouldHandleErrorsInternally == true,
                 selectBankButtonVisible = true,
             ),
-            shouldShowCloseButton = viewModel.paymentFlowConfiguration?.showCloseButtonOnReviewFragment ?: false
+            paymentFlowConfiguration = viewModel.paymentFlowConfiguration
+                ?: PaymentFlowConfiguration()
+
         )
         childFragmentManager.beginTransaction()
             .replace(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
@@ -449,7 +467,9 @@ class PaymentFragment private constructor(
             paymentDetails = viewModel.paymentDetails?.toCommonPaymentDetails(),
             paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
-            viewModel.onForwardToSharePdfTapped()
+            val overriddenPdfName = getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name, viewModel.giniInternalPaymentModule)
+            val pdfName = if (overriddenPdfName.isValidPdfName()) overriddenPdfName else getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name_default, viewModel.giniInternalPaymentModule)
+            viewModel.onForwardToSharePdfTapped(pdfName)
         }
     }
 

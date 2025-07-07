@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetPaymentComponentBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
@@ -62,6 +64,11 @@ class PaymentComponentBottomSheet private constructor(
         }
         paymentComponentView = binding.gpsPaymentComponent
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gps_select_bank_label))
     }
 
     override fun onCancel(dialog: DialogInterface) {

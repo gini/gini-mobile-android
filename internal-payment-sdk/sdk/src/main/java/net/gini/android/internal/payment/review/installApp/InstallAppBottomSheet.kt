@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -78,7 +79,8 @@ class InstallAppBottomSheet private constructor(
     ): View {
         binding = GpsBottomSheetInstallAppBinding.inflate(inflater, container, false)
         if (!resources.isLandscapeOrientation()) {
-            binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
+            binding.root.minHeight =
+                minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
         }
         binding.gpsPoweredByGiniLayout.root.visibility =
             if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
@@ -96,6 +98,13 @@ class InstallAppBottomSheet private constructor(
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.paymentProviderApp.collect { paymentProviderApp ->
                     if (paymentProviderApp != null) {
+                        ViewCompat.setAccessibilityPaneTitle(
+                            view, String.format(
+                                getLocaleStringResource(R.string.gps_install_app_title),
+                                paymentProviderApp.paymentProvider.name
+                            )
+                        )
+
                         binding.gpsPaymentProviderIcon.gpsPaymentProviderIcon.setImageDrawable(
                             paymentProviderApp.icon
                         )
@@ -110,7 +119,11 @@ class InstallAppBottomSheet private constructor(
                             paymentProviderApp.paymentProvider.name
                         )
                         binding.gpsPlayStoreLogo.setOnClickListener {
-                            paymentProviderApp.paymentProvider.playStoreUrl?.let { openPlayStoreUrl(it) }
+                            paymentProviderApp.paymentProvider.playStoreUrl?.let {
+                                openPlayStoreUrl(
+                                    it
+                                )
+                            }
                         }
                         if (paymentProviderApp.isInstalled()) {
                             updateUI(paymentProviderApp)

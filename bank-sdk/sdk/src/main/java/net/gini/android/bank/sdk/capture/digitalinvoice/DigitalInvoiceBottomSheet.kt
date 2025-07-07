@@ -4,17 +4,22 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.bank.sdk.R
@@ -25,6 +30,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.details.MIN_QUANTITY
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.doAfterTextChanged
 import net.gini.android.bank.sdk.capture.util.amountWatcher
 import net.gini.android.bank.sdk.capture.util.hideKeyboard
+import net.gini.android.bank.sdk.capture.util.showKeyboard
 import net.gini.android.bank.sdk.databinding.GbsEditItemBottomSheetBinding
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
@@ -47,17 +53,27 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private lateinit var binding: GbsEditItemBottomSheetBinding
     private var selectableLineItem: SelectableLineItem? = null
     private var originalSelectableLineItem: SelectableLineItem? = null
+    private val keyboardThresholdRatio = 0.15
     private var quantity: Int = 1
     private val editorListener = TextView.OnEditorActionListener { v, actionId, event ->
         v.clearFocus()
         v.hideKeyboard()
         true
     }
+    private var isKeyboardShowing = false
+    private val isKeyboardShowingStateKey = "keyboard_showing_state_key"
+    private val priceKey = "price_key"
+    private val quantityKey = "quantity_key"
+    private val descriptionKey = "description_key"
+    private var focusedViewId = View.NO_ID
+    private val focusedViewIdKey = "focused_view_id_key"
 
     private var selectedCurrency = "EUR"
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.EditReturnAssistant
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
+    private var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
+    private var restoringFromOrientationChange = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +93,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+            restoringFromOrientationChange = savedInstanceState != null
             activity?.let {
                 binding = GbsEditItemBottomSheetBinding.inflate(getLayoutInflaterWithGiniCaptureTheme(it.layoutInflater), null, false)
 
@@ -84,7 +101,21 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
                 builder.setView(binding.root)
                 setUpBindings()
 
-                return builder.create()
+                val alertDialog = builder.create()
+
+                activity?.window?.decorView?.let { view ->
+                    ViewCompat.setOnApplyWindowInsetsListener(view) { _, insetsCompat ->
+                        val imeVisible = insetsCompat.isVisible(WindowInsetsCompat.Type.ime())
+                        isKeyboardShowing = imeVisible
+                        insetsCompat
+                    }
+                }
+
+                alertDialog.setOnShowListener {
+                    restoreKeyboardState(savedInstanceState)
+                }
+
+                return alertDialog
             }
         }
 
@@ -104,6 +135,15 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         selectableLineItem!!
     )
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(isKeyboardShowingStateKey, isKeyboardShowing)
+        if (isKeyboardShowing) outState.putInt(focusedViewIdKey, focusedViewId)
+        outState.putString(priceKey, binding.gbsUnitPriceEditTxt.text.toString())
+        outState.putString(quantityKey, binding.gbsQuantityEditTxt.text.toString())
+        outState.putString(descriptionKey, binding.gbsArticleNameEditTxt.text.toString())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -114,27 +154,104 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         }
 
         binding = GbsEditItemBottomSheetBinding.inflate(inflater, container, false)
+        handleBottomSheetConfigurations()
+        return binding.root
+    }
+
+    private fun handleBottomSheetConfigurations() {
         dialog?.setOnShowListener {
-            val bottomSheetInternal = (it as? BottomSheetDialog)?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            val bottomSheetInternal =
+                (it as? BottomSheetDialog)?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             bottomSheetInternal?.let {
-                BottomSheetBehavior.from(bottomSheetInternal).state = BottomSheetBehavior.STATE_EXPANDED
+                BottomSheetBehavior.from(bottomSheetInternal).apply {
+                    peekHeight = 0
+                    state = BottomSheetBehavior.STATE_EXPANDED
+                    addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                        override fun onStateChanged(bottomSheet: View, newState: Int) {
+                            if (newState in listOf(
+                                    BottomSheetBehavior.STATE_HIDDEN,
+                                    STATE_COLLAPSED
+                                )
+                            )
+                                dismiss()
+
+                        }
+
+                        override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+                    })
+                }
             }
         }
-
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gbs_edit_article))
 
+        restoringFromOrientationChange = savedInstanceState != null
         setUpBindings()
 
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             dialog?.window?.disallowScreenshots()
         }
 
+        restoreKeyboardState(savedInstanceState)
         trackScreenShownEvent()
+        addGlobalViewTreeObserver()
+        restoreTextIfChanged(savedInstanceState)
     }
+
+    private fun restoreTextIfChanged(savedInstanceState: Bundle?) {
+        savedInstanceState?.let { bundle ->
+            binding.gbsArticleNameEditTxt.setText(bundle.getString(descriptionKey) ?: "")
+            val quantity = try {
+                bundle.getString(quantityKey)?.toInt() ?: MIN_QUANTITY
+            } catch (_: NumberFormatException) {
+                MIN_QUANTITY
+            }
+            this.quantity = quantity
+            binding.gbsQuantityEditTxt.setText("${this.quantity}")
+            binding.gbsUnitPriceEditTxt.setText(bundle.getString(priceKey) ?: "")
+        }
+    }
+
+    private fun restoreKeyboardState(savedInstanceState: Bundle?) {
+        savedInstanceState?.let { bundle ->
+            if (bundle.getBoolean(isKeyboardShowingStateKey)) {
+                val viewId = savedInstanceState.getInt(focusedViewIdKey, View.NO_ID)
+                val editText = when (viewId) {
+                    binding.gbsArticleNameEditTxt.id -> binding.gbsArticleNameEditTxt
+                    binding.gbsUnitPriceEditTxt.id -> binding.gbsUnitPriceEditTxt
+                    else -> null
+                }
+                editText?.requestFocus()
+                editText?.post { editText.showKeyboard() }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (!resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+            globalLayoutListener?.let {
+                binding.root.viewTreeObserver?.removeOnGlobalLayoutListener(it)
+            }
+        }
+    }
+
+
+    private fun addGlobalViewTreeObserver() {
+        globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+            val r = Rect()
+            binding.root.getWindowVisibleDisplayFrame(r)
+            val screenHeight = binding.root.rootView?.height ?: 0
+            val keypadHeight = screenHeight - r.bottom
+            val imeVisible = keypadHeight > screenHeight * keyboardThresholdRatio
+            isKeyboardShowing = imeVisible
+        }
+        binding.root.viewTreeObserver?.addOnGlobalLayoutListener(globalLayoutListener)
+    }
+
 
     /**
      * Internal use only.
@@ -154,6 +271,13 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     override fun onStop() {
         super.onStop()
         presenter?.stop()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
+            ViewCompat.setAccessibilityPaneTitle(binding.root, getString(R.string.gbs_edit_article))
+        }
     }
 
     private fun bindUI(lineItem: LineItem) {
@@ -284,8 +408,9 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     }
 
     private fun manageFocuses() {
-        binding.gbsArticleNameEditTxt.setOnFocusChangeListener { _, hasFocus ->
+        binding.gbsArticleNameEditTxt.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
+                focusedViewId = view.id
                 binding.gbsNameTxt.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
@@ -301,8 +426,9 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             }
         }
 
-        binding.gbsUnitPriceEditTxt.setOnFocusChangeListener { _, hasFocus ->
+        binding.gbsUnitPriceEditTxt.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
+                focusedViewId = view.id
                 binding.gbsUnitPriceTxt.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
@@ -337,15 +463,18 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private var presenter: LineItemDetailsScreenContract.Presenter? = null
 
     override fun showDescription(description: String) {
+        if (restoringFromOrientationChange) return
         binding.gbsArticleNameEditTxt.setText(description)
     }
 
     override fun showQuantity(quantity: Int) {
+        if (restoringFromOrientationChange) return
         this.quantity = quantity
         binding.gbsQuantityEditTxt.setText("${this.quantity}")
     }
 
     override fun showGrossPrice(displayedGrossPrice: String, currency: String) {
+        if (restoringFromOrientationChange) return
         binding.gbsUnitPriceEditTxt.setText(displayedGrossPrice)
     }
 

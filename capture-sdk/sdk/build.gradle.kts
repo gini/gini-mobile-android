@@ -153,7 +153,7 @@ dependencies {
 
     implementation(libs.orbitmvi.compose)
     implementation(libs.orbitmvi.viewmodel)
-    implementation(libs.orbitmvi.test)
+    testImplementation(libs.orbitmvi.test)
 
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.activity)

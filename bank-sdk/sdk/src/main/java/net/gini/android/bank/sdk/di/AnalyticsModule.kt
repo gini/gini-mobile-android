@@ -5,5 +5,5 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import org.koin.dsl.module
 
 internal val analyticsModule = module {
-    factory<UserAnalyticsEventTracker> { getGiniCaptureKoin().get() }
+    factory<UserAnalyticsEventTracker?> { getGiniCaptureKoin().getOrNull() }
 }

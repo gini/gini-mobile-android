@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import net.gini.android.health.api.response.DeletePaymentRequestErrorResponse
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.orders.data.OrdersRepository
 import net.gini.android.health.sdk.exampleapp.orders.data.model.Order
@@ -31,6 +32,13 @@ class OrdersViewModel(
 
     private val _errorsFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
     val errorsFlow: SharedFlow<String> = _errorsFlow
+
+    private val _deletePaymentRequestErrorsFlow =
+        MutableSharedFlow<DeletePaymentRequestErrorResponse?>(
+            extraBufferCapacity = 1
+        )
+    val deletePaymentRequestErrorsFlow: SharedFlow<DeletePaymentRequestErrorResponse?> =
+        _deletePaymentRequestErrorsFlow
 
     private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
 
@@ -76,6 +84,16 @@ class OrdersViewModel(
             return Result.failure(e)
         }
     }
+
+    fun deletePaymentRequests(orderIds: List<String>) = viewModelScope.launch {
+        val deletePaymentRequestErrorResponse = giniHealth.deletePaymentRequests(orderIds)
+
+        if (deletePaymentRequestErrorResponse == null) {
+            ordersRepository.deleteRequestIdsAndExpiryDates(orderIds)
+        }
+        _deletePaymentRequestErrorsFlow.emit(deletePaymentRequestErrorResponse)
+    }
+
 
     fun setIntegratedFlowConfiguration(flowConfiguration: PaymentFlowConfiguration) {
         this.paymentFlowConfiguration = flowConfiguration
