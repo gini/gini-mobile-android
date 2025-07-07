@@ -142,7 +142,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                 ) {
                     super.onInitializeAccessibilityNodeInfo(host, info)
                     val text = binding.amount.text?.toString()?.trim().orEmpty()
-                    val suffix = "€"
+                    val suffix = binding.amountLayout.suffixText
                     info.text = if (text.isNotEmpty()) {
                         "$text $suffix"
                     } else {
