@@ -414,7 +414,8 @@ class PaymentFragment private constructor(
     internal fun showPaymentComponentBottomSheet() {
         val paymentComponentBottomSheet = PaymentComponentBottomSheet.newInstance(
             viewModel.paymentComponent,
-            reviewFragmentShown = if (viewModel.documentId != null) true else viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false,            backListener = viewModel
+            reviewFragmentShown = (viewModel.documentId != null) || (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false),
+            backListener = viewModel
         )
         paymentComponentBottomSheet.show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
         viewModel.addToBackStack(DisplayedScreen.PaymentComponentBottomSheet)
