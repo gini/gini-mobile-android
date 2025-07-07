@@ -8,6 +8,9 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
@@ -24,7 +27,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.PaymentField
 import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.ValidationMessage
-import net.gini.android.internal.payment.utils.createAmountWatcher
+import net.gini.android.internal.payment.utils.amountWatcher
 import net.gini.android.internal.payment.utils.extensions.clearErrorMessage
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentTheme
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
@@ -54,6 +57,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     private var coroutineScope: CoroutineScope? = null
     private val internalPaymentModule
         get() = reviewComponent?.giniInternalPaymentModule
+    private var amountAccessibilityDelegate: AccessibilityDelegateCompat? = null
 
     var listener: ReviewViewListener? = null
     var reviewComponent: ReviewComponent? = null
@@ -75,6 +79,8 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         setDisabledIcons()
         setButtonHandlers()
         setInputListeners()
+        disableSuffixAccessibility(binding.amountLayout)
+        setupAmountAccessibilityDelegate()
         coroutineScope = CoroutineScope(coroutineContext)
         coroutineScope?.launch {
             launch {
@@ -117,6 +123,34 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                     binding.gpsFieldsLayout?.isVisible = reviewViewState == ReviewViewStateLandscape.EXPANDED
                 }
             }
+        }
+    }
+    private fun disableSuffixAccessibility(textInputLayout: TextInputLayout) {
+        textInputLayout.post {
+            val suffixView = textInputLayout.findViewById<View>(
+                com.google.android.material.R.id.textinput_suffix_text
+            )
+            suffixView?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+    }
+    private fun setupAmountAccessibilityDelegate() {
+        if (amountAccessibilityDelegate == null) {
+            amountAccessibilityDelegate = object : AccessibilityDelegateCompat() {
+                override fun onInitializeAccessibilityNodeInfo(
+                    host: View,
+                    info: AccessibilityNodeInfoCompat
+                ) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    val text = binding.amount.text?.toString()?.trim().orEmpty()
+                    val suffix = "€"
+                    info.text = if (text.isNotEmpty()) {
+                        "$text $suffix"
+                    } else {
+                        context.getString(R.string.gps_amount_hint)
+                    }
+                }
+            }
+            ViewCompat.setAccessibilityDelegate(binding.amount, amountAccessibilityDelegate)
         }
     }
 
@@ -192,7 +226,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             recipient.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setRecipient(text.toString()) })
             iban.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setIban(text.toString()) })
             amount.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setAmount(text.toString()) })
-            amount.addTextChangedListener(createAmountWatcher(amount))
+            amount.addTextChangedListener(amountWatcher)
             purpose.addTextChangedListener(onTextChanged = { text, _, _, _ -> reviewComponent?.setPurpose(text.toString()) })
             recipient.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, recipientLayout) }
             iban.setOnFocusChangeListener { _, hasFocus -> handleInputFocusChange(hasFocus, ibanLayout) }

@@ -24,6 +24,7 @@ import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 
 
@@ -105,7 +106,22 @@ class ReviewBottomSheet private constructor(
                 )
                 false
             }
+            binding.dragHandle.onKeyboardAction {
+                val layoutParams = bottomSheet.layoutParams as LayoutParams
+                layoutParams.gravity = Gravity.BOTTOM
+                val currentState =
+                    binding.gpsReviewLayout.reviewComponent?.getReviewViewStateInLandscapeMode()
+                binding.gpsReviewLayout.reviewComponent?.setReviewViewModeInLandscapeMode(
+                    if (currentState == ReviewViewStateLandscape.EXPANDED) ReviewViewStateLandscape.COLLAPSED
+                    else ReviewViewStateLandscape.EXPANDED
+                )
+            }
+        } else {
+            binding.dragHandle.onKeyboardAction {
+                dismiss()
+            }
         }
+
         return binding.root
     }
 

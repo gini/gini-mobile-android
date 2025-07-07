@@ -9,6 +9,7 @@
         style="@style/GiniPaymentTheme.Widget.Button.PaymentProviderSelector"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
         android:drawableRight="@drawable/gps_chevron_down_icon"
         android:contentDescription="@string/gps_select_bank_content_description"
         android:gravity="start|center_vertical"

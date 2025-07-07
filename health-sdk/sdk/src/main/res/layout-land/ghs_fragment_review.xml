@@ -93,6 +93,7 @@
                     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
                         style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
                         android:id="@+id/drag_handle"
+                        android:foreground="?attr/selectableItemBackground"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:focusable="false"

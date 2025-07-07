@@ -11,6 +11,7 @@
         style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
         android:focusable="true"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,6 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gps_large_36"
                 android:background="@null"
+                android:foreground="?attr/selectableItemBackground"
                 android:contentDescription="@string/gps_play_store_content_description"
                 android:src="@drawable/gps_play_store_logo"
                 android:visibility="visible"
