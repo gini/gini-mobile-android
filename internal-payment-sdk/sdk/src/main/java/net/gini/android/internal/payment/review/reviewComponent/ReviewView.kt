@@ -1,15 +1,22 @@
 package net.gini.android.internal.payment.review.reviewComponent
 
 import android.content.Context
+import android.os.Build
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputLayout
 import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.CoroutineScope
@@ -120,13 +127,105 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         }
     }
 
-    private fun setButtonHandlers() {
-        binding.gpsPaymentDetails.applyInsetter {
-            type(navigationBars = true, ime = true) {
-                padding(bottom = true)
+    /**
+     * [handleViewInsets] -> Handles bottom padding for the payment details view based on
+     * keyboard visibility.
+     *
+     * - No need to handle the bottom sheet case, system insets are applied automatically.
+     * - For standard fragments:
+     *   - On Android 15+ (API 35+), [applyInsetter] causes unwanted bottom padding when keyboard
+     *   is visible.
+     *     So we manually observe keyboard visibility and apply the correct height.
+     *   - On Android 14 and below, [applyInsetter] works as expected and is used.
+     */
+
+    private fun handleViewInsets() {
+        if (isReviewViewInBottomSheet()) return
+        when {
+            isAndroid15OrAbove() -> {
+                observeKeyboardVisibilityAndHeight(binding.root) { visible, height ->
+                    if (visible)
+                        binding.gpsPaymentDetails.updatePadding(
+                            bottom = (height + extraBottomPadding(
+                                context
+                            ))
+                        )
+                    else
+                        binding.gpsPaymentDetails.updatePadding(
+                            bottom = extraBottomPadding(context)
+                        )
+                }
+            }
+
+            else -> {
+                binding.gpsPaymentDetails.applyInsetter {
+                    type(navigationBars = true, ime = true) {
+                        padding(bottom = true)
+                    }
+                }
             }
         }
+    }
 
+    private fun extraBottomPadding(context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            8f,
+            context.resources.displayMetrics
+        ).toInt()
+    }
+
+    private fun isReviewViewInBottomSheet(): Boolean {
+        var current: View? = this
+        while (current != null) {
+            val parent = current.parent
+            if (parent is CoordinatorLayout) {
+                try {
+                    BottomSheetBehavior.from(current)
+                    return true
+                } catch (_: IllegalArgumentException) { }
+            }
+            current = if (parent is View) parent else null
+        }
+        return false
+    }
+
+    private fun isAndroid15OrAbove(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+    }
+
+
+    private fun observeKeyboardVisibilityAndHeight(view: View, onChanged: (visible: Boolean, height: Int) -> Unit) {
+        var lastVisible: Boolean? = null
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val isVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val height = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+
+
+            if (lastVisible != isVisible) {
+                lastVisible = isVisible
+                onChanged(isVisible, (height - navBarHeight))
+            }
+            insets
+        }
+
+        if (isAttachedToWindow) {
+            ViewCompat.requestApplyInsets(view)
+        } else {
+            addOnAttachStateChangeListener(object : OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(v: View) {
+                    ViewCompat.requestApplyInsets(v)
+                    v.removeOnAttachStateChangeListener(this)
+                }
+
+                override fun onViewDetachedFromWindow(v: View) = Unit
+            })
+        }
+    }
+
+    private fun setButtonHandlers() {
+        handleViewInsets()
         binding.gpsPaymentDetails.setOnClickListener { it.hideKeyboard() }
         binding.payment.setIntervalClickListener {
             it.hideKeyboard()
