@@ -74,18 +74,29 @@ fun View.onKeyboardAction(onKeyboardActivate: () -> Unit) {
  * under the status bar, so instead of giving top margin in every layout, we can pass the view to
  * below method and it will add top padding to the content of screen equals to action bar's height,
  * and it will only work for Android 15 onwards
+ *
+ * Important Note: We need to remove this method and start using the custom material toolbar.
  * */
 
-fun View.applyWindowInsetsWithTopPadding(paddingTargetView: View? = null) {
+fun View.applyWindowInsetsWithTopPadding(
+    paddingTargetView: View? = null,
+    displayCutout: Boolean = true,
+    navigationBars: Boolean = true,
+    statusBars: Boolean = true
+) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return
 
-    applyInsetter {
-        type(
-            displayCutout = true,
-            navigationBars = true,
-            statusBars = true,
-        ) {
-            margin()
+    val list = booleanArrayOf(displayCutout, navigationBars, statusBars)
+
+    if (list.atLeastOneIsTrue()) {
+        applyInsetter {
+            type(
+                displayCutout = displayCutout,
+                navigationBars = navigationBars,
+                statusBars = statusBars,
+            ) {
+                margin()
+            }
         }
     }
 
@@ -97,7 +108,7 @@ fun View.applyWindowInsetsWithTopPadding(paddingTargetView: View? = null) {
 
 private fun Context.getActionBarHeightInPx(): Int {
     val tv = TypedValue()
-    return if (theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+    return if (theme.resolveAttribute(androidx.appcompat.R.attr.actionBarSize, tv, true)) {
         TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
     } else 0
 }
