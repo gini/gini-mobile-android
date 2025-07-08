@@ -25,3 +25,5 @@ We’ve designed the SDK to work seamlessly with Android accessibility features,
   - Reduce Motion
 * ``External Keyboard Support``: Users can navigate and interact with the SDK using a hardware keyboard - improving accessibility for users with motor impairments.
 * ``System Settings Compatibility``: Any accessibility preferences set at the Android level (like color filters or zoom) are respected by the SDK and automatically applied.
+
+* ``Note on Integration``: If the Gini Health SDK is used as part of a larger view (e.g., embedded within your own `Fragment` or `ViewGroup`), please ensure that accessibility behaviors such as setting the initial focus are handled appropriately within your implementation.
