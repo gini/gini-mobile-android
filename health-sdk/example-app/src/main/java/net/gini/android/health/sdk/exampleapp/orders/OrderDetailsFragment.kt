@@ -27,6 +27,7 @@ import net.gini.android.health.sdk.exampleapp.util.isInTheFuture
 import net.gini.android.health.sdk.exampleapp.util.prettifyDate
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.utils.DisplayedScreen
+import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.math.BigDecimal
@@ -85,6 +86,12 @@ class OrderDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = resources.getString(R.string.title_create_order)
+        binding.mainContainer.applyWindowInsetsWithTopPadding(
+            binding.mainContainer,
+            displayCutout = false,
+            statusBars = false,
+            navigationBars = false,
+        )
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {

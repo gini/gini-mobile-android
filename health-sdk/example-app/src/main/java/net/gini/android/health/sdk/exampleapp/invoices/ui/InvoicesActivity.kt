@@ -48,7 +48,7 @@ open class InvoicesActivity : AppCompatActivity() {
         binding = ActivityInvoicesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setActivityTitle(DisplayedScreen.Nothing)
-        binding.root.applyWindowInsetsWithTopPadding(binding.mainContainer)
+        binding.root.applyWindowInsetsWithTopPadding(binding.invoicesList)
         // Check if fragment is already visible on recreation
         val fragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
         val isFragmentInBackStack = fragment != null && fragment.isAdded
