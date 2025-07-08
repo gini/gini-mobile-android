@@ -99,7 +99,7 @@ class OpenWithBottomSheet private constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ViewCompat.setAccessibilityPaneTitle(view, getString(net.gini.android.internal.payment.R.string.gps_open_with_title))
+        ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gps_open_with_title))
         evaluateMarginForDynamicAnchor()
     }
 

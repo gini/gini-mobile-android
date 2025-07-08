@@ -167,6 +167,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         }
     }
 
+    @Suppress("MagicNumber")
     private fun extraBottomPadding(context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
@@ -185,7 +186,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                     return true
                 } catch (_: IllegalArgumentException) { }
             }
-            current = if (parent is View) parent else null
+            current = parent as? View
         }
         return false
     }
