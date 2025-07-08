@@ -189,6 +189,7 @@
                     android:drawableRight="@drawable/gps_chevron_down_icon"
                     android:clickable="false"
                     android:gravity="start|center_vertical"
+                    android:foreground="?attr/selectableItemBackground"
                     android:paddingHorizontal="@dimen/gps_large"
                     android:contentDescription="@string/gps_select_bank_content_description"
                     app:layout_constraintStart_toStartOf="parent"
