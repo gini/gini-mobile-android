@@ -184,7 +184,9 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                 try {
                     BottomSheetBehavior.from(current)
                     return true
-                } catch (_: IllegalArgumentException) { }
+                } catch (_: IllegalArgumentException) {
+                    // Expected: view is not controlled by BottomSheetBehavior
+                }
             }
             current = parent as? View
         }
