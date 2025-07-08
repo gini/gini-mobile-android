@@ -16,6 +16,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:scrollbars="vertical"
+        android:id="@+id/scrollView"
         android:layout_height="match_parent">
 
         <LinearLayout
@@ -101,6 +102,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/gps_open_with_details_container"
                         android:background="@drawable/gps_review_bordered_background"
                         android:padding="@dimen/gps_large"
                         android:layout_marginHorizontal="@dimen/gps_large"
@@ -150,13 +152,15 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/gps_iban_label" />
 
+                        <View
+                            android:id="@+id/gps_dynamic_anchor"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:visibility="invisible"
+                            app:layout_constraintTop_toBottomOf="@+id/gps_iban_value"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
 
-                        <androidx.constraintlayout.widget.Barrier
-                            android:id="@+id/barrier"
-                            app:barrierDirection="bottom"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:constraint_referenced_ids="gps_iban_value,gps_recipient_value"/>
 
                         <TextView
                             android:layout_width="0dp"
@@ -167,7 +171,7 @@
                             app:layout_constraintEnd_toStartOf="@+id/guideline"
                             android:textColor="@color/gps_disabled_field_text_color"
                             android:layout_marginTop="@dimen/gps_large"
-                            app:layout_constraintTop_toBottomOf="@id/barrier"
+                            app:layout_constraintTop_toBottomOf="@id/gps_dynamic_anchor"
                             app:layout_constraintStart_toStartOf="parent"
                             />
 

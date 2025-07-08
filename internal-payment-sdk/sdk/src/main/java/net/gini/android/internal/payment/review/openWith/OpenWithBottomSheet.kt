@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
@@ -27,6 +28,7 @@ import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.addEuroSymbol
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
@@ -97,7 +99,26 @@ class OpenWithBottomSheet private constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gps_open_with_title))
+        ViewCompat.setAccessibilityPaneTitle(view, getString(net.gini.android.internal.payment.R.string.gps_open_with_title))
+        evaluateMarginForDynamicAnchor()
+    }
+
+    private fun evaluateMarginForDynamicAnchor() {
+        if (!resources.isLandscapeOrientation()) return
+        binding.scrollView?.post {
+            binding.gpsDynamicAnchor?.let { safeDynamicAnchor ->
+                val params = safeDynamicAnchor.layoutParams as ConstraintLayout.LayoutParams
+                params.topToTop = ConstraintLayout.LayoutParams.UNSET
+                params.topToBottom = ConstraintLayout.LayoutParams.UNSET
+                params.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+
+                params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                params.topMargin = maxOf(binding.gpsRecipientValue.bottom, binding.gpsIbanValue.bottom)
+
+                safeDynamicAnchor.layoutParams = params
+                binding.gpsOpenWithDetailsContainer?.requestLayout()
+            }
+        }
     }
 
     private fun setupLifecycleObservers() {
