@@ -1,10 +1,5 @@
 package net.gini.android.capture;
 
-import static com.google.android.gms.common.util.CollectionUtils.listOf;
-import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-
 import android.content.Context;
 import android.content.Intent;
 
@@ -45,6 +40,7 @@ import net.gini.android.capture.tracking.EventTracker;
 import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
+import net.gini.android.capture.ui.components.GiniComposableStyleProvider;
 import net.gini.android.capture.util.CancellationToken;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
@@ -62,6 +58,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.google.android.gms.common.util.CollectionUtils.listOf;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
 
 /**
  * Created by Alpar Szotyori on 22.02.2018.
@@ -126,6 +127,7 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapterInstance;
     private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance;
+    private final GiniComposableStyleProvider mGiniComposableStyleProvider;
     private final EntryPoint entryPoint;
     private final boolean allowScreenshots;
 
@@ -436,6 +438,7 @@ public class GiniCapture {
         entryPoint = builder.getEntryPoint();
         allowScreenshots = builder.getAllowScreenshots();
         mCustomUploadMetadata = builder.getCustomUploadMetadata();
+        mGiniComposableStyleProvider = builder.getGiniComposableStyleProvider();
     }
 
     /**
@@ -830,6 +833,11 @@ public class GiniCapture {
         });
     }
 
+    @Nullable
+    public GiniComposableStyleProvider getGiniComposableStyleProvider() {
+        return mGiniComposableStyleProvider;
+    }
+
     public interface CreateGiniCaptureFragmentForIntentCallback {
         void callback(CreateGiniCaptureFragmentForIntentResult result);
     }
@@ -918,6 +926,7 @@ public class GiniCapture {
         private boolean allowScreenshots = true;
 
         private Map<String, String> customUploadMetadata;
+        private GiniComposableStyleProvider giniComposableStyleProvider;
 
         /**
          * Create a new {@link GiniCapture} instance.
@@ -1481,6 +1490,15 @@ public class GiniCapture {
 
         private Map<String, String> getCustomUploadMetadata() {
             return customUploadMetadata;
+        }
+
+        public Builder setGiniComposableStyleProvider(GiniComposableStyleProvider giniComposableStyleProvider) {
+            this.giniComposableStyleProvider = giniComposableStyleProvider;
+            return this;
+        }
+
+        private GiniComposableStyleProvider getGiniComposableStyleProvider() {
+            return giniComposableStyleProvider;
         }
     }
 

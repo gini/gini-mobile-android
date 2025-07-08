@@ -50,7 +50,10 @@ class TransactionDocInvoicePreviewFragment : Fragment() {
                         modifier = Modifier.fillMaxSize(),
                         viewModel = viewModel,
                         navigateBack = { findNavController().navigateUp() },
-                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext())
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                        composableProviderConfig =
+                            GiniCapture.getInstance()
+                                .giniComposableStyleProvider?.setGiniComposableStyleProviderConfig()
                     )
                 }
             }

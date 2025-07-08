@@ -31,7 +31,7 @@ class SkontoFragment : Fragment() {
     private val viewModel: SkontoFragmentViewModel by giniBankViewModel {
         parametersOf(args.data)
     }
-    private val amountFormatter : AmountFormatter by getGiniBankKoin().inject()
+    private val amountFormatter: AmountFormatter by getGiniBankKoin().inject()
 
     lateinit var cancelListener: CancelListener
 
@@ -96,6 +96,9 @@ class SkontoFragment : Fragment() {
                         },
                         amountFormatter = amountFormatter,
                         isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                        composableProviderConfig =
+                            GiniCapture.getInstance()
+                                .giniComposableStyleProvider?.setGiniComposableStyleProviderConfig(),
                         shouldFieldShowKeyboard = viewModel.isKeyboardVisible,
                         isTablet = ContextHelper.isTablet(requireContext())
                     )
