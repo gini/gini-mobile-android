@@ -8,6 +8,7 @@
         android:id="@+id/gps_select_bank_button"
         style="@style/GiniPaymentTheme.Widget.Button.PaymentProviderPicker"
         android:layout_width="0dp"
+        android:foreground="?attr/selectableItemBackground"
         android:layout_height="wrap_content"
         android:drawableRight="@drawable/gps_chevron_down_icon"
         android:gravity="start|center_vertical"

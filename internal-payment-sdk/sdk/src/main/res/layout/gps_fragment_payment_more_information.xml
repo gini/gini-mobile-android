@@ -65,6 +65,7 @@
                 android:id="@+id/gps_more_information_details"
                 style="@style/GiniPaymentTheme.Typography.Body2"
                 android:layout_width="match_parent"
+                android:foreground="?attr/selectableItemBackground"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gps_medium"
                 android:text="@string/gps_more_information_details" />

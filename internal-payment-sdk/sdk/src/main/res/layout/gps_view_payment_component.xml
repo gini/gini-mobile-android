@@ -94,6 +94,7 @@
         app:layout_constraintBottom_toBottomOf="@id/gps_powered_by_gini"
         style="@style/GiniPaymentTheme.Typography.Caption2"
         android:layout_marginStart="@dimen/gps_large"
+        android:foreground="?attr/selectableItemBackground"
         android:drawableStart="@drawable/gps_info_circle_icon"
         android:drawablePadding="@dimen/gps_medium"
         android:drawableTint="@color/gps_more_information_color"

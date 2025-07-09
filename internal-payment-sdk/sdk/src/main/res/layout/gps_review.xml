@@ -86,7 +86,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="@dimen/gps_float_0.3"
         app:layout_constraintStart_toEndOf="@id/iban_layout"
-        app:layout_constraintTop_toTopOf="@id/iban_layout">
+        app:layout_constraintTop_toTopOf="@id/iban_layout"
+        app:suffixText="€">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/amount"
@@ -96,7 +97,7 @@
             android:paddingTop="@dimen/gps_large_28"
             android:paddingBottom="@dimen/gps_medium"
             android:paddingEnd="@dimen/gps_medium"
-            android:digits="0123456789.,€"
+            android:digits="0123456789.,"
             android:hint="@string/gps_amount_hint"
             android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -173,6 +174,7 @@
             style="@style/GiniPaymentTheme.Widget.Button.PaymentProviderSelector"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:foreground="?attr/selectableItemBackground"
             android:drawableRight="@drawable/gps_chevron_down_icon"
             android:clickable="false"
             android:gravity="start|center_vertical"
