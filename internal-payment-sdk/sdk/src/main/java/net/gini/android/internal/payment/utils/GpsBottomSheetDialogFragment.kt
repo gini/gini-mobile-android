@@ -1,7 +1,6 @@
 package net.gini.android.internal.payment.utils
 
 import android.app.Dialog
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
@@ -13,6 +12,7 @@ import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithG
 import net.gini.android.internal.payment.utils.extensions.getWidthPixels
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentTheme
+import androidx.core.graphics.drawable.toDrawable
 
 open class GpsBottomSheetDialogFragment: BottomSheetDialogFragment() {
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -24,7 +24,8 @@ open class GpsBottomSheetDialogFragment: BottomSheetDialogFragment() {
         val wrappedContext = requireContext().wrappedWithGiniPaymentTheme()
         val dialog = BottomSheetDialog(wrappedContext, theme)
 
-        val colorDrawable = ColorDrawable(ContextCompat.getColor(wrappedContext, R.color.gps_bottom_sheet_scrim))
+        val colorDrawable =
+            ContextCompat.getColor(wrappedContext, R.color.gps_bottom_sheet_scrim).toDrawable()
         colorDrawable.alpha = 102 // 40% alpha
         dialog.window?.setBackgroundDrawable(colorDrawable)
 

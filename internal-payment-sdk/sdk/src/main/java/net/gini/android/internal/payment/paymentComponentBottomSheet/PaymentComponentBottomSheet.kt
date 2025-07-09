@@ -52,6 +52,7 @@ class PaymentComponentBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetPaymentComponentBinding.inflate(inflater, container, false)
+        binding.gpsPaymentComponent.reviewFragmentWillBeShown = viewModel.reviewFragmentShown
         binding.dragHandle.onKeyboardAction {
             dismiss()
         }

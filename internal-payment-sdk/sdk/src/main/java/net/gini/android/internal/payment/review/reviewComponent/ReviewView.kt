@@ -11,7 +11,9 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
@@ -61,6 +63,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     private var coroutineScope: CoroutineScope? = null
     private val internalPaymentModule
         get() = reviewComponent?.giniInternalPaymentModule
+    private var amountAccessibilityDelegate: AccessibilityDelegateCompat? = null
 
     var listener: ReviewViewListener? = null
     var reviewComponent: ReviewComponent? = null
@@ -82,6 +85,8 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         setDisabledIcons()
         setButtonHandlers()
         setInputListeners()
+        disableSuffixAccessibility(binding.amountLayout)
+        setupAmountAccessibilityDelegate()
         coroutineScope = CoroutineScope(coroutineContext)
         coroutineScope?.launch {
             launch {
@@ -124,6 +129,34 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                     binding.gpsFieldsLayout?.isVisible = reviewViewState == ReviewViewStateLandscape.EXPANDED
                 }
             }
+        }
+    }
+    private fun disableSuffixAccessibility(textInputLayout: TextInputLayout) {
+        textInputLayout.post {
+            val suffixView = textInputLayout.findViewById<View>(
+                com.google.android.material.R.id.textinput_suffix_text
+            )
+            suffixView?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+    }
+    private fun setupAmountAccessibilityDelegate() {
+        if (amountAccessibilityDelegate == null) {
+            amountAccessibilityDelegate = object : AccessibilityDelegateCompat() {
+                override fun onInitializeAccessibilityNodeInfo(
+                    host: View,
+                    info: AccessibilityNodeInfoCompat
+                ) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    val text = binding.amount.text?.toString()?.trim().orEmpty()
+                    val suffix = binding.amountLayout.suffixText
+                    info.text = if (text.isNotEmpty()) {
+                        "$text $suffix"
+                    } else {
+                        context.getString(R.string.gps_amount_hint)
+                    }
+                }
+            }
+            ViewCompat.setAccessibilityDelegate(binding.amount, amountAccessibilityDelegate)
         }
     }
 

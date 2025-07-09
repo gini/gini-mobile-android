@@ -70,6 +70,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
      * The document id of the invoice item. This will be returned in the [PaymentComponent.Listener.onPayInvoiceClicked] method.
      */
     var documentId: String? = null
+    var reviewFragmentWillBeShown: Boolean = false
 
     var dismissListener: ButtonClickListener? = null
 
@@ -177,7 +178,7 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
         context?.wrappedWithGiniPaymentThemeAndLocale(paymentComponent?.getGiniPaymentLanguage())?.let { context ->
             payInvoiceButton.visibility = View.GONE
             paymentProviderAppIconHolder.root.visibility = View.GONE
-            selectBankButton.text = context.getString(R.string.gps_select_bank)
+            selectBankButton.text = context.getString(R.string.gps_your_bank)
             selectBankButton.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
@@ -273,8 +274,10 @@ class PaymentComponentView(context: Context, attrs: AttributeSet?) : ConstraintL
             payInvoiceButton = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsPayInvoiceButtonTwoRows else binding.gpsSingleRowBankSelection.gpsPayInvoiceButton
             paymentProviderAppIconHolder = if (paymentComponent?.bankPickerRows == BankPickerRows.TWO) binding.gpsSelectBankPicker.gpsPaymentProviderAppIconHolder else binding.gpsSingleRowBankSelection.gpsPaymentProviderAppIconHolder
 
-            payInvoiceButton.text = context.getString(R.string.gps_pay_button)
-            payInvoiceButton.contentDescription = context.getString(R.string.gps_to_banking_app_content_description)
+
+            payInvoiceButton.text =
+                if (reviewFragmentWillBeShown) context.getString(R.string.gps_continue_to_overview)
+                else context.getString(R.string.gps_pay_button)
         }
     }
 
