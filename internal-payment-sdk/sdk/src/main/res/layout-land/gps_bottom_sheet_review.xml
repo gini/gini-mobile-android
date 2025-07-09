@@ -19,6 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/gps_review_layout"
+        android:focusable="false"
+        android:importantForAccessibility="no"
         android:layout_marginHorizontal="@dimen/gps_large_72"
         app:layout_constraintBottom_toBottomOf="parent"
         />

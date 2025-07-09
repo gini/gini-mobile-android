@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="gps_accent_01">#009EDC</color>
+    <color name="gps_accent_01">#006ECF</color>
     <color name="gps_accent_02">#45B4DF</color>
     <color name="gps_accent_03">#89C8E1</color>
     <color name="gps_accent_04">#BFE7F6</color>
@@ -11,9 +11,9 @@
     <color name="gps_dark_02">#000000</color>
     <color name="gps_dark_03">#3A3A3C</color>
     <color name="gps_dark_04">#3A3A3C</color>
-    <color name="gps_dark_05">#F2F2F2</color>
+    <color name="gps_dark_05">#ADADAD</color>
     <color name="gps_dark_06">#F3F3F3</color>
-    <color name="gps_dark_07">#FAFAFA</color>
+    <color name="gps_dark_07">#FFFFFF</color>
     <color name="gps_dark_08">#48484A</color>
 =    <color name="gps_success_dark_01">#13822F</color>
 
@@ -43,7 +43,7 @@
     <color name="gps_bank_selection_bottom_sheet_caption">@color/gps_dark_02</color>
     <color name="gps_bank_selection_bottom_sheet_title">@color/gps_dark_02</color>
     <color name="gps_payment_details_background_color">@color/gps_dark_07</color>
-    <color name="gps_payment_input_border_color">@color/gps_dark_05</color>
+    <color name="gps_payment_input_border_color">@color/gps_dark_06</color>
     <color name="gps_payment_input_background_color">@color/gps_dark_06</color>
     <color name="gps_payment_input_hint">@color/gps_dark_04</color>
     <color name="gps_more_information_fragment_background">@color/gps_dark_07</color>

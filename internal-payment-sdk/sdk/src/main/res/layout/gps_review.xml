@@ -5,11 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:importantForAccessibility="no"
+    android:focusable="false"
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gps_payment_details"
         android:layout_width="match_parent"
+        android:focusable="false"
         android:importantForAccessibility="no"
         android:layout_height="wrap_content">
 

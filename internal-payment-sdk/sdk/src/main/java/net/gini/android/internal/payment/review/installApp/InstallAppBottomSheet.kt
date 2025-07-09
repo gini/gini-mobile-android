@@ -52,7 +52,8 @@ class InstallAppBottomSheet private constructor(
     private val viewModel: InstallAppViewModel by viewModels {
         InstallAppViewModel.Factory(
             paymentComponent,
-            backListener
+            backListener,
+            listener
         )
     }
 
@@ -153,7 +154,7 @@ class InstallAppBottomSheet private constructor(
         }
 
         binding.gpsForwardButton.setOnClickListener {
-            listener?.onForwardToBankSelected()
+            viewModel.installAppForwardListener?.onForwardToBankSelected()
             dismiss()
         }
     }
