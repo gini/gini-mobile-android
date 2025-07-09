@@ -143,8 +143,6 @@
                     android:layout_height="wrap_content"
                     android:nextFocusDown="@id/close"
                     android:nextFocusLeft="@id/close"
-                    android:focusable="false"
-                    android:importantForAccessibility="no"
                     android:nextFocusRight="@id/close"
                     android:nextFocusForward="@id/close"
                     android:nextFocusUp="@id/close"
