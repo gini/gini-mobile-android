@@ -1,0 +1,18 @@
+name: PR Build with Manual Deploy
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "hello i am done"
+
+  manual_deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: Deploy-approval
+    steps:
+      - run: echo "ok now i will do whatever you want me to do"
