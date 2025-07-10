@@ -13,6 +13,5 @@ jobs:
   manual_deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment: Deploy-approval
     steps:
       - run: echo "ok now i will do whatever you want me to do"
