@@ -1,18 +1,27 @@
 package net.gini.android.internal.payment.review.reviewComponent
 
 import android.content.Context
+import android.os.Build
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ScrollView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputLayout
 import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +42,7 @@ import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithG
 import net.gini.android.internal.payment.utils.extensions.hideErrorMessage
 import net.gini.android.internal.payment.utils.extensions.hideKeyboard
 import net.gini.android.internal.payment.utils.extensions.hideKeyboardFully
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.setErrorMessage
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import net.gini.android.internal.payment.utils.extensions.showErrorMessage
@@ -154,13 +164,163 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
         }
     }
 
-    private fun setButtonHandlers() {
-        binding.gpsPaymentDetails.applyInsetter {
-            type(navigationBars = true, ime = true) {
-                padding(bottom = true)
+    /**
+     * [handleViewInsets] -> Handles bottom padding for the payment details view based on
+     * keyboard visibility.
+     *
+     * - No need to handle the bottom sheet case, system insets are applied automatically.
+     * - For standard fragments:
+     *   - On Android 15+ (API 35+), [applyInsetter] causes unwanted bottom padding when keyboard
+     *   is visible.
+     *     So we manually observe keyboard visibility and apply the correct height.
+     *   - On Android 14 and below, [applyInsetter] works as expected and is used.
+     */
+
+    private fun handleViewInsets() {
+        if (isReviewViewInBottomSheet()) return
+        when {
+            isAndroid15OrAbove() -> {
+                observeKeyboardVisibilityAndHeight(binding.root) { visible, height , bottom ->
+                    if (visible) {
+                        binding.gpsPaymentDetails.updatePadding(
+                            bottom = (height + extraBottomPadding(
+                                context
+                            ))
+                        )
+                        scrollFocusedViewAboveKeyboard(bottom)
+                    }
+                    else
+                        binding.gpsPaymentDetails.updatePadding(
+                            bottom = extraBottomPadding(context)
+                        )
+                }
+            }
+
+            else -> {
+                binding.gpsPaymentDetails.applyInsetter {
+                    type(navigationBars = true, ime = true) {
+                        padding(bottom = true)
+                    }
+                }
             }
         }
+    }
 
+    /**
+     * In android 15 and above, when the keyboard is shown, the focused view (EditText) was hidden
+     * behind the keyboard.
+     *
+     * [scrollFocusedViewAboveKeyboard] takes care of that view which was hidden, by calculating
+     * height of keyboard and scrolling the focused view above it.
+     * @param keyboardBottom -> this is the bottom position of the keyboard
+     * calculated by the [observeKeyboardVisibilityAndHeight] function.
+     *
+     * Important note: This function is only called when
+     * - Device is in landscape orientation
+     * - Root view is attached to the window
+     * - Focused view is an instance of EditText
+     * - Parent ScrollView is found
+     * - Review View is not in a BottomSheet
+     * - Api level is 35 or above (Android 15+)
+     * - [findParentScrollView] returns a valid ScrollView
+     *
+     */
+
+    private fun scrollFocusedViewAboveKeyboard(keyboardBottom: Int) {
+        if (!resources.isLandscapeOrientation() || !rootView.isAttachedToWindow) return
+
+        findParentScrollView(this)?.let { scrollView ->
+            val focusedView = rootView.findFocus() as? EditText ?: return
+
+            val location = IntArray(2)
+            focusedView.getLocationOnScreen(location)
+            val viewBottom = location[1] + focusedView.height
+
+            val keyboardTop = rootView.height - keyboardBottom
+
+            if (viewBottom > keyboardTop) {
+                val scrollAmount = viewBottom - keyboardTop
+                scrollView.post {
+                    scrollView.smoothScrollBy(0, scrollAmount)
+                }
+            }
+        }
+    }
+
+    private fun findParentScrollView(view: View): ScrollView? {
+        var current = view.parent
+        while (current is ViewGroup) {
+            if (current is ScrollView) {
+                return current
+            }
+            current = current.parent
+        }
+        return null
+    }
+
+    @Suppress("MagicNumber")
+    private fun extraBottomPadding(context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            8f,
+            context.resources.displayMetrics
+        ).toInt()
+    }
+
+    private fun isReviewViewInBottomSheet(): Boolean {
+        var current: View? = this
+        while (current != null) {
+            val parent = current.parent
+            if (parent is CoordinatorLayout) {
+                try {
+                    BottomSheetBehavior.from(current)
+                    return true
+                } catch (_: IllegalArgumentException) {
+                    // Expected: view is not controlled by BottomSheetBehavior
+                }
+            }
+            current = parent as? View
+        }
+        return false
+    }
+
+    private fun isAndroid15OrAbove(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+    }
+
+
+    private fun observeKeyboardVisibilityAndHeight(
+        view: View,
+        onChanged: (
+            visible: Boolean,
+            height: Int,
+            imeInsetBottom: Int
+        ) -> Unit
+    ) {
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val isVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val height = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            onChanged(isVisible, (height - navBarHeight), height)
+            insets
+        }
+
+        if (isAttachedToWindow) {
+            ViewCompat.requestApplyInsets(view)
+        } else {
+            addOnAttachStateChangeListener(object : OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(v: View) {
+                    ViewCompat.requestApplyInsets(v)
+                    v.removeOnAttachStateChangeListener(this)
+                }
+
+                override fun onViewDetachedFromWindow(v: View) = Unit
+            })
+        }
+    }
+
+    private fun setButtonHandlers() {
+        handleViewInsets()
         binding.gpsPaymentDetails.setOnClickListener { it.hideKeyboard() }
         binding.payment.setIntervalClickListener {
             it.hideKeyboard()

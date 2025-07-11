@@ -21,6 +21,7 @@ import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
+import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        binding.root.applyWindowInsetsWithTopPadding(binding.mainContainer)
         binding.takePhoto.setOnClickListener {
             takePhoto()
         }
