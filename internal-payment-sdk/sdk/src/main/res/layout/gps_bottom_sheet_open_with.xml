@@ -8,6 +8,9 @@
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
         android:id="@+id/drag_handle"
+        android:focusable="true"
+        android:importantForAccessibility="yes"
+        android:foreground="?attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gps_medium"/>
@@ -36,6 +39,7 @@
                 android:layout_width="@dimen/gps_large_208"
                 android:layout_height="@dimen/gps_large_208"
                 android:id="@+id/gps_qr_image_view"
+                android:contentDescription="@string/gps_qr_image_content_description"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/gps_large_24"/>
 
@@ -116,11 +120,12 @@
                     app:layout_constraintStart_toStartOf="parent"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/gps_amount_label"
                     style="@style/GiniPaymentTheme.Typography.Caption2"
                     android:text="@string/gps_amount_hint"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
                     android:textColor="@color/gps_disabled_field_text_color"
                     android:layout_marginTop="@dimen/gps_large"
                     app:layout_constraintTop_toBottomOf="@id/gps_iban_value"
@@ -128,11 +133,13 @@
                     />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/gps_amount_value"
                     android:textColor="@color/gps_open_with_review_value"
                     android:layout_marginTop="@dimen/gps_small"
+                    android:layout_marginEnd="@dimen/gps_small"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
                     style="@style/GiniPaymentTheme.Typography.Body2"
                     app:layout_constraintTop_toBottomOf="@id/gps_amount_label"
                     app:layout_constraintStart_toStartOf="parent"/>
@@ -145,11 +152,12 @@
                     android:id="@+id/guideline"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/gps_reference_label"
                     style="@style/GiniPaymentTheme.Typography.Caption2"
                     android:text="@string/gps_reference_number"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:textColor="@color/gps_disabled_field_text_color"
                     app:layout_constraintStart_toEndOf="@id/guideline"
                     app:layout_constraintTop_toTopOf="@id/gps_amount_label"/>
@@ -161,8 +169,6 @@
                     android:layout_marginTop="@dimen/gps_small"
                     style="@style/GiniPaymentTheme.Typography.Body2"
                     android:textColor="@color/gps_open_with_review_value"
-                    android:ellipsize="marquee"
-                    android:singleLine="true"
                     app:layout_constraintStart_toEndOf="@id/guideline"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/gps_reference_label"/>

@@ -6,14 +6,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetPaymentComponentBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -50,8 +53,10 @@ class PaymentComponentBottomSheet private constructor(
     ): View {
         binding = GpsBottomSheetPaymentComponentBinding.inflate(inflater, container, false)
         binding.gpsPaymentComponent.reviewFragmentWillBeShown = viewModel.reviewFragmentShown
+        binding.dragHandle.onKeyboardAction {
+            dismiss()
+        }
         binding.gpsPaymentComponent.paymentComponent = viewModel.paymentComponent
-
         binding.gpsPaymentComponent.dismissListener = object : PaymentComponentView.ButtonClickListener {
             override fun onButtonClick(button: PaymentComponentView.Buttons) {
                 dismiss()
@@ -60,6 +65,11 @@ class PaymentComponentBottomSheet private constructor(
         }
         paymentComponentView = binding.gpsPaymentComponent
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gps_select_bank_label))
     }
 
     override fun onCancel(dialog: DialogInterface) {

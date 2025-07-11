@@ -4,5 +4,5 @@
         android:topLeftRadius="@dimen/gps_medium_12"
         android:topRightRadius="@dimen/gps_medium_12">
     </corners>
-    <solid android:color="@color/gps_success_01"/>
+    <solid android:color="@color/gps_info_bar"/>
 </shape>
