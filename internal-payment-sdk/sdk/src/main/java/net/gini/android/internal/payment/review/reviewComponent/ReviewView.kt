@@ -297,15 +297,11 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             imeInsetBottom: Int
         ) -> Unit
     ) {
-        var lastVisible: Boolean? = null
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val isVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
             val height = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
-            if (lastVisible != isVisible) {
-                lastVisible = isVisible
-                onChanged(isVisible, (height - navBarHeight), height)
-            }
+            onChanged(isVisible, (height - navBarHeight), height)
             insets
         }
 
