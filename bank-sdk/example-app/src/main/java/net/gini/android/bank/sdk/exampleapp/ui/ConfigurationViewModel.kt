@@ -33,6 +33,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigati
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableStyleProvider
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
@@ -277,6 +278,11 @@ class ConfigurationViewModel @Inject constructor(
                 importedFileSizeBytesLimit = configuration.importedFileSizeBytesLimit
             )
 
+        if (configuration.isCustomPrimaryComposeButtonEnabled) {
+            captureConfiguration = captureConfiguration.copy(
+                giniComposableStyleProvider = CustomGiniComposableStyleProvider()
+            )
+        }
         GiniBank.setCaptureConfiguration(context, captureConfiguration)
 
         // enable return reasons dialog

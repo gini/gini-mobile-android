@@ -118,6 +118,9 @@ data class Configuration(
     // net.gini.android.capture.GiniCapture.Builder#setNavigationBarTopAdapter →  on/off switch to show a custom adapter implementation
     val isCustomNavBarEnabled: Boolean = false,
 
+    // enable custom primary button in compose
+    val isCustomPrimaryComposeButtonEnabled: Boolean = false,
+
     // enable event tracker
     // net.gini.android.capture.GiniCapture.Builder#setEventTracker → ignore
     val isEventTrackerEnabled: Boolean = true,

@@ -19,6 +19,7 @@ import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter
 import net.gini.android.capture.tracking.EventTracker
+import net.gini.android.capture.ui.components.GiniComposableStyleProvider
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
@@ -226,6 +227,8 @@ data class CaptureConfiguration(
      * Enable/disable the transaction docs feature.
      */
     val transactionDocsEnabled: Boolean = true,
+
+    val giniComposableStyleProvider: GiniComposableStyleProvider? = null
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -299,5 +302,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
             }
             configuration.helpNavigationBarBottomAdapter?.let { setHelpNavigationBarBottomAdapter(it) }
             configuration.errorNavigationBarBottomAdapter?.let { setErrorNavigationBarBottomAdapter(it) }
+            configuration.giniComposableStyleProvider?.let { setGiniComposableStyleProvider(it) }
         }
 }
