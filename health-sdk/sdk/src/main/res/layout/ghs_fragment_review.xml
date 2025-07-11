@@ -122,6 +122,7 @@
             android:layout_height="wrap_content"
             android:nextFocusUp="@id/close"
             android:importantForAccessibility="no"
+            android:focusable="false"
             android:nextFocusDown="@id/ghs_payment_details"
             android:nextFocusForward="@id/ghs_payment_details"
             android:paddingHorizontal="@dimen/gps_large"
@@ -133,6 +134,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
+                android:importantForAccessibility="no"
                 android:layout_height="wrap_content">
 
                 <net.gini.android.internal.payment.review.reviewComponent.ReviewView
