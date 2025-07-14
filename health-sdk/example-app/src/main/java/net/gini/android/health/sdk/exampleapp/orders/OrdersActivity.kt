@@ -26,6 +26,7 @@ import net.gini.android.health.sdk.exampleapp.util.showAlertDialog
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.internal.payment.utils.DisplayedScreen
+import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -39,7 +40,7 @@ class OrdersActivity : AppCompatActivity() {
         binding = ActivityOrdersBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setActivityTitle(DisplayedScreen.Nothing)
-
+        binding.root.applyWindowInsetsWithTopPadding(binding.ordersList)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { observeOrders() }

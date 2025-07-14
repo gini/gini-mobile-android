@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/gps_medium"
+    android:id="@+id/mainContainer"
     tools:context="net.gini.android.health.sdk.exampleapp.MainActivity">
 
     <ScrollView
@@ -24,7 +24,7 @@
                 android:id="@+id/iv_giniLogo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/gps_large_64"
+                android:layout_marginTop="@dimen/gps_large"
                 android:src="@drawable/gini_logo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

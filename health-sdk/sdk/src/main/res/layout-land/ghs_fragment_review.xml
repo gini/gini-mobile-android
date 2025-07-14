@@ -76,6 +76,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/ghs_container_view"
                 style="@style/GiniPaymentTheme.PaymentDetailsCard"
                 android:clipToOutline="true">
                 <FrameLayout
