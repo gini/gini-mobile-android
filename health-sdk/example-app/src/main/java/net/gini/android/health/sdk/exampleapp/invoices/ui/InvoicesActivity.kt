@@ -34,6 +34,7 @@ import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.utils.DisplayedScreen
+import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
@@ -47,6 +48,30 @@ open class InvoicesActivity : AppCompatActivity() {
         binding = ActivityInvoicesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setActivityTitle(DisplayedScreen.Nothing)
+        binding.root.applyWindowInsetsWithTopPadding(binding.invoicesList)
+        // Check if fragment is already visible on recreation
+        val fragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
+        val isFragmentInBackStack = fragment != null && fragment.isAdded
+
+        setSiblingViewsEnabled(!isFragmentInBackStack)
+        if (isFragmentInBackStack) {
+            setActivityTitle(DisplayedScreen.ReviewScreen)
+        }
+
+        supportFragmentManager.addOnBackStackChangedListener {
+
+            val findFragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
+            val isFragmentInBackStackChanged = findFragment != null && findFragment.isAdded
+
+            setSiblingViewsEnabled(!isFragmentInBackStackChanged)
+
+            if (!isFragmentInBackStackChanged) {
+                title = resources.getString(R.string.title_activity_invoices)
+            }
+
+            invalidateOptionsMenu()
+        }
+
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -120,7 +145,7 @@ open class InvoicesActivity : AppCompatActivity() {
                         viewModel.getPaymentFragmentForPaymentDetails(result, IntentCompat.getParcelableExtra(intent, MainActivity.PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java))
                             .onSuccess { paymentFragment ->
                                 supportFragmentManager.beginTransaction()
-                                    .add(R.id.fragment_container, paymentFragment, REVIEW_FRAGMENT_TAG)
+                                    .replace(R.id.fragment_container, paymentFragment, REVIEW_FRAGMENT_TAG)
                                     .addToBackStack(paymentFragment::class.java.name)
                                     .commit()
                             }
@@ -236,6 +261,45 @@ open class InvoicesActivity : AppCompatActivity() {
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
             }
+    }
+
+    private fun setSiblingViewsEnabled(enabled: Boolean) {
+        val accessibilityFlag = if (enabled) {
+            View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+        } else {
+            View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+        }
+
+        // Apply to all visible items in the RecyclerView
+        for (i in 0 until binding.invoicesList.childCount) {
+            binding.invoicesList.getChildAt(i)?.apply {
+                isFocusable = enabled
+                isEnabled = enabled
+                isClickable = enabled
+                importantForAccessibility = accessibilityFlag
+            }
+        }
+
+        binding.invoicesList.apply {
+            isFocusable = enabled
+            isEnabled = enabled
+            isClickable = enabled
+            importantForAccessibility = accessibilityFlag
+        }
+
+        binding.noInvoicesLabel.apply {
+            isFocusable = enabled
+            isEnabled = enabled
+            isClickable = enabled
+            importantForAccessibility = accessibilityFlag
+        }
+
+        binding.loadingIndicatorContainer.apply {
+            isFocusable = enabled
+            isEnabled = enabled
+            isClickable = enabled
+            importantForAccessibility = accessibilityFlag
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

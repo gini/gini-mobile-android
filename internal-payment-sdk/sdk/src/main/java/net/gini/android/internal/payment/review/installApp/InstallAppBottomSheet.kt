@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +26,8 @@ import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import org.slf4j.LoggerFactory
@@ -49,7 +52,8 @@ class InstallAppBottomSheet private constructor(
     private val viewModel: InstallAppViewModel by viewModels {
         InstallAppViewModel.Factory(
             paymentComponent,
-            backListener
+            backListener,
+            listener
         )
     }
 
@@ -75,7 +79,10 @@ class InstallAppBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetInstallAppBinding.inflate(inflater, container, false)
-        binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
+        if (!resources.isLandscapeOrientation()) {
+            binding.root.minHeight =
+                minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
+        }
         binding.gpsPoweredByGiniLayout.root.visibility =
             if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
                 View.VISIBLE else View.INVISIBLE
@@ -85,10 +92,20 @@ class InstallAppBottomSheet private constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.dragHandle.onKeyboardAction {
+            dismiss()
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.paymentProviderApp.collect { paymentProviderApp ->
                     if (paymentProviderApp != null) {
+                        ViewCompat.setAccessibilityPaneTitle(
+                            view, String.format(
+                                getLocaleStringResource(R.string.gps_install_app_title),
+                                paymentProviderApp.paymentProvider.name
+                            )
+                        )
+
                         binding.gpsPaymentProviderIcon.gpsPaymentProviderIcon.setImageDrawable(
                             paymentProviderApp.icon
                         )
@@ -103,7 +120,11 @@ class InstallAppBottomSheet private constructor(
                             paymentProviderApp.paymentProvider.name
                         )
                         binding.gpsPlayStoreLogo.setOnClickListener {
-                            paymentProviderApp.paymentProvider.playStoreUrl?.let { openPlayStoreUrl(it) }
+                            paymentProviderApp.paymentProvider.playStoreUrl?.let {
+                                openPlayStoreUrl(
+                                    it
+                                )
+                            }
                         }
                         if (paymentProviderApp.isInstalled()) {
                             updateUI(paymentProviderApp)
@@ -133,7 +154,7 @@ class InstallAppBottomSheet private constructor(
         }
 
         binding.gpsForwardButton.setOnClickListener {
-            listener?.onForwardToBankSelected()
+            viewModel.installAppForwardListener?.onForwardToBankSelected()
             dismiss()
         }
     }

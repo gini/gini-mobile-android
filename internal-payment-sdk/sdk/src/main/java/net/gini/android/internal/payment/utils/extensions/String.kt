@@ -32,5 +32,9 @@ fun String.toBackendFormat(): String {
 
 fun String.sanitizeAmount(): String = formatCurrency(this)
 
+fun String.addEuroSymbol(): String {
+    return "$this €"
+}
+
 fun String.isValidPdfName(): Boolean =
     !(this.isEmpty() || this.length > PDF_NAME_MAX_LENGTH || !(this matches PDF_NAME_REGEX))

@@ -8,7 +8,9 @@
         style="@style/GiniPaymentTheme.Widget.BottomSheet.DragHandle"
         android:id="@+id/drag_handle"
         android:layout_width="match_parent"
+        android:foreground="?attr/selectableItemBackground"
         android:layout_height="wrap_content"
+        android:focusable="true"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="@dimen/gps_medium"
         />
