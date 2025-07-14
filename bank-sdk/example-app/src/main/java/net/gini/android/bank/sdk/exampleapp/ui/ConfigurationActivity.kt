@@ -202,6 +202,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable custom navigation bar
         binding.layoutGeneralUiCustomizationToggles.switchCustomNavigationController.isChecked =
             configuration.isCustomNavBarEnabled
+        // enable custom primary button in compose
+        binding.layoutGeneralUiCustomizationToggles.switchCustomPrimaryComposeButton.isChecked =
+            configuration.isCustomPrimaryComposeButtonEnabled
         // enable event tracker
         binding.layoutFeatureToggle.switchEventTracker.isChecked =
             configuration.isEventTrackerEnabled
@@ -398,7 +401,8 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         // enable Error screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowErrorScreenCustomBottomNavbar
+        binding.layoutBottomNavigationToggles
+            .switchShowErrorScreenCustomBottomNavbar
             .setOnCheckedChangeListener { _, isChecked ->
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
@@ -560,51 +564,67 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         // enable custom navigation bar
-        binding.layoutGeneralUiCustomizationToggles.switchCustomNavigationController.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isCustomNavBarEnabled = isChecked
-                )
-            )
-        }
-
-        // enable event tracker
-        binding.layoutFeatureToggle.switchEventTracker.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isEventTrackerEnabled = isChecked
-                )
-            )
-        }
-
-        // enable Gini error logger
-        binding.layoutDebugDevelopmentOptionsToggles.switchGiniErrorLogger.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isGiniErrorLoggerEnabled = isChecked
-                )
-            )
-        }
-
-        // enable custom error logger
-        binding.layoutDebugDevelopmentOptionsToggles.switchCustomErrorLogger.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isCustomErrorLoggerEnabled = isChecked
-                )
-            )
-        }
-
-        // set imported file size bytes limit
-        binding.layoutDebugDevelopmentOptionsToggles.editTextImportedFileSizeBytesLimit.doAfterTextChanged {
-            if (it.toString().isNotEmpty()) {
+        binding.layoutGeneralUiCustomizationToggles.switchCustomNavigationController
+            .setOnCheckedChangeListener { _, isChecked ->
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
-                        importedFileSizeBytesLimit = it.toString().toInt()
+                        isCustomNavBarEnabled = isChecked
                     )
                 )
             }
-        }
+
+        // enable custom primary button in compose
+        binding.layoutGeneralUiCustomizationToggles.switchCustomPrimaryComposeButton
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isCustomPrimaryComposeButtonEnabled = isChecked
+                    )
+                )
+            }
+
+
+        // enable event tracker
+        binding.layoutFeatureToggle.switchEventTracker
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isEventTrackerEnabled = isChecked
+                    )
+                )
+            }
+
+        // enable Gini error logger
+        binding.layoutDebugDevelopmentOptionsToggles.switchGiniErrorLogger
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isGiniErrorLoggerEnabled = isChecked
+                    )
+                )
+            }
+
+        // enable custom error logger
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomErrorLogger
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isCustomErrorLoggerEnabled = isChecked
+                    )
+                )
+            }
+
+        // set imported file size bytes limit
+        binding.layoutDebugDevelopmentOptionsToggles.editTextImportedFileSizeBytesLimit
+            .doAfterTextChanged {
+                if (it.toString().isNotEmpty()) {
+                    configurationViewModel.setConfiguration(
+                        configurationViewModel.configurationFlow.value.copy(
+                            importedFileSizeBytesLimit = it.toString().toInt()
+                        )
+                    )
+                }
+            }
 
         binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.doAfterTextChanged {
             configurationViewModel.setConfiguration(
@@ -612,8 +632,9 @@ class ConfigurationActivity : AppCompatActivity() {
                     clientId = it.toString()
                 )
             )
-            if (it.toString()
-                    .isNotEmpty() && binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.toString()
+            if (
+                it.toString().isNotEmpty() &&
+                binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.toString()
                     .isNotEmpty()
             ) {
                 applyClientSecretAndClientId()
@@ -625,8 +646,8 @@ class ConfigurationActivity : AppCompatActivity() {
                     clientSecret = it.toString()
                 )
             )
-            if (it.toString()
-                    .isNotEmpty() && binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.toString()
+            if (it.toString().isNotEmpty() &&
+                binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.toString()
                     .isNotEmpty()
             ) {
                 applyClientSecretAndClientId()
@@ -634,76 +655,84 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         // enable return assistant
-        binding.layoutFeatureToggle.switchReturnAssistantFeature.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isReturnAssistantEnabled = isChecked
+        binding.layoutFeatureToggle.switchReturnAssistantFeature
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isReturnAssistantEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // enable return reasons dialog
-        binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isReturnReasonsEnabled = isChecked
+        binding.layoutReturnAssistantToggles.switchReturnReasonsDialog
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isReturnReasonsEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // Digital invoice onboarding custom illustration
-        binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isDigitalInvoiceOnboardingCustomIllustrationEnabled = isChecked
+        binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isDigitalInvoiceOnboardingCustomIllustrationEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // Digital invoice help bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceHelpBottomNavigationBar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isDigitalInvoiceHelpBottomNavigationBarEnabled = isChecked
+        binding.layoutBottomNavigationToggles.switchDigitalInvoiceHelpBottomNavigationBar
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isDigitalInvoiceHelpBottomNavigationBarEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // Digital invoice onboarding bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceOnboardingBottomNavigationBar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isDigitalInvoiceOnboardingBottomNavigationBarEnabled = isChecked
+        binding.layoutBottomNavigationToggles.switchDigitalInvoiceOnboardingBottomNavigationBar
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isDigitalInvoiceOnboardingBottomNavigationBarEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // Digital invoice bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceBottomNavigationBar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isDigitalInvoiceBottomNavigationBarEnabled = isChecked
+        binding.layoutBottomNavigationToggles.switchDigitalInvoiceBottomNavigationBar
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isDigitalInvoiceBottomNavigationBarEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // Allow screenshots
-        binding.layoutDebugDevelopmentOptionsToggles.switchAllowScreenshots.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isAllowScreenshotsEnabled = isChecked
+        binding.layoutDebugDevelopmentOptionsToggles.switchAllowScreenshots
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isAllowScreenshotsEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // Debug mode
-        binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isDebugModeEnabled = isChecked
+        binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        isDebugModeEnabled = isChecked
+                    )
                 )
-            )
-        }
+            }
 
         // enable Skonto
         binding.layoutFeatureToggle.switchSkontoFeature.setOnCheckedChangeListener { _, isChecked ->

@@ -41,6 +41,12 @@ public final class DocumentFactory {
             final PdfDocument pdfDocument = PdfDocument.fromIntent(intent, importMethod);
             pdfDocument.loadFilename(context);
             return pdfDocument;
+        } else if (hasMimeType(intent, context, MimeType.APPLICATION_XML.asString())
+                ||
+                hasMimeType(intent, context, MimeType.TEXT_XML.asString())) {
+            final XmlDocument xmlDocument = XmlDocument.fromIntent(intent, importMethod);
+            xmlDocument.loadFilename(context);
+            return xmlDocument;
         } else if (hasMimeTypeWithPrefix(intent, context,
                 MimeType.IMAGE_PREFIX.asString())) {
             return ImageDocument.fromIntent(intent, context, deviceOrientation, deviceType,
@@ -85,6 +91,8 @@ public final class DocumentFactory {
             return new ImageMultiPageDocument((ImageDocument) document);
         } else if (document instanceof PdfDocument) {
             return new PdfMultiPageDocument((PdfDocument) document);
+        } else if (document instanceof XmlDocument) {
+            return new XmlMultiPageDocument((XmlDocument) document);
         } else if (document instanceof QRCodeDocument) {
             return new QRCodeMultiPageDocument((QRCodeDocument) document);
         } else {

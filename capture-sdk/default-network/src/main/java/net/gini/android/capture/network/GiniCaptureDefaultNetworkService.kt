@@ -10,11 +10,12 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.GiniBankAPIBuilder
-import net.gini.android.bank.api.models.*
+import net.gini.android.bank.api.models.AmplitudeEvent
+import net.gini.android.bank.api.models.AmplitudeRoot
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
-import net.gini.android.capture.internal.network.AmplitudeRoot
+import net.gini.android.capture.internal.network.AmplitudeRootModel
 import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.network.model.DocumentLayout
 import net.gini.android.capture.internal.network.model.DocumentPage
@@ -22,7 +23,13 @@ import net.gini.android.capture.logging.ErrorLog
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService.Companion.builder
 import net.gini.android.capture.network.logging.formattedErrorMessage
 import net.gini.android.capture.network.logging.toErrorEvent
-import net.gini.android.capture.network.model.*
+import net.gini.android.capture.network.model.CompoundExtractionsMapper
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.network.model.ReturnReasonsMapper
+import net.gini.android.capture.network.model.SpecificExtractionMapper
+import net.gini.android.capture.network.model.toCaptureDocumentLayout
+import net.gini.android.capture.network.model.toCaptureDocumentPages
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
 import net.gini.android.capture.util.CancellationToken
@@ -48,8 +55,9 @@ import net.gini.android.bank.api.models.Configuration as BankConfiguration
 /**
  * Default implementation of the network related tasks required by the Gini Capture SDK.
  *
- * Relies on the [Gini Bank API Library](https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/) for
- * executing the requests, which implements communication with the Gini Bank API using generated
+ * Relies on the
+ * [Gini Bank API Library](https://developer.gini.net/gini-mobile-android/bank-api-library/library/html/)
+ * for executing the requests, which implements communication with the Gini Bank API using generated
  * anonymous Gini users.
  *
  * *Important:* Access to the Gini User Center API is required which is restricted to
@@ -92,14 +100,14 @@ internal constructor(
 
 
     override fun sendEvents(
-        amplitudeRoot: AmplitudeRoot,
+        amplitudeRootModel: AmplitudeRootModel,
         callback: GiniCaptureNetworkCallback<Void, Error>
     ): CancellationToken? =
         launchCancellable {
             when (val configurationResource =
                 giniBankApi.documentManager.sendEvents(
                     mapAmplitudeRootModelToAmplitudeRoot(
-                        amplitudeRoot
+                        amplitudeRootModel
                     )
                 )) {
                 is Resource.Success -> {
@@ -128,10 +136,10 @@ internal constructor(
             }
         }
 
-    private fun mapAmplitudeRootModelToAmplitudeRoot(amplitudeRoot: AmplitudeRoot) =
+    private fun mapAmplitudeRootModelToAmplitudeRoot(amplitudeRootModel: AmplitudeRootModel) =
         AmplitudeRoot(
-            apiKey = amplitudeRoot.apiKey,
-            events = amplitudeRoot.events.map { event ->
+            apiKey = amplitudeRootModel.apiKey,
+            events = amplitudeRootModel.events.map { event ->
                 AmplitudeEvent(
                     userId = event.userId,
                     deviceId = event.deviceId,
@@ -192,10 +200,13 @@ internal constructor(
             isSkontoEnabled = configuration.isSkontoEnabled,
             isReturnAssistantEnabled = configuration.isReturnAssistantEnabled,
             isTransactionDocsEnabled = configuration.transactionDocsEnabled,
+            isQrCodeEducationEnabled = configuration.qrCodeEducationEnabled,
             isInstantPaymentEnabled = configuration.instantPaymentEnabled,
+            isEInvoiceEnabled = configuration.isEInvoiceEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
         )
 
+    @Suppress("LongMethod")
     override fun upload(
         document: Document,
         callback: GiniCaptureNetworkCallback<Result, Error>
@@ -305,6 +316,7 @@ internal constructor(
         }
     }
 
+    @Suppress("LongMethod")
     override fun analyze(
         giniApiDocumentIdRotationMap: LinkedHashMap<String, Int>,
         callback: GiniCaptureNetworkCallback<AnalysisResult, Error>
@@ -371,7 +383,8 @@ internal constructor(
                     ReturnReasonsMapper.mapToGiniCapture(allExtractions.returnReasons)
 
                 LOG.debug(
-                    "Document analysis success for documents {}: extractions = {}; compoundExtractions = {}; returnReasons = {}",
+                    "Document analysis success for documents {}: " +
+                            "extractions = {}; compoundExtractions = {}; returnReasons = {}",
                     giniApiDocumentIdRotationMap, extractions, compoundExtractions, returnReasons
                 )
 
@@ -504,6 +517,7 @@ internal constructor(
         }
     }
 
+    @Suppress("LongMethod")
     override fun sendFeedback(
         extractions: MutableMap<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: MutableMap<String, GiniCaptureCompoundExtraction>,

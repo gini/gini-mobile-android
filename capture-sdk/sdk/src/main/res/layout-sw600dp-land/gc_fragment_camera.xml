@@ -334,13 +334,13 @@
             style="@style/GiniCaptureTheme.Typography.Caption1"
             android:layout_width="290dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/gc_on_device_iban_detected_background"
-            android:gravity="center"
-            android:paddingHorizontal="@dimen/gc_medium"
-            android:paddingVertical="@dimen/gc_medium_12"
             android:text="@string/gc_iban_detected_please_take_picture"
             android:textColor="@color/gc_light_01"
+            android:gravity="center"
+            android:paddingVertical="@dimen/gc_medium_12"
+            android:paddingHorizontal="@dimen/gc_medium"
             android:visibility="gone"
+            android:background="@drawable/gc_on_device_iban_detected_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/gc_camera_frame" />
@@ -367,17 +367,17 @@
             app:layout_constraintTop_toBottomOf="@+id/gc_injected_loading_indicator" />
 
         <include
-            android:id="@+id/gc_detection_error_layout"
             layout="@layout/gc_detection_error_layout"
+            android:id="@+id/gc_detection_error_layout"
             android:layout_width="@dimen/gc_photo_disabled_detection_width"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginHorizontal="@dimen/gc_large_32"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_marginBottom="@dimen/gc_large"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/gc_camera_frame"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -400,5 +400,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/gc_qr_code_education_compose_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,6 +18,7 @@ import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.invoice.InvoiceScreenErrorContent
 import net.gini.android.bank.sdk.invoice.InvoiceScreenReadyContent
 import net.gini.android.bank.sdk.invoice.colors.InvoicePreviewScreenColors
+import net.gini.android.capture.ui.components.GiniComposableStyleProviderConfig
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenu
 import net.gini.android.capture.ui.components.menu.context.GiniDropdownMenuItem
 import net.gini.android.capture.ui.theme.GiniTheme
@@ -29,7 +30,8 @@ internal fun TransactionDocInvoicePreviewScreen(
     viewModel: TransactionDocInvoicePreviewViewModel,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
-    isLandScape : Boolean
+    isLandScape : Boolean,
+    composableProviderConfig: GiniComposableStyleProviderConfig?
 ) {
     val state by viewModel.collectAsState()
 
@@ -41,6 +43,7 @@ internal fun TransactionDocInvoicePreviewScreen(
             },
             onRetryClicked = viewModel::init,
             errorType = state.errorType,
+            composableProviderConfig = composableProviderConfig
         )
 
         is TransactionDocInvoicePreviewFragmentState.Ready -> InvoiceScreenReadyContent(

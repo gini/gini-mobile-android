@@ -38,6 +38,7 @@ import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.invoice.colors.InvoicePreviewScreenColors
 import net.gini.android.bank.sdk.invoice.colors.section.InvoicePreviewScreenFooterColors
 import net.gini.android.capture.error.ErrorType
+import net.gini.android.capture.ui.components.GiniComposableStyleProviderConfig
 import net.gini.android.capture.ui.components.button.filled.GiniButton
 import net.gini.android.capture.ui.components.list.ZoomableLazyColumn
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
@@ -53,7 +54,8 @@ internal fun InvoicePreviewScreen(
     viewModel: InvoicePreviewViewModel,
     modifier: Modifier = Modifier,
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
-    isLandScape: Boolean
+    isLandScape: Boolean,
+    composableProviderConfig: GiniComposableStyleProviderConfig?
 ) {
     val state by viewModel.collectAsState()
 
@@ -65,7 +67,8 @@ internal fun InvoicePreviewScreen(
                 viewModel.onUserNavigatesBack()
             },
             onRetryClicked = viewModel::init,
-            errorType = state.errorType
+            errorType = state.errorType,
+            composableProviderConfig = composableProviderConfig
         )
 
         is InvoicePreviewFragmentState.Ready -> InvoiceScreenReadyContent(
@@ -91,7 +94,8 @@ internal fun InvoiceScreenErrorContent(
     colors: InvoicePreviewScreenColors = InvoicePreviewScreenColors.colors(),
     onCloseClicked: () -> Unit,
     onRetryClicked: () -> Unit,
-    errorType: ErrorType
+    errorType: ErrorType,
+    composableProviderConfig: GiniComposableStyleProviderConfig?
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -160,7 +164,8 @@ internal fun InvoiceScreenErrorContent(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp),
                 text = stringResource(R.string.gbs_skonto_invoice_preview_try_again),
-                onClick = onRetryClicked
+                onClick = onRetryClicked,
+                composableProviderConfig = composableProviderConfig
             )
         }
     }
@@ -366,7 +371,8 @@ private fun InvoiceScreenErrorContentPreview() {
         InvoiceScreenErrorContent(
             onCloseClicked = {},
             onRetryClicked = {},
-            errorType = ErrorType.GENERAL
+            errorType = ErrorType.GENERAL,
+            composableProviderConfig = GiniComposableStyleProviderConfig()
         )
     }
 }

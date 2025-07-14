@@ -65,7 +65,7 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/indicator"
             android:layout_width="0dp"
-            android:layout_height="@dimen/gps_large"
+            android:layout_height="@dimen/gps_large_24"
             android:background="@color/ghs_light_07"
             android:nextFocusDown="@id/payment_details_scrollview"
             android:visibility="gone"
@@ -74,8 +74,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:tabBackground="@drawable/ghs_tab_pager_selector"
             app:tabGravity="center"
+            app:tabMinWidth="@dimen/gps_large_24"
             app:tabIndicatorHeight="0dp"
-            app:tabMaxWidth="@dimen/gps_large"
             app:tabMode="fixed"
             tools:visibility="visible" />
 

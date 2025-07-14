@@ -65,6 +65,7 @@
     <string name="gc_error_file_import_page_count_title">The document can only have a maximum of 10 pages.</string>
     <string name="gc_error_file_import_page_count_text"></string>
     <string name="gc_error_file_import_unsupported_title">Only files of the formats jpg, png, gif or PDF can be analysed.</string>
+    <string name="gc_error_file_import_unsupported_with_e_invoice_title">Only files of the formats jpg, png, gif, PDF or XML can be analysed.</string>
     <string name="gc_error_file_import_unsupported_text"></string>
     <string name="gc_error_file_import_password_title">Password protected documents cannot be analysed.</string>
     <string name="gc_error_file_import_password_text"></string>
@@ -87,6 +88,7 @@
     <string name="gc_document_import_close_error">Cancel</string>
     <string name="gc_file_chooser_fotos_section_header">Photos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
+    <string name="gc_file_chooser_pdfs_xmls_section_header">Invoices: PDF &amp; XML</string>
     <string name="gc_help_item_photo_tips_title">Tips for best results from photos</string>
     <string name="gc_help_item_file_import_guide_title">Import documents from other apps</string>
     <string name="gc_help_item_supported_formats_title">Supported formats</string>
@@ -94,6 +96,7 @@
     <string name="gc_supported_format_single_page_as_jpeg_png_gif">1-sided photos of format jpeg, png or gif</string>
     <string name="gc_supported_format_pdf">PDF documents of up to 10 pages</string>
     <string name="gc_supported_format_qr_code">QR codes</string>
+    <string name="gc_supported_format_e_invoices">E-Invoices: XRechnung (XML), ZUGFeRD (PDF)</string>
     <string name="gc_unsupported_format_handwriting">Handwriting</string>
     <string name="gc_unsupported_format_photos_of_screens">Photos of monitors or screens</string>
     <string name="gc_supported_format_section_header">Supported formats</string>
@@ -160,20 +163,13 @@
     <string name="gc_date_picker_select">Select</string>
     <string name="gc_date_picker_cancel">Cancel</string>
     <!--   endregion -->
-    <!--   region Qr Enagagement -->
-    <string name="gc_qr_engagement_page_1_title">More than just QR codes!</string>
-    <string name="gc_qr_engagement_page_1_description">Photo Payment isn’t just for QR codes. You can photo invoices or payment forms. Or upload images, PDFs or even GIFs.</string>
-
-    <string name="gc_qr_engagement_page_2_title">Photos, PDFs &amp; more!</string>
-    <string name="gc_qr_engagement_page_2_description">Take a photo, upload a PDF (up to 10 pages), or scan digital invoices and remittance slips – Photo Payment will handle the payment details for you!</string>
-
-    <string name="gc_qr_engagement_page_3_title">Send Screens &amp; GIFs!</string>
-    <string name="gc_qr_engagement_page_3_description">Scan payment details directly from a monitor, screenshot, GIF or QR code – quick and easy!</string>
-
-    <string name="gc_qr_engagement_btn_read_more">More Information</string>
-    <string name="gc_qr_engagement_btn_skip">Continue Payment</string>
-    <string name="gc_qr_engagement_btn_back">Back</string>
-    <string name="gc_qr_engagement_btn_next">Next</string>
-    <!--   endregion -->
     <string name="gc_detection_error_layout_description">QR code scanning is currently unavailable. Please take a picture of your invoice instead.</string>
+    <!--   region Education -->
+    <string name="gc_education_loading">analyzing</string>
+    <string name="gc_qr_education_intro_message">In case you didn’t know...</string>
+    <string name="gc_qr_education_photo_doc_message">You can take photos of receipts or remittance slips – even without a QR code</string>
+    <string name="gc_qr_education_upload_picture_message">You can upload PDFs, images, or GIFs</string>
+    <string name="gc_invoice_education_message">You can upload PDFs, images, or GIFs</string>
+    <string name="gc_invoice_education_content_description">analyzing invoice in progress</string>
+    <!--   endregion -->
 </resources>

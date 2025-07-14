@@ -219,7 +219,8 @@ class ReviewFragment private constructor(
         pager.adapter = documentPageAdapter
       val mediator = TabLayoutMediator(indicator, pager) { tab, _ ->
           tab.view.isFocusable = documentPageAdapter.itemCount > 1
-        }
+          tab.view.isClickable = true
+      }
         mediator.attach()
     }
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {

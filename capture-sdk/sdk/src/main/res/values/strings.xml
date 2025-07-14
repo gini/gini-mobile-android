@@ -67,6 +67,7 @@
     <string name="gc_error_file_import_page_count_title">Das Dokument darf nicht mehr als 10 Seiten haben.</string>
     <string name="gc_error_file_import_page_count_text"></string>
     <string name="gc_error_file_import_unsupported_title">Nur Dateien vom Format jpg, png, gif oder PDF können analysiert werden.</string>
+    <string name="gc_error_file_import_unsupported_with_e_invoice_title">Nur Dateien vom Format jpg, png, gif, PDF oder XML können analysiert werden.</string>
     <string name="gc_error_file_import_unsupported_text"></string>
     <string name="gc_error_file_import_password_title">Passwortgeschützte Dokumente können nicht analysiert werden.</string>
     <string name="gc_error_file_import_password_text"></string>
@@ -93,6 +94,7 @@
 
     <string name="gc_file_chooser_fotos_section_header">Fotos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
+    <string name="gc_file_chooser_pdfs_xmls_section_header">Rechnungen: PDF &amp; XML</string>
     <string name="gc_help_item_photo_tips_title">Tipps für beste Ergebnisse</string>
     <string name="gc_help_item_file_import_guide_title">Dokumente von anderen Apps importieren</string>
     <string name="gc_help_item_supported_formats_title">Unterstützte Formate</string>
@@ -106,6 +108,7 @@
     <string name="gc_supported_format_qr_type_stuzza" translatable="false">Stuzza (AT)</string>
     <string name="gc_supported_format_qr_type_girocode" translatable="false">Girocode (DE)</string>
     <string name="gc_supported_format_qr_type_gini_payment" translatable="false">QR by Gini</string>
+    <string name="gc_supported_format_e_invoices">E-Rechnungen: XRechnung (XML), ZUGFeRD (PDF)</string>
     <string name="gc_unsupported_format_handwriting">Handschrift</string>
     <string name="gc_unsupported_format_photos_of_screens">Fotos von Bildschirmen</string>
     <string name="gc_supported_format_section_header">Unterstützte Formate:</string>
@@ -179,20 +182,13 @@
     <string name="gc_date_picker_select">Auswählen</string>
     <string name="gc_date_picker_cancel">Abbrechen</string>
     <!--   endregion -->
-    <!--   region Qr Enagagement -->
-    <string name="gc_qr_engagement_page_1_title">Mehr als nur QR-Codes!</string>
-    <string name="gc_qr_engagement_page_1_description">Fotoüberweisung kann mehr als nur QR-Codes scannen! Fotografieren Sie entweder Rechnungen oder Zahlungsformulare oder laden Sie PDFs, Bilder, GIFs hoch.</string>
-
-    <string name="gc_qr_engagement_page_2_title">Fotos, PDFs &amp; mehr!</string>
-    <string name="gc_qr_engagement_page_2_description">Fotoüberweisung überträgt die Zahlungsdaten in ein Überweisungsformular: Fotografieren Sie eine Rechnung, laden Sie ein mehrseitiges PDF hoch oder scannen Sie digital erstellte Rechnungen / Überweisungsträger.</string>
-
-    <string name="gc_qr_engagement_page_3_title">Screenshots &amp; GIFs nutzen!</string>
-    <string name="gc_qr_engagement_page_3_description">Scannen Sie Zahlungsdaten direkt von einem Monitor, Screenshot, GIF oder QR-Code – schnell und einfach!</string>
-
-    <string name="gc_qr_engagement_btn_read_more">Mehr Erfahren</string>
-    <string name="gc_qr_engagement_btn_skip">Zahlung fortsetzen</string>
-    <string name="gc_qr_engagement_btn_back">Zurück</string>
-    <string name="gc_qr_engagement_btn_next">Weiter</string>
-    <!--   endregion -->
     <string name="gc_detection_error_layout_description">QR-Code scannen ist derzeit nicht verfügbar. Bitte fotografieren Sie stattdessen Ihre Rechnung.</string>
+    <!--   region Education -->
+    <string name="gc_education_loading">analysieren</string>
+    <string name="gc_qr_education_intro_message">Falls Sie es nicht wussten...</string>
+    <string name="gc_qr_education_photo_doc_message">Fotografieren Sie direkt ein Zahlungsformular oder eine Rechnung - auch ohne QR-Code</string>
+    <string name="gc_qr_education_upload_picture_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
+    <string name="gc_invoice_education_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
+    <string name="gc_invoice_education_content_description">analyse der Rechnung läuft</string>
+    <!--   endregion -->
 </resources>

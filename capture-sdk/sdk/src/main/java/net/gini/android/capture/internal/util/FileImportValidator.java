@@ -1,11 +1,13 @@
 package net.gini.android.capture.internal.util;
 
 
-import static net.gini.android.capture.util.UriHelper.getMimeType;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import net.gini.android.capture.R;
 import net.gini.android.capture.internal.pdf.Pdf;
@@ -18,9 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
+import static net.gini.android.capture.util.UriHelper.getMimeType;
 
 /**
  * Internal use only.
@@ -129,8 +129,21 @@ public class FileImportValidator {
         return false;
     }
 
+    private boolean isXml(final List<String> mimeTypes) {
+        for (final String mimeType : mimeTypes) {
+            if (MimeType.APPLICATION_XML.equals(mimeType) ||
+                    MimeType.TEXT_XML.equals(mimeType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isSupportedFileType(final List<String> mimeTypes) {
         if (isPdf(mimeTypes)) {
+            return true;
+        }
+        if (isXml(mimeTypes)) {
             return true;
         }
         for (final String mimeType : mimeTypes) {

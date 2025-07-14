@@ -42,6 +42,7 @@ class InvoicePreviewFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
+
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -50,7 +51,10 @@ class InvoicePreviewFragment : Fragment() {
                         modifier = Modifier.fillMaxSize(),
                         viewModel = viewModel,
                         navigateBack = { findNavController().navigateUp() },
-                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext())
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                        composableProviderConfig =
+                            GiniCapture.getInstance()
+                                .giniComposableStyleProvider?.setGiniComposableStyleProviderConfig()
                     )
                 }
             }

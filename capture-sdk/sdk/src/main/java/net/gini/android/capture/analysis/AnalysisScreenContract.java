@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
+import net.gini.android.capture.analysis.education.EducationCompleteListener;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.util.Size;
 
@@ -66,6 +67,8 @@ interface AnalysisScreenContract {
 
         abstract void showError(String errorMessage, Document document);
         abstract void showError(ErrorType errorType, Document document);
+
+        abstract void showEducation(EducationCompleteListener listener);
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements

@@ -61,6 +61,7 @@ import net.gini.android.capture.internal.camera.api.camerax.CameraXController;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoEdit;
 import net.gini.android.capture.internal.camera.view.QRCodePopup;
+import net.gini.android.capture.internal.camera.view.education.qrcode.QRCodeEducationPopup;
 import net.gini.android.capture.internal.fileimport.FileChooserFragment;
 import net.gini.android.capture.internal.fileimport.FileChooserResult;
 import net.gini.android.capture.internal.iban.IBANRecognizerFilter;
@@ -72,6 +73,7 @@ import net.gini.android.capture.internal.qrcode.PaymentQRCodeData;
 import net.gini.android.capture.internal.qrcode.PaymentQRCodeReader;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTask;
 import net.gini.android.capture.internal.qrcode.QRCodeDetectorTaskMLKit;
+import net.gini.android.capture.internal.qreducation.model.FlowType;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.textrecognition.CropToCameraFrameTextRecognizer;
 import net.gini.android.capture.internal.textrecognition.MLKitTextRecognizer;
@@ -145,7 +147,7 @@ import static net.gini.android.capture.tracking.EventTrackingHelper.trackCameraS
  * native ones.
  * TODO: refactor this to use a modern architecture for the camera fragment
  */
-class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader.Listener {
+class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragmentInterface, PaymentQRCodeReader.Listener {
 
     @VisibleForTesting
     static final String GC_SHARED_PREFS = "GC_SHARED_PREFS";
@@ -191,8 +193,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private String currentGenericErrorMessage = "";
     private String genericErrorType = "";
 
-    @VisibleForTesting
-    QRCodePopup<PaymentQRCodeData> mPaymentQRCodePopup;
     private QRCodePopup<String> mUnsupportedQRCodePopup;
 
     private View mImageCorners;
@@ -200,7 +200,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private boolean mInterfaceHidden;
     private boolean mInMultiPageState;
     private boolean mIsFlashEnabled = true;
-    private CameraFragmentListener mListener = NO_OP_LISTENER;
+
     private final UIExecutor mUIExecutor = new UIExecutor();
     private CameraInterface mCameraController;
     private ImageMultiPageDocument mMultiPageDocument;
@@ -255,6 +255,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     CameraFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull final CancelListener cancelListener, final boolean addPages) {
         mFragment = fragment;
         mCancelListener = cancelListener;
+        fragmentListener = NO_OP_LISTENER;
         this.addPages = addPages;
     }
 
@@ -302,6 +303,8 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         } else {
             showQRCodeViewWithDelay(paymentQRCodeData, qrCodeContent);
         }
+
+        mInterfaceHidden = true;
     }
 
     private boolean isPaymentQRCodeDetectionInProgress() {
@@ -315,7 +318,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         mQRCodeContent = qrCodeContent;
                         showUnsupportedQRCodePopup();
                     } else {
-                        mPaymentQRCodePopup.show(data);
+                        showQrCodePopup(data, () -> {
+                            handlePaymentQRCodeData(data);
+                            return Unit.INSTANCE;
+                        });
                     }
                 }, 1000);
     }
@@ -325,7 +331,10 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
             mQRCodeContent = qrCodeContent;
             showUnsupportedQRCodePopup();
         } else {
-            mPaymentQRCodePopup.show(data);
+            showQrCodePopup(data, () -> {
+                handlePaymentQRCodeData(data);
+                return Unit.INSTANCE;
+            });
         }
     }
 
@@ -348,7 +357,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     @Override
     public void setListener(@NonNull final CameraFragmentListener listener) {
-        mListener = listener;
+        fragmentListener = listener;
     }
 
     public void onCreate(final Bundle savedInstanceState) {
@@ -360,7 +369,6 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         if (savedInstanceState != null) {
             restoreSavedState(savedInstanceState);
         }
-
     }
 
     private void initFlashState() {
@@ -390,12 +398,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
         setTopBarInjectedViewContainer();
         setBottomInjectedViewContainer();
-        createPopups();
+        createPopups(view);
         initOnlyQRScanning();
 
         if (!GiniCapture.getInstance().isQRCodeScanningEnabled()) {
             setQRDisabledTexts();
         }
+
         return view;
     }
 
@@ -450,7 +459,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         }
     }
 
-    private void createPopups() {
+    private void createPopups(@NonNull View view) {
         mPaymentQRCodePopup =
                 new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, mLoadingIndicator,
                         getDifferentQRCodeDetectedPopupDelayMs(), true,
@@ -468,6 +477,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     mQRCodeContent = null;
                     return null;
                 });
+        qrCodeEducationPopup = new QRCodeEducationPopup<>(view.findViewById(R.id.gc_qr_code_education_compose_view));
     }
 
     /**
@@ -476,6 +486,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
      * @suppress
      */
     public void onStart() {
+        getUpdateFlowTypeUseCase().execute(null);
         checkGiniCaptureInstance();
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
@@ -515,7 +526,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     public void handleFileChooserResult(@NonNull FileChooserResult result) {
         if (result instanceof FileChooserResult.FilesSelected) {
             importDocumentFromIntent(((FileChooserResult.FilesSelected) result).getDataIntent());
-        } else if(result instanceof FileChooserResult.FilesSelectedUri) {
+        } else if (result instanceof FileChooserResult.FilesSelectedUri) {
             importDocumentFromUriList(((FileChooserResult.FilesSelectedUri) result).getList());
         } else if (result instanceof FileChooserResult.Error) {
             final GiniCaptureError error = ((FileChooserResult.Error) result).getError();
@@ -1098,8 +1109,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                 null,
                 Collections.singletonList(extraction)
         );
-        mListener.onExtractionsAvailable(
-                Collections.singletonMap(EXTRACTION_ENTITY_NAME, specificExtraction));
+        onQrCodeRecognized(Collections.singletonMap(EXTRACTION_ENTITY_NAME, specificExtraction));
     }
 
     private void updateCameraFlashState() {
@@ -1169,8 +1179,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                                     NoResultsFragment.navigateToNoResultsFragment(mFragment.findNavController(), CameraFragmentDirections.toNoResultsFragment(qrCodeDocument));
                                     return null;
                                 }
-                                mListener.onExtractionsAvailable(
-                                        requestResult.getAnalysisResult().getExtractions());
+                                onQrCodeRecognized(requestResult.getAnalysisResult().getExtractions());
                             }
                             return null;
                         });
@@ -1274,7 +1283,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                     final FileImportValidator.Error error = fileImportValidator.getError();
                     if (error != null) {
                         Error errorClass = new Error(error);
-                        ErrorType errorType = ErrorType.typeFromError(errorClass);
+                        ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
                         showGenericInvalidFileError(errorType);
                     }
                 }
@@ -1312,7 +1321,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
     private void requestClientDocumentCheck(final GiniCaptureDocument document) {
         showActivityIndicatorAndDisableInteraction();
         LOG.debug("Requesting document check from client");
-        mListener.onCheckImportedDocument(document,
+        fragmentListener.onCheckImportedDocument(document,
                 new CameraFragmentListener.DocumentCheckResultCallback() {
                     @Override
                     public void documentAccepted() {
@@ -1425,7 +1434,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
                         final FileImportValidator.Error error = exception.getValidationError();
                         if (error != null && mFragment.getActivity() != null) {
                             Error errorClass = new Error(error);
-                            ErrorType errorType = ErrorType.typeFromError(errorClass);
+                            ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
                             showGenericInvalidFileError(errorType);
                         }
                     }
@@ -1601,6 +1610,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         } else {
             if (photo != null) {
                 LOG.info("Picture taken");
+                getUpdateFlowTypeUseCase().execute(FlowType.Photo.INSTANCE);
                 showActivityIndicatorAndDisableInteraction();
                 photo.edit()
                         .crop(mCameraPreview, getRectForCroppingFromImageFrame())
@@ -2069,7 +2079,7 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
         } else {
             LOG.error(message);
         }
-        mListener.onError(new GiniCaptureError(errorCode, errorMessage));
+        fragmentListener.onError(new GiniCaptureError(errorCode, errorMessage));
     }
 
     private void onBackPressed() {
@@ -2081,13 +2091,13 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void trackCameraScreenCloseTappedEventIfNeeded() {
         if ((mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) && mUserAnalyticsEventTracker != null) {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
-            }
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                        }
+                    });
+        }
 
     }
 
@@ -2104,12 +2114,12 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void trackCameraScreenHelpTappedIfNeeded() {
         if ((mLayoutNoPermission == null || mLayoutNoPermission.getVisibility() != View.VISIBLE) && mUserAnalyticsEventTracker != null)
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
+            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.HELP_TAPPED,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                        }
+                    });
 
     }
 
@@ -2139,23 +2149,28 @@ class CameraFragmentImpl implements CameraFragmentInterface, PaymentQRCodeReader
 
     private void trackCameraAccessPermissionRequiredHelpClickedEventIfNeeded() {
         if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE && mUserAnalyticsEventTracker != null)
-                mUserAnalyticsEventTracker.trackEvent(
-                        UserAnalyticsEvent.HELP_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                            }
-                        });
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.HELP_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
+                        }
+                    });
 
     }
 
     private void trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded() {
         if (mLayoutNoPermission != null && mLayoutNoPermission.getVisibility() == View.VISIBLE && mUserAnalyticsEventTracker != null)
-                mUserAnalyticsEventTracker.trackEvent(
-                        UserAnalyticsEvent.CLOSE_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
-                            }
-                        });
+            mUserAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.CLOSE_TAPPED, new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(sScreenNamePermission));
+                        }
+                    });
 
+    }
+
+    @Override
+    public void hideImageCorners() {
+        hideDocumentCornerGuidesAnimated();
     }
 }
