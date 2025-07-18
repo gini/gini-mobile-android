@@ -55,11 +55,18 @@ jobs:
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
 
-      - name: Trigger release from defaultRepository
+      - name: Upload staging repository to Central Portal
+        # Make sure this runs after the artifacts have been deployed to OSSRH staging
+        env:
+          PORTAL_NAMESPACE: net.gini          # e.g. 'com.example' (no quotes in actual YAML)
+          TOKEN_USER: ${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}
+          TOKEN_PASS: ${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}
         run: |
-          curl -i -u "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}:${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}" \
-            -X POST \
-            "https://ossrh-staging-api.central.sonatype.com/service/rest/v1/manual/upload/defaultRepository/net.gini"
+          # Prepare the Bearer token for authentication (username:password base64)
+          AUTH=$(printf "%s:%s" "$TOKEN_USER" "$TOKEN_PASS" | base64)
+          # Trigger the upload of the staging repo to the Central Portal
+          curl -X POST -H "Authorization: Bearer $AUTH" \
+               "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/$PORTAL_NAMESPACE"
 
 
   release-documentation:
