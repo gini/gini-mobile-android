@@ -77,6 +77,7 @@
         android:drawableStart="@drawable/gps_info_circle_icon"
         android:drawableTint="@color/gps_more_information_color"
         android:drawablePadding="@dimen/gps_medium"
+        android:foreground="?attr/selectableItemBackground"
         android:text="@string/gps_more_information_underlined_part"
         android:textColor="@color/gps_payment_component_caption"
         android:gravity="center_vertical"

@@ -96,7 +96,7 @@ class MoreInformationFragment private constructor(
         binding.gpsFaqRecycler.adapter = faqAdapter
 
         binding.gpsPoweredByGini.root.visibility =
-            if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
+            if (viewModel.paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
                 View.VISIBLE else View.INVISIBLE
 
         viewModel.start()
