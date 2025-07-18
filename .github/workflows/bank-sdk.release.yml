@@ -54,11 +54,13 @@ jobs:
               "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
-      - name: Upload artifacts to OSSRH via manual API
+
+      - name: Trigger release from defaultRepository
         run: |
-          curl -u "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}:${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}" \
+          curl -i -u "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}:${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}" \
             -X POST \
-            https://central.sonatype.org/publish/manual/upload/defaultRepository/net.gini
+            "https://ossrh-staging-api.central.sonatype.com/service/rest/v1/manual/upload/defaultRepository/net.gini"
+
 
   release-documentation:
     needs: release
