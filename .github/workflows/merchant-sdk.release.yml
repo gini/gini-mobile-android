@@ -51,6 +51,18 @@ jobs:
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
 
+      - name: Upload staging repository to Central Portal
+        env:
+          PORTAL_NAMESPACE: net.gini
+          TOKEN_USER: ${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}
+          TOKEN_PASS: ${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}
+        run: |
+          # Prepare the Bearer token for authentication (username:password base64)
+          AUTH=$(printf "%s:%s" "$TOKEN_USER" "$TOKEN_PASS" | base64)
+          # Trigger the upload of the staging repo to the Central Portal
+          curl -X POST -H "Authorization: Bearer $AUTH" \
+               "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/$PORTAL_NAMESPACE"
+
   release-documentation:
     needs: release
     uses: ./.github/workflows/merchant-sdk.docs.release.yml
