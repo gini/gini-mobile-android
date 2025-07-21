@@ -94,23 +94,24 @@ class GiniCaptureFragment(
         setupUserAnalytics()
     }
 
+    private fun setCaptureVersionProperty() {
+        userAnalyticsEventTracker?.setUserProperty(
+            setOf(
+                UserAnalyticsUserProperty.CaptureSdkVersionName(BuildConfig.VERSION_NAME),
+            )
+        )
+    }
+
     private fun setupUserAnalytics() {
         if (GiniCapture.hasInstance()) {
             UserAnalytics.initialize(requireActivity())
+            setCaptureVersionProperty()
             val networkRequestsManager =
                 GiniCapture.getInstance().internal().networkRequestsManager
             val response = networkRequestsManager
                 ?.getConfigurations(UUID.randomUUID())
             response?.thenAcceptAsync { res ->
                 giniBankConfigurationProvider.update(res.configuration)
-                /**
-                 * Initialize the user property and set if
-                 * return assistant is enabled for the client or not
-                 * */
-                res.configuration.let {
-                    setEventSuperProperties(it)
-                    setUserEventProperties(it)
-                }
 
                 UserAnalytics.setPlatformTokens(
                     AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(
@@ -118,6 +119,11 @@ class GiniCaptureFragment(
                     ),
                     networkRequestsManager = networkRequestsManager
                 )
+
+                res.configuration.let {
+                    setEventSuperProperties(it)
+                    setUserEventProperties(it)
+                }
             }
         }
     }
@@ -130,9 +136,6 @@ class GiniCaptureFragment(
                 ),
                 UserAnalyticsUserProperty.GiniClientId(
                     configuration.clientID
-                ),
-                UserAnalyticsUserProperty.CaptureSdkVersionName(
-                    BuildConfig.VERSION_NAME
                 ),
                 UserAnalyticsUserProperty.InstantPaymentEnabled(
                     configuration.isInstantPaymentEnabled
