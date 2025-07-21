@@ -34,13 +34,13 @@ jobs:
           ruby-version: '3.2.0'
           bundler-cache: true
 
-      - name: "publish to Maven Central staging repo at https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      - name: "publish to Maven Central staging repo at https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
         uses: maierj/fastlane-action@v3.1.0
         with:
           lane: 'publish_to_maven_repo'
           options: >
             {
-              "repo_url": "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
+              "repo_url": "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/",
               "repo_user": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}",
               "repo_password": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}",
               "project_id": "health-sdk",
@@ -50,6 +50,18 @@ jobs:
               "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
+
+      - name: Upload staging repository to Central Portal
+        env:
+          PORTAL_NAMESPACE: net.gini
+          TOKEN_USER: ${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}
+          TOKEN_PASS: ${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}
+        run: |
+          # Prepare the Bearer token for authentication (username:password base64)
+          AUTH=$(printf "%s:%s" "$TOKEN_USER" "$TOKEN_PASS" | base64)
+          # Trigger the upload of the staging repo to the Central Portal
+          curl -X POST -H "Authorization: Bearer $AUTH" \
+               "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/$PORTAL_NAMESPACE"
 
   release-documentation:
     needs: release
