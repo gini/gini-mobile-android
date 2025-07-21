@@ -157,6 +157,10 @@ android {
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
+    lint {
+        checkDependencies = true
+    }
+
 }
 
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)

@@ -12,10 +12,15 @@ import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata
 import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import java.nio.charset.Charset
 import java.util.Arrays
 
 @RunWith(AndroidJUnit4::class)
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(
+    maxSdk = 35,
+)
 class ExifTest {
 
     @Test

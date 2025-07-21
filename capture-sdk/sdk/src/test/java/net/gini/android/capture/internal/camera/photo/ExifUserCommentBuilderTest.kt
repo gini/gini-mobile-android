@@ -10,8 +10,13 @@ import net.gini.android.capture.internal.camera.photo.ExifUserCommentHelper.Comp
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(
+    maxSdk = 35,
+)
 class ExifUserCommentBuilderTest {
 
     @After

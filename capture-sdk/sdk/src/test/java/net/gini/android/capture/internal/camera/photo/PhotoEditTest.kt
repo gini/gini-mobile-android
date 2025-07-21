@@ -11,11 +11,16 @@ import net.gini.android.capture.test.Helpers
 import net.gini.android.capture.test.PhotoSubject
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import java.io.IOException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(
+    maxSdk = 35,
+)
 class PhotoEditTest {
 
     @Test

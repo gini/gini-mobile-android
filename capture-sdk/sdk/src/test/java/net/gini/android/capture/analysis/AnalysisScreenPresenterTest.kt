@@ -31,6 +31,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.robolectric.annotation.Config
 import java.util.*
 import java.util.concurrent.CancellationException
 
@@ -40,6 +41,10 @@ import java.util.concurrent.CancellationException
  * Copyright (c) 2019 Gini GmbH.
  */
 @RunWith(AndroidJUnit4::class)
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(
+    maxSdk = 35,
+)
 class AnalysisScreenPresenterTest {
     @Mock
     private lateinit var mActivity: Activity

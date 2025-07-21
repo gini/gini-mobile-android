@@ -11,10 +11,15 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import java.io.IOException
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(
+    maxSdk = 35,
+)
 class PhotoTest {
     @Before
     @Throws(IOException::class)
