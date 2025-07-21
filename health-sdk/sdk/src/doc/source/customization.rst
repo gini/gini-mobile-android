@@ -79,12 +79,12 @@ the following snippet to one of your resources XML file (e.g, ``colors.xml``):
     If you override the ``GiniPaymentTheme``, the theme colors you set there override the color palette customization.
 
 Find the names of the color resources in the color palette (you can also view it in Figma `here
-<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=8502-357&t=a2nGT46mNSzeqjZ8-4>`_):
+<https://www.figma.com/design/K5IiEZgoSDDHrTv5Oc8yF2/Android-Gini-Health-SDK-5.5-UI-Customisation--WCAG-2.1-?node-id=16832-22788&t=VwWIxpVljtJaeA1w-4>`_):
 
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=8502-357&t=a2nGT46mNSzeqjZ8-4"
+    src="https://www.figma.com/design/K5IiEZgoSDDHrTv5Oc8yF2/Android-Gini-Health-SDK-5.5-UI-Customisation--WCAG-2.1-?node-id=16832-22788&t=VwWIxpVljtJaeA1w-4"
     allowfullscreen></iframe>
 
 |
@@ -129,12 +129,12 @@ application, use the root style as the parent, for example:
     We use ``android:lineSpacingMultiplier`` in combination with ``android:textSize`` to support resizing text for accessibility and avoid overlapping text.
 
 Preview our typography and find the names of the style resources (you can also view it in Figma `here
-<https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=8503-491&t=a2nGT46mNSzeqjZ8-4>`_):
+<https://www.figma.com/design/K5IiEZgoSDDHrTv5Oc8yF2/Android-Gini-Health-SDK-5.5-UI-Customisation--WCAG-2.1-?node-id=16832-22880&t=VwWIxpVljtJaeA1w-4>`_):
 
 .. raw:: html
 
     <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="600" height="450"
-    src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/8faTydWOqA1td2uUPBQPPa/Android-Gini-Health-SDK-5.0-UI-Customisation?node-id=8503-491&t=a2nGT46mNSzeqjZ8-4"
+    src="https://www.figma.com/design/K5IiEZgoSDDHrTv5Oc8yF2/Android-Gini-Health-SDK-5.5-UI-Customisation--WCAG-2.1-?node-id=16832-22880&t=VwWIxpVljtJaeA1w-4"
     allowfullscreen></iframe>
 
 |
