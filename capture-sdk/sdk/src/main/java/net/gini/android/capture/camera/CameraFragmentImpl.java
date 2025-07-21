@@ -844,7 +844,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
                         }
                     } else {
-                        injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_title_camera));
+                        if (ContextHelper.isPortraitOrientation(mFragment.getActivity()))
+                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_title_camera));
+                        else
+                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_top_bar_title_landscape));
                     }
                 }
 
