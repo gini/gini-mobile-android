@@ -8,6 +8,7 @@ import net.gini.android.capture.tracking.EventTrackingHelper.*
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 /**
  * Created by Alpar Szotyori on 02.03.2020.
@@ -16,6 +17,10 @@ import org.junit.runner.RunWith
  */
 
 @RunWith(AndroidJUnit4::class)
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(
+    maxSdk = 35,
+)
 class EventTrackingHelperTest {
 
     @After
