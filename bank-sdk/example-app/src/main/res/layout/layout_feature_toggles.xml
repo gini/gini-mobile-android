@@ -21,6 +21,13 @@
         android:layout_height="wrap_content"
         android:text="@string/open_with_switch_label" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_CaptureSdk"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Test Capture SDK" />
+
     <TextView
         android:id="@+id/tv_fileImportLabel"
         style="@style/SwitchConfigurationStyle"
