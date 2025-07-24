@@ -786,6 +786,36 @@ private fun SkontoSection(
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
             val pressed by dueDateOnClickSource.collectIsPressedAsState()
+            /**
+             * In landscape mode on phones, we don't need the dueDateOnClickSource
+             * because we have very less space, and we cannot pass null as interactionSource.
+             * So we use defaultInteractionSource is just a placeholder, and instead of using
+             * the whole area we will only use the trailing content to open the date picker in
+             * GiniTextInput, and we have isPhoneInLandscape check just to check if the current
+             * mode is landscape and phone or not. Tablet's and portrait mode will use the whole
+             * field of GiniTextInput to open the date picker.
+             * Also we have to change the textInputModifier of GiniTextInput to clickable only
+             * when it is not in landscape mode of phones.
+             * */
+            val defaultInteractionSource = remember { MutableInteractionSource() }
+            val isPhoneInLandscape =
+                !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
+
+            val activeInteractionSource =
+                if (isPhoneInLandscape) defaultInteractionSource else dueDateOnClickSource
+
+            val textInputModifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+                .focusable(false)
+                .then(
+                    if (!isPhoneInLandscape) Modifier.clickable(isActive) {
+                        if (isActive) {
+                            isDatePickerVisible = true
+                            onDueDateFieldFocued()
+                        }
+                    } else Modifier
+                )
 
             LaunchedEffect(key1 = pressed) {
                 if (pressed) {
@@ -795,29 +825,31 @@ private fun SkontoSection(
             }
 
             GiniTextInput(
-                modifier = Modifier
-                    .clickable(isActive) {
-                        if (isActive) {
-                            isDatePickerVisible = true
-                            onDueDateFieldFocued()
-                        }
-                    }
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-                    .focusable(false),
+                modifier = textInputModifier,
                 enabled = isActive,
-                interactionSource = dueDateOnClickSource,
+                interactionSource = activeInteractionSource,
                 readOnly = true,
                 colors = colors.dueDateTextFieldColor,
                 onValueChange = { /* Ignored */ },
                 text = dueDate.format(dateFormatter),
                 label = stringResource(id = R.string.gbs_skonto_section_discount_field_due_date_hint),
                 trailingContent = {
-                    androidx.compose.animation.AnimatedVisibility(visible = isActive) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.gbs_icon_calendar),
-                            contentDescription = null,
-                        )
+                    if (isPhoneInLandscape) {
+                        androidx.compose.animation.AnimatedVisibility(visible = isActive) {
+                            IconButton(
+                                onClick = {
+                                    isDatePickerVisible = true
+                                    onDueDateFieldFocued()
+                                },
+                                interactionSource = dueDateOnClickSource
+                            ) {
+                                CalendarIcon()
+                            }
+                        }
+                    } else {
+                        androidx.compose.animation.AnimatedVisibility(visible = isActive) {
+                            CalendarIcon()
+                        }
                     }
                 }
             )
@@ -838,6 +870,13 @@ private fun SkontoSection(
     }
 }
 
+@Composable
+fun CalendarIcon() {
+    Icon(
+        painter = painterResource(id = R.drawable.gbs_icon_calendar),
+        contentDescription = null
+    )
+}
 private fun getSkontoSelectableDates() = object : SelectableDates {
 
     val minDateCalendar = Calendar.getInstance().apply {
