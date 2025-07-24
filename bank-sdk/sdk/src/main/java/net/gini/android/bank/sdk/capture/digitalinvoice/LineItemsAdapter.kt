@@ -519,6 +519,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         private fun GbsItemDigitalInvoiceSkontoBinding.setupEditButton(data: DigitalInvoiceSkontoListItem) {
             if (data.enabled) {
                 gbsEditButton.isClickable = true
+                gbsEditButton.isEnabled = true
+                gbsEditButton.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
                 gbsEditButton.focusable = View.FOCUSABLE
                 gbsEditButton.setTextColor(
                     gbsEditButton.context.getColor(net.gini.android.capture.R.color.gc_accent_01)
@@ -537,6 +539,8 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
                 gbsEditButton.setOnClickListener(null)
                 gbsEditButton.focusable = View.NOT_FOCUSABLE
                 gbsEditButton.isClickable = false
+                gbsEditButton.isEnabled = false
+                gbsEditButton.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
             }
         }
 
