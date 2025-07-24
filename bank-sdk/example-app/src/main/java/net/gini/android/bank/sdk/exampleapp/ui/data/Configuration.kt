@@ -184,6 +184,9 @@ data class Configuration(
     // enable transaction docs
     val isTransactionDocsEnabled: Boolean = true,
 
+    // enable Capture Sdk
+    val isCaptureSDK: Boolean = false,
+
 ) : Parcelable {
 
     companion object {
@@ -208,6 +211,7 @@ data class Configuration(
                 isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
                 isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled,
                 isTransactionDocsEnabled = defaultCaptureConfiguration.transactionDocsEnabled,
+                isCaptureSDK = currentConfiguration.isCaptureSDK
             )
         }
     }

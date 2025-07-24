@@ -121,13 +121,23 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    private fun startSDK(entryPoint: EntryPoint) {
+        if (configurationViewModel.configurationFlow.value.isCaptureSDK) {
+            // Start Capture SDK in standalone mode
+            startActivity(CaptureSdkStandAloneActivity.newIntent(this))
+        } else {
+            // Start Bank SDK with the selected entry point passed from click listeners
+            checkIfAppShouldAskForCameraPermission(entryPoint)
+        }
+    }
+
     private fun addInputHandlers() {
         binding.buttonStartScanner.setOnClickListener {
-            checkIfAppShouldAskForCameraPermission(EntryPoint.BUTTON)
+            startSDK(EntryPoint.BUTTON)
         }
 
         binding.tilFieldEntryPoint.setEndIconOnClickListener {
-            checkIfAppShouldAskForCameraPermission(EntryPoint.FIELD)
+            startSDK(EntryPoint.FIELD)
         }
 
         binding.buttonOpenTlDemo.setOnClickListener {

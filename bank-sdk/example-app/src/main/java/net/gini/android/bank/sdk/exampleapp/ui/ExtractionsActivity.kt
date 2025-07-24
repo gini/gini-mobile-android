@@ -27,6 +27,7 @@ import net.gini.android.bank.sdk.exampleapp.databinding.ActivityExtractionsBindi
 import net.gini.android.bank.sdk.transactiondocs.ui.extractions.view.TransactionDocsView
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.util.protectViewFromInsets
 import java.math.BigDecimal
@@ -91,7 +92,11 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.transfer_summary -> {
-            sendTransferSummaryAndClose(binding)
+            if (isCaptureSDKExtractions)
+                sendTransferSummaryAndCloseForCapture()
+            else
+                sendTransferSummaryAndClose(binding)
+
             true
         }
 
@@ -187,6 +192,39 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         finish()
     }
 
+    private fun sendTransferSummaryAndCloseForCapture() {
+        // Transfer summary should be sent only for the user visible fields. Non-visible fields should be filtered out.
+        // In a real application the user input should be used as the new value.
+
+        var amount = mExtractions["amountToPay"]?.value ?: ""
+        val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
+        val paymentReference = mExtractions["paymentReference"]?.value ?: ""
+        val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
+        val iban = mExtractions["iban"]?.value ?: ""
+        val bic = mExtractions["bic"]?.value ?: ""
+        val instantPayment = mExtractions["instantPayment"]?.value ?: ""
+
+        if (amount.isEmpty()) {
+            amount = Amount.EMPTY.amountToPay()
+        }
+
+        GiniCapture.sendTransferSummary(
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            Amount(
+                BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
+            ),
+            instantPayment.toBooleanStrictOrNull()
+        )
+
+        GiniCapture.cleanup(applicationContext)
+
+        finish()
+    }
+
     private fun showProgressIndicator(binding: ActivityExtractionsBinding) {
         binding.recyclerviewExtractions.animate().alpha(0.5f)
         binding.layoutProgress.visibility = View.VISIBLE
@@ -199,13 +237,17 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     companion object {
         const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
-
+        var isCaptureSDKExtractions : Boolean = false
         fun getStartIntent(
-            context: Context, extractionsBundle: Map<String, GiniCaptureSpecificExtraction>
-        ): Intent = Intent(context, ExtractionsActivity::class.java).apply {
-            putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
-                extractionsBundle.map { putParcelable(it.key, it.value) }
-            })
+            context: Context, extractionsBundle: Map<String, GiniCaptureSpecificExtraction>,
+            isCaptureSdkExtractions: Boolean = false
+        ): Intent {
+            isCaptureSDKExtractions = isCaptureSdkExtractions
+            return Intent(context, ExtractionsActivity::class.java).apply {
+                putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
+                    extractionsBundle.map { putParcelable(it.key, it.value) }
+                })
+            }
         }
     }
 }

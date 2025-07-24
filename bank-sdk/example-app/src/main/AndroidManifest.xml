@@ -161,6 +161,46 @@
                 <data android:mimeType="text/xml" />
             </intent-filter>
         </activity>
+
+        <!-- Adding the standalone activity so we can test open with flows for capture -->
+        <activity
+            android:name=".ui.CaptureSdkStandAloneActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter
+                android:label="@string/capture_activity"
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter
+                android:label="@string/capture_activity"
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+            <intent-filter
+                android:label="@string/capture_activity"
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/xhtml+xml" />
+                <data android:mimeType="text/xml" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".ui.SplashActivity"
             android:exported="true">
