@@ -113,6 +113,8 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.isDefaultSDKConfigurationsEnabled
         // file import
         binding.layoutFeatureToggle.switchOpenWith.isChecked = configuration.isFileImportEnabled
+        // Capture SDK
+        binding.layoutFeatureToggle.switchCaptureSdk.isChecked = configuration.isCaptureSDK
         // QR code scanning
         binding.layoutFeatureToggle.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
         // only QR code scanning
@@ -285,6 +287,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isFileImportEnabled = isChecked
+                )
+            )
+        }
+
+        // Capture SDK testing
+        binding.layoutFeatureToggle.switchCaptureSdk.setOnCheckedChangeListener { _ , isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCaptureSDK = isChecked
                 )
             )
         }
