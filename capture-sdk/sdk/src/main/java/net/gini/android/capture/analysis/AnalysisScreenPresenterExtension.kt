@@ -22,6 +22,7 @@ import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
@@ -37,7 +38,8 @@ internal class AnalysisScreenPresenterExtension(
 
     val attachDocToTransactionDialogProvider: AttachedToTransactionDocumentProvider
             by getGiniCaptureKoin().inject()
-
+    val getEducationFeatureEnabledUseCase:
+            GetEducationFeatureEnabledUseCase by getGiniCaptureKoin().inject()
     private val getInvoiceEducationTypeUseCase: GetInvoiceEducationTypeUseCase
             by getGiniCaptureKoin().inject()
     private val incrementInvoiceRecognizedCounterUseCase: IncrementInvoiceRecognizedCounterUseCase
@@ -74,7 +76,7 @@ internal class AnalysisScreenPresenterExtension(
         onEducationFlowTriggered: () -> Unit
     ) = runBlocking {
             val type = runCatching { getInvoiceEducationTypeUseCase.execute() }.getOrNull()
-            if (type != null) {
+            if (type != null && getEducationFeatureEnabledUseCase.invoke()) {
                 view.showEducation {
                     runBlocking { incrementInvoiceRecognizedCounterUseCase.execute() }
                     educationMutex.unlock()
