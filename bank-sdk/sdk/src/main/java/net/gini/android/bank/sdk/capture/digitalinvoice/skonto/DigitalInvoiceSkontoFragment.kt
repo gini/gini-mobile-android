@@ -549,7 +549,7 @@ private fun YourInvoiceScanSection(
 
     }
 }
-
+@Suppress("CyclomaticComplexMethod")
 @Composable
 private fun SkontoSection(
     isActive: Boolean,

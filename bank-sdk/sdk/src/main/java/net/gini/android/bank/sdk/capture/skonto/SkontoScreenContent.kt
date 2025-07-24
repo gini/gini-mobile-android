@@ -618,7 +618,7 @@ private fun InvoicePreviewSection(
 
     }
 }
-
+@Suppress("CyclomaticComplexMethod")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SkontoSection(
