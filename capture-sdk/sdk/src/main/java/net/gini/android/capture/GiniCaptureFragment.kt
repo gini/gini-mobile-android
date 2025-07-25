@@ -117,7 +117,8 @@ class GiniCaptureFragment(
                     AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(
                         res.configuration.amplitudeApiKey
                     ),
-                    networkRequestsManager = networkRequestsManager
+                    networkRequestsManager = networkRequestsManager,
+                    isUserJourneyEnabled = res.configuration.isUserJourneyAnalyticsEnabled
                 )
 
                 res.configuration.let {
