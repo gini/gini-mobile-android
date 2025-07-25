@@ -14,7 +14,7 @@ internal class GetInvoiceEducationTypeUseCase(
     private val documentImportEnabledFileTypesProvider: () -> DocumentImportEnabledFileTypes?,
     private val getEducationFeatureEnabledUseCase: GetEducationFeatureEnabledUseCase
 ) {
-
+    @Suppress("ReturnCount")
     suspend fun execute(): InvoiceEducationType? {
         val flowType = flowTypeStorage.get()
 
