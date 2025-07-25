@@ -2,6 +2,7 @@ package net.gini.android.capture.internal.qreducation
 
 import kotlinx.coroutines.flow.first
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import net.gini.android.capture.internal.qreducation.model.FlowType
 import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType
 import net.gini.android.capture.internal.storage.FlowTypeStorage
@@ -11,11 +12,14 @@ internal class GetInvoiceEducationTypeUseCase(
     private val invoiceEducationStorage: InvoiceEducationStorage,
     private val flowTypeStorage: FlowTypeStorage,
     private val documentImportEnabledFileTypesProvider: () -> DocumentImportEnabledFileTypes?,
+    private val getEducationFeatureEnabledUseCase: GetEducationFeatureEnabledUseCase
 ) {
 
     suspend fun execute(): InvoiceEducationType? {
         val flowType = flowTypeStorage.get()
 
+        if (!getEducationFeatureEnabledUseCase.invoke())
+            return null
         val documentImportDisabled =
             documentImportEnabledFileTypesProvider() == DocumentImportEnabledFileTypes.NONE
         val wrongFlowType = flowType == null || !ALLOWED_FLOW_TYPES.contains(flowType)

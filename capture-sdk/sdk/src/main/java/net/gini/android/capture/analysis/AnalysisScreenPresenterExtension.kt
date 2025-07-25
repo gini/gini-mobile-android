@@ -17,12 +17,12 @@ import net.gini.android.capture.document.GiniCaptureDocumentError
 import net.gini.android.capture.document.GiniCaptureMultiPageDocument
 import net.gini.android.capture.internal.qreducation.GetInvoiceEducationTypeUseCase
 import net.gini.android.capture.internal.qreducation.IncrementInvoiceRecognizedCounterUseCase
+import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType
 import net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty
 import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
@@ -38,14 +38,14 @@ internal class AnalysisScreenPresenterExtension(
 
     val attachDocToTransactionDialogProvider: AttachedToTransactionDocumentProvider
             by getGiniCaptureKoin().inject()
-    val getEducationFeatureEnabledUseCase:
-            GetEducationFeatureEnabledUseCase by getGiniCaptureKoin().inject()
     private val getInvoiceEducationTypeUseCase: GetInvoiceEducationTypeUseCase
             by getGiniCaptureKoin().inject()
     private val incrementInvoiceRecognizedCounterUseCase: IncrementInvoiceRecognizedCounterUseCase
             by getGiniCaptureKoin().inject()
 
     private val educationMutex = Mutex()
+
+    private var invoiceEducationType: InvoiceEducationType? = null
 
     fun getAnalysisFragmentListenerOrNoOp(): AnalysisFragmentListener {
         return listener ?: noOpListener
@@ -72,19 +72,26 @@ internal class AnalysisScreenPresenterExtension(
         }
     }
 
+    fun getInvoiceEducationType(): InvoiceEducationType? {
+        runBlocking {
+            invoiceEducationType =
+                runCatching { getInvoiceEducationTypeUseCase.execute() }.getOrNull()
+        }
+        return invoiceEducationType
+    }
+
     fun showLoadingIndicator(
         onEducationFlowTriggered: () -> Unit
     ) = runBlocking {
-            val type = runCatching { getInvoiceEducationTypeUseCase.execute() }.getOrNull()
-            if (type != null && getEducationFeatureEnabledUseCase.invoke()) {
-                view.showEducation {
-                    runBlocking { incrementInvoiceRecognizedCounterUseCase.execute() }
-                    educationMutex.unlock()
-                }
-                educationMutex.lock()
-                onEducationFlowTriggered()
+        if (getInvoiceEducationType() != null) {
+            view.showEducation {
+                runBlocking { incrementInvoiceRecognizedCounterUseCase.execute() }
+                educationMutex.unlock()
             }
+            educationMutex.lock()
+            onEducationFlowTriggered()
         }
+    }
 
     private fun doWhenEducationFinished(action: () -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
