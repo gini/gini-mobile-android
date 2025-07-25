@@ -20,13 +20,11 @@ import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
 import net.gini.android.capture.internal.network.FailureException;
+import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
-import net.gini.android.capture.network.model.GiniCaptureReturnReason;
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY;
 
@@ -42,8 +40,6 @@ import java.util.Random;
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
-import static net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty;
-import static net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
@@ -170,7 +166,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     public void start() {
         mStopped = false;
         checkGiniCaptureInstance();
-        if (mMultiPageDocument.getType() != Document.Type.XML && mMultiPageDocument.getType() != Document.Type.XML_MULTI_PAGE){
+        if (mMultiPageDocument.getType() != Document.Type.XML &&
+        mMultiPageDocument.getType() != Document.Type.XML_MULTI_PAGE) {
             createDocumentRenderer();
         }
         clearParcelableMemoryCache();
@@ -387,7 +384,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     private void showHintsForImage() {
-        if (getFirstDocument().getType() == Document.Type.IMAGE) {
+        InvoiceEducationType invoiceEducationType = extension.getInvoiceEducationType();
+        if (getFirstDocument().getType() == Document.Type.IMAGE &&
+                invoiceEducationType == null) {
             getView().showHints(mHints);
         }
     }

@@ -28,11 +28,16 @@ internal class BufferedUserAnalyticsEventTracker(
     private val events: Queue<Pair<UserAnalyticsEvent, Set<UserAnalyticsEventProperty>>> =
         LinkedList()
     private var amplitude: AmplitudeUserAnalyticsEventTracker? = null
+    private var mIsUserJourneyEnabled = false
 
     fun setPlatformTokens(
         vararg tokens: UserAnalytics.AnalyticsApiKey,
         networkRequestsManager: NetworkRequestsManager,
+        isUserJourneyEnabled: Boolean = false
     ) {
+        mIsUserJourneyEnabled = isUserJourneyEnabled
+        if (!isUserJourneyEnabled)
+            return
         tokens.forEach { token ->
             when (token) {
 
@@ -60,6 +65,8 @@ internal class BufferedUserAnalyticsEventTracker(
 
 
     override fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>) {
+        if (!mIsUserJourneyEnabled)
+            return
         this.eventSuperProperties.add(property)
         trySendEvents()
     }
@@ -69,6 +76,8 @@ internal class BufferedUserAnalyticsEventTracker(
     }
 
     override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>) {
+        if (!mIsUserJourneyEnabled)
+            return
         this.userProperties.add(userProperties)
         trySendEvents()
     }
@@ -81,6 +90,8 @@ internal class BufferedUserAnalyticsEventTracker(
         eventName: UserAnalyticsEvent,
         properties: Set<UserAnalyticsEventProperty>
     ) {
+        if (!mIsUserJourneyEnabled)
+            return
         events.add(Pair(eventName, properties))
         trySendEvents()
     }
@@ -94,6 +105,8 @@ internal class BufferedUserAnalyticsEventTracker(
     }
 
     private fun trySendEvents() {
+        if (!mIsUserJourneyEnabled)
+            return
         if (eventTrackers.isEmpty()) {
             LOG.debug("No trackers found. Skipping sending events")
             return
