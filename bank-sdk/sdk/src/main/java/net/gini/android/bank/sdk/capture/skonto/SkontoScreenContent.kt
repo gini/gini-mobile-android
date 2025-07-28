@@ -350,7 +350,7 @@ private fun ScreenReadyState(
                     skontoAmountValidationError = state.skontoAmountValidationError,
                     isLandScape = isLandScape,
                     onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
-                    onDueDateFieldFocued = onDueDateFieldFocused,
+                    onDueDateFieldFocused = onDueDateFieldFocused,
                     shouldFieldShowKeyboard = shouldFieldShowKeyboard
 
                 )
@@ -634,7 +634,7 @@ private fun SkontoSection(
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
     onSkontoAmountFieldFocused: () -> Unit,
-    onDueDateFieldFocued: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     edgeCase: SkontoEdgeCase?,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
@@ -812,7 +812,7 @@ private fun SkontoSection(
                     if (!isPhoneInLandscape) Modifier.clickable(isActive) {
                         if (isActive) {
                             isDatePickerVisible = true
-                            onDueDateFieldFocued()
+                            onDueDateFieldFocused()
                         }
                     } else Modifier
                 )
@@ -820,7 +820,7 @@ private fun SkontoSection(
             LaunchedEffect(key1 = pressed) {
                 if (pressed) {
                     isDatePickerVisible = true
-                    onDueDateFieldFocued()
+                    onDueDateFieldFocused()
                 }
             }
 
@@ -839,7 +839,7 @@ private fun SkontoSection(
                             IconButton(
                                 onClick = {
                                     isDatePickerVisible = true
-                                    onDueDateFieldFocued()
+                                    onDueDateFieldFocused()
                                 },
                                 interactionSource = dueDateOnClickSource
                             ) {

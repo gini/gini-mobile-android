@@ -377,7 +377,7 @@ private fun ScreenReadyState(
                     onInfoBannerClicked = onInfoBannerClicked,
                     skontoAmountValidationError = state.skontoAmountValidationError,
                     onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
-                    onDueDateFieldFocued = onDueDateFieldFocused,
+                    onDueDateFieldFocused = onDueDateFieldFocused,
                     isLandScape = isLandScape,
                     shouldFieldShowKeyboard = shouldFieldShowKeyboard
                 )
@@ -561,7 +561,7 @@ private fun SkontoSection(
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
     onSkontoAmountFieldFocused: () -> Unit,
-    onDueDateFieldFocued: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     edgeCase: SkontoEdgeCase?,
     colors: DigitalInvoiceSkontoSectionColors,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
@@ -733,7 +733,7 @@ private fun SkontoSection(
                     if (!isPhoneInLandscape) Modifier.clickable(isActive) {
                         if (isActive) {
                             isDatePickerVisible = true
-                            onDueDateFieldFocued()
+                            onDueDateFieldFocused()
                         }
                     } else Modifier
                 )
@@ -741,7 +741,7 @@ private fun SkontoSection(
             LaunchedEffect(key1 = pressed) {
                 if (pressed) {
                     isDatePickerVisible = true
-                    onDueDateFieldFocued()
+                    onDueDateFieldFocused()
                 }
             }
 
@@ -760,7 +760,7 @@ private fun SkontoSection(
                             IconButton(
                                 onClick = {
                                     isDatePickerVisible = true
-                                    onDueDateFieldFocued()
+                                    onDueDateFieldFocused()
                                 },
                                 interactionSource = dueDateOnClickSource
                             ) {
