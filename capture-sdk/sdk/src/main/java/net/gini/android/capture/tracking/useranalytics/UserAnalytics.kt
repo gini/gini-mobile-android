@@ -6,7 +6,7 @@ import net.gini.android.capture.internal.network.NetworkRequestsManager
 object UserAnalytics {
 
     private var eventTracker: UserAnalyticsEventTracker? = null
-    private lateinit var sessionId : String
+    private lateinit var sessionId: String
 
     fun initialize(
         applicationContext: Context
@@ -17,8 +17,16 @@ object UserAnalytics {
         eventTracker = BufferedUserAnalyticsEventTracker(applicationContext, sessionId)
     }
 
-    fun setPlatformTokens(vararg tokens: AnalyticsApiKey, networkRequestsManager: NetworkRequestsManager) {
-        (eventTracker as? BufferedUserAnalyticsEventTracker)?.setPlatformTokens(*tokens, networkRequestsManager = networkRequestsManager)
+    fun setPlatformTokens(
+        vararg tokens: AnalyticsApiKey,
+        networkRequestsManager: NetworkRequestsManager,
+        isUserJourneyEnabled: Boolean
+    ) {
+        (eventTracker as? BufferedUserAnalyticsEventTracker)?.setPlatformTokens(
+            *tokens,
+            networkRequestsManager = networkRequestsManager,
+            isUserJourneyEnabled = isUserJourneyEnabled
+        )
     }
 
     fun flushEvents() {
