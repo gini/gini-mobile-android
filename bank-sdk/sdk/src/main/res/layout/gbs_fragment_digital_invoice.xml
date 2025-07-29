@@ -31,9 +31,9 @@
         android:id="@+id/line_items"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:focusable="true"
         android:layout_marginTop="@dimen/gc_medium_12"
         android:background="?attr/backgroundColor"
+        android:focusable="true"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/barrier"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,10 +45,10 @@
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
-        app:barrierDirection="top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="gbs_bottom_wrapper,gbs_bottom_bar_navigation"/>
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="gbs_bottom_wrapper,gbs_bottom_bar_navigation" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gbs_bottom_wrapper"
@@ -72,9 +72,9 @@
             android:id="@+id/total_price_group"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:importantForAccessibility="yes"
             android:layout_marginTop="@dimen/gc_small"
+            android:importantForAccessibility="yes"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="@id/gbs_total_and_skonto_container"
             app:layout_constraintTop_toBottomOf="@id/gbs_total_and_skonto_container">
 
@@ -98,12 +98,20 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/gc_large_24"
             android:id="@+id/gbs_total_and_skonto_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/gc_large_24"
-            app:layout_constraintTop_toBottomOf="@id/gbs_bottom_divider"
-            android:layout_height="wrap_content">
+            android:layout_marginTop="@dimen/gc_large_24"
+            app:layout_constraintTop_toBottomOf="@id/gbs_bottom_divider">
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/gbs_barrier_skonto_discount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="start"
+                app:constraint_referenced_ids="gbs_skonto_discount_label_container" />
+
             <TextView
                 android:id="@+id/total_label"
                 style="@style/GiniCaptureTheme.Typography.Body1"
@@ -111,23 +119,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/gc_medium_12"
                 android:text="@string/gbs_digital_invoice_footer_total_label"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/gbs_barrier_skonto_discount"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/gbs_skonto_discount_label_container"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <FrameLayout
-                android:layout_width="0dp"
-                app:layout_constraintTop_toTopOf="@id/total_label"
-                app:layout_constraintBottom_toBottomOf="@id/total_label"
-                app:layout_constraintStart_toEndOf="@+id/total_label"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/gbs_skonto_discount_label_container"
-                android:layout_marginEnd="@dimen/gc_large_24"
-                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/gc_medium_12"
-                android:layout_height="wrap_content">
+                android:layout_marginEnd="@dimen/gc_large_24"
+                app:layout_constraintBottom_toBottomOf="@id/total_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintTop_toTopOf="@id/total_label">
 
                 <TextView
                     android:id="@+id/skonto_discount_label"
@@ -139,7 +146,7 @@
                     android:paddingHorizontal="@dimen/gc_medium"
                     android:paddingVertical="@dimen/gc_small"
                     android:textColor="@color/gc_light_01"
-                    tools:text="3% Skonto discount"/>
+                    tools:text="3% Skonto discount" />
 
             </FrameLayout>
 
@@ -163,10 +170,10 @@
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/gbs_barrier_footer"
-            app:barrierDirection="bottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="total_price_group,skonto_saved_amount"/>
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="total_price_group,skonto_saved_amount" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/gbs_pay"
@@ -174,8 +181,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/gc_large_20"
-            android:layout_marginBottom="@dimen/gc_large_32"
             android:layout_marginTop="@dimen/gc_large"
+            android:layout_marginBottom="@dimen/gc_large_32"
             android:text="@string/gbs_proceed"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
