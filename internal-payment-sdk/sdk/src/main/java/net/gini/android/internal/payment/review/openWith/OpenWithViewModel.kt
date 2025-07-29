@@ -12,7 +12,15 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 
 
-internal class OpenWithViewModel private constructor(val paymentComponent: PaymentComponent?, val paymentProviderApp: PaymentProviderApp?, val openWithForwardListener: OpenWithForwardListener?, val backListener: BackListener?, val paymentDetails: PaymentDetails?, val paymentRequestId: String?): ViewModel() {
+internal class OpenWithViewModel private constructor(
+    val paymentComponent: PaymentComponent?,
+    val paymentProviderApp: PaymentProviderApp?,
+    val openWithForwardListener: OpenWithForwardListener?,
+    val backListener: BackListener?,
+    val paymentDetails: PaymentDetails?,
+    val paymentRequestId: String?,
+    val isRestoredAfterProcessDeath: Boolean
+): ViewModel() {
 
     private val qrCodeMutableFlow = MutableStateFlow<Bitmap?>(null)
     val qrCodeFlow: StateFlow<Bitmap?> = qrCodeMutableFlow
@@ -32,13 +40,17 @@ internal class OpenWithViewModel private constructor(val paymentComponent: Payme
     class Factory(private val paymentComponent: PaymentComponent?, private val paymentProviderApp: PaymentProviderApp?, private val openWithForwardListener: OpenWithForwardListener?, private val backListener: BackListener?, private val paymentDetails: PaymentDetails?, private val paymentRequestId: String?) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            val isRestoredAfterProcessDeath =
+                paymentComponent == null || backListener == null || paymentDetails == null
+
             return OpenWithViewModel(
                 paymentComponent,
                 paymentProviderApp,
                 openWithForwardListener,
                 backListener,
                 paymentDetails,
-                paymentRequestId
+                paymentRequestId,
+                isRestoredAfterProcessDeath
             ) as T
         }
     }

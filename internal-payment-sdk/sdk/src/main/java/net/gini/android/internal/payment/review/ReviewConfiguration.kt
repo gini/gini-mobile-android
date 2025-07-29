@@ -1,11 +1,14 @@
 package net.gini.android.internal.payment.review
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import net.gini.android.internal.payment.review.reviewComponent.ReviewFields
 
 
 /**
  * Configuration for the [ReviewBottomSheet].
  */
+@Parcelize
 data class ReviewConfiguration(
     /**
      * If set to `true`, the [ReviewBottomSheet] will handle errors internally and show snackbars for errors.
@@ -30,4 +33,4 @@ data class ReviewConfiguration(
      * Default value is `true`
      */
     internal val selectBankButtonVisible: Boolean = true
-)
+): Parcelable

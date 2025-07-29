@@ -65,6 +65,13 @@ class InstallAppBottomSheet private constructor(
         )
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (viewModel.isRestoredAfterProcessDeath) {
+            dismissAllowingStateLoss()
+        }
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         viewModel.backListener?.let {

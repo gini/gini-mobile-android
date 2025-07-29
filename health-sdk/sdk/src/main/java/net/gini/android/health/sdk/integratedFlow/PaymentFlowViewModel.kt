@@ -3,6 +3,7 @@ package net.gini.android.health.sdk.integratedFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -26,7 +27,7 @@ import net.gini.android.internal.payment.utils.PaymentNextStep
 import java.io.File
 import java.util.Stack
 
-internal class PaymentFlowViewModel(
+class PaymentFlowViewModel(
     internal var paymentDetails: PaymentDetails?,
     internal var documentId: String?,
     val paymentFlowConfiguration: PaymentFlowConfiguration?,
@@ -186,17 +187,24 @@ internal class PaymentFlowViewModel(
             is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> giniHealth.setDisplayedScreen(event.displayedScreen)
         }
     }
+        class Factory(
+            private val paymentDetails: PaymentDetails?,
+            private val documentId: String?,
+            private val paymentFlowConfiguration: PaymentFlowConfiguration?,
+            private val giniHealth: GiniHealth
+        ) : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                // existing implementation to instantiate PaymentFlowViewModel
+                return PaymentFlowViewModel(paymentDetails, documentId, paymentFlowConfiguration, giniHealth) as T
+            }
 
-    class Factory(private val paymentDetails: PaymentDetails?, private val documentId: String?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, private val giniHealth: GiniHealth): ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentFlowViewModel(
-                paymentDetails = paymentDetails,
-                documentId = documentId,
-                paymentFlowConfiguration = paymentFlowConfiguration,
-                giniHealth = giniHealth) as T
+            override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+                // Delegate to the one-parameter create() for compatibility with new Lifecycle
+                return create(modelClass)
+            }
         }
-    }
+
+
 
     override fun backCalled() {
         _backButtonEvent.tryEmit(null)

@@ -78,6 +78,9 @@ class GiniHealth(
         }
     }
 
+    init {
+        instance = this  // assign singleton on initialization
+    }
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
@@ -462,7 +465,7 @@ class GiniHealth(
         return PaymentFragment.newInstance(
             giniHealth = this,
             documentId = documentId,
-            paymentFlowConfiguration = configuration ?: PaymentFlowConfiguration()
+            configuration = configuration ?: PaymentFlowConfiguration()
         )
     }
 
@@ -488,7 +491,7 @@ class GiniHealth(
         val paymentFragment = PaymentFragment.newInstance(
             giniHealth = this,
             paymentDetails = paymentDetails,
-            paymentFlowConfiguration = configuration ?: PaymentFlowConfiguration()
+            configuration = configuration ?: PaymentFlowConfiguration()
         )
         return paymentFragment
     }
@@ -542,7 +545,8 @@ class GiniHealth(
 
     companion object {
         private val LOG = LoggerFactory.getLogger(GiniHealth::class.java)
-
+        @Volatile private var instance: GiniHealth? = null
+        fun getInstance(): GiniHealth? = instance
         private const val CAPTURED_ARGUMENTS_NULL = "CAPTURED_ARGUMENTS_NULL"
         private const val CAPTURED_ARGUMENTS_ID = "CAPTURED_ARGUMENTS_ID"
         private const val CAPTURED_ARGUMENTS_DOCUMENT = "CAPTURED_ARGUMENTS_DOCUMENT"

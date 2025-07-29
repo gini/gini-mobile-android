@@ -114,11 +114,22 @@ class PaymentFragment private constructor(
 
     constructor(): this(null)
     private var binding: GhsFragmentHealthBinding by autoCleared()
-    private val viewModel by viewModels<PaymentFlowViewModel> {
-        viewModelFactory ?: object : ViewModelProvider.Factory {}
+     var isProcessDeath = false
+     val viewModel: PaymentFlowViewModel by viewModels {
+        viewModelFactory ?: let {
+            isProcessDeath = true
+            val args = requireArguments()
+            PaymentFlowViewModel.Factory(
+                args.getParcelable("paymentDetails"),
+                args.getString("documentId"),
+                args.getParcelable("paymentFlowConfiguration"),
+                GiniHealth.getInstance()
+                    ?: throw IllegalStateException("GiniHealth is not initialized")
+            )
+        }
     }
     private var snackbar: Snackbar? = null
-    private var shareWithEventBroadcastReceiver = object: BroadcastReceiver() {
+    private var shareWithEventBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             viewModel.emitShareWithStartedEvent()
         }
@@ -132,9 +143,16 @@ class PaymentFragment private constructor(
      * Internal use only.
      */
     @VisibleForTesting
-    internal var reviewViewListener: ReviewViewListener = object: ReviewViewListener {
+    internal var reviewViewListener: ReviewViewListener = object : ReviewViewListener {
         override fun onPaymentButtonTapped(paymentDetails: net.gini.android.internal.payment.api.model.PaymentDetails) {
-            viewModel.updatePaymentDetails(PaymentDetails(recipient = paymentDetails.recipient, iban = paymentDetails.iban, amount = paymentDetails.amount, purpose = paymentDetails.purpose))
+            viewModel.updatePaymentDetails(
+                PaymentDetails(
+                    recipient = paymentDetails.recipient,
+                    iban = paymentDetails.iban,
+                    amount = paymentDetails.amount,
+                    purpose = paymentDetails.purpose
+                )
+            )
             viewModel.onPaymentButtonTapped()
         }
 
@@ -277,6 +295,12 @@ class PaymentFragment private constructor(
             if (viewModel.documentId != null) {
                 showReviewFragment()
             } else if (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true){
+                if (isProcessDeath) {
+                    val args = requireArguments()
+                    val paymentDetails = args.getParcelable<PaymentDetails>("paymentDetails")
+                    viewModel.giniInternalPaymentModule.setPaymentDetails(paymentDetails?.toCommonPaymentDetails())
+                    isProcessDeath = false
+                }
                 showReviewBottomDialog()
             } else {
                 showPaymentComponentBottomSheet()
@@ -405,7 +429,11 @@ class PaymentFragment private constructor(
 
         )
         childFragmentManager.beginTransaction()
-            .replace(R.id.ghs_fragment_container_view, reviewFragment, reviewFragment::class.simpleName)
+            .replace(
+                R.id.ghs_fragment_container_view,
+                reviewFragment,
+                reviewFragment::class.simpleName
+            )
             .addToBackStack(reviewFragment::class.java.name)
             .commit()
     }
@@ -450,8 +478,15 @@ class PaymentFragment private constructor(
             paymentDetails = viewModel.paymentDetails?.toCommonPaymentDetails(),
             paymentRequestId = viewModel.paymentRequestFlow.value?.id ?: ""
         ) {
-            val overriddenPdfName = getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name, viewModel.giniInternalPaymentModule)
-            val pdfName = if (overriddenPdfName.isValidPdfName()) overriddenPdfName else getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name_default, viewModel.giniInternalPaymentModule)
+            val overriddenPdfName = getLocaleStringResource(
+                net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name,
+                viewModel.giniInternalPaymentModule
+            )
+            val pdfName =
+                if (overriddenPdfName.isValidPdfName()) overriddenPdfName else getLocaleStringResource(
+                    net.gini.android.internal.payment.R.string.gps_payment_request_pdf_name_default,
+                    viewModel.giniInternalPaymentModule
+                )
             viewModel.onForwardToSharePdfTapped(pdfName)
         }
     }
@@ -460,10 +495,11 @@ class PaymentFragment private constructor(
         when (sdkEvent) {
             is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> {
                 if (viewModel.getLastBackstackEntry() is DisplayedScreen.ShareSheet) {
-                        return
-                    }
+                    return
+                }
                 try {
-                    val intent = viewModel.getPaymentProviderApp()?.getIntent(sdkEvent.paymentRequestId)
+                    val intent =
+                        viewModel.getPaymentProviderApp()?.getIntent(sdkEvent.paymentRequestId)
                     if (intent != null) {
                         startActivity(intent)
                     } else {
@@ -477,7 +513,12 @@ class PaymentFragment private constructor(
                 binding.loading.isVisible = false
                 handleError(getString(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.onPaymentButtonTapped() }
             }
-            GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> viewModel.giniHealth.setOpenBankState(GiniHealth.PaymentState.Cancel, viewModel.viewModelScope)
+
+            GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> viewModel.giniHealth.setOpenBankState(
+                GiniHealth.PaymentState.Cancel,
+                viewModel.viewModelScope
+            )
+
             else -> {
             }
         }
@@ -510,39 +551,52 @@ class PaymentFragment private constructor(
     }
 
     companion object {
-        /**
-         * Creates an instance of [PaymentFragment] for the case when payment is initiated with payment details
-         *
-         * @param giniHealth The [GiniHealth] instance
-         * @param paymentDetails the [PaymentDetails] with which the payment will be initiated
-         * @param paymentFlowConfiguration The [PaymentFlowConfiguration]
-         */
-        fun newInstance(giniHealth: GiniHealth, paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration,
-                        viewModelFactory : ViewModelProvider.Factory =
-                            PaymentFlowViewModel.Factory(
-                                paymentDetails,
-                                null,
-                                paymentFlowConfiguration,
-                                giniHealth
-                            )
-        ) = PaymentFragment(viewModelFactory)
+        fun newInstance(
+            giniHealth: GiniHealth,
+            documentId: String,
+            configuration: PaymentFlowConfiguration?
+        ): PaymentFragment {
+            val viewModelFactory = PaymentFlowViewModel.Factory(
+                null,
+                documentId,  // or documentId if you're using the other overload
+                configuration ?: PaymentFlowConfiguration(),
+                giniHealth
+            )
+            return PaymentFragment(viewModelFactory).apply {
+                arguments = Bundle().apply {
+                    putString("documentId", documentId)
+                    putParcelable(
+                        "paymentFlowConfiguration",
+                        configuration ?: PaymentFlowConfiguration()
+                    )
+                }
+            }
+        }
 
-        /**
-         * Creates an instance of [PaymentFragment] for the case when payment is initiated with a documentId
-         *
-         * @param giniHealth The [GiniHealth] instance
-         * @param documentId the id of the document to be paid
-         * @param paymentFlowConfiguration The [PaymentFlowConfiguration]
-         */
-        fun newInstance(giniHealth: GiniHealth, documentId: String, paymentFlowConfiguration: PaymentFlowConfiguration,
-                        viewModelFactory : ViewModelProvider.Factory =
-                            PaymentFlowViewModel.Factory(
-                                null,
-                                documentId,
-                                paymentFlowConfiguration,
-                                giniHealth
-                            )
-        ) = PaymentFragment(viewModelFactory)
+        // Similarly for PaymentDetails:
+        fun newInstance(
+            giniHealth: GiniHealth,
+            paymentDetails: PaymentDetails,
+            configuration: PaymentFlowConfiguration?,
+
+        ): PaymentFragment {
+            val viewModelFactory = PaymentFlowViewModel.Factory(
+                paymentDetails,
+                null,  // or documentId if you're using the other overload
+                configuration ?: PaymentFlowConfiguration(),
+                giniHealth
+            )
+            return PaymentFragment(viewModelFactory).apply {
+                arguments = Bundle().apply {
+                    putParcelable("paymentDetails", paymentDetails)
+                    putParcelable(
+                        "paymentFlowConfiguration",
+                        configuration ?: PaymentFlowConfiguration()
+                    )
+                }
+            }
+        }
+
     }
 }
 

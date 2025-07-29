@@ -95,7 +95,11 @@ class BankSelectionViewModelTest {
     @Test
     fun `processes payment provider apps when emitted from payment component with none selected`() = runTest {
         // Given
-        val viewModel = BankSelectionViewModel(paymentComponent, mockk())
+        val viewModel = BankSelectionViewModel(
+            paymentComponent,
+            mockk(),
+            false
+        )
 
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
             PaymentProviderAppsState.Success(
@@ -131,7 +135,11 @@ class BankSelectionViewModelTest {
     @Test
     fun `processes payment provider apps when emitted from payment component with default selected`() = runTest {
         // Given
-        val viewModel = BankSelectionViewModel(paymentComponent, mockk())
+        val viewModel = BankSelectionViewModel(
+            paymentComponent,
+            mockk(),
+            false
+        )
 
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
             PaymentProviderAppsState.Success(
@@ -170,7 +178,11 @@ class BankSelectionViewModelTest {
     @Test
     fun `sets selected payment provider app`() = runTest {
         // Given
-        val viewModel = BankSelectionViewModel(paymentComponent, mockk())
+        val viewModel = BankSelectionViewModel(
+            paymentComponent,
+            mockk(),
+            false
+        )
 
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
             PaymentProviderAppsState.Success(
@@ -215,7 +227,11 @@ class BankSelectionViewModelTest {
     @Test
     fun `rechecks which payment provider apps are installed`() = runTest {
         // Given
-        val viewModel = BankSelectionViewModel(paymentComponent, mockk())
+        val viewModel = BankSelectionViewModel(
+            paymentComponent,
+            mockk(),
+            false
+        )
 
         val paymentProvider1: PaymentProviderApp = mockk()
         every { paymentProvider1.isInstalled() } returns false
