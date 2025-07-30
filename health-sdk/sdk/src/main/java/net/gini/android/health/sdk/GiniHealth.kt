@@ -476,7 +476,7 @@ class GiniHealth(
         return PaymentFragment.newInstance(
             giniHealth = this,
             documentId = documentId,
-            configuration = configuration ?: PaymentFlowConfiguration()
+            paymentFlowConfiguration = configuration ?: PaymentFlowConfiguration()
         )
     }
 
@@ -502,7 +502,7 @@ class GiniHealth(
         val paymentFragment = PaymentFragment.newInstance(
             giniHealth = this,
             paymentDetails = paymentDetails,
-            configuration = configuration ?: PaymentFlowConfiguration()
+            paymentFlowConfiguration = configuration ?: PaymentFlowConfiguration()
         )
         return paymentFragment
     }

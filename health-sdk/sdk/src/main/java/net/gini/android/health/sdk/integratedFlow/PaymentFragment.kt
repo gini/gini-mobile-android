@@ -597,20 +597,20 @@ class PaymentFragment private constructor(
         fun newInstance(
             giniHealth: GiniHealth,
             documentId: String,
-            configuration: PaymentFlowConfiguration?
-        ): PaymentFragment {
-            val viewModelFactory = PaymentFlowViewModel.Factory(
+            paymentFlowConfiguration: PaymentFlowConfiguration?,
+            viewModelFactory: ViewModelProvider.Factory = PaymentFlowViewModel.Factory(
                 null,
                 documentId,  // or documentId if you're using the other overload
-                configuration ?: PaymentFlowConfiguration(),
+                paymentFlowConfiguration ?: PaymentFlowConfiguration(),
                 giniHealth
             )
+        ): PaymentFragment {
             return PaymentFragment(viewModelFactory).apply {
                 arguments = Bundle().apply {
                     putString("documentId", documentId)
                     putParcelable(
                         "paymentFlowConfiguration",
-                        configuration ?: PaymentFlowConfiguration()
+                        paymentFlowConfiguration ?: PaymentFlowConfiguration()
                     )
                 }
             }
@@ -620,21 +620,22 @@ class PaymentFragment private constructor(
         fun newInstance(
             giniHealth: GiniHealth,
             paymentDetails: PaymentDetails,
-            configuration: PaymentFlowConfiguration?,
-
+            paymentFlowConfiguration: PaymentFlowConfiguration?,
+            viewModelFactory : ViewModelProvider.Factory =
+                PaymentFlowViewModel.Factory(
+                    paymentDetails = paymentDetails,
+                    documentId = null,
+                    paymentFlowConfiguration = paymentFlowConfiguration,
+                    giniHealth = giniHealth
+                )
             ): PaymentFragment {
-            val viewModelFactory = PaymentFlowViewModel.Factory(
-                paymentDetails,
-                null,  // or documentId if you're using the other overload
-                configuration ?: PaymentFlowConfiguration(),
-                giniHealth
-            )
+
             return PaymentFragment(viewModelFactory).apply {
                 arguments = Bundle().apply {
                     putParcelable("paymentDetails", paymentDetails)
                     putParcelable(
                         "paymentFlowConfiguration",
-                        configuration ?: PaymentFlowConfiguration()
+                        paymentFlowConfiguration ?: PaymentFlowConfiguration()
                     )
                 }
             }

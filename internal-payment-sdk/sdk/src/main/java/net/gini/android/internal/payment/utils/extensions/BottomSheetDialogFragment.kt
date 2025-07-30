@@ -22,7 +22,10 @@ fun Fragment.isViewModelInitialized(viewModelClass: KClass<out ViewModel>): Bool
     return try {
         ViewModelProvider(this)[viewModelClass.java]
         true
-    } catch (e: Exception) {
+    } catch (e: IllegalArgumentException) {
+        false
+    } catch (e: RuntimeException) {
+        // Swallowed intentionally: absence of ViewModel is a valid case here
         false
     }
 }

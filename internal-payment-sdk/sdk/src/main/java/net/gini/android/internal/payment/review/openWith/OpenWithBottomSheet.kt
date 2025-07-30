@@ -23,7 +23,6 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.databinding.GpsBottomSheetOpenWithBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.review.reviewBottomSheet.ReviewBottomSheetViewModel
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
