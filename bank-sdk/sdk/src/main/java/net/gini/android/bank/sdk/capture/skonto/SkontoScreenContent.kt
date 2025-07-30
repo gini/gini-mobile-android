@@ -14,6 +14,7 @@ import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -36,6 +37,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -978,7 +981,7 @@ private fun InfoDialog(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun WithoutSkontoSection(
     isActive: Boolean,
@@ -1041,6 +1044,20 @@ private fun WithoutSkontoSection(
                     )
                 }
             }
+
+            val bringIntoViewRequester = remember { BringIntoViewRequester() }
+            var wasFinalAmountFocused by remember { mutableStateOf(false) }
+
+            LaunchedEffect(wasFinalAmountFocused, shouldFieldShowKeyboard) {
+                if (wasFinalAmountFocused && shouldFieldShowKeyboard) {
+                    /**
+                     * Adding 400ms delay, because the keyboard is not shown immediately
+                     * */
+                    delay(400)
+                    bringIntoViewRequester.bringIntoView()
+                }
+            }
+
             GiniAmountTextInput(
                 modifier = Modifier
                     .then(
@@ -1049,10 +1066,11 @@ private fun WithoutSkontoSection(
                                 invisibleToUser()
                             }
                         else Modifier
-                    )
+                    ).then(Modifier.bringIntoViewRequester(bringIntoViewRequester))
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .onFocusChanged {
+                        wasFinalAmountFocused = it.isFocused
                         if (it.isFocused) {
                             onFullAmountFieldFocused()
                         }
