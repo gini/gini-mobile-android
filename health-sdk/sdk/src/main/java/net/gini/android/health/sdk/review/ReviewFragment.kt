@@ -52,9 +52,11 @@ import net.gini.android.internal.payment.utils.extensions.getFontScale
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import org.jetbrains.annotations.VisibleForTesting
+import kotlin.reflect.KClass
 
 /**
  * Listener for [ReviewFragment] events.
@@ -76,11 +78,6 @@ internal interface ReviewFragmentListener {
     fun onToTheBankButtonClicked(paymentProviderName: String, paymentDetails: PaymentDetails)
 }
 
-internal object ReviewFragmentDependencyHolder {
-    var giniHealth: GiniHealth? = null
-    var paymentComponent: PaymentComponent? = null
-    var reviewFragmentListener: ReviewFragmentListener? = null
-}
 
 /**
  * The [ReviewFragment] displays an invoice’s pages and payment information extractions. It also lets users pay the
@@ -95,31 +92,7 @@ class ReviewFragment private constructor(
     constructor() : this(null)
 
     private val viewModel: ReviewViewModel by viewModels{
-        viewModelFactory ?: let {
-            val args = requireArguments()
-            val giniHealth = ReviewFragmentDependencyHolder.giniHealth
-                ?: throw IllegalStateException("GiniHealth not set")
-            val paymentComponent = ReviewFragmentDependencyHolder.paymentComponent
-                ?: throw IllegalStateException("PaymentComponent not set")
-            val listener = ReviewFragmentDependencyHolder.reviewFragmentListener
-                ?: throw IllegalStateException("ReviewFragmentListener not set")
-
-            val documentId = args.getString("documentId")
-                ?: throw IllegalStateException("documentId missing")
-            val reviewConfig = args.getParcelable<ReviewConfiguration>("reviewConfiguration")
-                ?: ReviewConfiguration()
-            val flowConfig =
-                args.getParcelable<PaymentFlowConfiguration>("paymentFlowConfiguration")
-                    ?: PaymentFlowConfiguration()
-            ReviewViewModel.Factory(
-                giniHealth,
-                reviewConfig,
-                paymentComponent,
-                documentId,
-                flowConfig,
-                listener
-            )
-        }
+        viewModelFactory ?: object : ViewModelProvider.Factory {}
     }
 
     private var binding: GhsFragmentReviewBinding by autoCleared()
@@ -140,6 +113,16 @@ class ReviewFragment private constructor(
 
         override fun onSelectBankButtonTapped() {
             viewModel.paymentComponent.listener?.onBankPickerClicked()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val isViewModelMissing = !isViewModelInitialized(ReviewViewModel::class)
+
+        if (viewModelFactory == null && isViewModelMissing) {
+            parentFragmentManager.beginTransaction().remove(this).commitAllowingStateLoss()
         }
     }
 
@@ -511,24 +494,8 @@ class ReviewFragment private constructor(
             paymentFlowConfiguration: PaymentFlowConfiguration
         ): ReviewFragment {
             // Store non-Parcelable dependencies in holder
-            ReviewFragmentDependencyHolder.giniHealth = giniHealth
-            ReviewFragmentDependencyHolder.paymentComponent = paymentComponent
-            ReviewFragmentDependencyHolder.reviewFragmentListener = listener
-            val viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(
-                giniHealth,
-                configuration,
-                paymentComponent,
-                documentId,
-                paymentFlowConfiguration,
-                listener
-            )
-            return ReviewFragment(viewModelFactory).apply {
-                arguments = Bundle().apply {
-                    putString("documentId", documentId)
-                    putParcelable("reviewConfiguration", configuration)
-                    putParcelable("paymentFlowConfiguration", paymentFlowConfiguration)
-                }
-            }
+            val viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, paymentFlowConfiguration, listener)
+            return ReviewFragment(viewModelFactory)
         }
 
     }

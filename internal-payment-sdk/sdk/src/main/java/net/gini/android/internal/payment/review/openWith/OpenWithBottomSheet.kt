@@ -11,6 +11,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -22,6 +23,7 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.databinding.GpsBottomSheetOpenWithBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
+import net.gini.android.internal.payment.review.reviewBottomSheet.ReviewBottomSheetViewModel
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
@@ -29,6 +31,7 @@ import net.gini.android.internal.payment.utils.extensions.addEuroSymbol
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
@@ -41,25 +44,13 @@ interface OpenWithForwardListener {
 }
 
 class OpenWithBottomSheet private constructor(
-    paymentProviderApp: PaymentProviderApp?,
-    private val listener: OpenWithForwardListener?,
-    private val backListener: BackListener?,
-    paymentComponent: PaymentComponent?,
-    paymentDetails: PaymentDetails?,
-    paymentRequestId: String?
+    val viewmodelFactory: ViewModelProvider.Factory? = null
 ) : GpsBottomSheetDialogFragment() {
 
-    constructor() : this(null, null, null, null, null, null)
+    constructor() : this(null)
 
     private val viewModel by viewModels<OpenWithViewModel> {
-        OpenWithViewModel.Factory(
-            paymentComponent,
-            paymentProviderApp,
-            listener,
-            backListener,
-            paymentDetails,
-            paymentRequestId
-        )
+      viewmodelFactory ?: object :ViewModelProvider.Factory{}
     }
     private var binding: GpsBottomSheetOpenWithBinding by autoCleared()
     private val internalPaymentModule
@@ -76,10 +67,11 @@ class OpenWithBottomSheet private constructor(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (viewModel.isRestoredAfterProcessDeath) {
+        if (viewmodelFactory == null && !isViewModelInitialized(OpenWithViewModel::class)) {
             dismissAllowingStateLoss()
         }
     }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         viewModel.backListener?.let {
@@ -250,13 +242,18 @@ class OpenWithBottomSheet private constructor(
             backListener: BackListener? = null,
             paymentDetails: PaymentDetails?,
             paymentRequestId: String?
-        ) = OpenWithBottomSheet(
-            paymentProviderApp = paymentProviderApp,
-            listener = listener,
-            backListener = backListener,
-            paymentComponent = paymentComponent,
-            paymentDetails = paymentDetails,
-            paymentRequestId = paymentRequestId
-        )
+        ): OpenWithBottomSheet {
+            val factory = OpenWithViewModel.Factory(
+                paymentComponent,
+                paymentProviderApp,
+                listener,
+                backListener,
+                paymentDetails,
+                paymentRequestId
+            )
+            return OpenWithBottomSheet(
+                viewmodelFactory = factory,
+            )
+        }
     }
 }

@@ -16,7 +16,6 @@ internal class InstallAppViewModel(
     val paymentComponent: PaymentComponent?,
     val backListener: BackListener?,
     val installAppForwardListener: InstallAppForwardListener?,
-    val isRestoredAfterProcessDeath: Boolean
 ) : ViewModel() {
 
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
@@ -45,9 +44,11 @@ internal class InstallAppViewModel(
     class Factory(private val paymentComponent: PaymentComponent?, private val backListener: BackListener?,private val installAppForwardListener: InstallAppForwardListener?) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val isRestoredAfterProcessDeath =
-                paymentComponent == null || backListener == null || installAppForwardListener == null
-            return InstallAppViewModel(paymentComponent, backListener,installAppForwardListener,isRestoredAfterProcessDeath) as T
+            return InstallAppViewModel(
+                paymentComponent,
+                backListener,
+                installAppForwardListener,
+            ) as T
         }
     }
 }

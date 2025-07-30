@@ -17,8 +17,7 @@ import org.slf4j.LoggerFactory
 
 internal class BankSelectionViewModel(
     val paymentComponent: PaymentComponent?,
-    val backListener: BackListener?,
-    val isRestoredAfterProcessDeath: Boolean
+    val backListener: BackListener?
 ) : ViewModel() {
 
     private val _paymentProviderAppsListFlow =
@@ -107,9 +106,7 @@ internal class BankSelectionViewModel(
     class Factory(private val paymentComponent: PaymentComponent?, private val backListener: BackListener? = null) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val isRestoredAfterProcessDeath =
-                paymentComponent == null || backListener == null
-            return BankSelectionViewModel(paymentComponent, backListener, isRestoredAfterProcessDeath) as T
+            return BankSelectionViewModel(paymentComponent, backListener) as T
         }
     }
 

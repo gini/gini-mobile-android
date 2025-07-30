@@ -21,14 +21,9 @@ import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
-
-object ReviewBottomSheetDependencyHolder {
-    var giniInternalPaymentModule: GiniInternalPaymentModule? = null
-    var reviewViewListener: ReviewViewListener? = null
-    var backListener: BackListener? = null
-}
 
 class ReviewBottomSheet private constructor(
     private val viewModelFactory: ViewModelProvider.Factory?
@@ -37,26 +32,7 @@ class ReviewBottomSheet private constructor(
     constructor() : this(null)
 
     private val viewModel: ReviewBottomSheetViewModel by viewModels {
-        viewModelFactory ?: let {
-            val args = requireArguments()
-            val paymentComponent = ReviewBottomSheetDependencyHolder.giniInternalPaymentModule?.paymentComponent
-                ?: throw IllegalStateException("PaymentComponent not set")
-            val listener = ReviewBottomSheetDependencyHolder.reviewViewListener
-                ?: throw IllegalStateException("ReviewFragmentListener not set")
-
-
-            val reviewConfig = args.getParcelable<ReviewConfiguration>("reviewConfiguration")
-                ?: ReviewConfiguration()
-
-            ReviewBottomSheetViewModel.Factory(
-                paymentComponent = paymentComponent,
-                reviewConfiguration = reviewConfig,
-                giniPaymentModule = ReviewBottomSheetDependencyHolder.giniInternalPaymentModule
-                    ?: throw IllegalStateException("GiniInternalPaymentModule not set"),
-                backListener = ReviewBottomSheetDependencyHolder.backListener,
-                reviewViewListener = listener
-            )
-        }
+        viewModelFactory ?: object : ViewModelProvider.Factory {}
     }
     private var binding: GpsBottomSheetReviewBinding by autoCleared()
     private lateinit var bottomSheet: FrameLayout
@@ -96,6 +72,13 @@ class ReviewBottomSheet private constructor(
         return dialog
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (viewModelFactory == null && !isViewModelInitialized(ReviewBottomSheetViewModel::class)) {
+            dismissAllowingStateLoss()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -130,10 +113,6 @@ class ReviewBottomSheet private constructor(
             giniInternalPaymentModule: GiniInternalPaymentModule,
             backListener: BackListener
         ): ReviewBottomSheet {
-            ReviewBottomSheetDependencyHolder.giniInternalPaymentModule = giniInternalPaymentModule
-            ReviewBottomSheetDependencyHolder.reviewViewListener = listener
-            ReviewBottomSheetDependencyHolder.backListener = backListener
-
             val factory = ReviewBottomSheetViewModel.Factory(
                 paymentComponent = giniInternalPaymentModule.paymentComponent,
                 reviewConfiguration = configuration,
@@ -141,11 +120,7 @@ class ReviewBottomSheet private constructor(
                 backListener = backListener,
                 reviewViewListener = listener
             )
-            return ReviewBottomSheet(factory).apply {
-                arguments = Bundle().apply {
-                    putParcelable("reviewConfiguration", configuration)
-                }
-            }
+            return ReviewBottomSheet(factory)
         }
     }
 }

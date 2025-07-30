@@ -19,7 +19,6 @@ internal class OpenWithViewModel private constructor(
     val backListener: BackListener?,
     val paymentDetails: PaymentDetails?,
     val paymentRequestId: String?,
-    val isRestoredAfterProcessDeath: Boolean
 ): ViewModel() {
 
     private val qrCodeMutableFlow = MutableStateFlow<Bitmap?>(null)
@@ -40,17 +39,13 @@ internal class OpenWithViewModel private constructor(
     class Factory(private val paymentComponent: PaymentComponent?, private val paymentProviderApp: PaymentProviderApp?, private val openWithForwardListener: OpenWithForwardListener?, private val backListener: BackListener?, private val paymentDetails: PaymentDetails?, private val paymentRequestId: String?) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val isRestoredAfterProcessDeath =
-                paymentComponent == null || backListener == null || paymentDetails == null
-
             return OpenWithViewModel(
                 paymentComponent,
                 paymentProviderApp,
                 openWithForwardListener,
                 backListener,
                 paymentDetails,
-                paymentRequestId,
-                isRestoredAfterProcessDeath
+                paymentRequestId
             ) as T
         }
     }

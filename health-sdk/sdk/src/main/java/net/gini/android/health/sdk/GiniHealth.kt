@@ -79,8 +79,19 @@ class GiniHealth(
     }
 
     init {
-        instance = this  // assign singleton on initialization
+        assignInstanceSafely()
     }
+
+    private fun assignInstanceSafely() {
+        if (instance == null) {
+            synchronized(GiniHealth::class.java) {
+                if (instance == null) {
+                    instance = this
+                }
+            }
+        }
+    }
+
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
