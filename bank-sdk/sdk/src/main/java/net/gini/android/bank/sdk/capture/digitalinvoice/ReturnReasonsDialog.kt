@@ -94,7 +94,7 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
         if (isPhoneLandscapeMode()) {
             binding.gbsCloseBottomSheet?.visibility = View.VISIBLE
             binding.gbsCloseBottomSheet?.setIntervalClickListener {
-                dismiss()
+                dismissAllowingStateLoss()
             }
         }
     }
@@ -107,7 +107,7 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
             binding.gbsReturnReasonsList.onItemClickListener =
                 AdapterView.OnItemClickListener { _, _, position, _ ->
                     callback?.invoke(reasons[position])
-                    dismiss()
+                    dismissAllowingStateLoss()
                 }
         }
     }
