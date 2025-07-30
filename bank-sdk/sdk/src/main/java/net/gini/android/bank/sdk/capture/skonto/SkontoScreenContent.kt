@@ -124,7 +124,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-
+private const val KEYBOARD_ANIMATION_DELAY_MS = 400L
 @Composable
 internal fun SkontoScreenContent(
     isBottomNavigationBarEnabled: Boolean,
@@ -1047,13 +1047,14 @@ private fun WithoutSkontoSection(
 
             val bringIntoViewRequester = remember { BringIntoViewRequester() }
             var wasFinalAmountFocused by remember { mutableStateOf(false) }
+            val shouldBringIntoView = wasFinalAmountFocused && shouldFieldShowKeyboard
 
-            LaunchedEffect(wasFinalAmountFocused, shouldFieldShowKeyboard) {
-                if (wasFinalAmountFocused && shouldFieldShowKeyboard) {
+            LaunchedEffect(shouldBringIntoView) {
+                if (shouldBringIntoView) {
                     /**
                      * Adding 400ms delay, because the keyboard is not shown immediately
                      * */
-                    delay(400)
+                    delay(KEYBOARD_ANIMATION_DELAY_MS)
                     bringIntoViewRequester.bringIntoView()
                 }
             }
