@@ -97,8 +97,7 @@ class BankSelectionViewModelTest {
         // Given
         val viewModel = BankSelectionViewModel(
             paymentComponent,
-            mockk(),
-            false
+            mockk()
         )
 
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
@@ -137,8 +136,7 @@ class BankSelectionViewModelTest {
         // Given
         val viewModel = BankSelectionViewModel(
             paymentComponent,
-            mockk(),
-            false
+            mockk()
         )
 
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
@@ -180,8 +178,7 @@ class BankSelectionViewModelTest {
         // Given
         val viewModel = BankSelectionViewModel(
             paymentComponent,
-            mockk(),
-            false
+            mockk()
         )
 
         every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
@@ -229,8 +226,7 @@ class BankSelectionViewModelTest {
         // Given
         val viewModel = BankSelectionViewModel(
             paymentComponent,
-            mockk(),
-            false
+            mockk()
         )
 
         val paymentProvider1: PaymentProviderApp = mockk()
