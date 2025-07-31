@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.annotation.XmlRes
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
-import net.gini.android.core.api.BuildConfig
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.GiniApiType
@@ -46,7 +45,7 @@ import javax.net.ssl.TrustManager
  * @param emailDomain  the email domain which is used for created Gini users
  * @param sessionManager if not null, then the [SessionManager] instance will be used for session management. If null, then anonymous Gini users will be used.
  */
-abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<DM,DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer>(
+abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<DM, DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer>(
     private val context: Context,
     private val clientId: String,
     private val clientSecret: String,
@@ -55,6 +54,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
 ) {
     private var mApiBaseUrl: String? = null
     private var mUserCenterApiBaseUrl = "https://user.gini.net/"
+
     @XmlRes
     private var mNetworkSecurityConfigResId = 0
     private var mMoshi: Moshi? = null
@@ -247,7 +247,8 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     @Synchronized
     protected fun getCredentialsStore(): CredentialsStore {
         if (mCredentialsStore == null) {
-            val sharedPreferences: SharedPreferences = context.getSharedPreferences("Gini", Context.MODE_PRIVATE)
+            val sharedPreferences: SharedPreferences =
+                context.getSharedPreferences("Gini", Context.MODE_PRIVATE)
             val encryptedCredentialsStore = EncryptedCredentialsStore(sharedPreferences, context)
             encryptedCredentialsStore.encryptExistingPlaintextCredentials()
             mCredentialsStore = encryptedCredentialsStore
@@ -295,7 +296,8 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     @Synchronized
     open fun getSessionManager(): SessionManager {
         if (sessionManager == null) {
-            sessionManager = AnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
+            sessionManager =
+                AnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
         }
         return sessionManager as SessionManager
     }
@@ -330,12 +332,15 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
                 chain.proceed(
                     chain.request()
                         .newBuilder()
-                        .header("User-Agent", System.getProperty("http.agent") ?: FALLBACK_USER_AGENT)
+                        .header(
+                            "User-Agent",
+                            System.getProperty("http.agent") ?: FALLBACK_USER_AGENT
+                        )
                         .build()
                 )
             }
 
-           getTrustManagers()?.let { trustManagers ->
+            getTrustManagers()?.let { trustManagers ->
                 createSSLSocketFactory(trustManagers)?.let { socketFactory ->
                     sslSocketFactory(socketFactory, X509TrustManagerAdapter(trustManagers[0]))
                 }
@@ -345,8 +350,11 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
                 cache(mCache)
             }
 
-            if (isDebuggingEnabled && BuildConfig.DEBUG) {
-                Log.w(LOG_TAG, "Logging interceptor is enabled. Make sure to disable debugging for release builds!")
+            if (isDebuggingEnabled) {
+                Log.w(
+                    LOG_TAG,
+                    "Logging interceptor is enabled. Make sure to disable debugging for release builds!"
+                )
                 addInterceptor(httpLoggingInterceptor)
             }
         }
@@ -421,7 +429,8 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     @Synchronized
     private fun getUserRemoteSource(): UserRemoteSource {
         if (mUserRemoteSource == null) {
-            mUserRemoteSource = UserRemoteSource(Dispatchers.IO, getUserService()!!, clientId, clientSecret)
+            mUserRemoteSource =
+                UserRemoteSource(Dispatchers.IO, getUserService()!!, clientId, clientSecret)
         }
         return mUserRemoteSource as UserRemoteSource
     }
@@ -435,6 +444,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
 
     companion object {
         const val LOG_TAG = "GiniCoreAPIBuilder"
-        val FALLBACK_USER_AGENT = "okhttp/${okhttp3.OkHttp.VERSION} (Android ${Build.VERSION.RELEASE}; ${Build.MODEL} Build/${Build.ID})"
+        val FALLBACK_USER_AGENT =
+            "okhttp/${okhttp3.OkHttp.VERSION} (Android ${Build.VERSION.RELEASE}; ${Build.MODEL} Build/${Build.ID})"
     }
 }
