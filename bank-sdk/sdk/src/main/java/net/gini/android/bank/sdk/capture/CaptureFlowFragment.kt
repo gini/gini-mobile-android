@@ -330,6 +330,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         result: CaptureSDKResult.Success,
         fallback: () -> Unit
     ) {
+        if (GiniBank.getCaptureConfiguration()?.skontoEnabled == false) {
+            fallback()
+            return
+        }
+
         try {
             skontoExtractionsHandler.initialize(
                 result.specificExtractions,
