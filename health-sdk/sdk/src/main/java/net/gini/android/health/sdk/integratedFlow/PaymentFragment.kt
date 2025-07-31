@@ -102,6 +102,7 @@ data class PaymentFlowConfiguration(
     }
 }
 
+
 /**
  * The [PaymentFragment] provides a container for all screens that should be displayed for the user
  * during the payment process (eg. [PaymentComponentBottomSheet], [BankSelectionBottomSheet], [ReviewBottomSheet]).
@@ -109,27 +110,28 @@ data class PaymentFlowConfiguration(
  * It handles the display logic for all screens. A new instance can be created using the [GiniHealth.getPaymentFragmentWithDocument] method for
  * payments with [documentId] and using the [GiniHealth.getPaymentFragmentWithoutDocument] for payments without a document.
  */
-class PaymentFragment private constructor(
-    private val viewModelFactory: ViewModelProvider.Factory? = null
+open class PaymentFragment private constructor(
+    private val giniHealth: GiniHealth? = null
 ) : Fragment() {
 
     constructor() : this(null)
 
     private var binding: GhsFragmentHealthBinding by autoCleared()
-    var isProcessDeath = false
-    val viewModel: PaymentFlowViewModel by viewModels {
-        viewModelFactory ?: let {
-            isProcessDeath = true
-            val args = requireArguments()
-            PaymentFlowViewModel.Factory(
-                args.getParcelable("paymentDetails"),
-                args.getString("documentId"),
-                args.getParcelable("paymentFlowConfiguration"),
-                GiniHealth.getInstance()
-                    ?: throw IllegalStateException("GiniHealth is not initialized")
+    private var isProcessDeath = giniHealth == null
+
+    private val safeGiniHealth: GiniHealth?
+        get() = giniHealth ?: GiniHealth.getInstance()
+
+    open val viewModel: PaymentFlowViewModel by viewModels {
+        safeGiniHealth?.let {
+            PaymentFlowViewModel.PaymentFlowViewModelFactory(
+                giniHealth = it,
+                owner = this,
+                defaultArgs = arguments
             )
-        }
+        } ?: object : ViewModelProvider.Factory {}
     }
+
     private var snackbar: Snackbar? = null
     private var shareWithEventBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -594,49 +596,45 @@ class PaymentFragment private constructor(
     }
 
     companion object {
+
+        /**
+         * Creates an instance of [PaymentFragment] for the case when payment is initiated with payment details
+         *
+         * @param giniHealth The [GiniHealth] instance
+         * @param paymentDetails the [PaymentDetails] with which the payment will be initiated
+         * @param paymentFlowConfiguration The [PaymentFlowConfiguration]
+         */
+
         fun newInstance(
             giniHealth: GiniHealth,
             documentId: String,
-            paymentFlowConfiguration: PaymentFlowConfiguration?,
-            viewModelFactory: ViewModelProvider.Factory = PaymentFlowViewModel.Factory(
-                null,
-                documentId,  // or documentId if you're using the other overload
-                paymentFlowConfiguration ?: PaymentFlowConfiguration(),
-                giniHealth
-            )
+            paymentFlowConfiguration: PaymentFlowConfiguration?
         ): PaymentFragment {
-            return PaymentFragment(viewModelFactory).apply {
+            return PaymentFragment(giniHealth = giniHealth).apply {
                 arguments = Bundle().apply {
                     putString("documentId", documentId)
-                    putParcelable(
-                        "paymentFlowConfiguration",
-                        paymentFlowConfiguration ?: PaymentFlowConfiguration()
-                    )
+                    putParcelable("paymentFlowConfiguration", paymentFlowConfiguration)
                 }
             }
         }
 
-        // Similarly for PaymentDetails:
+        /**
+         * Creates an instance of [PaymentFragment] for the case when payment is initiated with a documentId
+         *
+         * @param giniHealth The [GiniHealth] instance
+         * @param documentId the id of the document to be paid
+         * @param paymentFlowConfiguration The [PaymentFlowConfiguration]
+         */
+
         fun newInstance(
             giniHealth: GiniHealth,
             paymentDetails: PaymentDetails,
-            paymentFlowConfiguration: PaymentFlowConfiguration?,
-            viewModelFactory : ViewModelProvider.Factory =
-                PaymentFlowViewModel.Factory(
-                    paymentDetails = paymentDetails,
-                    documentId = null,
-                    paymentFlowConfiguration = paymentFlowConfiguration,
-                    giniHealth = giniHealth
-                )
-            ): PaymentFragment {
-
-            return PaymentFragment(viewModelFactory).apply {
+            paymentFlowConfiguration: PaymentFlowConfiguration?
+        ): PaymentFragment {
+            return PaymentFragment(giniHealth = giniHealth).apply {
                 arguments = Bundle().apply {
                     putParcelable("paymentDetails", paymentDetails)
-                    putParcelable(
-                        "paymentFlowConfiguration",
-                        paymentFlowConfiguration ?: PaymentFlowConfiguration()
-                    )
+                    putParcelable("paymentFlowConfiguration", paymentFlowConfiguration)
                 }
             }
         }

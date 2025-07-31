@@ -1,9 +1,11 @@
 package net.gini.android.health.sdk.integratedFlow
 
+import android.os.Bundle
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -28,11 +30,21 @@ import java.io.File
 import java.util.Stack
 
 class PaymentFlowViewModel(
-    internal var paymentDetails: PaymentDetails?,
-    internal var documentId: String?,
-    val paymentFlowConfiguration: PaymentFlowConfiguration?,
+    private val savedStateHandle: SavedStateHandle,
     val giniHealth: GiniHealth
 ) : ViewModel(), FlowBottomSheetsManager, BackListener {
+
+    var paymentDetails: PaymentDetails?
+        get() = savedStateHandle.get("paymentDetails")
+        set(value) = savedStateHandle.set("paymentDetails", value)
+
+    var documentId: String?
+        get() = savedStateHandle.get("documentId")
+        set(value) = savedStateHandle.set("documentId", value)
+
+    var paymentFlowConfiguration: PaymentFlowConfiguration?
+        get() = savedStateHandle.get("paymentFlowConfiguration")
+        set(value) = savedStateHandle.set("paymentFlowConfiguration", value)
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
@@ -187,23 +199,20 @@ class PaymentFlowViewModel(
             is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> giniHealth.setDisplayedScreen(event.displayedScreen)
         }
     }
-        class Factory(
-            private val paymentDetails: PaymentDetails?,
-            private val documentId: String?,
-            private val paymentFlowConfiguration: PaymentFlowConfiguration?,
-            private val giniHealth: GiniHealth
-        ) : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                // existing implementation to instantiate PaymentFlowViewModel
-                return PaymentFlowViewModel(paymentDetails, documentId, paymentFlowConfiguration, giniHealth) as T
-            }
 
-            override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-                // Delegate to the one-parameter create() for compatibility with new Lifecycle
-                return create(modelClass)
-            }
+    class PaymentFlowViewModelFactory(
+        private val giniHealth: GiniHealth,
+        owner: SavedStateRegistryOwner,
+        defaultArgs: Bundle? = null
+    ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+        override fun <T : ViewModel> create(
+            key: String,
+            modelClass: Class<T>,
+            handle: SavedStateHandle
+        ): T {
+            return PaymentFlowViewModel(handle, giniHealth) as T
         }
-
+    }
 
 
     override fun backCalled() {
