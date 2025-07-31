@@ -226,7 +226,7 @@ data class CaptureConfiguration(
     /**
      * Enable/disable the transaction docs feature.
      */
-    val transactionDocsEnabled: Boolean = true,
+    val transactionDocsEnabled: Boolean = false,
 
     val giniComposableStyleProvider: GiniComposableStyleProvider? = null
 )
