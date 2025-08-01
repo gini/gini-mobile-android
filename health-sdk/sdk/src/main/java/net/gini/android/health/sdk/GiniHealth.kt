@@ -587,9 +587,9 @@ class GiniHealth(
         /**
          * Sets the current [GiniHealth] instance for internal SDK use.
          *
-         * This reference is only valid while the app process is alive. After a process death,
-         * it must be set again during app initialization (e.g., in Application class or DI setup),
-         * using the same [GiniHealth] instance that starts the payment flow.
+         * This reference is valid only during the app's lifetime and must be re-set after a process death,
+         * typically in app initialization (e.g., Application class or DI),
+         * using the same [GiniHealth] instance.
          *
          * @param giniHealth the [GiniHealth] instance to set.
          */
