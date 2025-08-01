@@ -27,7 +27,6 @@ import androidx.core.widget.addTextChangedListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputLayout
 import dev.chrisbanes.insetter.applyInsetter
-import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

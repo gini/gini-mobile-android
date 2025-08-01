@@ -398,8 +398,8 @@ open class PaymentFragment private constructor(
 
                     PaymentComponentBottomSheet.newInstance(
                         viewModel.paymentComponent,
-                        if (viewModel.documentId != null) true else viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog
-                            ?: false,
+                        viewModel.documentId != null ||
+                                viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false,
                         viewModel
                     ).show(childFragmentManager, PaymentComponentBottomSheet::class.java.name)
                 }

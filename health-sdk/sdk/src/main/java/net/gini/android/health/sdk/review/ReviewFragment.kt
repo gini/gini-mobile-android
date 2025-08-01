@@ -56,7 +56,6 @@ import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import org.jetbrains.annotations.VisibleForTesting
-import kotlin.reflect.KClass
 
 /**
  * Listener for [ReviewFragment] events.

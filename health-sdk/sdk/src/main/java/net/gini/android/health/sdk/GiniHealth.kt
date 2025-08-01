@@ -585,9 +585,13 @@ class GiniHealth(
         private var instance: GiniHealth? = null
 
         /**
-         * Used to restore SDK state (e.g., during process death) by preserving a static reference.
+         * Sets the current [GiniHealth] instance for internal SDK use.
          *
-         * @param giniHealth The [GiniHealth] instance to be set as the singleton.
+         * This reference is only valid while the app process is alive. After a process death,
+         * it must be set again during app initialization (e.g., in Application class or DI setup),
+         * using the same [GiniHealth] instance that starts the payment flow.
+         *
+         * @param giniHealth the [GiniHealth] instance to set.
          */
 
         fun setInstance(giniHealth: GiniHealth) {

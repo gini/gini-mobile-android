@@ -199,7 +199,7 @@ class PaymentFlowViewModel(
             is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> giniHealth.setDisplayedScreen(event.displayedScreen)
         }
     }
-
+    @Suppress("UNCHECKED_CAST")
     class PaymentFlowViewModelFactory(
         private val giniHealth: GiniHealth,
         owner: SavedStateRegistryOwner,
