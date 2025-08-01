@@ -21,9 +21,9 @@ import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
-
 
 class ReviewBottomSheet private constructor(
     private val viewModelFactory: ViewModelProvider.Factory?
@@ -72,6 +72,13 @@ class ReviewBottomSheet private constructor(
         return dialog
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (viewModelFactory == null && !isViewModelInitialized(ReviewBottomSheetViewModel::class)) {
+            dismissAllowingStateLoss()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -104,14 +111,16 @@ class ReviewBottomSheet private constructor(
             configuration: ReviewConfiguration = ReviewConfiguration(),
             listener: ReviewViewListener,
             giniInternalPaymentModule: GiniInternalPaymentModule,
-            backListener: BackListener,
-            viewModelFactory: ViewModelProvider.Factory = ReviewBottomSheetViewModel.Factory(
+            backListener: BackListener
+        ): ReviewBottomSheet {
+            val factory = ReviewBottomSheetViewModel.Factory(
                 paymentComponent = giniInternalPaymentModule.paymentComponent,
                 reviewConfiguration = configuration,
                 giniPaymentModule = giniInternalPaymentModule,
                 backListener = backListener,
                 reviewViewListener = listener
-            ),
-        ): ReviewBottomSheet = ReviewBottomSheet(viewModelFactory)
+            )
+            return ReviewBottomSheet(factory)
+        }
     }
 }

@@ -142,15 +142,24 @@ class MoreInformationFragment private constructor(
             )
         }
 
+
     private fun buildGiniRelatedAnswer(): SpannedString {
         val giniLink = createSpanForLink(R.string.gps_gini_website, R.string.gps_gini_link_url)
-        val privacyPolicyString = createSpanForLink(R.string.gps_privacy_policy, R.string.gps_privacy_policy_link_url)
-        val span = buildSpannedString {
-            append(getLocaleStringResource(R.string.gps_faq_answer_4))
-            replace(indexOf("%s"), indexOf("%s") + 2, giniLink)
-            replace(indexOf("%p"), indexOf("%p") + 2, privacyPolicyString)
+        val privacyPolicyString =
+            createSpanForLink(R.string.gps_privacy_policy, R.string.gps_privacy_policy_link_url)
+        val baseText = getLocaleStringResource(R.string.gps_faq_answer_4)
+
+        return buildSpannedString {
+            append(baseText)
+            val sIndex = indexOf("%s")
+            if (sIndex >= 0) {
+                replace(sIndex, sIndex + 2, giniLink)
+            }
+            val pIndex = indexOf("%p")
+            if (pIndex >= 0) {
+                replace(pIndex, pIndex + 2, privacyPolicyString)
+            }
         }
-        return span
     }
 
     companion object {

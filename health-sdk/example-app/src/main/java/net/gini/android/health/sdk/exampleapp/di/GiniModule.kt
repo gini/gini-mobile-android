@@ -6,5 +6,9 @@ import org.koin.dsl.module
 
 val giniModule = module {
     single { getGiniApi(get(), getProperty("clientId"), getProperty("clientSecret"), "example.com") }
-    single { GiniHealth(get(), get()) }
+    single {
+        val giniHealth = GiniHealth(get(), get())
+        GiniHealth.setInstance(giniHealth)
+        giniHealth
+    }
 }

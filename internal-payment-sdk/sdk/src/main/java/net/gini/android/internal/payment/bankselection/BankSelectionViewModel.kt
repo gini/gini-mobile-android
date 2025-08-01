@@ -15,7 +15,10 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 import org.slf4j.LoggerFactory
 
-internal class BankSelectionViewModel(val paymentComponent: PaymentComponent?, val backListener: BackListener?) : ViewModel() {
+internal class BankSelectionViewModel(
+    val paymentComponent: PaymentComponent?,
+    val backListener: BackListener?
+) : ViewModel() {
 
     private val _paymentProviderAppsListFlow =
         MutableStateFlow<PaymentProviderAppsListState>(PaymentProviderAppsListState.Loading)
