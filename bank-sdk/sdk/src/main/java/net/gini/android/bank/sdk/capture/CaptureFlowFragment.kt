@@ -288,30 +288,38 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private fun tryShowingReturnAssistant(result: CaptureSDKResult.Success) {
         LineItemsValidator.validate(result.compoundExtractions)
-        val skontoData = kotlin.runCatching {
-            val data = skontoDataExtractor.extractSkontoData(
-                result.specificExtractions,
-                result.compoundExtractions
-            )
-            SkontoData(
-                skontoPercentageDiscounted = data.skontoPercentageDiscounted,
-                skontoPaymentMethod = when (data.skontoPaymentMethod) {
-                    SkontoData.SkontoPaymentMethod.Cash -> SkontoData.SkontoPaymentMethod.Cash
-                    SkontoData.SkontoPaymentMethod.PayPal -> SkontoData.SkontoPaymentMethod.PayPal
-                    else -> SkontoData.SkontoPaymentMethod.Unspecified
-                },
-                skontoAmountToPay = data.skontoAmountToPay,
-                fullAmountToPay = data.fullAmountToPay,
-                skontoRemainingDays = data.skontoRemainingDays,
-                skontoDueDate = data.skontoDueDate
-            )
-        }.getOrNull()
+        val skontoData = if (GiniBank.getCaptureConfiguration()?.skontoEnabled == true) {
+            kotlin.runCatching {
+                val data = skontoDataExtractor.extractSkontoData(
+                    result.specificExtractions,
+                    result.compoundExtractions
+                )
+                SkontoData(
+                    skontoPercentageDiscounted = data.skontoPercentageDiscounted,
+                    skontoPaymentMethod = when (data.skontoPaymentMethod) {
+                        SkontoData.SkontoPaymentMethod.Cash ->
+                            SkontoData.SkontoPaymentMethod.Cash
 
-        val highlightBoxes = kotlin.runCatching {
-            skontoInvoiceHighlightsExtractor.extract(
-                result.compoundExtractions
-            )
-        }.getOrNull() ?: emptyList()
+                        SkontoData.SkontoPaymentMethod.PayPal ->
+                            SkontoData.SkontoPaymentMethod.PayPal
+
+                        else -> SkontoData.SkontoPaymentMethod.Unspecified
+                    },
+                    skontoAmountToPay = data.skontoAmountToPay,
+                    fullAmountToPay = data.fullAmountToPay,
+                    skontoRemainingDays = data.skontoRemainingDays,
+                    skontoDueDate = data.skontoDueDate
+                )
+            }.getOrNull()
+        } else null
+
+        val highlightBoxes = if (GiniBank.getCaptureConfiguration()?.skontoEnabled == true) {
+            kotlin.runCatching {
+                skontoInvoiceHighlightsExtractor.extract(
+                    result.compoundExtractions
+                )
+            }.getOrNull() ?: emptyList()
+        } else emptyList()
 
         navController.navigate(
             GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
