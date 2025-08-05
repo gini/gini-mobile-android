@@ -373,7 +373,9 @@ open class PaymentFragment private constructor(
             }
         }
 
-        if (childFragmentManager.backStackEntryCount == 0 || childFragmentManager.fragments.last() is ReviewFragment) {
+        val lastFragment = childFragmentManager.fragments.lastOrNull()
+
+        if (childFragmentManager.backStackEntryCount == 0 || lastFragment is ReviewFragment) {
             when (viewModel.getLastBackstackEntry()) {
                 DisplayedScreen.ReviewBottomSheet -> {
                     createReviewBottomSheet().also {

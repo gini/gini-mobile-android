@@ -14,6 +14,7 @@ import androidx.core.text.buildSpannedString
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,21 +30,20 @@ import net.gini.android.internal.payment.utils.UrlSpanNoUnderline
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 
 /**
  * The [MoreInformationFragment] displays information and an FAQ section about the payment feature. It requires a
  * [PaymentComponent] instance to show the icons of the available payment provider apps.
  */
 class MoreInformationFragment private constructor(
-    private val paymentComponent: PaymentComponent?,
-    private val backListener: BackListener? = null) : Fragment() {
-    constructor() : this(paymentComponent = null)
+    private val viewmodelFactory: ViewModelProvider.Factory? = null
+) : Fragment() {
+    constructor() : this(  null)
 
     private var binding: GpsFragmentPaymentMoreInformationBinding by autoCleared()
     private val viewModel: MoreInformationViewModel by viewModels {
-        MoreInformationViewModel.Factory(
-            paymentComponent
-        )
+      viewmodelFactory ?: object :ViewModelProvider.Factory {}
     }
 
     private fun getLocaleStringResource(resourceId: Int): String {
@@ -70,6 +70,12 @@ class MoreInformationFragment private constructor(
         )
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (viewmodelFactory == null && !isViewModelInitialized(MoreInformationViewModel::class)) {
+            parentFragmentManager.beginTransaction().remove(this).commitAllowingStateLoss()
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -170,7 +176,13 @@ class MoreInformationFragment private constructor(
          * @param backListener a listener for back events
          */
         fun newInstance(paymentComponent: PaymentComponent?,
-                        backListener: BackListener? = null): MoreInformationFragment =
-            MoreInformationFragment(paymentComponent = paymentComponent, backListener = backListener)
+                        backListener: BackListener? = null): MoreInformationFragment {
+            val viewModelFactory = MoreInformationViewModel.Factory(
+                paymentComponent
+            )
+            return MoreInformationFragment(viewmodelFactory = viewModelFactory)
+
+        }
+
     }
 }
