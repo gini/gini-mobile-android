@@ -14,6 +14,7 @@ import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -36,6 +37,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -121,7 +124,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-
+private const val KEYBOARD_ANIMATION_DELAY_MS = 400L
 @Composable
 internal fun SkontoScreenContent(
     isBottomNavigationBarEnabled: Boolean,
@@ -350,7 +353,7 @@ private fun ScreenReadyState(
                     skontoAmountValidationError = state.skontoAmountValidationError,
                     isLandScape = isLandScape,
                     onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
-                    onDueDateFieldFocued = onDueDateFieldFocused,
+                    onDueDateFieldFocused = onDueDateFieldFocused,
                     shouldFieldShowKeyboard = shouldFieldShowKeyboard
 
                 )
@@ -618,7 +621,7 @@ private fun InvoicePreviewSection(
 
     }
 }
-
+@Suppress("CyclomaticComplexMethod")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SkontoSection(
@@ -634,7 +637,7 @@ private fun SkontoSection(
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
     onSkontoAmountFieldFocused: () -> Unit,
-    onDueDateFieldFocued: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     edgeCase: SkontoEdgeCase?,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
@@ -786,38 +789,70 @@ private fun SkontoSection(
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
             val pressed by dueDateOnClickSource.collectIsPressedAsState()
+            /**
+             * In landscape mode on phones, we don't need the dueDateOnClickSource
+             * because we have very less space, and we cannot pass null as interactionSource.
+             * So we use defaultInteractionSource is just a placeholder, and instead of using
+             * the whole area we will only use the trailing content to open the date picker in
+             * GiniTextInput, and we have isPhoneInLandscape check just to check if the current
+             * mode is landscape and phone or not. Tablet's and portrait mode will use the whole
+             * field of GiniTextInput to open the date picker.
+             * Also we have to change the textInputModifier of GiniTextInput to clickable only
+             * when it is not in landscape mode of phones.
+             * */
+            val defaultInteractionSource = remember { MutableInteractionSource() }
+            val isPhoneInLandscape =
+                !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
+
+            val activeInteractionSource =
+                if (isPhoneInLandscape) defaultInteractionSource else dueDateOnClickSource
+
+            val textInputModifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+                .focusable(false)
+                .then(
+                    if (!isPhoneInLandscape) Modifier.clickable(isActive) {
+                        if (isActive) {
+                            isDatePickerVisible = true
+                            onDueDateFieldFocused()
+                        }
+                    } else Modifier
+                )
 
             LaunchedEffect(key1 = pressed) {
                 if (pressed) {
                     isDatePickerVisible = true
-                    onDueDateFieldFocued()
+                    onDueDateFieldFocused()
                 }
             }
 
             GiniTextInput(
-                modifier = Modifier
-                    .clickable(isActive) {
-                        if (isActive) {
-                            isDatePickerVisible = true
-                            onDueDateFieldFocued()
-                        }
-                    }
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-                    .focusable(false),
+                modifier = textInputModifier,
                 enabled = isActive,
-                interactionSource = dueDateOnClickSource,
+                interactionSource = activeInteractionSource,
                 readOnly = true,
                 colors = colors.dueDateTextFieldColor,
                 onValueChange = { /* Ignored */ },
                 text = dueDate.format(dateFormatter),
                 label = stringResource(id = R.string.gbs_skonto_section_discount_field_due_date_hint),
                 trailingContent = {
-                    androidx.compose.animation.AnimatedVisibility(visible = isActive) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.gbs_icon_calendar),
-                            contentDescription = null,
-                        )
+                    if (isPhoneInLandscape) {
+                        androidx.compose.animation.AnimatedVisibility(visible = isActive) {
+                            IconButton(
+                                onClick = {
+                                    isDatePickerVisible = true
+                                    onDueDateFieldFocused()
+                                },
+                                interactionSource = dueDateOnClickSource
+                            ) {
+                                CalendarIcon()
+                            }
+                        }
+                    } else {
+                        androidx.compose.animation.AnimatedVisibility(visible = isActive) {
+                            CalendarIcon()
+                        }
                     }
                 }
             )
@@ -838,6 +873,13 @@ private fun SkontoSection(
     }
 }
 
+@Composable
+fun CalendarIcon() {
+    Icon(
+        painter = painterResource(id = R.drawable.gbs_icon_calendar),
+        contentDescription = null
+    )
+}
 private fun getSkontoSelectableDates() = object : SelectableDates {
 
     val minDateCalendar = Calendar.getInstance().apply {
@@ -978,7 +1020,7 @@ private fun InfoDialog(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun WithoutSkontoSection(
     isActive: Boolean,
@@ -1041,6 +1083,21 @@ private fun WithoutSkontoSection(
                     )
                 }
             }
+
+            val bringIntoViewRequester = remember { BringIntoViewRequester() }
+            var wasFinalAmountFocused by remember { mutableStateOf(false) }
+            val shouldBringIntoView = wasFinalAmountFocused && shouldFieldShowKeyboard
+
+            LaunchedEffect(shouldBringIntoView) {
+                if (shouldBringIntoView) {
+                    /**
+                     * Adding 400ms delay, because the keyboard is not shown immediately
+                     * */
+                    delay(KEYBOARD_ANIMATION_DELAY_MS)
+                    bringIntoViewRequester.bringIntoView()
+                }
+            }
+
             GiniAmountTextInput(
                 modifier = Modifier
                     .then(
@@ -1049,10 +1106,11 @@ private fun WithoutSkontoSection(
                                 invisibleToUser()
                             }
                         else Modifier
-                    )
+                    ).then(Modifier.bringIntoViewRequester(bringIntoViewRequester))
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .onFocusChanged {
+                        wasFinalAmountFocused = it.isFocused
                         if (it.isFocused) {
                             onFullAmountFieldFocused()
                         }
