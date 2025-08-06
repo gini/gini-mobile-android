@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -27,6 +28,7 @@ import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
 import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
@@ -40,21 +42,15 @@ interface InstallAppForwardListener {
 }
 
 class InstallAppBottomSheet private constructor(
-    private val paymentComponent: PaymentComponent?,
-    private val listener: InstallAppForwardListener?,
-    backListener: BackListener?,
+   val viewModelFactory: ViewModelProvider.Factory? = null,
     private val minHeight: Int?
 ) :
     GpsBottomSheetDialogFragment() {
-    constructor() : this(null, null, null, null)
+    constructor() : this(null, null)
 
     private var binding: GpsBottomSheetInstallAppBinding by autoCleared()
     private val viewModel: InstallAppViewModel by viewModels {
-        InstallAppViewModel.Factory(
-            paymentComponent,
-            backListener,
-            listener
-        )
+      viewModelFactory?: object : ViewModelProvider.Factory {}
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -63,6 +59,13 @@ class InstallAppBottomSheet private constructor(
             inflater,
             GiniInternalPaymentModule.getSDKLanguageInternal(requireContext())?.languageLocale()
         )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (viewModelFactory == null && !isViewModelInitialized(InstallAppViewModel::class)) {
+            dismissAllowingStateLoss()
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -196,7 +199,12 @@ class InstallAppBottomSheet private constructor(
             backListener: BackListener?,
             minHeight: Int?
         ): InstallAppBottomSheet {
-            return InstallAppBottomSheet(paymentComponent, listener, backListener, minHeight)
+            val factory = InstallAppViewModel.Factory(
+                paymentComponent,
+                backListener,
+                listener
+            )
+            return InstallAppBottomSheet(factory, minHeight)
         }
     }
 }

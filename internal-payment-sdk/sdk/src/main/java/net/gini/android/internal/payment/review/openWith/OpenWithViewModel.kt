@@ -12,7 +12,14 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 
 
-internal class OpenWithViewModel private constructor(val paymentComponent: PaymentComponent?, val paymentProviderApp: PaymentProviderApp?, val openWithForwardListener: OpenWithForwardListener?, val backListener: BackListener?, val paymentDetails: PaymentDetails?, val paymentRequestId: String?): ViewModel() {
+internal class OpenWithViewModel private constructor(
+    val paymentComponent: PaymentComponent?,
+    val paymentProviderApp: PaymentProviderApp?,
+    val openWithForwardListener: OpenWithForwardListener?,
+    val backListener: BackListener?,
+    val paymentDetails: PaymentDetails?,
+    val paymentRequestId: String?,
+): ViewModel() {
 
     private val qrCodeMutableFlow = MutableStateFlow<Bitmap?>(null)
     val qrCodeFlow: StateFlow<Bitmap?> = qrCodeMutableFlow

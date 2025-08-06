@@ -35,13 +35,17 @@ class OpenWithBottomSheetTest {
     @Test
     fun `listener method called when 'Forward' button tapped`() = runTest {
         // Given
+        val context: Context = ApplicationProvider.getApplicationContext()
+        giniPaymentModule = GiniInternalPaymentModule(context)
         val listener: OpenWithForwardListener = mockk()
         every { listener.onForwardSelected() } returns mockk()
+        paymentComponentWithLocale = PaymentComponent(context, giniPaymentModule)
+        giniPaymentModule.setSDKLanguage(GiniLocalization.ENGLISH, context)
 
         launchFragmentInContainer(themeResId = R.style.GiniPaymentTheme) {
             OpenWithBottomSheet.newInstance(
                 mockk(relaxed = true),
-                paymentComponent = mockk(relaxed = true),
+                paymentComponent = paymentComponentWithLocale,
                 listener = listener,
                 paymentDetails = mockk(relaxed = true),
                 paymentRequestId = null

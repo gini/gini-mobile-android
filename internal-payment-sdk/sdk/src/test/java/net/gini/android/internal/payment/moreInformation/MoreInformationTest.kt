@@ -1,7 +1,6 @@
 package net.gini.android.internal.payment.moreInformation
 
 import android.content.Context
-import android.widget.ExpandableListView
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
@@ -26,7 +25,6 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColor
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.moreinformation.MoreInformationFragment
 import net.gini.android.internal.payment.utils.GiniLocalization
-import org.hamcrest.Matchers.notNullValue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

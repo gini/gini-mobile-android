@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +31,7 @@ import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
@@ -42,8 +44,7 @@ import java.util.Locale
  * If a banking app is not installed it will also display its Play Store link.
  */
 class BankSelectionBottomSheet private constructor(
-    private val paymentComponent: PaymentComponent?,
-    private val backListener: BackListener? = null
+   private val viewmodelFactory: ViewModelProvider.Factory? = null
 ) :
     GpsBottomSheetDialogFragment() {
 
@@ -51,10 +52,7 @@ class BankSelectionBottomSheet private constructor(
 
     private var binding: GpsBottomSheetBankSelectionBinding by autoCleared()
     private val viewModel: BankSelectionViewModel by viewModels {
-        BankSelectionViewModel.Factory(
-            paymentComponent,
-            backListener
-        )
+       viewmodelFactory?: object : ViewModelProvider.Factory {}
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -63,6 +61,13 @@ class BankSelectionBottomSheet private constructor(
             inflater,
             GiniInternalPaymentModule.getSDKLanguageInternal(requireContext())?.languageLocale()
         )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (viewmodelFactory == null && !isViewModelInitialized(BankSelectionViewModel::class)) {
+            dismissAllowingStateLoss()
+        }
     }
 
     override fun onCreateView(
@@ -166,7 +171,11 @@ class BankSelectionBottomSheet private constructor(
             paymentComponent: PaymentComponent,
             backListener: BackListener? = null
         ): BankSelectionBottomSheet {
-            return BankSelectionBottomSheet(paymentComponent, backListener)
+            val factory = BankSelectionViewModel.Factory(
+                paymentComponent,
+                backListener
+            )
+            return BankSelectionBottomSheet(factory)
         }
     }
 }

@@ -3,6 +3,7 @@ package net.gini.android.health.sdk.review
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -154,13 +155,24 @@ internal class ReviewViewModel(
         private val documentId: String,
         private val paymentFlowConfiguration: PaymentFlowConfiguration,
         private val reviewFragmentListener: ReviewFragmentListener
-    ) :
-        ViewModelProvider.Factory {
+    ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId, paymentFlowConfiguration, reviewFragmentListener) as T
+            return ReviewViewModel(
+                giniHealth,
+                configuration,
+                paymentComponent,
+                documentId,
+                paymentFlowConfiguration,
+                reviewFragmentListener
+            ) as T
+        }
+
+        override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+            return create(modelClass)
         }
     }
+
 
     companion object {
         private val LOG = LoggerFactory.getLogger(ReviewViewModel::class.java)

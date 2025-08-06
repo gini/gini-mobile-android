@@ -138,7 +138,7 @@ class PaymentFragment private constructor(
             viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
             childFragmentManager.add(
                 containerId = binding.gmsFragmentContainerView.id,
-                fragment = MoreInformationFragment.newInstance(viewModel.paymentComponent, viewModel),
+                fragment = MoreInformationFragment.newInstance(viewModel.paymentComponent),
                 addToBackStack = true
             )
         }
