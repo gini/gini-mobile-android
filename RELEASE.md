@@ -60,7 +60,7 @@ To publish releases follow these steps:
 6. Wait for QA to assign back the release candidate tickets to you. 
 7. Create and push release tags by running: `bundle exec fastlane create_release_tags`.
 8. Check that the release workflows have started in [GitHub Actions](https://github.com/gini/gini-mobile-android/actions). 
-9. After all builds have finished log into [Sonatype's Nexus Repository Manager](https://oss.sonatype.org/#welcome)
+9. After all builds have finished log into [Sonatype's Nexus Repository Manager](https://central.sonatype.com/)
    (for Maven Central) and view the `Staging Repositories`. Credentials are in 1Password: "Maven Central Sonatype account for net.gini".
    1. Run pre-release checks: select all staging repositories and click `Close`.
    2. After the checks have completed check your emails to see whether Sonatype Lift detected any vulnerabilities.
