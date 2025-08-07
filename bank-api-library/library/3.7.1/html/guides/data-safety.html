@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Google Play Data Safety Guide &mdash; Gini Bank API Library for Android v1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'../',
+        VERSION:'v1',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Gini Bank API Library for Android v1 documentation" href="../index.html"/>
+        <link rel="next" title="Migrate to 2.0.0" href="migrate-to-2-0-0.html"/>
+        <link rel="prev" title="Using the Gini Bank API Library" href="using-the-library.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" id="gini-logo">
+          <img src="../_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#first-of-all-add-the-library-to-your-build">First of all: Add the library to your build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#integrating-the-gini-bank-api-library">Integrating the Gini Bank API Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#creating-the-ginibankapi-instance">Creating the GiniBankAPI instance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getting-started.html#public-key-pinning">Public Key Pinning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#configure-pinning">Configure Pinning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#id4">TrustKit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#enable-pinning-with-a-network-security-configuration">Enable Pinning with a Network Security Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#enable-pinning-with-a-custom-trustmanager-implementation">Enable Pinning with a custom TrustManager implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#extract-hash-from-pay-api-gini-net">Extract Hash From pay-api.gini.net</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting-started.html#extract-hash-from-public-key">Extract Hash From Public Key</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="using-the-library.html">Using the Gini Bank API Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#upload-a-document">Upload a document</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="using-the-library.html#setting-the-document-type-hint">Setting the document type hint</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#getting-extractions">Getting extractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#sending-feedback">Sending feedback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#handling-errors">Handling errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-the-library.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Google Play Data Safety Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-collection-and-security">Data collection and security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-types">Data types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-usage-and-handling">Data usage and handling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#financial-info-purchase-history">Financial info - Purchase history</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photos-and-videos">Photos and videos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#files-and-docs">Files and docs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#device-or-other-ids">Device or other IDs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="migrate-to-2-0-0.html">Migrate to 2.0.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#overview-of-public-api-changes">Overview of public API changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginibankapibuilder">GiniBankAPIBuilder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#ginibankapi">GiniBankAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#bankapidocumenttaskmanager">BankApiDocumentTaskManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#bankapidocumentmanager">BankApiDocumentManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#sessionmanager">SessionManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#resource">Resource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#documenttype">DocumentType</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrate-to-2-0-0.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#custom-caching">Custom caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#custom-sessionmanager">Custom SessionManager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="migrate-to-2-0-0.html#upload-and-analyze-a-document">Upload and analyze a document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../see_also.html">See also</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#bolts">Bolts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#android-volley">Android Volley</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#trustkit">TrustKit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Gini Bank API Library for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Google Play Data Safety Guide</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="google-play-data-safety-guide">
+<h1>Google Play Data Safety Guide<a class="headerlink" href="#google-play-data-safety-guide" title="Permalink to this headline">¶</a></h1>
+<p>Since <a class="reference external" href="https://support.google.com/googleplay/android-developer/answer/10787469?hl=en">July 20, 2022</a>, Google requires
+all apps published via the Google Play Store to declare how their app collects and handles user data. This document
+provides information about the Gini Bank API Library’s data use to help you fill out or update your app’s <a class="reference external" href="https://developer.android.com/privacy-and-security/declare-data-use">Data safety
+form</a> for the Google Play Store.</p>
+<div class="section" id="data-collection-and-security">
+<h2>Data collection and security<a class="headerlink" href="#data-collection-and-security" title="Permalink to this headline">¶</a></h2>
+<p>For the question <strong>“Does your app collect or share any of the required user data types?”</strong> please answer <strong>Yes</strong>. Gini
+Bank API Library collects information about purchases and transactions.</p>
+<p>For the questions <strong>“Is all of the user data collected by your app encrypted in transit?“</strong> please answer <strong>Yes.</strong> Gini
+Bank API Library transmits data only via https and in addition you can also use certificate pinning.</p>
+<p>The answer to the question <strong>“Do you provide a way for users to request that their data is deleted?“</strong> depends on
+whether you provide your users a way to request data deletion. If you do, then you can contact Gini support or use the
+Gini Pay API to delete user data.</p>
+</div>
+<div class="section" id="data-types">
+<h2>Data types<a class="headerlink" href="#data-types" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Category</th>
+<th class="head">Used by Gini Bank API Library</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Location</td>
+<td>🔴 Gini Bank API Library doesn’t collect approximate or precise location data.</td>
+</tr>
+<tr class="row-odd"><td>Personal info</td>
+<td>🔴 Gini Bank API Library doesn’t collect personal user data.</td>
+</tr>
+<tr class="row-even"><td>Financial info</td>
+<td>🟢 Gini Bank API Library collects <strong>purchase history</strong> (purchases and transactions).</td>
+</tr>
+<tr class="row-odd"><td>Health and fitness</td>
+<td>🔴 Gini Bank API Library doesn’t collect health or fitness data.</td>
+</tr>
+<tr class="row-even"><td>Messages</td>
+<td>🔴 Gini Bank API Library doesn’t collect data about emails, SMS/MMS messages, or other in-app messages from users.</td>
+</tr>
+<tr class="row-odd"><td>Photos and videos</td>
+<td>🟢 Gini Bank API Library collects <strong>photos</strong> which you can upload for the purpose of data extraction.</td>
+</tr>
+<tr class="row-even"><td>Audio files</td>
+<td>🔴 Audio files</td>
+</tr>
+<tr class="row-odd"><td>Files and docs</td>
+<td>🟢 Gini Bank API Library collects <strong>PDF files</strong> which you can upload for the purpose of data extraction.</td>
+</tr>
+<tr class="row-even"><td>Calendar</td>
+<td>🔴 Gini Bank API Library doesn’t collect calendar events from users.</td>
+</tr>
+<tr class="row-odd"><td>Contacts</td>
+<td>🔴 Gini Bank API Library doesn’t collect contacts from users.</td>
+</tr>
+<tr class="row-even"><td>App activity</td>
+<td>🔴 Gini Bank API Library doesn’t collect app activity.</td>
+</tr>
+<tr class="row-odd"><td>Web browsing</td>
+<td>🔴 Gini Bank API Library doesn’t collect web browsing history from users.</td>
+</tr>
+<tr class="row-even"><td>App info and performance</td>
+<td>🔴 Gini Bank API Library doesn’t collect crash logs or diagnostics.</td>
+</tr>
+<tr class="row-odd"><td>Device or other IDs</td>
+<td>ℹ️ Gini Bank API Library may collect <strong>anonymous user IDs</strong> which are generated random IDs and unique to app installations,
+provided you didn’t override authentication.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data-usage-and-handling">
+<h2>Data usage and handling<a class="headerlink" href="#data-usage-and-handling" title="Permalink to this headline">¶</a></h2>
+<p>The following sections provide information for filling out the “Data usage and handling” forms. For ease of use the
+terms and phrases which are used in the forms are highlighted in bold letters.</p>
+<div class="section" id="financial-info-purchase-history">
+<h3>Financial info - Purchase history<a class="headerlink" href="#financial-info-purchase-history" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Bank API Library <strong>collects</strong> data related to purchases for a limited duration. This duration is 28 days unless
+a different period has been agreed upon during contract negotiations. This means that data is <strong>not processed
+ephemerally</strong>. In addition <strong>users can’t choose whether this data is collected</strong>.</p>
+<p>The <strong>purpose</strong> for collecting purchase history is to provide SDK functionality (<strong>app functionality</strong>) and for
+<strong>analytics</strong>.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+<div class="section" id="photos-and-videos">
+<h3>Photos and videos<a class="headerlink" href="#photos-and-videos" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Bank API Library <strong>collects photos</strong> for a limited duration. This duration is 28 days unless a different period
+has been agreed upon during contract negotiations. This means that data is <strong>not processed ephemerally</strong>. In addition
+<strong>users can’t choose whether this data is collected</strong>.</p>
+<p>The <strong>purpose</strong> for collecting photos is to provide SDK functionality (<strong>app functionality</strong>) and for <strong>analytics</strong>.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+<div class="section" id="files-and-docs">
+<h3>Files and docs<a class="headerlink" href="#files-and-docs" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Bank API Library <strong>collects PDF files</strong> for a limited duration. This duration is 28 days unless a different
+period has been agreed upon during contract negotiations. This means that data is <strong>not processed ephemerally</strong>. In
+addition <strong>users can’t choose whether this data is collected</strong>.</p>
+<p>The <strong>purpose</strong> for collecting PDF files is to provide SDK functionality (<strong>app functionality</strong>) and for <strong>analytics</strong>.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+<div class="section" id="device-or-other-ids">
+<h3>Device or other IDs<a class="headerlink" href="#device-or-other-ids" title="Permalink to this headline">¶</a></h3>
+<p>The Gini Bank API Library may <strong>collect</strong> anonymous user IDs which are generated random IDs and unique to app
+installations, provided you didn’t override authentication (via a custom session manager). This data is <strong>not processed
+ephemerally</strong> and <strong>users can’t choose whether this data is collected</strong>.</p>
+<p>The reason for collecting anonymous user IDs is to provide SDK functionality (<strong>app functionality</strong>) and for
+<strong>analytics</strong> to monitor service quality.</p>
+<p>This data is only used internally and <strong>is not shared with third-parties</strong>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="migrate-to-2-0-0.html" class="btn btn-neutral float-right" title="Migrate to 2.0.0">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="using-the-library.html" class="btn btn-neutral" title="Using the Gini Bank API Library"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>
