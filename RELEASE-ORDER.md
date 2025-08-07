@@ -7,9 +7,9 @@ Release order for :capture-sdk:sdk 3.19.1:
 Release order for :core-api-library:library 2.5.1:
  1. :core-api-library:library 2.5.1
 
-Release order for :bank-api-library:library 3.7.0:
+Release order for :bank-api-library:library 3.7.1:
  1. :core-api-library:library 2.5.1
- 2. :bank-api-library:library 3.7.0
+ 2. :bank-api-library:library 3.7.1
 
 Release order for :health-api-library:library 5.4.0:
  1. :core-api-library:library 2.5.1
@@ -28,7 +28,7 @@ Release order for :health-sdk:sdk 5.5.0:
 
 Release order for :capture-sdk:default-network 3.19.0:
  1. :core-api-library:library 2.5.1
- 2. :bank-api-library:library 3.7.0
+ 2. :bank-api-library:library 3.7.1
  3. :capture-sdk:sdk 3.19.1
  4. :capture-sdk:default-network 3.19.0
 
@@ -40,7 +40,7 @@ Release order for :merchant-sdk:sdk 1.0.0:
 
 Release order for :bank-sdk:sdk 3.22.0:
  1. :core-api-library:library 2.5.1
- 2. :bank-api-library:library 3.7.0
+ 2. :bank-api-library:library 3.7.1
  3. :capture-sdk:sdk 3.19.1
  4. :capture-sdk:default-network 3.19.0
  5. :bank-sdk:sdk 3.22.0
