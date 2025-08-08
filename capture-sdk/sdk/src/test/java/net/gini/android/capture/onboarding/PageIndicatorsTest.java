@@ -1,20 +1,22 @@
 package net.gini.android.capture.onboarding;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static net.gini.android.capture.onboarding.PageIndicatorsHelper.isPageActive;
-import static net.gini.android.capture.onboarding.PageIndicatorsHelper.isPageInactive;
-
 import android.widget.LinearLayout;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
+
+import static com.google.common.truth.Truth.assertThat;
+import static net.gini.android.capture.onboarding.PageIndicatorsHelper.isPageActive;
+import static net.gini.android.capture.onboarding.PageIndicatorsHelper.isPageInactive;
+
 @RunWith(AndroidJUnit4.class)
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(maxSdk = 35)
 public class PageIndicatorsTest {
 
     @Test

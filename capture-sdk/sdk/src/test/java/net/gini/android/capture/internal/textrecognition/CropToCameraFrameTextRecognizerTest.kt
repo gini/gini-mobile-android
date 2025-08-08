@@ -9,6 +9,7 @@ import net.gini.android.capture.internal.textrecognition.test.TextRecognizerStub
 import net.gini.android.capture.internal.util.Size
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 /**
  * Cannot use `@RunWith(JUnitParamsRunner::class)` because android.graphics.Rect needs the implementation provided by Robolectric.
@@ -16,6 +17,10 @@ import org.junit.runner.RunWith
  * > `java.lang.RuntimeException: Method contains in android.graphics.Rect not mocked. See https://developer.android.com/r/studio-ui/build/not-mocked for details.`
  */
 @RunWith(AndroidJUnit4::class)
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(
+    maxSdk = 35,
+)
 internal class CropToCameraFrameTextRecognizerTest {
 
     /**
