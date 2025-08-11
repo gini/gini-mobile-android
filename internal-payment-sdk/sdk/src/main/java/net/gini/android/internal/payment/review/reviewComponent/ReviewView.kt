@@ -3,6 +3,7 @@ package net.gini.android.internal.payment.review.reviewComponent
 import android.content.Context
 import android.text.Editable
 import android.os.Build
+import android.os.Parcelable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextWatcher
@@ -530,4 +531,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
     }
 
 }
-enum class ReviewFields { RECIPIENT, IBAN, AMOUNT, PURPOSE }
+@kotlinx.parcelize.Parcelize
+enum class ReviewFields : Parcelable {
+    IBAN, AMOUNT, RECIPIENT, PURPOSE
+}

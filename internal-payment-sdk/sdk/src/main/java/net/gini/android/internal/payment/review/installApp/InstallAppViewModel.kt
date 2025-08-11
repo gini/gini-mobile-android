@@ -12,7 +12,11 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.utils.BackListener
 import org.slf4j.LoggerFactory
 
-internal class InstallAppViewModel(val paymentComponent: PaymentComponent?, val backListener: BackListener?,val installAppForwardListener: InstallAppForwardListener?) : ViewModel() {
+internal class InstallAppViewModel(
+    val paymentComponent: PaymentComponent?,
+    val backListener: BackListener?,
+    val installAppForwardListener: InstallAppForwardListener?,
+) : ViewModel() {
 
     private val _paymentProviderApp = MutableStateFlow<PaymentProviderApp?>(null)
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
@@ -40,7 +44,11 @@ internal class InstallAppViewModel(val paymentComponent: PaymentComponent?, val 
     class Factory(private val paymentComponent: PaymentComponent?, private val backListener: BackListener?,private val installAppForwardListener: InstallAppForwardListener?) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return InstallAppViewModel(paymentComponent, backListener,installAppForwardListener) as T
+            return InstallAppViewModel(
+                paymentComponent,
+                backListener,
+                installAppForwardListener,
+            ) as T
         }
     }
 }

@@ -78,6 +78,7 @@ class GiniHealth(
         }
     }
 
+
     val documentManager = giniInternalPaymentModule.giniHealthAPI.documentManager
 
     private var registryOwner = WeakReference<SavedStateRegistryOwner?>(null)
@@ -99,7 +100,8 @@ class GiniHealth(
      */
     val documentFlow: StateFlow<ResultWrapper<Document>> = _documentFlow
 
-    private val _paymentFlow = MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
+    private val _paymentFlow =
+        MutableStateFlow<ResultWrapper<PaymentDetails>>(ResultWrapper.Loading())
 
     /**
      * A flow for getting extracted [PaymentDetails] for the document set for review (see [setDocumentForReview]).
@@ -128,20 +130,21 @@ class GiniHealth(
      */
     val displayedScreen: SharedFlow<DisplayedScreen> = _displayedScreen
 
-    private val _trustMarkersFlow = giniInternalPaymentModule.paymentComponent.paymentProviderAppsFlow.map { result ->
-        when (result) {
-            is PaymentProviderAppsState.Error -> ResultWrapper.Error(result.throwable)
-            PaymentProviderAppsState.Loading -> ResultWrapper.Loading()
-            PaymentProviderAppsState.Nothing -> ResultWrapper.Loading()
-            is PaymentProviderAppsState.Success -> ResultWrapper.Success<TrustMarkerResponse> (
-                TrustMarkerResponse(
-                    paymentProviderIcon = result.paymentProviderApps.firstOrNull()?.icon,
-                    secondPaymentProviderIcon = if (result.paymentProviderApps.size >= 2) result.paymentProviderApps[1].icon else null,
-                    extraPaymentProvidersCount = maxOf(result.paymentProviderApps.size - 2, 0)
+    private val _trustMarkersFlow =
+        giniInternalPaymentModule.paymentComponent.paymentProviderAppsFlow.map { result ->
+            when (result) {
+                is PaymentProviderAppsState.Error -> ResultWrapper.Error(result.throwable)
+                PaymentProviderAppsState.Loading -> ResultWrapper.Loading()
+                PaymentProviderAppsState.Nothing -> ResultWrapper.Loading()
+                is PaymentProviderAppsState.Success -> ResultWrapper.Success<TrustMarkerResponse>(
+                    TrustMarkerResponse(
+                        paymentProviderIcon = result.paymentProviderApps.firstOrNull()?.icon,
+                        secondPaymentProviderIcon = if (result.paymentProviderApps.size >= 2) result.paymentProviderApps[1].icon else null,
+                        extraPaymentProvidersCount = maxOf(result.paymentProviderApps.size - 2, 0)
+                    )
                 )
-            )
+            }
         }
-    }
 
     /**
      * A flow for getting information about trust markers.
@@ -210,9 +213,9 @@ class GiniHealth(
         return when (response) {
             is Resource.Success -> null
             is Resource.Error -> if (response.message.isNullOrEmpty()) {
-                when(response.responseStatusCode){
+                when (response.responseStatusCode) {
                     404 -> "Payment request not found"
-                   else -> "Failed to delete payment request"
+                    else -> "Failed to delete payment request"
                 }
             } else
                 response.message
@@ -242,13 +245,18 @@ class GiniHealth(
             when (val documentResult = documentFlow.value) {
                 is ResultWrapper.Success -> {
                     _paymentFlow.value =
-                        wrapToResult { documentManager.getAllExtractionsWithPolling(documentResult.value).mapSuccess {
-                            Resource.Success(it.data.toPaymentDetails()) }
+                        wrapToResult {
+                            documentManager.getAllExtractionsWithPolling(documentResult.value)
+                                .mapSuccess {
+                                    Resource.Success(it.data.toPaymentDetails())
+                                }
                         }
                 }
+
                 is ResultWrapper.Error -> {
                     _paymentFlow.value = ResultWrapper.Error(Throwable("Failed to get document"))
                 }
+
                 is ResultWrapper.Loading -> {}
             }
         }
@@ -285,6 +293,7 @@ class GiniHealth(
 
                 throw Exception(response.message ?: "Error")
             }
+
             is Resource.Cancelled -> throw Exception("Request cancelled")
         }
     }
@@ -299,7 +308,8 @@ class GiniHealth(
     suspend fun checkIfDocumentContainsMultipleDocuments(documentId: String): Boolean {
         return when (val extractions = getExtractionsForDocument(documentId)) {
             null -> false
-            else -> (extractions.specificExtractions["contains_multiple_docs"]?.value ?: "" ) == HAS_MULTIPLE_DOCUMENTS
+            else -> (extractions.specificExtractions["contains_multiple_docs"]?.value
+                ?: "") == HAS_MULTIPLE_DOCUMENTS
         }
     }
 
@@ -312,7 +322,10 @@ class GiniHealth(
      * @return [DeleteDocumentErrorResponse] with more information about why the request failed
      */
     suspend fun deletePaymentRequests(paymentRequestIds: List<String>): DeletePaymentRequestErrorResponse? {
-        val response = giniInternalPaymentModule.giniHealthAPI.documentManager.deletePaymentRequests(paymentRequestIds)
+        val response =
+            giniInternalPaymentModule.giniHealthAPI.documentManager.deletePaymentRequests(
+                paymentRequestIds
+            )
         return when (response) {
             is Resource.Success -> {
                 null
@@ -328,8 +341,9 @@ class GiniHealth(
                         moshi = Moshi.Builder()
                             .build()
                     }
-                    val deleteDocumentsError = moshi.adapter(DeletePaymentRequestErrorResponse::class.java)
-                        .lenient().fromJson(failureMessage)
+                    val deleteDocumentsError =
+                        moshi.adapter(DeletePaymentRequestErrorResponse::class.java)
+                            .lenient().fromJson(failureMessage)
                     return deleteDocumentsError
                 }
                 return DeletePaymentRequestErrorResponse(message = "Unknown error occurred")
@@ -352,7 +366,8 @@ class GiniHealth(
      * @return [DeleteDocumentErrorResponse] with more information about why the request failed
      */
     suspend fun deleteDocuments(documentIds: List<String>): DeleteDocumentErrorResponse? {
-        val response = giniInternalPaymentModule.giniHealthAPI.documentManager.deleteDocuments(documentIds)
+        val response =
+            giniInternalPaymentModule.giniHealthAPI.documentManager.deleteDocuments(documentIds)
         return when (response) {
             is Resource.Success -> {
                 null
@@ -366,7 +381,9 @@ class GiniHealth(
                         moshi = Moshi.Builder()
                             .build()
                     }
-                    val deleteDocumentsError = moshi.adapter(DeleteDocumentErrorResponse::class.java).lenient().fromJson(failureMessage)
+                    val deleteDocumentsError =
+                        moshi.adapter(DeleteDocumentErrorResponse::class.java).lenient()
+                            .fromJson(failureMessage)
                     return deleteDocumentsError
                 }
                 return DeleteDocumentErrorResponse()
@@ -404,7 +421,11 @@ class GiniHealth(
 
     internal suspend fun retryDocumentReview() {
         when (val arguments = capturedArguments) {
-            is CapturedArguments.DocumentId -> setDocumentForReview(arguments.id, arguments.paymentDetails)
+            is CapturedArguments.DocumentId -> setDocumentForReview(
+                arguments.id,
+                arguments.paymentDetails
+            )
+
             is CapturedArguments.DocumentInstance -> setDocumentForReview(arguments.value)
             null -> { // Nothing
             }
@@ -417,7 +438,10 @@ class GiniHealth(
      * @param registryOwner The SavedStateRegistryOwner to which the observer is attached.
      * @param retryScope Should be a scope [setDocumentForReview] would be called in (ex: viewModelScope).
      */
-    fun setSavedStateRegistryOwner(registryOwner: SavedStateRegistryOwner, retryScope: CoroutineScope) {
+    fun setSavedStateRegistryOwner(
+        registryOwner: SavedStateRegistryOwner,
+        retryScope: CoroutineScope
+    ) {
         this.registryOwner.get()?.let { registry ->
             savedStateObserver?.let { observer ->
                 registry.lifecycle.removeObserver(observer)
@@ -432,10 +456,14 @@ class GiniHealth(
                 val state = registry?.consumeRestoredStateForKey(PROVIDER)
                 if (capturedArguments == null) {
                     capturedArguments = when (state?.getString(CAPTURED_ARGUMENTS_TYPE)) {
-                        CAPTURED_ARGUMENTS_ID -> state.getParcelable<CapturedArguments.DocumentId>(CAPTURED_ARGUMENTS)
+                        CAPTURED_ARGUMENTS_ID -> state.getParcelable<CapturedArguments.DocumentId>(
+                            CAPTURED_ARGUMENTS
+                        )
+
                         CAPTURED_ARGUMENTS_DOCUMENT -> state.getParcelable<CapturedArguments.DocumentInstance>(
                             CAPTURED_ARGUMENTS
                         )
+
                         else -> null
                     }
                     retryScope.launch {
@@ -455,7 +483,10 @@ class GiniHealth(
      * @param documentId The document id for which the extractions should be loaded
      * @param configuration The configuration for the [PaymentFragment]
      */
-    fun getPaymentFragmentWithDocument(documentId: String, configuration: PaymentFlowConfiguration?): PaymentFragment {
+    fun getPaymentFragmentWithDocument(
+        documentId: String,
+        configuration: PaymentFlowConfiguration?
+    ): PaymentFragment {
         LOG.debug("Getting payment review fragment for id: {}", documentId)
         giniInternalPaymentModule.setPaymentDetails(null)
         _paymentFlow.value = ResultWrapper.Loading()
@@ -466,6 +497,7 @@ class GiniHealth(
         )
     }
 
+
     /**
      * Creates an instance of [PaymentFragment] with the given payment details and
      * configuration.
@@ -475,7 +507,10 @@ class GiniHealth(
      * @throws IllegalStateException if any of the payment details ([recipient], [IBAN], [amount], [purpose]] are empty
      * or the [IBAN] is invalid.
      */
-    fun getPaymentFragmentWithoutDocument(paymentDetails: PaymentDetails, configuration: PaymentFlowConfiguration?): PaymentFragment {
+    fun getPaymentFragmentWithoutDocument(
+        paymentDetails: PaymentDetails,
+        configuration: PaymentFlowConfiguration?
+    ): PaymentFragment {
         LOG.debug("Getting payment fragment for payment details: {}", paymentDetails.toString())
         if (paymentDetails.iban.isEmpty() || paymentDetails.amount.isEmpty() || paymentDetails.purpose.isEmpty() || paymentDetails.recipient.isEmpty()) {
             throw IllegalStateException("Payment details are incomplete")
@@ -496,7 +531,8 @@ class GiniHealth(
     /**
      * Manually load payment provider apps, in case there was an error when trying to load them automatically.
      */
-    suspend fun loadPaymentProviders() = giniInternalPaymentModule.paymentComponent.loadPaymentProviderApps()
+    suspend fun loadPaymentProviders() =
+        giniInternalPaymentModule.paymentComponent.loadPaymentProviderApps()
 
     private val savedStateProvider = SavedStateRegistry.SavedStateProvider {
         Bundle().apply {
@@ -505,10 +541,12 @@ class GiniHealth(
                     this.putString(CAPTURED_ARGUMENTS_TYPE, CAPTURED_ARGUMENTS_ID)
                     this.putParcelable(CAPTURED_ARGUMENTS, capturedArguments)
                 }
+
                 is CapturedArguments.DocumentInstance -> {
                     this.putString(CAPTURED_ARGUMENTS_TYPE, CAPTURED_ARGUMENTS_DOCUMENT)
                     this.putParcelable(CAPTURED_ARGUMENTS, capturedArguments)
                 }
+
                 null -> this.putString(CAPTURED_ARGUMENTS_TYPE, CAPTURED_ARGUMENTS_NULL)
             }
         }
@@ -523,7 +561,8 @@ class GiniHealth(
         class DocumentInstance(val value: Document) : CapturedArguments()
 
         @Parcelize
-        class DocumentId(val id: String, val paymentDetails: PaymentDetails? = null) : CapturedArguments()
+        class DocumentId(val id: String, val paymentDetails: PaymentDetails? = null) :
+            CapturedArguments()
     }
 
     sealed class PaymentState {
@@ -542,6 +581,30 @@ class GiniHealth(
 
     companion object {
         private val LOG = LoggerFactory.getLogger(GiniHealth::class.java)
+        @Volatile
+        private var instance: GiniHealth? = null
+
+        /**
+         * Sets the current [GiniHealth] instance for internal SDK use.
+         *
+         * This reference is valid only during the app's lifetime and must be re-set after a process death,
+         * typically in app initialization (e.g., Application class or DI),
+         * using the same [GiniHealth] instance.
+         *
+         * @param giniHealth the [GiniHealth] instance to set.
+         */
+
+        fun setInstance(giniHealth: GiniHealth) {
+            if (instance == null) {
+                synchronized(GiniHealth::class.java) {
+                    if (instance == null) {
+                        instance = giniHealth
+                    }
+                }
+            }
+        }
+
+        fun getInstance(): GiniHealth? = instance
 
         private const val CAPTURED_ARGUMENTS_NULL = "CAPTURED_ARGUMENTS_NULL"
         private const val CAPTURED_ARGUMENTS_ID = "CAPTURED_ARGUMENTS_ID"
