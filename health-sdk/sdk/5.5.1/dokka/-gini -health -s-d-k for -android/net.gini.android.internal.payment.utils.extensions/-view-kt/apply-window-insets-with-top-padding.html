@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>applyWindowInsetsWithTopPadding</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            Gini Health SDK for Android
+                    </a>
+            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":internal-payment-sdk:sdk:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="member" id="content" pageIds="Gini Health SDK for Android::net.gini.android.internal.payment.utils.extensions/ViewKt/applyWindowInsetsWithTopPadding/android.view.View#android.view.View?#kotlin.Boolean#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration//-1184357419">
+  <div class="breadcrumbs"><a href="../../../index.html">Gini Health SDK for Android</a><span class="delimiter">/</span><a href="../index.html">net.gini.android.internal.payment.utils.extensions</a><span class="delimiter">/</span><a href="index.html">ViewKt</a><span class="delimiter">/</span><span class="current">applyWindowInsetsWithTopPadding</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>apply</span><wbr></wbr><span>Window</span><wbr></wbr><span>Insets</span><wbr></wbr><span>With</span><wbr></wbr><span>Top</span><wbr></wbr><span><span>Padding</span></span></h1>
+  </div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":internal-payment-sdk:sdk:dokkaHtml/release"><div class="symbol monospace block"><span class="token keyword">public </span><span class="token keyword">final </span><span class="token keyword">static </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a> <a href="apply-window-insets-with-top-padding.html"><span class="token function">applyWindowInsetsWithTopPadding</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/view/View.html">View</a> $self<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/android/view/View.html">View</a> paddingTargetView<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a> displayCutout<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a> navigationBars<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword"></span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a> statusBars</span></span><span class="token punctuation">)</span></div><p class="paragraph"><span data-unresolved-link="net.gini.android.internal.payment.utils.extensions//applyWindowInsetsWithTopPadding/android.view.View#android.view.View?#kotlin.Boolean#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/">applyWindowInsetsWithTopPadding</span> From Android 15 onwards we have to support the edge to edge enforcement. In health example app and SDK we are going to use this method, so we can protect the view from display cut outs nav bars and status bars.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":internal-payment-sdk:sdk:dokkaHtml/release" data-filterable-set=":internal-payment-sdk:sdk:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>padding</span><wbr></wbr><span>Target</span><wbr></wbr><span><span>View</span></span></u></div></span></div><div><div class="title"><p class="paragraph">: Because we are using action bars in many places for having the title of screen, in Android 15 onwards we were facing the issue that screen content was drawn under the status bar, so instead of giving top margin in every layout, we can pass the view to below method and it will add top padding to the content of screen equals to action bar's height, and it will only work for Android 15 onwards</p><p class="paragraph">Important Note: We need to remove this method and start using the custom material toolbar.</p></div></div></div></div></div></div></div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
