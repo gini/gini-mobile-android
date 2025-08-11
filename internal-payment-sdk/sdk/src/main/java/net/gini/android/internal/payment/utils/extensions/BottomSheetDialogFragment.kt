@@ -20,7 +20,6 @@ internal fun BottomSheetDialog.setBackListener(backListener: BackListener) {
 }
 
 fun Fragment.isViewModelInitialized(viewModelClass: KClass<out ViewModel>): Boolean {
-    // Specific signal used only by our probe factory
     class ViewModelAbsent : RuntimeException()
 
     val probeFactory = object : ViewModelProvider.Factory {
@@ -39,7 +38,6 @@ fun Fragment.isViewModelInitialized(viewModelClass: KClass<out ViewModel>): Bool
         ViewModelProvider(this, probeFactory)[viewModelClass.java]
         true
     } catch (_: ViewModelAbsent) {
-        // Optional: tiny log if you want to silence detekt's SwallowedException in strict configs
         false
     }
 }
