@@ -200,7 +200,6 @@ open class PaymentFragment private constructor(
                 containerId = binding.ghsFragmentContainerView.id,
                 fragment = MoreInformationFragment.newInstance(
                     viewModel.paymentComponent,
-                    viewModel
                 ),
                 addToBackStack = true
             )
@@ -323,6 +322,13 @@ open class PaymentFragment private constructor(
                 showPaymentComponentBottomSheet()
             }
         } else {
+            if (isProcessDeathWithSdk) {
+                val args = requireArguments()
+                val paymentDetails = args.getParcelable<PaymentDetails>("paymentDetails")
+                paymentDetails?.let {
+                    viewModel.giniInternalPaymentModule.setPaymentDetails(it.toCommonPaymentDetails())
+                }
+            }
             showPaymentComponentBottomSheet()
         }
     }

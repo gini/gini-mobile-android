@@ -25,7 +25,6 @@ import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsFragmentPaymentMoreInformationBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
-import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.UrlSpanNoUnderline
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
