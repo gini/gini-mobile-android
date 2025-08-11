@@ -117,7 +117,9 @@ open class PaymentFragment private constructor(
     constructor() : this(null)
 
     private var binding: GhsFragmentHealthBinding by autoCleared()
-    private var isProcessDeath = giniHealth == null
+
+    private val isProcessDeathWithSdk: Boolean
+        get() = giniHealth == null && GiniHealth.getInstance() != null
 
     private val safeGiniHealth: GiniHealth?
         get() = giniHealth ?: GiniHealth.getInstance()
@@ -311,11 +313,10 @@ open class PaymentFragment private constructor(
             if (viewModel.documentId != null) {
                 showReviewFragment()
             } else if (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true) {
-                if (isProcessDeath) {
+                if (isProcessDeathWithSdk) {
                     val args = requireArguments()
                     val paymentDetails = args.getParcelable<PaymentDetails>("paymentDetails")
                     viewModel.giniInternalPaymentModule.setPaymentDetails(paymentDetails?.toCommonPaymentDetails())
-                    isProcessDeath = false
                 }
                 showReviewBottomDialog()
             } else {

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.preferences.UserPreferences
@@ -104,7 +105,7 @@ internal class ReviewViewModel(
                 when (documentResult) {
                     is ResultWrapper.Success -> {
                         val pages = (1..documentResult.value.pageCount).map { pageNumber ->
-                            val image = giniHealth.documentManager.getPageImage(documentId, pageNumber)
+                            val image = retryGetPageImage(documentId, pageNumber)
                             DocumentPageAdapter.Page(image, pageNumber)
                         }
                         _documentPages.value = DocumentPagesResult.Success(pages)
@@ -129,7 +130,7 @@ internal class ReviewViewModel(
 
     fun reloadImage(pageNumber: Int) {
         viewModelScope.launch {
-            val image = giniHealth.documentManager.getPageImage(documentId, pageNumber)
+            val image = retryGetPageImage(documentId, pageNumber)
             if (_documentPages.value is DocumentPagesResult.Success) {
                 with(_documentPages.value as DocumentPagesResult.Success) {
                     val pages = this.pagesList.toMutableList().apply {
@@ -147,6 +148,26 @@ internal class ReviewViewModel(
             giniHealth.retryDocumentReview()
         }
     }
+
+    private suspend fun retryGetPageImage(
+        documentId: String,
+        pageNumber: Int,
+        retries: Int = 3,
+        delayMillis: Long = 1000
+    ): Resource<ByteArray> {
+        repeat(retries - 1) {
+            val result = giniHealth.documentManager.getPageImage(documentId, pageNumber)
+            if (result is Resource.Success) {
+                return result
+            }
+            delay(delayMillis) // Wait before next attempt
+        }
+        // Final attempt, return the result (successful or failed)
+        val finalResult =  giniHealth.documentManager.getPageImage(documentId, pageNumber)
+
+        return finalResult
+    }
+
 
     class Factory(
         private val giniHealth: GiniHealth,
