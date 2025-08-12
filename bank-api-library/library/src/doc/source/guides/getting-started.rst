@@ -137,7 +137,7 @@ Bank API Library uses by default ``pay-api.gini.net`` and ``user.gini.net``. It 
 .. warning::
 
     The above digests serve as an example only. You should **always** create the digest yourself
-    from the Gini API's public key and use that one (see `Extract Hash From gini.net`_). If you
+    from the Gini API's public key and use that one (see `Extract Hash From pay-api.gini.net`_). If you
     received a digest from us then **always** validate it by comparing it to the digest you created
     from the public key (see `Extract Hash From Public Key`_). Failing to validate a digest may lead
     to security vulnerabilities.
