@@ -108,7 +108,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#getting-extractions">Getting extractions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sending-feedback">Sending feedback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sending-transfer-summary">Sending transfer summary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#handling-errors">Handling errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
 </ul>
@@ -199,7 +199,7 @@ following <code class="docutils literal notranslate"><span class="pre">Resource<
 <li>cancelled request: <code class="docutils literal notranslate"><span class="pre">Resource.Cancelled</span></code>.</li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">Resource</span></code> also provides a helper instance method for chaining requests called <code class="docutils literal notranslate"><span class="pre">mapSuccess()</span></code>. For more details please
-consult the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/3.7.1/dokka/library/net.gini.android.core.api/-resource/index.html">reference documentation</a>.</p>
+consult the <a class="reference external" href="https://developer.gini.net/gini-mobile-android/bank-api-library/library/3.7.1/dokka/-gini%20-bank%20-a-p-i%20-library%20for%20-android/net.gini.android.core.api/-resource/index.html">reference documentation</a>.</p>
 <div class="section" id="upload-a-document">
 <h2>Upload a document<a class="headerlink" href="#upload-a-document" title="Permalink to this headline">¶</a></h2>
 <p>As the key aspect of the Gini Bank API is to provide information extraction for analyzing documents, the
@@ -246,7 +246,7 @@ setting a filename is a good practice for human readable document identification
 <div class="section" id="setting-the-document-type-hint">
 <h3>Setting the document type hint<a class="headerlink" href="#setting-the-document-type-hint" title="Permalink to this headline">¶</a></h3>
 <p>To easily set the document type hint we introduced the <code class="docutils literal notranslate"><span class="pre">DocumentType</span></code> enum. It is safer and easier
-to use than a <code class="docutils literal notranslate"><span class="pre">String</span></code>. For more details about the document type hints see the <a class="reference external" href="https://pay-api.gini.net/documentation/#document-types">Document Type
+to use than a <code class="docutils literal notranslate"><span class="pre">String</span></code>. For more details about the document type hints see the <a class="reference external" href="https://gini.atlassian.net/wiki/spaces/PA1/pages/36831615/Document+Types">Document Type
 Hints in the Gini Bank API documentation</a>.</p>
 </div>
 </div>
@@ -297,20 +297,20 @@ example shows how to achieve this in detail.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="sending-feedback">
-<h2>Sending feedback<a class="headerlink" href="#sending-feedback" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="sending-transfer-summary">
+<h2>Sending transfer summary<a class="headerlink" href="#sending-transfer-summary" title="Permalink to this headline">¶</a></h2>
 <p>Depending on your use case your app probably presents the extractions to the user and offers the
 opportunity to correct them. We do our best to prevent errors. You can help improve our service if
-your app sends feedback for the extractions Gini delivered. Your app should send feedback only for
-the extractions the <em>user has seen and accepted</em>. Feedback should be sent for corrected extractions
-<strong>and</strong> for <em>correct extractions</em>. The code example below shows how to correct extractions and send
-feedback.</p>
+your app sends transfer summary for the extractions Gini delivered. Your app should send transfer
+summary only for the extractions the <em>user has seen and accepted</em>. Transfer summary should be sent
+for corrected extractions <strong>and</strong> for <em>correct extractions</em>. The code example below shows how to
+correct extractions and send transfer summary.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>We also provide a sample test case <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/bank-api-library/library/src/androidTest/java/net/gini/android/bank/api/ExtractionFeedbackIntegrationTest.kt">here</a>
+<p>We also provide a sample test case <a class="reference external" href="https://github.com/gini/gini-mobile-android/blob/main/bank-api-library/library/src/androidTest/java/net/gini/android/bank/api/TransferSummaryIntegrationTest.kt">here</a>
 to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a
 starting point to write your own test case.</p>
-<p class="last">The sample test case is based on the Bank API documentation’s <a class="reference external" href="https://pay-api.gini.net/documentation/#test-example">recommended steps</a> for testing extraction feedback sending.</p>
+<p class="last">The sample test case is based on the Bank API documentation’s <a class="reference external" href="https://gini.atlassian.net/wiki/spaces/PA1/pages/36733143/Submit+Transfer+Summary+on+Extractions#Test-example">recommended steps</a> for testing extraction feedback sending.</p>
 </div>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Assuming that `giniBankApi` is an instance of the `GiniBankAPI` facade class</span>
 
