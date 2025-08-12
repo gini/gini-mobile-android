@@ -203,7 +203,7 @@ to the ``GiniBankAPIBuilder#setTrustManager()`` method:
 
 .. note::
 
-     The method .setTrustManager(YourTrustManager()) and .setNetworkSecurityConfigResId(R.xml.network_security_config) belongs
+     The methods .setTrustManager(YourTrustManager()) and .setNetworkSecurityConfigResId(R.xml.network_security_config) belong
      to same class which is GiniBankAPIBuilder. Please explore GiniBankAPIBuilder class for more details, and you can use
      these methods with YourSessionManager as mentioned above.
 
