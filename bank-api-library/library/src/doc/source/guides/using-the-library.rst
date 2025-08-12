@@ -25,7 +25,7 @@ following ``Resource`` instances are returned:
 - cancelled request: ``Resource.Cancelled``.
 
 ``Resource`` also provides a helper instance method for chaining requests called ``mapSuccess()``. For more details please
-consult the :root_dokka_path:`reference documentation <library/-gini%20-bank%20-a-p-i%20-library%20for%20-android/net.gini.android.core.api/-resource/index.html>`.
+consult the :root_dokka_path:`reference documentation <-gini%20-bank%20-a-p-i%20-library%20for%20-android/net.gini.android.core.api/-resource/index.html>`.
 
 Upload a document
 -----------------
