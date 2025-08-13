@@ -274,3 +274,56 @@ The ``PaymentFlowConfiguration`` class contains the following options:
         }
    }
 
+Handling process death
+----------------------
+
+If the Android system kills your app’s process (process death) and later recreates it, all in-memory references are lost — including the ``GiniHealth`` instance.
+To ensure the SDK continues to work correctly after process death, you must create a new ``GiniHealth`` instance at app startup and call the ``setInstance()`` method once during initialization (for example, in your ``Application`` class or dependency injection container).
+
+This guarantees that whenever the SDK’s internal components call ``getInstance()`` after a process restart, they will receive a valid, initialized instance.
+
+Example (Koin)
+~~~~~~~~~~~~~~
+
+The following snippet matches the example app and shows how to set the instance during DI startup. This is an example only; you are not required to use Koin.
+
+.. code-block:: kotlin
+
+    val giniModule = module {
+        single {
+            getGiniApi(
+                context = get(),
+                clientId = getProperty("clientId"),
+                clientSecret = getProperty("clientSecret"),
+                emailDomain = "example.com"
+            )
+        }
+        single {
+            val giniHealth = GiniHealth(get(), get())
+            GiniHealth.setInstance(giniHealth)
+            giniHealth
+        }
+    }
+
+Koin bootstrap (in Application)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Initialize Koin once at app startup so the ``GiniHealth`` instance is created and ``setInstance()`` is called during DI initialization.
+
+.. code-block:: kotlin
+
+    class ExampleApplication : Application() {
+        override fun onCreate() {
+            super.onCreate()
+            startKoin {
+                androidContext(this@ExampleApplication)
+                fileProperties("/client.properties")
+                modules(giniModule, viewModelModule)
+            }
+        }
+    }
+
+.. note::
+   You can also initialize without a DI framework by creating the ``GiniHealth`` instance in your ``Application`` and calling the ``setInstance()`` method once at startup. The sample app includes Koin-based usage for reference.
+
+
