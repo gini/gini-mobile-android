@@ -1,5 +1,6 @@
 package net.gini.android.capture.util
 
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -24,7 +25,12 @@ private val RD_DAYS = listOf(3, 23)
 fun getSpokenDateForTalkBack(date: String): String {
 
     val inputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-    val parsedDate = inputFormat.parse(date) ?: return date
+    val parsedDate = try {
+        inputFormat.parse(date)
+    } catch (e: ParseException) {
+        return date
+    }
+
 
     val locale = Locale.getDefault()
 
