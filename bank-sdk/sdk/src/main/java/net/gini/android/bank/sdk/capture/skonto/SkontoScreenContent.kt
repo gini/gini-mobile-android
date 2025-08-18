@@ -854,7 +854,8 @@ private fun SkontoSection(
                             CalendarIcon()
                         }
                     }
-                }
+                },
+                isDate = true
             )
         }
     }
