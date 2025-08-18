@@ -9,6 +9,10 @@ private const val ND_KEY_WORD = "nd"
 private const val RD_KEY_WORD = "rd"
 private const val TH_KEY_WORD = "th"
 
+private val ST_DAYS = listOf(1, 21, 31)
+private val ND_DAYS = listOf(2, 22)
+private val RD_DAYS = listOf(3, 23)
+
 /**
  * TalkBack does not read the date correctly on some devices,
  * for example we are using dd.MM.YYYY format, and if we select 01.09.2023,
@@ -29,9 +33,9 @@ fun getSpokenDateForTalkBack(date: String): String {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         val daySuffix = when (day) {
-            1, 21, 31 -> ST_KEY_WORD
-            2, 22 -> ND_KEY_WORD
-            3, 23 -> RD_KEY_WORD
+            in ST_DAYS -> ST_KEY_WORD
+            in ND_DAYS -> ND_KEY_WORD
+            in RD_DAYS -> RD_KEY_WORD
             else -> TH_KEY_WORD
         }
 
