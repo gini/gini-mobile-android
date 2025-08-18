@@ -28,7 +28,7 @@ fun getSpokenDateForTalkBack(date: String): String {
 
     val locale = Locale.getDefault()
 
-    if (locale == Locale.ENGLISH) {
+    if (locale.language == Locale.ENGLISH.language) {
         val calendar = Calendar.getInstance().apply { time = parsedDate }
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
@@ -44,7 +44,7 @@ fun getSpokenDateForTalkBack(date: String): String {
 
         return "$day$daySuffix of $monthName $year"
     }
-    // This is for all the other locals, because we don't need suffix (1st, 3rd etc)
+    // This is for all the other locales, because we don't need suffix (1st, 3rd etc)
     val spokenFormat = SimpleDateFormat("d. MMMM yyyy", locale)
     return spokenFormat.format(parsedDate)
 }

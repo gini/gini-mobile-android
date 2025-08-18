@@ -39,7 +39,7 @@ fun GiniTextInput(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     supportingText: @Composable (() -> Unit)? = null,
-    shouldFieldShowKeyboard :Boolean = false,
+    shouldFieldShowKeyboard: Boolean = false,
     isDate: Boolean = false
 ) {
     GiniTextInput(
