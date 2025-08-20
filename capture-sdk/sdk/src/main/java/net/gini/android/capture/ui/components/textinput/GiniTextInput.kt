@@ -14,12 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.util.getSpokenDateForTalkBack
 
 @Composable
 fun GiniTextInput(
@@ -36,7 +39,8 @@ fun GiniTextInput(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     supportingText: @Composable (() -> Unit)? = null,
-    shouldFieldShowKeyboard :Boolean = false
+    shouldFieldShowKeyboard: Boolean = false,
+    isDate: Boolean = false
 ) {
     GiniTextInput(
         modifier = modifier,
@@ -57,7 +61,8 @@ fun GiniTextInput(
         colors = colors,
         visualTransformation = visualTransformation,
         supportingText = supportingText,
-        shouldFieldShowKeyboard = shouldFieldShowKeyboard
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+        isDate = isDate,
     )
 }
 
@@ -76,18 +81,31 @@ fun GiniTextInput(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     supportingText: @Composable (() -> Unit)? = null,
-    shouldFieldShowKeyboard: Boolean = false
+    shouldFieldShowKeyboard: Boolean = false,
+    isDate: Boolean = false,
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
-    
+
+    val baseModifier = modifier.then(Modifier.focusRequester(focusRequester))
+    val extendedModifier = if (isDate) {
+        baseModifier.then(
+            Modifier.clearAndSetSemantics {
+                // we need to use clear semantics here, if we don't, it will read the date twice.
+                contentDescription = getSpokenDateForTalkBack(text)
+            }
+        )
+    } else {
+        baseModifier
+    }
+
     TextField(
-        modifier = modifier.then(Modifier.focusRequester(focusRequester)),
         value = TextFieldValue(
             text = text,
             selection = TextRange(text.length)
         ),
+        modifier = extendedModifier,
         enabled = enabled,
         keyboardOptions = keyboardOptions,
         textStyle = GiniTheme.typography.subtitle1,
