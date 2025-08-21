@@ -26,6 +26,15 @@ import kotlinx.coroutines.delay
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.util.getSpokenDateForTalkBack
 
+
+/**
+ * Delay duration (in milliseconds) used to allow the view to settle down before requesting focus.
+ *
+ * A value of 500ms was chosen based on observed behaviour on Android 10 devices and below, where
+ * immediately requesting keyboard focus after view creation can result in the keyboard not
+ * appearing.
+ * This delay helps ensure that the keyboard is reliably shown when the field requests focus.
+ */
 private const val VIEW_SETTLE_DOWN_DELAY_FOR_FOCUS = 500L
 
 @Composable
