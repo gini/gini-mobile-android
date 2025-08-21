@@ -829,7 +829,7 @@ private fun SkontoSection(
 
             GiniTextInput(
                 modifier = textInputModifier,
-                enabled = if (isPhoneInLandscape) false else isActive,
+                enabled = isActive,
                 interactionSource = activeInteractionSource,
                 readOnly = true,
                 colors = colors.dueDateTextFieldColor,
