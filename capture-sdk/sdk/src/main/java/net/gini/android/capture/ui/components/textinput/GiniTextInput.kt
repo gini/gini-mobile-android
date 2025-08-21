@@ -1,6 +1,7 @@
 package net.gini.android.capture.ui.components.textinput
 
 import android.content.res.Configuration
+import android.os.Build
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,8 +22,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.util.getSpokenDateForTalkBack
+
+private const val VIEW_SETTLE_DOWN_DELAY_FOR_FOCUS = 500L
 
 @Composable
 fun GiniTextInput(
@@ -148,6 +152,11 @@ fun GiniTextInput(
     LaunchedEffect(shouldFieldShowKeyboard) {
         if (shouldFieldShowKeyboard) {
             focusRequester.requestFocus()
+            /** keyboardController?.show() fails in Android 10 & below if the focus is not
+             * in place, That's why delay is added, so the window is already settled before showing
+             * the keyboard. */
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q)
+                delay(VIEW_SETTLE_DOWN_DELAY_FOR_FOCUS)
             keyboardController?.show()
         }
     }
