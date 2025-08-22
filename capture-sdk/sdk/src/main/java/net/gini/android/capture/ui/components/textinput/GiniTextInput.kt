@@ -110,13 +110,13 @@ fun GiniTextInput(
     val focusRequester = remember { FocusRequester() }
     val baseModifier = modifier.then(Modifier.focusRequester(focusRequester))
     if (isDate) {
-        val extendedModifier = baseModifier.
-        then(
-            Modifier.clearAndSetSemantics {
-                // we need to use clear semantics here, if we don't, it will read the date twice.
-                contentDescription = getSpokenDateForTalkBack(text) + labelText
-            }
-        )
+        val extendedModifier = baseModifier
+            .then(
+                Modifier.clearAndSetSemantics {
+                    // we need to use clear semantics here, if we don't, it will read the date twice.
+                    contentDescription = getSpokenDateForTalkBack(text) + labelText
+                }
+            )
 
         // In date, the trailing content will be displayed separately in landscape mode.
         // So, we need to use an empty composable to avoid TextField trailing icon.
@@ -245,8 +245,9 @@ fun GiniBaseTextField(
             /** keyboardController?.show() fails in Android 10 & below if the focus is not
              * in place, That's why delay is added, so the window is already settled before showing
              * the keyboard. */
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q)
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 delay(VIEW_SETTLE_DOWN_DELAY_FOR_FOCUS)
+            }
             keyboardController?.show()
         }
     }
