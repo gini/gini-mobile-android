@@ -3,6 +3,9 @@ package net.gini.android.capture.ui.components.textinput
 import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
@@ -11,6 +14,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -53,7 +57,8 @@ fun GiniTextInput(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     supportingText: @Composable (() -> Unit)? = null,
     shouldFieldShowKeyboard: Boolean = false,
-    isDate: Boolean = false
+    isDate: Boolean = false,
+    isPhoneInLandscape: Boolean
 ) {
     GiniTextInput(
         modifier = modifier,
@@ -76,6 +81,8 @@ fun GiniTextInput(
         supportingText = supportingText,
         shouldFieldShowKeyboard = shouldFieldShowKeyboard,
         isDate = isDate,
+        isPhoneInLandscape = isPhoneInLandscape,
+        labelText = label
     )
 }
 
@@ -96,29 +103,103 @@ fun GiniTextInput(
     supportingText: @Composable (() -> Unit)? = null,
     shouldFieldShowKeyboard: Boolean = false,
     isDate: Boolean = false,
+    labelText : String = "",
+    isPhoneInLandscape: Boolean
 ) {
 
-    val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
-
     val baseModifier = modifier.then(Modifier.focusRequester(focusRequester))
-    val extendedModifier = if (isDate) {
-        baseModifier.then(
+    if (isDate) {
+        val extendedModifier = baseModifier.
+        then(
             Modifier.clearAndSetSemantics {
                 // we need to use clear semantics here, if we don't, it will read the date twice.
-                contentDescription = getSpokenDateForTalkBack(text)
+                contentDescription = getSpokenDateForTalkBack(text) + labelText
             }
         )
-    } else {
-        baseModifier
+
+        // In date, the trailing content will be displayed separately in landscape mode.
+        // So, we need to use an empty composable to avoid TextField trailing icon.
+        val emptyComposable: @Composable () -> Unit = {}
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            GiniBaseTextField(
+                text = text,
+                label = label,
+                onValueChange = onValueChange,
+                modifier = extendedModifier.then(Modifier.weight(1f)),
+                enabled = enabled,
+                isError = isError,
+                readOnly = readOnly,
+                keyboardOptions = keyboardOptions,
+                colors = colors,
+                trailingContent = if (isPhoneInLandscape) emptyComposable else trailingContent,
+                visualTransformation = visualTransformation,
+                interactionSource = interactionSource,
+                supportingText = supportingText,
+                shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+                focusRequester = focusRequester
+            )
+            if (isPhoneInLandscape) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 8.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    trailingContent()
+                }
+            }
+        }
+    } else  {
+        GiniBaseTextField(
+            text = text,
+            label = label,
+            onValueChange = onValueChange,
+            modifier = baseModifier,
+            trailingContent = trailingContent,
+            enabled = enabled,
+            isError = isError,
+            readOnly = readOnly,
+            keyboardOptions = keyboardOptions,
+            colors = colors,
+            visualTransformation = visualTransformation,
+            interactionSource = interactionSource,
+            supportingText = supportingText,
+            shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+            focusRequester = focusRequester
+        )
     }
+}
+
+@Composable
+fun GiniBaseTextField(
+    text: String,
+    label: @Composable () -> Unit,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    trailingContent: @Composable () -> Unit = {},
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    readOnly: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    colors: GiniTextInputColors = GiniTextInputColors.colors(),
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    supportingText: @Composable (() -> Unit)? = null,
+    shouldFieldShowKeyboard: Boolean = false,
+    focusRequester: FocusRequester = remember { FocusRequester() },
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     TextField(
         value = TextFieldValue(
             text = text,
             selection = TextRange(text.length)
         ),
-        modifier = extendedModifier,
+        modifier = modifier,
         enabled = enabled,
         keyboardOptions = keyboardOptions,
         textStyle = GiniTheme.typography.subtitle1,
@@ -194,7 +275,8 @@ private fun GiniTextInputPreview() {
             text = "Some text here",
             label = "Label Text",
             trailingContent = { },
-            onValueChange = {}
+            onValueChange = {},
+            isPhoneInLandscape = false,
         )
     }
 }
