@@ -10,6 +10,7 @@ data class SkontoInfoDialogColors(
     val cardBackgroundColor: Color,
     val textColor: Color,
     val buttonTextColor: Color,
+    val borderColor: Color
 ) {
 
     companion object {
@@ -19,10 +20,12 @@ data class SkontoInfoDialogColors(
             cardBackgroundColor: Color = GiniTheme.colorScheme.dialogs.container,
             textColor: Color = GiniTheme.colorScheme.dialogs.text,
             buttonTextColor: Color = GiniTheme.colorScheme.dialogs.labelText,
+            borderColor: Color = GiniTheme.colorScheme.dialogs.borderColor,
         ) = SkontoInfoDialogColors(
             cardBackgroundColor = cardBackgroundColor,
             textColor = textColor,
             buttonTextColor = buttonTextColor,
+            borderColor = borderColor
         )
     }
 
