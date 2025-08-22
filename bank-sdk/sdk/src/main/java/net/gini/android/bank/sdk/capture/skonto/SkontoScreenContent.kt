@@ -16,6 +16,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -83,6 +84,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import kotlinx.coroutines.delay
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
@@ -125,6 +127,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private const val KEYBOARD_ANIMATION_DELAY_MS = 400L
+
 @Composable
 internal fun SkontoScreenContent(
     isBottomNavigationBarEnabled: Boolean,
@@ -621,6 +624,7 @@ private fun InvoicePreviewSection(
 
     }
 }
+
 @Suppress("CyclomaticComplexMethod")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -789,6 +793,7 @@ private fun SkontoSection(
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
             val pressed by dueDateOnClickSource.collectIsPressedAsState()
+
             /**
              * In landscape mode on phones, we don't need the dueDateOnClickSource
              * because we have very less space, and we cannot pass null as interactionSource.
@@ -880,6 +885,7 @@ fun CalendarIcon() {
         contentDescription = null
     )
 }
+
 private fun getSkontoSelectableDates() = object : SelectableDates {
 
     val minDateCalendar = Calendar.getInstance().apply {
@@ -988,8 +994,11 @@ private fun InfoDialog(
         properties = DialogProperties(),
         onDismissRequest = onDismissRequest
     ) {
+        (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0.8f)
         Card(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .border(1.dp, color = colors.borderColor, shape = RoundedCornerShape(28.dp)),
             shape = RoundedCornerShape(28.dp),
             colors = CardDefaults.cardColors(
                 containerColor = colors.cardBackgroundColor
@@ -1106,7 +1115,8 @@ private fun WithoutSkontoSection(
                                 invisibleToUser()
                             }
                         else Modifier
-                    ).then(Modifier.bringIntoViewRequester(bringIntoViewRequester))
+                    )
+                    .then(Modifier.bringIntoViewRequester(bringIntoViewRequester))
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .onFocusChanged {
