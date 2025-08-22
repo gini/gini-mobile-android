@@ -127,6 +127,9 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private const val KEYBOARD_ANIMATION_DELAY_MS = 400L
+private const val INFO_DIALOG_DIM_AMOUNT = 0.8f
+private val INFO_DIALOG_BORDER_WIDTH = 1.dp
+private val INFO_DIALOG_CORNER_RADIUS = 28.dp
 
 @Composable
 internal fun SkontoScreenContent(
@@ -994,12 +997,17 @@ private fun InfoDialog(
         properties = DialogProperties(),
         onDismissRequest = onDismissRequest
     ) {
-        (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0.8f)
+        (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(
+            INFO_DIALOG_DIM_AMOUNT
+        )
         Card(
             modifier = modifier
                 .fillMaxWidth()
-                .border(1.dp, color = colors.borderColor, shape = RoundedCornerShape(28.dp)),
-            shape = RoundedCornerShape(28.dp),
+                .border(
+                    INFO_DIALOG_BORDER_WIDTH, color = colors.borderColor,
+                    shape = RoundedCornerShape(INFO_DIALOG_CORNER_RADIUS)
+                ),
+            shape = RoundedCornerShape(INFO_DIALOG_CORNER_RADIUS),
             colors = CardDefaults.cardColors(
                 containerColor = colors.cardBackgroundColor
             )
