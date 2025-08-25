@@ -64,6 +64,8 @@ import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -574,6 +576,8 @@ private fun SkontoSection(
     val focusManager = LocalFocusManager.current
 
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
+    val isPhoneInLandscape =
+        !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
     Card(
         modifier = modifier,
         shape = RectangleShape,
@@ -702,7 +706,8 @@ private fun SkontoSection(
                 supportingText = skontoAmountValidationError?.toErrorMessage(
                     resources = resources,
                 ),
-                shouldFieldShowKeyboard = shouldFieldShowKeyboard
+                shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+                isPhoneInLandscape = isPhoneInLandscape
             )
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
@@ -719,8 +724,6 @@ private fun SkontoSection(
              * when it is not in landscape mode of phones.
              * */
             val defaultInteractionSource = remember { MutableInteractionSource() }
-            val isPhoneInLandscape =
-                !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
 
             val activeInteractionSource =
                 if (isPhoneInLandscape) defaultInteractionSource else dueDateOnClickSource
@@ -745,6 +748,9 @@ private fun SkontoSection(
                 }
             }
 
+            val calendarIconContentDescription =
+                stringResource(id = R.string.gbs_skonto_calendar_icon_content_description)
+
             GiniTextInput(
                 modifier = textInputModifier,
                 enabled = if (isPhoneInLandscape) false else isActive,
@@ -762,6 +768,9 @@ private fun SkontoSection(
                                     isDatePickerVisible = true
                                     onDueDateFieldFocused()
                                 },
+                                modifier = Modifier.semantics {
+                                    contentDescription = calendarIconContentDescription
+                                },
                                 interactionSource = dueDateOnClickSource
                             ) {
                                 CalendarIcon()
@@ -773,7 +782,8 @@ private fun SkontoSection(
                         }
                     }
                 },
-                isDate = true
+                isDate = true,
+                isPhoneInLandscape = isPhoneInLandscape
             )
         }
     }
