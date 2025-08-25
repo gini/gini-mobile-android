@@ -14,9 +14,14 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(
+    maxSdk = 35,
+    )
 class GiniMerchantTest {
 
     private var context: Context? = null

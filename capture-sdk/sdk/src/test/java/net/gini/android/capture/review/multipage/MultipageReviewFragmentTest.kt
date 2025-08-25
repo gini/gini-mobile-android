@@ -25,6 +25,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
+import org.robolectric.annotation.Config
 
 
 /**
@@ -34,6 +35,10 @@ import org.mockito.Mockito.`when`
  */
 
 @RunWith(AndroidJUnit4::class)
+//TODO: remove after upgrading to robolectric to 4.16
+@Config(
+    maxSdk = 35,
+)
 class MultipageReviewFragmentTest {
 
     @After
