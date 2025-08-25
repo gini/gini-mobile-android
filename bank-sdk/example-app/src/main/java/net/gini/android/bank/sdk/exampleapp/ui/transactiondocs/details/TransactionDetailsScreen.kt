@@ -32,6 +32,7 @@ internal fun TransactionDetailsScreen(
     configurationViewModel: ConfigurationViewModel,
     viewModel: TransactionDetailsViewModel,
     navigateBack: () -> Unit,
+    isPhoneLandscape: Boolean
 ) {
     val context = LocalContext.current
     val state by viewModel.collectAsState()
@@ -95,7 +96,11 @@ internal fun TransactionDetailsScreen(
             .padding(vertical = 8.dp)) {
             LazyColumn {
                 items(fields) {
-                    Field(placeholder = it.first, text = it.second())
+                    Field(
+                        placeholder = it.first,
+                        text = it.second(),
+                        isPhoneLandscape = isPhoneLandscape
+                    )
                 }
             }
             TransactionDocsContent(
@@ -125,6 +130,7 @@ private fun Field(
     placeholder: String,
     text: String,
     modifier: Modifier = Modifier,
+    isPhoneLandscape: Boolean
 ) {
     GiniTextInput(
         modifier = modifier
@@ -135,6 +141,7 @@ private fun Field(
         label = {
             Text(placeholder)
         },
-        readOnly = true
+        readOnly = true,
+        isPhoneInLandscape = isPhoneLandscape
     )
 }

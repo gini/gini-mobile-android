@@ -33,7 +33,8 @@ fun GiniAmountTextInput(
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
     supportingText: String? = null,
     shouldFieldShowKeyboard: Boolean = false,
-    onNewValue: (String) -> Unit = {}
+    onNewValue: (String) -> Unit = {},
+    isPhoneInLandscape: Boolean
 ) {
     val parsedAmount = decimalFormatter.parseAmount(amount)
 
@@ -76,6 +77,7 @@ fun GiniAmountTextInput(
             }
         },
         shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+        isPhoneInLandscape = isPhoneInLandscape
     )
 }
 
@@ -108,7 +110,8 @@ private fun GiniTextInputPreview() {
             onValueChange = {},
             trailingContent = { },
             onNewValue = {
-            }
+            },
+            isPhoneInLandscape = false,
         )
     }
 }
@@ -125,7 +128,8 @@ private fun GiniTextInputPreviewError() {
             trailingContent = { },
             isError = true,
             supportingText = "Error text",
-            onNewValue = {}
+            onNewValue = {},
+            isPhoneInLandscape = false
         )
     }
 }

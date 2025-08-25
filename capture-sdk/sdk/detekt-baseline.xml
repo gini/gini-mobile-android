@@ -260,6 +260,7 @@
     <ID>NewLineAtEndOfFile:UserAnalyticsUserProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty.kt</ID>
     <ID>NewLineAtEndOfFile:Width.kt$net.gini.android.capture.ui.theme.modifier.Width.kt</ID>
     <ID>ReturnCount:CameraXController.kt$CameraXController$override fun open(): CompletableFuture&lt;Void></ID>
+    <ID>ReturnCount:AccessibilityHelpers.kt$fun getSpokenDateForTalkBack(date: String): String</ID>
     <ID>ReturnCount:CameraXController.kt$CameraXController$override fun takePicture(): CompletableFuture&lt;Photo></ID>
     <ID>ReturnCount:ErrorFragmentImpl.kt$ErrorFragmentImpl$private fun shouldAllowRetakeImages(): Boolean</ID>
     <ID>ReturnCount:ErrorType.kt$ErrorType.Companion$@JvmStatic fun typeFromError(error: Error): ErrorType</ID>
