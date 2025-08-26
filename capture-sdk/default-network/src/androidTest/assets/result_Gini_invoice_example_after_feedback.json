@@ -5,51 +5,67 @@
       "value": "Fahrrad Rückenwind",
       "candidates": "paymentRecipients"
     },
-    "paymentPurpose": {
-      "entity": "reference",
-      "value": "RE-20210512-02"
-    },
-    "bic": {
-      "entity": "bic",
-      "value": "BYLADEM1001",
-      "candidates": "bics"
+    "iban": {
+      "entity": "iban",
+      "value": "DE02120300000000202051",
+      "candidates": "ibans"
     },
     "amountToPay": {
       "entity": "amount",
       "value": "950.00:EUR",
       "candidates": "amounts"
     },
-    "iban": {
-      "entity": "iban",
-      "value": "DE02120300000000202051",
-      "candidates": "ibans"
+    "paymentPurpose": {
+      "entity": "text",
+      "value": "RE-20210512-02"
+    },
+    "instantPayment": {
+      "entity": "text",
+      "value": "false"
     },
     "docType": {
       "entity": "doctype",
       "value": "Invoice"
+    },
+    "paymentState": {
+      "entity": "paymentstate",
+      "value": "ToBePaid"
+    },
+    "bic": {
+      "entity": "bic",
+      "value": "BYLADEM1001",
+      "candidates": "bics"
     }
   },
   "candidates": {
     "paymentRecipients": [
       {
         "entity": "companyname",
-        "value": "Fahrrad Rückenwind",
-        "box": {
-          "top": 103.69,
-          "left": 66.25,
-          "width": 107.0,
-          "height": 12.0,
-          "page": 1
-        }
+        "value": "Fahrrad Rückenwind"
       },
       {
         "entity": "companyname",
         "value": "Fahrrad Rückenwind",
         "box": {
-          "top": 617.53,
-          "left": 66.25,
-          "width": 192.95999999999998,
-          "height": 11.040000000000077,
+          "top": 446.55,
+          "left": 280.55,
+          "width": 432.99999999999994,
+          "height": 39,
+          "page": 1
+        }
+      },
+      {
+        "entity": "companyname",
+        "value": "FAHRRADÜCKENWIND GMBH"
+      },
+      {
+        "entity": "companyname",
+        "value": "Fahrrad Rückenwind",
+        "box": {
+          "top": 2586.55,
+          "left": 281.55,
+          "width": 795,
+          "height": 39,
           "page": 1
         }
       }
@@ -59,10 +75,10 @@
         "entity": "bic",
         "value": "BYLADEM1001",
         "box": {
-          "top": 794.41,
-          "left": 282.25,
-          "width": 62.420000000000016,
-          "height": 7.920000000000073,
+          "top": 2690.5,
+          "left": 280.5,
+          "width": 350,
+          "height": 35,
           "page": 1
         }
       },
@@ -70,10 +86,10 @@
         "entity": "bic",
         "value": "BYLADEM1001",
         "box": {
-          "top": 642.49,
-          "left": 66.25,
-          "width": 86.03,
-          "height": 11.039999999999964,
+          "top": 3320.55,
+          "left": 1177.55,
+          "width": 258,
+          "height": 25,
           "page": 1
         }
       }
@@ -81,25 +97,7 @@
     "amounts": [
       {
         "entity": "amount",
-        "value": "995.00:EUR",
-        "box": {
-          "top": 464.89,
-          "left": 496.45,
-          "width": 29.439999999999998,
-          "height": 10.080000000000041,
-          "page": 1
-        }
-      },
-      {
-        "entity": "amount",
-        "value": "995.00:EUR",
-        "box": {
-          "top": 464.89,
-          "left": 496.45,
-          "width": 29.439999999999998,
-          "height": 10.080000000000041,
-          "page": 1
-        }
+        "value": "995.00:EUR"
       }
     ],
     "ibans": [
@@ -107,10 +105,10 @@
         "entity": "iban",
         "value": "DE02120300000000202051",
         "box": {
-          "top": 804.49,
-          "left": 302.17,
-          "width": 88.56,
-          "height": 7.919999999999959,
+          "top": 2795.15,
+          "left": 429.15,
+          "width": 464,
+          "height": 28,
           "page": 1
         }
       },
@@ -118,12 +116,27 @@
         "entity": "iban",
         "value": "DE02120300000000202051",
         "box": {
-          "top": 666.49,
-          "left": 93.65,
-          "width": 121.82999999999998,
-          "height": 11.039999999999964,
+          "top": 2795.15,
+          "left": 274.2,
+          "width": 618.95,
+          "height": 470.0499999999997,
           "page": 1
         }
+      },
+      {
+        "entity": "iban",
+        "value": "DE02120300000000202051",
+        "box": {
+          "top": 3362.55,
+          "left": 1285.55,
+          "width": 339,
+          "height": 25,
+          "page": 1
+        }
+      },
+      {
+        "entity": "iban",
+        "value": "DE02120300000000202051"
       }
     ]
   }
