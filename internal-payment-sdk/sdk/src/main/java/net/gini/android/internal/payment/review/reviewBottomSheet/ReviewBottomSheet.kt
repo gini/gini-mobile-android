@@ -2,14 +2,13 @@ package net.gini.android.internal.payment.review.reviewBottomSheet
 
 import android.app.Dialog
 import android.content.DialogInterface
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -36,11 +35,13 @@ private const val VIEW_SETTLE_DELAY_MS = 200L
 private const val KEY_IME_WAS_VISIBLE = "ime_was_visible"
 private const val KEY_FOCUSED_ID = "focused_view_id"
 private const val KEYBOARD_VISIBILITY_RATIO = 0.25f
-private var lastFocusedId: Int = View.NO_ID
-private var focusTracker: ViewTreeObserver.OnGlobalFocusChangeListener? = null
+
 class ReviewBottomSheet private constructor(
     private val viewModelFactory: ViewModelProvider.Factory?
 ) : GpsBottomSheetDialogFragment() {
+
+    private var lastFocusedId: Int = View.NO_ID
+    private var focusTracker: ViewTreeObserver.OnGlobalFocusChangeListener? = null
 
     constructor() : this(null)
 
@@ -90,36 +91,27 @@ class ReviewBottomSheet private constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Track the currently focused view’s id at all times
+
         focusTracker = ViewTreeObserver.OnGlobalFocusChangeListener { _, new ->
             val id = new?.id ?: View.NO_ID
             if (id != View.NO_ID) lastFocusedId = id
         }
         view.viewTreeObserver.addOnGlobalFocusChangeListener(focusTracker)
 
-        if (preQ()) {
-            startPreRKeyboardTracker(view)
-            restoreFocusAndImeIfNeeded(view, savedInstanceState)
-        }
+        startPreRKeyboardTracker(view)
+        restoreFocusAndImeIfNeeded(view, savedInstanceState)
     }
-
-    private fun preQ() = Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q
 
     private fun restoreFocusAndImeIfNeeded(root: View, savedInstanceState: Bundle?) {
         val focusedId = savedInstanceState?.getInt(KEY_FOCUSED_ID) ?: View.NO_ID
         val imeWasVisible = savedInstanceState?.getBoolean(KEY_IME_WAS_VISIBLE) ?: false
-        if (focusedId == View.NO_ID) return
-
+        if (focusedId == View.NO_ID || !imeWasVisible) return
         root.post {
-            val v = root.findViewById<View>(focusedId)
-            if (v != null && v.isShown && v.isEnabled && v.isFocusable) {
-                v.requestFocus()
-                // if you specifically want to re-open the IME:
-                if (imeWasVisible && v is EditText) {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        delay(VIEW_SETTLE_DELAY_MS)
-                        v.showKeyboard() // your helper
-                    }
+            val et = root.findViewById<TextView>(focusedId)
+            if (et?.isShown == true && et.isEnabled && et.isFocusable) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(VIEW_SETTLE_DELAY_MS)
+                    et.showKeyboard()
                 }
             }
         }
@@ -160,17 +152,22 @@ class ReviewBottomSheet private constructor(
             root.getWindowVisibleDisplayFrame(r)
             val visible = r.height()
             val heightDiff = root.rootView.height - visible
-            imeVisibleNow = heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // ~keyboard threshold
+            imeVisibleNow =
+                heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // ~keyboard threshold
         }
         root.viewTreeObserver.addOnGlobalLayoutListener(listener)
         preRKeyboardTracker = listener
     }
 
     override fun onDestroyView() {
-        preRKeyboardTracker?.let { l ->
-            view?.viewTreeObserver?.removeOnGlobalLayoutListener(l)
+        preRKeyboardTracker?.let {
+            view?.viewTreeObserver?.removeOnGlobalLayoutListener(it)
+        }
+        focusTracker?.let {
+            view?.viewTreeObserver?.removeOnGlobalFocusChangeListener(it)
         }
         preRKeyboardTracker = null
+        focusTracker = null
         super.onDestroyView()
     }
 
@@ -180,13 +177,12 @@ class ReviewBottomSheet private constructor(
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        if (preQ()) {
-            outState.putInt(KEY_FOCUSED_ID, lastFocusedId)
-            outState.putBoolean(KEY_IME_WAS_VISIBLE, imeVisibleNow)
-        }
+        outState.putInt(KEY_FOCUSED_ID, lastFocusedId)
+        outState.putBoolean(KEY_IME_WAS_VISIBLE, imeVisibleNow)
         super.onSaveInstanceState(outState)
 
     }
+
     companion object {
         fun newInstance(
             configuration: ReviewConfiguration = ReviewConfiguration(),
