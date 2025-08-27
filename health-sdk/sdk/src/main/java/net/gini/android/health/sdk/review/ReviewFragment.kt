@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.ViewTreeObserver
+import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.ViewCompat
@@ -32,6 +34,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.R as HealthR
@@ -55,6 +58,7 @@ import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
 import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
 import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
+import net.gini.android.internal.payment.utils.showKeyboard
 import org.jetbrains.annotations.VisibleForTesting
 
 /**
@@ -77,7 +81,18 @@ internal interface ReviewFragmentListener {
     fun onToTheBankButtonClicked(paymentProviderName: String, paymentDetails: PaymentDetails)
 }
 
-
+/**
+ * Delay duration (in milliseconds) used to allow the view to settle down before requesting focus.
+ *
+ * A value of 500ms was chosen based on observed behaviour on Android 10 devices and below, where
+ * immediately requesting keyboard focus after view creation can result in the keyboard not
+ * appearing.
+ * This delay helps ensure that the keyboard is reliably shown when the field requests focus.
+ */
+private const val VIEW_SETTLE_DELAY_MS = 200L
+private const val KEY_IME_WAS_VISIBLE = "ime_was_visible"
+private const val KEY_FOCUSED_ID = "focused_view_id"
+private const val KEYBOARD_VISIBILITY_RATIO = 0.25f
 /**
  * The [ReviewFragment] displays an invoice’s pages and payment information extractions. It also lets users pay the
  * invoice with the bank they selected in the [BankSelectionBottomSheet].
@@ -93,6 +108,8 @@ class ReviewFragment private constructor(
     private val viewModel: ReviewViewModel by viewModels{
         viewModelFactory ?: object : ViewModelProvider.Factory {}
     }
+    private var imeVisibleNow: Boolean = false
+    private var preRKeyboardTracker: ViewTreeObserver.OnGlobalLayoutListener? = null
 
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
@@ -169,7 +186,30 @@ class ReviewFragment private constructor(
         if (resources.isLandscapeOrientation()) {
             setupLandscapeBehavior()
         }
+
+        // handling keyboard in Version <= Q (Pie and below) after orientation change
+        if (preQ()) {
+            startPreRKeyboardTracker(view)
+            restoreImeIfNeeded(view, savedInstanceState)
+        }
     }
+
+    private fun restoreImeIfNeeded(root: View, savedInstanceState: Bundle?) {
+        val focusedId = savedInstanceState?.getInt(KEY_FOCUSED_ID) ?: View.NO_ID
+        val imeWasVisible = savedInstanceState?.getBoolean(KEY_IME_WAS_VISIBLE) ?: false
+        if (focusedId == View.NO_ID || !imeWasVisible) return
+
+        root.post {
+            val et = root.findViewById<EditText>(focusedId)
+            if (et?.isShown == true && et.isEnabled && et.isFocusable) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(VIEW_SETTLE_DELAY_MS)
+                    et.showKeyboard() // your helper already requests focus
+                }
+            }
+        }
+    }
+
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -376,6 +416,18 @@ class ReviewFragment private constructor(
             })
     }
 
+    private fun startPreRKeyboardTracker(root: View) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            val r = android.graphics.Rect()
+            root.getWindowVisibleDisplayFrame(r)
+            val visible = r.height()
+            val heightDiff = root.rootView.height - visible
+            imeVisibleNow = heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // ~keyboard threshold
+        }
+        root.viewTreeObserver.addOnGlobalLayoutListener(listener)
+        preRKeyboardTracker = listener
+    }
+
     private fun GhsFragmentReviewBinding.showInfoBar() {
         root.doOnLayout {
             if (resources.isLandscapeOrientation()) {
@@ -477,10 +529,23 @@ class ReviewFragment private constructor(
     override fun onSaveInstanceState(outState: Bundle) {
         val height = view?.findViewById<ViewPager2>(HealthR.id.pager)?.layoutParams?.height ?: -1
         outState.putInt(PAGER_HEIGHT, height)
+        if (preQ()) {
+            val focusedId = view?.findFocus()?.id ?: View.NO_ID
+            outState.putInt(KEY_FOCUSED_ID, focusedId)
+            outState.putBoolean(KEY_IME_WAS_VISIBLE, imeVisibleNow)
+        }
         super.onSaveInstanceState(outState)
+
     }
+    private fun preQ() = Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q
 
-
+    override fun onDestroyView() {
+        preRKeyboardTracker?.let { l ->
+            view?.viewTreeObserver?.removeOnGlobalLayoutListener(l)
+        }
+        preRKeyboardTracker = null
+        super.onDestroyView()
+    }
     internal companion object {
         private const val PAGER_HEIGHT = "pager_height"
 
