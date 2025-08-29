@@ -15,4 +15,4 @@ jobs:
     runs-on: ubuntu-latest
     environment: Deploy-approval
     steps:
-      - run: echo "ok now i will do whatever you want me to do"
+      - run: echo "ok now i will do whatever you want me to do, check"
