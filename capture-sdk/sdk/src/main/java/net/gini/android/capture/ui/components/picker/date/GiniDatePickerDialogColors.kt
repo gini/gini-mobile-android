@@ -17,6 +17,7 @@ data class GiniDatePickerDialogColors(
     val textDateEnabled: Color = Color.Unspecified,
     val textDateDisabled: Color = Color.Unspecified,
     val divider: Color = Color.Unspecified,
+    val containerColor: Color = Color.Unspecified,
 ) {
 
     companion object {
@@ -33,6 +34,7 @@ data class GiniDatePickerDialogColors(
             textDateEnabled: Color = GiniTheme.colorScheme.datePicker.text.primary,
             textDateDisabled: Color = GiniTheme.colorScheme.datePicker.text.secondary,
             divider: Color = GiniTheme.colorScheme.datePicker.divider,
+            containerColor: Color = GiniTheme.colorScheme.datePicker.container
         ) = GiniDatePickerDialogColors(
             dateSelected = dateSelected,
             borderDate = borderDate,
@@ -44,6 +46,7 @@ data class GiniDatePickerDialogColors(
             textDateEnabled = textDateEnabled,
             textDateDisabled = textDateDisabled,
             divider = divider,
+            containerColor = containerColor
         )
     }
 }
