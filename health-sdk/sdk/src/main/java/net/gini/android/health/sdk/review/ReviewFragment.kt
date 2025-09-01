@@ -204,7 +204,7 @@ class ReviewFragment private constructor(
             if (et?.isShown == true && et.isEnabled && et.isFocusable) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     delay(VIEW_SETTLE_DELAY_MS)
-                    et.showKeyboard() // your helper already requests focus
+                    et.showKeyboard() // Helper already requests focus
                 }
             }
         }
@@ -422,7 +422,7 @@ class ReviewFragment private constructor(
             root.getWindowVisibleDisplayFrame(r)
             val visible = r.height()
             val heightDiff = root.rootView.height - visible
-            imeVisibleNow = heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // ~keyboard threshold
+            imeVisibleNow = heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // keyboard threshold
         }
         root.viewTreeObserver.addOnGlobalLayoutListener(listener)
         preRKeyboardTracker = listener
