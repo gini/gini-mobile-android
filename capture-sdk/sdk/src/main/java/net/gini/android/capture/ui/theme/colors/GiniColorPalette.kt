@@ -186,7 +186,8 @@ data class GiniColorScheme(
     data class Dialogs(
         val container: Color = Color.Unspecified,
         val text: Color = Color.Unspecified,
-        val labelText: Color = Color.Unspecified
+        val labelText: Color = Color.Unspecified,
+        val borderColor: Color = Color.Unspecified,
     )
 
     @Immutable
@@ -317,9 +318,10 @@ internal fun giniLightColorScheme(
             )
         ),
         dialogs = GiniColorScheme.Dialogs(
-            container = light03,
+            container = light02,
             text = dark01,
-            labelText = accent01
+            labelText = accent01,
+            borderColor = light03
         ),
         icons = GiniColorScheme.Icons(secondary = light06),
         datePicker = GiniColorScheme.DatePicker(
@@ -450,9 +452,10 @@ internal fun giniDarkColorScheme(
             )
         ),
         dialogs = GiniColorScheme.Dialogs(
-            container = dark03,
+            container = dark02,
             text = light01,
-            labelText = accent01
+            labelText = accent01,
+            borderColor = dark03
         ),
         icons = GiniColorScheme.Icons(secondary = dark06),
         datePicker = GiniColorScheme.DatePicker(
