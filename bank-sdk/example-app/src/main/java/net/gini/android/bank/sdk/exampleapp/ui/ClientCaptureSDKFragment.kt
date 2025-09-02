@@ -9,10 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
-import net.gini.android.capture.Amount
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
@@ -27,6 +25,7 @@ class ClientCaptureSDKFragment :
     GiniCaptureFragmentListener {
 
     private lateinit var permissionHandler: PermissionHandler
+    private var captureFragmentListener: GiniCaptureFragmentListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +92,10 @@ class ClientCaptureSDKFragment :
 
     private var mFileImportCancellationToken: CancellationToken? = null
 
+    fun setListener(listener: GiniCaptureFragmentListener) {
+        this.captureFragmentListener = listener
+    }
+
     fun startCaptureSDKForIntent(
         context: AppCompatActivity,
         openWithIntent: Intent,
@@ -114,7 +117,6 @@ class ClientCaptureSDKFragment :
 
                                 // Set the listener to receive the Gini Bank SDK's results
                                 result.fragment.setListener(listener)
-
                                 // Show the CaptureFlowFragment for example via
                                 // the fragment manager:
                                 context.supportFragmentManager.beginTransaction()
@@ -153,82 +155,20 @@ class ClientCaptureSDKFragment :
 
     }
 
-    fun stopGiniCaptureSDKWithTransferSummary(paymentRecipient: String,
-                                           paymentReference: String,
-                                           paymentPurpose: String,
-                                           iban: String,
-                                           bic: String,
-                                           amount: Amount
-    ) {
-        // After the user has seen and potentially corrected the extractions, send the final
-        // transfer summary values to Gini which will be used to improve the future
-        // extraction accuracy:
-        GiniCapture.sendTransferSummary(
-            paymentRecipient,
-            paymentReference,
-            paymentPurpose,
-            iban,
-            bic,
-            amount,
-            null
-        )
-
-        // cleanup the capture SDK after sending the transfer summary
-        GiniCapture.cleanup(requireActivity())
+    override fun onFinishedWithResult(result: CaptureSDKResult) {
+        finishWithResult(result)
     }
 
-    override fun onFinishedWithResult(result: CaptureSDKResult) {
-        when (result) {
-            is CaptureSDKResult.Success -> {
-                startActivity(
-                    ExtractionsActivity.getStartIntent(
-                        requireContext(),
-                        result.specificExtractions
-                    )
-                )
-                requireActivity().finish()
-            }
-
-            is CaptureSDKResult.Error -> {
-
-                Toast.makeText(
-                    requireContext(),
-                    "Error: ${(result.value as ResultError.FileImport).code} " +
-                            "${(result.value as ResultError.FileImport).message}",
-                    Toast.LENGTH_LONG
-                ).show()
-
-                requireActivity().finish()
-            }
-
-            CaptureSDKResult.Empty -> {
-                requireActivity().finish()
-            }
-
-            CaptureSDKResult.Cancel -> {
-                requireActivity().finish()
-            }
-
-            CaptureSDKResult.EnterManually -> {
-                Toast.makeText(
-                    requireContext(),
-                    "Scan exited for manual enter mode",
-                    Toast.LENGTH_SHORT
-                ).show()
-                requireActivity().finish()
-            }
-        }
+    private fun finishWithResult(result: CaptureSDKResult) {
+        captureFragmentListener?.onFinishedWithResult(result)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        captureFragmentListener = null
         if (mFileImportCancellationToken != null) {
             mFileImportCancellationToken!!.cancel()
             mFileImportCancellationToken = null
         }
     }
-
-
 }
-
-
