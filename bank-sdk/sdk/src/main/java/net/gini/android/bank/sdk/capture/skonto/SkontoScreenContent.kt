@@ -77,6 +77,7 @@ import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.invisibleToUser
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -373,7 +374,8 @@ private fun ScreenReadyState(
                     amountFormatter = amountFormatter,
                     fullAmountValidationError = state.fullAmountValidationError,
                     onFullAmountFieldFocused = onFullAmountFieldFocused,
-                    shouldFieldShowKeyboard = shouldFieldShowKeyboard
+                    shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+                    isLandScape = isLandScape,
                 )
 
                 if (isLandScape && customBottomNavBarAdapter == null) {
@@ -791,7 +793,9 @@ private fun SkontoSection(
                     resources = resources,
                     amountFormatter = amountFormatter
                 ),
-                shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive)
+                shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive),
+                isPhoneInLandscape = isLandScape,
+
             )
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
@@ -834,10 +838,11 @@ private fun SkontoSection(
                     onDueDateFieldFocused()
                 }
             }
-
+            val calendarIconContentDescription =
+                stringResource(id = R.string.gbs_skonto_calendar_icon_content_description)
             GiniTextInput(
                 modifier = textInputModifier,
-                enabled = isActive,
+                enabled = if (isPhoneInLandscape) false else isActive,
                 interactionSource = activeInteractionSource,
                 readOnly = true,
                 colors = colors.dueDateTextFieldColor,
@@ -852,6 +857,9 @@ private fun SkontoSection(
                                     isDatePickerVisible = true
                                     onDueDateFieldFocused()
                                 },
+                                modifier = Modifier.semantics {
+                                    contentDescription = calendarIconContentDescription
+                                },
                                 interactionSource = dueDateOnClickSource
                             ) {
                                 CalendarIcon()
@@ -862,7 +870,9 @@ private fun SkontoSection(
                             CalendarIcon()
                         }
                     }
-                }
+                },
+                isDate = true,
+                isPhoneInLandscape = isPhoneInLandscape
             )
         }
     }
@@ -1049,8 +1059,9 @@ private fun WithoutSkontoSection(
     fullAmountValidationError: SkontoScreenState.Ready.FullAmountValidationError?,
     modifier: Modifier = Modifier,
     shouldFieldShowKeyboard: Boolean = false,
-    hideFieldsForTalkBack: Boolean
-) {
+    hideFieldsForTalkBack: Boolean,
+    isLandScape: Boolean = false
+    ) {
     val resources = LocalContext.current.resources
     val focusManager = LocalFocusManager.current
     val view = LocalView.current
@@ -1114,7 +1125,8 @@ private fun WithoutSkontoSection(
                     bringIntoViewRequester.bringIntoView()
                 }
             }
-
+            val isPhoneInLandscape =
+                !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
             GiniAmountTextInput(
                 modifier = Modifier
                     .then(
@@ -1158,7 +1170,8 @@ private fun WithoutSkontoSection(
                 shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive),
                 onNewValue = {
                     newAmount = it
-                }
+                },
+                isPhoneInLandscape = isPhoneInLandscape
             )
         }
     }
