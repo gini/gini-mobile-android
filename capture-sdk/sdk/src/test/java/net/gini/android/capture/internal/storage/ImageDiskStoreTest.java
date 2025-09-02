@@ -1,20 +1,11 @@
 package net.gini.android.capture.internal.storage;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static net.gini.android.capture.test.Helpers.copyAssetToStorage;
-import static net.gini.android.capture.test.Helpers.getTestJpeg;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.spy;
-import static org.robolectric.Shadows.shadowOf;
-
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-
 import android.app.Application;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.webkit.MimeTypeMap;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +20,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+import static com.google.common.truth.Truth.assertThat;
+import static net.gini.android.capture.test.Helpers.copyAssetToStorage;
+import static net.gini.android.capture.test.Helpers.getTestJpeg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.robolectric.Shadows.shadowOf;
 
 /**
  * Created by Alpar Szotyori on 04.07.2019.
@@ -37,10 +34,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
  * Copyright (c) 2019 Gini GmbH.
  */
 @RunWith(AndroidJUnit4.class)
+//TODO: remove the maxSdk after upgrading to robolectric to 4.16
 @Config(shadows = {
         ImageDiskStoreTest.ContentResolverShadow.class,
         ImageDiskStoreTest.MimeTypeMapShadow.class
-})
+},
+maxSdk = 35)
 public class ImageDiskStoreTest {
 
     @Test
