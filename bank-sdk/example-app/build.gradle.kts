@@ -6,11 +6,12 @@ import org.tomlj.TomlTable
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
+    alias(libs.plugins.compose.compiler)
 }
 
 // TODO: construct version code and name in fastlane and inject them
@@ -160,8 +161,10 @@ android {
 
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
 // https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version
-tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class) {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+    }
 }
 
 dependencies {
@@ -186,10 +189,6 @@ dependencies {
     implementation(libs.androidx.multidex)
     implementation(libs.dexter)
     implementation(libs.logback.android.core)
-    implementation(libs.logback.android.classic) {
-        // workaround issue #73
-        exclude(group = "com.google.android", module = "android")
-    }
     
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
@@ -207,7 +206,7 @@ dependencies {
     implementation(libs.hilt.library)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.test.espresso.idlingresource)
@@ -231,7 +230,7 @@ dependencies {
 }
 
 // this is needed because of Dagger-Hilt
-kapt {
-    correctErrorTypes = true
-}
+//kapt {
+//    correctErrorTypes = true
+//}
 apply<CodeAnalysisPlugin>()

@@ -3,7 +3,7 @@ import net.gini.gradle.*
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -57,9 +57,12 @@ android {
 }
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
 // https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version
-tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class) {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+    }
 }
+
 dependencies {
     api(libs.retrofit)
     implementation(libs.okhttp3)
@@ -70,7 +73,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.moshi.core)
     implementation(libs.retrofit.moshi.converter)
-    kapt(libs.moshi.codegen)
+    ksp(libs.moshi.codegen)
     implementation(libs.okhttp3.logging.interceptor)
 
     androidTestImplementation(libs.kotlinx.coroutines.test)

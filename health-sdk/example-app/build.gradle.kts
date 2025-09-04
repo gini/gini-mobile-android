@@ -5,7 +5,7 @@ import net.gini.gradle.readLocalPropertiesToMap
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("kotlin-parcelize")
 }
 
@@ -83,8 +83,10 @@ android {
 
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
 // https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version
-tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class) {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+    }
 }
 
 dependencies {
@@ -99,18 +101,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.koin.androidx.scope)
-    implementation(libs.koin.androidx.viewmodel)
-    implementation(libs.koin.androidx.fragment)
+    implementation(libs.koin.android)
     implementation(libs.insetter)
     implementation(libs.datastore.preferences)
     implementation(libs.moshi.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    kapt(libs.moshi.codegen)
+    ksp(libs.moshi.codegen)
     implementation(libs.logback.android.core)
-    implementation(libs.logback.android.classic) {
-        // workaround issue #73
-        exclude(group = "com.google.android", module = "android")
-    }
 
     testImplementation(libs.junit)
 

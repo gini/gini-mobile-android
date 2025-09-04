@@ -6,6 +6,7 @@ import net.gini.android.bank.sdk.exampleapp.data.storage.TransactionDocsStorage
 import net.gini.android.bank.sdk.exampleapp.ui.extractions.ExtractionsContainerHost
 import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Attachment
 import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.docs.model.Transaction
+import org.orbitmvi.orbit.blockingIntent
 import java.util.UUID
 import javax.inject.Inject
 
