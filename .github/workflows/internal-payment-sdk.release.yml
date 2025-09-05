@@ -1,5 +1,9 @@
 name: Release Internal Payment SDK
 
+permissions:
+  contents: write
+  packages: write
+
 on:
   workflow_dispatch:
   push:
