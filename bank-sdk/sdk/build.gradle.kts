@@ -56,10 +56,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
-
     buildTypes {
         debug {
             // Disabled due to jacoco throwing an exception: "Unexpected SMAP line: *S KotlinDebug"

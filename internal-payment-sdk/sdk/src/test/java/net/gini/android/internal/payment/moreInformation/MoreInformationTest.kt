@@ -41,8 +41,9 @@ class MoreInformationTest {
     fun setup() {
         paymentComponent = mockk(relaxed = true)
         context = ApplicationProvider.getApplicationContext()
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
+        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(
+            PaymentProviderAppsState.Nothing
+        ).asStateFlow()
         every { paymentComponent!!.paymentModule.localizedContext } returns context
         every { paymentComponent!!.getGiniPaymentLanguage(context) } returns null
     }
@@ -62,7 +63,10 @@ class MoreInformationTest {
                             name = "payment provider name",
                             packageName = "com.paymentProvider.packageName",
                             appVersion = "appVersion",
-                            colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
+                            colors = PaymentProvider.Colors(
+                                backgroundColorRGBHex = "",
+                                textColoRGBHex = ""
+                            ),
                             icon = ByteArray(0),
                             gpcSupportedPlatforms = listOf("android"),
                             openWithSupportedPlatforms = listOf("android")
@@ -77,7 +81,10 @@ class MoreInformationTest {
                             name = "payment provider name",
                             packageName = "com.paymentProvider.packageName",
                             appVersion = "appVersion",
-                            colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
+                            colors = PaymentProvider.Colors(
+                                backgroundColorRGBHex = "",
+                                textColoRGBHex = ""
+                            ),
                             icon = ByteArray(0),
                             gpcSupportedPlatforms = listOf("android"),
                             openWithSupportedPlatforms = listOf("android")
@@ -92,7 +99,10 @@ class MoreInformationTest {
                             name = "payment provider name",
                             packageName = "com.paymentProvider.packageName",
                             appVersion = "appVersion",
-                            colors = PaymentProvider.Colors(backgroundColorRGBHex = "", textColoRGBHex = ""),
+                            colors = PaymentProvider.Colors(
+                                backgroundColorRGBHex = "",
+                                textColoRGBHex = ""
+                            ),
                             icon = ByteArray(0),
                             gpcSupportedPlatforms = listOf("android"),
                             openWithSupportedPlatforms = listOf("android")
@@ -108,7 +118,11 @@ class MoreInformationTest {
         }
 
         // Then
-        onView(withId(R.id.gps_payment_providers_icons_list)).check { view, _ -> assertThat ((view as RecyclerView).adapter!!.itemCount).isEqualTo(3) }
+        onView(withId(R.id.gps_payment_providers_icons_list)).check { view, _ ->
+            assertThat((view as RecyclerView).adapter!!.itemCount).isEqualTo(
+                3
+            )
+        }
     }
 
     @Test
@@ -142,7 +156,13 @@ class MoreInformationTest {
         }
 
         // Then
-        onView(withId(R.id.gps_more_information_title)).check(ViewAssertions.matches(ViewMatchers.withText("Pay bills easily with the banking app.")))
+        onView(withId(R.id.gps_more_information_title)).check(
+            ViewAssertions.matches(
+                ViewMatchers.withText(
+                    "Pay bills easily with the banking app."
+                )
+            )
+        )
         onView(withId(R.id.gps_faq_title)).check(ViewAssertions.matches(ViewMatchers.withText("Frequently asked questions")))
     }
 
@@ -159,7 +179,13 @@ class MoreInformationTest {
         }
 
         // Then
-        onView(withId(R.id.gps_more_information_title)).check(ViewAssertions.matches(ViewMatchers.withText("Rechnungen ganz einfach mit der Banking-App bezahlen.")))
+        onView(withId(R.id.gps_more_information_title)).check(
+            ViewAssertions.matches(
+                ViewMatchers.withText(
+                    "Rechnungen ganz einfach mit der Banking-App bezahlen."
+                )
+            )
+        )
         onView(withId(R.id.gps_faq_title)).check(ViewAssertions.matches(ViewMatchers.withText("Häufig gestellte Fragen")))
     }
 }

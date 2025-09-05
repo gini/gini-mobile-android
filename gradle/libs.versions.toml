@@ -119,7 +119,6 @@ navigation_ui_ktx = { module = "androidx.navigation:navigation-ui-ktx", version.
 navigation_safe_args = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigation_component" }
 datastore-preferences = "androidx.datastore:datastore-preferences:1.1.7"
 tomlj = "org.tomlj:tomlj:1.1.1"
-json-testing = "org.json:json:20250517"
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }

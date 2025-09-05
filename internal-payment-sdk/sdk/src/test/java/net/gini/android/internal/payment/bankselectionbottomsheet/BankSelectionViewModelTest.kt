@@ -84,94 +84,108 @@ class BankSelectionViewModelTest {
     @Before
     fun setup() {
         paymentComponent = mockk(relaxed = true)
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(mockk()).asStateFlow()
-        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(mockk()).asStateFlow()
+        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(
+            mockk()
+        ).asStateFlow()
+        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(
+            mockk()
+        ).asStateFlow()
     }
 
     @After
     fun tearDown() {
         paymentComponent = null
     }
-    @Test
-    fun `processes payment provider apps when emitted from payment component with none selected`() = runTest {
-        // Given
-        val viewModel = BankSelectionViewModel(
-            paymentComponent,
-            mockk()
-        )
-
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
-            PaymentProviderAppsState.Success(
-                listOf(
-                    paymentProvider1,
-                    paymentProvider2,
-                    paymentProvider3
-                )
-            )
-        )
-
-        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-            SelectedPaymentProviderAppState.NothingSelected)
-
-        viewModel.start()
-
-        // When
-        viewModel.paymentProviderAppsListFlow.test {
-
-            // Then
-            val validation = awaitItem()
-            assertThat(validation).isInstanceOf(PaymentProviderAppsListState.Success::class.java)
-
-            val validationResult = validation as PaymentProviderAppsListState.Success
-            assertThat(validationResult.paymentProviderAppsList).isNotEmpty()
-            assertThat(validationResult.paymentProviderAppsList).hasSize(3)
-            assertThat(validationResult.paymentProviderAppsList.filter { it.isSelected }.size).isEqualTo(0)
-
-            cancelAndConsumeRemainingEvents()
-        }
-    }
 
     @Test
-    fun `processes payment provider apps when emitted from payment component with default selected`() = runTest {
-        // Given
-        val viewModel = BankSelectionViewModel(
-            paymentComponent,
-            mockk()
-        )
+    fun `processes payment provider apps when emitted from payment component with none selected`() =
+        runTest {
+            // Given
+            val viewModel = BankSelectionViewModel(
+                paymentComponent,
+                mockk()
+            )
 
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
-            PaymentProviderAppsState.Success(
-                listOf(
-                    paymentProvider1,
-                    paymentProvider2,
-                    paymentProvider3
+            every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
+                PaymentProviderAppsState.Success(
+                    listOf(
+                        paymentProvider1,
+                        paymentProvider2,
+                        paymentProvider3
+                    )
                 )
             )
-        )
 
-        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp = paymentProvider1))
+            every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+                SelectedPaymentProviderAppState.NothingSelected
+            )
 
-        viewModel.start()
+            viewModel.start()
 
-        // When
-        viewModel.paymentProviderAppsListFlow.test {
+            // When
+            viewModel.paymentProviderAppsListFlow.test {
 
-            // Then
-            val validation = awaitItem()
-            assertThat(validation).isInstanceOf(PaymentProviderAppsListState.Success::class.java)
+                // Then
+                val validation = awaitItem()
+                assertThat(validation).isInstanceOf(PaymentProviderAppsListState.Success::class.java)
 
-            val validationResult = validation as PaymentProviderAppsListState.Success
-            assertThat(validationResult.paymentProviderAppsList).isNotEmpty()
-            assertThat(validationResult.paymentProviderAppsList).hasSize(3)
+                val validationResult = validation as PaymentProviderAppsListState.Success
+                assertThat(validationResult.paymentProviderAppsList).isNotEmpty()
+                assertThat(validationResult.paymentProviderAppsList).hasSize(3)
+                assertThat(validationResult.paymentProviderAppsList.filter { it.isSelected }.size).isEqualTo(
+                    0
+                )
 
-            val selectedPaymentProviderAppsList = validationResult.paymentProviderAppsList.filter { it.isSelected }
-            assertThat(selectedPaymentProviderAppsList.size).isEqualTo(1)
-            assertThat(selectedPaymentProviderAppsList.first().paymentProviderApp.name).isEqualTo("payment provider")
-
-            cancelAndConsumeRemainingEvents()
+                cancelAndConsumeRemainingEvents()
+            }
         }
-    }
+
+    @Test
+    fun `processes payment provider apps when emitted from payment component with default selected`() =
+        runTest {
+            // Given
+            val viewModel = BankSelectionViewModel(
+                paymentComponent,
+                mockk()
+            )
+
+            every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(
+                PaymentProviderAppsState.Success(
+                    listOf(
+                        paymentProvider1,
+                        paymentProvider2,
+                        paymentProvider3
+                    )
+                )
+            )
+
+            every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+                SelectedPaymentProviderAppState.AppSelected(paymentProviderApp = paymentProvider1)
+            )
+
+            viewModel.start()
+
+            // When
+            viewModel.paymentProviderAppsListFlow.test {
+
+                // Then
+                val validation = awaitItem()
+                assertThat(validation).isInstanceOf(PaymentProviderAppsListState.Success::class.java)
+
+                val validationResult = validation as PaymentProviderAppsListState.Success
+                assertThat(validationResult.paymentProviderAppsList).isNotEmpty()
+                assertThat(validationResult.paymentProviderAppsList).hasSize(3)
+
+                val selectedPaymentProviderAppsList =
+                    validationResult.paymentProviderAppsList.filter { it.isSelected }
+                assertThat(selectedPaymentProviderAppsList.size).isEqualTo(1)
+                assertThat(selectedPaymentProviderAppsList.first().paymentProviderApp.name).isEqualTo(
+                    "payment provider"
+                )
+
+                cancelAndConsumeRemainingEvents()
+            }
+        }
 
     @Test
     fun `sets selected payment provider app`() = runTest {
@@ -191,10 +205,11 @@ class BankSelectionViewModelTest {
             )
         )
 
-        val paymentAppProviderFlow = MutableStateFlow<SelectedPaymentProviderAppState> (SelectedPaymentProviderAppState.NothingSelected)
+        val paymentAppProviderFlow =
+            MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.NothingSelected)
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns paymentAppProviderFlow
 
-        coEvery { paymentComponent!!.setSelectedPaymentProviderApp(paymentProvider1) } coAnswers  {
+        coEvery { paymentComponent!!.setSelectedPaymentProviderApp(paymentProvider1) } coAnswers {
             paymentAppProviderFlow.emit(SelectedPaymentProviderAppState.AppSelected(paymentProvider1))
         }
 
@@ -203,7 +218,9 @@ class BankSelectionViewModelTest {
         viewModel.paymentProviderAppsListFlow.test {
             val nothingSelectedValidation = awaitItem()
             assertThat(nothingSelectedValidation).isInstanceOf(PaymentProviderAppsListState.Success::class.java)
-            assertThat((nothingSelectedValidation as PaymentProviderAppsListState.Success).paymentProviderAppsList.filter { it.isSelected }.size).isEqualTo(0)
+            assertThat((nothingSelectedValidation as PaymentProviderAppsListState.Success).paymentProviderAppsList.filter { it.isSelected }.size).isEqualTo(
+                0
+            )
 
             // When
             viewModel.setSelectedPaymentProviderApp(paymentProvider1)
@@ -211,11 +228,15 @@ class BankSelectionViewModelTest {
             // Then
             val paymentAppProviderSelectedValidation = awaitItem()
             assertThat(paymentAppProviderSelectedValidation).isInstanceOf(
-                PaymentProviderAppsListState.Success::class.java)
+                PaymentProviderAppsListState.Success::class.java
+            )
 
-            val selectedPaymentProvidersList = (paymentAppProviderSelectedValidation as PaymentProviderAppsListState.Success).paymentProviderAppsList.filter { it.isSelected }
+            val selectedPaymentProvidersList =
+                (paymentAppProviderSelectedValidation as PaymentProviderAppsListState.Success).paymentProviderAppsList.filter { it.isSelected }
             assertThat(selectedPaymentProvidersList.size).isEqualTo(1)
-            assertThat(selectedPaymentProvidersList.first().paymentProviderApp.name).isEqualTo(paymentProvider1.name)
+            assertThat(selectedPaymentProvidersList.first().paymentProviderApp.name).isEqualTo(
+                paymentProvider1.name
+            )
         }
     }
 
@@ -254,7 +275,8 @@ class BankSelectionViewModelTest {
         viewModel.paymentProviderAppsListFlow.test {
             val validateNoPaymentProviderAppInstalled = awaitItem()
             assertThat(validateNoPaymentProviderAppInstalled).isInstanceOf(
-                PaymentProviderAppsListState.Success::class.java)
+                PaymentProviderAppsListState.Success::class.java
+            )
             assertThat((validateNoPaymentProviderAppInstalled as PaymentProviderAppsListState.Success).paymentProviderAppsList).isNotEmpty()
             assertThat(validateNoPaymentProviderAppInstalled.paymentProviderAppsList.filter { it.paymentProviderApp.isInstalled() }).isEmpty()
 
@@ -266,7 +288,8 @@ class BankSelectionViewModelTest {
             // Then
             val validateOnePaymentProviderAppInstalled = awaitItem()
             assertThat(validateOnePaymentProviderAppInstalled).isInstanceOf(
-                PaymentProviderAppsListState.Success::class.java)
+                PaymentProviderAppsListState.Success::class.java
+            )
             assertThat((validateOnePaymentProviderAppInstalled as PaymentProviderAppsListState.Success).paymentProviderAppsList).isNotEmpty()
             assertThat(validateOnePaymentProviderAppInstalled.paymentProviderAppsList.filter { it.paymentProviderApp.isInstalled() }).isNotEmpty()
         }
