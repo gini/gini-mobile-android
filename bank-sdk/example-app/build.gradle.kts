@@ -189,7 +189,9 @@ dependencies {
     implementation(libs.androidx.multidex)
     implementation(libs.dexter)
     implementation(libs.logback.android.core)
-    
+    testImplementation(libs.logback.classic) {
+        exclude(module = "logback-android")
+    }
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
     implementation(libs.compose.activity)

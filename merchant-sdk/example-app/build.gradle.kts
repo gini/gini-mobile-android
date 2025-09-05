@@ -107,7 +107,9 @@ dependencies {
 
     ksp(libs.moshi.codegen)
     implementation(libs.logback.android.core)
-
+    testImplementation(libs.logback.classic) {
+        exclude(module = "logback-android")
+    }
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.test.junit)
