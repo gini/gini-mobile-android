@@ -5,10 +5,11 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("kotlin-parcelize")
     id("jacoco")
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.compose.compiler)
 }
 
 jacoco {
@@ -55,10 +56,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
-
     buildTypes {
         debug {
             // Disabled due to jacoco throwing an exception: "Unexpected SMAP line: *S KotlinDebug"
@@ -92,8 +89,10 @@ android {
 
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
 // https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version
-tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class) {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+tasks.withType<org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+    }
 }
 
 dependencies {
@@ -151,7 +150,7 @@ dependencies {
     testImplementation(libs.jUnitParams)
 
     androidTestImplementation(libs.moshi.core)
-    kaptAndroidTest(libs.moshi.codegen)
+    kspAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.androidx.test.junit.ktx)
     androidTestImplementation(libs.androidx.test.espresso.core)
 }

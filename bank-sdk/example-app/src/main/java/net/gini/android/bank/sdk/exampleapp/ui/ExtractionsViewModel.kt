@@ -22,7 +22,7 @@ internal class ExtractionsViewModel @Inject constructor(
         paymentRecipient: String,
         paymentPurpose: String,
         paymentReference: String,
-    ) = with(saveTransactionDataIntent) {
+    ) : Unit = with(saveTransactionDataIntent) {
         run(iban, bic, amountToPay, paymentRecipient, paymentPurpose, paymentReference)
     }
 }

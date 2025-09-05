@@ -20,6 +20,7 @@ import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
+import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
@@ -48,7 +49,7 @@ class PaymentFlowViewModelTest {
     private var giniHealthApi: GiniHealthAPI? = null
     private var context: Context? = null
 
-    private var initialPaymentProviderApp =  PaymentProviderApp(
+    private var initialPaymentProviderApp = PaymentProviderApp(
         name = "payment provider",
         icon = null,
         colors = PaymentProviderAppColors(-1, -1),
@@ -64,7 +65,7 @@ class PaymentFlowViewModelTest {
         )
     )
 
-    private var changedPaymentProviderApp =  PaymentProviderApp(
+    private var changedPaymentProviderApp = PaymentProviderApp(
         name = "payment provider2",
         icon = null,
         colors = PaymentProviderAppColors(-1, -1),
@@ -92,8 +93,12 @@ class PaymentFlowViewModelTest {
         giniHealthApi = mockk(relaxed = true)
         every { giniHealthApi!!.documentManager } returns documentManager!!
 
-        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow(mockk())
-        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(SelectedPaymentProviderAppState.AppSelected(initialPaymentProviderApp))
+        every { paymentComponent!!.paymentProviderAppsFlow } returns MutableStateFlow<PaymentProviderAppsState>(
+            PaymentProviderAppsState.Nothing
+        )
+        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow<SelectedPaymentProviderAppState>(
+            SelectedPaymentProviderAppState.AppSelected(initialPaymentProviderApp)
+        )
         every { giniInternalPaymentModule!!.paymentComponent } returns paymentComponent!!
         every { giniInternalPaymentModule!!.giniHealthAPI } returns giniHealthApi!!
         every { giniMerchant!!.giniInternalPaymentModule } returns giniInternalPaymentModule!!
@@ -174,7 +179,7 @@ class PaymentFlowViewModelTest {
     @Test
     fun `forwards on payment action to giniPayment`() = runTest {
         // Given
-        coEvery { giniInternalPaymentModule!!.onPayment(any(), any()) } coAnswers {  }
+        coEvery { giniInternalPaymentModule!!.onPayment(any(), any()) } coAnswers { }
         val viewModel = PaymentFlowViewModel(
             paymentDetails = PaymentDetails("", "", "", ""),
             paymentFlowConfiguration = null,
@@ -195,7 +200,9 @@ class PaymentFlowViewModelTest {
         )
 
         viewModel.checkBankAppInstallState(changedPaymentProviderApp)
-        assertThat(viewModel.getPaymentProviderApp()?.paymentProvider?.id).isEqualTo(changedPaymentProviderApp.paymentProvider.id)
+        assertThat(viewModel.getPaymentProviderApp()?.paymentProvider?.id).isEqualTo(
+            changedPaymentProviderApp.paymentProvider.id
+        )
     }
 
     @Test
@@ -221,7 +228,26 @@ class PaymentFlowViewModelTest {
             giniMerchant = giniMerchant!!,
         )
 
-        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED, "", "") }
+        coEvery {
+            giniInternalPaymentModule!!.getPaymentRequest(
+                any(),
+                any()
+            )
+        } coAnswers {
+            PaymentRequest(
+                "1234",
+                null,
+                null,
+                "",
+                "",
+                null,
+                "20",
+                "",
+                PaymentRequest.Status.PAID_ADJUSTED,
+                "",
+                ""
+            )
+        }
 
         val paymentRequest = viewModel.getPaymentRequest()
         assertThat(paymentRequest.id).isEqualTo("1234")
@@ -236,35 +262,54 @@ class PaymentFlowViewModelTest {
         )
         val byteArray = byteArrayOf()
 
-        coEvery { documentManager!!.getPaymentRequestDocument("1234") } coAnswers { Resource.Success(byteArray)}
+        coEvery { documentManager!!.getPaymentRequestDocument("1234") } coAnswers {
+            Resource.Success(
+                byteArray
+            )
+        }
 
-        val document = viewModel.getPaymentRequestDocument(PaymentRequest("1234", "", "", "", "", "", "", "", PaymentRequest.Status.OPEN, "", ""))
+        val document = viewModel.getPaymentRequestDocument(
+            PaymentRequest(
+                "1234",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                PaymentRequest.Status.OPEN,
+                "",
+                ""
+            )
+        )
         assertThat(document.data).isEqualTo(byteArray)
     }
 
     @Test
-    fun `returns 'RedirectToBank' when payment provider app supports GPC and is installed`() = runTest {
-        // Given
-        val paymentProviderApp = mockk<PaymentProviderApp>()
-        every { paymentProviderApp.paymentProvider.gpcSupported() } returns true
-        every { paymentProviderApp.isInstalled() } returns true
+    fun `returns 'RedirectToBank' when payment provider app supports GPC and is installed`() =
+        runTest {
+            // Given
+            val paymentProviderApp = mockk<PaymentProviderApp>()
+            every { paymentProviderApp.paymentProvider.gpcSupported() } returns true
+            every { paymentProviderApp.isInstalled() } returns true
 
-        val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant!!,
-        )
-        viewModel.checkBankAppInstallState(paymentProviderApp)
-        viewModel.paymentNextStep.test {
-            // When
-            viewModel.onPaymentButtonTapped(context!!.externalCacheDir)
-            val nextStep = awaitItem()
+            val viewModel = PaymentFlowViewModel(
+                paymentDetails = PaymentDetails("", "", "", ""),
+                paymentFlowConfiguration = null,
+                giniMerchant = giniMerchant!!,
+            )
+            viewModel.checkBankAppInstallState(paymentProviderApp)
+            viewModel.paymentNextStep.test {
+                // When
+                viewModel.onPaymentButtonTapped(context!!.externalCacheDir)
+                val nextStep = awaitItem()
 
-            // Then
-            assertThat(nextStep).isEqualTo(PaymentNextStep.RedirectToBank)
-            cancelAndConsumeRemainingEvents()
+                // Then
+                assertThat(nextStep).isEqualTo(PaymentNextStep.RedirectToBank)
+                cancelAndConsumeRemainingEvents()
+            }
         }
-    }
 
     @Test
     fun `returns 'ShowOpenWith' when payment provider app does not support GPC`() = runTest {
@@ -273,9 +318,29 @@ class PaymentFlowViewModelTest {
         every { paymentProviderApp.paymentProvider.gpcSupported() } returns false
 
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
+        )
 
-        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN, "", "") }
+        coEvery {
+            giniInternalPaymentModule!!.getPaymentRequest(
+                any(),
+                any()
+            )
+        } coAnswers {
+            PaymentRequest(
+                "1234",
+                null,
+                null,
+                "",
+                "",
+                null,
+                "20",
+                "",
+                PaymentRequest.Status.OPEN,
+                "",
+                ""
+            )
+        }
 
         val viewModel = PaymentFlowViewModel(
             paymentDetails = PaymentDetails("", "", "", ""),
@@ -291,33 +356,39 @@ class PaymentFlowViewModelTest {
     }
 
     @Test
-    fun `returns 'DownloadPaymentRequestFile' when payment provider app does not support GPC and 'Open With' was shown 3 times`() = runTest {
-        // Given
-        val paymentProviderApp = mockk<PaymentProviderApp>()
-        every { paymentProviderApp.paymentProvider.gpcSupported() } returns false
-        every { paymentProviderApp.paymentProvider.id } returns "123"
+    fun `returns 'DownloadPaymentRequestFile' when payment provider app does not support GPC and 'Open With' was shown 3 times`() =
+        runTest {
+            // Given
+            val paymentProviderApp = mockk<PaymentProviderApp>()
+            every { paymentProviderApp.paymentProvider.gpcSupported() } returns false
+            every { paymentProviderApp.paymentProvider.id } returns "123"
 
-        coEvery { giniInternalPaymentModule!!.giniHealthAPI.documentManager.getPaymentRequestDocument(any()) } coAnswers { mockk(relaxed = true) }
+            coEvery {
+                giniInternalPaymentModule!!.giniHealthAPI.documentManager.getPaymentRequestDocument(
+                    any()
+                )
+            } coAnswers { mockk(relaxed = true) }
 
-        every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
-            SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+            every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
+                SelectedPaymentProviderAppState.AppSelected(paymentProviderApp)
+            )
 
-        val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniMerchant = giniMerchant!!,
-        )
+            val viewModel = PaymentFlowViewModel(
+                paymentDetails = PaymentDetails("", "", "", ""),
+                paymentFlowConfiguration = null,
+                giniMerchant = giniMerchant!!,
+            )
 
-        viewModel.paymentNextStep.test {
-            // When
-            viewModel.onPaymentButtonTapped(context!!.externalCacheDir)
-            val nextStep = awaitItem()
+            viewModel.paymentNextStep.test {
+                // When
+                viewModel.onPaymentButtonTapped(context!!.externalCacheDir)
+                val nextStep = awaitItem()
 
-            // Then
-            assertThat(nextStep).isEqualTo(PaymentNextStep.SetLoadingVisibility(true))
-            cancelAndConsumeRemainingEvents()
+                // Then
+                assertThat(nextStep).isEqualTo(PaymentNextStep.SetLoadingVisibility(true))
+                cancelAndConsumeRemainingEvents()
+            }
         }
-    }
 
     @Test
     fun `updates payment details`() {

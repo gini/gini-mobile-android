@@ -4,12 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.widget.ImageView;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
-
-import androidx.annotation.DrawableRes;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import static com.google.common.truth.Fact.fact;
 import static com.google.common.truth.Fact.simpleFact;

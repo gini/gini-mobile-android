@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import net.gini.android.bank.sdk.di.getGiniBankKoin
-import org.koin.androidx.viewmodel.resolveViewModel
 import org.koin.core.annotation.KoinInternalApi
 import org.koin.core.parameter.ParametersHolder
 import org.koin.core.qualifier.Qualifier
+import org.koin.viewmodel.resolveViewModel
 
 @MainThread
 inline fun <reified T : ViewModel> Fragment.giniBankViewModel(

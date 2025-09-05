@@ -2,11 +2,10 @@ package net.gini.android.capture.test
 
 import com.google.common.truth.FailureMetadata
 import com.google.common.truth.Subject
-import com.google.common.truth.Subject.Factory
 import net.gini.android.capture.internal.camera.photo.JpegByteArraySubject
 import net.gini.android.capture.internal.camera.photo.Photo
 
-class PhotoSubject constructor(metadata: FailureMetadata?, actual: Any?) : Subject(metadata, actual) {
+class PhotoSubject constructor(metadata: FailureMetadata, actual: Any?) : Subject(metadata, actual) {
     private val mJpegByteArraySubject: JpegByteArraySubject
     private val actual: Photo?
 

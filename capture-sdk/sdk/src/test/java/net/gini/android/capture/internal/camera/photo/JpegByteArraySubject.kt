@@ -5,7 +5,7 @@ import com.google.common.truth.FailureMetadata
 import com.google.common.truth.Subject
 import com.google.common.truth.Subject.Factory
 
-class JpegByteArraySubject(metadata: FailureMetadata?, actual: Any?) : Subject(metadata, actual) {
+class JpegByteArraySubject(metadata: FailureMetadata, actual: Any?) : Subject(metadata, actual) {
     private val actual: ByteArray?
 
     init {

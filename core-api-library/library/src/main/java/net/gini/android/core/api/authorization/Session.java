@@ -3,9 +3,6 @@ package net.gini.android.core.api.authorization;
 
 import net.gini.android.core.api.authorization.apimodels.SessionToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Date;
 
 
