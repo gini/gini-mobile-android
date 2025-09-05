@@ -1,5 +1,9 @@
 name: Release Bank SDK
 
+permissions:
+  contents: write
+  packages: write
+
 on:
   workflow_dispatch:
   push:
