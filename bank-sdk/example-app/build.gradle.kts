@@ -11,6 +11,7 @@ plugins {
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
+    alias(libs.plugins.compose.compiler)
 }
 
 // TODO: construct version code and name in fastlane and inject them
