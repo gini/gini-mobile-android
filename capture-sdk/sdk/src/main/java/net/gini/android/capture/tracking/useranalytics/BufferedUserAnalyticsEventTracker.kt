@@ -1,6 +1,7 @@
 package net.gini.android.capture.tracking.useranalytics
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import net.gini.android.capture.internal.network.NetworkRequestsManager
 import net.gini.android.capture.internal.provider.UniqueIdProvider
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
@@ -140,5 +141,8 @@ internal class BufferedUserAnalyticsEventTracker(
     private fun everyTracker(block: (UserAnalyticsEventTracker) -> Unit) {
         eventTrackers.forEach(block)
     }
+
+    @VisibleForTesting
+    internal fun getTrackers(): Set<UserAnalyticsEventTracker> = eventTrackers.toSet()
 
 }
