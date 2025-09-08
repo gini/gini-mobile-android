@@ -49,7 +49,7 @@ jobs:
           fail: true
 
       - name: Distribute GPC example apk to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        uses: wzieba/Firebase-Distribution-Github-Action@bd494989dd4bec0343f78adee87fe66e48279ad6 # v1.7.1
         with:
           appId: ${{secrets.GINI_PAYMENT_PROVIDER_EXAMPLE_APP_FIREBASE_ID}}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIAL_FILE_CONTENT }}
