@@ -14,14 +14,14 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
 
 /**
- * How our analytics working?
+ * How do our analytics work?
  *
  * We are initializing the [BufferedUserAnalyticsEventTracker] and it adds all the trackers through
  * [BufferedUserAnalyticsEventTracker.setPlatformTokens] into a set.
  * If the config value (isUserJourneyEnabled) from the backend is false, no tracker should be
  * added to the set, and eventually no event will be tracked.
  *
- * If the values is true, the passed tracker (e.g [AmplitudeUserAnalyticsEventTracker])
+ * If the value is true, the passed tracker (e.g [AmplitudeUserAnalyticsEventTracker])
  * will be added to the set and all the events will be tracked.
  *
  * This class will test this behaviour of [BufferedUserAnalyticsEventTracker]. If we pass false,
@@ -33,7 +33,7 @@ import org.junit.Assert.assertFalse
  * testing, but the main problem is that we are using polling for the queues
  * in [BufferedUserAnalyticsEventTracker.trySendEvents] which empties the queues, so even if we
  * expose them, it will be always empty after trackEvent is called,
- * on the other the trackers servers the same thing, if the tracker is empty, it
+ * on the other hand, the trackers serve the same thing. If the tracker is empty, it
  * already means that no events will be tracked. That's why every test of this class will check
  * the trackers set. For all positive and negative cases.
  *
