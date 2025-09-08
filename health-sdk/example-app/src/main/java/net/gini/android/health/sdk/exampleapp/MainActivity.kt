@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import ch.qos.logback.classic.Logger
@@ -23,11 +22,12 @@ import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModel()
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture(), ::photoResult)
     private val importLauncher =
         registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments(), ::importResult)

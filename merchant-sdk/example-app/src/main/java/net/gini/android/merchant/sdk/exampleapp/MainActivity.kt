@@ -2,7 +2,6 @@ package net.gini.android.merchant.sdk.exampleapp
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
@@ -11,11 +10,12 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import net.gini.android.merchant.sdk.exampleapp.configuration.ConfigurationFragment
 import net.gini.android.merchant.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.merchant.sdk.exampleapp.orders.ui.OrdersActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModel()
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

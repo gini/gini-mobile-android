@@ -105,6 +105,10 @@ dependencies {
     kapt(libs.moshi.codegen)
     implementation(libs.logback.android)
 
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
     testImplementation(libs.junit)
 

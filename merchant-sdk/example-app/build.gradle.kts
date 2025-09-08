@@ -102,6 +102,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(project(":merchant-sdk:sdk"))
 
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
     kapt(libs.moshi.codegen)
     implementation(libs.logback.android)
 
