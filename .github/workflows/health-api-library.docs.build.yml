@@ -1,5 +1,8 @@
 name: Build docs for Health API Library
 
+permissions:
+  content: read
+
 on:
   workflow_dispatch:
   pull_request:

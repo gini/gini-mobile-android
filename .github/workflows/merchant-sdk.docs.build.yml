@@ -1,5 +1,8 @@
 name: Build docs for Merchant SDK
 
+permissions:
+  content: read
+
 on:
   workflow_dispatch:
   push:
