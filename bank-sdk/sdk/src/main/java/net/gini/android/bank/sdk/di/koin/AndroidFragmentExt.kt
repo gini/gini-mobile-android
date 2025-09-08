@@ -9,7 +9,7 @@ import net.gini.android.bank.sdk.di.getGiniBankKoin
 import org.koin.core.annotation.KoinInternalApi
 import org.koin.core.parameter.ParametersHolder
 import org.koin.core.qualifier.Qualifier
-import org.koin.viewmodel.resolveViewModel
+import org.koin.androidx.viewmodel.resolveViewModel
 
 @MainThread
 inline fun <reified T : ViewModel> Fragment.giniBankViewModel(
