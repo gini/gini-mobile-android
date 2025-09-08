@@ -27,7 +27,7 @@
     <string name="gbs_digital_invoice_name_validation_error">Bitte geben Sie den Artikelnamen ein.</string>
     <string name="gbs_digital_invoice_price_validation_error">Bitte geben Sie den Artikelpreis ein.</string>
 
-    <string name="gbs_proceed">Weiter</string>
+    <string name="gbs_proceed">Bestätigen und weiter</string>
     <string name="gbs_edit_article">Artikel bearbeiten</string>
     <string name="gbs_name">Name</string>
     <string name="gbs_unit_price">Einzelpreis</string>
@@ -36,6 +36,7 @@
     <string name="gbs_help_invoice_title">Wie funktioniert die Digitale Rechnung?</string>
     <string name="gbs_help_invoice_text">Wir lesen alle Artikel aus der Rechnung aus und listen diese für Sie auf. Falls Sie einige Artikel zurücksenden oder die Rechnung nur teilweise bezahlen möchten, wählen Sie einfach die Artikel ab, die Sie zurücksenden und wir berechnen den zu zahlenden Betrag für Sie neu.</string>
     <string name="gbs_help_edit_title">Wie kann ich Artikel bearbeiten?</string>
+    <string name="image_content_description_suffix">%1$s Bild</string>
     <string name="gbs_help_edit_text">Mit einem Klick auf “Bearbeiten” neben dem entsprechenden Artikel haben Sie anschließend die Möglichkeit die Beschreibung, Anzahl und Preis zu bearbeiten. Bitte beachten Sie, dass der Preis pro Stück die Mehrwertsteuer bereits enthält.</string>
     <string name="gbs_help_online_shops_title">Welche Onlineshops werden unterstützt?</string>
     <string name="gbs_help_online_shops_text">Wir konzentrieren uns derzeit auf die beliebtesten Online-Händler auf dem Markt. Weitere Einzelhändler werden in Zukunft hinzukommen.</string>
@@ -43,6 +44,8 @@
     <!-- region Skonto -->
     <string name="gbs_skonto_screen_title">Skonto</string>
     <string name="gbs_skonto_screen_content_description_close">Schließen</string>
+    <string name="page_number_invoice_preview_description">Rechnungsvorschau - Seite %1$d</string>
+
     <string name="gbs_skonto_screen_content_description_help">Hilfe</string>
     <string name="gbs_skonto_screen_content_description_back">Zurück</string>
     <!--   region Section Invoice Scan -->
@@ -61,8 +64,10 @@
     <string name="gbs_skonto_section_discount_field_due_date_hint">Ablaufdatum Skonto</string>
     <string name="gbs_skonto_section_discount_field_amount_validation_error_limit_exceeded">Ihr Überweisungslimit wurde überschritten: %1$s</string>
     <string name="gbs_skonto_section_discount_field_amount_validation_error_skonto_amount_more_than_full_amount">Der Betrag mit Skonto darf nicht höher sein als ohne</string>
+    <string name="gbs_skonto_calendar_icon_content_description">Kalender</string>
     <!--   endregion -->
     <!--   region Section Without Discount -->
+    <string name="gbs_Skonto_section_without_full_amount_entered_accessibility">%1$s eingegeben</string>
     <string name="gbs_skonto_section_without_discount_title">Ohne Skonto</string>
     <string name="gbs_skonto_section_without_discount_hint_label_enabled">  •  Aktiviert</string>
     <string name="gbs_skonto_section_without_discount_field_amount_hint">Betrag ohne Abzug</string>
@@ -72,7 +77,7 @@
     <string name="gbs_skonto_section_footer_title">Gesamtpreis</string>
     <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto</string>
     <string name="gbs_skonto_section_footer_label_save">%1$s sparen</string>
-    <string name="gbs_skonto_section_footer_continue_button_text">Zahlung fortsetzen</string>
+    <string name="gbs_skonto_section_footer_continue_button_text">Bestätigen und weiter</string>
     <!--   endregion -->
     <!--   region InfoDialog -->
     <string name="gbs_skonto_section_info_dialog_pay_today_message">Von dieser Rechnung kann ein Skontobetrag abgezogen werden – die Frist läuft heute ab.</string>
@@ -96,6 +101,7 @@
     <string name="gbs_skonto_invoice_preview_expire_date">Ablaufdatum Skonto: %1$s</string>
     <string name="gbs_skonto_invoice_preview_final_amount">Betrag nach Abzug: %1$s</string>
     <string name="gbs_skonto_invoice_preview_full_amount">Betrag ohne Abzug: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_try_again">Versuch\'s Nochmal</string>
     <!--   endregion -->
 
     <!--   region Transaction Docs. Attach Document Dialog -->

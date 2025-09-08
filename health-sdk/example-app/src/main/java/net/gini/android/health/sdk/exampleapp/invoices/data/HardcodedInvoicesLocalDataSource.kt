@@ -4,7 +4,7 @@ import android.content.Context
 
 private val HARDCODED_INVOICES = listOf(
     "health-invoice-1.jpg",
-    "health-invoice-2.jpg",
+    "health-invoice-2.pdf",
     "health-invoice-3.jpg",
     "health-invoice-4.jpg",
     "health-invoice-5.jpg",

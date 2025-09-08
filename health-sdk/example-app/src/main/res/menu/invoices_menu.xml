@@ -4,7 +4,7 @@
     <item android:id="@+id/upload_test_invoices"
         android:title="@string/upload_test_invoices"
         app:showAsAction="never"/>
-    <item android:id="@+id/create_payment_order"
-        android:title="@string/create_payment_order"
+    <item android:id="@+id/batch_delete"
+        android:title="@string/batch_delete_documents"
         app:showAsAction="never"/>
 </menu>

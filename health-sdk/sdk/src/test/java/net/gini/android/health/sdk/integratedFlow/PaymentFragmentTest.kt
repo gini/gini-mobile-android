@@ -1,6 +1,9 @@
 package net.gini.android.health.sdk.integratedFlow
 
 import android.content.Context
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
@@ -79,22 +83,30 @@ class PaymentFragmentTest {
         every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
         every { paymentFlowViewModel!!.paymentFlowConfiguration } returns mockk(relaxed = true)
         every { paymentFlowViewModel!!.paymentFlowConfiguration?.shouldShowReviewBottomDialog } returns false
-        every { paymentFlowViewModel!!.giniInternalPaymentModule!!.getReturningUser() } returns false
-        val fragment = PaymentFragment.newInstance(
-            giniHealth = giniHealth!!,
-            paymentDetails = mockk(relaxed = true),
-            paymentFlowConfiguration = mockk(relaxed = true),
-            viewModelFactory = viewModelFactory
-        )
+        every { paymentFlowViewModel!!.giniInternalPaymentModule.getReturningUser() } returns false
 
-        // When
-        launchFragmentInContainer() {
-            fragment
+        val args = Bundle().apply {
+            putParcelable("paymentDetails", mockk(relaxed = true))
+            putParcelable("paymentFlowConfiguration", mockk(relaxed = true))
         }
 
+        val fragmentFactory = object : FragmentFactory() {
+            override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                return TestablePaymentFragment(paymentFlowViewModel!!)
+            }
+        }
+
+        val scenario = launchFragmentInContainer<TestablePaymentFragment>(
+            fragmentArgs = args,
+            factory = fragmentFactory
+        )
+
         // Then
-        verify { fragment.showPaymentComponentBottomSheet() }
+        scenario.onFragment { fragment ->
+            verify { fragment.showPaymentComponentBottomSheet() }
+        }
     }
+
 
     @Test
     fun `shows review fragment on startup in case returning user and document id`() = runTest {
@@ -107,20 +119,25 @@ class PaymentFragmentTest {
         every { paymentFlowViewModel!!.documentId } returns "1234"
         every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
 
-        val fragment = PaymentFragment.newInstance(
-            giniHealth = giniHealth!!,
-            paymentDetails = mockk(relaxed = true),
-            paymentFlowConfiguration = mockk(relaxed = true),
-            viewModelFactory = viewModelFactory
-        )
-
-        // When
-        launchFragmentInContainer {
-            fragment
+        val args = Bundle().apply {
+            putParcelable("paymentDetails", mockk(relaxed = true))
+            putParcelable("paymentFlowConfiguration", mockk(relaxed = true))
         }
 
+        val fragmentFactory = object : FragmentFactory() {
+            override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                return TestablePaymentFragment(paymentFlowViewModel!!)
+            }
+        }
+
+        val scenario = launchFragmentInContainer<TestablePaymentFragment>(
+            fragmentArgs = args,
+            factory = fragmentFactory
+        )
         // Then
-        verify { fragment.showReviewFragment() }
+        scenario.onFragment { fragment ->
+            verify { fragment.showReviewFragment() }
+        }
     }
 
     @Test
@@ -132,20 +149,31 @@ class PaymentFragmentTest {
         every { paymentFlowViewModel!!.giniInternalPaymentModule.getReturningUser() } returns true
         every { paymentFlowViewModel!!.documentId } returns null
 
-        val fragment = PaymentFragment.newInstance(
-            giniHealth = giniHealth!!,
-            paymentDetails = mockk(relaxed = true),
-            paymentFlowConfiguration = mockk(relaxed = true),
-            viewModelFactory = viewModelFactory
-        )
+        val args = Bundle().apply {
+            putParcelable("paymentDetails", PaymentDetails(
+                amount = "100.00",
+                iban = "DE89370400440532013000",
+                recipient = "Test Recipient",
+                purpose = "Test Purpose",
 
-        // When
-        launchFragmentInContainer {
-            fragment
+            ))
+            putParcelable("paymentFlowConfiguration", mockk(relaxed = true))
         }
 
+        val fragmentFactory = object : FragmentFactory() {
+            override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                return TestablePaymentFragment(paymentFlowViewModel!!)
+            }
+        }
+
+        val scenario = launchFragmentInContainer<TestablePaymentFragment>(
+            fragmentArgs = args,
+            factory = fragmentFactory
+        )
         // Then
-        verify { fragment.showReviewBottomDialog() }
+        scenario.onFragment { fragment ->
+            verify { fragment.showReviewBottomDialog() }
+        }
     }
 
     @Test
@@ -158,20 +186,25 @@ class PaymentFragmentTest {
         every { paymentFlowViewModel!!.giniInternalPaymentModule.getReturningUser() } returns true
         every { paymentFlowViewModel!!.paymentNextStep } returns MutableSharedFlow()
         every { paymentFlowViewModel!!.documentId } returns null
-        val fragment = PaymentFragment.newInstance(
-            giniHealth = giniHealth!!,
-            paymentDetails = mockk(relaxed = true),
-            paymentFlowConfiguration = mockk(relaxed = true),
-            viewModelFactory = viewModelFactory
-        )
-
-        // When
-        launchFragmentInContainer {
-            fragment
+        val args = Bundle().apply {
+            putParcelable("paymentDetails", mockk(relaxed = true))
+            putParcelable("paymentFlowConfiguration", mockk(relaxed = true))
+        }
+        val fragmentFactory = object : FragmentFactory() {
+            override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                return TestablePaymentFragment(paymentFlowViewModel!!)
+            }
         }
 
+        val scenario = launchFragmentInContainer<TestablePaymentFragment>(
+            fragmentArgs = args,
+            factory = fragmentFactory
+        )
+
         // Then
-        verify { fragment.showPaymentComponentBottomSheet() }
+        scenario.onFragment { fragment ->
+            verify { fragment.showPaymentComponentBottomSheet() }
+        }
     }
 
     @Test
@@ -183,22 +216,29 @@ class PaymentFragmentTest {
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewBottomDialog } returns false
         every { paymentFlowViewModel!!.documentId } returns null
-        val fragment = PaymentFragment.newInstance(
-            giniHealth = giniHealth!!,
-            paymentDetails = mockk(relaxed = true),
-            paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewBottomDialog = false),
-            viewModelFactory = viewModelFactory
-        )
-
-        launchFragmentInContainer {
-            fragment
+        val args = Bundle().apply {
+            putParcelable("paymentDetails", mockk(relaxed = true))
+            putParcelable("paymentFlowConfiguration", mockk(relaxed = true))
+        }
+        val fragmentFactory = object : FragmentFactory() {
+            override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                return TestablePaymentFragment(paymentFlowViewModel!!)
+            }
         }
 
+        val scenario = launchFragmentInContainer<TestablePaymentFragment>(
+            fragmentArgs = args,
+            factory = fragmentFactory
+        )
         // When
-        fragment.handlePayFlow()
+        scenario.onFragment { fragment ->
+           fragment.handlePayFlow()
+        }
 
         // Then
-        verify { paymentFlowViewModel!!.onPaymentButtonTapped() }
+        scenario.onFragment { fragment ->
+            verify { paymentFlowViewModel!!.onPaymentButtonTapped() }
+        }
     }
 
     @Test
@@ -209,23 +249,30 @@ class PaymentFragmentTest {
         every { paymentFlowViewModel!!.paymentNextStep } returns paymentFlow
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewBottomDialog } returns false
+        every { paymentFlowViewModel!!.paymentFlowConfiguration!!.popupDurationPaymentReview } returns 3
         every { paymentFlowViewModel!!.documentId } returns "123"
-        val fragment = PaymentFragment.newInstance(
-            giniHealth = giniHealth!!,
-            paymentDetails = mockk(relaxed = true),
-            paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewBottomDialog = false),
-            viewModelFactory = viewModelFactory
-        )
-
-        launchFragmentInContainer {
-            fragment
+        val args = Bundle().apply {
+            putParcelable("paymentDetails", mockk(relaxed = true))
+            putParcelable("paymentFlowConfiguration", mockk(relaxed = true))
+        }
+        val fragmentFactory = object : FragmentFactory() {
+            override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                return TestablePaymentFragment(paymentFlowViewModel!!)
+            }
         }
 
+        val scenario = launchFragmentInContainer<TestablePaymentFragment>(
+            fragmentArgs = args,
+            factory = fragmentFactory
+        )
         // When
-        fragment.handlePayFlow()
-
+        scenario.onFragment { fragment ->
+            fragment.handlePayFlow()
+        }
         // Then
-        verify { fragment.showReviewFragment() }
+        scenario.onFragment { fragment ->
+            verify {fragment.showReviewFragment()  }
+        }
     }
 
     @Test
@@ -237,22 +284,36 @@ class PaymentFragmentTest {
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldHandleErrorsInternally } returns false
         every { paymentFlowViewModel!!.paymentFlowConfiguration!!.shouldShowReviewBottomDialog } returns true
         every { paymentFlowViewModel!!.documentId } returns null
-        val fragment = PaymentFragment.newInstance(
-            giniHealth = giniHealth!!,
-            paymentDetails = mockk(relaxed = true),
-            paymentFlowConfiguration = PaymentFlowConfiguration(shouldShowReviewBottomDialog = false),
-            viewModelFactory = viewModelFactory
-        )
-
-        launchFragmentInContainer {
-            fragment
+        val args = Bundle().apply {
+            putParcelable("paymentDetails", mockk(relaxed = true))
+            putParcelable("paymentFlowConfiguration", mockk(relaxed = true))
+        }
+        val fragmentFactory = object : FragmentFactory() {
+            override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                return TestablePaymentFragment(paymentFlowViewModel!!)
+            }
         }
 
+        val scenario = launchFragmentInContainer<TestablePaymentFragment>(
+            fragmentArgs = args,
+            factory = fragmentFactory
+        )
         // When
-        fragment.handlePayFlow()
-
+        scenario.onFragment { fragment ->
+            fragment.handlePayFlow()
+        }
         // Then
-        verify { fragment.showReviewBottomDialog() }
+        scenario.onFragment { fragment ->
+            verify { fragment.showReviewBottomDialog()  }
+        }
     }
 
+}
+
+class TestablePaymentFragment(
+    private val testViewModel: PaymentFlowViewModel
+) : PaymentFragment() {
+
+    override val viewModel: PaymentFlowViewModel
+        get() = testViewModel
 }

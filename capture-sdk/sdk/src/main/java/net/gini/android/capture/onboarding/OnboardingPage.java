@@ -3,14 +3,11 @@ package net.gini.android.capture.onboarding;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import net.gini.android.capture.camera.CameraActivity;
-import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
-
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+
+import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter;
 
 /**
  * <p>

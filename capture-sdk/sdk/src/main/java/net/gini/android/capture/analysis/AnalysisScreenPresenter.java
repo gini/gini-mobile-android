@@ -1,9 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.internal.util.NullabilityHelper.getListOrEmpty;
-import static net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-
 import android.app.Activity;
 
 import androidx.annotation.NonNull;
@@ -24,13 +20,11 @@ import net.gini.android.capture.internal.camera.photo.ParcelableMemoryCache;
 import net.gini.android.capture.internal.document.DocumentRenderer;
 import net.gini.android.capture.internal.document.DocumentRendererFactory;
 import net.gini.android.capture.internal.network.FailureException;
+import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType;
 import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
-import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
-import net.gini.android.capture.network.model.GiniCaptureReturnReason;
-import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY;
 
@@ -44,6 +38,9 @@ import java.util.Map;
 import java.util.Random;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlin.Unit;
+
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.
@@ -63,27 +60,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @VisibleForTesting
     final AnalysisScreenPresenterExtension extension;
 
-    private static final AnalysisFragmentListener NO_OP_LISTENER = new AnalysisFragmentListener() {
-        @Override
-        public void onError(@NonNull final GiniCaptureError error) {
-        }
-
-        @Override
-        public void onExtractionsAvailable(@NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
-                                           @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions,
-                                           @NonNull final List<GiniCaptureReturnReason> returnReasons) {
-        }
-
-        @Override
-        public void onProceedToNoExtractionsScreen(@NonNull final Document document) {
-        }
-
-        @Override
-        public void onDefaultPDFAppAlertDialogCancelled() {
-        }
-
-    };
-
     private final GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
             mMultiPageDocument;
     private final String mDocumentAnalysisErrorMessage;
@@ -91,7 +67,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     private final List<AnalysisHint> mHints;
     @VisibleForTesting
     DocumentRenderer mDocumentRenderer;
-    private AnalysisFragmentListener mListener;
     private boolean mStopped;
     private boolean mAnalysisCompleted;
 
@@ -119,7 +94,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         mDocumentAnalysisErrorMessage = documentAnalysisErrorMessage;
         mAnalysisInteractor = analysisInteractor;
         mHints = generateRandomHintsList();
-        extension = new AnalysisScreenPresenterExtension();
+        extension = new AnalysisScreenPresenterExtension(view);
     }
 
     private List<AnalysisHint> generateRandomHintsList() {
@@ -179,7 +154,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     @Override
     public void setListener(@NonNull final AnalysisFragmentListener listener) {
-        mListener = listener;
+        extension.setListener(listener);
     }
 
     @VisibleForTesting
@@ -191,7 +166,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     public void start() {
         mStopped = false;
         checkGiniCaptureInstance();
-        createDocumentRenderer();
+        if (mMultiPageDocument.getType() != Document.Type.XML &&
+        mMultiPageDocument.getType() != Document.Type.XML_MULTI_PAGE) {
+            createDocumentRenderer();
+        }
         clearParcelableMemoryCache();
         getView().showScanAnimation();
         loadDocumentData();
@@ -265,7 +243,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         negativeButtonClickListener, cancelListener))
                 .handle((CompletableFuture.BiFun<Void, Throwable, Void>) (aVoid, throwable) -> {
                     if (throwable != null) {
-                        getAnalysisFragmentListenerOrNoOp()
+                        extension.getAnalysisFragmentListenerOrNoOp()
                                 .onDefaultPDFAppAlertDialogCancelled();
                     } else {
                         showErrorIfAvailableAndAnalyzeDocument();
@@ -285,6 +263,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @VisibleForTesting
     void doAnalyzeDocument() {
         startScanAnimation();
+        extension.showLoadingIndicator(() -> {
+            stopScanAnimation();
+            return Unit.INSTANCE;
+        });
         mAnalysisInteractor.analyzeMultiPageDocument(mMultiPageDocument)
                 .handle(new CompletableFuture.BiFun<
                         AnalysisInteractor.ResultHolder, Throwable, Void>() {
@@ -349,16 +331,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     private void proceedSuccessNoExtractions() {
-        trackAnalysisScreenEvent(AnalysisScreenEvent.NO_RESULTS);
-        getAnalysisFragmentListenerOrNoOp()
-                .onProceedToNoExtractionsScreen(mMultiPageDocument);
+        extension.proceedSuccessNoExtractions(mMultiPageDocument);
     }
 
     private void proceedWithExtractions(AnalysisInteractor.ResultHolder resultHolder) {
-        getAnalysisFragmentListenerOrNoOp()
-                .onExtractionsAvailable(getMapOrEmpty(resultHolder.getExtractions()),
-                        getMapOrEmpty(resultHolder.getCompoundExtractions()),
-                        getListOrEmpty(resultHolder.getReturnReasons()));
+        extension.proceedWithExtractions(resultHolder);
     }
 
     private void loadDocumentData() {
@@ -387,7 +364,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                             return;
                         }
                         ErrorLogger.log(new ErrorLog("Failed to load document data", exception));
-                        getAnalysisFragmentListenerOrNoOp().onError(
+                        extension.getAnalysisFragmentListenerOrNoOp().onError(
                                 new GiniCaptureError(GiniCaptureError.ErrorCode.ANALYSIS,
                                         "An error occurred while loading the document."));
                     }
@@ -406,13 +383,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         analyzeDocument();
     }
 
-    @NonNull
-    private AnalysisFragmentListener getAnalysisFragmentListenerOrNoOp() {
-        return mListener != null ? mListener : NO_OP_LISTENER;
-    }
-
     private void showHintsForImage() {
-        if (getFirstDocument().getType() == Document.Type.IMAGE) {
+        InvoiceEducationType invoiceEducationType = extension.getInvoiceEducationType();
+        if (getFirstDocument().getType() == Document.Type.IMAGE &&
+                invoiceEducationType == null) {
             getView().showHints(mHints);
         }
     }
@@ -435,6 +409,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     private void showDocument() {
         LOG.debug("Rendering the document");
+        if (mDocumentRenderer == null)
+            return;
         mDocumentRenderer.toBitmap(getActivity(), getView().getPdfPreviewSize(),
                 (bitmap, rotationForDisplay) -> {
                     LOG.debug("Document rendered");

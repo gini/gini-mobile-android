@@ -25,7 +25,7 @@
     <string name="gbs_digital_invoice_onboarding_text_2">Deselect the products you want to return and we will recalculate the price for you.</string>
     <string name="gbs_digital_invoice_onboarding_done_button_title">Get Started</string>
 
-    <string name="gbs_proceed">Proceed</string>
+    <string name="gbs_proceed">Confirm and proceed</string>
     <string name="gbs_edit_article">Edit Article</string>
     <string name="gbs_name">Name</string>
     <string name="gbs_unit_price">Unit price</string>
@@ -34,6 +34,7 @@
     <string name="gbs_digital_invoice_price_validation_error">Please enter the article price.</string>
 
     <string name="gbs_help_invoice_title">How does a digital invoice work?</string>
+    <string name="image_content_description_suffix">%1$s image</string>
     <string name="gbs_help_invoice_text">We extracted all articles from your invoice and listed them for you. In case you want to return an ordered article or just partly pay your invoice, you simply deselect the article and the new total will be calculated automatically.</string>
     <string name="gbs_help_edit_title">How can I edit an article?</string>
     <string name="gbs_help_edit_text">By clicking an article, you are able to edit its description, quantity and price per item. Please note that the price per item needs to include tax.</string>
@@ -43,6 +44,7 @@
     <!-- region Skonto -->
     <string name="gbs_skonto_screen_title">Skonto discount</string>
     <string name="gbs_skonto_screen_content_description_close">Close</string>
+    <string name="page_number_invoice_preview_description">Invoice preview - Page %1$d</string>
     <string name="gbs_skonto_screen_content_description_help">Help</string>
     <string name="gbs_skonto_screen_content_description_back">Back</string>
     <!--   region Section Invoice Scan -->
@@ -61,8 +63,10 @@
     <string name="gbs_skonto_section_discount_field_due_date_hint">Expiry date</string>
     <string name="gbs_skonto_section_discount_field_amount_validation_error_limit_exceeded">Your transfer limit has been exceeded: %1$s</string>
     <string name="gbs_skonto_section_discount_field_amount_validation_error_skonto_amount_more_than_full_amount">Discounted value cannot exceed initial value</string>
+    <string name="gbs_skonto_calendar_icon_content_description">Calendar</string>
     <!--   endregion -->
     <!--   region Section Without Discount -->
+    <string name="gbs_Skonto_section_without_full_amount_entered_accessibility">%1$s entered</string>
     <string name="gbs_skonto_section_without_discount_title">Without Skonto discount</string>
     <string name="gbs_skonto_section_without_discount_hint_label_enabled">  •  Active</string>
     <string name="gbs_skonto_section_without_discount_field_amount_hint">Full amount</string>
@@ -72,7 +76,7 @@
     <string name="gbs_skonto_section_footer_title">Total</string>
     <string name="gbs_skonto_section_footer_label_discount">%1$s Skonto discount</string>
     <string name="gbs_skonto_section_footer_label_save">Save %1$s</string>
-    <string name="gbs_skonto_section_footer_continue_button_text">Proceed</string>
+    <string name="gbs_skonto_section_footer_continue_button_text">Confirm and proceed</string>
     <!--   endregion -->
     <!--   region InfoDialog -->
     <string name="gbs_skonto_section_info_dialog_pay_today_message">A Skonto discount can be applied to this invoice, it will expire after today.</string>
@@ -96,6 +100,7 @@
     <string name="gbs_skonto_invoice_preview_expire_date">Expiry date: %1$s</string>
     <string name="gbs_skonto_invoice_preview_final_amount">Final amount: %1$s</string>
     <string name="gbs_skonto_invoice_preview_full_amount">Full amount: %1$s</string>
+    <string name="gbs_skonto_invoice_preview_try_again">Try Again</string>
     <!--   endregion -->
     <!-- endregion -->
     <!--   region Transaction Docs. Attach Document Dialog TODO-->

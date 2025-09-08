@@ -1,7 +1,6 @@
 package net.gini.android.internal.payment.moreInformation
 
 import android.content.Context
-import android.widget.ExpandableListView
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
@@ -119,8 +118,14 @@ class MoreInformationTest {
             fragment
         }
 
-        // Then
-        onView(withId(R.id.gps_faq_list)).check { view, _ -> assertThat ((view as ExpandableListView).adapter!!.count).isEqualTo(fragment.faqList.size) }
+        // Wait for RecyclerView to load and validate item count
+        onView(withId(R.id.gps_faq_recycler))
+            .check { view, _ ->
+                val recyclerView = view as RecyclerView
+                val adapter = recyclerView.adapter
+                assertThat(adapter).isNotNull()
+                assertThat(adapter!!.itemCount).isEqualTo(fragment.faqList.size)
+            }
     }
 
     @Test
@@ -132,7 +137,7 @@ class MoreInformationTest {
 
         // When
         launchFragmentInContainer {
-            MoreInformationFragment.newInstance(paymentComponentWithLocale!!)
+            MoreInformationFragment.newInstance(paymentComponentWithLocale)
         }
 
         // Then

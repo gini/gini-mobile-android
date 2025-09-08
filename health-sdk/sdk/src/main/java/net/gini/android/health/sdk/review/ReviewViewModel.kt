@@ -3,12 +3,15 @@ package net.gini.android.health.sdk.review
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.GiniHealth
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -20,13 +23,14 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.review.ReviewConfiguration
 import net.gini.android.internal.payment.review.reviewComponent.ReviewComponent
 import org.slf4j.LoggerFactory
+import kotlin.time.Duration.Companion.seconds
 
 internal class ReviewViewModel(
     val giniHealth: GiniHealth,
     val configuration: ReviewConfiguration,
     val paymentComponent: PaymentComponent,
     val documentId: String,
-    val shouldShowCloseButton: Boolean,
+    val paymentFlowConfiguration: PaymentFlowConfiguration,
     val reviewFragmentListener: ReviewFragmentListener
 ) : ViewModel() {
 
@@ -39,6 +43,10 @@ internal class ReviewViewModel(
         coroutineScope = viewModelScope
     )
 
+
+    private val _showInfoBarDurationMs = paymentFlowConfiguration.popupDurationPaymentReview.coerceIn(0, 10).seconds.inWholeMilliseconds
+    val showInfoBarDurationMs: Long get() = _showInfoBarDurationMs
+
     private val _paymentDetails = MutableStateFlow(PaymentDetails("", "", "", ""))
     val paymentDetails: StateFlow<PaymentDetails> = _paymentDetails
 
@@ -49,6 +57,13 @@ internal class ReviewViewModel(
     val paymentProviderApp: StateFlow<PaymentProviderApp?> = _paymentProviderApp
 
     val giniInternalPaymentModule = giniHealth.giniInternalPaymentModule
+
+    private val _documentPages = MutableStateFlow<DocumentPagesResult>(DocumentPagesResult.Loading)
+    val documentPages: StateFlow<DocumentPagesResult> = _documentPages
+
+    val showLoading = giniHealth.paymentFlow.combine(documentPages) { paymentFlow, pagesFlow ->
+        paymentFlow is ResultWrapper.Loading && pagesFlow is DocumentPagesResult.Loading
+    }
 
     init {
         viewModelScope.launch {
@@ -63,7 +78,7 @@ internal class ReviewViewModel(
             }
         }
         viewModelScope.launch {
-            delay(SHOW_INFO_BAR_MS)
+            delay(showInfoBarDurationMs)
             _isInfoBarVisible.value = false
         }
         viewModelScope.launch {
@@ -84,11 +99,47 @@ internal class ReviewViewModel(
                 _paymentDetails.value = _paymentDetails.value.copy(recipient = paymentDetails.recipient, iban = paymentDetails.iban, amount = paymentDetails.amount, purpose = paymentDetails.purpose)
             }
         }
+
+        viewModelScope.launch {
+            giniHealth.documentFlow.collect { documentResult ->
+                when (documentResult) {
+                    is ResultWrapper.Success -> {
+                        val pages = (1..documentResult.value.pageCount).map { pageNumber ->
+                            val image = retryGetPageImage(documentId, pageNumber)
+                            DocumentPageAdapter.Page(image, pageNumber)
+                        }
+                        _documentPages.value = DocumentPagesResult.Success(pages)
+                    }
+                    is ResultWrapper.Error -> {
+                        _documentPages.value = DocumentPagesResult.Error
+                    }
+                    else -> {
+                        _documentPages.value = DocumentPagesResult.Loading
+                    }
+                }
+            }
+        }
     }
 
-    fun getPages(document: Document): List<DocumentPageAdapter.Page> {
-        return (1..document.pageCount).map { pageNumber ->
-            DocumentPageAdapter.Page(document.id, pageNumber)
+    /**
+     * In case one of the images in the document returned Error, try to fetch it again and insert it at the corresponding location.
+     *
+     * We will not get to this case if the document fetch returned Error, since we don't display the retry button for the image.
+     *
+     */
+
+    fun reloadImage(pageNumber: Int) {
+        viewModelScope.launch {
+            val image = retryGetPageImage(documentId, pageNumber)
+            if (_documentPages.value is DocumentPagesResult.Success) {
+                with(_documentPages.value as DocumentPagesResult.Success) {
+                    val pages = this.pagesList.toMutableList().apply {
+                        removeAt(pageNumber - 1)    // page number is the number in the document, which starts with 1. subtract 1 to match the list ordering
+                        add(pageNumber - 1, DocumentPageAdapter.Page(image, pageNumber))
+                    }
+                    _documentPages.value = DocumentPagesResult.Success(pages)
+                }
+            }
         }
     }
 
@@ -98,25 +149,62 @@ internal class ReviewViewModel(
         }
     }
 
+    private suspend fun retryGetPageImage(
+        documentId: String,
+        pageNumber: Int,
+        retries: Int = 3,
+        delayMillis: Long = 1000
+    ): Resource<ByteArray> {
+        repeat(retries - 1) {
+            val result = giniHealth.documentManager.getPageImage(documentId, pageNumber)
+            if (result is Resource.Success) {
+                return result
+            }
+            delay(delayMillis) // Wait before next attempt
+        }
+        // Final attempt, return the result (successful or failed)
+        val finalResult =  giniHealth.documentManager.getPageImage(documentId, pageNumber)
+
+        return finalResult
+    }
+
+
     class Factory(
         private val giniHealth: GiniHealth,
         private val configuration: ReviewConfiguration,
         private val paymentComponent: PaymentComponent,
         private val documentId: String,
-        private val shouldShowCloseButton: Boolean,
+        private val paymentFlowConfiguration: PaymentFlowConfiguration,
         private val reviewFragmentListener: ReviewFragmentListener
-    ) :
-        ViewModelProvider.Factory {
+    ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ReviewViewModel(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, reviewFragmentListener) as T
+            return ReviewViewModel(
+                giniHealth,
+                configuration,
+                paymentComponent,
+                documentId,
+                paymentFlowConfiguration,
+                reviewFragmentListener
+            ) as T
+        }
+
+        override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+            return create(modelClass)
         }
     }
 
+
     companion object {
-        const val SHOW_INFO_BAR_MS = 3000L
         private val LOG = LoggerFactory.getLogger(ReviewViewModel::class.java)
     }
+}
+
+internal sealed interface DocumentPagesResult {
+    data class Success(val pagesList: List<DocumentPageAdapter.Page>): DocumentPagesResult
+    data object Error: DocumentPagesResult
+
+    data object Loading: DocumentPagesResult
 }
 
 private fun PaymentDetails.overwriteEmptyFields(value: PaymentDetails): PaymentDetails = this.copy(

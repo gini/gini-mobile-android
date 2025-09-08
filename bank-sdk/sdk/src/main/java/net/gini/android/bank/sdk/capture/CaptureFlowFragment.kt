@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.capture
 
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -48,10 +49,10 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty
 import net.gini.android.capture.ui.theme.GiniTheme
+import net.gini.android.capture.util.protectViewFromInsets
 
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
@@ -83,13 +84,17 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private var willBeRestored = false
     private var didFinishWithResult = false
+    private var attachDocumentDialogShowing = false
+    private var captureResult: CaptureSDKResult.Success? = null
+    private val attachToTransactionDialogStateKey = "attach_to_transaction_dialog_state_key"
+    private val activityResultKey = "activity_result_key"
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
     private lateinit var composeView: ComposeView
 
     private fun setReturnReasonsEventProperty() {
-        userAnalyticsEventTracker.setUserProperty(
+        userAnalyticsEventTracker?.setUserProperty(
             setOf(
                 UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
                 UserAnalyticsUserProperty.BankSdkVersionName(BuildConfig.VERSION_NAME),
@@ -122,8 +127,31 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         super.onViewCreated(view, savedInstanceState)
         composeView = view.findViewById(R.id.gbs_compose_view)
         setReturnReasonsEventProperty()
-        userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
+        view.protectViewFromInsets()
+        userAnalyticsEventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
+        restoreCaptureResultIfNeeded(savedInstanceState)
+    }
+
+    private fun restoreCaptureResultIfNeeded(savedInstanceState: Bundle?) {
+        attachDocumentDialogShowing =
+            savedInstanceState?.getBoolean(attachToTransactionDialogStateKey, false) ?: false
+        if (attachDocumentDialogShowing.not()) return
+        savedInstanceState?.let {
+            captureResult =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    savedInstanceState.getParcelable(
+                        activityResultKey,
+                        CaptureSDKResult.Success::class.java
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    savedInstanceState.getParcelable(activityResultKey)
+                }
+        }
+        captureResult?.let {
+            processOnFinishedResultSuccessState(it)
+        }
     }
 
 
@@ -141,6 +169,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        outState.putBoolean(attachToTransactionDialogStateKey , attachDocumentDialogShowing)
+        outState.putParcelable(activityResultKey , captureResult)
         willBeRestored = true
     }
 
@@ -177,46 +207,56 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
     }
 
-    override fun onFinishedWithResult(result: CaptureSDKResult) {
-        when (result) {
-            is CaptureSDKResult.Success -> {
-                when {
-                    GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true -> {
-                        try {
-                            tryShowingReturnAssistant(result)
-                            return
-                        } catch (notUsed: DigitalInvoiceException) {
-                            tryShowingSkontoScreen(result) {
-                                tryShowAttachDocToTransactionDialog {
-                                    finishWithResult(interceptSuccessResult(result).toCaptureResult())
-                                }
-                            }
-                            return
-                        }
-                    }
-
-                    GiniBank.getCaptureConfiguration()?.skontoEnabled == true -> {
-                        tryShowingSkontoScreen(result) {
-                            tryShowAttachDocToTransactionDialog {
-                                finishWithResult(interceptSuccessResult(result).toCaptureResult())
-                            }
-                        }
-                        return
-                    }
-
-                    else -> {
+    private fun processOnFinishedResultSuccessState(result: CaptureSDKResult.Success) {
+        when {
+            GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true -> {
+                try {
+                    tryShowingReturnAssistant(result)
+                    return
+                } catch (notUsed: DigitalInvoiceException) {
+                    tryShowingSkontoScreen(result) {
                         tryShowAttachDocToTransactionDialog {
                             finishWithResult(interceptSuccessResult(result).toCaptureResult())
                         }
+                    }
+                    return
+                }
+            }
 
+            GiniBank.getCaptureConfiguration()?.skontoEnabled == true -> {
+                tryShowingSkontoScreen(result) {
+                    tryShowAttachDocToTransactionDialog {
+                        finishWithResult(interceptSuccessResult(result).toCaptureResult())
                     }
                 }
+                return
+            }
+
+            else -> {
+                tryShowAttachDocToTransactionDialog {
+                    finishWithResult(interceptSuccessResult(result).toCaptureResult())
+                }
+
+            }
+        }
+    }
+
+    override fun onFinishedWithResult(result: CaptureSDKResult) {
+        when (result) {
+            is CaptureSDKResult.Success -> {
+                captureResult = result
+                processOnFinishedResultSuccessState(result)
             }
 
             else -> {
                 finishWithResult(result.toCaptureResult())
             }
         }
+    }
+
+    private fun resetValuesForDialogState() {
+        attachDocumentDialogShowing = false
+        captureResult = null
     }
 
     private fun tryShowAttachDocToTransactionDialog(continueFlow: () -> Unit) {
@@ -228,15 +268,19 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         composeView.setContent {
             GiniTheme {
                 if (!autoAttachDoc) {
+                    attachDocumentDialogShowing = true
                     AttachDocumentToTransactionDialog(onDismiss = {
                         lifecycleScope.launch { transactionDocDialogCancelAttachUseCase() }
                         continueFlow()
+                        resetValuesForDialogState()
                     }, onConfirm = {
                         lifecycleScope.launch { transactionDocDialogConfirmAttachUseCase(it) }
                         continueFlow()
+                        resetValuesForDialogState()
                     })
                 } else {
                     continueFlow()
+                    resetValuesForDialogState()
                 }
             }
         }
@@ -244,30 +288,38 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private fun tryShowingReturnAssistant(result: CaptureSDKResult.Success) {
         LineItemsValidator.validate(result.compoundExtractions)
-        val skontoData = kotlin.runCatching {
-            val data = skontoDataExtractor.extractSkontoData(
-                result.specificExtractions,
-                result.compoundExtractions
-            )
-            SkontoData(
-                skontoPercentageDiscounted = data.skontoPercentageDiscounted,
-                skontoPaymentMethod = when (data.skontoPaymentMethod) {
-                    SkontoData.SkontoPaymentMethod.Cash -> SkontoData.SkontoPaymentMethod.Cash
-                    SkontoData.SkontoPaymentMethod.PayPal -> SkontoData.SkontoPaymentMethod.PayPal
-                    else -> SkontoData.SkontoPaymentMethod.Unspecified
-                },
-                skontoAmountToPay = data.skontoAmountToPay,
-                fullAmountToPay = data.fullAmountToPay,
-                skontoRemainingDays = data.skontoRemainingDays,
-                skontoDueDate = data.skontoDueDate
-            )
-        }.getOrNull()
+        val skontoData = if (GiniBank.getCaptureConfiguration()?.skontoEnabled == true) {
+            kotlin.runCatching {
+                val data = skontoDataExtractor.extractSkontoData(
+                    result.specificExtractions,
+                    result.compoundExtractions
+                )
+                SkontoData(
+                    skontoPercentageDiscounted = data.skontoPercentageDiscounted,
+                    skontoPaymentMethod = when (data.skontoPaymentMethod) {
+                        SkontoData.SkontoPaymentMethod.Cash ->
+                            SkontoData.SkontoPaymentMethod.Cash
 
-        val highlightBoxes = kotlin.runCatching {
-            skontoInvoiceHighlightsExtractor.extract(
-                result.compoundExtractions
-            )
-        }.getOrNull() ?: emptyList()
+                        SkontoData.SkontoPaymentMethod.PayPal ->
+                            SkontoData.SkontoPaymentMethod.PayPal
+
+                        else -> SkontoData.SkontoPaymentMethod.Unspecified
+                    },
+                    skontoAmountToPay = data.skontoAmountToPay,
+                    fullAmountToPay = data.fullAmountToPay,
+                    skontoRemainingDays = data.skontoRemainingDays,
+                    skontoDueDate = data.skontoDueDate
+                )
+            }.getOrNull()
+        } else null
+
+        val highlightBoxes = if (GiniBank.getCaptureConfiguration()?.skontoEnabled == true) {
+            kotlin.runCatching {
+                skontoInvoiceHighlightsExtractor.extract(
+                    result.compoundExtractions
+                )
+            }.getOrNull() ?: emptyList()
+        } else emptyList()
 
         navController.navigate(
             GiniCaptureFragmentDirections.toDigitalInvoiceFragment(
@@ -286,6 +338,11 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         result: CaptureSDKResult.Success,
         fallback: () -> Unit
     ) {
+        if (GiniBank.getCaptureConfiguration()?.skontoEnabled == false) {
+            fallback()
+            return
+        }
+
         try {
             skontoExtractionsHandler.initialize(
                 result.specificExtractions,
@@ -318,7 +375,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
         didFinishWithResult = true
         captureFlowFragmentListener.onFinishedWithResult(result)
-        trackSdkClosedEvent(UserAnalyticsScreen.Analysis)
+        trackSdkClosedEvent()
     }
 
     private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
@@ -387,11 +444,10 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
     }
 
-    private fun trackSdkClosedEvent(screen: UserAnalyticsScreen) = runCatching {
-        userAnalyticsEventTracker.trackEvent(
+    private fun trackSdkClosedEvent() = runCatching {
+        userAnalyticsEventTracker?.trackEvent(
             UserAnalyticsEvent.SDK_CLOSED,
             setOf(
-                UserAnalyticsEventProperty.Screen(screen),
                 UserAnalyticsEventProperty.Status(UserAnalyticsEventProperty.Status.StatusType.Successful),
             )
         )

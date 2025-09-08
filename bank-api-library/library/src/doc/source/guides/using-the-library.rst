@@ -25,7 +25,7 @@ following ``Resource`` instances are returned:
 - cancelled request: ``Resource.Cancelled``.
 
 ``Resource`` also provides a helper instance method for chaining requests called ``mapSuccess()``. For more details please
-consult the :root_dokka_path:`reference documentation <library/net.gini.android.core.api/-resource/index.html>`.
+consult the :root_dokka_path:`reference documentation <-gini%20-bank%20-a-p-i%20-library%20for%20-android/net.gini.android.core.api/-resource/index.html>`.
 
 Upload a document
 -----------------
@@ -83,7 +83,7 @@ Setting the document type hint
 To easily set the document type hint we introduced the ``DocumentType`` enum. It is safer and easier
 to use than a ``String``. For more details about the document type hints see the `Document Type
 Hints in the Gini Bank API documentation
-<https://pay-api.gini.net/documentation/#document-types>`_.
+<https://gini.atlassian.net/wiki/spaces/PA1/pages/36831615/Document+Types>`_.
 
 .. _getting-extractions:
 
@@ -139,25 +139,25 @@ example shows how to achieve this in detail.
         }
     }
 
-Sending feedback
+Sending transfer summary
 ----------------
 
 Depending on your use case your app probably presents the extractions to the user and offers the
 opportunity to correct them. We do our best to prevent errors. You can help improve our service if
-your app sends feedback for the extractions Gini delivered. Your app should send feedback only for
-the extractions the *user has seen and accepted*. Feedback should be sent for corrected extractions
-**and** for *correct extractions*. The code example below shows how to correct extractions and send
-feedback.
+your app sends transfer summary for the extractions Gini delivered. Your app should send transfer
+summary only for the extractions the *user has seen and accepted*. Transfer summary should be sent
+for corrected extractions **and** for *correct extractions*. The code example below shows how to
+correct extractions and send transfer summary.
 
 .. note::
 
     We also provide a sample test case `here
-    <https://github.com/gini/gini-mobile-android/blob/main/bank-api-library/library/src/androidTest/java/net/gini/android/bank/api/ExtractionFeedbackIntegrationTest.kt>`_
+    <https://github.com/gini/gini-mobile-android/blob/main/bank-api-library/library/src/androidTest/java/net/gini/android/bank/api/TransferSummaryIntegrationTest.kt>`_
     to verify that extraction feedback sending works. You may use it along with the example pdf and json files as a
     starting point to write your own test case.
 
     The sample test case is based on the Bank API documentation's `recommended steps
-    <https://pay-api.gini.net/documentation/#test-example>`_ for testing extraction feedback sending.
+    <https://gini.atlassian.net/wiki/spaces/PA1/pages/36733143/Submit+Transfer+Summary+on+Extractions#Test-example>`_ for testing extraction feedback sending.
 
 .. code-block:: java
 

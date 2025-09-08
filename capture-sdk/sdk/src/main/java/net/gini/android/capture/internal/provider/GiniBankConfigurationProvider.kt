@@ -11,6 +11,9 @@ class GiniBankConfigurationProvider {
         isReturnAssistantEnabled = false,
         amplitudeApiKey = "",
         isTransactionDocsEnabled = false,
+        isQrCodeEducationEnabled = false,
+        isInstantPaymentEnabled = false,
+        isEInvoiceEnabled = false,
     )
 
     fun provide(): Configuration = configuration

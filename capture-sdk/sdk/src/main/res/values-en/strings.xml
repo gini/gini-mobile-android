@@ -4,7 +4,7 @@
     <string name="gc_title_onboarding"/>
     <string name="gc_title_review">Review</string>
     <string name="gc_title_help">Help</string>
-    <string name="gc_title_analysis">Review</string>
+    <string name="gc_title_analysis">Analysis</string>
     <string name="gc_title_photo_tips">Tips</string>
     <string name="gc_title_supported_formats">Formats</string>
     <string name="gc_title_file_import">How to import</string>
@@ -12,7 +12,7 @@
     <string name="gc_title_error">Error</string>
     <string name="gc_help">Help</string>
     <string name="gc_menu_item_help_button_content_description">Help</string>
-    <string name="gc_menu_item_close_button_content_description">Close, button</string>
+    <string name="gc_menu_item_close_button_content_description">Close</string>
     <string name="gc_camera_error_no_permission">We need access to your camera to enable you to capture your invoices</string>
     <string name="gc_camera_error_no_permission_button_title">Give Access</string>
     <string name="gc_camera_image_stack_subtitle">Pages</string>
@@ -65,6 +65,7 @@
     <string name="gc_error_file_import_page_count_title">The document can only have a maximum of 10 pages.</string>
     <string name="gc_error_file_import_page_count_text"></string>
     <string name="gc_error_file_import_unsupported_title">Only files of the formats jpg, png, gif or PDF can be analysed.</string>
+    <string name="gc_error_file_import_unsupported_with_e_invoice_title">Only files of the formats jpg, png, gif, PDF or XML can be analysed.</string>
     <string name="gc_error_file_import_unsupported_text"></string>
     <string name="gc_error_file_import_password_title">Password protected documents cannot be analysed.</string>
     <string name="gc_error_file_import_password_text"></string>
@@ -87,6 +88,7 @@
     <string name="gc_document_import_close_error">Cancel</string>
     <string name="gc_file_chooser_fotos_section_header">Photos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
+    <string name="gc_file_chooser_pdfs_xmls_section_header">Invoices: PDF &amp; XML</string>
     <string name="gc_help_item_photo_tips_title">Tips for best results from photos</string>
     <string name="gc_help_item_file_import_guide_title">Import documents from other apps</string>
     <string name="gc_help_item_supported_formats_title">Supported formats</string>
@@ -94,6 +96,7 @@
     <string name="gc_supported_format_single_page_as_jpeg_png_gif">1-sided photos of format jpeg, png or gif</string>
     <string name="gc_supported_format_pdf">PDF documents of up to 10 pages</string>
     <string name="gc_supported_format_qr_code">QR codes</string>
+    <string name="gc_supported_format_e_invoices">E-Invoices: XRechnung (XML), ZUGFeRD (PDF)</string>
     <string name="gc_unsupported_format_handwriting">Handwriting</string>
     <string name="gc_unsupported_format_photos_of_screens">Photos of monitors or screens</string>
     <string name="gc_supported_format_section_header">Supported formats</string>
@@ -117,8 +120,8 @@
     <string name="gc_tip">Tip:\u0020</string>
     <string name="gc_get_started">Get Started</string>
     <string name="gc_onboarding_viewpager_content_description">Onboarding</string>
-    <string name="gc_onboarding_page_indicator_active_content_description">Active page indicator for page %1$d.</string>
-    <string name="gc_onboarding_page_indicator_inactive_content_description">Inactive page indicator for page %1$d.</string>
+    <string name="gc_onboarding_page_indicator_active_content_description">Active page indicator for page %1$d</string>
+    <string name="gc_onboarding_page_indicator_inactive_content_description">Inactive page indicator for page %1$d</string>
     <string name="gc_photo_tip_good_lighting_title">Good lighting</string>
     <string name="gc_photo_tip_flatten_the_page_title">Flatten the page</string>
     <string name="gc_photo_tip_parallel_title">Parallel</string>
@@ -135,6 +138,7 @@
     <string name="gc_turn_flash_on_content_description">Turn on flash</string>
     <string name="gc_turn_flash_off_content_description">Turn off flash</string>
     <string name="gc_camera_info_label_invoice_and_qr">Scan invoice or QR code</string>
+    <string name="gc_camera_top_bar_title_landscape">Scan invoice or QR code</string>
     <string name="gc_camera_info_label_only_invoice">Scan an invoice</string>
     <string name="gc_camera_info_label_only_qr">Scan a QR code</string>
     <string name="gc_qr_scanner_error">Scanning QR codes is temporarily disabled. Please try again later.</string>
@@ -150,6 +154,7 @@
     <string name="gc_scan">Scan</string>
     <string name="gc_take_a_picture">Take a picture</string>
     <string name="gc_flash_button">Flash</string>
+    <string name="gc_photo_review_content_description">Photo review</string>
     <string name="gc_delete_page">Delete page</string>
     <string name="gc_document_page">Document page</string>
     <string name="gc_useful_tips">Useful tips</string>
@@ -160,4 +165,12 @@
     <string name="gc_date_picker_cancel">Cancel</string>
     <!--   endregion -->
     <string name="gc_detection_error_layout_description">QR code scanning is currently unavailable. Please take a picture of your invoice instead.</string>
+    <!--   region Education -->
+    <string name="gc_education_loading">analyzing</string>
+    <string name="gc_qr_education_intro_message">In case you didn’t know...</string>
+    <string name="gc_qr_education_photo_doc_message">You can take photos of receipts or remittance slips – even without a QR code</string>
+    <string name="gc_qr_education_upload_picture_message">You can upload PDFs, images, or GIFs</string>
+    <string name="gc_invoice_education_message">You can upload PDFs, images, or GIFs</string>
+    <string name="gc_invoice_education_content_description">analyzing invoice in progress</string>
+    <!--   endregion -->
 </resources>

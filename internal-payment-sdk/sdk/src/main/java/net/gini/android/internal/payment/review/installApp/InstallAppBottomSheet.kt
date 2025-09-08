@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -25,6 +27,9 @@ import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import net.gini.android.internal.payment.utils.setBackgroundTint
 import org.slf4j.LoggerFactory
@@ -37,20 +42,15 @@ interface InstallAppForwardListener {
 }
 
 class InstallAppBottomSheet private constructor(
-    private val paymentComponent: PaymentComponent?,
-    private val listener: InstallAppForwardListener?,
-    backListener: BackListener?,
+   val viewModelFactory: ViewModelProvider.Factory? = null,
     private val minHeight: Int?
 ) :
     GpsBottomSheetDialogFragment() {
-    constructor() : this(null, null, null, null)
+    constructor() : this(null, null)
 
     private var binding: GpsBottomSheetInstallAppBinding by autoCleared()
     private val viewModel: InstallAppViewModel by viewModels {
-        InstallAppViewModel.Factory(
-            paymentComponent,
-            backListener
-        )
+      viewModelFactory?: object : ViewModelProvider.Factory {}
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -59,6 +59,13 @@ class InstallAppBottomSheet private constructor(
             inflater,
             GiniInternalPaymentModule.getSDKLanguageInternal(requireContext())?.languageLocale()
         )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (viewModelFactory == null && !isViewModelInitialized(InstallAppViewModel::class)) {
+            dismissAllowingStateLoss()
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -75,9 +82,14 @@ class InstallAppBottomSheet private constructor(
         savedInstanceState: Bundle?
     ): View {
         binding = GpsBottomSheetInstallAppBinding.inflate(inflater, container, false)
-        binding.root.minHeight = minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
+        if (!resources.isLandscapeOrientation()) {
+            binding.root.minHeight =
+                minHeight ?: resources.getDimension(R.dimen.gps_install_app_min_height).toInt()
+        }
         binding.gpsPoweredByGiniLayout.root.visibility =
-            if (paymentComponent?.paymentModule?.getIngredientBrandVisibility() == IngredientBrandType.FULL_VISIBLE)
+            if (viewModel.paymentComponent?.paymentModule?.getIngredientBrandVisibility()
+                == IngredientBrandType.FULL_VISIBLE
+            )
                 View.VISIBLE else View.INVISIBLE
         return binding.root
     }
@@ -85,10 +97,20 @@ class InstallAppBottomSheet private constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.dragHandle.onKeyboardAction {
+            dismiss()
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.paymentProviderApp.collect { paymentProviderApp ->
                     if (paymentProviderApp != null) {
+                        ViewCompat.setAccessibilityPaneTitle(
+                            view, String.format(
+                                getLocaleStringResource(R.string.gps_install_app_title),
+                                paymentProviderApp.paymentProvider.name
+                            )
+                        )
+
                         binding.gpsPaymentProviderIcon.gpsPaymentProviderIcon.setImageDrawable(
                             paymentProviderApp.icon
                         )
@@ -103,7 +125,11 @@ class InstallAppBottomSheet private constructor(
                             paymentProviderApp.paymentProvider.name
                         )
                         binding.gpsPlayStoreLogo.setOnClickListener {
-                            paymentProviderApp.paymentProvider.playStoreUrl?.let { openPlayStoreUrl(it) }
+                            paymentProviderApp.paymentProvider.playStoreUrl?.let {
+                                openPlayStoreUrl(
+                                    it
+                                )
+                            }
                         }
                         if (paymentProviderApp.isInstalled()) {
                             updateUI(paymentProviderApp)
@@ -133,7 +159,7 @@ class InstallAppBottomSheet private constructor(
         }
 
         binding.gpsForwardButton.setOnClickListener {
-            listener?.onForwardToBankSelected()
+            viewModel.installAppForwardListener?.onForwardToBankSelected()
             dismiss()
         }
     }
@@ -173,7 +199,12 @@ class InstallAppBottomSheet private constructor(
             backListener: BackListener?,
             minHeight: Int?
         ): InstallAppBottomSheet {
-            return InstallAppBottomSheet(paymentComponent, listener, backListener, minHeight)
+            val factory = InstallAppViewModel.Factory(
+                paymentComponent,
+                backListener,
+                listener
+            )
+            return InstallAppBottomSheet(factory, minHeight)
         }
     }
 }

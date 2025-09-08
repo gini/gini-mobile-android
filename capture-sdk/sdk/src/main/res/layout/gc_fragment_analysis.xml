@@ -79,6 +79,15 @@
 
     </LinearLayout>
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/gc_education_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
+
     <LinearLayout
         android:id="@+id/gc_analysis_hint_container"
         android:layout_width="match_parent"
@@ -87,6 +96,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/gc_large"
         android:layout_marginEnd="@dimen/gc_large"
+        android:importantForAccessibility="yes"
         android:layout_marginBottom="@dimen/gc_large_32"
         android:background="@drawable/gc_analysis_tips_background"
         android:minHeight="@dimen/gc_analysis_hint_container_min_height"
@@ -127,7 +137,7 @@
                 style="@style/GiniCaptureTheme.Typography.Body2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gc_dark_06"
+                android:textColor="@color/gc_dark_05"
                 tools:text="Gute Lichtverhältnisse beim Aufnehmen des Fotos beschleunigen die Analyse." />
         </LinearLayout>
 

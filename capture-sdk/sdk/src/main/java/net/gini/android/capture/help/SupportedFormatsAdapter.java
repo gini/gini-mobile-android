@@ -1,20 +1,19 @@
 package net.gini.android.capture.help;
 
-import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
 import net.gini.android.capture.R;
+import net.gini.android.capture.di.CaptureSdkJavaInterop;
+import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,9 +35,13 @@ public class SupportedFormatsAdapter extends
 
     private final List<Enum> mItems;
     private Boolean isQRDocument;
+    private GetEInvoiceFeatureEnabledUseCase getEInvoiceFeatureEnabledUseCase;
+    private boolean isEInvoiceEnabled;
 
     public SupportedFormatsAdapter(Boolean isQrCodeDocument) {
         isQRDocument = isQrCodeDocument;
+        getEInvoiceFeatureEnabledUseCase = CaptureSdkJavaInterop.getEInvoiceFeatureEnabledUseCase();
+        isEInvoiceEnabled = getEInvoiceFeatureEnabledUseCase.invoke();
         mItems = setUpItems();
     }
 
@@ -68,6 +71,10 @@ public class SupportedFormatsAdapter extends
             items.add(SupportedFormat.QR_CODE);
         }
         items.add(SupportedFormat.PHOTOS_OF_MONITORS);
+
+        if (isEInvoiceEnabled) {
+            items.add(SupportedFormat.E_INVOICES);
+        }
         items.add(SectionHeader.UNSUPPORTED_FORMATS);
         Collections.addAll(items, UnsupportedFormat.values());
         return items;
@@ -75,7 +82,7 @@ public class SupportedFormatsAdapter extends
 
     @Override
     public FormatItemViewHolder onCreateViewHolder(final ViewGroup parent,
-            final int viewType) {
+                                                   final int viewType) {
         final ItemType itemType = ItemType.fromOrdinal(viewType);
         switch (itemType) {
             case HEADER:
@@ -101,7 +108,7 @@ public class SupportedFormatsAdapter extends
 
     @Override
     public void onBindViewHolder(final FormatItemViewHolder holder,
-            final int position) {
+                                 final int position) {
         if (holder instanceof HeaderItemViewHolder) {
             final HeaderItemViewHolder viewHolder = (HeaderItemViewHolder) holder;
             final SectionHeader sectionHeader = (SectionHeader) mItems.get(position);
@@ -113,10 +120,11 @@ public class SupportedFormatsAdapter extends
             viewHolder.icon.setImageResource(formatInfo.getIcon());
 
             //Remove last dividers
-            if (formatInfo.getLabel() == SupportedFormat.PHOTOS_OF_MONITORS.getLabel()) {
+            if (!isEInvoiceEnabled && formatInfo.getLabel() == SupportedFormat.PHOTOS_OF_MONITORS.getLabel()) {
                 viewHolder.dividerView.setVisibility(View.INVISIBLE);
-            }
-            else {
+            } else if (isEInvoiceEnabled && formatInfo.getLabel() == SupportedFormat.E_INVOICES.getLabel()) {
+                viewHolder.dividerView.setVisibility(View.INVISIBLE);
+            } else {
                 viewHolder.dividerView.setVisibility(View.VISIBLE);
             }
 
@@ -175,7 +183,8 @@ public class SupportedFormatsAdapter extends
         QR_EPS(R.string.gc_supported_format_qr_type_eps),
         QR_STUZZA(R.string.gc_supported_format_qr_type_stuzza),
         QR_GIROCODE(R.string.gc_supported_format_qr_type_girocode),
-        QR_GINI_PAYMENT(R.string.gc_supported_format_qr_type_gini_payment);
+        QR_GINI_PAYMENT(R.string.gc_supported_format_qr_type_gini_payment),
+        E_INVOICES(R.string.gc_supported_format_e_invoices);
 
         @DrawableRes
         private final int mSupportedIcon;

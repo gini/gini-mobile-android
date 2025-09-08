@@ -1,7 +1,6 @@
 package net.gini.android.capture.tracking.useranalytics.tracker
 
 import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -10,7 +9,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import net.gini.android.capture.BuildConfig
 import net.gini.android.capture.internal.network.AmplitudeEventModel
-import net.gini.android.capture.internal.network.AmplitudeRoot
+import net.gini.android.capture.internal.network.AmplitudeRootModel
 import net.gini.android.capture.internal.network.NetworkRequestsManager
 import net.gini.android.capture.internal.provider.UniqueIdProvider
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
@@ -101,11 +100,8 @@ internal class AmplitudeUserAnalyticsEventTracker(
             )
         )
 
-        Log.e("User journey", "Event: ${eventName.eventName}\n" +
-                properties.joinToString("\n") { "  ${it.getPair().first}=${it.getPair().second}" })
-
         LOG.debug("\nEvent: ${eventName.eventName}\n" +
-                properties.joinToString("\n") { "  ${it.getPair().first}=${it.getPair().second}" })
+                finalProperties.toList().joinToString("\n") { "  ${it.first}=${it.second}" })
     }
 
     fun startRepeatingJob(): Job {
@@ -125,7 +121,7 @@ internal class AmplitudeUserAnalyticsEventTracker(
 
     private fun sendEventsToAmplitudeApi() {
         if (events.isNotEmpty()) {
-            val reqBody = AmplitudeRoot(apiKey = apiKey.key, events.toList())
+            val reqBody = AmplitudeRootModel(apiKey = apiKey.key, events.toList())
             networkRequestsManager.sendEvents(reqBody, UUID.randomUUID())
             events.clear()
         }

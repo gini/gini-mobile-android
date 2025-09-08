@@ -13,7 +13,7 @@ build.gradle:
 .. code-block:: groovy
 
     dependencies {
-        implementation 'net.gini.android:gini-bank-api-lib:3.3.1'
+        implementation 'net.gini.android:gini-bank-api-lib:3.7.1'
     }
 
 Integrating the Gini Bank API Library
@@ -52,6 +52,27 @@ with this configuration would be ``550e8400-e29b-11d4-a716-446655440000@example.
     val giniBankApi: GiniBankAPI =
             GiniBankAPIBuilder(context, "gini-client-id", "GiniClientSecret", "example.com")
                     .build();
+
+    // If you want to use your own authentication, please implement the SessionManager interface
+    import net.gini.android.core.api.authorization.SessionManager
+
+    class YourSessionManager: SessionManager {
+        override suspend fun getSession(): Resource<Session> {
+            // Retrieve the session token from your backend
+            val sessionToken: String = (...)
+            val expirationDate: Date = (...)
+            // Note: When the token expires the SDK calls this method
+            // again to get a new token.
+            return Resource.Success(Session(sessionToken, expirationDate))
+        }
+    }
+
+    // and YourSessionManager can be passed to GiniBankAPIBuilder like this
+    val giniBankApi: GiniBankAPI =
+                GiniBankAPIBuilder(
+                    context,
+                    sessionManager = YourSessionManager()
+                ).build()
 
     // The BankApiDocumentManager provides the high-level API to work with documents.
     val documentManager: BankApiDocumentManager = giniBankApi.documentManager;
@@ -116,7 +137,7 @@ Bank API Library uses by default ``pay-api.gini.net`` and ``user.gini.net``. It 
 .. warning::
 
     The above digests serve as an example only. You should **always** create the digest yourself
-    from the Gini API's public key and use that one (see `Extract Hash From gini.net`_). If you
+    from the Gini API's public key and use that one (see `Extract Hash From pay-api.gini.net`_). If you
     received a digest from us then **always** validate it by comparing it to the digest you created
     from the public key (see `Extract Hash From Public Key`_). Failing to validate a digest may lead
     to security vulnerabilities.
@@ -156,6 +177,12 @@ For the library to know about the xml you need to set the xml resource id using 
             .setNetworkSecurityConfigResId(R.xml.network_security_config)
             .build();
 
+    // if you want to use custom SessionManager, please pass YourSessionManager like below example with your network security config
+       val giniBankApi: GiniBankAPI = GiniBankAPIBuilder(
+                       context,
+                       sessionManager = YourSessionManager()
+                  ).setNetworkSecurityConfigResId(R.xml.network_security_config).build()
+
 Enable Pinning with a custom TrustManager implementation
 --------------------------------------------------------
 
@@ -167,6 +194,18 @@ to the ``GiniBankAPIBuilder#setTrustManager()`` method:
     val giniBankApi: GiniBankAPI = GiniBankAPIBuilder(context, "gini-client-id", "GiniClientSecret", "example.com")
             .setTrustManager(yourTrustManager)
             .build();
+
+    // if you want to use your TrustManager just pass TrustManager like below example with YourSessionManager
+    val giniBankApi : GiniBankAPI = GiniBankAPIBuilder(
+                       context,
+                       sessionManager = YourSessionManager()
+                   ).setTrustManager(YourTrustManager()).build()
+
+.. note::
+
+     The methods `.setTrustManager(YourTrustManager())` and `.setNetworkSecurityConfigResId(R.xml.network_security_config)` belong
+     to same class which is GiniBankAPIBuilder. Please explore GiniBankAPIBuilder class for more details, and you can use
+     these methods with YourSessionManager as mentioned above.
 
 .. warning::
 

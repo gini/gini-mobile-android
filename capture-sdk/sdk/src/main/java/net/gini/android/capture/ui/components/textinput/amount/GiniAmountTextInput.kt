@@ -32,6 +32,9 @@ fun GiniAmountTextInput(
     decimalFormatter: DecimalFormatter = DecimalFormatter(),
     colors: GiniTextInputColors = GiniTextInputColors.colors(),
     supportingText: String? = null,
+    shouldFieldShowKeyboard: Boolean = false,
+    onNewValue: (String) -> Unit = {},
+    isPhoneInLandscape: Boolean
 ) {
     val parsedAmount = decimalFormatter.parseAmount(amount)
 
@@ -50,6 +53,7 @@ fun GiniAmountTextInput(
         ),
         label = label,
         onValueChange = {
+            onNewValue(it)
             val newText = decimalFormatter.textToDigits(it) // take only 7 digits
             if (newText != text) {
                 text = newText
@@ -71,7 +75,9 @@ fun GiniAmountTextInput(
                     style = GiniTheme.typography.caption1,
                 )
             }
-        }
+        },
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+        isPhoneInLandscape = isPhoneInLandscape
     )
 }
 
@@ -97,12 +103,15 @@ private fun GiniTextInputPreviewDark() {
 private fun GiniTextInputPreview() {
     GiniTheme {
         GiniAmountTextInput(
-            modifier = Modifier.padding(16.dp),
             amount = BigDecimal("1234"),
-            label = "Label Text",
-            trailingContent = { },
             currencyCode = "EUR",
-            onValueChange = {}
+            label = "Label Text",
+            modifier = Modifier.padding(16.dp),
+            onValueChange = {},
+            trailingContent = { },
+            onNewValue = {
+            },
+            isPhoneInLandscape = false,
         )
     }
 }
@@ -111,14 +120,16 @@ private fun GiniTextInputPreview() {
 private fun GiniTextInputPreviewError() {
     GiniTheme {
         GiniAmountTextInput(
-            modifier = Modifier.padding(16.dp),
             amount = BigDecimal("1234"),
-            label = "Label Text",
-            trailingContent = { },
             currencyCode = "EUR",
+            label = "Label Text",
+            modifier = Modifier.padding(16.dp),
             onValueChange = {},
+            trailingContent = { },
             isError = true,
-            supportingText = "Error text"
+            supportingText = "Error text",
+            onNewValue = {},
+            isPhoneInLandscape = false
         )
     }
 }

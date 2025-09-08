@@ -201,6 +201,16 @@
     <!-- Style for the progress indicator that is displayed on top of the Pay button in ReviewFragment -->
     <style name="GiniPaymentTheme.PaymentButtonProgressStyle" parent="Root.GiniPaymentTheme.PaymentButtonProgressStyle" />
 
+    <style name="Root.GiniPaymentTheme.Widget.Button.PaymentProviderSelector" parent="GiniPaymentTheme.Widget.Button.TransparentBackground">
+        <item name="android:textAppearance">@style/GiniPaymentTheme.Typography.Input</item>
+    </style>
+    <style name="GiniPaymentTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniPaymentTheme.Widget.Button.PaymentProviderSelector"/>
+    
+    <style name="Root.GiniPaymentTheme.Widget.Button.PaymentProviderPicker" parent="GiniPaymentTheme.Widget.Button.TransparentBackground">
+        <item name="android:textAppearance">@style/GiniPaymentTheme.Typography.Body1</item>
+    </style>
+    <style name="GiniPaymentTheme.Widget.Button.PaymentProviderPicker" parent="Root.GiniPaymentTheme.Widget.Button.PaymentProviderPicker"/>
+
     <style name="Root.GiniPaymentTheme.CloseButtonStyle" parent="Widget.AppCompat.ImageButton">
         <item name="android:minWidth">@dimen/gps_large_50</item>
         <item name="android:minHeight">@dimen/gps_large_50</item>
@@ -222,17 +232,8 @@
     <style name="GiniPaymentTheme.PaymentDetails.InfoBar.TextView" parent="Root.GiniPaymentTheme.PaymentDetails.InfoBar.TextView" />
 
     <style name="Root.GiniPaymentTheme.PaymentDetails.InfoBar.TextAppearance" parent="GiniPaymentTheme.Typography.Caption1">
-        <item name="android:textColor">@color/gps_dark_07</item>
+        <item name="android:textColor">@color/gps_hint_color</item>
     </style>
     <style name="GiniPaymentTheme.PaymentDetails.InfoBar.TextAppearance" parent="Root.GiniPaymentTheme.PaymentDetails.InfoBar.TextAppearance" />
 
-    <style name="Root.GiniPaymentTheme.Widget.Button.PaymentProviderSelector" parent="GiniPaymentTheme.Widget.Button.TransparentBackground">
-        <item name="android:textAppearance">@style/GiniPaymentTheme.Typography.Input</item>
-    </style>
-    <style name="GiniPaymentTheme.Widget.Button.PaymentProviderSelector" parent="Root.GiniPaymentTheme.Widget.Button.PaymentProviderSelector"/>
-    
-    <style name="Root.GiniPaymentTheme.Widget.Button.PaymentProviderPicker" parent="GiniPaymentTheme.Widget.Button.TransparentBackground">
-        <item name="android:textAppearance">@style/GiniPaymentTheme.Typography.Body1</item>
-    </style>
-    <style name="GiniPaymentTheme.Widget.Button.PaymentProviderPicker" parent="Root.GiniPaymentTheme.Widget.Button.PaymentProviderPicker"/>
 </resources>

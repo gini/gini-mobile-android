@@ -1,8 +1,11 @@
 package net.gini.android.health.sdk.integratedFlow
 
+import android.os.Bundle
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -26,12 +29,22 @@ import net.gini.android.internal.payment.utils.PaymentNextStep
 import java.io.File
 import java.util.Stack
 
-internal class PaymentFlowViewModel(
-    internal var paymentDetails: PaymentDetails?,
-    internal var documentId: String?,
-    val paymentFlowConfiguration: PaymentFlowConfiguration?,
+class PaymentFlowViewModel(
+    private val savedStateHandle: SavedStateHandle,
     val giniHealth: GiniHealth
 ) : ViewModel(), FlowBottomSheetsManager, BackListener {
+
+    var paymentDetails: PaymentDetails?
+        get() = savedStateHandle.get("paymentDetails")
+        set(value) = savedStateHandle.set("paymentDetails", value)
+
+    var documentId: String?
+        get() = savedStateHandle.get("documentId")
+        set(value) = savedStateHandle.set("documentId", value)
+
+    var paymentFlowConfiguration: PaymentFlowConfiguration?
+        get() = savedStateHandle.get("paymentFlowConfiguration")
+        set(value) = savedStateHandle.set("paymentFlowConfiguration", value)
 
     private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
@@ -132,11 +145,11 @@ internal class PaymentFlowViewModel(
         checkNextStep(initialSelectedPaymentProvider, externalCacheDir, viewModelScope)
     }
 
-    fun onForwardToSharePdfTapped() {
+    fun onForwardToSharePdfTapped(fileName: String) {
         documentId?.let {
             sendFeedback()
         }
-        sharePdf(initialSelectedPaymentProvider, externalCacheDir, viewModelScope, paymentRequestFlow.value)
+        sharePdf(initialSelectedPaymentProvider, externalCacheDir, fileName, viewModelScope, paymentRequestFlow.value)
     }
 
     override suspend fun getPaymentRequest(): PaymentRequest = giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails?.toCommonPaymentDetails())
@@ -186,17 +199,21 @@ internal class PaymentFlowViewModel(
             is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> giniHealth.setDisplayedScreen(event.displayedScreen)
         }
     }
-
-    class Factory(private val paymentDetails: PaymentDetails?, private val documentId: String?, private val paymentFlowConfiguration: PaymentFlowConfiguration?, private val giniHealth: GiniHealth): ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PaymentFlowViewModel(
-                paymentDetails = paymentDetails,
-                documentId = documentId,
-                paymentFlowConfiguration = paymentFlowConfiguration,
-                giniHealth = giniHealth) as T
+    @Suppress("UNCHECKED_CAST")
+    class PaymentFlowViewModelFactory(
+        private val giniHealth: GiniHealth,
+        owner: SavedStateRegistryOwner,
+        defaultArgs: Bundle? = null
+    ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+        override fun <T : ViewModel> create(
+            key: String,
+            modelClass: Class<T>,
+            handle: SavedStateHandle
+        ): T {
+            return PaymentFlowViewModel(handle, giniHealth) as T
         }
     }
+
 
     override fun backCalled() {
         _backButtonEvent.tryEmit(null)

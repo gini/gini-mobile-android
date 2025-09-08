@@ -1,6 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.internal.util.ActivityHelper.forcePortraitOrientationOnPhones;
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 import android.app.Activity;
@@ -21,12 +20,14 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
+import net.gini.android.capture.analysis.education.EducationCompleteListener;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
@@ -36,9 +37,11 @@ import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
+import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -72,6 +75,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
     private final UserAnalyticsScreen screenName = UserAnalyticsScreen.Analysis.INSTANCE;
+    UserAnalyticsEventTracker userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
+    AnalysisFragmentExtension fragmentExtension = new AnalysisFragmentExtension();
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
@@ -95,17 +100,22 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     private void addUserAnalyticEvents(@NonNull Document document) {
-        UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(
-                UserAnalyticsEvent.SCREEN_SHOWN,
-                new HashSet<UserAnalyticsEventProperty>() {
-                    {
-                        add(new UserAnalyticsEventProperty.DocumentType(
-                                UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document)
-                        ));
-                        add(new UserAnalyticsEventProperty.Screen(screenName));
+        if (userAnalyticsEventTracker != null) {
+            userAnalyticsEventTracker.setEventSuperProperty(
+                    new UserAnalyticsEventSuperProperty.DocumentType(
+                            UserAnalyticsMappersKt.mapToAnalyticsDocumentType(document)
+                    )
+            );
+
+            userAnalyticsEventTracker.trackEvent(
+                    UserAnalyticsEvent.SCREEN_SHOWN,
+                    new HashSet<UserAnalyticsEventProperty>() {
+                        {
+                            add(new UserAnalyticsEventProperty.Screen(screenName));
+                        }
                     }
-                }
-        );
+            );
+        }
     }
 
     @Override
@@ -134,6 +144,18 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             });
         if (mAnalysisMessageTextView != null)
             mAnalysisMessageTextView.setVisibility(View.GONE);
+    }
+
+    void showEducation(EducationCompleteListener listener) {
+        fragmentExtension.showEducation(() -> {
+            hideEducation();
+            listener.onComplete();
+            return Unit.INSTANCE;
+        });
+    }
+
+    void hideEducation() {
+        fragmentExtension.hideEducation();
     }
 
     @Override
@@ -231,17 +253,15 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onCreate(final Bundle savedInstanceState) {
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        forcePortraitOrientationOnPhones(activity);
+        // Required by superclass, no changes need to remove it.
     }
+
 
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_analysis, container, false);
         bindViews(view);
+        fragmentExtension.bindViews(view);
         setTopBarInjectedViewContainer();
         setLoadingIndicatorViewContainer();
         createHintsAnimator(view);
@@ -318,12 +338,15 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private void onBack() {
         boolean popBackStack = mFragment.findNavController().popBackStack();
         if (!popBackStack) {
-            UserAnalytics.INSTANCE.getAnalyticsEventTracker().trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
+            if (userAnalyticsEventTracker != null) {
+                userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
+                        new HashSet<UserAnalyticsEventProperty>() {
+                            {
+                                add(new UserAnalyticsEventProperty.Screen(screenName));
+                            }
+                        });
+            }
+
             trackAnalysisScreenEvent(AnalysisScreenEvent.CANCEL);
             mCancelListener.onCancelFlow();
         }
@@ -334,10 +357,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onDestroy() {
-        getPresenter().stop();
         final Activity activity = mFragment.getActivity();
-        if (activity != null && activity.isFinishing()) {
-            getPresenter().finish();
+        if (activity != null) {
+            if (!activity.isChangingConfigurations()) getPresenter().stop();
+            if (activity.isFinishing()) getPresenter().finish();
         }
     }
 

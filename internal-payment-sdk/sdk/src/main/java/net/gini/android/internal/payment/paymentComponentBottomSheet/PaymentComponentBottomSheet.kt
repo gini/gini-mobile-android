@@ -6,33 +6,38 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.databinding.GpsBottomSheetPaymentComponentBinding
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentComponentView
 import net.gini.android.internal.payment.utils.BackListener
 import net.gini.android.internal.payment.utils.GpsBottomSheetDialogFragment
 import net.gini.android.internal.payment.utils.autoCleared
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.setBackListener
 import org.jetbrains.annotations.VisibleForTesting
 
 class PaymentComponentBottomSheet private constructor(
-    paymentComponent: PaymentComponent?,
-    reviewFragmentShown: Boolean,
-    backListener: BackListener? = null
+    private val viewmodelFactory: ViewModelProvider.Factory? = null
 ): GpsBottomSheetDialogFragment() {
-    constructor(): this(null, false)
+    constructor() : this(null)
 
     private var binding: GpsBottomSheetPaymentComponentBinding by autoCleared()
     private val viewModel by viewModels<PaymentComponentBottomSheetViewModel> {
-        PaymentComponentBottomSheetViewModel.Factory(
-            paymentComponent,
-            backListener,
-            reviewFragmentShown
-        )
+        viewmodelFactory ?: object :ViewModelProvider.Factory{}
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (viewmodelFactory == null && !isViewModelInitialized(PaymentComponentBottomSheetViewModel::class)) {
+            dismissAllowingStateLoss()
+        }
+    }
     @VisibleForTesting
     internal lateinit var paymentComponentView: PaymentComponentView
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -50,8 +55,10 @@ class PaymentComponentBottomSheet private constructor(
     ): View {
         binding = GpsBottomSheetPaymentComponentBinding.inflate(inflater, container, false)
         binding.gpsPaymentComponent.reviewFragmentWillBeShown = viewModel.reviewFragmentShown
+        binding.dragHandle.onKeyboardAction {
+            dismiss()
+        }
         binding.gpsPaymentComponent.paymentComponent = viewModel.paymentComponent
-
         binding.gpsPaymentComponent.dismissListener = object : PaymentComponentView.ButtonClickListener {
             override fun onButtonClick(button: PaymentComponentView.Buttons) {
                 dismiss()
@@ -62,6 +69,11 @@ class PaymentComponentBottomSheet private constructor(
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gps_select_bank_label))
+    }
+
     override fun onCancel(dialog: DialogInterface) {
         viewModel.backListener?.backCalled()
         super.onCancel(dialog)
@@ -69,7 +81,14 @@ class PaymentComponentBottomSheet private constructor(
 
     companion object {
         fun newInstance(paymentComponent: PaymentComponent?, reviewFragmentShown: Boolean, backListener: BackListener)
-            = PaymentComponentBottomSheet(paymentComponent, reviewFragmentShown, backListener)
+            :PaymentComponentBottomSheet{
+            val viewModelFactory = PaymentComponentBottomSheetViewModel.Factory(
+                paymentComponent,
+                backListener,
+                reviewFragmentShown
+            )
+            return PaymentComponentBottomSheet(viewModelFactory)
+        }
     }
 
 }

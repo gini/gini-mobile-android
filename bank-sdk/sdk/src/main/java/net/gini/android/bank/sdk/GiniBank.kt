@@ -33,8 +33,10 @@ import net.gini.android.bank.sdk.invoice.InvoicePreviewFragment
 import net.gini.android.bank.sdk.invoice.InvoicePreviewFragmentArgs
 import net.gini.android.bank.sdk.pay.getBusinessIntent
 import net.gini.android.bank.sdk.pay.getRequestId
-import net.gini.android.bank.sdk.transactiondocs.TransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.GiniTransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.GiniTransactions
 import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactionDocs
+import net.gini.android.bank.sdk.transactiondocs.internal.GiniBankTransactions
 import net.gini.android.bank.sdk.transactiondocs.ui.invoice.TransactionDocInvoicePreviewFragmentArgs
 import net.gini.android.bank.sdk.util.parseAmountToBackendFormat
 import net.gini.android.capture.Amount
@@ -78,9 +80,14 @@ object GiniBank {
 
     internal var giniBankTransactionDocs: GiniBankTransactionDocs? = null
         private set
+    internal var giniGankTransactions: GiniBankTransactions? = null
+        private set
 
-    val transactionDocs: TransactionDocs
+    val giniTransactionDocs: GiniTransactionDocs
         get() = giniBankTransactionDocs
+            ?: error("Transaction list not initialized. Call `initializeTransactionListFeature(...)` first.")
+    val giniTransactions: GiniTransactions
+        get() = giniGankTransactions
             ?: error("Transaction list not initialized. Call `initializeTransactionListFeature(...)` first.")
 
     /**
@@ -202,6 +209,7 @@ object GiniBank {
         BankSdkIsolatedKoinContext.init(context)
         getGiniCaptureKoin().loadModules(listOf(captureSdkDiBridge))
         this.giniBankTransactionDocs = GiniBankTransactionDocs()
+        this.giniGankTransactions = GiniBankTransactions()
     }
 
 
@@ -222,6 +230,7 @@ object GiniBank {
      * @param iban international bank account
      * @param bic bank identification code
      * @param amount accepts extracted amount and currency
+     * @param instantPayment based on the user's preference to have the payment as instant payment
      */
     fun sendTransferSummary(
         paymentRecipient: String,
@@ -229,11 +238,34 @@ object GiniBank {
         paymentPurpose: String,
         iban: String,
         bic: String,
-        amount: Amount
+        amount: Amount,
+        instantPayment: Boolean? = null
     ) {
         GiniCapture.sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
+            paymentRecipient,
+            paymentReference,
+            paymentPurpose,
+            iban,
+            bic,
+            amount,
+            instantPayment
         )
+    }
+
+    internal fun sendTransferSummaryForSkonto(
+        amount: Amount,
+        skontoAmountToPayCalculated: String,
+        skontoPercentageDiscountedCalculated: String,
+        skontoDueDateCalculated: String
+    ) {
+        GiniCapture.sendTransferSummaryForSkonto(
+            amount,
+            skontoAmountToPayCalculated,
+            skontoPercentageDiscountedCalculated,
+            skontoDueDateCalculated,
+
+            )
+
     }
 
     /**
@@ -624,6 +656,7 @@ object GiniBank {
     @Suppress("UnusedParameter")
     private fun releaseTransactionDocsFeature(context: Context) {
         giniBankTransactionDocs = null
+        giniGankTransactions = null
     }
 
     /**

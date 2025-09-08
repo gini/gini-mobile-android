@@ -23,6 +23,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceHelp
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceSkontoNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomErrorNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomLottiLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter
@@ -32,6 +33,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigati
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
+import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableStyleProvider
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
@@ -62,14 +64,14 @@ class ConfigurationViewModel @Inject constructor(
     fun getAlwaysAttachSetting(context: Context): Boolean {
         configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
         return runBlocking {
-            GiniBank.transactionDocs.transactionDocsSettings.getAlwaysAttachSetting().first()
+            GiniBank.giniTransactionDocs.transactionDocsSettings.getAlwaysAttachSetting().first()
         }
     }
 
     fun setAlwaysAttachSetting(context: Context, isChecked: Boolean) {
         configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
         viewModelScope.launch {
-            GiniBank.transactionDocs.transactionDocsSettings.setAlwaysAttachSetting(
+            GiniBank.giniTransactionDocs.transactionDocsSettings.setAlwaysAttachSetting(
                 isChecked
             )
         }
@@ -98,81 +100,71 @@ class ConfigurationViewModel @Inject constructor(
         val configuration = configurationFlow.value
 
         var captureConfiguration = CaptureConfiguration(
-            // 37 Debug mode
+            // Debug mode
             networkService = if (configuration.isDebugModeEnabled)
                 defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled
             else
                 defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled,
-            // 1 file import
+            // file import
             fileImportEnabled = configuration.isFileImportEnabled,
-            // 2 QR code scanning
+            // QR code scanning
             qrCodeScanningEnabled = configuration.isQrCodeEnabled,
-            // 3 only QR code scanning
+            // only QR code scanning
             onlyQRCodeScanningEnabled = configuration.isOnlyQrCodeEnabled,
-            // 4 enable multi page
+            // enable multi page
             multiPageEnabled = configuration.isMultiPageEnabled,
-            // 5 enable flash toggle
+            // enable flash toggle
             flashButtonEnabled = configuration.isFlashButtonDisplayed,
-            // 6 enable flash on by default
+            // enable flash on by default
             flashOnByDefault = configuration.isFlashDefaultStateEnabled,
-            // 7 set file import type
+            // set file import type
             documentImportEnabledFileTypes = configuration.documentImportEnabledFileTypes,
-            // 8 enable bottom navigation bar
+            // enable bottom navigation bar
             bottomNavigationBarEnabled = configuration.isBottomNavigationBarEnabled,
 
-            // 9-12 are implemented after captureConfiguration initialisation
-
-            // 13 enable onboarding screens at first launch
+            // enable onboarding screens at first launch
             showOnboardingAtFirstRun = configuration.isOnboardingAtFirstRunEnabled,
-            // 14 enable onboarding at every launch
+            // enable onboarding at every launch
             showOnboarding = configuration.isOnboardingAtEveryLaunchEnabled,
-
-            // 15-22 are implemented after captureConfiguration initialisation
-
-            // 23 enable supported format help screen
+            // enable supported format help screen
             supportedFormatsHelpScreenEnabled = configuration.isSupportedFormatsHelpScreenEnabled,
-
-            // 24-26 are implemented after captureConfiguration initialisation
-
-            // 27 enable Gini error logger
+            // enable Gini error logger
             giniErrorLoggerIsOn = configuration.isGiniErrorLoggerEnabled,
-
-            // 28-29 are implemented after captureConfiguration initialisation
-
-            // 30 entry point
+            // entry point
             entryPoint = configuration.entryPoint,
-
-            // 31 enable return assistant
+            // enable return assistant
             returnAssistantEnabled = configuration.isReturnAssistantEnabled,
-
             // allow screenshots
             allowScreenshots = configuration.isAllowScreenshotsEnabled,
-
-            // 40 enable skonto
+            // enable skonto
             skontoEnabled = configuration.isSkontoEnabled,
 
-            // 43 enable transaction docs
+            // enable transaction docs
             transactionDocsEnabled = configuration.isTransactionDocsEnabled,
         )
 
-        // 9 enable Help screens custom bottom navigation bar
+        // enable Help screens custom bottom navigation bar
         if (configuration.isHelpScreensCustomBottomNavBarEnabled)
             captureConfiguration =
                 captureConfiguration.copy(helpNavigationBarBottomAdapter = CustomHelpNavigationBarBottomAdapter())
+        // enable Error screens custom bottom navigation bar
+        if (configuration.isErrorScreensCustomBottomNavBarEnabled)
+            captureConfiguration =
+                captureConfiguration.copy(errorNavigationBarBottomAdapter = CustomErrorNavigationBarBottomAdapter())
 
-        // 10 enable camera screens custom bottom navigation bar
+        // enable camera screens custom bottom navigation bar
         if (configuration.isCameraBottomNavBarEnabled)
             captureConfiguration =
                 captureConfiguration.copy(cameraNavigationBarBottomAdapter = CustomCameraNavigationBarBottomAdapter())
 
-        // 11 enable review screens custom bottom navigation bar
+        // enable review screens custom bottom navigation bar
         if (configuration.isReviewScreenCustomBottomNavBarEnabled)
             captureConfiguration =
                 captureConfiguration.copy(reviewNavigationBarBottomAdapter = CustomReviewNavigationBarBottomAdapter())
 
-        // 12 enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
+        // enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
-        // 15 enable custom onboarding pages
+        // enable custom onboarding pages
         if (configuration.isCustomOnboardingPagesEnabled) {
             val pages = DefaultPages.asArrayList(
                 configuration.isMultiPageEnabled,
@@ -190,7 +182,7 @@ class ConfigurationViewModel @Inject constructor(
                 captureConfiguration.copy(onboardingPages = pages)
         }
 
-        // 16 enable align corners in custom onboarding pages
+        // enable align corners in custom onboarding pages
         if (configuration.isAlignCornersInCustomOnboardingEnabled) {
             captureConfiguration = captureConfiguration.copy(
                 onboardingAlignCornersIllustrationAdapter = CustomOnboardingIllustrationAdapter(
@@ -199,7 +191,7 @@ class ConfigurationViewModel @Inject constructor(
             )
         }
 
-        // 17 enable lighting in custom onboarding pages
+        // enable lighting in custom onboarding pages
         if (configuration.isLightingInCustomOnboardingEnabled) {
             captureConfiguration = captureConfiguration.copy(
                 onboardingLightingIllustrationAdapter = CustomOnboardingIllustrationAdapter(
@@ -208,7 +200,7 @@ class ConfigurationViewModel @Inject constructor(
             )
         }
 
-        // 18 enable QR code in custom onboarding pages
+        // enable QR code in custom onboarding pages
         if (configuration.isQRCodeInCustomOnboardingEnabled) {
             captureConfiguration = captureConfiguration.copy(
                 onboardingQRCodeIllustrationAdapter = CustomOnboardingIllustrationAdapter(
@@ -217,7 +209,7 @@ class ConfigurationViewModel @Inject constructor(
             )
         }
 
-        // 19 enable multi page in custom onboarding pages
+        // enable multi page in custom onboarding pages
         if (configuration.isMultiPageInCustomOnboardingEnabled) {
             captureConfiguration = captureConfiguration.copy(
                 onboardingMultiPageIllustrationAdapter = CustomOnboardingIllustrationAdapter(
@@ -226,20 +218,20 @@ class ConfigurationViewModel @Inject constructor(
             )
         }
 
-        // 20 enable custom navigation bar in custom onboarding pages
+        // enable custom navigation bar in custom onboarding pages
         if (configuration.isCustomNavigationBarInCustomOnboardingEnabled)
             captureConfiguration = captureConfiguration.copy(
                 onboardingNavigationBarBottomAdapter = CustomOnboardingNavigationBarBottomAdapter()
             )
 
-        // 21 enable button's custom loading indicator
+        // enable button's custom loading indicator
         if (configuration.isButtonsCustomLoadingIndicatorEnabled) {
             captureConfiguration = captureConfiguration.copy(
                 onButtonLoadingIndicatorAdapter = CustomOnButtonLoadingIndicatorAdapter()
             )
         }
 
-        // 22 enable screen's custom loading indicator
+        // enable screen's custom loading indicator
         if (configuration.isScreenCustomLoadingIndicatorEnabled) {
             captureConfiguration = captureConfiguration.copy(
                 customLoadingIndicatorAdapter = CustomLottiLoadingIndicatorAdapter(
@@ -248,7 +240,7 @@ class ConfigurationViewModel @Inject constructor(
             )
         }
 
-        // 24 enable custom help items
+        // enable custom help items
         if (configuration.isCustomHelpItemsEnabled) {
             val customHelpItems: MutableList<HelpItem.Custom> = ArrayList()
             customHelpItems.add(
@@ -262,36 +254,41 @@ class ConfigurationViewModel @Inject constructor(
             )
         }
 
-        // 25 enable custom navigation bar
+        // enable custom navigation bar
         if (configuration.isCustomNavBarEnabled)
             captureConfiguration = captureConfiguration.copy(
                 navigationBarTopAdapter = CustomNavigationBarTopAdapter()
             )
 
-        // 26 enable event tracker
+        // enable event tracker
         if (configuration.isEventTrackerEnabled)
             captureConfiguration = captureConfiguration.copy(
                 eventTracker = GiniCaptureEventTracker()
             )
 
-        // 28 enable custom error logger
+        // enable custom error logger
         if (configuration.isCustomErrorLoggerEnabled)
             captureConfiguration = captureConfiguration.copy(
                 errorLoggerListener = CustomErrorLoggerListener()
             )
 
-        // 29 set imported file size bytes limit
+        // set imported file size bytes limit
         if (configuration.importedFileSizeBytesLimit != FileImportValidator.FILE_SIZE_LIMIT && configuration.importedFileSizeBytesLimit >= 0)
             captureConfiguration = captureConfiguration.copy(
                 importedFileSizeBytesLimit = configuration.importedFileSizeBytesLimit
             )
 
+        if (configuration.isCustomPrimaryComposeButtonEnabled) {
+            captureConfiguration = captureConfiguration.copy(
+                giniComposableStyleProvider = CustomGiniComposableStyleProvider()
+            )
+        }
         GiniBank.setCaptureConfiguration(context, captureConfiguration)
 
-        // 32 enable return reasons dialog
+        // enable return reasons dialog
         GiniBank.enableReturnReasons = configuration.isReturnReasonsEnabled
 
-        // 33 Digital invoice onboarding custom illustration
+        // Digital invoice onboarding custom illustration
         if (configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled) {
             GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
                 CustomOnboardingIllustrationAdapter(
@@ -299,7 +296,7 @@ class ConfigurationViewModel @Inject constructor(
                 )
         }
 
-        // 34 Digital invoice help bottom navigation bar
+        // Digital invoice help bottom navigation bar
         if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled) {
             GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter =
                 CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
@@ -325,19 +322,19 @@ class ConfigurationViewModel @Inject constructor(
             GiniBank.skontoHelpNavigationBarBottomAdapter = null
         }
 
-        // 35 Digital invoice onboarding bottom navigation bar
+        // Digital invoice onboarding bottom navigation bar
         if (configuration.isDigitalInvoiceOnboardingBottomNavigationBarEnabled) {
             GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter =
                 CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter()
         }
 
-        // 36 Digital invoice bottom navigation bar
+        // Digital invoice bottom navigation bar
         if (configuration.isDigitalInvoiceBottomNavigationBarEnabled) {
             GiniBank.digitalInvoiceNavigationBarBottomAdapter =
                 CustomDigitalInvoiceNavigationBarBottomAdapter()
         }
 
-        // 37 Debug mode
+        // Debug mode
         GiniCaptureDebug.enable()
         configureLogging()
         if (configuration.isDebugModeEnabled) {

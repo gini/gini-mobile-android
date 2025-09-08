@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.integratedFlow
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
@@ -104,11 +105,10 @@ class PaymentFlowViewModelTest {
     @Test
     fun `adds to backstack`() = runTest {
         // Given
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
 
         // When
@@ -121,11 +121,10 @@ class PaymentFlowViewModelTest {
     @Test
     fun `pops backstack`() = runTest {
         // Given
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
 
         // When
@@ -142,13 +141,11 @@ class PaymentFlowViewModelTest {
     @Test
     fun `peek backstack returns last value in backstack`() = runTest {
         // Given
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
-
         // When
         viewModel.addToBackStack(DisplayedScreen.BankSelectionBottomSheet)
         viewModel.addToBackStack(DisplayedScreen.MoreInformationFragment)
@@ -160,11 +157,10 @@ class PaymentFlowViewModelTest {
     @Test
     fun `returns true if payment provider app has been changed`() = runTest {
         // Given
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
 
         // Then
@@ -175,11 +171,16 @@ class PaymentFlowViewModelTest {
     fun `forwards on payment action to giniPayment`() = runTest {
         // Given
         coEvery { giniInternalPaymentModule!!.onPayment(any(), any()) } coAnswers {  }
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "paymentDetails" to PaymentDetails("", "", "", ""),
+                "documentId" to null,
+                "paymentFlowConfiguration" to null
+            )
+        )
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null,
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
 
         // Then
@@ -189,11 +190,10 @@ class PaymentFlowViewModelTest {
 
     @Test
     fun `checks bank app installed state`() = runTest {
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null,
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
 
         viewModel.checkBankAppInstallState(changedPaymentProviderApp)
@@ -202,11 +202,10 @@ class PaymentFlowViewModelTest {
 
     @Test
     fun `emits share with started event`() = runTest {
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null,
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
 
         viewModel.emitShareWithStartedEvent()
@@ -218,14 +217,12 @@ class PaymentFlowViewModelTest {
 
     @Test
     fun `returns payment request from giniPaymentManager`() = runTest {
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null,
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
-
-        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED) }
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED, "", "") }
 
         val paymentRequest = viewModel.getPaymentRequest()
         assertThat(paymentRequest.id).isEqualTo("1234")
@@ -233,18 +230,17 @@ class PaymentFlowViewModelTest {
 
     @Test
     fun `returns document as byteArray from giniHealth`() = runTest {
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null,
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
         viewModel.setExternalCacheDir(mockk(relaxed = true))
         val byteArray = byteArrayOf()
 
         coEvery { giniInternalPaymentModule!!.giniHealthAPI.documentManager.getPaymentRequestDocument("1234") } coAnswers { Resource.Success(byteArray)}
 
-        val document = viewModel.getPaymentRequestDocument(PaymentRequest("1234", "", "", "", "", "", "", "", PaymentRequest.Status.OPEN))
+        val document = viewModel.getPaymentRequestDocument(PaymentRequest("1234", "", "", "", "", "", "", "", PaymentRequest.Status.OPEN, "", ""))
         assertThat(document.data).isEqualTo(byteArray)
     }
 
@@ -255,11 +251,10 @@ class PaymentFlowViewModelTest {
         every { paymentProviderApp.paymentProvider.gpcSupported() } returns true
         every { paymentProviderApp.isInstalled() } returns true
 
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null,
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
         viewModel.checkBankAppInstallState(paymentProviderApp)
         viewModel.paymentNextStep.test {
@@ -282,13 +277,12 @@ class PaymentFlowViewModelTest {
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
-        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN) }
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN, "", "") }
 
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null,
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
 
         // When
@@ -301,11 +295,10 @@ class PaymentFlowViewModelTest {
     @Test
     fun `updates payment details`() {
         // Given
+        val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = null,
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
 
         val updatedPaymentDetails = PaymentDetails("recipient", "iban", "amount", "purpose")
@@ -320,11 +313,16 @@ class PaymentFlowViewModelTest {
     @Test
     fun `loads payment details for documentId`() {
         // Given
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "paymentDetails" to PaymentDetails("", "", "", ""),
+                "documentId" to "123",
+                "paymentFlowConfiguration" to null
+            )
+        )
         val viewModel = PaymentFlowViewModel(
-            paymentDetails = PaymentDetails("", "", "", ""),
-            paymentFlowConfiguration = null,
-            giniHealth = giniHealth!!,
-            documentId = "123",
+            savedStateHandle = savedStateHandle,
+            giniHealth = giniHealth!!
         )
 
         // Then

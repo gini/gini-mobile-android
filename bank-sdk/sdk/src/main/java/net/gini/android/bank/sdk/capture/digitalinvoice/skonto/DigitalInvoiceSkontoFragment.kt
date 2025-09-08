@@ -4,6 +4,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice.skonto
 
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -45,21 +47,32 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -75,6 +88,7 @@ import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.Di
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoSectionColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.mapper.toErrorMessage
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.viewmodel.DigitalInvoiceSkontoViewModel
+import net.gini.android.bank.sdk.capture.skonto.CalendarIcon
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoEdgeCase
 import net.gini.android.bank.sdk.di.koin.giniBankViewModel
@@ -82,7 +96,7 @@ import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.ui.keyboardAsState
 import net.gini.android.capture.Amount
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.internal.util.ActivityHelper
+import net.gini.android.capture.internal.util.ContextHelper
 import net.gini.android.capture.ui.components.picker.date.GiniDatePickerDialog
 import net.gini.android.capture.ui.components.textinput.GiniTextInput
 import net.gini.android.capture.ui.components.textinput.amount.GiniAmountTextInput
@@ -129,7 +143,6 @@ class DigitalInvoiceSkontoFragment : Fragment() {
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
-        ActivityHelper.forcePortraitOrientationOnPhones(activity)
 
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -174,7 +187,9 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                             findNavController().navigate(
                                 DigitalInvoiceSkontoFragmentDirections.toSkontoHelpFragment()
                             )
-                        }
+                        },
+                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                        shouldFieldShowKeyboard = viewModel.isKeyboardVisible
                     )
                 }
             }
@@ -193,6 +208,8 @@ private fun ScreenContent(
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
+    isLandScape: Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
 
     BackHandler { viewModel.onBackClicked() }
@@ -230,6 +247,10 @@ private fun ScreenContent(
         onInvoiceClicked = viewModel::onInvoiceClicked,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
         onHelpClicked = viewModel::onHelpClicked,
+        isLandScape = isLandScape,
+        onSkontoAmountFieldFocused = viewModel::onSkontoAmountFieldFocused,
+        onDueDateFieldFocused = viewModel::onDueDateFieldFocused,
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard
     )
 }
 
@@ -244,9 +265,13 @@ private fun ScreenStateContent(
     onInfoDialogDismissed: () -> Unit,
     onInvoiceClicked: () -> Unit,
     onHelpClicked: () -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
-    screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors()
+    screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
+    isLandScape : Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     when (state) {
         is SkontoScreenState.Ready -> ScreenReadyState(
@@ -262,6 +287,10 @@ private fun ScreenStateContent(
             onInvoiceClicked = onInvoiceClicked,
             customBottomNavBarAdapter = customBottomNavBarAdapter,
             onHelpClicked = onHelpClicked,
+            onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
+            onDueDateFieldFocused = onDueDateFieldFocused,
+            isLandScape = isLandScape,
+            shouldFieldShowKeyboard = shouldFieldShowKeyboard
         )
     }
 
@@ -277,10 +306,14 @@ private fun ScreenReadyState(
     onInfoDialogDismissed: () -> Unit,
     onDiscountAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     isBottomNavigationBarEnabled: Boolean,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
+    isLandScape : Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
 
     val scrollState = rememberScrollState()
@@ -348,6 +381,10 @@ private fun ScreenReadyState(
                     edgeCase = state.edgeCase,
                     onInfoBannerClicked = onInfoBannerClicked,
                     skontoAmountValidationError = state.skontoAmountValidationError,
+                    onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
+                    onDueDateFieldFocused = onDueDateFieldFocused,
+                    isLandScape = isLandScape,
+                    shouldFieldShowKeyboard = shouldFieldShowKeyboard
                 )
             }
         }
@@ -517,7 +554,7 @@ private fun YourInvoiceScanSection(
 
     }
 }
-
+@Suppress("CyclomaticComplexMethod")
 @Composable
 private fun SkontoSection(
     isActive: Boolean,
@@ -528,15 +565,22 @@ private fun SkontoSection(
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onDueDateChanged: (LocalDate) -> Unit,
     onInfoBannerClicked: () -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    onDueDateFieldFocused: () -> Unit,
     edgeCase: SkontoEdgeCase?,
     colors: DigitalInvoiceSkontoSectionColors,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
+    isLandScape : Boolean,
+    shouldFieldShowKeyboard: Boolean = false
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val resources = LocalContext.current.resources
+    val focusManager = LocalFocusManager.current
 
-    var isDatePickerVisible by remember { mutableStateOf(false) }
+    var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
+    val isPhoneInLandscape =
+        !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
     Card(
         modifier = modifier,
         shape = RectangleShape,
@@ -637,7 +681,18 @@ private fun SkontoSection(
                 currencyCode = amount.currency.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 16.dp)
+                    .onPreviewKeyEvent { keyEvent ->
+                        handleTabKeyEvent(
+                            keyEvent,
+                            focusManager
+                        )
+                    }
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            onSkontoAmountFieldFocused()
+                        }
+                    },
                 enabled = isActive,
                 colors = colors.amountFieldColors,
                 onValueChange = { onSkontoAmountChange(it) },
@@ -653,38 +708,85 @@ private fun SkontoSection(
                 isError = skontoAmountValidationError != null,
                 supportingText = skontoAmountValidationError?.toErrorMessage(
                     resources = resources,
-                )
+                ),
+                shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+                isPhoneInLandscape = isPhoneInLandscape
             )
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
             val pressed by dueDateOnClickSource.collectIsPressedAsState()
+            /**
+             * In landscape mode on phones, we don't need the dueDateOnClickSource
+             * because we have very less space, and we cannot pass null as interactionSource.
+             * So we use defaultInteractionSource is just a placeholder, and instead of using
+             * the whole area we will only use the trailing content to open the date picker in
+             * GiniTextInput, and we have isPhoneInLandscape check just to check if the current
+             * mode is landscape and phone or not. Tablet's and portrait mode will use the whole
+             * field of GiniTextInput to open the date picker.
+             * Also we have to change the textInputModifier of GiniTextInput to clickable only
+             * when it is not in landscape mode of phones.
+             * */
+            val defaultInteractionSource = remember { MutableInteractionSource() }
+
+            val activeInteractionSource =
+                if (isPhoneInLandscape) defaultInteractionSource else dueDateOnClickSource
+
+            val textInputModifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+                .focusable(false)
+                .then(
+                    if (!isPhoneInLandscape) Modifier.clickable(isActive) {
+                        if (isActive) {
+                            isDatePickerVisible = true
+                            onDueDateFieldFocused()
+                        }
+                    } else Modifier
+                )
 
             LaunchedEffect(key1 = pressed) {
                 if (pressed) {
                     isDatePickerVisible = true
+                    onDueDateFieldFocused()
                 }
             }
 
+            val calendarIconContentDescription =
+                stringResource(id = R.string.gbs_skonto_calendar_icon_content_description)
+
             GiniTextInput(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-                    .focusable(false),
-                enabled = isActive,
-                interactionSource = dueDateOnClickSource,
+                modifier = textInputModifier,
+                enabled = if (isPhoneInLandscape) false else isActive,
+                interactionSource = activeInteractionSource,
                 readOnly = true,
                 colors = colors.dueDateTextFieldColor,
                 onValueChange = { /* Ignored */ },
                 text = dueDate.format(dateFormatter),
                 label = stringResource(id = R.string.gbs_skonto_section_discount_field_due_date_hint),
                 trailingContent = {
-                    androidx.compose.animation.AnimatedVisibility(visible = isActive) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.gbs_icon_calendar),
-                            contentDescription = null,
-                        )
+                    if (isPhoneInLandscape) {
+                        androidx.compose.animation.AnimatedVisibility(visible = isActive) {
+                            IconButton(
+                                onClick = {
+                                    isDatePickerVisible = true
+                                    onDueDateFieldFocused()
+                                },
+                                modifier = Modifier.semantics {
+                                    contentDescription = calendarIconContentDescription
+                                },
+                                interactionSource = dueDateOnClickSource
+                            ) {
+                                CalendarIcon()
+                            }
+                        }
+                    } else {
+                        androidx.compose.animation.AnimatedVisibility(visible = isActive) {
+                            CalendarIcon()
+                        }
                     }
                 },
+                isDate = true,
+                isPhoneInLandscape = isPhoneInLandscape
             )
         }
     }
@@ -697,10 +799,31 @@ private fun SkontoSection(
                 onDueDateChanged(it)
             },
             date = dueDate,
-            selectableDates = getSkontoSelectableDates()
+            selectableDates = getSkontoSelectableDates(),
+            isLandScape = isLandScape
         )
     }
 }
+private fun handleTabKeyEvent(
+    event: androidx.compose.ui.input.key.KeyEvent,
+    focusManager: FocusManager
+): Boolean {
+    val nativeEvent = event.nativeKeyEvent
+    val isTab = nativeEvent.keyCode == KeyEvent.KEYCODE_TAB
+    val isDown = nativeEvent.action == KeyEvent.ACTION_DOWN
+
+    if (!isTab || !isDown) return false
+
+    val direction = if (nativeEvent.isShiftPressed) {
+        FocusDirection.Previous
+    } else {
+        FocusDirection.Next
+    }
+
+    focusManager.moveFocus(direction)
+    return true
+}
+
 
 @Composable
 private fun FooterSection(
@@ -825,8 +948,11 @@ private fun InfoDialog(
         properties = DialogProperties(),
         onDismissRequest = onDismissRequest
     ) {
+        (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0.8f)
         Card(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .border(1.dp, color = colors.borderColor, shape = RoundedCornerShape(28.dp)),
             shape = RoundedCornerShape(28.dp),
             colors = CardDefaults.cardColors(
                 containerColor = colors.cardBackgroundColor
@@ -880,6 +1006,9 @@ private fun ScreenReadyStatePreview() {
             onInvoiceClicked = {},
             onHelpClicked = {},
             customBottomNavBarAdapter = null,
+            onSkontoAmountFieldFocused = {},
+            onDueDateFieldFocused = {},
+            isLandScape = false
         )
     }
 }

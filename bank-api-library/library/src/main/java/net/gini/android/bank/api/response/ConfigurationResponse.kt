@@ -12,6 +12,9 @@ data class ConfigurationResponse(
     @Json(name = "returnAssistantEnabled") val returnAssistantEnabled: Boolean?,
     @Json(name = "amplitudeApiKey") val amplitudeApiKey: String?,
     @Json(name = "transactionDocsEnabled") val transactionDocsEnabled: Boolean?,
+    @Json(name = "qrCodeEducationEnabled") val qrCodeEducationEnabled: Boolean?,
+    @Json(name = "instantPaymentEnabled") val instantPaymentEnabled: Boolean?,
+    @Json(name = "eInvoiceEnabled") val eInvoiceEnabled: Boolean?,
 )
 
 internal fun ConfigurationResponse.toConfiguration() = Configuration(
@@ -21,5 +24,8 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     isReturnAssistantEnabled = returnAssistantEnabled ?: false,
     amplitudeApiKey = amplitudeApiKey,
     transactionDocsEnabled = transactionDocsEnabled ?: false,
+    qrCodeEducationEnabled = qrCodeEducationEnabled ?: false,
+    instantPaymentEnabled = instantPaymentEnabled ?: false,
+    isEInvoiceEnabled = eInvoiceEnabled ?: false
 )
 

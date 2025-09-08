@@ -2,9 +2,15 @@ package net.gini.android.health.sdk.review
 
 import android.os.Build
 import android.os.Bundle
+import android.transition.ChangeBounds
+import android.transition.Transition
+import android.transition.TransitionListenerAdapter
+import android.transition.TransitionManager
+import android.transition.TransitionSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.ViewCompat
@@ -21,21 +27,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.transition.ChangeBounds
-import androidx.transition.Transition
-import androidx.transition.TransitionListenerAdapter
-import androidx.transition.TransitionManager
-import androidx.transition.TransitionSet
-import com.google.android.material.math.MathUtils.lerp
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dev.chrisbanes.insetter.applyInsetter
 import dev.chrisbanes.insetter.windowInsetTypesOf
 import kotlinx.coroutines.launch
-import net.gini.android.core.api.models.Document
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.R
+import net.gini.android.health.sdk.R as HealthR
+import net.gini.android.internal.payment.R as InternalPaymentR
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
+import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.preferences.UserPreferences
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
@@ -43,11 +45,15 @@ import net.gini.android.health.sdk.review.pager.DocumentPageAdapter
 import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.review.ReviewConfiguration
+import net.gini.android.internal.payment.review.ReviewViewStateLandscape
 import net.gini.android.internal.payment.review.reviewComponent.ReviewViewListener
 import net.gini.android.internal.payment.utils.autoCleared
 import net.gini.android.internal.payment.utils.extensions.getFontScale
 import net.gini.android.internal.payment.utils.extensions.getLayoutInflaterWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.extensions.getLocaleStringResource
+import net.gini.android.internal.payment.utils.extensions.isLandscapeOrientation
+import net.gini.android.internal.payment.utils.extensions.isViewModelInitialized
+import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -71,6 +77,7 @@ internal interface ReviewFragmentListener {
     fun onToTheBankButtonClicked(paymentProviderName: String, paymentDetails: PaymentDetails)
 }
 
+
 /**
  * The [ReviewFragment] displays an invoice’s pages and payment information extractions. It also lets users pay the
  * invoice with the bank they selected in the [BankSelectionBottomSheet].
@@ -83,22 +90,38 @@ class ReviewFragment private constructor(
 
     constructor() : this(null)
 
-    private val viewModel: ReviewViewModel by viewModels { viewModelFactory ?: object : ViewModelProvider.Factory {} }
+    private val viewModel: ReviewViewModel by viewModels{
+        viewModelFactory ?: object : ViewModelProvider.Factory {}
+    }
+
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
     private var errorSnackbar: Snackbar? = null
 
+
     @VisibleForTesting
-    internal val reviewViewListener = object: ReviewViewListener {
+    internal val reviewViewListener = object : ReviewViewListener {
         override fun onPaymentButtonTapped(paymentDetails: net.gini.android.internal.payment.api.model.PaymentDetails) {
             requireActivity().currentFocus?.clearFocus()
             binding.ghsPaymentDetails.hideKeyboard()
-            viewModel.reviewFragmentListener.onToTheBankButtonClicked(viewModel.paymentProviderApp.value?.name ?: "", viewModel.paymentDetails.value)
+            viewModel.reviewFragmentListener.onToTheBankButtonClicked(
+                viewModel.paymentProviderApp.value?.name ?: "", viewModel.paymentDetails.value
+            )
         }
 
         override fun onSelectBankButtonTapped() {
             viewModel.paymentComponent.listener?.onBankPickerClicked()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val isViewModelMissing = !isViewModelInitialized(ReviewViewModel::class)
+
+        if (viewModelFactory == null && isViewModelMissing) {
+            parentFragmentManager.beginTransaction().remove(this).commitAllowingStateLoss()
         }
     }
 
@@ -110,9 +133,15 @@ class ReviewFragment private constructor(
         )
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
-        documentPageAdapter = DocumentPageAdapter(viewModel.giniHealth)
+        documentPageAdapter = DocumentPageAdapter { pageNumber ->
+            viewModel.reloadImage(pageNumber)
+        }
         binding = GhsFragmentReviewBinding.inflate(inflater).apply {
             configureViews()
             configureOrientation()
@@ -125,30 +154,35 @@ class ReviewFragment private constructor(
         super.onViewCreated(view, savedInstanceState)
         val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
         viewModel.userPreferences = UserPreferences(requireContext())
-
         with(binding) {
             ghsPaymentDetails.reviewComponent = viewModel.reviewComponent
             setStateListeners()
             setKeyboardAnimation()
             removePagerConstraintAndSetPreviousHeightIfNeeded(documentPagerHeight)
         }
-
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            bottomMargin = -resources.getDimensionPixelSize(net.gini.android.internal.payment.R.dimen.gps_medium_12)
+            bottomMargin =
+                -resources.getDimensionPixelSize(net.gini.android.internal.payment.R.dimen.gps_medium_12)
+        }
+
+        if (resources.isLandscapeOrientation()) {
+            setupLandscapeBehavior()
         }
     }
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
+                launch {
+                    viewModel.paymentComponent.recheckWhichPaymentProviderAppsAreInstalled()
+                }
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.giniHealth.documentFlow.collect { handleDocumentResult(it) }
+                    viewModel.documentPages.collect { handleDocumentPagesResult(it) }
                 }
                 launch {
                     viewModel.giniHealth.paymentFlow.collect { handlePaymentResult(it) }
@@ -165,42 +199,58 @@ class ReviewFragment private constructor(
                         }
                     }
                 }
+                launch {
+                    viewModel.showLoading.collect { isLoading ->
+                        binding.loading.isVisible = isLoading
+                    }
+                }
             }
         }
     }
 
-    private fun GhsFragmentReviewBinding.handleDocumentResult(documentResult: ResultWrapper<Document>) {
-        when (documentResult) {
-            is ResultWrapper.Success -> {
-                documentPageAdapter.submitList(viewModel.getPages(documentResult.value).also { pages ->
-                    indicator.isVisible = pages.size > 1
+    private fun GhsFragmentReviewBinding.handleDocumentPagesResult(documentPagesResult: DocumentPagesResult) {
+        when (documentPagesResult) {
+            is DocumentPagesResult.Success -> {
+                documentPageAdapter.submitList(documentPagesResult.pagesList.also { pages ->
+                    indicator.isVisible = true
+                    indicator.importantForAccessibility =
+                        if (pages.size > 1) View.IMPORTANT_FOR_ACCESSIBILITY_YES else View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                    indicator.focusable = if (pages.size > 1) View.FOCUSABLE else View.NOT_FOCUSABLE
                     pager.isUserInputEnabled = pages.size > 1
+                    indicator.isEnabled = pages.size > 1
+                    indicator.alpha = if (pages.size > 1) 1f else 0f
                 })
             }
 
-            is ResultWrapper.Error -> handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
-            else -> { // Loading state handled by payment details
+            is DocumentPagesResult.Error -> {
+                handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
+            }
+
+            else -> {
+                //do nothing, loading is handled separately
             }
         }
     }
 
     private fun GhsFragmentReviewBinding.handlePaymentResult(paymentResult: ResultWrapper<PaymentDetails>) {
-        binding.loading.isVisible = paymentResult is ResultWrapper.Loading
         if (paymentResult is ResultWrapper.Error) {
-            handleError(getLocaleStringResource(R.string.ghs_generic_error_message)) { viewModel.retryDocumentReview() }
+            handleError(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_generic_error_message)) { viewModel.retryDocumentReview() }
         }
     }
 
     private fun GhsFragmentReviewBinding.configureViews() {
-        close.isGone = !viewModel.shouldShowCloseButton
+        close.isGone = !viewModel.paymentFlowConfiguration.showCloseButtonOnReviewFragment
     }
 
     private fun GhsFragmentReviewBinding.configureOrientation() {
         pager.isVisible = true
         pager.adapter = documentPageAdapter
-        TabLayoutMediator(indicator, pager) { tab, _ -> tab.view.isClickable = false }.attach()
+      val mediator = TabLayoutMediator(indicator, pager) { tab, _ ->
+          tab.view.isFocusable = documentPageAdapter.itemCount > 1
+          tab.view.isClickable = true
+      }
+        mediator.attach()
     }
-
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
         if (viewModel.configuration.handleErrorsInternally) {
             showSnackbar(text, onRetry)
@@ -214,8 +264,8 @@ class ReviewFragment private constructor(
             if (context.getFontScale() < 1.5) {
                 anchorView = paymentDetailsScrollview
             }
-            setTextMaxLines(2)
-            setAction(getLocaleStringResource(R.string.ghs_snackbar_retry)) {
+            setTextMaxLines(3)
+            setAction(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) {
                 onRetry()
             }
             show()
@@ -225,6 +275,8 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.setActionListeners() {
         ghsPaymentDetails.listener = reviewViewListener
         close.setOnClickListener { view ->
+            binding.root.findFocus()?.clearFocus()
+            binding.ghsPaymentDetails.clearFocus()
             if (isKeyboardShown) {
                 view.hideKeyboard()
             } else {
@@ -242,14 +294,16 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.removePagerConstraintAndSetPreviousHeightIfNeeded(savedHeight: Int) {
+        if (resources.isLandscapeOrientation()) return
         root.post {
+            if (savedHeight == 0) return@post
             ConstraintSet().apply {
                 clone(constraintRoot)
-                constrainHeight(R.id.pager, pager.height)
-                clear(R.id.pager, ConstraintSet.BOTTOM)
+                constrainHeight(HealthR.id.pager, pager.height)
+                clear(HealthR.id.pager, ConstraintSet.BOTTOM)
                 applyTo(constraintRoot)
             }
-            if (savedHeight != -1) {
+            if (savedHeight > 0) {
                 val pagerLayoutParams = binding.pager.layoutParams
                 pagerLayoutParams.height = savedHeight
                 binding.pager.layoutParams = pagerLayoutParams
@@ -288,11 +342,16 @@ class ReviewFragment private constructor(
                     runningAnimations: MutableList<WindowInsetsAnimationCompat>
                 ): WindowInsetsCompat {
                     if (Build.VERSION.SDK_INT >= 30) {
-                        runningAnimations.find { it.typeMask == windowInsetTypesOf(ime = true) }?.let { animation ->
-                            ghsPaymentDetails.translationY =
-                                lerp((endBottom - startBottom).toFloat(), 0f, animation.interpolatedFraction)
-                            paymentDetailsInfoBar.translationY = ghsPaymentDetails.translationY
-                        }
+                        runningAnimations.find { it.typeMask == windowInsetTypesOf(ime = true) }
+                            ?.let { animation ->
+                                ghsPaymentDetails.translationY =
+                                    com.google.android.material.math.MathUtils.lerp(
+                                        (endBottom - startBottom).toFloat(),
+                                        0f,
+                                        animation.interpolatedFraction
+                                    )
+                                paymentDetailsInfoBar.translationY = ghsPaymentDetails.translationY
+                            }
                     }
                     return insets
                 }
@@ -319,6 +378,9 @@ class ReviewFragment private constructor(
 
     private fun GhsFragmentReviewBinding.showInfoBar() {
         root.doOnLayout {
+            if (resources.isLandscapeOrientation()) {
+                paymentDetailsInfoBar.isVisible = true
+            }
             // paymentDetailsInfoBar visibility should never be GONE, otherwise the animation won't work
             if (paymentDetailsInfoBar.isInvisible) {
                 TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
@@ -340,22 +402,72 @@ class ReviewFragment private constructor(
 
     private fun GhsFragmentReviewBinding.hideInfoBarAnimated() {
         root.doOnLayout {
-            if (paymentDetailsInfoBar.isVisible) {
-                TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
-                    addTransition(ChangeBounds())
-                    addListener(object : TransitionListenerAdapter() {
-                        override fun onTransitionEnd(transition: Transition) {
-                            super.onTransitionEnd(transition)
-                            paymentDetailsInfoBar.isInvisible = true
-                        }
+            if (!resources.isLandscapeOrientation()) {
+                if (paymentDetailsInfoBar.isVisible) {
+                    TransitionManager.beginDelayedTransition(root, TransitionSet().apply {
+                        addTransition(ChangeBounds())
+                        addListener(object : TransitionListenerAdapter() {
+                            override fun onTransitionEnd(transition: Transition) {
+                                super.onTransitionEnd(transition)
+                                paymentDetailsInfoBar.isInvisible = true
+                            }
+                        })
                     })
-                })
-                paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    topToTop = paymentDetailsScrollview.id
-                    bottomToTop = ConstraintLayout.LayoutParams.UNSET
+                    paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                        topToTop = paymentDetailsScrollview.id
+                        bottomToTop = ConstraintLayout.LayoutParams.UNSET
+                    }
                 }
+            } else {
+                paymentInfoLabel?.isVisible = false
             }
         }
+    }
+
+    private fun setupLandscapeBehavior() {
+        val dragHandle = binding.dragHandleContainer
+        val fieldsLayout =
+            binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_fields_layout)
+        val bottomLayout =
+            binding.ghsPaymentDetails.findViewById<View>(net.gini.android.internal.payment.R.id.gps_bottom_layout)
+        dragHandle?.onKeyboardAction {
+            fieldsLayout.alpha = if (isVisible) 0f else 1f
+            val currentState =
+                binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode()
+            binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(
+                if (currentState == ReviewViewStateLandscape.EXPANDED) ReviewViewStateLandscape.COLLAPSED else ReviewViewStateLandscape.EXPANDED
+            )
+        }
+        binding.root.post {
+            setupConstraintsForTabLayout((dragHandle?.height ?: 0) + bottomLayout.height)
+        }
+        dragHandle?.setOnClickListener {
+            fieldsLayout.alpha = if (it.isVisible) 0f else 1f
+            val currentState =
+                binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode()
+            val nextState = if (currentState == ReviewViewStateLandscape.EXPANDED)
+                ReviewViewStateLandscape.COLLAPSED
+            else
+                ReviewViewStateLandscape.EXPANDED
+
+            binding.ghsPaymentDetails.reviewComponent?.setReviewViewModeInLandscapeMode(nextState)
+
+            val announcement = when (nextState) {
+                ReviewViewStateLandscape.EXPANDED -> getString(InternalPaymentR.string.gps_drag_handle_expanded)
+                ReviewViewStateLandscape.COLLAPSED -> getString(InternalPaymentR.string.gps_drag_handle_collapsed)
+                else -> null
+            }
+            announcement?.let {
+                dragHandle.announceForAccessibility(it)
+            }
+        }
+
+    }
+
+    private fun setupConstraintsForTabLayout(collapsedBottomSheetHeight: Int) {
+        val layoutParams = binding.indicator.layoutParams as MarginLayoutParams
+        layoutParams.bottomMargin = collapsedBottomSheetHeight + 20
+        binding.indicator.layoutParams = layoutParams
     }
 
     private fun getLocaleStringResource(resourceId: Int): String {
@@ -363,9 +475,11 @@ class ReviewFragment private constructor(
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(PAGER_HEIGHT, binding.pager.layoutParams.height)
+        val height = view?.findViewById<ViewPager2>(HealthR.id.pager)?.layoutParams?.height ?: -1
+        outState.putInt(PAGER_HEIGHT, height)
         super.onSaveInstanceState(outState)
     }
+
 
     internal companion object {
         private const val PAGER_HEIGHT = "pager_height"
@@ -376,8 +490,12 @@ class ReviewFragment private constructor(
             listener: ReviewFragmentListener,
             paymentComponent: PaymentComponent,
             documentId: String,
-            shouldShowCloseButton: Boolean,
-            viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, shouldShowCloseButton, listener),
-        ): ReviewFragment = ReviewFragment(viewModelFactory)
+            paymentFlowConfiguration: PaymentFlowConfiguration
+        ): ReviewFragment {
+            // Store non-Parcelable dependencies in holder
+            val viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, paymentFlowConfiguration, listener)
+            return ReviewFragment(viewModelFactory)
+        }
+
     }
 }

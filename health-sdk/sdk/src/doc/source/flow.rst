@@ -84,6 +84,7 @@ into one final document:
         }
     }
 
+
 Check which documents/invoices are payable
 ------------------------------------------
 
@@ -155,6 +156,95 @@ You need to pass the payment details as parameter to the method:
     The ``PaymentFragment`` handles the navigation for the screens shown during the payment flow. It doesn't handle external navigation related events and doesn't show a navigation bar. You are
     free to design navigation to and from the fragment as you see fit.
 
+Get Payment Details
+------------------------
+
+Call ``giniHealth.getPayment()`` with the payment request ID to retrieve the details of a specific payment.
+The method returns a ``Payment`` object containing the relevant payment information.
+
+If the request fails or is canceled, an exception will be thrown with an error message.
+
+.. code-block:: kotlin
+
+    // Assuming paymentId is the ID of the payment request
+
+    coroutineScope.launch {
+        try {
+            // Retrieve payment details
+            val paymentDetails = giniHealth.getPayment(paymentId)
+        } catch (e: Exception) {
+            // Handle error
+        }
+    }
+
+Delete payment request
+---------------------------------
+
+``GiniHealthSDK`` provides a method to delete a payment request. You can do this by calling ``giniHealth.deletePaymentRequest(...)`` with a payment request ID.
+
+.. code-block:: kotlin
+
+    coroutineScope.launch {
+        // Delete  payment requests
+        val deletePaymentRequest = giniHealth.deletePaymentRequest(paymentRequestId)
+
+        when (deletePaymentRequest) {
+            is Resource.Success -> {
+                // `null` will be returned here
+            }
+            is Resource.Error -> // Handle Error
+            is Resource.Cancelled -> //  Handle cancellation
+        }
+    }
+
+Delete multiple payment requests
+---------------------------------
+
+``GiniHealthSDK`` provides a  method to delete multiple payment request at once. You can do this by calling ``giniHealth.deletePaymentRequests(...)`` with a list of payment request IDs. The call will only succeed if all payment request were successfully deleted. If any payment request is invalid, unauthorized, or not found, the entire deletion request will fail, and no payment requests will be deleted. In the case of failures, an error or type ``DeletePaymentRequestErrorResponse`` will be provided, with more insight into why the deletion failed.
+
+.. code-block:: kotlin
+
+    // Assuming `paymentRequestIds` is a list of `String` which
+    // representing the IDs of the payment requests to be deleted
+
+    coroutineScope.launch {
+        // Delete multiple payment requests at once
+        val deletePaymentRequests = giniHealth.deletePaymentRequests(paymentRequestIds)
+
+        when (deletePaymentRequests) {
+            is Resource.Success -> {
+                // `null` will be returned here
+            }
+            is Resource.Error -> // Handle `DeletePaymentRequestErrorResponse`
+            is Resource.Cancelled -> // Handle `DeletePaymentRequestErrorResponse`
+        }
+    }
+
+Delete multiple documents at once
+---------------------------------
+
+``GiniHealthSDK`` provides an easy method to delete multiple documents at once. You can call ``giniHealth.deleteDocuments(...)`` with the list of document
+ids you want to delete. The call will only succeed if all documents were successfully deleted. If not all documents can be deleted, the whole call will fail
+and no documents will be deleted. In the case of failures, an error or type ``DeleteDocumentErrorResponse`` will be provided, with more insight into why the deletion failed.
+
+.. code-block:: kotlin
+
+    // Assuming `documentIds` is a list of `String` which
+    // represent the ids of the documents to be deleted
+
+    coroutineScope.launch {
+        // Delete multiple documents at once
+        val deleteDocuments = giniHealth.deleteDocuments(documentIds)
+
+        when (deleteDocuments) {
+            is Resource.Success -> {
+                // `null` will be returned here
+            }
+            is Resource.Error -> // Handle `DeleteDocumentErrorResponse`
+            is Resource.Cancelled -> // Handle `DeleteDocumentErrorResponse`
+        }
+    }
+
 The ``PaymentFlowConfiguration`` class contains the following options:
 
 - ``shouldHandleErrorsInternally``: If set to ``true``, the ``PaymentFragment`` will handle errors internally and show
@@ -164,6 +254,7 @@ The ``PaymentFlowConfiguration`` class contains the following options:
 - ``shouldShowReviewBottomDialog``: If set to ``true``, the ``PaymentFragment`` will show a bottom sheet dialog containing the payment details. If set to ``false``, the payment details will not be visible during the payment flow. They will be available to be reviewed after redirecting to the selected payment provider,
     before finalizing the payment. This parameter is only used in the case of payment flows started without ``documentId``.
     Default value is ``false``
+- ``popupDurationPaymentReview``: Defines the duration (in seconds) for which the payment review popup will be displayed before automatically closing. This value must be between `0` (min) and `10` (max) seconds to ensure a smooth user experience, with a default of `3` seconds.
 
 .. warning::
     As the SDK is not responsible for navigation flows outside of it, removing the payment fragment from the hierarchy is the responsibility of implementers at ``PaymentState.Success(paymentRequest)`` or ``PaymentState.Cancel()`` events.
@@ -182,4 +273,57 @@ The ``PaymentFlowConfiguration`` class contains the following options:
             else -> {}
         }
    }
+
+Handling process death
+----------------------
+
+If the Android system kills your app’s process (process death) and later recreates it, all in-memory references are lost — including the ``GiniHealth`` instance.
+To ensure the SDK continues to work correctly after process death, you must create a new ``GiniHealth`` instance at app startup and call the ``setInstance()`` method once during initialization (for example, in your ``Application`` class or dependency injection container).
+
+This guarantees that whenever the SDK’s internal components call ``getInstance()`` after a process restart, they will receive a valid, initialized instance.
+
+Example (Koin)
+~~~~~~~~~~~~~~
+
+The following snippet matches the example app and shows how to set the instance during DI startup. This is an example only; you are not required to use Koin.
+
+.. code-block:: kotlin
+
+    val giniModule = module {
+        single {
+            getGiniApi(
+                context = get(),
+                clientId = getProperty("clientId"),
+                clientSecret = getProperty("clientSecret"),
+                emailDomain = "example.com"
+            )
+        }
+        single {
+            val giniHealth = GiniHealth(get(), get())
+            GiniHealth.setInstance(giniHealth)
+            giniHealth
+        }
+    }
+
+Koin bootstrap (in Application)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Initialize Koin once at app startup so the ``GiniHealth`` instance is created and ``setInstance()`` is called during DI initialization.
+
+.. code-block:: kotlin
+
+    class ExampleApplication : Application() {
+        override fun onCreate() {
+            super.onCreate()
+            startKoin {
+                androidContext(this@ExampleApplication)
+                fileProperties("/client.properties")
+                modules(giniModule, viewModelModule)
+            }
+        }
+    }
+
+.. note::
+   You can also initialize without a DI framework by creating the ``GiniHealth`` instance in your ``Application`` and calling the ``setInstance()`` method once at startup. The sample app includes Koin-based usage for reference.
+
 

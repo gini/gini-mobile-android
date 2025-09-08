@@ -82,13 +82,13 @@
     <ID>MagicNumber:FileImportHelpFragment.kt$FileImportHelpFragment$5</ID>
     <ID>MagicNumber:FileImportHelpFragment.kt$FileImportHelpFragment$500</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF000000</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF048016</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF09B523</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF0A84FF</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF121212</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF165425</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF13822F</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF006ECF</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF161616</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF313131</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF3193FD</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF32D74B</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF5DD27A</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF4A4A4A</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF626262</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF62ACFB</ID>
@@ -99,19 +99,19 @@
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFBFBFBF</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFC4DDF7</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFCCCCCC</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFD0ECD4</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFD9190E</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFD9A00E</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFC0EECC</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF6C2121</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFF966B17</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFD9D9D9</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFDEEEE1</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFEBF9EE</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFE5E5E5</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFECD0D0</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFECE4D0</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFEEDEDE</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFEEEADE</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFFFFAC5</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFF6EEEE</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFFDFBE7</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFF2F2F2</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFFF453A</ID>
-    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFFFC73A</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFDD0000</ID>
+    <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFFFE20C</ID>
     <ID>MagicNumber:GiniColorPrimirives.kt$GiniColorPrimitives$0xFFFFFFFF</ID>
     <ID>MagicNumber:GiniDatePickerDialog.kt$0.95f</ID>
     <ID>MagicNumber:GiniDatePickerDialog.kt$12</ID>
@@ -260,6 +260,7 @@
     <ID>NewLineAtEndOfFile:UserAnalyticsUserProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty.kt</ID>
     <ID>NewLineAtEndOfFile:Width.kt$net.gini.android.capture.ui.theme.modifier.Width.kt</ID>
     <ID>ReturnCount:CameraXController.kt$CameraXController$override fun open(): CompletableFuture&lt;Void></ID>
+    <ID>ReturnCount:AccessibilityHelpers.kt$fun getSpokenDateForTalkBack(date: String): String</ID>
     <ID>ReturnCount:CameraXController.kt$CameraXController$override fun takePicture(): CompletableFuture&lt;Photo></ID>
     <ID>ReturnCount:ErrorFragmentImpl.kt$ErrorFragmentImpl$private fun shouldAllowRetakeImages(): Boolean</ID>
     <ID>ReturnCount:ErrorType.kt$ErrorType.Companion$@JvmStatic fun typeFromError(error: Error): ErrorType</ID>

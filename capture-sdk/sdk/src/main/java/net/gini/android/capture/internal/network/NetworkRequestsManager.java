@@ -75,7 +75,7 @@ public class NetworkRequestsManager {
     }
 
 
-    public CompletableFuture<String> sendEvents(AmplitudeRoot amplitudeRoot, UUID id) {
+    public CompletableFuture<String> sendEvents(AmplitudeRootModel amplitudeRootModel, UUID id) {
 
         final CompletableFuture<String> userJourneyEventsFutures =
                 mUserJourneyEventsFutures.get(id);
@@ -88,13 +88,13 @@ public class NetworkRequestsManager {
         mUserJourneyEventsFutures.put(id, future);
 
         final CancellationToken cancellationToken =
-                mGiniCaptureNetworkService.sendEvents(amplitudeRoot,
+                mGiniCaptureNetworkService.sendEvents(amplitudeRootModel,
                         new GiniCaptureNetworkCallback<Void, Error>() {
                             @Override
                             public void failure(final Error error) {
                                 LOG.error("Send events failed for {}",
                                         error.getMessage());
-                                ErrorType errorType = ErrorType.typeFromError(error);
+                                ErrorType errorType = ErrorType.typeFromError(error, false);
                                 future.completeExceptionally(new FailureException(errorType));
                             }
 
@@ -151,7 +151,7 @@ public class NetworkRequestsManager {
                                 LOG.error("Get configuration failed for {}: {}",
                                         id,
                                         error.getMessage());
-                                ErrorType errorType = ErrorType.typeFromError(error);
+                                ErrorType errorType = ErrorType.typeFromError(error, false);
                                 future.completeExceptionally(new FailureException(errorType));
                             }
 
@@ -221,7 +221,7 @@ public class NetworkRequestsManager {
                                         LOG.error("Document upload failed for {}: {}",
                                                 document.getId(),
                                                 error.getMessage());
-                                        ErrorType errorType = ErrorType.typeFromError(error);
+                                        ErrorType errorType = ErrorType.typeFromError(error, false);
                                         future.completeExceptionally(new FailureException(errorType));
                                     }
 
@@ -394,7 +394,7 @@ public class NetworkRequestsManager {
                                         "Document deletion failed for {}: {}",
                                         document.getId(),
                                         error.getMessage());
-                                ErrorType errorType = ErrorType.typeFromError(error);
+                                ErrorType errorType = ErrorType.typeFromError(error, false);
                                 future.completeExceptionally(new FailureException(errorType));
                             }
 
@@ -509,7 +509,7 @@ public class NetworkRequestsManager {
                             public void failure(final Error error) {
                                 LOG.error("Document analysis failed for {}: {}",
                                         multiPageDocument.getId(), error.getMessage());
-                                ErrorType errorType = ErrorType.typeFromError(error);
+                                ErrorType errorType = ErrorType.typeFromError(error, false);
                                 future.completeExceptionally(new FailureException(errorType));
                             }
 

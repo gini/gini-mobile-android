@@ -31,6 +31,8 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcFragmentFileChooserBinding
+import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.einvoice.GetEInvoiceFeatureEnabledUseCase
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersAdapter
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersAppItem
 import net.gini.android.capture.internal.fileimport.providerchooser.ProvidersAppWrapperItem
@@ -62,12 +64,12 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     private var binding: GcFragmentFileChooserBinding by autoCleared()
     private var chooseFileLauncher: ActivityResultLauncher<Intent>? = null
     private var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>? = null
-    private lateinit var mUserAnalyticsEventTracker: UserAnalyticsEventTracker
+    private var userAnalyticsEventTracker: UserAnalyticsEventTracker? = null
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.Camera
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mUserAnalyticsEventTracker =
+        userAnalyticsEventTracker =
             UserAnalytics.getAnalyticsEventTracker()
         arguments?.let {
             docImportEnabledFileTypes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -119,8 +121,9 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupFileChooserListener() {
-        chooseFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            findNavController().popBackStack()
+        chooseFileLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                findNavController().popBackStack()
                 when (result.resultCode) {
                     RESULT_OK -> {
                         result.data?.let { data ->
@@ -156,7 +159,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                         )
                     })
                 }
-        }
+            }
 
         val photoPickType =
             if (FeatureConfiguration.isMultiPageEnabled()) {
@@ -179,7 +182,7 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             FileChooserResult.Cancelled
         } else {
             try {
-                val uriList = when(activityResultUriList){
+                val uriList = when (activityResultUriList) {
                     is Uri -> listOf(activityResultUriList)
                     is List<*> -> {
                         activityResultUriList.filterIsInstance<Uri>().takeIf {
@@ -194,7 +197,12 @@ class FileChooserFragment : BottomSheetDialogFragment() {
                     FileChooserResult.Cancelled
                 }
             } catch (e: IllegalArgumentException) {
-                FileChooserResult.Error(GiniCaptureError(GiniCaptureError.ErrorCode.DOCUMENT_IMPORT, e.message))
+                FileChooserResult.Error(
+                    GiniCaptureError(
+                        GiniCaptureError.ErrorCode.DOCUMENT_IMPORT,
+                        e.message
+                    )
+                )
             }
         }
     }
@@ -238,13 +246,13 @@ class FileChooserFragment : BottomSheetDialogFragment() {
         binding.gcFileProviders.adapter =
             ProvidersAdapter(requireContext(), providerItems) { item ->
                 if (item in imageProviderItems) {
-                    mUserAnalyticsEventTracker.trackEvent(
+                    userAnalyticsEventTracker?.trackEvent(
                         UserAnalyticsEvent.UPLOAD_PHOTOS_TAPPED,
                         setOf(UserAnalyticsEventProperty.Screen(screenName))
                     )
 
                 } else {
-                    mUserAnalyticsEventTracker.trackEvent(
+                    userAnalyticsEventTracker?.trackEvent(
                         UserAnalyticsEvent.UPLOAD_DOCUMENTS_TAPPED,
                         setOf(UserAnalyticsEventProperty.Screen(screenName))
                     )
@@ -317,9 +325,14 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     private fun getPdfProviderItems(pdfProviderResolveInfos: List<ResolveInfo>): List<ProvidersItem> =
         mutableListOf<ProvidersItem>().apply {
             if (pdfProviderResolveInfos.isNotEmpty()) {
-                add(ProvidersSectionItem(getString(R.string.gc_file_chooser_pdfs_section_header)))
 
-                val getPdfDocumentIntent = createGetPdfDocumentIntent()
+                val getPdfDocumentIntent = if (getEInvoiceFeatureEnabledUseCase.invoke()) {
+                    add(ProvidersSectionItem(getString(R.string.gc_file_chooser_pdfs_xmls_section_header)))
+                    createGetPdfAndXmlDocumentIntent()
+                } else {
+                    add(ProvidersSectionItem(getString(R.string.gc_file_chooser_pdfs_section_header)))
+                    createGetPdfDocumentIntent()
+                }
                 for (pdfProviderResolveInfo in pdfProviderResolveInfos) {
                     add(ProvidersAppItem(getPdfDocumentIntent, pdfProviderResolveInfo))
                 }
@@ -339,6 +352,8 @@ class FileChooserFragment : BottomSheetDialogFragment() {
     companion object {
         const val REQUEST_KEY = "GC_FILE_CHOOSER_REQUEST_KEY"
         const val RESULT_KEY = "GC_FILE_CHOOSER_RESULT_BUNDLE_KEY"
+        private val getEInvoiceFeatureEnabledUseCase: GetEInvoiceFeatureEnabledUseCase
+                by getGiniCaptureKoin().inject()
 
         @JvmStatic
         fun newInstance(docImportEnabledFileTypes: DocumentImportEnabledFileTypes) =
@@ -402,7 +417,12 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             "SDK documentation informs clients to declare the <queries> element in their manifest"
         )
         private fun queryPdfProviders(context: Context): List<ResolveInfo> {
-            val intent = createGetPdfDocumentIntent()
+            val intent =
+                if (getEInvoiceFeatureEnabledUseCase.invoke()) {
+                    createGetPdfAndXmlDocumentIntent()
+                } else {
+                    createGetPdfDocumentIntent()
+                }
             return context.packageManager.queryIntentActivities(intent, 0)
         }
 
@@ -410,6 +430,19 @@ class FileChooserFragment : BottomSheetDialogFragment() {
             Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = MimeType.APPLICATION_PDF.asString()
+                if (FeatureConfiguration.isMultiPageEnabled()) {
+                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                }
+            }
+
+        private fun createGetPdfAndXmlDocumentIntent(): Intent =
+            Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "*/*"
+                putExtra(
+                    Intent.EXTRA_MIME_TYPES,
+                    arrayOf("application/pdf", "text/xml", "application/xml")
+                )
                 if (FeatureConfiguration.isMultiPageEnabled()) {
                     putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                 }

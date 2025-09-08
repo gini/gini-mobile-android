@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.exampleapp.ui
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -34,7 +35,9 @@ class ClientCaptureSDKFragment :
             checkCameraPermission()
         } else {
             val giniCaptureFragment =
-                requireActivity().supportFragmentManager.findFragmentByTag("fragment_host") as? GiniCaptureFragment
+                requireActivity().supportFragmentManager.findFragmentByTag("fragment_host")
+                        as?
+                        GiniCaptureFragment
             giniCaptureFragment?.setListener(this)
         }
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
@@ -44,21 +47,21 @@ class ClientCaptureSDKFragment :
         permissionHandler = PermissionHandler(requireActivity())
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
-                configureCaptureSDK()
+                configureCaptureSDK(requireContext())
                 startCaptureSDK()
             }
         }
     }
 
-    private fun configureCaptureSDK() {
-        val clientId = requireContext().getString(R.string.gini_api_client_id)
-        val clientSecret = requireContext().getString(R.string.gini_api_client_secret)
+    private fun configureCaptureSDK(context: Context) {
+        val clientId = context.getString(R.string.gini_api_client_id)
+        val clientSecret = context.getString(R.string.gini_api_client_secret)
         val documentMetadata = DocumentMetadata()
         documentMetadata.setBranchId("GCSExampleAndroid")
         documentMetadata.add("AppFlow", "ScreenAPI")
 
         val networkService = GiniCaptureDefaultNetworkService
-            .builder(requireContext())
+            .builder(context)
             .setClientCredentials(
                 clientId,
                 clientSecret,
@@ -90,38 +93,63 @@ class ClientCaptureSDKFragment :
 
     private var mFileImportCancellationToken: CancellationToken? = null
 
-    fun startCaptureSDKForIntent(openWithIntent: Intent) {
-        mFileImportCancellationToken = GiniCapture.getInstance().createGiniCaptureFragmentForIntent(
-            requireActivity(),
-            openWithIntent,
-            object : GiniCapture.CreateGiniCaptureFragmentForIntentCallback {
-                override fun callback(result: GiniCapture.CreateGiniCaptureFragmentForIntentResult?) {
-                    when (result) {
-                        is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Success -> {
-                            // Opening the file(s) from the intent and creating the GiniCaptureFragment finished
+    fun startCaptureSDKForIntent(
+        context: AppCompatActivity,
+        openWithIntent: Intent,
+        listener: GiniCaptureFragmentListener
+    ) {
+        configureCaptureSDK(context)
+        mFileImportCancellationToken = GiniCapture.getInstance()
+            .createGiniCaptureFragmentForIntent(
+                context,
+                openWithIntent,
+                object : GiniCapture.CreateGiniCaptureFragmentForIntentCallback {
+                    override fun callback(
+                        result: GiniCapture.CreateGiniCaptureFragmentForIntentResult?
+                    ) {
+                        when (result) {
+                            is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Success -> {
+                                // Opening the file(s) from the intent and creating the
+                                // GiniCaptureFragment finished
 
-                            // Set the listener to receive the Gini Bank SDK's results
-                            result.fragment.setListener(this@ClientCaptureSDKFragment)
+                                // Set the listener to receive the Gini Bank SDK's results
+                                result.fragment.setListener(listener)
 
-                            // Show the CaptureFlowFragment for example via the fragment manager:
-                            requireActivity().supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragment_host, result.fragment, "GiniCaptureFragment")
-                                .addToBackStack(null)
-                                .commit()
-                        }
+                                // Show the CaptureFlowFragment for example via
+                                // the fragment manager:
+                                context.supportFragmentManager.beginTransaction()
+                                    .replace(
+                                        R.id.fragment_host,
+                                        result.fragment,
+                                        "GiniCaptureFragment"
+                                    )
+                                    .addToBackStack(null)
+                                    .commit()
+                            }
 
-                        is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Error -> {
-                        // Something went wrong when opening the file(s) from the intent or uploading the document
+                            is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Error -> {
+                                // Something went wrong when opening the file(s) from the intent or
+                                // uploading the document
+                                Toast.makeText(
+                                    context,
+                                    "Error, Exiting",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                context.finish()
+                            }
 
-
-                        }
-
-                        is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Cancelled -> {
+                            is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Cancelled -> {
+                                Toast.makeText(
+                                    context,
+                                    "Cancelled, Exiting",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                context.finish()
+                            }
                         }
                     }
-                }
 
-            })
+                })
 
     }
 
@@ -133,14 +161,16 @@ class ClientCaptureSDKFragment :
                                            amount: Amount
     ) {
         // After the user has seen and potentially corrected the extractions, send the final
-        // transfer summary values to Gini which will be used to improve the future extraction accuracy:
+        // transfer summary values to Gini which will be used to improve the future
+        // extraction accuracy:
         GiniCapture.sendTransferSummary(
             paymentRecipient,
             paymentReference,
             paymentPurpose,
             iban,
             bic,
-            amount
+            amount,
+            null
         )
 
         // cleanup the capture SDK after sending the transfer summary
@@ -163,7 +193,8 @@ class ClientCaptureSDKFragment :
 
                 Toast.makeText(
                     requireContext(),
-                    "Error: ${(result.value as ResultError.FileImport).code} ${(result.value as ResultError.FileImport).message}",
+                    "Error: ${(result.value as ResultError.FileImport).code} " +
+                            "${(result.value as ResultError.FileImport).message}",
                     Toast.LENGTH_LONG
                 ).show()
 

@@ -52,6 +52,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        compose = true
     }
 
 
@@ -148,11 +149,18 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.android.compat)
 
+    implementation(libs.orbitmvi.compose)
+    implementation(libs.orbitmvi.viewmodel)
+    testImplementation(libs.orbitmvi.test)
+
     implementation(platform(libs.compose.bom))
+    implementation(libs.compose.activity)
     implementation(libs.compose.material3)
     implementation(libs.compose.tools.uiToolingPreview)
     implementation(libs.accompanist.themeAdapter)
     debugImplementation(libs.compose.tools.uiTooling)
+
+    implementation(libs.datastore.preferences)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)

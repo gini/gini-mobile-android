@@ -11,9 +11,12 @@ import net.gini.android.bank.sdk.capture.skonto.usecase.di.skontoUseCaseModule
 import net.gini.android.bank.sdk.invoice.invoicePreviewScreenModule
 import net.gini.android.bank.sdk.transactiondocs.di.transactionListModule
 import net.gini.android.bank.sdk.transactiondocs.ui.invoice.transactionDocInvoicePreviewScreenModule
+import net.gini.android.capture.di.CaptureSdkIsolatedKoinContext
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.Koin
+import org.koin.dsl.bind
 import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 
 @SuppressLint("StaticFieldLeak")
 object BankSdkIsolatedKoinContext {
@@ -28,13 +31,15 @@ object BankSdkIsolatedKoinContext {
                         "Call BankSdkIsolatedKoinContext.init(context)!"
             }
             androidContext(ctx)
-
             modules(
                 screenModules
+                    .asSequence()
                     .plus(useCaseModules)
+                    .plus(analyticsModule)
                     .plus(commonModules)
                     .plus(handlerModule)
                     .plus(transactionListModule)
+                    .toList()
             )
         }.koin
     }
@@ -46,6 +51,14 @@ object BankSdkIsolatedKoinContext {
         } else {
             Log.d("BankIsolatedKoinContext", "Koin already initialized")
         }
+
+        CaptureSdkIsolatedKoinContext.koin.loadModules(
+            listOf(
+                module {
+                    single { context } bind Context::class
+                }
+            )
+        )
     }
 
     fun clean() {

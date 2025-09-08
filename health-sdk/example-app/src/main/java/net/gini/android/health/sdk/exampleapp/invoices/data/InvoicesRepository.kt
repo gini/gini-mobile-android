@@ -127,6 +127,10 @@ class InvoicesRepository(
             else -> Pair(null, extractionsResource)
         }
     }
+
+    suspend fun deleteDocuments(documentIds: List<String>) {
+        invoicesLocalDataSource.deleteDocuments(documentIds)
+    }
 }
 
 sealed class UploadHardcodedInvoicesState {

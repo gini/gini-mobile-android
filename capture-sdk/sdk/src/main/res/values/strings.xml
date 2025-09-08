@@ -1,12 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="gc_title_camera">Aufnahme</string>
-    <string name="gc_title_onboarding"/>
+    <string name="gc_title_onboarding" />
     <string name="gc_title_review">Übersicht</string>
     <string name="gc_title_help">Hilfe</string>
     <string name="gc_title_photo_tips">Tipps</string>
     <string name="gc_title_supported_formats">Formate</string>
     <string name="gc_title_file_import">Importieren</string>
-    <string name="gc_title_analysis">Übersicht</string>
+    <string name="gc_title_analysis">Auswertung</string>
     <string name="gc_title_no_results">Keine Ergebnisse</string>
     <string name="gc_title_error">Fehler</string>
     <string name="gc_help">Hilfe</string>
@@ -67,6 +67,7 @@
     <string name="gc_error_file_import_page_count_title">Das Dokument darf nicht mehr als 10 Seiten haben.</string>
     <string name="gc_error_file_import_page_count_text"></string>
     <string name="gc_error_file_import_unsupported_title">Nur Dateien vom Format jpg, png, gif oder PDF können analysiert werden.</string>
+    <string name="gc_error_file_import_unsupported_with_e_invoice_title">Nur Dateien vom Format jpg, png, gif, PDF oder XML können analysiert werden.</string>
     <string name="gc_error_file_import_unsupported_text"></string>
     <string name="gc_error_file_import_password_title">Passwortgeschützte Dokumente können nicht analysiert werden.</string>
     <string name="gc_error_file_import_password_text"></string>
@@ -93,6 +94,7 @@
 
     <string name="gc_file_chooser_fotos_section_header">Fotos</string>
     <string name="gc_file_chooser_pdfs_section_header">PDF</string>
+    <string name="gc_file_chooser_pdfs_xmls_section_header">Rechnungen: PDF &amp; XML</string>
     <string name="gc_help_item_photo_tips_title">Tipps für beste Ergebnisse</string>
     <string name="gc_help_item_file_import_guide_title">Dokumente von anderen Apps importieren</string>
     <string name="gc_help_item_supported_formats_title">Unterstützte Formate</string>
@@ -106,6 +108,7 @@
     <string name="gc_supported_format_qr_type_stuzza" translatable="false">Stuzza (AT)</string>
     <string name="gc_supported_format_qr_type_girocode" translatable="false">Girocode (DE)</string>
     <string name="gc_supported_format_qr_type_gini_payment" translatable="false">QR by Gini</string>
+    <string name="gc_supported_format_e_invoices">E-Rechnungen: XRechnung (XML), ZUGFeRD (PDF)</string>
     <string name="gc_unsupported_format_handwriting">Handschrift</string>
     <string name="gc_unsupported_format_photos_of_screens">Fotos von Bildschirmen</string>
     <string name="gc_supported_format_section_header">Unterstützte Formate:</string>
@@ -152,6 +155,7 @@
     <string name="gc_turn_flash_on_content_description">Blitz einschalten</string>
     <string name="gc_turn_flash_off_content_description">Blitz ausschalten</string>
     <string name="gc_camera_info_label_invoice_and_qr">Rechnung oder QR-Code scannen</string>
+    <string name="gc_camera_top_bar_title_landscape">Rechnung oder QR-Code scannen</string>
     <string name="gc_camera_info_label_only_invoice">Rechnung scannen</string>
     <string name="gc_camera_info_label_only_qr">QR-Code scannen</string>
     <string name="gc_qr_scanner_error">Das Scannen von QR-Codes ist vorübergehend deaktiviert. Bitte versuchen Sie es später erneut.</string>
@@ -167,11 +171,12 @@
     <string name="gc_scan">Aufnahme</string>
     <string name="gc_take_a_picture">Foto schießen</string>
     <string name="gc_flash_button">Blitz</string>
+    <string name="gc_photo_review_content_description">Foto vorschaubild</string>
     <string name="gc_delete_page">Seite löschen</string>
     <string name="gc_document_page">Dokumentenseite</string>
     <string name="gc_useful_tips">Nützliche Tipps</string>
     <string name="gc_menu_item_help_button_content_description">Hilfe</string>
-    <string name="gc_menu_item_close_button_content_description">Schließen, Schaltfläche</string>
+    <string name="gc_menu_item_close_button_content_description">Schließen</string>
     <string name="gc_iban_detected_please_take_picture">\n\nMachen Sie ein Foto</string>
     <string name="gc_iban_detected">IBAN erkannt</string>
     <!--   region Date Picker -->
@@ -179,4 +184,12 @@
     <string name="gc_date_picker_cancel">Abbrechen</string>
     <!--   endregion -->
     <string name="gc_detection_error_layout_description">QR-Code scannen ist derzeit nicht verfügbar. Bitte fotografieren Sie stattdessen Ihre Rechnung.</string>
+    <!--   region Education -->
+    <string name="gc_education_loading">analysieren</string>
+    <string name="gc_qr_education_intro_message">Falls Sie es nicht wussten...</string>
+    <string name="gc_qr_education_photo_doc_message">Fotografieren Sie direkt ein Zahlungsformular oder eine Rechnung - auch ohne QR-Code</string>
+    <string name="gc_qr_education_upload_picture_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
+    <string name="gc_invoice_education_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
+    <string name="gc_invoice_education_content_description">analyse der Rechnung läuft</string>
+    <!--   endregion -->
 </resources>
