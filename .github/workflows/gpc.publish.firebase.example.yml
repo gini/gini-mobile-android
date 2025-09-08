@@ -1,5 +1,8 @@
 name: Publish GPC Example App QA Build to Firebase distribution
 
+permissions:
+  content: read
+
 on:
   workflow_dispatch:
 jobs:
