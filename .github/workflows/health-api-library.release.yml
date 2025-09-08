@@ -1,5 +1,9 @@
 name: Release Health API Library
 
+permissions:
+  contents: write
+  packages: write
+
 on:
   workflow_dispatch:
   push:
