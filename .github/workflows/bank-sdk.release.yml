@@ -43,7 +43,7 @@ jobs:
           bundler-cache: true
 
       - name: "publish to Maven Central staging repo at https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971  # v3.1.0
         with:
           lane: 'publish_to_maven_repo'
           options: >

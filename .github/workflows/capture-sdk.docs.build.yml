@@ -40,7 +40,7 @@ jobs:
           bundler-cache: true
 
       - name: build sdk documentation
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971  # v3.1.0
         with:
           lane: 'build_documentation'
           options: >
@@ -56,7 +56,7 @@ jobs:
           path: capture-sdk/sdk/build/docs
 
       - name: build default network library documentation
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971  # v3.1.0
         with:
           lane: 'build_documentation'
           options: >

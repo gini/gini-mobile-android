@@ -27,7 +27,7 @@
 #           bundler-cache: true
 
 #       - name: "publish to gini's maven snapshots repo at https://repo.gini.net/nexus/content/repositories/snapshots"
-#         uses: maierj/fastlane-action@v3.0.0
+#         uses: maierj/fastlane-action@5a3b971  # v3.1.0
 #         with:
 #           lane: 'publish_to_maven_snapshots_repo'
 #           options: >
@@ -42,7 +42,7 @@
 #             }
 
 #       - name: "publish to Maven Central snapshots repo at https://oss.sonatype.org/content/repositories/snapshots/"
-#         uses: maierj/fastlane-action@v3.0.0
+#         uses: maierj/fastlane-action@5a3b971  # v3.1.0
 #         with:
 #           lane: 'publish_to_maven_snapshots_repo'
 #           options: >

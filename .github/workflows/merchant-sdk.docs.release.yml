@@ -57,7 +57,7 @@ jobs:
           bundler-cache: true
 
       - name: release documentation
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971  # v3.1.0
         with:
           lane: 'release_documentation'
           options: >

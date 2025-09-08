@@ -48,7 +48,7 @@ jobs:
           bundler-cache: true
 
       - name: release sdk documentation
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971  # v3.1.0
         with:
           lane: 'release_documentation'
           options: >
@@ -69,7 +69,7 @@ jobs:
           path: capture-sdk/sdk/build/docs
 
       - name: release default network library documentation
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971  # v3.1.0
         with:
           lane: 'release_documentation'
           options: >
