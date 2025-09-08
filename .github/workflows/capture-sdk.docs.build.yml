@@ -1,7 +1,7 @@
 name: Build docs for Capture SDK
 
 permissions:
-  content: read
+  contents: read
 
 on:
   workflow_dispatch:

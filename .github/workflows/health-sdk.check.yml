@@ -1,7 +1,7 @@
 name: Check Health SDK
 
 permissions:
-  content: read
+  contents: read
 
 on:
   workflow_dispatch:
