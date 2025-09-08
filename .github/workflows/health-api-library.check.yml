@@ -1,5 +1,8 @@
 name: Check Health API Library
 
+permissions:
+  content: read
+
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]

@@ -1,5 +1,8 @@
 name: Check Internal Payment SDK
 
+permissions:
+  content: read
+
 on:
   workflow_dispatch:
   push:
