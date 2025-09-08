@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
@@ -14,11 +15,10 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityUploadBinding
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadViewModel.UploadState
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class UploadActivity : AppCompatActivity() {
 
-    private val viewModel: UploadViewModel by viewModel()
+    private val viewModel: UploadViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
