@@ -5,7 +5,7 @@ import net.gini.gradle.readLocalPropertiesToMap
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
+    alias(libs.plugins.devtools.ksp)
 }
 
 android {
@@ -107,7 +107,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
-    kapt(libs.moshi.codegen)
+    ksp(libs.moshi.codegen)
     implementation(libs.logback.android)
 
 

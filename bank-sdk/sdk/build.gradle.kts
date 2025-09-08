@@ -5,11 +5,11 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
     id("kotlin-parcelize")
     id("jacoco")
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.devtools.ksp)
 }
 
 jacoco {
@@ -149,7 +149,7 @@ dependencies {
     testImplementation(libs.jUnitParams)
 
     androidTestImplementation(libs.moshi.core)
-    kaptAndroidTest(libs.moshi.codegen)
+    kspAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.androidx.test.junit.ktx)
     androidTestImplementation(libs.androidx.test.espresso.core)
 }

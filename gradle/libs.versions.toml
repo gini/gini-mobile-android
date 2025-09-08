@@ -3,6 +3,7 @@ android-compileSdk = "35"
 android-minSdk = "21"
 android-targetSdk = "35"
 kotlin = "2.0.20"
+ksp="2.0.20-1.0.25"
 android-gradle-plugin = "8.9.0"
 dokka = "1.9.20"
 androidx-lifecycle = "2.8.7"
@@ -77,6 +78,7 @@ hiya-android="0.2"
 
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+devtools-ksp = { id = "com.google.devtools.ksp", version.ref =  "ksp"}
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }

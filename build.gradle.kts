@@ -3,6 +3,10 @@
 import net.gini.gradle.ReleaseOrderPlugin
 import net.gini.gradle.DependencyUpdatesPlugin
 
+plugins {
+    alias(libs.plugins.devtools.ksp) apply false
+}
+
 buildscript {
     repositories {
         google()

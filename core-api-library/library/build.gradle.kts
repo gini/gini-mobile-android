@@ -3,7 +3,7 @@ import net.gini.gradle.*
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
+    alias(libs.plugins.devtools.ksp)
 }
 
 android {
@@ -78,7 +78,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.moshi.core)
     implementation(libs.retrofit.moshi.converter)
-    kapt(libs.moshi.codegen)
+    ksp(libs.moshi.codegen)
     implementation(libs.okhttp3.logging.interceptor)
 
     androidTestImplementation(libs.kotlinx.coroutines.test)

@@ -6,8 +6,8 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
     id("jacoco")
+    alias(libs.plugins.devtools.ksp)
 }
 
 jacoco {
@@ -95,7 +95,7 @@ dependencies {
     testImplementation(libs.truth)
 
     androidTestImplementation(libs.moshi.core)
-    kaptAndroidTest(libs.moshi.codegen)
+    kspAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.kotlinx.coroutines.core)
     androidTestImplementation(libs.kotlinx.coroutines.android)
     androidTestImplementation(libs.androidx.test.runner)
