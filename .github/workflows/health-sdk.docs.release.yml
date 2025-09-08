@@ -1,5 +1,8 @@
 name: Release docs for Health SDK
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
   push:
