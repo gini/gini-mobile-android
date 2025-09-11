@@ -3,13 +3,12 @@
 package net.gini.android.capture.ui.components.tooltip
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CaretProperties
-import androidx.compose.material3.CaretScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TooltipScope
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -45,16 +44,14 @@ fun GiniTooltipBox(
 }
 
 @Composable
-private fun CaretScope.GiniPlainTooltip(
+private fun TooltipScope.GiniPlainTooltip(
     modifier: Modifier = Modifier,
-    caretProperties: (CaretProperties)? = null,
     contentColor: Color,
     containerColor: Color,
     content: @Composable () -> Unit
 ) {
     PlainTooltip(
         modifier = modifier,
-        caretProperties = caretProperties,
         contentColor = contentColor,
         containerColor = containerColor,
         content = content

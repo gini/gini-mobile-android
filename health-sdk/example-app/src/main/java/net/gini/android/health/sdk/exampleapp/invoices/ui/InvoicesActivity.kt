@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -35,12 +36,11 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
 open class InvoicesActivity : AppCompatActivity() {
 
-    private val viewModel: InvoicesViewModel by viewModel()
+    private val viewModel: InvoicesViewModel by viewModels()
     private lateinit var binding: ActivityInvoicesBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
