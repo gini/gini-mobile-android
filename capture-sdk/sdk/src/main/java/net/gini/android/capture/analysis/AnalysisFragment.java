@@ -170,47 +170,35 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     public void showWarning(@NonNull WarningType type, @NonNull Runnable onProceed) {
         FragmentManager fm = getParentFragmentManager();
 
-        // If already showing, just reattach the listener and return
-        Fragment existing = fm.findFragmentByTag(WARNING_TAG);
-        if (existing instanceof WarningBottomSheet) {
-            ((WarningBottomSheet) existing).setListener(new WarningBottomSheet.Listener() {
-                @Override
-                public void onCancelAction() {
-                    if (mCancelListener != null) {
-                        mCancelListener.onCancelFlow();
-                    }
-                }
-
-                @Override
-                public void onProceedAction() {
-                    onProceed.run();
-                }
-            });
-            return;
+        WarningBottomSheet sheet = (WarningBottomSheet) fm.findFragmentByTag(WARNING_TAG);
+        if (sheet == null) {
+            sheet = WarningBottomSheet.Companion.newInstance(type);
         }
 
-        WarningBottomSheet sheet = WarningBottomSheet.Companion.newInstance(type);
         sheet.setCancelable(false);
+        sheet.setListener(makeWarningListener(onProceed));
+        if (!sheet.isAdded()) {
+            if (!fm.isStateSaved()) {
+                sheet.show(fm, WARNING_TAG);
+            } else {
+                fm.beginTransaction().add(sheet, WARNING_TAG).commitAllowingStateLoss();
+            }
+        }
+    }
 
-        sheet.setListener(new WarningBottomSheet.Listener() {
+    private WarningBottomSheet.Listener makeWarningListener(@NonNull Runnable onProceed) {
+        return new WarningBottomSheet.Listener() {
             @Override
             public void onCancelAction() {
                 if (mCancelListener != null) {
                     mCancelListener.onCancelFlow();
                 }
             }
-
             @Override
             public void onProceedAction() {
                 onProceed.run();
             }
-        });
-
-        if (!fm.isStateSaved()) {
-            sheet.show(fm, WARNING_TAG);
-        } else {
-            fm.beginTransaction().add(sheet, WARNING_TAG).commitAllowingStateLoss();
-        }
+        };
     }
 
     @NonNull

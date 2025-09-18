@@ -225,7 +225,7 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.isReturnAssistantEnabled
 
         // enable payment hints
-        binding.layoutAnalysisToggles.switchSetupPaymentHints.isChecked =
+        binding.layoutFeatureToggle.switchSetupPaymentHints.isChecked =
             configuration.isPaymentHintsEnabled
 
         // enable return reasons dialog
@@ -561,7 +561,7 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         //enable payment hints for showing warning
-        binding.layoutAnalysisToggles.switchSetupPaymentHints.setOnCheckedChangeListener{ _, isChecked ->
+        binding.layoutFeatureToggle.switchSetupPaymentHints.setOnCheckedChangeListener{ _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isPaymentHintsEnabled = isChecked
