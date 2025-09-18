@@ -28,4 +28,11 @@
         android:layout_height="wrap_content"
         android:text="@string/screen_custom_loading_indicator_switch_description" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_setupPaymentHints"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/paid_invoice_switch_label" />
+
 </LinearLayout>

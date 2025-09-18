@@ -70,7 +70,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mUserRemoteSource: UserRemoteSource? = null
     private var mDocumentManager: DM? = null
     private var mDocumentRepository: DR? = null
-    private var isDebuggingEnabled = false
+    private var isDebuggingEnabled = true
     private val httpLoggingInterceptor: HttpLoggingInterceptor by lazy {
         HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY

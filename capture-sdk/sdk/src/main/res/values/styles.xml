@@ -83,4 +83,9 @@
     </style>
     <style name="GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton"/>
 
+    <style name="CircleShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

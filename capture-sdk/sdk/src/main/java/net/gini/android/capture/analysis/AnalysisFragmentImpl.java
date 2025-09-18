@@ -20,7 +20,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.compose.ui.platform.ComposeView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
@@ -28,6 +27,7 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
@@ -223,6 +223,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 mFragment.findNavController(),
                 AnalysisFragmentDirections.toErrorFragmentWithErrorMessage(error, document)
         );
+    }
+
+    @Override
+    void showPaidWarningThen(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
+            mFragment.showWarning(warningType ,onProceed);
     }
 
     @Override

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="?attr/colorSurface"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/bs_content_padding">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/textScroll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/bs_space_l"
+                android:fillViewport="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/warningIcon">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/gc_analysis_hint_icon_size"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/warningTitle"
+                        android:gravity="center"
+                        style="@style/GiniCaptureTheme.Typography.Headline5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/bs_space_s" />
+
+                    <TextView
+                        android:id="@+id/warningDescription"
+                        android:gravity="center"
+                        style="@style/GiniCaptureTheme.Typography.Body1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+
+            <!-- Primary (blue, left) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/primaryButton"
+                style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/gc_cancel_transfer"
+                app:layout_constraintTop_toBottomOf="@id/textScroll"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/secondaryButton"
+                android:layout_marginTop="@dimen/bs_space_xl"
+                android:layout_marginBottom="@dimen/bs_space_xl"
+                android:layout_marginStart="@dimen/bs_space_xl"
+                android:layout_marginEnd="@dimen/bs_space_s"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintHorizontal_weight="1" />
+
+            <!-- Secondary (outlined, right) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/secondaryButton"
+                style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/gc_proceed_anyway"
+                app:layout_constraintTop_toTopOf="@id/primaryButton"
+                app:layout_constraintBottom_toBottomOf="@id/primaryButton"
+                app:layout_constraintStart_toEndOf="@id/primaryButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="@dimen/bs_space_s"
+                android:layout_marginEnd="@dimen/bs_space_xl"
+                app:layout_constraintHorizontal_weight="1" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

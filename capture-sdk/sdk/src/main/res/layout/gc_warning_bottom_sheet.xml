@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?attr/colorSurface"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/bs_content_padding">
+
+            <ImageView
+                android:id="@+id/warningIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:foregroundGravity="center"
+                android:layout_marginVertical="@dimen/gc_analysis_hint_icon_size"
+                android:background="@drawable/gc_bg_warning_circle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?attr/colorSecondary" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/textScroll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:overScrollMode="ifContentScrolls"
+                android:fillViewport="false"
+                android:clipToPadding="false"
+                android:layout_marginTop="@dimen/gc_analysis_hint_icon_size"
+                android:paddingStart="@dimen/gc_analysis_hint_icon_size"
+                android:paddingEnd="@dimen/gc_analysis_hint_icon_size"
+                app:layout_constraintTop_toBottomOf="@id/warningIcon"
+                app:layout_constraintBottom_toTopOf="@id/actions"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/warningIcon">
+
+                <TextView
+                    android:id="@+id/warningTitle"
+                    android:gravity="center"
+                    style="@style/GiniCaptureTheme.Typography.Headline5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/bs_space_s" />
+
+                <TextView
+                    android:id="@+id/warningDescription"
+                    android:gravity="center"
+                    style="@style/GiniCaptureTheme.Typography.Body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+            <LinearLayout
+                android:id="@+id/actions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/gc_analysis_hint_icon_size"
+                android:paddingStart="@dimen/gc_analysis_hint_icon_size"
+                android:paddingEnd="@dimen/gc_analysis_hint_icon_size"
+                android:paddingBottom="@dimen/gc_analysis_hint_icon_size"
+                app:layout_constraintTop_toBottomOf="@id/textScroll"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/primaryButton"
+                    style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gc_cancel_transfer" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/secondaryButton"
+                    style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/bs_space_s"
+                    android:text="@string/gc_proceed_anyway" />
+            </LinearLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

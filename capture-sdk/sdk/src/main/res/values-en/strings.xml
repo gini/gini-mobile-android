@@ -173,4 +173,13 @@
     <string name="gc_invoice_education_message">You can upload PDFs, images, or GIFs</string>
     <string name="gc_invoice_education_content_description">analyzing invoice in progress</string>
     <!--   endregion -->
+
+    <!--   region Warning -->
+    <string name="gc_cancel_transfer">Cancel transfer</string>
+    <string name="gc_proceed_anyway">Proceed anyway</string>
+    <string name="gc_document_marked_paid_title">Document marked as paid</string>
+    <string name="gc_document_marked_paid_desc">This document states that it has already been paid. Please check the note in the document to be sure.</string>
+    <string name="gc_warning_title_dialog">Warning Dialog</string>
+    <!--   endregion -->
+
 </resources>
