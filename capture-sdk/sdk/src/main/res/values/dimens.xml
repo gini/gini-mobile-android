@@ -48,17 +48,4 @@
     <dimen name="gc_unknown_banner_width">330dp</dimen>
     <dimen name="gc_unelevated_button_height">55dp</dimen>
     <dimen name="gc_snackbar_text_height">60dp</dimen>
-
-    <dimen name="bs_space_s">8dp</dimen>
-    <dimen name="bs_space_m">12dp</dimen>
-    <dimen name="bs_space_l">16dp</dimen>
-    <dimen name="bs_space_xl">24dp</dimen>
-    <dimen name="bs_spacing_horizontal">16dp</dimen>
-    <dimen name="bs_spacing_top">8dp</dimen>
-    <dimen name="bs_spacing_bottom">16dp</dimen>
-    <dimen name="bs_corner_radius">16dp</dimen>
-    <dimen name="bs_content_padding">16dp</dimen>
-    <dimen name="bs_spacing_horizontal_land">24dp</dimen>
-    <dimen name="bs_spacing_vertical_land">8dp</dimen>
-    <dimen name="bs_content_padding_tablet">24dp</dimen>
 </resources>

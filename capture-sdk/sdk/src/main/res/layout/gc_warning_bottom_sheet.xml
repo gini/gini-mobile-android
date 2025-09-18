@@ -14,7 +14,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/bs_content_padding">
+            android:padding="@dimen/gc_large">
 
             <ImageView
                 android:id="@+id/warningIcon"
@@ -57,7 +57,7 @@
                     style="@style/GiniCaptureTheme.Typography.Headline5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/bs_space_s" />
+                    android:paddingBottom="@dimen/gc_medium" />
 
                 <TextView
                     android:id="@+id/warningDescription"
@@ -83,18 +83,18 @@
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/primaryButton"
+                    android:id="@+id/cancel_button"
                     style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/gc_cancel_transfer" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/secondaryButton"
+                    android:id="@+id/proceed_button"
                     style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/bs_space_s"
+                    android:layout_marginTop="@dimen/gc_medium"
                     android:text="@string/gc_proceed_anyway" />
             </LinearLayout>
 

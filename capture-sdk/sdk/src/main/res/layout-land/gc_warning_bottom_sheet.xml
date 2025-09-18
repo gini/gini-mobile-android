@@ -13,13 +13,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/bs_content_padding">
+            android:padding="@dimen/gc_large">
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/textScroll"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/bs_space_l"
+                android:layout_marginStart="@dimen/gc_medium"
                 android:fillViewport="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
                         style="@style/GiniCaptureTheme.Typography.Headline5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/bs_space_s" />
+                        android:paddingBottom="@dimen/gc_medium" />
 
                     <TextView
                         android:id="@+id/warningDescription"
@@ -51,7 +51,7 @@
 
             <!-- Primary (blue, left) -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/primaryButton"
+                android:id="@+id/cancel_button"
                 style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -59,27 +59,27 @@
                 app:layout_constraintTop_toBottomOf="@id/textScroll"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/secondaryButton"
-                android:layout_marginTop="@dimen/bs_space_xl"
-                android:layout_marginBottom="@dimen/bs_space_xl"
-                android:layout_marginStart="@dimen/bs_space_xl"
-                android:layout_marginEnd="@dimen/bs_space_s"
+                app:layout_constraintEnd_toStartOf="@id/proceed_button"
+                android:layout_marginTop="@dimen/gc_large_24"
+                android:layout_marginBottom="@dimen/gc_large_24"
+                android:layout_marginStart="@dimen/gc_large_24"
+                android:layout_marginEnd="@dimen/gc_large_24"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintHorizontal_weight="1" />
 
             <!-- Secondary (outlined, right) -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/secondaryButton"
+                android:id="@+id/proceed_button"
                 style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/gc_proceed_anyway"
-                app:layout_constraintTop_toTopOf="@id/primaryButton"
-                app:layout_constraintBottom_toBottomOf="@id/primaryButton"
-                app:layout_constraintStart_toEndOf="@id/primaryButton"
+                app:layout_constraintTop_toTopOf="@id/cancel_button"
+                app:layout_constraintBottom_toBottomOf="@id/cancel_button"
+                app:layout_constraintStart_toEndOf="@id/cancel_button"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginStart="@dimen/bs_space_s"
-                android:layout_marginEnd="@dimen/bs_space_xl"
+                android:layout_marginStart="@dimen/gc_large"
+                android:layout_marginEnd="@dimen/gc_large_24"
                 app:layout_constraintHorizontal_weight="1" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

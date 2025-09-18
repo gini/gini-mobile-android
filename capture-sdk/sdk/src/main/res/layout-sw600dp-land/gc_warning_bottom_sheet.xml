@@ -12,7 +12,7 @@
             android:id="@+id/WaringBottomSheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/bs_content_padding">
+            android:padding="@dimen/gc_large">
 
             <ImageView
                 android:id="@+id/warningIcon"
@@ -40,7 +40,7 @@
                 app:layout_constraintStart_toStartOf="@+id/WaringBottomSheet"
                 app:layout_constraintEnd_toEndOf="@+id/WaringBottomSheet"
                 app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage"
-                android:layout_marginStart="@dimen/bs_space_m">
+                android:layout_marginStart="@dimen/gc_medium_12">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
                     style="@style/GiniCaptureTheme.Typography.Headline5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/bs_space_s" />
+                    android:paddingBottom="@dimen/gc_medium" />
 
                 <TextView
                     android:id="@+id/warningDescription"
@@ -71,7 +71,7 @@
             </androidx.core.widget.NestedScrollView>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/primaryButton"
+                android:id="@+id/cancel_button"
                 style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -84,18 +84,18 @@
                  />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/secondaryButton"
+                android:id="@+id/proceed_button"
                 style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/bs_space_s"
+                android:layout_marginTop="@dimen/gc_medium"
                 android:layout_marginHorizontal="@dimen/gc_analysis_hint_icon_size"
                 android:layout_marginBottom="@dimen/gc_analysis_hint_icon_size"
                 android:text="@string/gc_proceed_anyway"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/primaryButton" />
+                app:layout_constraintTop_toBottomOf="@id/cancel_button" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

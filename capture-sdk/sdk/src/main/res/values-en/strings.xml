@@ -180,6 +180,7 @@
     <string name="gc_document_marked_paid_title">Document marked as paid</string>
     <string name="gc_document_marked_paid_desc">This document states that it has already been paid. Please check the note in the document to be sure.</string>
     <string name="gc_warning_title_dialog">Warning Dialog</string>
+    <string name="warning_icon_description">Warning icon</string>
     <!--   endregion -->
 
 </resources>

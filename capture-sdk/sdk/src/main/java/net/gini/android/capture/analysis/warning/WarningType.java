@@ -4,6 +4,12 @@ import androidx.annotation.StringRes;
 
 import net.gini.android.capture.R;
 
+/**
+ * Represents the different warning scenarios that can be shown in the UI
+ * (e.g. inside {@link WarningBottomSheet}).
+ * Each enum value holds the resource IDs for its title and description,
+ * so that the UI can easily fetch localized strings when displaying the warning.
+ */
 public enum WarningType {
     DOCUMENT_MARKED_AS_PAID(
             R.string.gc_document_marked_paid_title,

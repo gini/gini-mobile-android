@@ -15,6 +15,17 @@ import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcWarningBottomSheetBinding
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 
+/**
+ * A reusable bottom sheet (or dialog on tablets) that displays a warning message.
+ *
+ * Responsibilities:
+ * - Presents warning information to the user in a modal sheet/dialog.
+ * - Provides two actions: cancel (primary button) and proceed (secondary button).
+ * - Handles accessibility (content descriptions, pane title).
+ * - Adapts its layout and behavior for phones (BottomSheetDialog) and tablets (AlertDialog).
+ *
+ * Use [newInstance] with a [WarningType] to configure the title and description.
+ */
 
 class WarningBottomSheet : BottomSheetDialogFragment() {
 
@@ -30,16 +41,13 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
 
     var listener: Listener? = null
 
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val type = arguments?.getSerializable(ARG_TYPE) as? WarningType
         if (type != null) {
             titleText = getString(type.titleRes)
-            descText  = getString(type.descriptionRes)
-        } else {
-            // Fallback if nothing passed
-            titleText = arguments?.getCharSequence(ARG_TITLE)
-            descText  = arguments?.getCharSequence(ARG_DESC)
+            descText = getString(type.descriptionRes)
         }
     }
 
@@ -52,7 +60,11 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (resources.getBoolean(R.bool.gc_is_tablet)) {
             activity?.let {
-                binding = GcWarningBottomSheetBinding.inflate(getLayoutInflaterWithGiniCaptureTheme(it.layoutInflater), null, false)
+                binding = GcWarningBottomSheetBinding.inflate(
+                    getLayoutInflaterWithGiniCaptureTheme(it.layoutInflater),
+                    null,
+                    false
+                )
 
                 val builder = AlertDialog.Builder(context)
                 builder.setView(binding.root)
@@ -70,9 +82,7 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
         if (resources.getBoolean(R.bool.gc_is_tablet)) {
             return super.getTheme()
         }
-        return super.getTheme()
-        // Use your app theme for bottom sheets
-//        return R.style.GiniCaptureTheme_BottomSheetDialog
+        return R.style.GiniCaptureTheme_BottomSheetDialog
     }
 
     override fun onCreateView(
@@ -94,26 +104,36 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
         ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.gc_warning_title_dialog))
         bindUi()
     }
-    private fun handleBottomSheetConfigurations() {
-        dialog?.setOnShowListener {
-            val bottomSheetInternal =
-                (it as? BottomSheetDialog)?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            (it as? BottomSheetDialog)?.setCanceledOnTouchOutside(false)
 
-            bottomSheetInternal?.let {
+    private fun handleBottomSheetConfigurations() {
+        dialog?.setOnShowListener { dlg ->
+            val bottomSheetInternal = (dlg as? BottomSheetDialog)
+                ?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+                ?: return@setOnShowListener
+
+            dlg.setCanceledOnTouchOutside(false)
+
+            this.isCancelable = false
+
+            bottomSheetInternal.let {
                 BottomSheetBehavior.from(bottomSheetInternal).apply {
                     isDraggable = false
                     isHideable = false
+                    skipCollapsed = true
                     state = BottomSheetBehavior.STATE_EXPANDED
                     addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                        override fun onStateChanged(bottomSheet: View, newState: Int) {
-                            if (newState in listOf(
-                                    BottomSheetBehavior.STATE_HIDDEN,
-                                    STATE_COLLAPSED
-                                )
-                            )
-                                dismiss()
-
+                        override fun onStateChanged(bs: View, newState: Int) {
+                            when (newState) {
+                                BottomSheetBehavior.STATE_DRAGGING,
+                                BottomSheetBehavior.STATE_SETTLING,
+                                BottomSheetBehavior.STATE_COLLAPSED -> {
+                                    state = BottomSheetBehavior.STATE_EXPANDED
+                                }
+                                BottomSheetBehavior.STATE_HIDDEN -> {
+                                    state = BottomSheetBehavior.STATE_EXPANDED
+                                }
+                                else -> Unit
+                            }
                         }
 
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
@@ -122,28 +142,26 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
             }
         }
     }
+
     private fun bindUi() {
         binding.warningTitle.text = titleText
         binding.warningDescription.text = descText
-        // Icon is decorative only
-        binding.warningIcon?.contentDescription = null
-        binding.warningIcon?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
 
-        binding.primaryButton.setOnClickListener {
+        binding.warningIcon?.contentDescription = getString(R.string.warning_icon_description)
+        binding.warningIcon?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+
+        binding.cancelButton.setOnClickListener {
             listener?.onCancelAction()
             dismissAllowingStateLoss()
         }
-        binding.secondaryButton.setOnClickListener {
+        binding.proceedButton.setOnClickListener {
             listener?.onProceedAction()
             dismissAllowingStateLoss()
         }
     }
 
     companion object {
-        private const val ARG_TYPE  = "arg_type"
-        private const val ARG_TITLE = "arg_title" // kept for backward-compat if needed
-        private const val ARG_DESC  = "arg_desc"
-
+        private const val ARG_TYPE = "arg_type"
         @JvmStatic
         fun newInstance(type: WarningType) = WarningBottomSheet().apply {
             arguments = Bundle().apply {

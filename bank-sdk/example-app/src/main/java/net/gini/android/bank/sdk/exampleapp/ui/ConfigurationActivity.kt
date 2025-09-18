@@ -560,6 +560,7 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
+        //enable payment hints for showing warning
         binding.layoutAnalysisToggles.switchSetupPaymentHints.setOnCheckedChangeListener{ _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
