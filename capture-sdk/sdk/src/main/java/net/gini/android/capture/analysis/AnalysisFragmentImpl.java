@@ -227,7 +227,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showPaidWarningThen(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
-            mFragment.showWarning(warningType ,onProceed);
+            mFragment.showWarning(warningType, onProceed);
     }
 
     @Override

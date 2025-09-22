@@ -496,4 +496,3 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         return state.isPaid();
     }
 }
-

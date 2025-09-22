@@ -151,7 +151,7 @@ data class Configuration(
     // enable return reasons dialog
     val isReturnReasonsEnabled: Boolean = false,
 
-    // enable show waring for paid invoices
+    // enable show warning for paid invoices
     val isPaymentHintsEnabled: Boolean = true,
 
     // Digital invoice onboarding custom illustration
