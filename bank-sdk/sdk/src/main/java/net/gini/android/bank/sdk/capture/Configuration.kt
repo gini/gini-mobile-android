@@ -254,7 +254,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
-        .setShowPaymentHintsEnabled(configuration.paymentHintsEnabled)
+        .setPaymentHintsEnabled(configuration.paymentHintsEnabled)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
         .addCustomUploadMetadata(GiniBank.USER_COMMENT_GINI_BANK_VERSION, BuildConfig.VERSION_NAME)

@@ -1341,7 +1341,7 @@ public class GiniCapture {
             return this;
         }
 
-        public Builder setShowPaymentHintsEnabled(final Boolean enabled){
+        public Builder setPaymentHintsEnabled(final Boolean enabled){
             isPaymentHintsEnabled = enabled;
             return this;
         }

@@ -2,13 +2,13 @@ package net.gini.android.capture.analysis.warning
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.capture.R
@@ -41,10 +41,15 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
 
     var listener: Listener? = null
 
-    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val type = arguments?.getSerializable(ARG_TYPE) as? WarningType
+        val type: WarningType? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable(ARG_TYPE, WarningType::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable(ARG_TYPE) as? WarningType
+        }
+
         if (type != null) {
             titleText = getString(type.titleRes)
             descText = getString(type.descriptionRes)

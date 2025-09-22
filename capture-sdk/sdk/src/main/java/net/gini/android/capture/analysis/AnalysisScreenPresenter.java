@@ -329,7 +329,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 } else {
                                     proceedWithExtractions(resultHolder);
                                 }
-                                break;
                             }
                             case NO_NETWORK_SERVICE:
                                 break;

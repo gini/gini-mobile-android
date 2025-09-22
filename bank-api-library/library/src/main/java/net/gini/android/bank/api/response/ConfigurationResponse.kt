@@ -28,6 +28,6 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     qrCodeEducationEnabled = qrCodeEducationEnabled ?: false,
     instantPaymentEnabled = instantPaymentEnabled ?: false,
     isEInvoiceEnabled = eInvoiceEnabled ?: false,
-    paymentHintsEnabled =  paymentHintsEnabled ?:false
+    paymentHintsEnabled = paymentHintsEnabled ?: false
 )
 

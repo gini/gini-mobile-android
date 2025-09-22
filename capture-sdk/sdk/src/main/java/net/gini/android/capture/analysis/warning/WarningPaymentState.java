@@ -22,8 +22,8 @@ import androidx.annotation.Nullable;
         if (raw == null) return UNKNOWN;
         switch (raw.trim()) {
             case "Paid":      return PAID;
-            case "ToBePaid":  return TO_BE_PAID; // in future versions this might be "ToBePaid"
-            case "booked":    return BOOKED; // in future versions this might be "Booked"
+            case "ToBePaid":  return TO_BE_PAID;
+            case "booked":    return BOOKED;
             default:          return UNKNOWN;
         }
     }
