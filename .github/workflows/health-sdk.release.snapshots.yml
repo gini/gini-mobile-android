@@ -21,13 +21,13 @@
 #           cache: 'gradle'
 
 #       - name: setup ruby
-#         uses: ruby/setup-ruby@v1
+#         uses: ruby/setup-ruby@44511735964dcb71245e7e55f72539531f7bc0eb # v1.257.0
 #         with:
 #           ruby-version: '3.2.0'
 #           bundler-cache: true
 
 #       - name: "publish to gini's maven snapshots repo at https://repo.gini.net/nexus/content/repositories/snapshots"
-#         uses: maierj/fastlane-action@v3.0.0
+#         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7  # v3.1.0
 #         with:
 #           lane: 'publish_to_maven_snapshots_repo'
 #           options: >
@@ -42,7 +42,7 @@
 #             }
 
 #       - name: "publish to Maven Central snapshots repo at https://oss.sonatype.org/content/repositories/snapshots/"
-#         uses: maierj/fastlane-action@v3.0.0
+#         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7  # v3.1.0
 #         with:
 #           lane: 'publish_to_maven_snapshots_repo'
 #           options: >
