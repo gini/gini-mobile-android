@@ -267,6 +267,7 @@ internal class DigitalInvoiceScreenPresenter(
     }
 
     override fun stop() {
+        TODO("Not yet implemented")
     }
 
     @VisibleForTesting
