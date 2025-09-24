@@ -65,7 +65,7 @@ class DocumentAnalyzer @JvmOverloads internal constructor(
                     listener?.onExtractionsReceived(extractionsResource.data.specificExtractions)
                 }
                 is Resource.Error -> {
-                    Log.d(LOG_TAG, "Analysis failed for document ${giniApiDocument?.id}: ${extractionsResource!!.message}")
+                    Log.d(LOG_TAG, "Analysis failed for document ${giniApiDocument?.id}: ${extractionsResource.message}")
                     listener?.onException(Exception(extractionsResource.message, extractionsResource.exception))
                 }
                 is Resource.Cancelled -> {}
