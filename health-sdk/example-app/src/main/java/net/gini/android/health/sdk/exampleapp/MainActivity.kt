@@ -1,28 +1,19 @@
 package net.gini.android.health.sdk.exampleapp
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.android.LogcatAppender
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
-import com.google.android.material.tabs.TabLayoutMediator
 import net.gini.android.health.sdk.exampleapp.configuration.ConfigurationFragment
-import net.gini.android.health.sdk.exampleapp.databinding.ActivityMainBinding
 import net.gini.android.health.sdk.exampleapp.invoices.ui.AppCompatThemeInvoicesActivity
 import net.gini.android.health.sdk.exampleapp.invoices.ui.InvoicesActivity
 import net.gini.android.health.sdk.exampleapp.orders.OrdersActivity
-import net.gini.android.health.sdk.exampleapp.pager.PagerAdapter
-import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadActivity
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
-import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
