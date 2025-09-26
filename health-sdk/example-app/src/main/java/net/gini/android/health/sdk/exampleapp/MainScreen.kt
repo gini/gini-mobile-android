@@ -280,7 +280,7 @@ fun MainScreen(
             )
         }
 
-//        val isLoading by viewModel.isLoading.collectAsState(initial = false) // add this in VM if not present
+//        val isLoading by viewModel.isLoading.collectAsState(initial = false)
 //        if (isLoading) {
 //            CircularProgressIndicator(
 //                modifier = Modifier.align(Alignment.Center)
