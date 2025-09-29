@@ -320,7 +320,7 @@ internal class DigitalInvoice(
         }
     }
 
-    private fun transformLineItemExtractions(extraction:  GiniCaptureCompoundExtraction) : MutableList<MutableMap<String, GiniCaptureSpecificExtraction>> {
+    private fun transformLineItemExtractions(extraction: GiniCaptureCompoundExtraction): MutableList<MutableMap<String, GiniCaptureSpecificExtraction>> {
         return extraction.specificExtractionMaps.mapIndexed { index, lineItemExtractions ->
             selectableLineItems.find { it.lineItem.id.toInt() == index }
                 ?.let { sli ->
