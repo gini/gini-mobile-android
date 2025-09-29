@@ -2,10 +2,6 @@ package net.gini.android.core.api.authorization;
 
 
 import net.gini.android.core.api.authorization.apimodels.SessionToken;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Date;
 
 
@@ -41,7 +37,7 @@ public class Session {
         return now.after(mExpirationDate);
     }
 
-    public static Session fromAPIResponse(final SessionToken apiResponse){
+    public static Session fromAPIResponse(final SessionToken apiResponse) {
         final String accessToken = apiResponse.getAccessToken();
         final Date now = new Date();
         final long expirationTime = now.getTime() + apiResponse.getExpiresIn() * 1000;

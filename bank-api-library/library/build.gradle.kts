@@ -5,7 +5,7 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
+    alias(libs.plugins.devtools.ksp)
 }
 
 android {
@@ -77,9 +77,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.moshi.core)
-    kapt(libs.moshi.codegen)
+    ksp(libs.moshi.codegen)
 
-    kaptAndroidTest(libs.moshi.codegen)
+    kspAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)

@@ -5,7 +5,7 @@ import net.gini.gradle.readLocalPropertiesToMap
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
+    alias(libs.plugins.devtools.ksp)
 }
 
 android {
@@ -95,21 +95,21 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.koin.androidx.scope)
-    implementation(libs.koin.androidx.viewmodel)
-    implementation(libs.koin.androidx.fragment)
+
     implementation(libs.insetter)
     implementation(libs.datastore.preferences)
     implementation(libs.moshi.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(project(":merchant-sdk:sdk"))
 
-    kapt(libs.moshi.codegen)
-    implementation(libs.logback.android.core)
-    implementation(libs.logback.android.classic) {
-        // workaround issue #73
-        exclude(group = "com.google.android", module = "android")
-    }
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
+    ksp(libs.moshi.codegen)
+    implementation(libs.logback.android)
+
 
     testImplementation(libs.junit)
 

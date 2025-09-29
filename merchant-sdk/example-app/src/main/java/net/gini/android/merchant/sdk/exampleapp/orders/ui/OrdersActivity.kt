@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -29,12 +30,11 @@ import net.gini.android.merchant.sdk.exampleapp.orders.ui.model.OrderItem
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.merchant.sdk.integratedFlow.PaymentFragment
 import net.gini.android.merchant.sdk.util.DisplayedScreen
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
 class OrdersActivity : AppCompatActivity() {
 
-    private val viewModel: OrdersViewModel by viewModel()
+    private val viewModel: OrdersViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

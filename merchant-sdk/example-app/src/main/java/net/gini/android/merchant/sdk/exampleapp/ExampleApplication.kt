@@ -5,6 +5,7 @@ import net.gini.android.merchant.sdk.exampleapp.di.giniModule
 import net.gini.android.merchant.sdk.exampleapp.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import org.koin.fileProperties
 
 class ExampleApplication : Application() {
 

@@ -8,6 +8,7 @@ plugins {
     id("kotlin-parcelize")
     id("jacoco")
     id("androidx.navigation.safeargs")
+    alias(libs.plugins.compose.compiler)
 }
 
 jacoco {
@@ -54,9 +55,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
 
 
     buildTypes {
@@ -176,7 +174,7 @@ dependencies {
     testImplementation(libs.androidx.test.espresso.intents)
     testImplementation(libs.jUnitParams)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation (libs.json.testing)
+    testImplementation (libs.jsonJava)
     testImplementation(libs.mockk)
 
     debugImplementation(libs.androidx.test.core.ktx)
