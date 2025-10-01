@@ -34,13 +34,13 @@ import com.nhaarman.mockitokotlin2.whenever
 import java.util.UUID
 
 /**
- * This class is responsible for testing the behavior of BufferedUserAnalyticsEventTracker
- * in-case the user journey analytics is enabled or disabled from the Gini API.
- * for more detailed information how Analytics works in this project,
- * Please refer to the documentation written in the Unit tests of
- * BufferedUserAnalyticsEventTracker
- * [net.gini.android.capture.tracking.BufferedUserAnalyticsEventTrackerTest]
- *
+ * Integration test to verify the correct behavior of Analytics.
+ * Classes involved
+ * - [GiniCaptureFragment]
+ * - [GiniCapture]
+ * - [GiniCapture.Internal]
+ * - [NetworkRequestsManager]
+ * - [BufferedUserAnalyticsEventTracker]
  * */
 
 @RunWith(AndroidJUnit4::class)
