@@ -108,10 +108,9 @@ internal class BufferedUserAnalyticsEventTracker(
     }
 
     private fun trySendEvents(): Boolean {
-        if (!mIsUserJourneyEnabled)
-            return false
-        if (eventTrackers.isEmpty()) {
-            LOG.debug("No trackers found. Skipping sending events")
+        if (!mIsUserJourneyEnabled || eventTrackers.isEmpty()) {
+            if (eventTrackers.isEmpty())
+                LOG.debug("No trackers found. Skipping sending events")
             return false
         }
 
