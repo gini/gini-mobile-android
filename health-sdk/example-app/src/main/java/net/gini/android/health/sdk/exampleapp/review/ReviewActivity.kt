@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory
 
 class ReviewActivity : AppCompatActivity() {
 
-    private val viewModel: ReviewViewModel by viewModels()
+    private val viewModel: ReviewViewModel by viewModel()
     private var doctorName: SpecificExtraction? = null
     private var documentId: String? = null
 

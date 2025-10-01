@@ -12,7 +12,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -32,6 +31,7 @@ import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithT
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
 import java.math.BigDecimal
 import java.text.DecimalFormat
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.NumberFormat
 import java.util.Locale
 import net.gini.android.internal.payment.R as internalR
@@ -40,7 +40,7 @@ class OrderDetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentOrderDetailsBinding
     private val ordersViewModel: OrdersViewModel by activityViewModels()
-    private val orderDetailsViewModel: OrderDetailsViewModel by viewModels()
+    private val orderDetailsViewModel: OrderDetailsViewModel by viewModel()
     private val amountWatcher = object : TextWatcher {
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

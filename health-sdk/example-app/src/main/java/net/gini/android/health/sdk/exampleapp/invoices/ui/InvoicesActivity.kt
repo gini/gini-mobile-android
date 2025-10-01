@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.activity.viewModels
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
 
 open class InvoicesActivity : AppCompatActivity() {
 
-    private val viewModel: InvoicesViewModel by viewModels()
+    private val viewModel: InvoicesViewModel by viewModel()
     private lateinit var binding: ActivityInvoicesBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
