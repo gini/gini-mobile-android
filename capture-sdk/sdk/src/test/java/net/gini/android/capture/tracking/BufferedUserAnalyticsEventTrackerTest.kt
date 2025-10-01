@@ -14,38 +14,27 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
 
 /**
- * How do our analytics work?
+ * Tests the behavior of [BufferedUserAnalyticsEventTracker].
  *
- * We are initializing the [BufferedUserAnalyticsEventTracker] and it adds all the trackers through
- * [BufferedUserAnalyticsEventTracker.setPlatformTokens] into a set.
- * If the config value (isUserJourneyEnabled) from the backend is false, no tracker should be
- * added to the set, and eventually no event will be tracked.
+ * If userJourney is disabled, no tracker is added and events/properties return false.
+ * If enabled, trackers are added and methods return true.
  *
- * If the value is true, the passed tracker (e.g [AmplitudeUserAnalyticsEventTracker])
- * will be added to the set and all the events will be tracked.
- *
- * This class will test this behaviour of [BufferedUserAnalyticsEventTracker]. If we pass false,
- * No tracker should be added and vice versa.
- *
- * Things to consider:
- * We are using queues to store the events, user properties and super properties.
- * We can not test by checking these queues, because they are private, we can expose them for
- * testing, but the main problem is that we are using polling for the queues
- * in [BufferedUserAnalyticsEventTracker.trySendEvents] which empties the queues, so even if we
- * expose them, it will be always empty after trackEvent is called,
- * on the other hand, the trackers serve the same thing. If the tracker is empty, it
- * already means that no events will be tracked. That's why every test of this class will check
- * the trackers set. For all positive and negative cases.
- *
- * */
+ * Each test verifies this behavior by checking method results instead of internal queues.
+ */
 
 @RunWith(AndroidJUnit4::class)
 class BufferedUserAnalyticsEventTrackerTest {
 
     private lateinit var tracker: BufferedUserAnalyticsEventTracker
     private val mockContext: Context = mockk(relaxed = true)
+
+    // Random testSessionId for testing
     private val testSessionId = "test-session"
+
+    // Random api key for testing
     private val testApiKey = "test-api-key"
+
+    // This is an arbitrary version for testing
     private val testCaptureVersion = "3.10.1"
 
     @Before
@@ -54,62 +43,62 @@ class BufferedUserAnalyticsEventTrackerTest {
     }
 
     @Test
-    fun `when userJourney disabled, Initialize does not add trackers`() {
-        initializeTracker(isUserJourneyEnabled = false)
+    fun `trackEvent returns false when userJourney is disabled`() {
+        setupTrackerWithUserJourney(isUserJourneyEnabled = false)
 
-        tracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
+        val result = tracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
 
-        assertTrue(tracker.getTrackers().isEmpty())
+        assertFalse(result)
     }
 
 
     @Test
-    fun `when userJourney enabled, Initialize does add trackers`() {
-        initializeTracker(isUserJourneyEnabled = true)
+    fun `trackEvent returns true when userJourney is enabled`() {
+        setupTrackerWithUserJourney(isUserJourneyEnabled = true)
 
-        tracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
+        val result = tracker.trackEvent(UserAnalyticsEvent.SDK_OPENED)
 
-        assertFalse(tracker.getTrackers().isEmpty())
+        assertTrue(result)
     }
 
 
     @Test
-    fun `when userJourney disabled, setEventSuperProperty does not add trackers`() {
-        initializeTracker(isUserJourneyEnabled = false)
+    fun `setEventSuperProperty returns false when userJourney is disabled`() {
+        setupTrackerWithUserJourney(isUserJourneyEnabled = false)
 
-        tracker.setEventSuperProperty(emptySet())
+        val result = tracker.setEventSuperProperty(emptySet())
 
-        assertTrue(tracker.getTrackers().isEmpty())
+        assertFalse(result)
     }
 
     @Test
-    fun `when userJourney enabled, setEventSuperProperty does add trackers`() {
-        initializeTracker(isUserJourneyEnabled = true)
+    fun `setEventSuperProperty returns true when userJourney is enabled`() {
+        setupTrackerWithUserJourney(isUserJourneyEnabled = true)
 
-        tracker.setEventSuperProperty(emptySet())
+        val result = tracker.setEventSuperProperty(emptySet())
 
-        assertFalse(tracker.getTrackers().isEmpty())
+        assertTrue(result)
     }
 
     @Test
-    fun `when userJourney disabled, trackEvent does not add tracker`() {
-        initializeTracker(isUserJourneyEnabled = false)
+    fun `trackEvent with properties returns false when userJourney is disabled`() {
+        setupTrackerWithUserJourney(isUserJourneyEnabled = false)
 
-        tracker.trackEvent(UserAnalyticsEvent.SDK_OPENED, emptySet())
+        val result = tracker.trackEvent(UserAnalyticsEvent.SDK_OPENED, emptySet())
 
-        assertTrue(tracker.getTrackers().isEmpty())
+        assertFalse(result)
     }
 
     @Test
-    fun `when userJourney enabled, trackEvent does add tracker`() {
-        initializeTracker(isUserJourneyEnabled = true)
+    fun `trackEvent with properties returns true when userJourney is enabled`() {
+        setupTrackerWithUserJourney(isUserJourneyEnabled = true)
 
-        tracker.trackEvent(UserAnalyticsEvent.SDK_OPENED, emptySet())
+        val result = tracker.trackEvent(UserAnalyticsEvent.SDK_OPENED, emptySet())
 
-        assertFalse(tracker.getTrackers().isEmpty())
+        assertTrue(result)
     }
 
-    private fun initializeTracker(isUserJourneyEnabled: Boolean) {
+    private fun setupTrackerWithUserJourney(isUserJourneyEnabled: Boolean) {
 
         tracker.setPlatformTokens(
             AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(testApiKey),
@@ -119,7 +108,7 @@ class BufferedUserAnalyticsEventTrackerTest {
 
         tracker.setUserProperty(
             setOf(
-                UserAnalyticsUserProperty.CaptureSdkVersionName(testCaptureVersion),
+                UserAnalyticsUserProperty.CaptureSdkVersionName(testCaptureVersion)
             )
         )
     }
