@@ -121,7 +121,8 @@ class ConfigurationViewModel @Inject constructor(
             documentImportEnabledFileTypes = configuration.documentImportEnabledFileTypes,
             // enable bottom navigation bar
             bottomNavigationBarEnabled = configuration.isBottomNavigationBarEnabled,
-
+            // enable payment hints
+            paymentHintsEnabled = configuration.isPaymentHintsEnabled,
             // enable onboarding screens at first launch
             showOnboardingAtFirstRun = configuration.isOnboardingAtFirstRunEnabled,
             // enable onboarding at every launch
