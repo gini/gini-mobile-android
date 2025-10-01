@@ -65,52 +65,54 @@ internal class BufferedUserAnalyticsEventTracker(
     }
 
 
-    override fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>) {
+    override fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>): Boolean {
         if (!mIsUserJourneyEnabled)
-            return
+            return false
         this.eventSuperProperties.add(property)
-        trySendEvents()
+        return trySendEvents()
     }
 
-    override fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty) {
-        setEventSuperProperty(setOf(property))
+    override fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty): Boolean {
+        return setEventSuperProperty(setOf(property))
     }
 
-    override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>) {
+    override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>): Boolean {
         if (!mIsUserJourneyEnabled)
-            return
+            return false
         this.userProperties.add(userProperties)
-        trySendEvents()
+        return trySendEvents()
     }
 
-    override fun setUserProperty(userProperty: UserAnalyticsUserProperty) {
-        setUserProperty(setOf(userProperty))
+    override fun setUserProperty(userProperty: UserAnalyticsUserProperty): Boolean {
+        return setUserProperty(setOf(userProperty))
     }
 
     override fun trackEvent(
         eventName: UserAnalyticsEvent,
         properties: Set<UserAnalyticsEventProperty>
-    ) {
+    ): Boolean {
         if (!mIsUserJourneyEnabled)
-            return
+            return false
         events.add(Pair(eventName, properties))
-        trySendEvents()
+        return trySendEvents()
     }
 
-    override fun trackEvent(eventName: UserAnalyticsEvent) {
-        trackEvent(eventName, emptySet())
+    override fun trackEvent(eventName: UserAnalyticsEvent): Boolean {
+        return trackEvent(eventName, emptySet())
     }
 
-    override fun flushEvents() {
-        amplitude?.flushEvents()
+    override fun flushEvents(): Boolean {
+        return amplitude?.let {
+            amplitude?.flushEvents()
+        } ?: false
     }
 
-    private fun trySendEvents() {
+    private fun trySendEvents(): Boolean {
         if (!mIsUserJourneyEnabled)
-            return
+            return false
         if (eventTrackers.isEmpty()) {
             LOG.debug("No trackers found. Skipping sending events")
-            return
+            return false
         }
 
         LOG.debug("${eventTrackers.size} Tracker(s) found. Sending events...")
@@ -136,6 +138,7 @@ internal class BufferedUserAnalyticsEventTracker(
 
 
         LOG.debug("Events sent")
+        return true
     }
 
     private fun everyTracker(block: (UserAnalyticsEventTracker) -> Unit) {
