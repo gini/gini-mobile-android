@@ -4,12 +4,9 @@ import android.app.Activity
 import com.google.common.collect.Lists
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
 import junitparams.JUnitParamsRunner
@@ -53,8 +50,8 @@ class OnboardingScreenPresenterTest {
     @Before
     fun setUp() {
         mUserAnalyticsEventTracker = mockk<UserAnalyticsEventTracker>().apply {
-            every { trackEvent(any()) } just Runs
-            every { trackEvent(any(), any()) } just Runs
+            every { trackEvent(any()) } returns true
+            every { trackEvent(any(), any()) } returns true
         }
         mActivity = mockk()
 

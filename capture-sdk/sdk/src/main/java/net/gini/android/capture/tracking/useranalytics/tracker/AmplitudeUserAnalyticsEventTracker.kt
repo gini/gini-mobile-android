@@ -45,24 +45,26 @@ internal class AmplitudeUserAnalyticsEventTracker(
         context
     )
 
-    override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>) {
+    override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>) : Boolean {
         this.userProperties = userProperties.associate { it.getPair() }
+        return true
     }
 
-    override fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty) {
-        setEventSuperProperty(setOf(property))
+    override fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty) : Boolean{
+        return setEventSuperProperty(setOf(property))
     }
 
-    override fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>) {
+    override fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>) : Boolean{
         superProperties.addAll(property)
+        return true
     }
 
-    override fun setUserProperty(userProperty: UserAnalyticsUserProperty) {
-        setUserProperty(setOf(userProperty))
+    override fun setUserProperty(userProperty: UserAnalyticsUserProperty): Boolean {
+        return setUserProperty(setOf(userProperty))
     }
 
-    override fun trackEvent(eventName: UserAnalyticsEvent) {
-        trackEvent(eventName, emptySet())
+    override fun trackEvent(eventName: UserAnalyticsEvent) : Boolean{
+        return trackEvent(eventName, emptySet())
     }
 
     private val events: MutableList<AmplitudeEventModel> = mutableListOf()
@@ -70,7 +72,7 @@ internal class AmplitudeUserAnalyticsEventTracker(
     override fun trackEvent(
         eventName: UserAnalyticsEvent,
         properties: Set<UserAnalyticsEventProperty>
-    ) {
+    ) : Boolean{
 
         val superPropertiesMap = superProperties.associate { it.getPair() }
         val propertiesMap = properties.associate { it.getPair() }
@@ -102,6 +104,7 @@ internal class AmplitudeUserAnalyticsEventTracker(
 
         LOG.debug("\nEvent: ${eventName.eventName}\n" +
                 finalProperties.toList().joinToString("\n") { "  ${it.first}=${it.second}" })
+        return true
     }
 
     fun startRepeatingJob(): Job {
@@ -113,10 +116,11 @@ internal class AmplitudeUserAnalyticsEventTracker(
         }
     }
 
-    override fun flushEvents() {
+    override fun flushEvents() : Boolean{
         CoroutineScope(Dispatchers.IO).launch {
             sendEventsToAmplitudeApi()
         }
+        return true
     }
 
     private fun sendEventsToAmplitudeApi() {
