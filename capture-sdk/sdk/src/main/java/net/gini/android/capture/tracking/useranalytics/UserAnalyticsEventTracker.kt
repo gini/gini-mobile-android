@@ -7,19 +7,22 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsU
 
 interface UserAnalyticsEventTracker {
 
-    fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty)
+    fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty): Boolean
 
-    fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>)
+    fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>): Boolean
 
-    fun setUserProperty(userProperty: UserAnalyticsUserProperty)
+    fun setUserProperty(userProperty: UserAnalyticsUserProperty): Boolean
 
-    fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>)
+    fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>): Boolean
 
-    fun trackEvent(eventName: UserAnalyticsEvent)
+    fun trackEvent(eventName: UserAnalyticsEvent): Boolean
 
-    fun trackEvent(eventName: UserAnalyticsEvent, properties: Set<UserAnalyticsEventProperty>)
+    fun trackEvent(
+        eventName: UserAnalyticsEvent,
+        properties: Set<UserAnalyticsEventProperty>
+    ): Boolean
 
-    fun flushEvents()
+    fun flushEvents(): Boolean
 }
 
 
