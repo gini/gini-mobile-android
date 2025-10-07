@@ -93,9 +93,6 @@ fun MainScreen(
             )
         }
     }
-
-    // Activity Result launchers (Compose way)
-    var tempCaptureUri by remember { mutableStateOf<Uri?>(null) }
     val takePictureLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { saved ->
@@ -280,12 +277,6 @@ fun MainScreen(
             )
         }
 
-//        val isLoading by viewModel.isLoading.collectAsState(initial = false)
-//        if (isLoading) {
-//            CircularProgressIndicator(
-//                modifier = Modifier.align(Alignment.Center)
-//            )
-//        }
     }
 }
 @Composable
