@@ -2,6 +2,7 @@ package net.gini.android.capture.analysis.warning
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -144,6 +145,12 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
                     })
                 }
+                if (shouldFullscreen()) {
+                    bottomSheetInternal.layoutParams = bottomSheetInternal.layoutParams.apply {
+                        height = ViewGroup.LayoutParams.MATCH_PARENT
+                    }
+                    bottomSheetInternal.requestLayout()
+                }
             }
         }
     }
@@ -163,6 +170,13 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
             listener?.onProceedAction()
             dismissAllowingStateLoss()
         }
+    }
+
+
+    private fun shouldFullscreen(): Boolean {
+        val isTablet = resources.getBoolean(R.bool.gc_is_tablet)
+        val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        return !isTablet && isLandscape
     }
 
     companion object {
