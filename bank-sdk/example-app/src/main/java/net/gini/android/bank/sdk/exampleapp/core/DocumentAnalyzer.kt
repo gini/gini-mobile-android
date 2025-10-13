@@ -19,9 +19,6 @@ class DocumentAnalyzer @JvmOverloads internal constructor(
     private val documentManager: DocumentManager<*, *>,
     coroutineContext: CoroutineContext = Dispatchers.Main
 ) {
-    companion object {
-        private const val LOG_TAG = "gini-api"
-    }
     private val coroutineScope = CoroutineScope(coroutineContext)
 
     var giniApiDocument: Document? = null
@@ -84,5 +81,9 @@ class DocumentAnalyzer @JvmOverloads internal constructor(
     interface Listener {
         fun onException(exception: Exception)
         fun onExtractionsReceived(extractions: Map<String, SpecificExtraction>)
+    }
+
+    companion object {
+        private const val LOG_TAG = "gini-api"
     }
 }
