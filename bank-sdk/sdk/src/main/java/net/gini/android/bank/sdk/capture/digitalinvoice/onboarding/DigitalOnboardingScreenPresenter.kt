@@ -28,10 +28,10 @@ internal class DigitalOnboardingScreenPresenter(
     }
 
     override fun start() {
-        //no op
+        /* no-op */
     }
 
     override fun stop() {
-        //no op
+        /* no-op */
     }
 }

@@ -445,7 +445,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         }
 
         override fun unbind() {
-            // No operation
+            /* no-op */
         }
     }
 

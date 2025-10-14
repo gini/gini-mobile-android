@@ -48,7 +48,7 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
      * Example value: "3% Skonto discount"
      */
     fun onSkontoPercentageBadgeUpdated(text: String) {
-        // no-op: default implementation, override if needed
+        /* no-op */
     }
 
     /**
@@ -57,7 +57,7 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
      * @param isVisible visibility flag
      */
     fun onSkontoPercentageBadgeVisibilityUpdate(isVisible: Boolean) {
-        // no-op: default implementation, override if needed
+        /* no-op */
     }
 
     /**
@@ -67,7 +67,7 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
      * Example value: `"Save 100.00 EUR"`
      */
     fun onSkontoSavingsAmountUpdated(text: String) {
-        // no-op: default implementation, override if needed
+        /* no-op */
     }
 
     /**
@@ -76,7 +76,7 @@ interface DigitalInvoiceNavigationBarBottomAdapter : InjectedViewAdapter {
      * @param isVisible visibility flag
      */
     fun onSkontoSavingsAmountVisibilityUpdated(isVisible: Boolean) {
-        // no-op: default implementation, override if needed
+        /* no-op */
     }
 
 }

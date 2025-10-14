@@ -195,7 +195,7 @@ internal class LineItemDetailsScreenPresenter(
     }
 
     override fun stop() {
-        // No op
+        /* no-op */
     }
 }
 
