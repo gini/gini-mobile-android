@@ -93,6 +93,10 @@ internal class AnalysisScreenPresenterExtension(
         }
     }
 
+    fun releaseMutex() {
+        if (educationMutex.isLocked) educationMutex.unlock()
+    }
+
     private fun doWhenEducationFinished(action: () -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             educationMutex.withLock {
