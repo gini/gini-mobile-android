@@ -1,14 +1,20 @@
 package net.gini.android.capture.analysis;
 
+import static net.gini.android.capture.analysis.AnalysisFragmentImpl.INVOICE_SAVING_IN_PROGRESS_KEY;
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -30,6 +36,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     private AnalysisFragmentImpl mFragmentImpl;
     private AnalysisFragmentListener mListener;
     private CancelListener mCancelListener;
+    private ActivityResultLauncher<Intent> safFolderIntentLauncher;
 
     /**
      * Internal use only.
@@ -39,8 +46,41 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        registerSafFolderSelectionHandler();
         mFragmentImpl = createFragmentImpl();
         mFragmentImpl.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(
+                INVOICE_SAVING_IN_PROGRESS_KEY,
+                mFragmentImpl.getIsInvoiceSavingInProgress());
+    }
+
+    private void registerSafFolderSelectionHandler() {
+        safFolderIntentLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                this::handleFolderResult
+        );
+    }
+
+    private void handleFolderResult(ActivityResult result) {
+        if (result.getResultCode() != Activity.RESULT_OK) return;
+
+        Intent data = result.getData();
+        if (data == null) return;
+
+        Uri treeUri = data.getData();
+        if (treeUri == null) return;
+
+        mFragmentImpl.processSafFolderSelection(treeUri, data);
+    }
+
+    @Override
+    public void executeSafIntent(Intent intent) {
+        safFolderIntentLauncher.launch(intent);
     }
 
     @VisibleForTesting
@@ -142,10 +182,12 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
      * @return a new instance of the Fragment
      */
     public static AnalysisFragment createInstance(@NonNull final Document document,
-                                                  @Nullable final String documentAnalysisErrorMessage) {
+                                                  @Nullable final String documentAnalysisErrorMessage,
+                                                  final Boolean saveInvoicesLocally) {
         final AnalysisFragment fragment = new AnalysisFragment();
         fragment.setArguments(
-                AnalysisFragmentHelper.createArguments(document, documentAnalysisErrorMessage));
+                AnalysisFragmentHelper.createArguments(document, documentAnalysisErrorMessage,
+                        saveInvoicesLocally));
         return fragment;
     }
 
