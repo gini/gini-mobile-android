@@ -90,6 +90,7 @@
     <string name="custom_onboarding_lighting_page_switch_label">Onboarding \`lighting\` page custom illustration</string>
     <string name="custom_onboarding_qr_code_page_switch_label">Onboarding \`QR code\` page custom illustration</string>
     <string name="custom_onboarding_multi_page_switch_label">Onboarding \`multi page\` page custom illustration</string>
+    <string name="configuration_button_remove_saf_data">Remove SAF Data</string>
 
     <string name="onboarding_custom_bottom_nav_bar_switch_label">Onboarding custom bottom navigation bar</string>
     <string name="onboarding_custom_bottom_nav_bar_switch_description">The custom bottom navigation bar is shown if \`Bottom navigation bar\` is also enabled.</string>
