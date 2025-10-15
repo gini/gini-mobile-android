@@ -32,7 +32,6 @@ import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_K
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
