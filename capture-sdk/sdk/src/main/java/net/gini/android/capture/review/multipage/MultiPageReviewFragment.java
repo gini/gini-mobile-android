@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.tabs.TabLayout;
 
 import net.gini.android.capture.Document;
@@ -102,6 +103,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private PreviewPagesAdapter mPreviewPagesAdapter;
     private RecyclerView mRecyclerView;
     private Button mButtonNext;
+    private ConstraintLayout mSaveInvoicesWrapper;
+    private SwitchMaterial mSaveInvoicesSwitch;
     private LinearLayout mAddPagesWrapperLayout;
     private Button mAddPagesButton;
     private TabLayout mTabIndicator;
@@ -440,6 +443,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
     private void bindViews(final View view) {
         mButtonNext = view.findViewById(R.id.gc_button_next);
+        mSaveInvoicesWrapper = view.findViewById(R.id.gc_save_invoices_wrapper);
+        mSaveInvoicesSwitch = view.findViewById(R.id.gc_save_invoices_switch);
         mTabIndicator = view.findViewById(R.id.gc_tab_indicator);
         mTopAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mAddPagesWrapperLayout = view.findViewById(R.id.gc_add_pages_wrapper);
@@ -751,7 +756,13 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             );
         }
         mNextClicked = true;
-        NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toAnalysisFragment(mMultiPageDocument, ""));
+        NavHostFragment.findNavController(this).navigate(
+                MultiPageReviewFragmentDirections.toAnalysisFragment(
+                        mMultiPageDocument,
+                        "",
+                        mSaveInvoicesSwitch.isChecked()
+                )
+        );
     }
 
     @Override
