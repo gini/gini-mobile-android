@@ -3,6 +3,7 @@ package net.gini.android.capture.analysis;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,9 +18,6 @@ import net.gini.android.capture.internal.util.Size;
 import java.util.List;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.
@@ -69,6 +67,7 @@ interface AnalysisScreenContract {
         abstract void showError(ErrorType errorType, Document document);
 
         abstract void showEducation(EducationCompleteListener listener);
+        abstract void processInvoiceSaving();
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements
@@ -80,5 +79,13 @@ interface AnalysisScreenContract {
         }
 
         abstract void finish();
+
+        abstract void resumeInterruptedFlow();
+
+        abstract List<Uri> assembleMultiPageDocumentUris();
+
+        abstract void updateInvoiceSavingState(Boolean isInProgress);
+
+        abstract void releaseMutexForEducation();
     }
 }
