@@ -21,6 +21,8 @@ import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CONFIGURAT
 import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
+import net.gini.android.capture.util.SharedPreferenceHelper
+import net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -545,6 +547,12 @@ class ConfigurationActivity : AppCompatActivity() {
                     isButtonsCustomLoadingIndicatorEnabled = isChecked
                 )
             )
+        }
+
+        // for internal testing: To simulate the SAF first time experience, in which the picker
+        // will be shown
+        binding.layoutGeneralUiCustomizationToggles.btnRemoveSafData.setOnClickListener {
+            SharedPreferenceHelper.saveString(SAF_STORAGE_URI_KEY, "", this)
         }
 
         // enable screen's custom loading indicator
