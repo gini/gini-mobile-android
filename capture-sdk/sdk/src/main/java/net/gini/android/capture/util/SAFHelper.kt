@@ -10,6 +10,10 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import net.gini.android.capture.R
+import net.gini.android.capture.internal.textrecognition.MLKitTextRecognizer.Companion.LOG
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 
 
 /**
@@ -72,7 +76,7 @@ object SAFHelper {
         try {
             context.contentResolver.takePersistableUriPermission(folderUri, takeFlags)
         } catch (e: SecurityException) {
-            e.printStackTrace()
+            LOG.error("SecurityException in SAF", e)
         }
     }
 
@@ -110,21 +114,37 @@ object SAFHelper {
      * @return True if the file was saved successfully, false otherwise.
      */
 
-    private fun saveSingleFile(context: Context, folder: DocumentFile, sourceUri: Uri, fileName: String): Boolean {
+    private fun saveSingleFile(
+        context: Context,
+        folder: DocumentFile,
+        sourceUri: Uri,
+        fileName: String
+    ): Boolean {
         return try {
             val resolver = context.contentResolver
-            val newFile = folder.createFile("image/jpeg", fileName) ?: return false
+            val newFile = folder.createFile("image/jpeg", fileName)
+            val input = resolver.openInputStream(sourceUri)
+            val output = newFile?.let { resolver.openOutputStream(it.uri) }
 
-            resolver.openInputStream(sourceUri).use { input ->
-                resolver.openOutputStream(newFile.uri).use { output ->
-                    if (input == null || output == null) return false
-                    input.copyTo(output)
-                }
-            }
-            true
-        } catch (e: Exception) {
-            e.printStackTrace()
+            val success = if (newFile != null && input != null && output != null) {
+                copyStreams(input, output)
+                true
+            } else false
+
+            success
+        } catch (e: IOException) {
+            LOG.error("IOException in SAF", e)
+            false
+        } catch (e: SecurityException) {
+            LOG.error("SecurityException in SAF", e)
+            false
+        } catch (e: IllegalArgumentException) {
+            LOG.error("IllegalArgumentException in SAF", e)
             false
         }
+    }
+
+    private fun copyStreams(input: InputStream, output: OutputStream) {
+        input.use { i -> output.use { o -> i.copyTo(o) } }
     }
 }
