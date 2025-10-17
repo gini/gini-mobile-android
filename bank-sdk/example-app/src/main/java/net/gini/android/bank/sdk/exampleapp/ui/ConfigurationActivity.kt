@@ -117,6 +117,8 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.switchOpenWith.isChecked = configuration.isFileImportEnabled
         // Capture SDK
         binding.layoutFeatureToggle.switchCaptureSdk.isChecked = configuration.isCaptureSDK
+        // Saving Invoices Locally
+        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature.isChecked = configuration.saveInvoicesLocallyEnabled
         // QR code scanning
         binding.layoutFeatureToggle.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
         // only QR code scanning
@@ -549,12 +551,6 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
-        // for internal testing: To simulate the SAF first time experience, in which the picker
-        // will be shown
-        binding.layoutGeneralUiCustomizationToggles.btnRemoveSafData.setOnClickListener {
-            SharedPreferenceHelper.saveString(SAF_STORAGE_URI_KEY, "", this)
-        }
-
         // enable screen's custom loading indicator
         binding.layoutAnalysisToggles.switchScreenCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
@@ -609,6 +605,21 @@ class ConfigurationActivity : AppCompatActivity() {
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
                         isEventTrackerEnabled = isChecked
+                    )
+                )
+            }
+
+        // for internal testing: To simulate the SAF first time experience, in which the picker
+        // will be shown
+        binding.layoutFeatureToggle.btnRemoveSafData.setOnClickListener {
+            SharedPreferenceHelper.saveString(SAF_STORAGE_URI_KEY, "", this)
+        }
+
+        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        saveInvoicesLocallyEnabled = isChecked
                     )
                 )
             }

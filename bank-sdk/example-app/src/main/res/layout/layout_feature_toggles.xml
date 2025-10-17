@@ -146,5 +146,23 @@
         android:layout_marginTop="@dimen/gc_medium_12"
         android:text="@string/event_tracker_switch_label" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_SaveInvoicesLocallyFeature"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/save_invoices_feature_label" />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:id="@+id/btn_remove_saf_data"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:layout_height="wrap_content"
+        app:cornerRadius="@dimen/gc_small"
+        android:textColor="@color/gc_light_01"
+        android:text="@string/configuration_button_remove_saf_data"
+        />
+
 </LinearLayout>
 

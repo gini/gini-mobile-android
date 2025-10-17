@@ -187,6 +187,9 @@ data class Configuration(
     // enable Capture Sdk
     val isCaptureSDK: Boolean = false,
 
+    // enable/disable save invoices locally feature
+    val saveInvoicesLocallyEnabled: Boolean = true,
+
 ) : Parcelable {
 
     companion object {
@@ -211,7 +214,8 @@ data class Configuration(
                 isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
                 isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled,
                 isTransactionDocsEnabled = defaultCaptureConfiguration.transactionDocsEnabled,
-                isCaptureSDK = currentConfiguration.isCaptureSDK
+                isCaptureSDK = currentConfiguration.isCaptureSDK,
+                saveInvoicesLocallyEnabled = currentConfiguration.saveInvoicesLocallyEnabled
             )
         }
     }

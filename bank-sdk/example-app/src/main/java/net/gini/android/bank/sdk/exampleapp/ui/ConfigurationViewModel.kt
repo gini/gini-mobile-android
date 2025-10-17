@@ -141,6 +141,8 @@ class ConfigurationViewModel @Inject constructor(
 
             // enable transaction docs
             transactionDocsEnabled = configuration.isTransactionDocsEnabled,
+
+            saveInvoicesLocallyEnabled = configuration.saveInvoicesLocallyEnabled,
         )
 
         // enable Help screens custom bottom navigation bar
