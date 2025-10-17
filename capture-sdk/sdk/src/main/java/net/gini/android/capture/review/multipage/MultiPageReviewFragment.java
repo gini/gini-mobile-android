@@ -55,6 +55,7 @@ import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
+import net.gini.android.capture.saveinvoiceslocally.SaveInvoicesFeatureEvaluator;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
@@ -297,11 +298,20 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
         setupTopNavigationBar();
 
+        handleViewsForSavingInvoices();
+
         if (mMultiPageDocument != null) {
             updateNextButtonVisibility();
             initRecyclerView();
             delayWithBlueRect();
         }
+    }
+
+    private void handleViewsForSavingInvoices() {
+        if (SaveInvoicesFeatureEvaluator.INSTANCE.shouldShowSaveInvoicesLocallyView())
+            mSaveInvoicesWrapper.setVisibility(View.VISIBLE);
+        else
+            mSaveInvoicesWrapper.setVisibility(View.GONE);
     }
 
 
@@ -626,6 +636,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage());
         } else {
             doDeleteDocumentAndUpdateUI(document);
+            handleViewsForSavingInvoices();
         }
     }
 
@@ -760,7 +771,10 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 MultiPageReviewFragmentDirections.toAnalysisFragment(
                         mMultiPageDocument,
                         "",
-                        mSaveInvoicesSwitch.isChecked()
+                        SaveInvoicesFeatureEvaluator.INSTANCE.shouldSaveInvoicesLocally(
+                                mSaveInvoicesWrapper.getVisibility(),
+                                mSaveInvoicesSwitch.isChecked()
+                        )
                 )
         );
     }
