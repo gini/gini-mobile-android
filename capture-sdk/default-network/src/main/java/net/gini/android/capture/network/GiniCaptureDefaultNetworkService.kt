@@ -204,6 +204,7 @@ internal constructor(
             isInstantPaymentEnabled = configuration.instantPaymentEnabled,
             isEInvoiceEnabled = configuration.isEInvoiceEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
+            savePhotosLocallyEnabled = configuration.savePhotosLocallyEnabled
         )
 
     @Suppress("LongMethod")
