@@ -56,8 +56,7 @@
                 app:argType="string" />
             <argument
                 android:name="GC_ARGS_SAVE_INVOICES"
-                app:argType="boolean"
-                android:defaultValue="false"/>
+                app:argType="boolean" />
         </action>
         <action
             android:id="@+id/to_error_fragment"
