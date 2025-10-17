@@ -17,6 +17,7 @@ import java.io.OutputStream
 
 
 /**
+ * Internal use only.
  * SAFHelper
  *
  * This object helps with saving files using Android's Storage Access Framework (SAF).
@@ -26,7 +27,7 @@ import java.io.OutputStream
  * Used when the app needs to let the user choose a folder and save files.
  */
 
-object SAFHelper {
+internal object SAFHelper {
 
     /**
     * Checks if the app has write permission for the given folder URI.
