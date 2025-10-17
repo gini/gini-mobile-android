@@ -93,6 +93,7 @@
             app:layout_constraintBottom_toTopOf="@+id/gc_process_documents_wrapper"
             android:id="@+id/gc_save_invoices_wrapper"
             android:paddingVertical="@dimen/gc_large_24"
+            android:visibility="gone"
             android:layout_marginBottom="@dimen/gc_large"
             android:layout_height="wrap_content">
             

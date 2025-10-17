@@ -84,6 +84,7 @@
             app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar"
             app:layout_constraintBottom_toTopOf="@+id/gc_process_documents_wrapper"
             android:id="@+id/gc_save_invoices_wrapper"
+            android:visibility="gone"
             android:paddingVertical="@dimen/gc_large_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
