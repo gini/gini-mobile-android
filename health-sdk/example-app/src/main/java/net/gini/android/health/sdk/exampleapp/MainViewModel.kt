@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.Resource
 import net.gini.android.health.sdk.GiniHealth
@@ -24,6 +25,19 @@ class MainViewModel(
     val pages: StateFlow<List<PagerAdapter.Page>> = _pages
     private val _paymentRequest = MutableStateFlow<PaymentRequest?>(null)
     val paymentRequest: StateFlow<PaymentRequest?> = _paymentRequest
+
+    private val _contentPages = MutableStateFlow<List<Page>>(emptyList())
+    val contentPages: StateFlow<List<Page>> = _contentPages
+
+    // Simple data holder
+    data class Page(val uri: Uri)
+
+    fun addImportedUris(uris: List<Uri>) {
+        if (uris.isEmpty()) return
+        _contentPages.update { current ->
+            current + uris.map { uri -> Page(uri) }
+        }
+    }
 
     private var currentIndex = 0
     private var currentFileUri: Uri? = null
