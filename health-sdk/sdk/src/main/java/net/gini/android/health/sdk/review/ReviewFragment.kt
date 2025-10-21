@@ -535,7 +535,6 @@ class ReviewFragment private constructor(
             outState.putBoolean(KEY_IME_WAS_VISIBLE, imeVisibleNow)
         }
         super.onSaveInstanceState(outState)
-
     }
     private fun preQ() = Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q
 
