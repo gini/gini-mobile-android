@@ -10,6 +10,8 @@ import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.analysis.warning.WarningPaymentState;
+import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
@@ -25,6 +27,7 @@ import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
+import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY;
 
@@ -55,6 +58,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     @VisibleForTesting
     static final String PARCELABLE_MEMORY_CACHE_TAG = "ANALYSIS_FRAGMENT";
+
+    private static final String EXTRACTION_PAYMENT_STATE = "paymentState";
+
     private static final Logger LOG = LoggerFactory.getLogger(AnalysisScreenPresenter.class);
 
     @VisibleForTesting
@@ -167,7 +173,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         mStopped = false;
         checkGiniCaptureInstance();
         if (mMultiPageDocument.getType() != Document.Type.XML &&
-        mMultiPageDocument.getType() != Document.Type.XML_MULTI_PAGE) {
+                mMultiPageDocument.getType() != Document.Type.XML_MULTI_PAGE) {
             createDocumentRenderer();
         }
         clearParcelableMemoryCache();
@@ -301,7 +307,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 }
                                 proceedSuccessNoExtractions();
                                 break;
-                            case SUCCESS_WITH_EXTRACTIONS:
+                            case SUCCESS_WITH_EXTRACTIONS: {
+
                                 mAnalysisCompleted = true;
                                 extension.getLastAnalyzedDocumentProvider()
                                         .update(remoteAnalyzedDocument);
@@ -311,11 +318,18 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 } catch (Exception ignored) {
 
                                 }
+
                                 if (resultHolder.getExtractions().isEmpty()) {
                                     proceedSuccessNoExtractions();
+                                } else if (shouldShowPaidInvoiceWarning(resultHolder)) {
+                                    getView().showPaidWarningThen(
+                                            WarningType.DOCUMENT_MARKED_AS_PAID,
+                                            () -> proceedWithExtractions(resultHolder)
+                                    );
                                 } else {
                                     proceedWithExtractions(resultHolder);
                                 }
+                            }
                             case NO_NETWORK_SERVICE:
                                 break;
                             default:
@@ -459,5 +473,25 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             errorType = ErrorType.GENERAL;
         }
         getView().showError(errorType, mMultiPageDocument);
+    }
+
+    private boolean shouldShowPaidInvoiceWarning(
+            @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        // Feature flags / config
+        final boolean hintsEnabled = extension.getGetPaymentHintsEnabledUseCase().invoke();
+
+        final boolean showPaidWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentHintsEnabled();
+
+        if (!hintsEnabled || !showPaidWarningFlag) {
+            return false;
+        }
+
+        // Payment state
+        final Map<String, GiniCaptureSpecificExtraction> exts = resultHolder.getExtractions();
+        final GiniCaptureSpecificExtraction ps = exts.get(EXTRACTION_PAYMENT_STATE);
+        final String paymentStateValue = ps != null ? ps.getValue() : null;
+        final WarningPaymentState state = WarningPaymentState.from(paymentStateValue);
+
+        return state.isPaid();
     }
 }

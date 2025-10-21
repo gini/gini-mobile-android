@@ -151,6 +151,9 @@ data class Configuration(
     // enable return reasons dialog
     val isReturnReasonsEnabled: Boolean = false,
 
+    // enable show warning for paid invoices
+    val isPaymentHintsEnabled: Boolean = true,
+
     // Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
 
@@ -187,7 +190,7 @@ data class Configuration(
     // enable Capture Sdk
     val isCaptureSDK: Boolean = false,
 
-) : Parcelable {
+    ) : Parcelable {
 
     companion object {
         fun setupSDKWithDefaultConfiguration(
@@ -203,6 +206,7 @@ data class Configuration(
                 isFlashDefaultStateEnabled = defaultCaptureConfiguration.flashOnByDefault,
                 documentImportEnabledFileTypes = defaultCaptureConfiguration.documentImportEnabledFileTypes,
                 isBottomNavigationBarEnabled = defaultCaptureConfiguration.bottomNavigationBarEnabled,
+                isPaymentHintsEnabled = defaultCaptureConfiguration.paymentHintsEnabled,
                 isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
