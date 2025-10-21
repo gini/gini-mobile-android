@@ -180,7 +180,6 @@ class ReviewBottomSheet private constructor(
         outState.putInt(KEY_FOCUSED_ID, lastFocusedId)
         outState.putBoolean(KEY_IME_WAS_VISIBLE, imeVisibleNow)
         super.onSaveInstanceState(outState)
-
     }
 
     companion object {
