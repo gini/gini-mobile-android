@@ -221,7 +221,7 @@ class ReviewFragment private constructor(
         val h = when {
             viewModel.pagerHeight > 0 -> viewModel.pagerHeight
             binding.pager.height > 0 -> binding.pager.height
-            else -> 1
+            else -> ViewGroup.LayoutParams.WRAP_CONTENT
         }
 
         viewModel.pagerHeight = h
@@ -468,7 +468,7 @@ class ReviewFragment private constructor(
             val visible = r.height()
             val heightDiff = root.rootView.height - visible
             imeWasVisible =
-                heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // keyboard threshold
+                imeWasVisible || (heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO) // keyboard threshold
 
         }
         root.viewTreeObserver.addOnGlobalLayoutListener(listener)
