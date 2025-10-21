@@ -203,7 +203,7 @@ jobs:
           script: >
             adb uninstall net.gini.android.capture.network.test ;
             ./gradlew capture-sdk:default-network:connectedCheck
-            -PtestClientId="gini-mobile-test"
+            -PtestClientId="gini-mobile-ci"
             -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
             -PtestApiUri="https://pay-api.gini.net"
             -PtestUserCenterUri="https://user.gini.net"

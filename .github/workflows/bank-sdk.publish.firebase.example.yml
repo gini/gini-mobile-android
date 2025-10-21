@@ -47,7 +47,7 @@ jobs:
       - name: build release example app for QA
         run: >
           ./gradlew bank-sdk:example-app:assembleQaExampleAppRelease
-          -PclientId="gini-mobile-test" 
+          -PclientId="gini-mobile-ci" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="screen_api_example.jks"
           -PreleaseKeystorePassword='${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
