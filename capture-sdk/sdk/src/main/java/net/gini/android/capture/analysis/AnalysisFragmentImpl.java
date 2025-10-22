@@ -246,9 +246,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 SAF_STORAGE_URI_KEY,
                 Objects.requireNonNull(mFragment.getActivity()));
 
-        if (haveSavePermission(folderUri)) {
+        Boolean haveSavePermission = haveSavePermission(folderUri);
+        if (haveSavePermission)
             saveInvoices(folderUri);
-        } else {
+        else {
             getPresenter().releaseMutexForEducation();
             mFragment.executeSafIntent(SAFHelper.INSTANCE.createFolderPickerIntent());
         }
