@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.tabs.TabLayout;
 
 import net.gini.android.capture.Document;
@@ -105,7 +105,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private RecyclerView mRecyclerView;
     private Button mButtonNext;
     private ConstraintLayout mSaveInvoicesWrapper;
-    private SwitchMaterial mSaveInvoicesSwitch;
+    private MaterialSwitch mSaveInvoicesSwitch;
     private LinearLayout mAddPagesWrapperLayout;
     private Button mAddPagesButton;
     private TabLayout mTabIndicator;
@@ -308,10 +308,15 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     }
 
     private void handleViewsForSavingInvoices() {
-        if (SaveInvoicesFeatureEvaluator.INSTANCE.shouldShowSaveInvoicesLocallyView())
+        if (SaveInvoicesFeatureEvaluator.INSTANCE.shouldShowSaveInvoicesLocallyView()) {
+            updateSaveInvoicesBackground();
             mSaveInvoicesWrapper.setVisibility(View.VISIBLE);
-        else
+        } else
             mSaveInvoicesWrapper.setVisibility(View.GONE);
+
+        mSaveInvoicesSwitch.setOnCheckedChangeListener((
+                buttonView,
+                isChecked) -> updateSaveInvoicesBackground());
     }
 
 
@@ -481,6 +486,14 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 }
             }));
         }
+    }
+
+    private void updateSaveInvoicesBackground() {
+        mSaveInvoicesWrapper.setBackgroundResource(
+                mSaveInvoicesSwitch.isChecked()
+                        ? R.drawable.gc_bg_on_save_invoices_locally
+                        : R.drawable.gc_bg_off_save_invoices_locally
+        );
     }
 
     private void setReviewNavigationBarBottomAdapter(View view) {
