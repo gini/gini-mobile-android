@@ -1,6 +1,7 @@
 package net.gini.android.capture.tracking.useranalytics
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import net.gini.android.capture.internal.network.NetworkRequestsManager
 import net.gini.android.capture.internal.provider.UniqueIdProvider
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
@@ -64,52 +65,53 @@ internal class BufferedUserAnalyticsEventTracker(
     }
 
 
-    override fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>) {
+    override fun setEventSuperProperty(property: Set<UserAnalyticsEventSuperProperty>): Boolean {
         if (!mIsUserJourneyEnabled)
-            return
+            return false
         this.eventSuperProperties.add(property)
-        trySendEvents()
+        return trySendEvents()
     }
 
-    override fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty) {
-        setEventSuperProperty(setOf(property))
+    override fun setEventSuperProperty(property: UserAnalyticsEventSuperProperty): Boolean {
+        return setEventSuperProperty(setOf(property))
     }
 
-    override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>) {
+    override fun setUserProperty(userProperties: Set<UserAnalyticsUserProperty>): Boolean {
         if (!mIsUserJourneyEnabled)
-            return
+            return false
         this.userProperties.add(userProperties)
-        trySendEvents()
+        return trySendEvents()
     }
 
-    override fun setUserProperty(userProperty: UserAnalyticsUserProperty) {
-        setUserProperty(setOf(userProperty))
+    override fun setUserProperty(userProperty: UserAnalyticsUserProperty): Boolean {
+        return setUserProperty(setOf(userProperty))
     }
 
     override fun trackEvent(
         eventName: UserAnalyticsEvent,
         properties: Set<UserAnalyticsEventProperty>
-    ) {
+    ): Boolean {
         if (!mIsUserJourneyEnabled)
-            return
+            return false
         events.add(Pair(eventName, properties))
-        trySendEvents()
+        return trySendEvents()
     }
 
-    override fun trackEvent(eventName: UserAnalyticsEvent) {
-        trackEvent(eventName, emptySet())
+    override fun trackEvent(eventName: UserAnalyticsEvent): Boolean {
+        return trackEvent(eventName, emptySet())
     }
 
-    override fun flushEvents() {
-        amplitude?.flushEvents()
+    override fun flushEvents(): Boolean {
+        return amplitude?.let {
+            amplitude?.flushEvents()
+        } ?: false
     }
 
-    private fun trySendEvents() {
-        if (!mIsUserJourneyEnabled)
-            return
-        if (eventTrackers.isEmpty()) {
-            LOG.debug("No trackers found. Skipping sending events")
-            return
+    private fun trySendEvents(): Boolean {
+        if (!mIsUserJourneyEnabled || eventTrackers.isEmpty()) {
+            if (eventTrackers.isEmpty())
+                LOG.debug("No trackers found. Skipping sending events")
+            return false
         }
 
         LOG.debug("${eventTrackers.size} Tracker(s) found. Sending events...")
@@ -135,10 +137,14 @@ internal class BufferedUserAnalyticsEventTracker(
 
 
         LOG.debug("Events sent")
+        return true
     }
 
     private fun everyTracker(block: (UserAnalyticsEventTracker) -> Unit) {
         eventTrackers.forEach(block)
     }
+
+    @VisibleForTesting
+    internal fun getTrackers(): Set<UserAnalyticsEventTracker> = eventTrackers.toSet()
 
 }
