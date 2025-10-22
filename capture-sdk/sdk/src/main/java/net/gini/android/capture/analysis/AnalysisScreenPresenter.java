@@ -153,7 +153,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     private void startScanAnimation() {
-        getView().showScanAnimation();
+        getView().showScanAnimation(mIsInvoiceSavingEnabled);
     }
 
     private void stopScanAnimation() {
@@ -179,7 +179,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             createDocumentRenderer();
         }
         clearParcelableMemoryCache();
-        getView().showScanAnimation();
+        getView().showScanAnimation(mIsInvoiceSavingEnabled);
         loadDocumentData();
         showHintsForImage();
     }
