@@ -10,18 +10,22 @@ import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
+import net.gini.android.capture.di.CaptureSdkIsolatedKoinContext
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.ImageDocumentFake
 import net.gini.android.capture.internal.network.NetworkRequestResult
 import net.gini.android.capture.internal.network.NetworkRequestsManager
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.ReviewScreenEvent
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY.*
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.dsl.module
 import org.mockito.Mockito
 import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
@@ -35,10 +39,19 @@ import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class MultipageReviewFragmentTest {
+    private val koinTestModule = module {
+        single { GiniBankConfigurationProvider() }
+    }
+
+    @Before
+    fun setup() {
+        CaptureSdkIsolatedKoinContext.koin.loadModules(listOf(koinTestModule))
+    }
 
     @After
     fun after() {
         GiniCaptureHelper.setGiniCaptureInstance(null)
+        CaptureSdkIsolatedKoinContext.koin.unloadModules(listOf(koinTestModule))
     }
 
     @Test
