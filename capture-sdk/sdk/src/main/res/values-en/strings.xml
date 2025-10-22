@@ -29,6 +29,7 @@
     <string name="gc_onboarding_qr_code_message">Besides invoices, QR codes are also supported</string>
     <string name="gc_multi_page_review_add_pages_subtitle">Add a page</string>
     <string name="gc_analysis_activity_indicator_message">Analyzing documents</string>
+    <string name="gc_analysis_activity_indicator_message_save_invoices_locally">Analyzing documents &amp; preparing download to local gallery</string>
     <string name="gc_pdf_analysis_activity_indicator_message">Analyzing\n%s</string>
     <string name="gc_photo_tip_align">Capture the entire page within the frame shown on the camera screen</string>
     <string name="gc_photo_tip_multipage">It\'s possible to scan an invoice with multiple pages</string>
@@ -148,6 +149,7 @@
     <string name="gc_payment_details_visible">Make sure the payment details are visible</string>
     <string name="gc_save_invoices_feature_title">Save to gallery</string>
     <string name="gc_save_invoices_feature_subtitle">A copy of the invoice will be saved to your local gallery.</string>
+    <string name="gc_invoice_saving_success_toast_text">Image saved to gallery</string>
     <string name="gc_invoice_file_name">FotoUeberweisung_Rechnung_%1$d.</string>
     <string name="gc_pages">Pages</string>
     <string name="gc_process_documents">Process</string>
