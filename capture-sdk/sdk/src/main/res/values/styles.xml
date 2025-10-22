@@ -83,9 +83,12 @@
     </style>
     <style name="GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton"/>
 
-    <style name="Root.GiniCaptureTheme.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
-        <item name="thumbTint">@color/gbs_switch_thumb_color</item>
-        <item name="trackTint">@color/gbs_switch_track_color</item>
+    <style name="Root.GiniCaptureTheme.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="useMaterialThemeColors">false</item>
+        <item name="thumbTint">@color/gc_switch_thumb_color</item>
+        <item name="trackTint">@color/gc_switch_track_color</item>
+        <item name="trackDecorationTint">@color/gc_switch_outline_color</item>
+
     </style>
     <style name="GiniCaptureTheme.Switch" parent="Root.GiniCaptureTheme.Switch" />
 
