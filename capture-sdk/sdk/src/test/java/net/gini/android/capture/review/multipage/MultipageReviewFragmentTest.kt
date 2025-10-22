@@ -39,6 +39,7 @@ import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class MultipageReviewFragmentTest {
+
     private val koinTestModule = module {
         single { GiniBankConfigurationProvider() }
     }
