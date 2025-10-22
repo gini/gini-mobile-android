@@ -20,6 +20,6 @@ object SharedPreferenceHelper {
 
     fun getString(key: String, context: Context): String? {
         val prefs = context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
-        return prefs.getString(key, "")
+        return prefs.getString(key, null)
     }
 }

@@ -98,7 +98,7 @@
             android:paddingVertical="@dimen/gc_large_20"
             android:paddingStart="@dimen/gc_large"
             android:paddingEnd="@dimen/gc_large"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/gc_process_documents_wrapper">
             
             <TextView
@@ -110,7 +110,7 @@
                 android:text="@string/gc_save_invoices_feature_title"
                 app:layout_constraintEnd_toStartOf="@+id/gc_save_invoices_switch"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <TextView
