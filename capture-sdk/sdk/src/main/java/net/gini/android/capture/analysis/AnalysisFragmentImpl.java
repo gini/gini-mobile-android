@@ -138,7 +138,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showScanAnimation() {
+    void showScanAnimation(Boolean isSavingInvoicesLocallyEnabled) {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
         isScanAnimationActive = true;
         if (injectedLoadingIndicatorContainer != null)
@@ -146,6 +146,15 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 adapter.onVisible();
                 return Unit.INSTANCE;
             });
+
+        Context context = mFragment.getActivity();
+        if (context == null) return;
+
+        int messageResId = isSavingInvoicesLocallyEnabled
+                ? R.string.gc_analysis_activity_indicator_message_save_invoices_locally
+                : R.string.gc_analysis_activity_indicator_message;
+
+        mAnalysisMessageTextView.setText(context.getString(messageResId));
     }
 
     @Override
@@ -199,15 +208,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     private void notifyUserAboutSafResult(int count, @NonNull Context context) {
-        if (count > 0) {
+        if (count > 0)
             Toast.makeText(context,
-                    context.getString(R.string.gc_invoice_saving_success_toast_text, count),
+                    context.getString(R.string.gc_invoice_saving_success_toast_text),
                     Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(context,
-                    R.string.gc_invoice_saving_un_successful_toast_text,
-                    Toast.LENGTH_LONG).show();
-        }
     }
 
     private Boolean haveSavePermission(String folderUri) {

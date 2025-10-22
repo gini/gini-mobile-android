@@ -185,7 +185,7 @@ public class AnalysisFragmentImplTest {
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
 
-                            analysisFragment.showScanAnimation();
+                            analysisFragment.showScanAnimation(false);
                         }
                     });
 
@@ -216,7 +216,7 @@ public class AnalysisFragmentImplTest {
                         public void perform(final AnalysisFragmentHostActivity activity) {
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.showScanAnimation();
+                            analysisFragment.showScanAnimation(false);
                             analysisFragment.hideScanAnimation();
                         }
                     });
