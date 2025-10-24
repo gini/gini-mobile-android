@@ -35,11 +35,11 @@ final class AnalysisFragmentHelper {
     static AnalysisFragmentImpl createFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull CancelListener cancelListener,
                                                    @NonNull final Bundle arguments) {
         final Document document = arguments.getParcelable(ARGS_DOCUMENT);
-        final Boolean mIsInvoiceSavingEnabled = arguments.getBoolean(GC_ARGS_SAVE_INVOICES, false);
+        final Boolean isInvoiceSavingEnabled = arguments.getBoolean(GC_ARGS_SAVE_INVOICES, false);
         if (document != null) {
             final String analysisErrorMessage = arguments.getString(
                     ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE);
-            return new AnalysisFragmentImpl(fragment, cancelListener, document, analysisErrorMessage, mIsInvoiceSavingEnabled);
+            return new AnalysisFragmentImpl(fragment, cancelListener, document, analysisErrorMessage, isInvoiceSavingEnabled);
         } else {
             throw new IllegalStateException(
                     "AnalysisFragmentCompat requires a Document. Use the createInstance() method of these classes for instantiating.");
