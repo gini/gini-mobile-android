@@ -228,7 +228,12 @@ data class CaptureConfiguration(
      */
     val transactionDocsEnabled: Boolean = false,
 
-    val giniComposableStyleProvider: GiniComposableStyleProvider? = null
+    val giniComposableStyleProvider: GiniComposableStyleProvider? = null,
+
+    /**
+     * Enable/disable the save invoices locally feature
+     */
+    val saveInvoicesLocallyEnabled: Boolean = true,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -249,6 +254,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
+        .setSaveInvoicesLocallyEnabled(configuration.saveInvoicesLocallyEnabled)
         .addCustomUploadMetadata(GiniBank.USER_COMMENT_GINI_BANK_VERSION, BuildConfig.VERSION_NAME)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }

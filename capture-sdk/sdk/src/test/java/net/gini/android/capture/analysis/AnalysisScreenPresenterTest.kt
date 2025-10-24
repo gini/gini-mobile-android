@@ -118,7 +118,7 @@ class AnalysisScreenPresenterTest {
         if (analysisInteractor == null) {
             presenter = object : AnalysisScreenPresenter(
                 mActivity, mView,
-                document, documentAnalysisErrorMessage
+                document, documentAnalysisErrorMessage, false
             ) {
                 public override fun createDocumentRenderer() {
                     mDocumentRenderer = documentRenderer
@@ -128,7 +128,7 @@ class AnalysisScreenPresenterTest {
             presenter = object : AnalysisScreenPresenter(
                 mActivity, mView, document,
                 documentAnalysisErrorMessage,
-                analysisInteractor
+                analysisInteractor, false
             ) {
                 public override fun createDocumentRenderer() {
                     mDocumentRenderer = documentRenderer
@@ -229,7 +229,7 @@ class AnalysisScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView, atLeastOnce()).showScanAnimation()
+        verify(mView, atLeastOnce()).showScanAnimation(false)
     }
 
     @Test
@@ -382,7 +382,7 @@ class AnalysisScreenPresenterTest {
 
         // Then
         // Two times, because scan animation is also started when starting the presenter
-        verify(mView, atLeast(2)).showScanAnimation()
+        verify(mView, atLeast(2)).showScanAnimation(false)
     }
 
     @Test

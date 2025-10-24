@@ -42,6 +42,10 @@ public final class FeatureConfiguration {
         return GiniCapture.hasInstance() && GiniCapture.getInstance().isMultiPageEnabled();
     }
 
+    public static boolean isSavingInvoicesLocallyEnabled() {
+        return GiniCapture.hasInstance() && GiniCapture.getInstance().getSaveInvoicesEnabled();
+    }
+
     private FeatureConfiguration() {
     }
 }

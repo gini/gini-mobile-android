@@ -130,6 +130,7 @@ public class GiniCapture {
     private final GiniComposableStyleProvider mGiniComposableStyleProvider;
     private final EntryPoint entryPoint;
     private final boolean allowScreenshots;
+    private final boolean saveInvoicesLocallyEnabled;
 
     private final Map<String, String> mCustomUploadMetadata;
 
@@ -437,6 +438,7 @@ public class GiniCapture {
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
         entryPoint = builder.getEntryPoint();
         allowScreenshots = builder.getAllowScreenshots();
+        saveInvoicesLocallyEnabled = builder.getSaveInvoicesLocallyEnabled();
         mCustomUploadMetadata = builder.getCustomUploadMetadata();
         mGiniComposableStyleProvider = builder.getGiniComposableStyleProvider();
     }
@@ -794,6 +796,10 @@ public class GiniCapture {
         return allowScreenshots;
     }
 
+    public boolean getSaveInvoicesEnabled() {
+        return saveInvoicesLocallyEnabled;
+    }
+
     /**
      * Get upload metadata to be added to the HTTP headers
      *
@@ -924,6 +930,7 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
         private boolean allowScreenshots = true;
+        private boolean savingInvoicesLocallyEnabled = true;
 
         private Map<String, String> customUploadMetadata;
         private GiniComposableStyleProvider giniComposableStyleProvider;
@@ -1478,6 +1485,15 @@ public class GiniCapture {
 
         private boolean getAllowScreenshots() {
             return allowScreenshots;
+        }
+
+        public Builder setSaveInvoicesLocallyEnabled(boolean savingInvoicesLocallyEnabled) {
+            this.savingInvoicesLocallyEnabled = savingInvoicesLocallyEnabled;
+            return this;
+        }
+
+        private boolean getSaveInvoicesLocallyEnabled() {
+            return savingInvoicesLocallyEnabled;
         }
 
         public Builder addCustomUploadMetadata(String key, String value) {

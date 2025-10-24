@@ -119,12 +119,13 @@ public class AnalysisFragmentImplTest {
 
                                     }
                                 },
-                                document, null) {
+                                document, null, false) {
 
                             @Override
                             void createPresenter(@NonNull final Activity activity,
-                                    @NonNull final Document document,
-                                    final String documentAnalysisErrorMessage) {
+                                                 @NonNull final Document document,
+                                                 final String documentAnalysisErrorMessage,
+                                                 final Boolean saveInvoicesLocally) {
                                 setPresenter(presenter);
                             }
 
@@ -184,7 +185,7 @@ public class AnalysisFragmentImplTest {
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
 
-                            analysisFragment.showScanAnimation();
+                            analysisFragment.showScanAnimation(false);
                         }
                     });
 
@@ -215,7 +216,7 @@ public class AnalysisFragmentImplTest {
                         public void perform(final AnalysisFragmentHostActivity activity) {
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.showScanAnimation();
+                            analysisFragment.showScanAnimation(false);
                             analysisFragment.hideScanAnimation();
                         }
                     });

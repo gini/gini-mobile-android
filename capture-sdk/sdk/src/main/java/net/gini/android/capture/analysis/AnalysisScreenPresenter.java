@@ -1,6 +1,7 @@
 package net.gini.android.capture.analysis;
 
 import android.app.Activity;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
@@ -69,14 +71,18 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     DocumentRenderer mDocumentRenderer;
     private boolean mStopped;
     private boolean mAnalysisCompleted;
+    private final boolean mIsInvoiceSavingEnabled;
+    private boolean isSavingInvoicesInProgress = false;
 
+    private AnalysisInteractor.ResultHolder successResultHolder;
     AnalysisScreenPresenter(
             @NonNull final Activity activity,
             @NonNull final AnalysisScreenContract.View view,
             @NonNull final Document document,
-            @Nullable final String documentAnalysisErrorMessage) {
+            @Nullable final String documentAnalysisErrorMessage,
+            @NonNull final Boolean mIsInvoiceSavingEnabled) {
         this(activity, view, document, documentAnalysisErrorMessage,
-                new AnalysisInteractor(activity.getApplication()));
+                new AnalysisInteractor(activity.getApplication()), mIsInvoiceSavingEnabled);
     }
 
     @VisibleForTesting
@@ -85,7 +91,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             @NonNull final AnalysisScreenContract.View view,
             @NonNull final Document document,
             @Nullable final String documentAnalysisErrorMessage,
-            @NonNull final AnalysisInteractor analysisInteractor) {
+            @NonNull final AnalysisInteractor analysisInteractor,
+            @NonNull final Boolean mIsInvoiceSavingEnabled) {
         super(activity, view);
         view.setPresenter(this);
         mMultiPageDocument = asMultiPageDocument(document);
@@ -95,6 +102,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         mAnalysisInteractor = analysisInteractor;
         mHints = generateRandomHintsList();
         extension = new AnalysisScreenPresenterExtension(view);
+        this.mIsInvoiceSavingEnabled = mIsInvoiceSavingEnabled;
     }
 
     private List<AnalysisHint> generateRandomHintsList() {
@@ -145,7 +153,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     private void startScanAnimation() {
-        getView().showScanAnimation();
+        getView().showScanAnimation(mIsInvoiceSavingEnabled);
     }
 
     private void stopScanAnimation() {
@@ -171,7 +179,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             createDocumentRenderer();
         }
         clearParcelableMemoryCache();
-        getView().showScanAnimation();
+        getView().showScanAnimation(mIsInvoiceSavingEnabled);
         loadDocumentData();
         showHintsForImage();
     }
@@ -288,6 +296,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                         resultHolder.getDocumentFileName()
                                 );
                         final AnalysisInteractor.Result result = resultHolder.getResult();
+                        boolean shouldClearImageCaches = true;
                         switch (result) {
                             case SUCCESS_NO_EXTRACTIONS:
                                 mAnalysisCompleted = true;
@@ -315,6 +324,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                     proceedSuccessNoExtractions();
                                 } else {
                                     proceedWithExtractions(resultHolder);
+                                    shouldClearImageCaches = false;
                                 }
                             case NO_NETWORK_SERVICE:
                                 break;
@@ -322,7 +332,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 throw new UnsupportedOperationException(
                                         "Unknown AnalysisInteractor result: " + result);
                         }
-                        if (result != AnalysisInteractor.Result.NO_NETWORK_SERVICE) {
+                        if (result != AnalysisInteractor.Result.NO_NETWORK_SERVICE
+                                && shouldClearImageCaches) {
                             clearSavedImages();
                         }
                         return null;
@@ -335,7 +346,18 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     private void proceedWithExtractions(AnalysisInteractor.ResultHolder resultHolder) {
-        extension.proceedWithExtractions(resultHolder);
+        successResultHolder = resultHolder;
+        // This case will happen in case of screen rotation OR if the feature is disabled
+        if (!mIsInvoiceSavingEnabled || isSavingInvoicesInProgress) {
+            clearSavedImagesAndProceed();
+            return;
+        }
+        // if the feature is enabled, Start the SAF flow
+        getView().processInvoiceSaving();
+    }
+    private void clearSavedImagesAndProceed(){
+        clearSavedImages();
+        extension.proceedWithExtractions(successResultHolder);
     }
 
     private void loadDocumentData() {
@@ -459,5 +481,49 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             errorType = ErrorType.GENERAL;
         }
         getView().showError(errorType, mMultiPageDocument);
+    }
+
+    /**
+     * We only have to add the files which are captured from camera, That's why we have to filter
+     * out the files which are imported via picker or they are from "open with" flow.
+     * */
+    @Override
+    public List<Uri> assembleMultiPageDocumentUris() {
+        if (mMultiPageDocument == null || mMultiPageDocument.getDocuments() == null) {
+            return Collections.emptyList();
+        }
+
+        return mMultiPageDocument.getDocuments().stream()
+                .filter(doc -> doc.getUri() != null)
+                .filter(doc -> doc.getImportMethod() != Document.ImportMethod.PICKER
+                        && doc.getImportMethod() != Document.ImportMethod.OPEN_WITH)
+                .map(Document::getUri)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    void updateInvoiceSavingState(Boolean isInProgress) {
+        isSavingInvoicesInProgress = isInProgress;
+    }
+
+    @Override
+    void releaseMutexForEducation() {
+        extension.releaseMutex();
+    }
+
+    /**
+     * Resumes the interrupted processing flow after the user selects a folder via SAF.
+     * <p>
+     * After a configuration change {@code successResultHolder} will be {@code null}.
+     * In that case the flow is restarted by calling {@link #start()}, and rest of the
+     * flow is handled by {@link #proceedWithExtractions(AnalysisInteractor.ResultHolder)}.
+     * So, this method must not attempt to resume.
+     * When {@code successResultHolder} is non-null, this method clears saved images and
+     * continues processing.
+     */
+    @Override
+    public void resumeInterruptedFlow() {
+        if (successResultHolder == null) return;
+        clearSavedImagesAndProceed();
     }
 }

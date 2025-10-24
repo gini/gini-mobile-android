@@ -36,15 +36,18 @@ class ImmutablePhoto implements Photo {
     int mRotationForDisplay;
     private final ImageDocument.ImageFormat mImageFormat;
     private final boolean mIsImported;
+    private Document.ImportMethod mImportMethod = null;
     private String mParcelableMemoryCacheTag;
 
     ImmutablePhoto(@NonNull final byte[] data, final int orientation,
-            @NonNull final ImageDocument.ImageFormat imageFormat, final boolean isImported) {
+                   @NonNull final ImageDocument.ImageFormat imageFormat, final boolean isImported,
+                   final Document.ImportMethod importMethod) {
         mData = data;
         mRotationForDisplay = orientation;
         mImageFormat = imageFormat;
         mIsImported = isImported;
         mBitmapPreview = createPreview();
+        mImportMethod = importMethod;
     }
 
     ImmutablePhoto(@NonNull final ImageDocument imageDocument) {
@@ -53,6 +56,7 @@ class ImmutablePhoto implements Photo {
         mImageFormat = imageDocument.getFormat();
         mIsImported = imageDocument.isImported();
         mBitmapPreview = createPreview();
+        mImportMethod = imageDocument.getImportMethod();
     }
 
     @Nullable
@@ -150,7 +154,7 @@ class ImmutablePhoto implements Photo {
 
     @Override
     public Document.ImportMethod getImportMethod() {
-        return null;
+        return mImportMethod;
     }
 
     @Override

@@ -48,5 +48,5 @@
     <dimen name="gc_unknown_banner_width">330dp</dimen>
     <dimen name="gc_unelevated_button_height">55dp</dimen>
     <dimen name="gc_snackbar_text_height">60dp</dimen>
-
+    <dimen name="gc_save_invoices_locally_view_tablet_minimum_width">340dp</dimen>
 </resources>

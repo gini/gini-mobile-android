@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
+            android:focusable="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,6 +33,7 @@
             android:layout_marginStart="@dimen/gc_large_24"
             android:layout_marginEnd="@dimen/gc_large_24"
             android:layout_marginBottom="@dimen/gc_large"
+            android:focusable="true"
             android:layout_marginTop="@dimen/gc_large_24"
             android:gravity="center"
             android:text="@string/gc_payment_details_visible"
@@ -89,8 +91,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_save_invoices_wrapper"
             android:layout_width="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
             android:minWidth="@dimen/gc_save_invoices_locally_view_tablet_minimum_width"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/gc_medium_12"
@@ -137,7 +139,6 @@
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/gc_process_documents_wrapper"
