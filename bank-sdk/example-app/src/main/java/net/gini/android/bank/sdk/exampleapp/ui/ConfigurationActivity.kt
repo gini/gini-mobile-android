@@ -614,7 +614,7 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.btnRemoveSafData.setOnClickListener {
             SharedPreferenceHelper.saveString(SAF_STORAGE_URI_KEY, "", this)
         }
-
+        // For testing Save Invoices Locally SDK flag, this is how clients can enable/disable it
         binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature
             .setOnCheckedChangeListener { _, isChecked ->
                 configurationViewModel.setConfiguration(
