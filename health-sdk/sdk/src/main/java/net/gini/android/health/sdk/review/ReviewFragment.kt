@@ -84,7 +84,7 @@ internal interface ReviewFragmentListener {
 /**
  * Delay duration (in milliseconds) used to allow the view to settle down before requesting focus.
  *
- * A value of 200ms was chosen based on observed behaviour on Android 10 devices and below, where
+ * A value of 200ms was chosen based on observed behaviour on Android Q (API 29) and below, where
  * immediately requesting keyboard focus after view creation can result in the keyboard not
  * appearing.
  * This delay helps ensure that the keyboard is reliably shown when the field requests focus.
