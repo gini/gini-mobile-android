@@ -108,7 +108,7 @@ class ReviewFragment private constructor(
     private val viewModel: ReviewViewModel by viewModels{
         viewModelFactory ?: object : ViewModelProvider.Factory {}
     }
-    private var imeVisibleNow: Boolean = false
+    private var isImeVisible: Boolean = false
     private var preRKeyboardTracker: ViewTreeObserver.OnGlobalLayoutListener? = null
 
     private var binding: GhsFragmentReviewBinding by autoCleared()
@@ -422,7 +422,7 @@ class ReviewFragment private constructor(
             root.getWindowVisibleDisplayFrame(r)
             val visible = r.height()
             val heightDiff = root.rootView.height - visible
-            imeVisibleNow = heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // keyboard threshold
+            isImeVisible = heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // keyboard threshold
         }
         root.viewTreeObserver.addOnGlobalLayoutListener(listener)
         preRKeyboardTracker = listener
@@ -532,7 +532,7 @@ class ReviewFragment private constructor(
         if (preQ()) {
             val focusedId = view?.findFocus()?.id ?: View.NO_ID
             outState.putInt(KEY_FOCUSED_ID, focusedId)
-            outState.putBoolean(KEY_IME_WAS_VISIBLE, imeVisibleNow)
+            outState.putBoolean(KEY_IME_WAS_VISIBLE, isImeVisible)
         }
         super.onSaveInstanceState(outState)
     }
