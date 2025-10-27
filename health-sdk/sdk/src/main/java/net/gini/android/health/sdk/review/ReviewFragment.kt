@@ -39,7 +39,6 @@ import dev.chrisbanes.insetter.windowInsetTypesOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.R as HealthR
 import net.gini.android.internal.payment.R as InternalPaymentR
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
@@ -180,12 +179,12 @@ class ReviewFragment private constructor(
                 val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
                 if (!imeVisible && !ranPostRotateFix && resources.isLandscapeOrientation().not()) {
                     ranPostRotateFix = true
-                    v.post { fixPagerAfterRotationThenMaybeRestoreIme() }
+                    v.post { restorePagerAndImeAfterRotation() }
                 }
                 insets
             }
         } else if (resources.isLandscapeOrientation().not()) {
-            fixPagerAfterRotationThenMaybeRestoreIme()
+            restorePagerAndImeAfterRotation()
         }
 
         with(binding) {
@@ -211,7 +210,7 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun fixPagerAfterRotationThenMaybeRestoreIme() {
+    private fun restorePagerAndImeAfterRotation() {
         binding.pager.doOnPreDraw {
             applyPagerConstraintFromCurrentSize()
         }
