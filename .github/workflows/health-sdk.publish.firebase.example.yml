@@ -46,7 +46,7 @@ jobs:
       - name: build release example app for QA
         run: >
           ./gradlew health-sdk:example-app:assembleQaRelease
-          -PclientId="gini-mobile-test" 
+          -PclientId="gini-mobile-ci" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="health_sdk_example.jks"
           -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
