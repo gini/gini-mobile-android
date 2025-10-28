@@ -85,7 +85,8 @@ fun GiniDatePickerDialog(
                         todayContentColor = textDateToday,
                         todayDateBorderColor = dateSelected,
                         dividerColor = divider,
-                        containerColor = containerColor
+                        containerColor = containerColor,
+                        disabledDayContentColor = textDateDisabled
                     )
                 }
             )
