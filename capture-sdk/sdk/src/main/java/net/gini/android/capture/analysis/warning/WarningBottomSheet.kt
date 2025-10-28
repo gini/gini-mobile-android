@@ -145,13 +145,28 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
                         override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
                     })
                 }
-                if (shouldFullscreen()) {
-                    bottomSheetInternal.layoutParams = bottomSheetInternal.layoutParams.apply {
-                        height = ViewGroup.LayoutParams.MATCH_PARENT
-                    }
-                    bottomSheetInternal.requestLayout()
-                }
+
             }
+        }
+    }
+    override fun onStart() {
+        super.onStart()
+
+        if (!resources.getBoolean(R.bool.gc_is_tablet) &&
+            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            val bottomSheet = (dialog as? BottomSheetDialog)
+                ?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+                ?: return
+
+            val behavior = BottomSheetBehavior.from(bottomSheet)
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.isDraggable = false
+            behavior.isHideable = false
+            behavior.skipCollapsed = true
+
+            bottomSheet.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            bottomSheet.requestLayout()
         }
     }
 
@@ -173,11 +188,6 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
     }
 
 
-    private fun shouldFullscreen(): Boolean {
-        val isTablet = resources.getBoolean(R.bool.gc_is_tablet)
-        val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-        return !isTablet && isLandscape
-    }
 
     companion object {
         private const val ARG_TYPE = "arg_type"
