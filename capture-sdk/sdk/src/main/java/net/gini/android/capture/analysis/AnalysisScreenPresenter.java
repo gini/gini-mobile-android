@@ -60,6 +60,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     static final String PARCELABLE_MEMORY_CACHE_TAG = "ANALYSIS_FRAGMENT";
 
     private static final String EXTRACTION_PAYMENT_STATE = "paymentState";
+    private static final String EXTRACTION_PAYMENT_DUE_DATE = "paymentDueDate";
 
     private static final Logger LOG = LoggerFactory.getLogger(AnalysisScreenPresenter.class);
 
@@ -487,11 +488,33 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         }
 
         // Payment state
-        final Map<String, GiniCaptureSpecificExtraction> exts = resultHolder.getExtractions();
-        final GiniCaptureSpecificExtraction ps = exts.get(EXTRACTION_PAYMENT_STATE);
-        final String paymentStateValue = ps != null ? ps.getValue() : null;
-        final WarningPaymentState state = WarningPaymentState.from(paymentStateValue);
-
+        final WarningPaymentState state = extractPaymentState(resultHolder.getExtractions());
         return state.isPaid();
+    }
+
+    private boolean shouldShowPaymentDueHint(
+            @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        // Feature flags / config
+        final boolean paymentDueHintClientFlagEnabled = extension.getGetPaymentHintsEnabledUseCase().invoke();
+
+        final boolean showPaymentDueWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
+
+        if (!paymentDueHintClientFlagEnabled || !showPaymentDueWarningFlag) {
+            return false;
+        }
+
+        final Map<String, GiniCaptureSpecificExtraction> extractions = resultHolder.getExtractions();
+        // Payment state
+        final WarningPaymentState state = extractPaymentState(extractions);
+
+        return state.toBePaid();
+    }
+
+    // extracts the payment state from extractions
+    private WarningPaymentState extractPaymentState(
+            @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
+        final GiniCaptureSpecificExtraction ps = extractions.get(EXTRACTION_PAYMENT_STATE);
+        final String paymentStateValue = ps != null ? ps.getValue() : null;
+        return WarningPaymentState.from(paymentStateValue);
     }
 }
