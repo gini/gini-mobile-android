@@ -49,7 +49,6 @@ class SaveInvoicesFeatureEvaluatorTest {
     fun setup() {
         mockkStatic(GiniCapture::class)
         mockkStatic(FeatureConfiguration::class)
-        CaptureSdkIsolatedKoinContext.koin.loadModules(listOf(koinTestModule))
         mockGiniCapture = mockk(relaxed = true)
         mockInternal = mockk(relaxed = true)
         mockMemoryStore = mockk(relaxed = true)
@@ -61,6 +60,7 @@ class SaveInvoicesFeatureEvaluatorTest {
         every { mockInternal.imageMultiPageDocumentMemoryStore } returns mockMemoryStore
         every { mockMemoryStore.multiPageDocument } returns mockMultiPageDocument
 
+        CaptureSdkIsolatedKoinContext.koin.loadModules(listOf(koinTestModule))
     }
 
     @After
