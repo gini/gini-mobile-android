@@ -9,7 +9,7 @@ import net.gini.android.capture.internal.util.FileImportValidator
 
 
 @Parcelize
-data class Configuration(
+data class ExampleAppBankConfiguration(
     // setup sdk with default configurations
     val isDefaultSDKConfigurationsEnabled: Boolean = false,
 
@@ -195,11 +195,11 @@ data class Configuration(
 
     ) : Parcelable {
 
-    companion object {
+    companion object Companion {
         fun setupSDKWithDefaultConfiguration(
-            currentConfiguration: Configuration,
+            currentConfiguration: ExampleAppBankConfiguration,
             defaultCaptureConfiguration: CaptureConfiguration,
-        ): Configuration {
+        ): ExampleAppBankConfiguration {
             return currentConfiguration.copy(
                 isFileImportEnabled = defaultCaptureConfiguration.fileImportEnabled,
                 isQrCodeEnabled = defaultCaptureConfiguration.qrCodeScanningEnabled,

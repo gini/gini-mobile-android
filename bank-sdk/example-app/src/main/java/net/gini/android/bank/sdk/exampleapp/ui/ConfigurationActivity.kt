@@ -18,7 +18,7 @@ import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityConfigurationBinding
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CAMERA_PERMISSION_BUNDLE
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
-import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
 import javax.inject.Inject
@@ -107,7 +107,7 @@ class ConfigurationActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun updateUIWithConfigurationObject(configuration: Configuration) {
+    private fun updateUIWithConfigurationObject(configuration: ExampleAppBankConfiguration) {
         // setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.isChecked =
             configuration.isDefaultSDKConfigurationsEnabled
