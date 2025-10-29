@@ -209,6 +209,7 @@ class SaveInvoicesFeatureEvaluatorTest {
 
         val validUri = mockk<Uri>()
         val mockDoc = createMockDocument(uri = validUri, importMethod = Document.ImportMethod.NONE)
+
         every { mockMultiPageDocument.documents } returns listOf(mockDoc)
 
         val result = SaveInvoicesFeatureEvaluator.shouldShowSaveInvoicesLocallyView()
