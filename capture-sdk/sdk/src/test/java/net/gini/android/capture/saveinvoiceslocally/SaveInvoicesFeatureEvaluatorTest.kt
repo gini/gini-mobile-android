@@ -17,6 +17,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
 /**
@@ -36,10 +37,8 @@ class SaveInvoicesFeatureEvaluatorTest {
 
     private lateinit var mockGetSaveInvoicesLocallyFeatureEnabledUseCase:
             GetSaveInvoicesLocallyFeatureEnabledUseCase
-    private val koinTestModule = module {
-        single<GetSaveInvoicesLocallyFeatureEnabledUseCase>
-        { mockGetSaveInvoicesLocallyFeatureEnabledUseCase }
-    }
+    private lateinit var koinTestModule: Module
+
     private lateinit var mockGiniCapture: GiniCapture
     private lateinit var mockInternal: GiniCapture.Internal
     private lateinit var mockMemoryStore: ImageMultiPageDocumentMemoryStore
@@ -53,14 +52,18 @@ class SaveInvoicesFeatureEvaluatorTest {
         mockInternal = mockk(relaxed = true)
         mockMemoryStore = mockk(relaxed = true)
         mockMultiPageDocument = mockk(relaxed = true)
-        mockGetSaveInvoicesLocallyFeatureEnabledUseCase = mockk(relaxed = true)
+        mockGetSaveInvoicesLocallyFeatureEnabledUseCase = mockk()
 
+        koinTestModule = module {
+            single<GetSaveInvoicesLocallyFeatureEnabledUseCase>
+            { mockGetSaveInvoicesLocallyFeatureEnabledUseCase }
+        }
+
+        CaptureSdkIsolatedKoinContext.koin.loadModules(listOf(koinTestModule))
         every { GiniCapture.getInstance() } returns mockGiniCapture
         every { mockGiniCapture.internal() } returns mockInternal
         every { mockInternal.imageMultiPageDocumentMemoryStore } returns mockMemoryStore
         every { mockMemoryStore.multiPageDocument } returns mockMultiPageDocument
-
-        CaptureSdkIsolatedKoinContext.koin.loadModules(listOf(koinTestModule))
     }
 
     @After
