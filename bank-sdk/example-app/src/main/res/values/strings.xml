@@ -60,6 +60,7 @@
     <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
     <string name="default_sdk_configuration_switch_label">SDK default configurations</string>
     <string name="payment_hint_switch_label">Payment Hint State</string>
+    <string name="payment_due_hint_switch_label">Payment Due Hint</string>
     <string name="open_with_switch_label">Open with</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>
     <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>

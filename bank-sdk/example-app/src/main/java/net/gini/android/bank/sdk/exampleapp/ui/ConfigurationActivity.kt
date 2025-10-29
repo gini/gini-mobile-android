@@ -228,6 +228,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.switchSetupPaymentHints.isChecked =
             configuration.isPaymentHintsEnabled
 
+        // enable payment due hint
+        binding.layoutFeatureToggle.switchPaymentDueHint.isChecked =
+            configuration.isPaymentDueHintEnabled
+
         // enable return reasons dialog
         binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked =
             configuration.isReturnReasonsEnabled
@@ -565,6 +569,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isPaymentHintsEnabled = isChecked
+                )
+            )
+        }
+
+        //enable payment due hint for showing warning
+        binding.layoutFeatureToggle.switchPaymentDueHint.setOnCheckedChangeListener{ _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isPaymentDueHintEnabled = isChecked
                 )
             )
         }

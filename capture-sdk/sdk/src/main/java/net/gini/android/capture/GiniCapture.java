@@ -121,6 +121,7 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance;
     private final boolean isBottomNavigationBarEnabled;
     private final boolean isPaymentHintsEnabled;
+    private final boolean isPaymentDueHintEnabled;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -429,6 +430,7 @@ public class GiniCapture {
         errorNavigationBarBottomAdapterInstance = builder.getErrorNavigationBarBottomAdapterInstance();
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
         isPaymentHintsEnabled = builder.isPaymentHintsEnabled();
+        isPaymentDueHintEnabled = builder.isPaymentDueHintEnabled();
         onboardingAlignCornersIllustrationAdapterInstance = builder.getOnboardingAlignCornersIllustrationAdapterInstance();
         onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
         onboardingMultiPageIllustrationAdapterInstance = builder.getOnboardingMultiPageIllustrationAdapterInstance();
@@ -721,6 +723,10 @@ public class GiniCapture {
         return isPaymentHintsEnabled;
     }
 
+    public boolean isPaymentDueHintEnabled() {
+        return isPaymentDueHintEnabled;
+    }
+
     @Nullable
     public OnboardingIllustrationAdapter getOnboardingAlignCornersIllustrationAdapter() {
         if (onboardingAlignCornersIllustrationAdapterInstance == null) {
@@ -921,6 +927,7 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private boolean isBottomNavigationBarEnabled = false;
         private boolean isPaymentHintsEnabled = true;
+        private boolean isPaymentDueHintEnabled = true;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -1346,6 +1353,11 @@ public class GiniCapture {
             return this;
         }
 
+        public Builder setPaymentDueHintEnabled(final Boolean enabled){
+            isPaymentDueHintEnabled = enabled;
+            return this;
+        }
+
         private boolean isBottomNavigationBarEnabled() {
             return isBottomNavigationBarEnabled;
         }
@@ -1354,6 +1366,9 @@ public class GiniCapture {
             return isPaymentHintsEnabled;
         }
 
+        private boolean isPaymentDueHintEnabled(){
+            return isPaymentDueHintEnabled;
+        }
         @NonNull
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingAlignCornersIllustrationAdapterInstance() {
             return onboardingAlignCornersIllustrationAdapterInstance;

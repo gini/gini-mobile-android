@@ -153,6 +153,13 @@
         android:layout_height="wrap_content"
         android:text="@string/payment_hint_switch_label" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_paymentDueHint"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/payment_due_hint_switch_label" />
+
     <TextView
         android:id="@+id/tv_paymentHintsDescription"
         style="@style/TextAppearance.MaterialComponents.Caption"

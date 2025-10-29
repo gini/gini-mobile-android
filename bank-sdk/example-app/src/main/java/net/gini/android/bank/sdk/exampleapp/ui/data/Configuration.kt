@@ -154,6 +154,9 @@ data class Configuration(
     // enable show warning for paid invoices
     val isPaymentHintsEnabled: Boolean = true,
 
+    // enable payment due hint
+    val isPaymentDueHintEnabled: Boolean = true,
+
     // Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
 
@@ -207,6 +210,7 @@ data class Configuration(
                 documentImportEnabledFileTypes = defaultCaptureConfiguration.documentImportEnabledFileTypes,
                 isBottomNavigationBarEnabled = defaultCaptureConfiguration.bottomNavigationBarEnabled,
                 isPaymentHintsEnabled = defaultCaptureConfiguration.paymentHintsEnabled,
+                isPaymentDueHintEnabled = defaultCaptureConfiguration.paymentDueHintEnabled,
                 isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
