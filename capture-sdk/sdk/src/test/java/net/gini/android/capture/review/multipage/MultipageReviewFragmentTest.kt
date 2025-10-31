@@ -7,6 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.*
+import io.mockk.every
+import io.mockk.mockk
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
@@ -16,6 +18,7 @@ import net.gini.android.capture.document.ImageDocumentFake
 import net.gini.android.capture.internal.network.NetworkRequestResult
 import net.gini.android.capture.internal.network.NetworkRequestsManager
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
+import net.gini.android.capture.saveinvoiceslocally.GetSaveInvoicesLocallyFeatureEnabledUseCase
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.ReviewScreenEvent
@@ -40,8 +43,10 @@ import org.mockito.Mockito.`when`
 @RunWith(AndroidJUnit4::class)
 class MultipageReviewFragmentTest {
 
+    private val mockGetSaveInvoicesLocallyFeatureEnabledUseCase = mockk<GetSaveInvoicesLocallyFeatureEnabledUseCase>()
     private val koinTestModule = module {
         single { GiniBankConfigurationProvider() }
+        single { mockGetSaveInvoicesLocallyFeatureEnabledUseCase }
     }
 
     @Before
@@ -62,7 +67,7 @@ class MultipageReviewFragmentTest {
         GiniCapture.Builder().setEventTracker(eventTracker).build()
         GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
         UserAnalytics.initialize(InstrumentationRegistry.getInstrumentation().context)
-
+        every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
         FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java).use { scenario ->
             scenario.moveToState(Lifecycle.State.STARTED)
 
@@ -95,6 +100,7 @@ class MultipageReviewFragmentTest {
             GiniCapture.Builder().setEventTracker(eventTracker).build()
             GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(mock())
             UserAnalytics.initialize(InstrumentationRegistry.getInstrumentation().context)
+            every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
             FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java).use { scenario ->
                 scenario.moveToState(Lifecycle.State.STARTED)
 

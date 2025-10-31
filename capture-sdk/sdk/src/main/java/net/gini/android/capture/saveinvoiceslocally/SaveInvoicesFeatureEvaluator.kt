@@ -16,7 +16,9 @@ import net.gini.android.capture.internal.util.FeatureConfiguration.isSavingInvoi
 internal object SaveInvoicesFeatureEvaluator {
 
     private val getSaveInvoicesLocallyFeatureEnabledUseCase:
-            GetSaveInvoicesLocallyFeatureEnabledUseCase by getGiniCaptureKoin().inject()
+            GetSaveInvoicesLocallyFeatureEnabledUseCase
+        get() = getGiniCaptureKoin().get()
+
 
     /**
      * These conditions must be met to show the Save Invoices Locally view:

@@ -6,11 +6,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.mockk.*
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.di.CaptureSdkIsolatedKoinContext
 import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
-import net.gini.android.capture.internal.util.FeatureConfiguration
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -35,40 +36,42 @@ import org.koin.dsl.module
 @RunWith(AndroidJUnit4::class)
 class SaveInvoicesFeatureEvaluatorTest {
 
-    private lateinit var mockGetSaveInvoicesLocallyFeatureEnabledUseCase:
-            GetSaveInvoicesLocallyFeatureEnabledUseCase
-    private lateinit var koinTestModule: Module
-
+    private lateinit var  mockGiniBankConfigurationProvider : GiniBankConfigurationProvider
     private lateinit var mockGiniCapture: GiniCapture
     private lateinit var mockInternal: GiniCapture.Internal
     private lateinit var mockMemoryStore: ImageMultiPageDocumentMemoryStore
     private lateinit var mockMultiPageDocument: ImageMultiPageDocument
+    private val mockGetSaveInvoicesLocallyFeatureEnabledUseCase = mockk<GetSaveInvoicesLocallyFeatureEnabledUseCase>()
+    private lateinit var koinTestModule : Module
 
     @Before
     fun setup() {
-        mockkStatic(GiniCapture::class)
-        mockkStatic(FeatureConfiguration::class)
+
+        mockGiniBankConfigurationProvider = mockk<GiniBankConfigurationProvider>()
+
+        koinTestModule = module {
+            single { mockGiniBankConfigurationProvider }
+            single { mockGetSaveInvoicesLocallyFeatureEnabledUseCase }
+        }
+
         mockGiniCapture = mockk(relaxed = true)
         mockInternal = mockk(relaxed = true)
         mockMemoryStore = mockk(relaxed = true)
         mockMultiPageDocument = mockk(relaxed = true)
-        mockGetSaveInvoicesLocallyFeatureEnabledUseCase = mockk()
-
-        koinTestModule = module {
-            single<GetSaveInvoicesLocallyFeatureEnabledUseCase>
-            { mockGetSaveInvoicesLocallyFeatureEnabledUseCase }
-        }
 
         CaptureSdkIsolatedKoinContext.koin.loadModules(listOf(koinTestModule))
-        every { GiniCapture.getInstance() } returns mockGiniCapture
+
         every { mockGiniCapture.internal() } returns mockInternal
         every { mockInternal.imageMultiPageDocumentMemoryStore } returns mockMemoryStore
         every { mockMemoryStore.multiPageDocument } returns mockMultiPageDocument
+        GiniCaptureHelper.setGiniCaptureInstance(mockGiniCapture)
+
     }
 
     @After
     fun tearDown() {
         unmockkAll()
+        GiniCaptureHelper.setGiniCaptureInstance(null)
         CaptureSdkIsolatedKoinContext.koin.unloadModules(listOf(koinTestModule))
     }
 
@@ -76,7 +79,7 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns false when GiniCapture is not initialized`() {
 
-        every { GiniCapture.hasInstance() } returns false
+        GiniCaptureHelper.setGiniCaptureInstance(null)
 
         val result = SaveInvoicesFeatureEvaluator.shouldShowSaveInvoicesLocallyView()
 
@@ -86,9 +89,8 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns false when feature is not enabled in SDK`() {
 
-        every { GiniCapture.hasInstance() } returns true
-        every { FeatureConfiguration.isSavingInvoicesLocallyEnabled() } returns false
-
+        every { mockGiniCapture.saveInvoicesEnabled } returns false
+        every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
         val result = SaveInvoicesFeatureEvaluator.shouldShowSaveInvoicesLocallyView()
 
         assertFalse(result)
@@ -97,9 +99,8 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns false when feature flag is disabled`() {
 
-        every { GiniCapture.hasInstance() } returns true
-        every { FeatureConfiguration.isSavingInvoicesLocallyEnabled() } returns true
-        every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns false
+        every { mockGiniCapture.saveInvoicesEnabled } returns true
+        every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns false 
 
         val result = SaveInvoicesFeatureEvaluator.shouldShowSaveInvoicesLocallyView()
 
@@ -109,8 +110,7 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns false when documents list is empty`() {
 
-        every { GiniCapture.hasInstance() } returns true
-        every { FeatureConfiguration.isSavingInvoicesLocallyEnabled() } returns true
+        every { mockGiniCapture.saveInvoicesEnabled } returns true
         every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
         every { mockMultiPageDocument.documents } returns emptyList()
 
@@ -122,8 +122,7 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns false when multiPageDocument is null`() {
 
-        every { GiniCapture.hasInstance() } returns true
-        every { FeatureConfiguration.isSavingInvoicesLocallyEnabled() } returns true
+        every { mockGiniCapture.saveInvoicesEnabled } returns true
         every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
         every { mockMemoryStore.multiPageDocument } returns null
 
@@ -135,8 +134,7 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns false when all documents have null uri`() {
 
-        every { GiniCapture.hasInstance() } returns true
-        every { FeatureConfiguration.isSavingInvoicesLocallyEnabled() } returns true
+        every { mockGiniCapture.saveInvoicesEnabled } returns true
         every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
 
         val mockDoc = createMockDocument(uri = null, importMethod = Document.ImportMethod.PICKER)
@@ -150,8 +148,7 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns false when all documents are from PICKER`() {
 
-        every { GiniCapture.hasInstance() } returns true
-        every { FeatureConfiguration.isSavingInvoicesLocallyEnabled() } returns true
+        every { mockGiniCapture.saveInvoicesEnabled } returns true
         every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
 
         val mockUri = mockk<Uri>()
@@ -166,8 +163,7 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns false when all documents are from OPEN_WITH`() {
 
-        every { GiniCapture.hasInstance() } returns true
-        every { FeatureConfiguration.isSavingInvoicesLocallyEnabled() } returns true
+        every { mockGiniCapture.saveInvoicesEnabled } returns true
         every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
 
         val mockUri = mockk<Uri>()
@@ -183,8 +179,7 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns true with mixed documents when at least one is valid`() {
 
-        every { GiniCapture.hasInstance() } returns true
-        every { FeatureConfiguration.isSavingInvoicesLocallyEnabled() } returns true
+        every { mockGiniCapture.saveInvoicesEnabled } returns true
         every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
 
         val validUri = mockk<Uri>()
@@ -206,8 +201,7 @@ class SaveInvoicesFeatureEvaluatorTest {
     @Test
     fun `shouldShowSaveInvoicesLocallyView returns true when the document is valid`() {
 
-        every { GiniCapture.hasInstance() } returns true
-        every { FeatureConfiguration.isSavingInvoicesLocallyEnabled() } returns true
+        every { mockGiniCapture.saveInvoicesEnabled } returns true
         every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
 
         val validUri = mockk<Uri>()

@@ -5,7 +5,7 @@ import org.koin.dsl.module
 
 internal val saveInvoicesLocallyModule = module {
 
-    factory {
+    single {
         GetSaveInvoicesLocallyFeatureEnabledUseCase(
             giniBankConfigurationProvider = get(),
         )
