@@ -31,6 +31,7 @@ import org.koin.dsl.module
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
+import net.gini.android.capture.di.getGiniCaptureKoin
 import java.util.UUID
 
 /**
@@ -119,6 +120,46 @@ class GiniCaptureFragmentTest {
         }
     }
 
+    @Test
+    fun savePhotosLocally_shouldBeDisabled_whenConfigurationSetToFalse() {
+        whenever(networkRequestsManager.getConfigurations(any())).thenReturn(
+            CompletableFuture.completedFuture(
+                getMockedConfiguration(
+                    userJourneyEnabled = false,
+                    savePhotosLocallyEnabled = false
+                )
+            )
+        )
+
+        launchGiniCaptureFragment().use { scenario ->
+            scenario.moveToState(Lifecycle.State.RESUMED)
+            val giniBankConfigurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+            val configuration = giniBankConfigurationProvider.provide()
+
+            assertThat(configuration.savePhotosLocallyEnabled).isFalse()
+        }
+    }
+
+    @Test
+    fun savePhotosLocally_shouldBeEnabled_whenConfigurationSetToTrue() {
+        whenever(networkRequestsManager.getConfigurations(any())).thenReturn(
+            CompletableFuture.completedFuture(
+                getMockedConfiguration(
+                    userJourneyEnabled = false,
+                    savePhotosLocallyEnabled = true
+                )
+            )
+        )
+
+        launchGiniCaptureFragment().use { scenario ->
+            scenario.moveToState(Lifecycle.State.RESUMED)
+            val giniBankConfigurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+            val configuration = giniBankConfigurationProvider.provide()
+
+            assertThat(configuration.savePhotosLocallyEnabled).isTrue()
+        }
+    }
+
 
     @Test
     fun analyticsTracker_shouldNotBeEmpty_whenUserJourneyEnabled() {
@@ -138,7 +179,10 @@ class GiniCaptureFragmentTest {
     }
 
 
-    private fun getMockedConfiguration(userJourneyEnabled: Boolean): ConfigurationNetworkResult {
+    private fun getMockedConfiguration(
+        userJourneyEnabled: Boolean,
+        savePhotosLocallyEnabled: Boolean = false
+    ): ConfigurationNetworkResult {
         val testConfig = Configuration(
             id = UUID.randomUUID(),
             clientID = TEST_CLIENT_ID,
@@ -149,7 +193,8 @@ class GiniCaptureFragmentTest {
             isQrCodeEducationEnabled = false,
             isInstantPaymentEnabled = false,
             isEInvoiceEnabled = false,
-            amplitudeApiKey = TEST_API_KEY
+            amplitudeApiKey = TEST_API_KEY,
+            savePhotosLocallyEnabled = savePhotosLocallyEnabled
         )
 
         return ConfigurationNetworkResult(testConfig, UUID.randomUUID())
