@@ -177,43 +177,44 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
-
       - name: run ktlint
         run: ./gradlew bank-api-library:library:ktlintCheck
-
       - name: archive ktlint report
         uses: actions/upload-artifact@v4
         with:
           name: bank-api-library-ktlint-report
           path: bank-api-library/library/build/reports/ktlint/**/*.html
 
-  sonarcloud:   # ← now a top-level job under `jobs:`, not nested under ktlint
+  sonarcloud:
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: [ checkstyle, pmd, android-lint, detekt, ktlint ]  # waits for static checks
+    needs: [ checkstyle, pmd, android-lint, detekt, ktlint ]
     steps:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # IMPORTANT for PR diffs/new-code
-
+          fetch-depth: 0
       - name: setup java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
-
       - name: build module
         run: ./gradlew -p bank-api-library clean build
-
-      - name: sonar scan
+      - name: Sonar scan (Action)
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew -p bank-api-library sonar
+        with:
+          projectBaseDir: bank-api-library
+          # (Optional) pass properties inline instead of a properties file:
+          # args: >
+          #   -Dsonar.projectKey=bank-api-library
+          #   -Dsonar.organization=gini
+          #   -Dsonar.host.url=https://sonarcloud.io

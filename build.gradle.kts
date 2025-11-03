@@ -33,6 +33,17 @@ buildscript {
         // in the individual module build.gradle.kts files
     }
 }
+// build.gradle.kts (root)
+subprojects {
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.apache.commons" && requested.name == "commons-compress") {
+                useVersion("1.26.1")
+                because("Avoid NoSuchMethodError in Sonar task due to mismatched commons-compress")
+            }
+        }
+    }
+}
 
 apply<DependencyUpdatesPlugin>()
 apply<ReleaseOrderPlugin>()
