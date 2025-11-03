@@ -5,9 +5,17 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
+    id("org.sonarqube")
     alias(libs.plugins.devtools.ksp)
 }
 
+sonar {
+    properties {
+        property("sonar.projectKey", "bank-api-library")
+        property("sonar.organization", "gini")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
 android {
     // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml
     namespace = "net.gini.android.bank.api"
@@ -114,8 +122,18 @@ tasks.register<CreatePropertiesTask>("injectTestProperties") {
 
     doFirst {
         propertiesMap.clear()
-        propertiesMap.putAll(readLocalPropertiesToMapSilent(project,
-            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri", "testHealthApiUri")))
+        propertiesMap.putAll(
+            readLocalPropertiesToMapSilent(
+                project,
+                listOf(
+                    "testClientId",
+                    "testClientSecret",
+                    "testApiUri",
+                    "testUserCenterUri",
+                    "testHealthApiUri"
+                )
+            )
+        )
     }
 
     destinations.put(
