@@ -37,4 +37,8 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonar --info
+        run: >
+          ./gradlew build sonar
+          -Dsonar.projectKey=bank-api-library
+          -Dsonar.organization=gini
+          -Dsonar.host.url=https://sonarcloud.io
