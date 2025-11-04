@@ -1,39 +1,40 @@
-name: SonarCloud (bank-api-library)
+name: SonarQube
 
 on:
-  pull_request:
-    paths:
-      - 'bank-api-library/**'
-      - 'gradle/**'
   push:
     branches: [ main ]
-    paths:
-      - 'bank-api-library/**'
-      - 'gradle/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
-  analyze:
+  build:
+    name: Build and analyze
     runs-on: ubuntu-latest
-    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-      - uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          fetch-depth: 0
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
           java-version: '17'
-          cache: gradle
-      # Build bytecode only; tests are optional for Sonar (needed only for coverage)
-      - name: Build (assemble only)
-        run: ./gradlew -p bank-api-library assemble
-      - name: Sonar scan (Action)
-        uses: SonarSource/sonarqube-scan-action@v6
+          distribution: zulu
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectBaseDir: bank-api-library
-          # or provide args here if you don't have sonar-project.properties
-          # args: >
-          #   -Dsonar.projectKey=bank-api-library
-          #   -Dsonar.organization=gini
-          #   -Dsonar.host.url=https://sonarcloud.io
+        run: ./gradlew build sonar --info
