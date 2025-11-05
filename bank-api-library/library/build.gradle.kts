@@ -5,7 +5,7 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
-    id("org.sonarqube")
+    id ("org.sonarqube") version "7.0.1.6134"
     alias(libs.plugins.devtools.ksp)
 }
 
@@ -13,7 +13,6 @@ sonar {
     properties {
         property("sonar.projectKey", "bank-api-library")
         property("sonar.organization", "gini")
-        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
 android {
