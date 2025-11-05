@@ -21,6 +21,7 @@ data class GiniColorScheme(
     val badge: Badge = Badge(),
     val button: Button = Button(),
     val buttonOutlined: ButtonOutlined = ButtonOutlined(),
+    val progressBarButton: ProgressBarButton = ProgressBarButton(),
     val textField: TextField = TextField(),
     val toggles: Toggles = Toggles(),
     val dialogs: Dialogs = Dialogs(),
@@ -117,6 +118,14 @@ data class GiniColorScheme(
     data class ButtonOutlined(
         val container: Color = Color.Unspecified,
         val content: Color = Color.Unspecified,
+    )
+
+    @Immutable
+    data class ProgressBarButton(
+        val container: Color = Color.Unspecified,
+        val content: Color = Color.Unspecified,
+        val border: Color = Color.Unspecified,
+        val progress: Color = Color.Unspecified,
     )
 
     @Immutable
@@ -284,6 +293,12 @@ internal fun giniLightColorScheme(
             container = light04,
             content = dark02
         ),
+        progressBarButton = GiniColorScheme.ProgressBarButton(
+            container = light02,
+            content = dark02,
+            border = light04,
+            progress = accent01
+        ),
         textField = GiniColorScheme.TextField(
             container = light01,
             text = GiniColorScheme.TextField.Text(
@@ -413,6 +428,12 @@ internal fun giniDarkColorScheme(
         buttonOutlined = GiniColorScheme.ButtonOutlined(
             container = dark04,
             content = light01
+        ),
+        progressBarButton = GiniColorScheme.ProgressBarButton(
+            container = dark02,
+            content = light01,
+            border = light01,
+            progress = accent01
         ),
         textField = GiniColorScheme.TextField(
             container = dark02,
