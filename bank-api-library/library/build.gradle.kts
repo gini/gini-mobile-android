@@ -15,6 +15,7 @@ sonar {
         property("sonar.organization", "gini")
         property("sonar.java.binaries", "build/classes")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.exclusions", "**/*.java")
     }
 }
 android {
