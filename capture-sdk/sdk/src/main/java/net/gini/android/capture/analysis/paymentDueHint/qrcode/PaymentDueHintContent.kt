@@ -33,7 +33,7 @@ import net.gini.android.capture.ui.theme.GiniTheme
 @Composable
 fun PaymentDueHintContent(
     dueDate: String,
-    onComplete: () -> Unit,
+    onDismiss: () -> Unit,
     screenColorScheme: PaymentDueHintColors = PaymentDueHintColors.colors(),
 ) {
     Surface(
@@ -43,11 +43,11 @@ fun PaymentDueHintContent(
             modifier = Modifier
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.Center
         ) {
             TipCard(screenColorScheme, dueDate)
             Spacer(modifier = Modifier.height(4.dp))
-            DismissCard(screenColorScheme)
+            DismissCard(screenColorScheme, onDismiss)
         }
     }
 }
@@ -96,8 +96,10 @@ fun TipCard(
 
 @Composable
 fun DismissCard(
-    screenColorScheme: PaymentDueHintColors
+    screenColorScheme: PaymentDueHintColors,
+    onDismiss: () -> Unit,
 ) {
+    //TODO: check the background of the dismiss button
     Card(
         shape = RoundedCornerShape(4.dp),
         colors = CardDefaults.cardColors(
@@ -110,7 +112,8 @@ fun DismissCard(
                 width = 1.dp,
                 color = screenColorScheme.buttonBorderColor,
                 shape = RoundedCornerShape(4.dp)
-            )
+            ),
+        onClick = onDismiss
 
     ) {
         Column(
@@ -143,7 +146,7 @@ fun DismissCard(
 @Composable
 private fun ScreenReadyStatePreview(isLandScape: Boolean = false) {
     GiniTheme {
-        PaymentDueHintContent(onComplete = { /* no-op */ }, dueDate = "12/12/2023")
+        PaymentDueHintContent(onDismiss = { /* no-op */ }, dueDate = "12/12/2023")
     }
 }
 

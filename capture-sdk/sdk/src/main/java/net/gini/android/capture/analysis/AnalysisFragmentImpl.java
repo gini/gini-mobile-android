@@ -1,7 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -27,6 +25,7 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.paymentDueHint.PaymentDueHintDismissListener;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -56,6 +55,8 @@ import java.util.List;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
@@ -146,6 +147,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             mAnalysisMessageTextView.setVisibility(View.GONE);
     }
 
+    @Override
     void showEducation(EducationCompleteListener listener) {
         fragmentExtension.showEducation(() -> {
             hideEducation();
@@ -227,7 +229,16 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showPaidWarningThen(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
-            mFragment.showWarning(warningType, onProceed);
+        mFragment.showWarning(warningType, onProceed);
+    }
+
+    @Override
+    void showPaymentDueHint(PaymentDueHintDismissListener listener, String dueDate) {
+        fragmentExtension.showPaymentDueHint(() -> {
+                    listener.onDismiss();
+                    return Unit.INSTANCE;
+                },
+                dueDate);
     }
 
     @Override

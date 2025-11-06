@@ -34,11 +34,16 @@ import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_K
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
@@ -327,6 +332,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                             WarningType.DOCUMENT_MARKED_AS_PAID,
                                             () -> proceedWithExtractions(resultHolder)
                                     );
+                                } else if (shouldShowPaymentDueHint(resultHolder)) {
+                                    getView().showPaymentDueHint(
+                                            () -> proceedWithExtractions(resultHolder),
+                                            extractPaymentDueDateFromExtraction(resultHolder)
+                                    );
                                 } else {
                                     proceedWithExtractions(resultHolder);
                                 }
@@ -495,19 +505,55 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     private boolean shouldShowPaymentDueHint(
             @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
         // Feature flags / config
+        // TODO: get a new flag from backend: paymentDueHintEnabled
         final boolean paymentDueHintClientFlagEnabled = extension.getGetPaymentHintsEnabledUseCase().invoke();
 
         final boolean showPaymentDueWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
 
+        //TODO: check if the resultHolder contains Skonto or RA extractions
+
+        //TODO: check if Skonto or RA SDK flags are not active but extractions are coming, show the due hint
+
         if (!paymentDueHintClientFlagEnabled || !showPaymentDueWarningFlag) {
             return false;
         }
+
+        String paymentDueDate = extractPaymentDueDateFromExtraction(resultHolder);
+        if (paymentDueDate.isEmpty()) {
+            return false;
+        }
+
+        if (calculateRemainingDays(paymentDueDate) < 5) {
+            return false;
+        }
+        //TODO: add the default value of 5 days for the payment due date
+
 
         final Map<String, GiniCaptureSpecificExtraction> extractions = resultHolder.getExtractions();
         // Payment state
         final WarningPaymentState state = extractPaymentState(extractions);
 
         return state.toBePaid();
+    }
+
+    private String extractPaymentDueDateFromExtraction(AnalysisInteractor.ResultHolder resultHolder) {
+        return resultHolder.getExtractions().get(EXTRACTION_PAYMENT_DUE_DATE) != null ?
+                resultHolder.getExtractions().get(EXTRACTION_PAYMENT_DUE_DATE).getValue() : "";
+    }
+
+//TODO: check the validity of remaining day
+    private int calculateRemainingDays(@NonNull final String paymentDueDate) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            sdf.setLenient(false);
+            Date dueDate = sdf.parse(paymentDueDate);
+            Date today = new Date();
+            long diffMillis = (dueDate != null ? dueDate.getTime() : 0) - today.getTime();
+            return (int) TimeUnit.MILLISECONDS.toDays(diffMillis);
+        } catch (ParseException e) {
+            LOG.error("Failed to parse payment due date: " + paymentDueDate, e);
+            return 0;
+        }
     }
 
     // extracts the payment state from extractions
