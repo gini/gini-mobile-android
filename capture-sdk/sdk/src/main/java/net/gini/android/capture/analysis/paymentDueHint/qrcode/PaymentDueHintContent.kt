@@ -1,6 +1,9 @@
 package net.gini.android.capture.analysis.paymentDueHint.qrcode
 
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +22,11 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -129,17 +137,46 @@ fun DismissCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            LinearProgressIndicator(
-                progress = { 0.8f },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .clip(RoundedCornerShape(5.dp)),
-                color = screenColorScheme.buttonProgressBarColor,
-                trackColor = screenColorScheme.buttonBorderColor
-            )
+            AnimatedProgressBar(screenColorScheme = screenColorScheme, onFinished = onDismiss)
         }
     }
+}
+
+@Composable
+fun AnimatedProgressBar(
+    durationMillis: Int = 3000,
+    onFinished: () -> Unit = {},
+    screenColorScheme: PaymentDueHintColors,
+) {
+    var target by remember { mutableStateOf(0f) }
+
+    val animated by animateFloatAsState(
+        targetValue = target,
+        animationSpec = tween(durationMillis = durationMillis, easing = LinearEasing),
+        label = "progress"
+    )
+
+    // Start animation once
+    LaunchedEffect(Unit) {
+        target = 1f
+    }
+
+    // Run the lambda when the animation completes
+    LaunchedEffect(animated) {
+        if (animated >= target) {
+            onFinished()
+        }
+    }
+
+    LinearProgressIndicator(
+        progress = { animated },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(10.dp)
+            .clip(RoundedCornerShape(5.dp)),
+        color = screenColorScheme.buttonProgressBarColor,
+        trackColor = screenColorScheme.buttonBorderColor
+    )
 }
 
 
