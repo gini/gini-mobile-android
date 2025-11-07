@@ -89,6 +89,7 @@ import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SI
  */
 public class GiniCapture {
 
+    public static final int PAYMENT_DUE_HINT_THRESHOLD_DAYS = 5;
     private static final Logger LOG = LoggerFactory.getLogger(GiniCapture.class);
     private static GiniCapture sInstance;
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
@@ -122,6 +123,7 @@ public class GiniCapture {
     private final boolean isBottomNavigationBarEnabled;
     private final boolean isAlreadyPaidHintEnabled;
     private final boolean isPaymentDueHintEnabled;
+    private final int paymentDueHintThresholdDays;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -431,6 +433,7 @@ public class GiniCapture {
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
         isAlreadyPaidHintEnabled = builder.isAlreadyPaidHintEnabled();
         isPaymentDueHintEnabled = builder.isPaymentDueHintEnabled();
+        paymentDueHintThresholdDays = builder.getPaymentDueHintThresholdDays();
         onboardingAlignCornersIllustrationAdapterInstance = builder.getOnboardingAlignCornersIllustrationAdapterInstance();
         onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
         onboardingMultiPageIllustrationAdapterInstance = builder.getOnboardingMultiPageIllustrationAdapterInstance();
@@ -727,6 +730,10 @@ public class GiniCapture {
         return isPaymentDueHintEnabled;
     }
 
+    public int getPaymentDueHintThresholdDays() {
+        return paymentDueHintThresholdDays;
+    }
+
     @Nullable
     public OnboardingIllustrationAdapter getOnboardingAlignCornersIllustrationAdapter() {
         if (onboardingAlignCornersIllustrationAdapterInstance == null) {
@@ -928,6 +935,7 @@ public class GiniCapture {
         private boolean isBottomNavigationBarEnabled = false;
         private boolean isAlreadyPaidHintEnabled = true;
         private boolean isPaymentDueHintEnabled = true;
+        private int paymentDueHintThresholdDays = PAYMENT_DUE_HINT_THRESHOLD_DAYS;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -1358,6 +1366,11 @@ public class GiniCapture {
             return this;
         }
 
+        public Builder setPaymentDueHintThresholdDays(final int thresholdDays){
+            paymentDueHintThresholdDays = thresholdDays;
+            return this;
+        }
+
         private boolean isBottomNavigationBarEnabled() {
             return isBottomNavigationBarEnabled;
         }
@@ -1369,6 +1382,11 @@ public class GiniCapture {
         private boolean isPaymentDueHintEnabled(){
             return isPaymentDueHintEnabled;
         }
+
+        private int getPaymentDueHintThresholdDays(){
+            return paymentDueHintThresholdDays;
+        }
+
         @NonNull
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> getOnboardingAlignCornersIllustrationAdapterInstance() {
             return onboardingAlignCornersIllustrationAdapterInstance;

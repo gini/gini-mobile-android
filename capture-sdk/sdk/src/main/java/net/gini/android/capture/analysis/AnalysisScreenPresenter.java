@@ -506,9 +506,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
         // Feature flags / config
         // TODO: get a new flag from backend: paymentDueHintEnabled
-        final boolean paymentDueHintClientFlagEnabled = extension.getGetPaymentHintsEnabledUseCase().invoke();
+        final boolean paymentDueHintClientFlagEnabled =
+                extension.getGetPaymentHintsEnabledUseCase().invoke();
 
-        final boolean showPaymentDueWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
+        final boolean showPaymentDueWarningFlag =
+                GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
 
         if (isRAOrSkontoIncludedInExtractions(resultHolder)) {
             return false;
@@ -524,7 +526,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             return false;
         }
 
-        if (calculateRemainingDays(paymentDueDate) < 5) {
+        if (calculateRemainingDays(paymentDueDate) < GiniCapture.getInstance().getPaymentDueHintThresholdDays()) {
             return false;
         }
         //TODO: add the default value of 5 days for the payment due date

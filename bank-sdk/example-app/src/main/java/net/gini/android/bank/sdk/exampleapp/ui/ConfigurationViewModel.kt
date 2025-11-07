@@ -125,6 +125,8 @@ class ConfigurationViewModel @Inject constructor(
             alreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
             // enable payment due hint
             paymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
+            // set payment due hint threshold days
+            paymentDueHintThresholdDays = configuration.paymentDueHintThresholdDays,
             // enable onboarding screens at first launch
             showOnboardingAtFirstRun = configuration.isOnboardingAtFirstRunEnabled,
             // enable onboarding at every launch

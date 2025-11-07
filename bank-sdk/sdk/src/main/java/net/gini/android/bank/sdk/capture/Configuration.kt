@@ -156,6 +156,13 @@ data class CaptureConfiguration(
     val paymentDueHintEnabled: Boolean = true,
 
     /**
+     * Set the payment due hint threshold days
+     *
+     * 5 by default.
+     */
+    val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
+
+    /**
      * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
      */
     val onboardingNavigationBarBottomAdapter: OnboardingNavigationBarBottomAdapter? = null,
@@ -263,6 +270,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
         .setAlreadyPaidHintEnabled(configuration.alreadyPaidHintEnabled)
         .setPaymentDueHintEnabled(configuration.paymentDueHintEnabled)
+        .setPaymentDueHintThresholdDays(configuration.paymentDueHintThresholdDays)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
         .addCustomUploadMetadata(GiniBank.USER_COMMENT_GINI_BANK_VERSION, BuildConfig.VERSION_NAME)

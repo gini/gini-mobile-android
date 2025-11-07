@@ -232,6 +232,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.switchPaymentDueHint.isChecked =
             configuration.isPaymentDueHintEnabled
 
+        // set payment due hint threshold days
+        binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays.hint =
+            configuration.paymentDueHintThresholdDays.toString()
+
         // enable return reasons dialog
         binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked =
             configuration.isReturnReasonsEnabled
@@ -581,6 +585,19 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
+
+        // set payment due hint threshold days
+        binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays
+            .doAfterTextChanged {
+                if (it.toString().isNotEmpty()) {
+                    configurationViewModel.setConfiguration(
+                        configurationViewModel.configurationFlow.value.copy(
+                            paymentDueHintThresholdDays = it.toString().toInt()
+                        )
+                    )
+                }
+            }
+
 
         // enable supported format help screen
         binding.layoutHelpToggles.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->

@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.FileImportValidator
 
 
@@ -157,6 +158,9 @@ data class ExampleAppBankConfiguration(
     // enable payment due hint
     val isPaymentDueHintEnabled: Boolean = true,
 
+    //  payment due hint threshold days
+    val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
+
     // Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
 
@@ -211,6 +215,7 @@ data class ExampleAppBankConfiguration(
                 isBottomNavigationBarEnabled = defaultCaptureConfiguration.bottomNavigationBarEnabled,
                 isAlreadyPaidHintEnabled = defaultCaptureConfiguration.alreadyPaidHintEnabled,
                 isPaymentDueHintEnabled = defaultCaptureConfiguration.paymentDueHintEnabled,
+                paymentDueHintThresholdDays = defaultCaptureConfiguration.paymentDueHintThresholdDays,
                 isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
