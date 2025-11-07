@@ -11,6 +11,7 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
+import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.GiniCaptureDocumentError
@@ -72,6 +73,14 @@ internal class AnalysisScreenPresenterExtension(
                     getMapOrEmpty(resultHolder.compoundExtractions),
                     getListOrEmpty(resultHolder.returnReasons)
                 )
+        }
+    }
+
+    fun showAlreadyPaid(resultHolder: AnalysisInteractor.ResultHolder) {
+        doWhenEducationFinished {
+            view.showPaidWarningThen(
+                WarningType.DOCUMENT_MARKED_AS_PAID,
+                { proceedWithExtractions(resultHolder) })
         }
     }
 

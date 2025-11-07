@@ -11,7 +11,6 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.analysis.warning.WarningPaymentState;
-import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
@@ -328,10 +327,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 if (resultHolder.getExtractions().isEmpty()) {
                                     proceedSuccessNoExtractions();
                                 } else if (shouldShowPaidInvoiceWarning(resultHolder)) {
-                                    getView().showPaidWarningThen(
-                                            WarningType.DOCUMENT_MARKED_AS_PAID,
-                                            () -> proceedWithExtractions(resultHolder)
-                                    );
+                                    extension.showAlreadyPaid(resultHolder);
                                 } else if (shouldShowPaymentDueHint(resultHolder)) {
                                     getView().showPaymentDueHint(
                                             () -> proceedWithExtractions(resultHolder),
@@ -529,7 +525,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         if (calculateRemainingDays(paymentDueDate) < GiniCapture.getInstance().getPaymentDueHintThresholdDays()) {
             return false;
         }
-        //TODO: add the default value of 5 days for the payment due date
 
 
         final Map<String, GiniCaptureSpecificExtraction> extractions = resultHolder.getExtractions();
