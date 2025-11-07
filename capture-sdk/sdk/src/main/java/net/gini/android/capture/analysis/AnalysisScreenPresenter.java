@@ -491,7 +491,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         // Feature flags / config
         final boolean hintsEnabled = extension.getGetPaymentHintsEnabledUseCase().invoke();
 
-        final boolean showPaidWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentHintsEnabled();
+        final boolean showPaidWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isAlreadyPaidHintEnabled();
 
         if (!hintsEnabled || !showPaidWarningFlag) {
             return false;

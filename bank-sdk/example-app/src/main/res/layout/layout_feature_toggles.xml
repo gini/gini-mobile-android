@@ -147,11 +147,11 @@
         android:text="@string/event_tracker_switch_label" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch_setupPaymentHints"
+        android:id="@+id/switch_setupAlreadyPaidHintEnabled"
         style="@style/SwitchConfigurationStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/payment_hint_switch_label" />
+        android:text="@string/already_paid_hint_switch_label" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_paymentDueHint"

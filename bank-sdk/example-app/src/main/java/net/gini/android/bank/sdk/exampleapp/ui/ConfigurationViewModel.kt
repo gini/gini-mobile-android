@@ -122,7 +122,7 @@ class ConfigurationViewModel @Inject constructor(
             // enable bottom navigation bar
             bottomNavigationBarEnabled = configuration.isBottomNavigationBarEnabled,
             // enable payment hints
-            paymentHintsEnabled = configuration.isPaymentHintsEnabled,
+            alreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
             // enable payment due hint
             paymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
             // enable onboarding screens at first launch

@@ -152,7 +152,7 @@ data class ExampleAppBankConfiguration(
     val isReturnReasonsEnabled: Boolean = false,
 
     // enable show warning for paid invoices
-    val isPaymentHintsEnabled: Boolean = true,
+    val isAlreadyPaidHintEnabled: Boolean = true,
 
     // enable payment due hint
     val isPaymentDueHintEnabled: Boolean = true,
@@ -209,7 +209,7 @@ data class ExampleAppBankConfiguration(
                 isFlashDefaultStateEnabled = defaultCaptureConfiguration.flashOnByDefault,
                 documentImportEnabledFileTypes = defaultCaptureConfiguration.documentImportEnabledFileTypes,
                 isBottomNavigationBarEnabled = defaultCaptureConfiguration.bottomNavigationBarEnabled,
-                isPaymentHintsEnabled = defaultCaptureConfiguration.paymentHintsEnabled,
+                isAlreadyPaidHintEnabled = defaultCaptureConfiguration.alreadyPaidHintEnabled,
                 isPaymentDueHintEnabled = defaultCaptureConfiguration.paymentDueHintEnabled,
                 isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,

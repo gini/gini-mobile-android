@@ -146,7 +146,7 @@ data class CaptureConfiguration(
      *
      * On by default.
      */
-    val paymentHintsEnabled: Boolean = true,
+    val alreadyPaidHintEnabled: Boolean = true,
 
     /**
      * Enable/disable the payment due hint.
@@ -261,7 +261,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
-        .setPaymentHintsEnabled(configuration.paymentHintsEnabled)
+        .setAlreadyPaidHintEnabled(configuration.alreadyPaidHintEnabled)
         .setPaymentDueHintEnabled(configuration.paymentDueHintEnabled)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)

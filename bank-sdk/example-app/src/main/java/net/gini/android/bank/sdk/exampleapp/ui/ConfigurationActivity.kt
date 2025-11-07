@@ -225,8 +225,8 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.isReturnAssistantEnabled
 
         // enable payment hints
-        binding.layoutFeatureToggle.switchSetupPaymentHints.isChecked =
-            configuration.isPaymentHintsEnabled
+        binding.layoutFeatureToggle.switchSetupAlreadyPaidHintEnabled.isChecked =
+            configuration.isAlreadyPaidHintEnabled
 
         // enable payment due hint
         binding.layoutFeatureToggle.switchPaymentDueHint.isChecked =
@@ -565,10 +565,10 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         //enable payment hints for showing warning
-        binding.layoutFeatureToggle.switchSetupPaymentHints.setOnCheckedChangeListener{ _, isChecked ->
+        binding.layoutFeatureToggle.switchSetupAlreadyPaidHintEnabled.setOnCheckedChangeListener{ _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
-                    isPaymentHintsEnabled = isChecked
+                    isAlreadyPaidHintEnabled = isChecked
                 )
             )
         }
