@@ -510,9 +510,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
         final boolean showPaymentDueWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
 
-        //TODO: check if the resultHolder contains Skonto or RA extractions
+        if (isRAOrSkontoIncludedInExtractions(resultHolder)) {
+            return false;
+        }
 
-        //TODO: check if Skonto or RA SDK flags are not active but extractions are coming, show the due hint
 
         if (!paymentDueHintClientFlagEnabled || !showPaymentDueWarningFlag) {
             return false;
@@ -536,12 +537,23 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         return state.toBePaid();
     }
 
+    //TODO: how to use LineItemsValidator and SkontoDataExtractor here
+    //TODO: check if Skonto or RA SDK flags are not active but extractions are coming, show the due hint
+    private boolean isRAOrSkontoIncludedInExtractions(AnalysisInteractor.ResultHolder resultHolder) {
+        if (!resultHolder.getCompoundExtractions().isEmpty()) {
+            return true;
+        }
+
+        return false;
+    }
+
+
     private String extractPaymentDueDateFromExtraction(AnalysisInteractor.ResultHolder resultHolder) {
         return resultHolder.getExtractions().get(EXTRACTION_PAYMENT_DUE_DATE) != null ?
                 resultHolder.getExtractions().get(EXTRACTION_PAYMENT_DUE_DATE).getValue() : "";
     }
 
-//TODO: check the validity of remaining day
+    //TODO: check the validity of remaining day
     private int calculateRemainingDays(@NonNull final String paymentDueDate) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
