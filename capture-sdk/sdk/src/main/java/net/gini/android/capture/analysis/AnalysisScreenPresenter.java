@@ -329,10 +329,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 } else if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)) {
                                     extension.showAlreadyPaidHint(resultHolder);
                                 } else if (shouldShowPaymentDueHint(resultHolder)) {
-                                    getView().showPaymentDueHint(
-                                            () -> proceedWithExtractions(resultHolder),
-                                            extractPaymentDueDateFromExtraction(resultHolder)
-                                    );
+                                    extension.showPaymentDueHint(
+                                            resultHolder,
+                                            extractPaymentDueDateFromExtraction(resultHolder));
+
                                 } else {
                                     proceedWithExtractions(resultHolder);
                                 }

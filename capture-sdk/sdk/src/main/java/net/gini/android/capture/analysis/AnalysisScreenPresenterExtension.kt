@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
+import net.gini.android.capture.analysis.paymentDueHint.PaymentDueHintDismissListener
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -90,6 +91,19 @@ internal class AnalysisScreenPresenterExtension(
             view.showAlreadyPaidWarning(
                 WarningType.DOCUMENT_MARKED_AS_PAID,
                 { proceedWithExtractions(resultHolder) })
+        }
+    }
+
+    fun showPaymentDueHint(
+        resultHolder: AnalysisInteractor.ResultHolder,
+        dueDate: String
+    ) {
+        doWhenEducationFinished {
+            view.showPaymentDueHint(
+                { proceedWithExtractions(resultHolder) },
+                dueDate
+            )
+
         }
     }
 
