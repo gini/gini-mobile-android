@@ -230,6 +230,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 context,
                 treeUri,
                 getPresenter().assembleMultiPageDocumentUris());
+        SAFHelper.INSTANCE.logDebug("saveInvoices result");
 
         notifyUserAboutSafResult(result, context);
 

@@ -28,6 +28,7 @@ import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY;
+import net.gini.android.capture.util.SAFHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -297,6 +298,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                 );
                         final AnalysisInteractor.Result result = resultHolder.getResult();
                         boolean shouldClearImageCaches = true;
+                        SAFHelper.INSTANCE.logDebug("doAnalyzeDocument" + " Result: " + result.name());
                         switch (result) {
                             case SUCCESS_NO_EXTRACTIONS:
                                 mAnalysisCompleted = true;
@@ -490,15 +492,18 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @Override
     public List<Uri> assembleMultiPageDocumentUris() {
         if (mMultiPageDocument == null || mMultiPageDocument.getDocuments() == null) {
+            SAFHelper.INSTANCE.logDebug("assembleMultiPageDocumentUris emptyList");
             return Collections.emptyList();
         }
 
-        return mMultiPageDocument.getDocuments().stream()
+        List<Uri> uris = mMultiPageDocument.getDocuments().stream()
                 .filter(doc -> doc.getUri() != null)
                 .filter(doc -> doc.getImportMethod() != Document.ImportMethod.PICKER
                         && doc.getImportMethod() != Document.ImportMethod.OPEN_WITH)
                 .map(Document::getUri)
                 .collect(Collectors.toList());
+        SAFHelper.INSTANCE.logDebug("assembleMultiPageDocumentUris ListSize : " + uris.size());
+        return uris;
     }
 
     @Override

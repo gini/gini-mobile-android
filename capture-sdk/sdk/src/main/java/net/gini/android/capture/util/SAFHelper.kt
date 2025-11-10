@@ -3,6 +3,7 @@ package net.gini.android.capture.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -99,6 +100,7 @@ internal object SAFHelper {
 
             val results = sourceUris.map { uri ->
                 val fileName = context.getString(R.string.gc_invoice_file_name, System.currentTimeMillis())
+                logDebug("saveFilesToFolder fileName $fileName")
                 async { saveSingleFile(context, pickedDir, uri, fileName) }
             }.awaitAll()
 
@@ -121,6 +123,7 @@ internal object SAFHelper {
         sourceUri: Uri,
         fileName: String
     ): Boolean {
+        logDebug("saveSingleFile")
         return try {
             val resolver = context.contentResolver
             val newFile = folder.createFile("image/jpeg", fileName)
@@ -135,17 +138,24 @@ internal object SAFHelper {
             success
         } catch (e: IOException) {
             LOG.error("IOException in SAF", e)
+            logDebug("saveSingleFile IOException: ${e.message}")
             false
         } catch (e: SecurityException) {
             LOG.error("SecurityException in SAF", e)
+            logDebug("saveSingleFile SecurityException: ${e.message}")
             false
         } catch (e: IllegalArgumentException) {
             LOG.error("IllegalArgumentException in SAF", e)
+            logDebug("saveSingleFile IllegalArgumentException: ${e.message}")
             false
         }
     }
 
     private fun copyStreams(input: InputStream, output: OutputStream) {
         input.use { i -> output.use { o -> i.copyTo(o) } }
+    }
+
+    fun logDebug(message: String) {
+        Log.d("SavingInvoicesLocally","message = $message")
     }
 }
