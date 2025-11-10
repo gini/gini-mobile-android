@@ -203,6 +203,7 @@ internal constructor(
             isQrCodeEducationEnabled = configuration.qrCodeEducationEnabled,
             isInstantPaymentEnabled = configuration.instantPaymentEnabled,
             isAlreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
+            isPaymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
             isEInvoiceEnabled = configuration.isEInvoiceEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
         )

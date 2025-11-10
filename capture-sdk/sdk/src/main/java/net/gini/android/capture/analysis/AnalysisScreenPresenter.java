@@ -485,11 +485,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     private boolean shouldShowAlreadyPaidInvoiceWarning(
             @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
         // Feature flags / config
-        final boolean hintsEnabled = extension.getGetAlreadyPaidHintEnabledUseCase().invoke();
+        final boolean alreadyPaidHintClientFlagEnabled = extension.getAlreadyPaidHintEnabledUseCase().invoke();
 
-        final boolean showPaidWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isAlreadyPaidHintEnabled();
+        final boolean alreadyPaidHintSDKFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isAlreadyPaidHintEnabled();
 
-        if (!hintsEnabled || !showPaidWarningFlag) {
+        if (!alreadyPaidHintClientFlagEnabled || !alreadyPaidHintSDKFlag) {
             return false;
         }
 
@@ -500,12 +500,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     private boolean shouldShowPaymentDueHint(
             @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
-        // Feature flags / config
-        // TODO: get a new flag from backend: paymentDueHintEnabled
-        final boolean paymentDueHintClientFlagEnabled =
-                extension.getGetAlreadyPaidHintEnabledUseCase().invoke();
 
-        final boolean showPaymentDueWarningFlag =
+        final boolean paymentDueHintClientFlagEnabled =
+                extension.getPaymentDueHintEnabledUseCase().invoke();
+
+        final boolean paymentDueHintSDKFlag =
                 GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
 
         if (isRAOrSkontoIncludedInExtractions(resultHolder)) {
@@ -513,7 +512,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         }
 
 
-        if (!paymentDueHintClientFlagEnabled || !showPaymentDueWarningFlag) {
+        if (!paymentDueHintClientFlagEnabled || !paymentDueHintSDKFlag) {
             return false;
         }
 

@@ -10,5 +10,6 @@ data class Configuration(
     val instantPaymentEnabled: Boolean,
     val isEInvoiceEnabled: Boolean,
     val qrCodeEducationEnabled: Boolean,
-    val isAlreadyPaidHintEnabled: Boolean
+    val isAlreadyPaidHintEnabled: Boolean,
+    val isPaymentDueHintEnabled: Boolean,
 )
