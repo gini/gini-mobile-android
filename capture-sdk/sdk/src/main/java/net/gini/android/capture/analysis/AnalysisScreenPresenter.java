@@ -326,8 +326,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
                                 if (resultHolder.getExtractions().isEmpty()) {
                                     proceedSuccessNoExtractions();
-                                } else if (shouldShowPaidInvoiceWarning(resultHolder)) {
-                                    extension.showAlreadyPaid(resultHolder);
+                                } else if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)) {
+                                    extension.showAlreadyPaidHint(resultHolder);
                                 } else if (shouldShowPaymentDueHint(resultHolder)) {
                                     getView().showPaymentDueHint(
                                             () -> proceedWithExtractions(resultHolder),
@@ -356,7 +356,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     private void proceedWithExtractions(AnalysisInteractor.ResultHolder resultHolder) {
-        extension.proceedWithExtractions(resultHolder);
+        extension.proceedWithExtractionsWhenEducationFinished(resultHolder);
     }
 
     private void loadDocumentData() {
@@ -482,10 +482,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         getView().showError(errorType, mMultiPageDocument);
     }
 
-    private boolean shouldShowPaidInvoiceWarning(
+    private boolean shouldShowAlreadyPaidInvoiceWarning(
             @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
         // Feature flags / config
-        final boolean hintsEnabled = extension.getGetPaymentHintsEnabledUseCase().invoke();
+        final boolean hintsEnabled = extension.getGetAlreadyPaidHintEnabledUseCase().invoke();
 
         final boolean showPaidWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isAlreadyPaidHintEnabled();
 
@@ -503,7 +503,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         // Feature flags / config
         // TODO: get a new flag from backend: paymentDueHintEnabled
         final boolean paymentDueHintClientFlagEnabled =
-                extension.getGetPaymentHintsEnabledUseCase().invoke();
+                extension.getGetAlreadyPaidHintEnabledUseCase().invoke();
 
         final boolean showPaymentDueWarningFlag =
                 GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();

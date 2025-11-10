@@ -24,7 +24,7 @@ import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.paymentHints.GetPaymentHintsEnabledUseCase
+import net.gini.android.capture.paymentHints.GetAlreadyPaidHintEnabledUseCase
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
@@ -34,8 +34,8 @@ internal class AnalysisScreenPresenterExtension(
 
     var listener: AnalysisFragmentListener? = null
 
-    val getPaymentHintsEnabledUseCase:
-            GetPaymentHintsEnabledUseCase by getGiniCaptureKoin().inject()
+    val getAlreadyPaidHintEnabledUseCase:
+            GetAlreadyPaidHintEnabledUseCase by getGiniCaptureKoin().inject()
 
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()
@@ -65,20 +65,25 @@ internal class AnalysisScreenPresenterExtension(
         }
     }
 
-    fun proceedWithExtractions(resultHolder: AnalysisInteractor.ResultHolder) {
+    fun proceedWithExtractionsWhenEducationFinished(resultHolder: AnalysisInteractor.ResultHolder) {
         doWhenEducationFinished {
-            getAnalysisFragmentListenerOrNoOp()
-                .onExtractionsAvailable(
-                    getMapOrEmpty(resultHolder.extractions),
-                    getMapOrEmpty(resultHolder.compoundExtractions),
-                    getListOrEmpty(resultHolder.returnReasons)
-                )
+            proceedWithExtractions(resultHolder)
         }
     }
 
-    fun showAlreadyPaid(resultHolder: AnalysisInteractor.ResultHolder) {
+    fun proceedWithExtractions(resultHolder: AnalysisInteractor.ResultHolder) {
+        getAnalysisFragmentListenerOrNoOp()
+            .onExtractionsAvailable(
+                getMapOrEmpty(resultHolder.extractions),
+                getMapOrEmpty(resultHolder.compoundExtractions),
+                getListOrEmpty(resultHolder.returnReasons)
+            )
+
+    }
+
+    fun showAlreadyPaidHint(resultHolder: AnalysisInteractor.ResultHolder) {
         doWhenEducationFinished {
-            view.showPaidWarningThen(
+            view.showAlreadyPaidWarning(
                 WarningType.DOCUMENT_MARKED_AS_PAID,
                 { proceedWithExtractions(resultHolder) })
         }

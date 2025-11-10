@@ -13,5 +13,5 @@ data class Configuration(
     val isInstantPaymentEnabled: Boolean,
     val isEInvoiceEnabled: Boolean,
     val amplitudeApiKey: String,
-    val paymentHintsEnabled: Boolean,
+    val isAlreadyPaidHintEnabled: Boolean,
 )

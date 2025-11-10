@@ -3,9 +3,9 @@ package net.gini.android.capture.paymentHints
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 
 
-class GetPaymentHintsEnabledUseCase(
+class GetAlreadyPaidHintEnabledUseCase(
     private val giniBankConfigurationProvider: GiniBankConfigurationProvider,
 ) {
-    operator fun invoke() = giniBankConfigurationProvider.provide().paymentHintsEnabled
+    operator fun invoke() = giniBankConfigurationProvider.provide().isAlreadyPaidHintEnabled
 
 }

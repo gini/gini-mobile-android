@@ -14,7 +14,7 @@ class GiniBankConfigurationProvider {
         isQrCodeEducationEnabled = false,
         isInstantPaymentEnabled = false,
         isEInvoiceEnabled = false,
-        paymentHintsEnabled = false
+        isAlreadyPaidHintEnabled = false
     )
 
     fun provide(): Configuration = configuration
