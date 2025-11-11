@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import net.gini.android.capture.AsyncCallback;
+import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
@@ -167,6 +168,13 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     public void setListener(@NonNull final AnalysisFragmentListener listener) {
         extension.setListener(listener);
     }
+
+
+    @Override
+    public void setBankSDKBridge(BankSDKBridge bankSDKBridge) {
+        extension.setBankSDKBridge(bankSDKBridge);
+    }
+
 
     @VisibleForTesting
     void clearSavedImages() {
@@ -507,7 +515,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         final boolean paymentDueHintSDKFlag =
                 GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
 
-        if (isRAOrSkontoIncludedInExtractions(resultHolder)) {
+        if (extension.isRAOrSkontoIncludedInExtractions(resultHolder)) {
             return false;
         }
 
@@ -531,16 +539,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         final WarningPaymentState state = extractPaymentState(extractions);
 
         return state.toBePaid();
-    }
-
-    //TODO: how to use LineItemsValidator and SkontoDataExtractor here
-    //TODO: check if Skonto or RA SDK flags are not active but extractions are coming, show the due hint
-    private boolean isRAOrSkontoIncludedInExtractions(AnalysisInteractor.ResultHolder resultHolder) {
-        if (!resultHolder.getCompoundExtractions().isEmpty()) {
-            return true;
-        }
-
-        return false;
     }
 
 

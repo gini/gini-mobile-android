@@ -7,10 +7,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import net.gini.android.capture.BankSDKBridge
+import net.gini.android.capture.BankSDKProperties
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
+import net.gini.android.capture.analysis.AnalysisInteractor.ResultHolder
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
-import net.gini.android.capture.analysis.paymentDueHint.PaymentDueHintDismissListener
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
@@ -36,6 +38,8 @@ internal class AnalysisScreenPresenterExtension(
 
     var listener: AnalysisFragmentListener? = null
 
+    var bankSDKBridge: BankSDKBridge? = null
+
     val alreadyPaidHintEnabledUseCase:
             GetAlreadyPaidHintEnabledUseCase by getGiniCaptureKoin().inject()
 
@@ -58,6 +62,28 @@ internal class AnalysisScreenPresenterExtension(
 
     fun getAnalysisFragmentListenerOrNoOp(): AnalysisFragmentListener {
         return listener ?: noOpListener
+    }
+
+    fun isRAOrSkontoIncludedInExtractions(resultHolder: ResultHolder): Boolean {
+        val bankSDKProperties: BankSDKProperties? =
+            bankSDKBridge?.getBankSDKProperties(
+                ResultHolder.toCaptureResult(
+                    resultHolder
+                )
+            )
+        bankSDKProperties?.let {
+            val isSkontoEnabled = bankSDKProperties.isSkontoSDKFlagEnabled &&
+                    bankSDKProperties.isSkontoExtractionsValid
+
+            val isReturnAssistantEnabled = bankSDKProperties.isReturnAssistantSDKFlagEnabled &&
+                    bankSDKProperties.isReturnAssistantExtractionsValid
+
+            if (isSkontoEnabled || isReturnAssistantEnabled) {
+                return true
+            }
+        }
+
+        return false
     }
 
     fun proceedSuccessNoExtractions(

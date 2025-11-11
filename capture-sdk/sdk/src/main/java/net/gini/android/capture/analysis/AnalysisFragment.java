@@ -1,13 +1,12 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -15,12 +14,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+
+import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
+import net.gini.android.capture.analysis.warning.WarningBottomSheet;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.CancelListener;
-import net.gini.android.capture.analysis.warning.WarningBottomSheet;
+
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 
 /**
  * Internal use only.
@@ -31,6 +34,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     private static final String WARNING_TAG = "WarningBottomSheet";
     private AnalysisFragmentImpl mFragmentImpl;
     private AnalysisFragmentListener mListener;
+    private BankSDKBridge bankSDKBridge;
     private CancelListener mCancelListener;
 
     /**
@@ -50,6 +54,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         final AnalysisFragmentImpl fragmentImpl = AnalysisFragmentHelper.createFragmentImpl(this, mCancelListener,
                 getArguments());
         AnalysisFragmentHelper.setListener(fragmentImpl, getActivity(), mListener);
+        AnalysisFragmentHelper.setBankSDKBridge(fragmentImpl, getActivity(), bankSDKBridge);
         return fragmentImpl;
     }
 
@@ -119,6 +124,14 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         mListener = listener;
     }
 
+    @Override
+    public void setBankSDKBridge(BankSDKBridge bankSDKBridge) {
+        if (mFragmentImpl != null) {
+            mFragmentImpl.setBankSDKBridge(bankSDKBridge);
+        }
+        this.bankSDKBridge = bankSDKBridge;
+    }
+
     public void setCancelListener(@NonNull final CancelListener cancelListener) {
         mCancelListener = cancelListener;
     }
@@ -152,11 +165,11 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
 
     @Override
     public void showAlertDialog(@NonNull final String message,
-            @NonNull final String positiveButtonTitle,
-            @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
-            @Nullable final String negativeButtonTitle,
-            @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
-            @Nullable final DialogInterface.OnCancelListener cancelListener) {
+                                @NonNull final String positiveButtonTitle,
+                                @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
+                                @Nullable final String negativeButtonTitle,
+                                @Nullable final DialogInterface.OnClickListener negativeButtonClickListener,
+                                @Nullable final DialogInterface.OnCancelListener cancelListener) {
         final Activity activity = getActivity();
         if (activity == null) {
             return;
@@ -194,6 +207,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
                     mCancelListener.onCancelFlow();
                 }
             }
+
             @Override
             public void onProceedAction() {
                 onProceed.run();

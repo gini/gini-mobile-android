@@ -21,6 +21,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
+import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
@@ -122,6 +123,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     @Override
     public void setListener(@NonNull final AnalysisFragmentListener listener) {
         getPresenter().setListener(listener);
+    }
+
+    @Override
+    public void setBankSDKBridge(BankSDKBridge bankSDKBridge) {
+        getPresenter().setBankSDKBridge(bankSDKBridge);
     }
 
     @Override
