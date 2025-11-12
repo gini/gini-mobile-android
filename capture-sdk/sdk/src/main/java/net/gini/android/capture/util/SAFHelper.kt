@@ -30,29 +30,17 @@ import java.io.OutputStream
 
 internal object SAFHelper {
 
-    /**
-    * Checks if the app has write permission for the given folder URI.
-    *
-    * @param context The context used to access the content resolver.
-    * @param folderUri The URI of the folder to check.
-    * @return True if write permission exists, false otherwise.
-    */
-
     fun hasWritePermission(context: Context, folderUri: Uri): Boolean {
+        logDebug("hasWritePermission: Checking permissions for $folderUri")
         val result = context.contentResolver.persistedUriPermissions.any {
             it.uri == folderUri && it.isWritePermission
         }
+        logDebug("hasWritePermission: result = $result")
         return result
     }
 
-    /**
-     * Creates an intent that opens a system folder picker for the user.
-     * The intent requests both read and write access to the chosen folder.
-     *
-     * @return Intent ready to start with startActivityForResult() or ActivityResultLauncher.
-     */
-
     fun createFolderPickerIntent(): Intent {
+        logDebug("createFolderPickerIntent: Creating intent for folder picker")
         return Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
             addFlags(
                 Intent.FLAG_GRANT_READ_URI_PERMISSION or
@@ -63,59 +51,54 @@ internal object SAFHelper {
         }
     }
 
-    /**
-     * Saves the user's folder selection permission so it can be reused later
-     * without asking again.
-     *
-     * @param context The context used to access the content resolver.
-     * @param dataIntent The intent returned from the folder picker.
-     */
-
     fun persistFolderPermission(context: Context, dataIntent: Intent?) {
-        if (dataIntent == null) return
-        val folderUri = dataIntent.data ?: return
+        logDebug("persistFolderPermission: called")
+        if (dataIntent == null) {
+            logDebug("persistFolderPermission: dataIntent is null")
+            return
+        }
+        val folderUri = dataIntent.data
+        if (folderUri == null) {
+            logDebug("persistFolderPermission: folderUri is null")
+            return
+        }
+
         val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         try {
+            logDebug("persistFolderPermission: taking permission for $folderUri")
             context.contentResolver.takePersistableUriPermission(folderUri, takeFlags)
+            logDebug("persistFolderPermission: permission granted successfully")
         } catch (e: SecurityException) {
+            logDebug("persistFolderPermission exception = ${e.message}")
             LOG.error("SecurityException in SAF", e)
         }
     }
 
-    /**
-     * Saves multiple files to the selected folder.
-     *
-     * @param context The context used to access files and resolver.
-     * @param folderUri The URI of the destination folder.
-     * @param sourceUris List of URIs of the source files to copy.
-     * @return Number of files successfully saved.
-     */
-
-    fun saveFilesToFolder(context: Context,
-                          folderUri: Uri,
-                          sourceUris: List<Uri>,
+    fun saveFilesToFolder(
+        context: Context,
+        folderUri: Uri,
+        sourceUris: List<Uri>,
     ): Int = runBlocking {
+        logDebug("saveFilesToFolder: Starting to save ${sourceUris.size} files")
         withContext(Dispatchers.IO) {
-            val pickedDir = DocumentFile.fromTreeUri(context, folderUri) ?: return@withContext 0
+            val pickedDir = DocumentFile.fromTreeUri(context, folderUri)
+            if (pickedDir == null) {
+                logDebug("saveFilesToFolder: pickedDir is null, returning 0")
+                return@withContext 0
+            }
 
-            val results = sourceUris.map { uri ->
-                val fileName = context.getString(R.string.gc_invoice_file_name, System.currentTimeMillis())
-                logDebug("saveFilesToFolder fileName $fileName")
+            val results = sourceUris.mapIndexed {index, uri ->
+//                val fileName = context.getString(R.string.gc_invoice_file_name, System.currentTimeMillis())
+                val fileName = context.getString(R.string.gc_invoice_file_name, System.currentTimeMillis(),index)
+                logDebug("saveFilesToFolder: Preparing to save $uri as $fileName")
                 async { saveSingleFile(context, pickedDir, uri, fileName) }
             }.awaitAll()
 
-            results.count { it }
+            val count = results.count { it }
+            logDebug("saveFilesToFolder: Completed. Successfully saved $count / ${sourceUris.size} files")
+            count
         }
     }
-
-    /**
-     * Copies one file at a time to the given folder.
-     *
-     * @param context The context used to open streams.
-     * @param folder The DocumentFile representing the target folder.
-     * @param sourceUri The URI of the source file.
-     * @return True if the file was saved successfully, false otherwise.
-     */
 
     private fun saveSingleFile(
         context: Context,
@@ -123,18 +106,33 @@ internal object SAFHelper {
         sourceUri: Uri,
         fileName: String
     ): Boolean {
-        logDebug("saveSingleFile")
+        logDebug("saveSingleFile: Called for $fileName from $sourceUri")
         return try {
             val resolver = context.contentResolver
+
+            logDebug("saveSingleFile: Creating target file $fileName")
             val newFile = folder.createFile("image/jpeg", fileName)
+            logDebug("saveSingleFile: newFile uri = ${newFile?.uri}")
+
+            logDebug("saveSingleFile: Opening input stream for $sourceUri")
             val input = resolver.openInputStream(sourceUri)
+            logDebug("saveSingleFile: input stream = ${input != null}")
+
+            logDebug("saveSingleFile: Opening output stream for ${newFile?.uri}")
             val output = newFile?.let { resolver.openOutputStream(it.uri) }
+            logDebug("saveSingleFile: output stream = ${output != null}")
 
             val success = if (newFile != null && input != null && output != null) {
+                logDebug("saveSingleFile: Starting copyStreams()")
                 copyStreams(input, output)
+                logDebug("saveSingleFile: Finished copyStreams() successfully")
                 true
-            } else false
+            } else {
+                logDebug("saveSingleFile: One or more streams are null (newFile=$newFile, input=$input, output=$output)")
+                false
+            }
 
+            logDebug("saveSingleFile: Success = $success for file $fileName")
             success
         } catch (e: IOException) {
             LOG.error("IOException in SAF", e)
@@ -152,10 +150,17 @@ internal object SAFHelper {
     }
 
     private fun copyStreams(input: InputStream, output: OutputStream) {
-        input.use { i -> output.use { o -> i.copyTo(o) } }
+        logDebug("copyStreams: Starting copy")
+        input.use { i ->
+            output.use { o ->
+                val bytesCopied = i.copyTo(o)
+                logDebug("copyStreams: Copied $bytesCopied bytes")
+            }
+        }
+        logDebug("copyStreams: Completed")
     }
 
     fun logDebug(message: String) {
-        Log.d("SavingInvoicesLocally","message = $message")
+        Log.d("SavingInvoicesLocally", "message = $message")
     }
 }

@@ -230,7 +230,8 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 context,
                 treeUri,
                 getPresenter().assembleMultiPageDocumentUris());
-        SAFHelper.INSTANCE.logDebug("saveInvoices result");
+
+        SAFHelper.INSTANCE.logDebug("# of files saved saveInvoices result" + result);
 
         notifyUserAboutSafResult(result, context);
 
@@ -248,6 +249,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 Objects.requireNonNull(mFragment.getActivity()));
 
         Boolean haveSavePermission = haveSavePermission(folderUri);
+        SAFHelper.INSTANCE.logDebug("haveSavePermission = " + haveSavePermission);
         if (haveSavePermission)
             saveInvoices(folderUri);
         else {
