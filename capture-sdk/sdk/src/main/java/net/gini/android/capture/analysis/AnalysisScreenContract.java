@@ -11,15 +11,13 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 
 /**
  * Created by Alpar Szotyori on 08.05.2019.
@@ -66,6 +64,7 @@ interface AnalysisScreenContract {
         abstract void showHints(List<AnalysisHint> hints);
 
         abstract void showError(String errorMessage, Document document);
+        abstract void showPaidWarningThen(@NonNull WarningType warningType, @NonNull Runnable onProceed);
         abstract void showError(ErrorType errorType, Document document);
 
         abstract void showEducation(EducationCompleteListener listener);
