@@ -15,7 +15,7 @@ data class ConfigurationResponse(
     @Json(name = "qrCodeEducationEnabled") val qrCodeEducationEnabled: Boolean?,
     @Json(name = "instantPaymentEnabled") val instantPaymentEnabled: Boolean?,
     @Json(name = "eInvoiceEnabled") val eInvoiceEnabled: Boolean?,
-    @Json(name = "paymentHintsEnabled") val isAlreadyPaidHintEnabled: Boolean?,
+    @Json(name = "alreadyPaidHintEnabled") val isAlreadyPaidHintEnabled: Boolean?,
     @Json(name = "paymentDueHintEnabled") val isPaymentDueHintEnabled: Boolean?,
 )
 

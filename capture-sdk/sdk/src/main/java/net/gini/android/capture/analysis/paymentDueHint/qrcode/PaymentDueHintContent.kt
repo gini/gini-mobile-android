@@ -30,8 +30,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import net.gini.android.capture.R
 import net.gini.android.capture.analysis.paymentDueHint.colors.PaymentDueHintColors
@@ -93,7 +98,17 @@ fun TipCard(
             )
 
             Text(
-                text = stringResource(R.string.gc_due_date_hint, dueDate),
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(stringResource(R.string.gc_due_date_hint_tip))
+                    }
+                    append(
+                        stringResource(
+                            R.string.gc_due_date_hint,
+                            dueDate
+                        )
+                    )
+                },
                 color = screenColorScheme.tipContentWarningColor,
                 modifier = Modifier.padding(start = 8.dp, top = 4.dp, bottom = 4.dp, end = 2.dp),
                 style = GiniTheme.typography.caption1,
@@ -107,11 +122,10 @@ fun DismissCard(
     screenColorScheme: PaymentDueHintColors,
     onDismiss: () -> Unit,
 ) {
-    //TODO: check the background of the dismiss button
     Card(
         shape = RoundedCornerShape(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = screenColorScheme.buttonBackgroundColor
+            containerColor = Color.Transparent
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -161,7 +175,6 @@ fun AnimatedProgressBar(
         target = 1f
     }
 
-    // Run the lambda when the animation completes
     LaunchedEffect(animated) {
         if (animated >= target) {
             onFinished()
@@ -181,7 +194,7 @@ fun AnimatedProgressBar(
 
 
 @Composable
-private fun ScreenReadyStatePreview(isLandScape: Boolean = false) {
+private fun ScreenReadyStatePreview() {
     GiniTheme {
         PaymentDueHintContent(onDismiss = { /* no-op */ }, dueDate = "12/12/2023")
     }
