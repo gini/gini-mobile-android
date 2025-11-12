@@ -473,14 +473,14 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         val isSkontoExtractionsValid: Boolean = try {
             extractSkontoData(captureResult)
             true
-        } catch (e: NoSuchElementException) {
+        } catch (_: NoSuchElementException) {
             false
         }
 
         val isReturnAssistantExtractionsValid: Boolean = try {
             LineItemsValidator.validate(captureResult.compoundExtractions)
             true
-        } catch (e: DigitalInvoiceException) {
+        } catch (_: DigitalInvoiceException) {
             false
         }
 
