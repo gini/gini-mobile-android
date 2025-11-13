@@ -111,7 +111,7 @@ jobs:
           script: >
             adb uninstall net.gini.android.bank.sdk.test ;
             ./gradlew bank-sdk:sdk:connectedCheck
-            -PtestClientId="gini-mobile-test"
+            -PtestClientId="gini-mobile-ci"
             -PtestClientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
             -PtestApiUri="https://pay-api.gini.net"
             -PtestUserCenterUri="https://user.gini.net"
