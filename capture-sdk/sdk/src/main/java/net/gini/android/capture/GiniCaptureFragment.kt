@@ -49,7 +49,7 @@ class GiniCaptureFragment(
     CancelListener {
 
     private lateinit var navController: NavController
-    private lateinit var giniCaptureFragmentListener: GiniCaptureFragmentListener
+    private var giniCaptureFragmentListener: GiniCaptureFragmentListener? = null
     private lateinit var oncePerInstallEventStore: OncePerInstallEventStore
 
     /**
@@ -207,8 +207,9 @@ class GiniCaptureFragment(
     override fun onDestroy() {
         super.onDestroy()
         if (!didFinishWithResult && !willBeRestored) {
-            giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
+            giniCaptureFragmentListener?.onFinishedWithResult(CaptureSDKResult.Cancel)
         }
+        giniCaptureFragmentListener = null
         if (willBeRestored) {
             UserAnalytics.flushEvents()
         }
@@ -242,12 +243,12 @@ class GiniCaptureFragment(
         document: Document,
         callback: CameraFragmentListener.DocumentCheckResultCallback
     ) {
-        giniCaptureFragmentListener.onCheckImportedDocument(document, callback)
+        giniCaptureFragmentListener?.onCheckImportedDocument(document, callback)
     }
 
     override fun onError(error: GiniCaptureError) {
         didFinishWithResult = true
-        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Error(error))
+        giniCaptureFragmentListener?.onFinishedWithResult(CaptureSDKResult.Error(error))
     }
 
     override fun onExtractionsAvailable(
@@ -257,7 +258,7 @@ class GiniCaptureFragment(
     ) {
         didFinishWithResult = true
         lastExtractionsProvider.update(extractions)
-        giniCaptureFragmentListener.onFinishedWithResult(
+        giniCaptureFragmentListener?.onFinishedWithResult(
             CaptureSDKResult.Success(
                 extractions,
                 compoundExtractions,
@@ -280,7 +281,7 @@ class GiniCaptureFragment(
     override fun onExtractionsAvailable(extractions: MutableMap<String, GiniCaptureSpecificExtraction>) {
         didFinishWithResult = true
         lastExtractionsProvider.update(extractions)
-        giniCaptureFragmentListener.onFinishedWithResult(
+        giniCaptureFragmentListener?.onFinishedWithResult(
             CaptureSDKResult.Success(
                 extractions,
                 emptyMap(),
@@ -291,7 +292,7 @@ class GiniCaptureFragment(
 
     override fun onEnterManuallyPressed() {
         didFinishWithResult = true
-        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.EnterManually)
+        giniCaptureFragmentListener?.onFinishedWithResult(CaptureSDKResult.EnterManually)
     }
 
     override fun onCancelFlow() {
@@ -300,7 +301,7 @@ class GiniCaptureFragment(
 
     private fun finishWithCancel() {
         didFinishWithResult = true
-        giniCaptureFragmentListener.onFinishedWithResult(CaptureSDKResult.Cancel)
+        giniCaptureFragmentListener?.onFinishedWithResult(CaptureSDKResult.Cancel)
     }
 
     private fun setAnalyticsEntryPointProperty(isOpenWithDocumentExists: Boolean) {

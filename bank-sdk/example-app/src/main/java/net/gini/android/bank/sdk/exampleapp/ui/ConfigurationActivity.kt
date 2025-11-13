@@ -228,6 +228,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.switchReturnAssistantFeature.isChecked =
             configuration.isReturnAssistantEnabled
 
+        // enable payment hints
+        binding.layoutFeatureToggle.switchSetupPaymentHints.isChecked =
+            configuration.isPaymentHintsEnabled
+
         // enable return reasons dialog
         binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked =
             configuration.isReturnReasonsEnabled
@@ -556,6 +560,15 @@ class ConfigurationActivity : AppCompatActivity() {
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
                     isScreenCustomLoadingIndicatorEnabled = isChecked
+                )
+            )
+        }
+
+        //enable payment hints for showing warning
+        binding.layoutFeatureToggle.switchSetupPaymentHints.setOnCheckedChangeListener{ _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isPaymentHintsEnabled = isChecked
                 )
             )
         }

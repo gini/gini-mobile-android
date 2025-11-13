@@ -163,6 +163,19 @@
         android:textColor="@color/gc_light_01"
         android:text="@string/configuration_button_remove_saf_data"
         />
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_setupPaymentHints"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/payment_hint_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_paymentHintsDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/payment_hint_switch_description" />
 
 </LinearLayout>
 

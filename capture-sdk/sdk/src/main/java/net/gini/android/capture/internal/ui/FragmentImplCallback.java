@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
-
+import net.gini.android.capture.analysis.warning.WarningType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +50,8 @@ public interface FragmentImplCallback {
 
     @NonNull
     FragmentManager getChildFragmentManager();
+
+    default void showWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {}
 
     @NonNull
     FragmentManager getParentFragmentManager();

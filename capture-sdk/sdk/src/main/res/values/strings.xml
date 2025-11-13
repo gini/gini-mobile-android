@@ -196,5 +196,16 @@
     <string name="gc_qr_education_upload_picture_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
     <string name="gc_invoice_education_message">Laden Sie direkt ein PDF, Bild oder GIF hoch</string>
     <string name="gc_invoice_education_content_description">analyse der Rechnung läuft</string>
+
+    <!--   region Warning -->
+    <string name="gc_cancel_transfer">Überweisung abbrechen</string>
+    <string name="gc_proceed_anyway">Trotzdem fortfahren</string>
+    <string name="gc_document_marked_paid_title">Dokument als bezahlt gekennzeichnet</string>
+    <string name="gc_document_marked_paid_desc">
+        Auf diesem Dokument steht, dass es bereits bezahlt wurde. Bitte prüfen Sie den Hinweis in dem Dokument, um sicherzugehen.
+    </string>
+    <string name="gc_warning_title_dialog">Warndialog</string>
+    <string name="warning_icon_description">Warnsymbol</string>
     <!--   endregion -->
+
 </resources>

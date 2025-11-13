@@ -23,6 +23,7 @@ import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import net.gini.android.capture.paymentHints.GetPaymentHintsEnabledUseCase
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
@@ -32,6 +33,8 @@ internal class AnalysisScreenPresenterExtension(
 
     var listener: AnalysisFragmentListener? = null
 
+    val getPaymentHintsEnabledUseCase:
+            GetPaymentHintsEnabledUseCase by getGiniCaptureKoin().inject()
 
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()

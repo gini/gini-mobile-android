@@ -142,6 +142,13 @@ data class CaptureConfiguration(
     val bottomNavigationBarEnabled: Boolean = false,
 
     /**
+     * Enable/disable the payment hint.
+     *
+     * On by default.
+     */
+    val paymentHintsEnabled: Boolean = true,
+
+    /**
      * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
      */
     val onboardingNavigationBarBottomAdapter: OnboardingNavigationBarBottomAdapter? = null,
@@ -252,6 +259,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
+        .setPaymentHintsEnabled(configuration.paymentHintsEnabled)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
         .setSaveInvoicesLocallyEnabled(configuration.saveInvoicesLocallyEnabled)

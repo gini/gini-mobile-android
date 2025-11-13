@@ -32,6 +32,7 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
@@ -334,6 +335,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 mFragment.findNavController(),
                 AnalysisFragmentDirections.toErrorFragmentWithErrorMessage(error, document)
         );
+    }
+
+    @Override
+    void showPaidWarningThen(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
+            mFragment.showWarning(warningType, onProceed);
     }
 
     @Override

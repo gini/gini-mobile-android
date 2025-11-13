@@ -13,5 +13,6 @@ data class Configuration(
     val isInstantPaymentEnabled: Boolean,
     val isEInvoiceEnabled: Boolean,
     val amplitudeApiKey: String,
-    val savePhotosLocallyEnabled: Boolean
+    val savePhotosLocallyEnabled: Boolean,
+    val paymentHintsEnabled: Boolean,
 )

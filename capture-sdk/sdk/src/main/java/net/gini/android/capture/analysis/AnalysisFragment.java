@@ -19,13 +19,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-
 import net.gini.android.capture.Document;
+import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.CancelListener;
+import net.gini.android.capture.analysis.warning.WarningBottomSheet;
 
 /**
  * Internal use only.
@@ -33,6 +35,7 @@ import net.gini.android.capture.internal.util.CancelListener;
 public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         AnalysisFragmentInterface {
 
+    private static final String WARNING_TAG = "WarningBottomSheet";
     private AnalysisFragmentImpl mFragmentImpl;
     private AnalysisFragmentListener mListener;
     private CancelListener mCancelListener;
@@ -106,7 +109,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
-            @Nullable final Bundle savedInstanceState) {
+                             @Nullable final Bundle savedInstanceState) {
         return mFragmentImpl.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -178,7 +181,6 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
      *                                     ReviewFragmentListener#onProceedToAnalysisScreen
      *                                     (Document)}
      * @param documentAnalysisErrorMessage an optional error message shown to the user
-     *
      * @return a new instance of the Fragment
      */
     public static AnalysisFragment createInstance(@NonNull final Document document,
@@ -205,6 +207,41 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         AlertDialogHelperCompat.showAlertDialog(activity, message, positiveButtonTitle,
                 positiveButtonClickListener, negativeButtonTitle, negativeButtonClickListener,
                 cancelListener);
+    }
+
+    @Override
+    public void showWarning(@NonNull WarningType type, @NonNull Runnable onProceed) {
+        FragmentManager fm = getParentFragmentManager();
+
+        WarningBottomSheet sheet = (WarningBottomSheet) fm.findFragmentByTag(WARNING_TAG);
+        if (sheet == null) {
+            sheet = WarningBottomSheet.Companion.newInstance(type);
+        }
+
+        sheet.setCancelable(false);
+        sheet.setListener(makeWarningListener(onProceed));
+        if (!sheet.isAdded()) {
+            if (!fm.isStateSaved()) {
+                sheet.show(fm, WARNING_TAG);
+            } else {
+                fm.beginTransaction().add(sheet, WARNING_TAG).commitAllowingStateLoss();
+            }
+        }
+    }
+
+    private WarningBottomSheet.Listener makeWarningListener(@NonNull Runnable onProceed) {
+        return new WarningBottomSheet.Listener() {
+            @Override
+            public void onCancelAction() {
+                if (mCancelListener != null) {
+                    mCancelListener.onCancelFlow();
+                }
+            }
+            @Override
+            public void onProceedAction() {
+                onProceed.run();
+            }
+        };
     }
 
     @NonNull
