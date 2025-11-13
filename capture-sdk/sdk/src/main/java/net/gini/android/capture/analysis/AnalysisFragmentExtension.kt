@@ -8,6 +8,9 @@ import net.gini.android.capture.R
 import net.gini.android.capture.analysis.paymentDueHint.qrcode.PaymentDueHintContent
 import net.gini.android.capture.internal.camera.view.education.AnimatedEducationMessageWithIntro
 import net.gini.android.capture.ui.theme.GiniTheme
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class AnalysisFragmentExtension {
 
@@ -24,7 +27,7 @@ class AnalysisFragmentExtension {
         paymentDueHintView.setContent {
             GiniTheme {
                 PaymentDueHintContent(
-                    dueDate = dueDate,
+                    dueDate = formatDateToGermanStyle(dueDate),
                     onDismiss = onDismiss
                 )
             }
@@ -50,5 +53,14 @@ class AnalysisFragmentExtension {
 
     fun hideEducation() {
         educationView.visibility = View.GONE
+    }
+    fun formatDateToGermanStyle(dateString: String): String {
+        return try {
+            val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())
+            val outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
+            LocalDate.parse(dateString, inputFormatter).format(outputFormatter)
+        } catch (_: Exception) {
+            dateString // fallback if parsing fails
+        }
     }
 }

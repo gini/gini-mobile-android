@@ -1,19 +1,21 @@
 package net.gini.android.capture.analysis.paymentDueHint.qrcode
 
 
+import android.os.SystemClock
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,12 +52,14 @@ fun PaymentDueHintContent(
     onDismiss: () -> Unit,
     screenColorScheme: PaymentDueHintColors = PaymentDueHintColors.colors(),
 ) {
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    val maxCardWidth = 360.dp
+
+    Surface {
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.CenterHorizontally)
+                .widthIn(max = maxCardWidth),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -158,31 +163,46 @@ fun DismissCard(
 
 @Composable
 fun AnimatedProgressBar(
-    durationMillis: Int = 3000,
+    durationMillis: Int = 3_000,
     onFinished: () -> Unit = {},
     screenColorScheme: PaymentDueHintColors,
 ) {
-    var target by remember { mutableStateOf(0f) }
+    // Persist when the countdown started and whether we've already notified finish
+    val startedAt = rememberSaveable { SystemClock.elapsedRealtime() }
+    var finished by rememberSaveable { mutableStateOf(false) }
 
-    val animated by animateFloatAsState(
-        targetValue = target,
-        animationSpec = tween(durationMillis = durationMillis, easing = LinearEasing),
-        label = "progress"
-    )
+    // Compute elapsed/remaining and initial progress after any recreation (e.g., rotation)
+    val elapsed = (SystemClock.elapsedRealtime() - startedAt).coerceAtLeast(0)
+    val remaining = (durationMillis - elapsed).coerceAtLeast(0).toInt()
+    val initial = (elapsed.toFloat() / durationMillis).coerceIn(0f, 1f)
 
-    // Start animation once
-    LaunchedEffect(Unit) {
-        target = 1f
-    }
+    // Drive progress explicitly
+    val progress = remember { Animatable(initial) }
 
-    LaunchedEffect(animated) {
-        if (animated >= target) {
-            onFinished()
+    LaunchedEffect(remaining) {
+        // Ensure we're at the correct starting fraction after recreation
+        progress.snapTo(initial)
+
+        if (!finished) {
+            if (remaining == 0) {
+                finished = true
+                onFinished()
+            } else {
+                // Animate only for the time left
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = remaining, easing = LinearEasing)
+                )
+                if (!finished) {
+                    finished = true
+                    onFinished()
+                }
+            }
         }
     }
 
     LinearProgressIndicator(
-        progress = { animated },
+        progress = { progress.value },
         modifier = Modifier
             .fillMaxWidth()
             .height(10.dp)
