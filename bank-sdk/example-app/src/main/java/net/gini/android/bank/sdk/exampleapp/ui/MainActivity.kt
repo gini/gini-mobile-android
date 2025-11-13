@@ -24,7 +24,7 @@ import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
-import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.TransactionDocsActivity
 import net.gini.android.capture.Document
 import net.gini.android.capture.EntryPoint
@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                 when (result.resultCode) {
                     RESULT_CANCELED -> {}
                     RESULT_OK -> {
-                        val configurationResult: Configuration? = result.data?.getParcelableExtra(
+                        val configurationResult: ExampleAppBankConfiguration? = result.data?.getParcelableExtra(
                             CONFIGURATION_BUNDLE
                         )
                         if (configurationResult != null) {

@@ -29,4 +29,6 @@ import androidx.annotation.Nullable;
     }
 
     public boolean isPaid() { return this == PAID; }
+
+    public boolean toBePaid() { return this == TO_BE_PAID; }
 }

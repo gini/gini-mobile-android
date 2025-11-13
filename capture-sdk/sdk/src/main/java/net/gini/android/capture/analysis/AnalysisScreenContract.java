@@ -12,6 +12,7 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.paymentDueHint.PaymentDueHintDismissListener;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.util.Size;
@@ -65,7 +66,8 @@ interface AnalysisScreenContract {
         abstract void showHints(List<AnalysisHint> hints);
 
         abstract void showError(String errorMessage, Document document);
-        abstract void showPaidWarningThen(@NonNull WarningType warningType, @NonNull Runnable onProceed);
+        abstract void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed);
+        abstract void showPaymentDueHint(PaymentDueHintDismissListener listener, String dueDate);
         abstract void showError(ErrorType errorType, Document document);
 
         abstract void showEducation(EducationCompleteListener listener);

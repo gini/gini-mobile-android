@@ -18,7 +18,7 @@ import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityConfigurationBinding
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CAMERA_PERMISSION_BUNDLE
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
-import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
 import net.gini.android.capture.util.SharedPreferenceHelper
@@ -109,7 +109,7 @@ class ConfigurationActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun updateUIWithConfigurationObject(configuration: Configuration) {
+    private fun updateUIWithConfigurationObject(configuration: ExampleAppBankConfiguration) {
         // setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.isChecked =
             configuration.isDefaultSDKConfigurationsEnabled
@@ -229,8 +229,16 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.isReturnAssistantEnabled
 
         // enable payment hints
-        binding.layoutFeatureToggle.switchSetupPaymentHints.isChecked =
-            configuration.isPaymentHintsEnabled
+        binding.layoutFeatureToggle.switchSetupAlreadyPaidHintEnabled.isChecked =
+            configuration.isAlreadyPaidHintEnabled
+
+        // enable payment due hint
+        binding.layoutFeatureToggle.switchPaymentDueHint.isChecked =
+            configuration.isPaymentDueHintEnabled
+
+        // set payment due hint threshold days
+        binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays.hint =
+            configuration.paymentDueHintThresholdDays.toString()
 
         // enable return reasons dialog
         binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked =
@@ -565,13 +573,35 @@ class ConfigurationActivity : AppCompatActivity() {
         }
 
         //enable payment hints for showing warning
-        binding.layoutFeatureToggle.switchSetupPaymentHints.setOnCheckedChangeListener{ _, isChecked ->
+        binding.layoutFeatureToggle.switchSetupAlreadyPaidHintEnabled.setOnCheckedChangeListener{ _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(
-                    isPaymentHintsEnabled = isChecked
+                    isAlreadyPaidHintEnabled = isChecked
                 )
             )
         }
+
+        //enable payment due hint for showing warning
+        binding.layoutFeatureToggle.switchPaymentDueHint.setOnCheckedChangeListener{ _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isPaymentDueHintEnabled = isChecked
+                )
+            )
+        }
+
+        // set payment due hint threshold days
+        binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays
+            .doAfterTextChanged {
+                if (it.toString().isNotEmpty()) {
+                    configurationViewModel.setConfiguration(
+                        configurationViewModel.configurationFlow.value.copy(
+                            paymentDueHintThresholdDays = it.toString().toInt()
+                        )
+                    )
+                }
+            }
+
 
         // enable supported format help screen
         binding.layoutHelpToggles.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->

@@ -8,11 +8,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import net.gini.android.capture.AsyncCallback;
+import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.analysis.warning.WarningPaymentState;
-import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentError;
@@ -35,12 +35,17 @@ import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_K
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
@@ -62,6 +67,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     static final String PARCELABLE_MEMORY_CACHE_TAG = "ANALYSIS_FRAGMENT";
 
     private static final String EXTRACTION_PAYMENT_STATE = "paymentState";
+    private static final String EXTRACTION_PAYMENT_DUE_DATE = "paymentDueDate";
 
     private static final Logger LOG = LoggerFactory.getLogger(AnalysisScreenPresenter.class);
 
@@ -170,6 +176,13 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     public void setListener(@NonNull final AnalysisFragmentListener listener) {
         extension.setListener(listener);
     }
+
+
+    @Override
+    public void setBankSDKBridge(BankSDKBridge bankSDKBridge) {
+        extension.setBankSDKBridge(bankSDKBridge);
+    }
+
 
     @VisibleForTesting
     void clearSavedImages() {
@@ -330,16 +343,20 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
                                 if (resultHolder.getExtractions().isEmpty()) {
                                     proceedSuccessNoExtractions();
-                                } else if (shouldShowPaidInvoiceWarning(resultHolder)
+                                } else if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)
                                 && !isSavingInvoicesInProgress) {
                                     shouldClearImageCaches = false;
-                                    getView().showPaidWarningThen(
-                                            WarningType.DOCUMENT_MARKED_AS_PAID,
-                                            () -> proceedWithExtractions(resultHolder)
-                                    );
-                                } else {
-                                    proceedWithExtractions(resultHolder);
+                                    extension.showAlreadyPaidHint(resultHolder);
+                                } else if (shouldShowPaymentDueHint(resultHolder)
+                                        && !isSavingInvoicesInProgress) {
                                     shouldClearImageCaches = false;
+                                    extension.showPaymentDueHint(
+                                            resultHolder,
+                                            extractPaymentDueDateFromExtraction(resultHolder));
+
+                                } else {
+                                    shouldClearImageCaches = false;
+                                    proceedWithExtractions(resultHolder);
                                 }
                             }
                             case NO_NETWORK_SERVICE:
@@ -362,19 +379,23 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     private void proceedWithExtractions(AnalysisInteractor.ResultHolder resultHolder) {
-        successResultHolder = resultHolder;
-        // This case will happen in case of screen rotation OR if the feature is disabled
-        if (!mIsInvoiceSavingEnabled || isSavingInvoicesInProgress) {
-            clearSavedImagesAndProceed();
-            return;
-        }
-        // if the feature is enabled, Start the SAF flow
-        getView().processInvoiceSaving();
+        extension.proceedWithExtractionsWhenEducationFinished(resultHolder);
     }
-    private void clearSavedImagesAndProceed(){
-        clearSavedImages();
-        extension.proceedWithExtractions(successResultHolder);
-    }
+//    private void proceedWithExtractions(AnalysisInteractor.ResultHolder resultHolder) {
+//        successResultHolder = resultHolder;
+//        // This case will happen in case of screen rotation OR if the feature is disabled
+//        if (!mIsInvoiceSavingEnabled || isSavingInvoicesInProgress) {
+//            clearSavedImagesAndProceed();
+//            return;
+//        }
+//        // if the feature is enabled, Start the SAF flow
+//        getView().processInvoiceSaving();
+//    }
+//    private void clearSavedImagesAndProceed() {
+//        clearSavedImages();
+//        extension.proceedWithExtractions(successResultHolder);
+//        extension.proceedWithExtractionsWhenEducationFinished(resultHolder);
+//    }
 
     private void loadDocumentData() {
         LOG.debug("Loading document data");
@@ -499,6 +520,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         getView().showError(errorType, mMultiPageDocument);
     }
 
+
     /**
      * We only have to add the files which are captured from camera, That's why we have to filter
      * out the files which are imported via picker or they are from "open with" flow.
@@ -543,25 +565,84 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         clearSavedImagesAndProceed();
     }
 
-
-    private boolean shouldShowPaidInvoiceWarning(
+    private boolean shouldShowAlreadyPaidInvoiceWarning(
             @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
         // Feature flags / config
-        final boolean hintsEnabled = extension.getGetPaymentHintsEnabledUseCase().invoke();
+        final boolean alreadyPaidHintClientFlagEnabled = extension.getAlreadyPaidHintEnabledUseCase().invoke();
 
-        final boolean showPaidWarningFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentHintsEnabled();
+        final boolean alreadyPaidHintSDKFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isAlreadyPaidHintEnabled();
 
-        if (!hintsEnabled || !showPaidWarningFlag) {
+        if (!alreadyPaidHintClientFlagEnabled || !alreadyPaidHintSDKFlag) {
             return false;
         }
 
         // Payment state
-        final Map<String, GiniCaptureSpecificExtraction> exts = resultHolder.getExtractions();
-        final GiniCaptureSpecificExtraction ps = exts.get(EXTRACTION_PAYMENT_STATE);
-        final String paymentStateValue = ps != null ? ps.getValue() : null;
-        final WarningPaymentState state = WarningPaymentState.from(paymentStateValue);
-
+        final WarningPaymentState state = extractPaymentState(resultHolder.getExtractions());
         return state.isPaid();
+    }
+
+    private boolean shouldShowPaymentDueHint(
+            @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+
+        final boolean paymentDueHintClientFlagEnabled =
+                extension.getPaymentDueHintEnabledUseCase().invoke();
+
+        final boolean paymentDueHintSDKFlag =
+                GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
+
+        if (extension.isRAOrSkontoIncludedInExtractions(resultHolder)) {
+            return false;
+        }
+
+
+        if (!paymentDueHintClientFlagEnabled || !paymentDueHintSDKFlag) {
+            return false;
+        }
+
+        String paymentDueDate = extractPaymentDueDateFromExtraction(resultHolder);
+        if (paymentDueDate.isEmpty()) {
+            return false;
+        }
+
+        if (calculateRemainingDays(paymentDueDate) < GiniCapture.getInstance().getPaymentDueHintThresholdDays()) {
+            return false;
+        }
+
+
+        final Map<String, GiniCaptureSpecificExtraction> extractions = resultHolder.getExtractions();
+        // Payment state
+        final WarningPaymentState state = extractPaymentState(extractions);
+
+        return state.toBePaid();
+    }
+
+
+    private String extractPaymentDueDateFromExtraction(AnalysisInteractor.ResultHolder resultHolder) {
+        return resultHolder.getExtractions().get(EXTRACTION_PAYMENT_DUE_DATE) != null ?
+                resultHolder.getExtractions().get(EXTRACTION_PAYMENT_DUE_DATE).getValue() : "";
+    }
+
+    //TODO: check the validity of remaining day
+    private int calculateRemainingDays(@NonNull final String paymentDueDate) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            sdf.setLenient(false);
+            Date dueDate = sdf.parse(paymentDueDate);
+            Date today = new Date();
+            long diffMillis = (dueDate != null ? dueDate.getTime() : 0) - today.getTime();
+            return (int) TimeUnit.MILLISECONDS.toDays(diffMillis);
+        } catch (ParseException e) {
+            LOG.error("Failed to parse payment due date: " + paymentDueDate, e);
+            return 0;
+        }
+    }
+
+    // extracts the payment state from extractions
+    private WarningPaymentState extractPaymentState(
+            @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
+        final GiniCaptureSpecificExtraction ps = extractions.get(EXTRACTION_PAYMENT_STATE);
+        final String paymentStateValue = ps != null ? ps.getValue() : null;
+        return WarningPaymentState.from(paymentStateValue);
     }
 
 }

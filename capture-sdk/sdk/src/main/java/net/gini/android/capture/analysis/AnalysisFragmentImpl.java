@@ -28,10 +28,12 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
+import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.paymentDueHint.PaymentDueHintDismissListener;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -64,6 +66,8 @@ import java.util.Objects;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
@@ -139,6 +143,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
+    public void setBankSDKBridge(BankSDKBridge bankSDKBridge) {
+        getPresenter().setBankSDKBridge(bankSDKBridge);
+    }
+
+    @Override
     void showScanAnimation(Boolean isSavingInvoicesLocallyEnabled) {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
         isScanAnimationActive = true;
@@ -170,6 +179,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             mAnalysisMessageTextView.setVisibility(View.GONE);
     }
 
+    @Override
     void showEducation(EducationCompleteListener listener) {
         fragmentExtension.showEducation(() -> {
             hideEducation();
@@ -338,8 +348,17 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showPaidWarningThen(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
-            mFragment.showWarning(warningType, onProceed);
+    void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
+        mFragment.showWarning(warningType, onProceed);
+    }
+
+    @Override
+    void showPaymentDueHint(PaymentDueHintDismissListener listener, String dueDate) {
+        fragmentExtension.showPaymentDueHint(() -> {
+                    listener.onDismiss();
+                    return Unit.INSTANCE;
+                },
+                dueDate);
     }
 
     @Override

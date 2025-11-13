@@ -59,7 +59,9 @@
     <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default GiniConfiguration values.</string>
     <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
     <string name="default_sdk_configuration_switch_label">SDK default configurations</string>
-    <string name="payment_hint_switch_label">Payment Hint State</string>
+    <string name="already_paid_hint_switch_label">Already Paid Hint</string>
+    <string name="payment_due_hint_switch_label">Payment Due Hint</string>
+    <string name="payment_due_hint_threshold_days_label">Payment Due Hint Threshold Days</string>
     <string name="open_with_switch_label">Open with</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>
     <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>
@@ -112,7 +114,6 @@
     <string name="custom_primary_compose_button_switch_label">Custom primary button in Skonto</string>
     <string name="return_assistant_feature_switch_label">Return assistant feature</string>
     <string name="return_assistant_feature_switch_description">Present a digital representation of the invoice</string>
-    <string name="payment_hint_switch_description">Toggle to show a warning when an invoice is marked as paid or similar states</string>
     <string name="skonto_feature_switch_label">Skonto feature</string>
     <string name="transaction_docs_feature_switch_label">Transaction Docs feature</string>
     <string name="return_assistant_onboarding_custom_illustration_switch_label">Return assistant onboarding custom illustration</string>

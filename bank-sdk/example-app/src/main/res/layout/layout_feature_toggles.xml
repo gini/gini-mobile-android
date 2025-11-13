@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_round_corners"
@@ -164,18 +165,44 @@
         android:text="@string/configuration_button_remove_saf_data"
         />
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch_setupPaymentHints"
+        android:id="@+id/switch_setupAlreadyPaidHintEnabled"
         style="@style/SwitchConfigurationStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/payment_hint_switch_label" />
+        android:text="@string/already_paid_hint_switch_label" />
 
-    <TextView
-        android:id="@+id/tv_paymentHintsDescription"
-        style="@style/TextAppearance.MaterialComponents.Caption"
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_paymentDueHint"
+        style="@style/SwitchConfigurationStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/payment_hint_switch_description" />
+        android:text="@string/payment_due_hint_switch_label" />
+
+    <TextView
+        android:id="@+id/textView_paymentDueHintThresholdDays"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/payment_due_hint_threshold_days_label"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout_paymentDueHintThresholdDays"
+        style="?attr/textInputOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editText_paymentDueHintThresholdDays"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLines="1"
+            android:textColor="@drawable/edittext_selector"
+            android:textSize="18sp"
+            tools:text="Hello@World and stuff and foo and bar and whatchamacallit" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
 

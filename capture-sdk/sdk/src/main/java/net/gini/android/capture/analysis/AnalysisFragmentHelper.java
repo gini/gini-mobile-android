@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.CancelListener;
@@ -57,6 +58,20 @@ final class AnalysisFragmentHelper {
                     "AnalysisFragmentListener not set. "
                             + "You can set it with AnalysisFragmentCompat#setListener() or "
                             + "by making the host activity implement the AnalysisFragmentListener.");
+        }
+    }
+
+    public static void setBankSDKBridge(@NonNull final AnalysisFragmentImpl fragmentImpl,
+                                        @NonNull final Context context, @Nullable final BankSDKBridge bankSDKBridge) {
+        if (context instanceof BankSDKBridge) {
+            fragmentImpl.setBankSDKBridge((BankSDKBridge) context);
+        } else if (bankSDKBridge != null) {
+            fragmentImpl.setBankSDKBridge(bankSDKBridge);
+        } else {
+            throw new IllegalStateException(
+                    "BankSDKBridge not set. "
+                            + "You can set it with AnalysisFragmentCompat#setBankSDKBridge() or "
+                            + "by making the host activity implement the BankSDKBridge.");
         }
     }
 

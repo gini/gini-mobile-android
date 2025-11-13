@@ -202,7 +202,8 @@ internal constructor(
             isTransactionDocsEnabled = configuration.transactionDocsEnabled,
             isQrCodeEducationEnabled = configuration.qrCodeEducationEnabled,
             isInstantPaymentEnabled = configuration.instantPaymentEnabled,
-            paymentHintsEnabled = configuration.paymentHintsEnabled,
+            isAlreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
+            isPaymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
             isEInvoiceEnabled = configuration.isEInvoiceEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
             savePhotosLocallyEnabled = configuration.savePhotosLocallyEnabled

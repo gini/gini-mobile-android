@@ -7,10 +7,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import net.gini.android.capture.BankSDKBridge
+import net.gini.android.capture.BankSDKProperties
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCaptureError
+import net.gini.android.capture.analysis.AnalysisInteractor.ResultHolder
 import net.gini.android.capture.analysis.AnalysisScreenContract.View
 import net.gini.android.capture.analysis.transactiondoc.AttachedToTransactionDocumentProvider
+import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.GiniCaptureDocumentError
@@ -23,7 +27,8 @@ import net.gini.android.capture.internal.util.NullabilityHelper.getMapOrEmpty
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
-import net.gini.android.capture.paymentHints.GetPaymentHintsEnabledUseCase
+import net.gini.android.capture.paymentHints.GetAlreadyPaidHintEnabledUseCase
+import net.gini.android.capture.paymentHints.GetPaymentDueHintEnabledUseCase
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
@@ -33,8 +38,13 @@ internal class AnalysisScreenPresenterExtension(
 
     var listener: AnalysisFragmentListener? = null
 
-    val getPaymentHintsEnabledUseCase:
-            GetPaymentHintsEnabledUseCase by getGiniCaptureKoin().inject()
+    var bankSDKBridge: BankSDKBridge? = null
+
+    val alreadyPaidHintEnabledUseCase:
+            GetAlreadyPaidHintEnabledUseCase by getGiniCaptureKoin().inject()
+
+    val paymentDueHintEnabledUseCase:
+            GetPaymentDueHintEnabledUseCase by getGiniCaptureKoin().inject()
 
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()
@@ -54,6 +64,28 @@ internal class AnalysisScreenPresenterExtension(
         return listener ?: noOpListener
     }
 
+    fun isRAOrSkontoIncludedInExtractions(resultHolder: ResultHolder): Boolean {
+        val bankSDKProperties: BankSDKProperties? =
+            bankSDKBridge?.getBankSDKProperties(
+                ResultHolder.toCaptureResult(
+                    resultHolder
+                )
+            )
+        bankSDKProperties?.let {
+            val isSkontoEnabled = bankSDKProperties.isSkontoSDKFlagEnabled &&
+                    bankSDKProperties.isSkontoExtractionsValid
+
+            val isReturnAssistantEnabled = bankSDKProperties.isReturnAssistantSDKFlagEnabled &&
+                    bankSDKProperties.isReturnAssistantExtractionsValid
+
+            if (isSkontoEnabled || isReturnAssistantEnabled) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     fun proceedSuccessNoExtractions(
         document: GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
     ) {
@@ -64,14 +96,40 @@ internal class AnalysisScreenPresenterExtension(
         }
     }
 
-    fun proceedWithExtractions(resultHolder: AnalysisInteractor.ResultHolder) {
+    fun proceedWithExtractionsWhenEducationFinished(resultHolder: AnalysisInteractor.ResultHolder) {
         doWhenEducationFinished {
-            getAnalysisFragmentListenerOrNoOp()
-                .onExtractionsAvailable(
-                    getMapOrEmpty(resultHolder.extractions),
-                    getMapOrEmpty(resultHolder.compoundExtractions),
-                    getListOrEmpty(resultHolder.returnReasons)
-                )
+            proceedWithExtractions(resultHolder)
+        }
+    }
+
+    fun proceedWithExtractions(resultHolder: AnalysisInteractor.ResultHolder) {
+        getAnalysisFragmentListenerOrNoOp()
+            .onExtractionsAvailable(
+                getMapOrEmpty(resultHolder.extractions),
+                getMapOrEmpty(resultHolder.compoundExtractions),
+                getListOrEmpty(resultHolder.returnReasons)
+            )
+
+    }
+
+    fun showAlreadyPaidHint(resultHolder: AnalysisInteractor.ResultHolder) {
+        doWhenEducationFinished {
+            view.showAlreadyPaidWarning(
+                WarningType.DOCUMENT_MARKED_AS_PAID,
+                { proceedWithExtractions(resultHolder) })
+        }
+    }
+
+    fun showPaymentDueHint(
+        resultHolder: AnalysisInteractor.ResultHolder,
+        dueDate: String
+    ) {
+        doWhenEducationFinished {
+            view.showPaymentDueHint(
+                { proceedWithExtractions(resultHolder) },
+                dueDate
+            )
+
         }
     }
 
