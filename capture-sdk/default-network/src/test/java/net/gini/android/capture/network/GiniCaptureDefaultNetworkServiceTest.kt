@@ -2,7 +2,6 @@ package net.gini.android.capture.network
 
 import android.net.Uri
 import android.os.Looper
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
