@@ -915,7 +915,12 @@ class AnalysisScreenPresenterTest {
             }
             every { presenter.proceedWithExtractions(any()) } just Runs
 
-            presenter.proceedWithExtractionsWhenEducationFinished(mockResultHolder)
+            presenter.proceedWithExtractionsWhenEducationFinished(
+                mockResultHolder,
+                mIsInvoiceSavingEnabled = false,
+                isSavingInvoicesInProgress = false,
+                mockk()
+            )
 
             verify { presenter.proceedWithExtractions(mockResultHolder) }
         }
