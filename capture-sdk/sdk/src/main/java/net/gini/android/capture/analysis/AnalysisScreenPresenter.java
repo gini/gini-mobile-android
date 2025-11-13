@@ -330,7 +330,8 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
                                 if (resultHolder.getExtractions().isEmpty()) {
                                     proceedSuccessNoExtractions();
-                                } else if (shouldShowPaidInvoiceWarning(resultHolder)) {
+                                } else if (shouldShowPaidInvoiceWarning(resultHolder)
+                                && !isSavingInvoicesInProgress) {
                                     shouldClearImageCaches = false;
                                     getView().showPaidWarningThen(
                                             WarningType.DOCUMENT_MARKED_AS_PAID,

@@ -24,6 +24,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.analysis.warning.WarningType;
+import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.CancelListener;
@@ -233,6 +234,8 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         return new WarningBottomSheet.Listener() {
             @Override
             public void onCancelAction() {
+                if (getActivity() != null) ImageDiskStore.clear(getActivity());
+
                 if (mCancelListener != null) {
                     mCancelListener.onCancelFlow();
                 }
