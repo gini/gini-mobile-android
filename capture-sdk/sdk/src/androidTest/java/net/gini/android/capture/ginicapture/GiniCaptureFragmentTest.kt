@@ -194,7 +194,8 @@ class GiniCaptureFragmentTest {
             isInstantPaymentEnabled = false,
             isEInvoiceEnabled = false,
             amplitudeApiKey = TEST_API_KEY,
-            savePhotosLocallyEnabled = savePhotosLocallyEnabled
+            savePhotosLocallyEnabled = savePhotosLocallyEnabled,
+            paymentHintsEnabled = false
         )
 
         return ConfigurationNetworkResult(testConfig, UUID.randomUUID())
