@@ -150,7 +150,7 @@
     <string name="gc_save_invoices_feature_title">Save to gallery</string>
     <string name="gc_save_invoices_feature_subtitle">A copy of the invoice will be saved to your local gallery.</string>
     <string name="gc_invoice_saving_success_toast_text">Image saved to gallery</string>
-    <string name="gc_invoice_file_name">PhotoPayment_Invoice_%1$d</string>
+    <string name="gc_invoice_file_name">PhotoPayment_Invoice_%1$d_%2$d</string>
     <string name="gc_pages">Pages</string>
     <string name="gc_process_documents">Process</string>
     <string name="gc_continue">Continue</string>

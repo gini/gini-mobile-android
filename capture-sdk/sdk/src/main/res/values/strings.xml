@@ -166,7 +166,7 @@
     <string name="gc_payment_details_visible">Sind alle Zahlungsinformationen gut lesbar?</string>
     <string name="gc_save_invoices_feature_title">In Galerie speichern</string>
     <string name="gc_save_invoices_feature_subtitle">Eine Kopie dieser Rechnung wird automatisch in deiner Galerie gespeichert.</string>
-    <string name="gc_invoice_file_name">FotoUeberweisung_Rechnung_%1$d</string>
+    <string name="gc_invoice_file_name">FotoUeberweisung_Rechnung_%1$d_%2$d</string>
     <string name="gc_invoice_saving_success_toast_text">Rechnung wurde in Galerie gesp</string>
     <string name="gc_pages">Seite</string>
     <string name="gc_process_documents">Verarbeiten</string>

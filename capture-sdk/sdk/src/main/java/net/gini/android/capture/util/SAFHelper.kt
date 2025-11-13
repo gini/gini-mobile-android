@@ -90,15 +90,19 @@ internal object SAFHelper {
      * @return Number of files successfully saved.
      */
 
-    fun saveFilesToFolder(context: Context,
-                          folderUri: Uri,
-                          sourceUris: List<Uri>,
+    fun saveFilesToFolder(
+        context: Context,
+        folderUri: Uri,
+        sourceUris: List<Uri>,
     ): Int = runBlocking {
         withContext(Dispatchers.IO) {
             val pickedDir = DocumentFile.fromTreeUri(context, folderUri) ?: return@withContext 0
 
-            val results = sourceUris.map { uri ->
-                val fileName = context.getString(R.string.gc_invoice_file_name, System.currentTimeMillis())
+            val results = sourceUris.mapIndexed { index, uri ->
+                val fileName = context.getString(
+                    R.string.gc_invoice_file_name,
+                    System.currentTimeMillis(), index
+                )
                 async { saveSingleFile(context, pickedDir, uri, fileName) }
             }.awaitAll()
 
