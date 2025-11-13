@@ -267,7 +267,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         if (haveSavePermission)
             saveInvoices(folderUri);
         else {
-            getPresenter().releaseMutexForEducation();
             mFragment.executeSafIntent(SAFHelper.INSTANCE.createFolderPickerIntent());
         }
     }
