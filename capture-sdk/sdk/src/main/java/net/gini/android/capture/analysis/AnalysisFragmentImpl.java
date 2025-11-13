@@ -214,6 +214,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                     Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Checks if the app has permission to save files in the given folder URI, selected by the user.
+     *
+     * @param folderUri The folder URI to check.
+     * @return True if the URI is valid and write permission is granted.
+     */
     private Boolean haveSavePermission(String folderUri) {
         return folderUri != null && !folderUri.isEmpty() &&
                 SAFHelper.INSTANCE.hasWritePermission(

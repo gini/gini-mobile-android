@@ -98,10 +98,10 @@ internal object SAFHelper {
         withContext(Dispatchers.IO) {
             val pickedDir = DocumentFile.fromTreeUri(context, folderUri) ?: return@withContext 0
 
-            val results = sourceUris.mapIndexed { index, uri ->
+            val results = sourceUris.mapIndexed { suffixForFileName, uri ->
                 val fileName = context.getString(
                     R.string.gc_invoice_file_name,
-                    System.currentTimeMillis(), index
+                    System.currentTimeMillis(), suffixForFileName
                 )
                 async { saveSingleFile(context, pickedDir, uri, fileName) }
             }.awaitAll()
