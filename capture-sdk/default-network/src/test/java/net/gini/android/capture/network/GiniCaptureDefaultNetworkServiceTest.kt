@@ -90,7 +90,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         val networkService = GiniCaptureDefaultNetworkService(
             bankApi,
             null,
-            ApplicationProvider.getApplicationContext()
+            getApplicationContext()
         )
 
         // Mock Gini Capture SDK document
@@ -98,7 +98,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         every { captureDocument.id } returns "id"
         every { captureDocument.data } returns byteArrayOf()
         every { captureDocument.mimeType } returns "image/jpeg"
-        every { captureDocument.generateUploadMetadata(ApplicationProvider.getApplicationContext()) } returns ""
+        every { captureDocument.generateUploadMetadata(getApplicationContext()) } returns ""
 
         // When
         networkService.upload(captureDocument, mockk(relaxed = true))
@@ -121,16 +121,17 @@ class GiniCaptureDefaultNetworkServiceTest {
 
         val bankConfig = BankConfig(
             "test-client-id",
-            true,
-            true,
-            true,
-            "amplitude",
-            true,
-            true,
-            true,
-            true,
-            true,
-            true
+            isUserJourneyAnalyticsEnabled = true,
+            isSkontoEnabled = true,
+            isReturnAssistantEnabled = true,
+            amplitudeApiKey = "amplitude",
+            transactionDocsEnabled = true,
+            instantPaymentEnabled = true,
+            isEInvoiceEnabled = true,
+            qrCodeEducationEnabled = true,
+            savePhotosLocallyEnabled = true,
+            isAlreadyPaidHintEnabled = true,
+            isPaymentDueHintEnabled = true
         )
 
         // Add more stubs if mapBankConfigurationToConfiguration uses other properties
