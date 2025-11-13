@@ -343,18 +343,25 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
                                 if (resultHolder.getExtractions().isEmpty()) {
                                     proceedSuccessNoExtractions();
-                                } else if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)
-                                && !isSavingInvoicesInProgress) {
+                                } else if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)) {
+                                    successResultHolder = resultHolder;
                                     shouldClearImageCaches = false;
-                                    extension.showAlreadyPaidHint(resultHolder);
-                                } else if (shouldShowPaymentDueHint(resultHolder)
-                                        && !isSavingInvoicesInProgress) {
+                                    extension.showAlreadyPaidHint(
+                                            mIsInvoiceSavingEnabled,
+                                            isSavingInvoicesInProgress,
+                                            successResultHolder,
+                                            getActivity());
+                                } else if (shouldShowPaymentDueHint(resultHolder)) {
+                                    successResultHolder = resultHolder;
                                     shouldClearImageCaches = false;
                                     extension.showPaymentDueHint(
                                             resultHolder,
-                                            extractPaymentDueDateFromExtraction(resultHolder));
-
+                                            extractPaymentDueDateFromExtraction(resultHolder),
+                                            mIsInvoiceSavingEnabled,
+                                            isSavingInvoicesInProgress,
+                                            getActivity());
                                 } else {
+                                    successResultHolder = resultHolder;
                                     shouldClearImageCaches = false;
                                     proceedWithExtractions(resultHolder);
                                 }
@@ -379,23 +386,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     private void proceedWithExtractions(AnalysisInteractor.ResultHolder resultHolder) {
-        extension.proceedWithExtractionsWhenEducationFinished(resultHolder);
+        extension.proceedWithExtractionsWhenEducationFinished(
+                resultHolder, mIsInvoiceSavingEnabled, isSavingInvoicesInProgress, getActivity()
+        );
     }
-//    private void proceedWithExtractions(AnalysisInteractor.ResultHolder resultHolder) {
-//        successResultHolder = resultHolder;
-//        // This case will happen in case of screen rotation OR if the feature is disabled
-//        if (!mIsInvoiceSavingEnabled || isSavingInvoicesInProgress) {
-//            clearSavedImagesAndProceed();
-//            return;
-//        }
-//        // if the feature is enabled, Start the SAF flow
-//        getView().processInvoiceSaving();
-//    }
-//    private void clearSavedImagesAndProceed() {
-//        clearSavedImages();
-//        extension.proceedWithExtractions(successResultHolder);
-//        extension.proceedWithExtractionsWhenEducationFinished(resultHolder);
-//    }
 
     private void loadDocumentData() {
         LOG.debug("Loading document data");
@@ -562,7 +556,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @Override
     public void resumeInterruptedFlow() {
         if (successResultHolder == null) return;
-        clearSavedImagesAndProceed();
+        extension.clearSavedImagesAndProceed(successResultHolder, getActivity());
     }
 
     private boolean shouldShowAlreadyPaidInvoiceWarning(
