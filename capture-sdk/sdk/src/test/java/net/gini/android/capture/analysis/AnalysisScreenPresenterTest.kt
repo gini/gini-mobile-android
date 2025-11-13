@@ -919,7 +919,7 @@ class AnalysisScreenPresenterTest {
                 mockResultHolder,
                 mIsInvoiceSavingEnabled = false,
                 isSavingInvoicesInProgress = false,
-                mockk()
+                mActivity
             )
 
             verify { presenter.proceedWithExtractions(mockResultHolder) }

@@ -195,7 +195,8 @@ class GiniCaptureFragmentTest {
             isEInvoiceEnabled = false,
             amplitudeApiKey = TEST_API_KEY,
             savePhotosLocallyEnabled = savePhotosLocallyEnabled,
-            paymentHintsEnabled = false
+            isPaymentDueHintEnabled = false,
+            isAlreadyPaidHintEnabled = false
         )
 
         return ConfigurationNetworkResult(testConfig, UUID.randomUUID())
@@ -218,6 +219,7 @@ class GiniCaptureFragmentTest {
                 override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
                     return GiniCaptureFragment.createInstance().apply {
                         setListener(mock())
+                        setBankSDKBridge(mock())
                     }
                 }
             }
