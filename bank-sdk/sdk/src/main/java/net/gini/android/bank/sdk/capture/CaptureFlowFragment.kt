@@ -57,6 +57,7 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsU
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.util.protectViewFromInsets
 
+@Suppress("TooManyFunctions")
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     GiniCaptureFragmentListener,
