@@ -205,7 +205,7 @@
         Auf diesem Dokument steht, dass es bereits bezahlt wurde. Bitte prüfen Sie den Hinweis in dem Dokument, um sicherzugehen.
     </string>
     <string name="gc_warning_title_dialog">Warndialog</string>
-    <string name="gc_warning_icon_description">Warnsymbol</string>
+    <string name="gc_warning_icon_content_description">Warnsymbol</string>
     <!--   endregion -->
 
     <!--   region Due Date -->

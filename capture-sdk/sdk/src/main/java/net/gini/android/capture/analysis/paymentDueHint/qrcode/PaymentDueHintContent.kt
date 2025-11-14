@@ -98,7 +98,7 @@ fun TipCard(
                 modifier = Modifier
                     .size(18.dp),
                 painter = painterResource(id = R.drawable.gc_alert_triangle_icon),
-                contentDescription = "Warning",
+                contentDescription = stringResource(R.string.gc_warning_icon_content_description),
                 tint = screenColorScheme.tipContentWarningColor
             )
 
