@@ -198,8 +198,8 @@
     <string name="gc_invoice_education_content_description">analyse der Rechnung läuft</string>
 
     <!--   region Warning -->
-    <string name="gc_cancel_transfer">Überweisung abbrechen</string>
-    <string name="gc_proceed_anyway">Trotzdem fortfahren</string>
+    <string name="gc_cancel_transfer">Überweisung Abbrechen</string>
+    <string name="gc_proceed_anyway">Trotzdem Fortfahren</string>
     <string name="gc_document_marked_paid_title">Dokument als bezahlt gekennzeichnet</string>
     <string name="gc_document_marked_paid_desc">
         Auf diesem Dokument steht, dass es bereits bezahlt wurde. Bitte prüfen Sie den Hinweis in dem Dokument, um sicherzugehen.
@@ -209,7 +209,7 @@
     <!--   endregion -->
 
     <!--   region Due Date -->
-    <string name="gc_dismiss_message">Hinweis schließen</string>
+    <string name="gc_dismiss_message">Hinweis Schließen</string>
     <string name="gc_due_date_hint">\u0020Deine Rechnung ist am %1$s fällig. Du könntest sie als Terminüberweisung anlegen.</string>
     <string name="gc_due_date_hint_tip">Tipp:</string>
     <!--   endregion -->
