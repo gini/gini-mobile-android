@@ -210,7 +210,7 @@
 
     <!--   region Due Date -->
     <string name="gc_dismiss_message">Hinweis schließen</string>
-    <string name="gc_due_date_hint"> Deine Rechnung ist am %1$s fällig. Du könntest sie als Terminüberweisung anlegen.</string>
+    <string name="gc_due_date_hint">\u0020Deine Rechnung ist am %1$s fällig. Du könntest sie als Terminüberweisung anlegen.</string>
     <string name="gc_due_date_hint_tip">Tipp:</string>
     <!--   endregion -->
 

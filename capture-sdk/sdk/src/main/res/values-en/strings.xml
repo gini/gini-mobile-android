@@ -190,7 +190,7 @@
 
     <!--   region Due Date -->
     <string name="gc_dismiss_message">Dismiss Message</string>
-    <string name="gc_due_date_hint"> Your invoice is due on %1$s. You could set it up as a scheduled transfer.</string>
+    <string name="gc_due_date_hint">\u0020Your invoice is due on %1$s. You could set it up as a scheduled transfer.</string>
     <string name="gc_due_date_hint_tip">Tip:</string>
     <!--   endregion -->
 
