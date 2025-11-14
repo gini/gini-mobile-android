@@ -1,8 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.analysis.AnalysisFragmentImpl.INVOICE_SAVING_IN_PROGRESS_KEY;
-import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,7 +12,6 @@ import android.view.ViewGroup;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -33,6 +29,7 @@ import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.CancelListener;
 
+import static net.gini.android.capture.analysis.AnalysisFragmentImpl.INVOICE_SAVING_IN_PROGRESS_KEY;
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 
 /**
@@ -98,7 +95,9 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         final AnalysisFragmentImpl fragmentImpl = AnalysisFragmentHelper.createFragmentImpl(this, mCancelListener,
                 getArguments());
         AnalysisFragmentHelper.setListener(fragmentImpl, getActivity(), mListener);
-        AnalysisFragmentHelper.setBankSDKBridge(fragmentImpl, getActivity(), bankSDKBridge);
+        if (bankSDKBridge != null) {
+            AnalysisFragmentHelper.setBankSDKBridge(fragmentImpl, getActivity(), bankSDKBridge);
+        }
         return fragmentImpl;
     }
 
@@ -169,11 +168,13 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     }
 
     @Override
-    public void setBankSDKBridge(BankSDKBridge bankSDKBridge) {
+    public void setBankSDKBridge(@Nullable BankSDKBridge bankSDKBridge) {
         if (mFragmentImpl != null) {
             mFragmentImpl.setBankSDKBridge(bankSDKBridge);
         }
-        this.bankSDKBridge = bankSDKBridge;
+        if (bankSDKBridge != null) {
+            this.bankSDKBridge = bankSDKBridge;
+        }
     }
 
     public void setCancelListener(@NonNull final CancelListener cancelListener) {
