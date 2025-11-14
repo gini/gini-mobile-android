@@ -17,7 +17,7 @@ class PaymentDueHintColors(
     val buttonBackgroundColor: Color,
 ) {
 
-    companion object Companion {
+    companion object {
         @Composable
         fun colors(
             tipBackgroundColor: Color = GiniTheme.colorScheme.card.containerWarning,
