@@ -6,5 +6,5 @@ internal class GetSaveInvoicesLocallyFeatureEnabledUseCase (
     private val giniBankConfigurationProvider: GiniBankConfigurationProvider,
 ) {
     operator fun invoke(): Boolean =
-        giniBankConfigurationProvider.provide().savePhotosLocallyEnabled
+        giniBankConfigurationProvider.provide().isSavePhotosLocallyEnabled
 }

@@ -136,7 +136,7 @@ class GiniCaptureFragmentTest {
             val giniBankConfigurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
             val configuration = giniBankConfigurationProvider.provide()
 
-            assertThat(configuration.savePhotosLocallyEnabled).isFalse()
+            assertThat(configuration.isSavePhotosLocallyEnabled).isFalse()
         }
     }
 
@@ -156,7 +156,7 @@ class GiniCaptureFragmentTest {
             val giniBankConfigurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
             val configuration = giniBankConfigurationProvider.provide()
 
-            assertThat(configuration.savePhotosLocallyEnabled).isTrue()
+            assertThat(configuration.isSavePhotosLocallyEnabled).isTrue()
         }
     }
 
@@ -194,7 +194,7 @@ class GiniCaptureFragmentTest {
             isInstantPaymentEnabled = false,
             isEInvoiceEnabled = false,
             amplitudeApiKey = TEST_API_KEY,
-            savePhotosLocallyEnabled = savePhotosLocallyEnabled,
+            isSavePhotosLocallyEnabled = savePhotosLocallyEnabled,
             isPaymentDueHintEnabled = false,
             isAlreadyPaidHintEnabled = false
         )

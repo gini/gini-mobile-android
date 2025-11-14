@@ -32,6 +32,6 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     isEInvoiceEnabled = eInvoiceEnabled ?: false,
     isAlreadyPaidHintEnabled = alreadyPaidHintEnabled ?: false,
     isPaymentDueHintEnabled = paymentDueHintEnabled ?: false,
-    savePhotosLocallyEnabled = savePhotosLocallyEnabled ?: false,
+    isSavePhotosLocallyEnabled = savePhotosLocallyEnabled ?: false,
 )
 

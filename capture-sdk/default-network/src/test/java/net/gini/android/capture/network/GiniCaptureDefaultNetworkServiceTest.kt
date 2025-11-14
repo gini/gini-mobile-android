@@ -128,7 +128,7 @@ class GiniCaptureDefaultNetworkServiceTest {
             isInstantPaymentEnabled = true,
             isEInvoiceEnabled = true,
             isQrCodeEducationEnabled = true,
-            savePhotosLocallyEnabled = true,
+            isSavePhotosLocallyEnabled = true,
             isAlreadyPaidHintEnabled = true,
             isPaymentDueHintEnabled = true
         )

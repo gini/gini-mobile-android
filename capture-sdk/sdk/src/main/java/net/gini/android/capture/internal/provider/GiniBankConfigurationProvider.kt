@@ -14,7 +14,7 @@ class GiniBankConfigurationProvider {
         isQrCodeEducationEnabled = false,
         isInstantPaymentEnabled = false,
         isEInvoiceEnabled = false,
-        savePhotosLocallyEnabled = false,
+        isSavePhotosLocallyEnabled = false,
         isAlreadyPaidHintEnabled = false,
         isPaymentDueHintEnabled = false
     )
