@@ -162,9 +162,13 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         childFragmentManager.fragmentFactory =
-            CaptureFlowFragmentFactory(
-                this, this,
-                openWithDocument, this, this, this
+           CaptureFlowFragmentFactory(
+                giniCaptureFragmentListener = this,
+                bankSDKBridge = this,
+                openWithDocument = openWithDocument,
+                digitalInvoiceListener = this,
+                skontoListener = this,
+                cancelCallback = this
             )
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
