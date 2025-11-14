@@ -124,10 +124,10 @@ class GiniCaptureDefaultNetworkServiceTest {
             isSkontoEnabled = true,
             isReturnAssistantEnabled = true,
             amplitudeApiKey = "amplitude",
-            transactionDocsEnabled = true,
-            instantPaymentEnabled = true,
+            isTransactionDocsEnabled = true,
+            isInstantPaymentEnabled = true,
             isEInvoiceEnabled = true,
-            qrCodeEducationEnabled = true,
+            isQrCodeEducationEnabled = true,
             savePhotosLocallyEnabled = true,
             isAlreadyPaidHintEnabled = true,
             isPaymentDueHintEnabled = true
