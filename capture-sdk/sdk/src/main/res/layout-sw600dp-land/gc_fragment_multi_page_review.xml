@@ -104,7 +104,8 @@
 
             <TextView
                 android:id="@+id/gc_save_invoices_title"
-                style="@style/TextAppearance.MaterialComponents.Body1"
+                style="@style/GiniCaptureTheme.Typography.Subtitle1"
+                android:textColor="?attr/colorOnBackground"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:focusable="true"
