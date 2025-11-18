@@ -21,8 +21,9 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
+          distribution: 'temurin'
           java-version: '17'
-          distribution: 'zulu'
+          cache: 'gradle'
 
       # Build just the module first (adjust task names if you use variants)
       - name: Build module
