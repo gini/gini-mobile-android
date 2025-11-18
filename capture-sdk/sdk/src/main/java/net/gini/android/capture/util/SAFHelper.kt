@@ -10,7 +10,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import net.gini.android.capture.R
-import net.gini.android.capture.internal.textrecognition.MLKitTextRecognizer.Companion.LOG
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -38,10 +37,30 @@ internal object SAFHelper {
     */
 
     fun hasWritePermission(context: Context, folderUri: Uri): Boolean {
+        if (directoryExists(context, folderUri).not()) return false
         val result = context.contentResolver.persistedUriPermissions.any {
             it.uri == folderUri && it.isWritePermission
         }
         return result
+    }
+
+    /**
+     * Checks if the directory exists and is accessible. Helps in case of
+     * user deletes the whole directory, then we have to ask for permission again.
+     *
+     * @param context The context used to access the content resolver.
+     * @param folderUri The URI of the folder to check.
+     * @return True if the directory exists and is accessible, false otherwise.
+     */
+    private fun directoryExists(context: Context, folderUri: Uri): Boolean {
+        return try {
+            val documentFile = DocumentFile.fromTreeUri(context, folderUri)
+            documentFile?.exists() == true && documentFile.isDirectory
+        } catch (e: SecurityException) {
+            false
+        } catch (e: IllegalArgumentException) {
+            false
+        }
     }
 
     /**
@@ -76,8 +95,8 @@ internal object SAFHelper {
         val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         try {
             context.contentResolver.takePersistableUriPermission(folderUri, takeFlags)
-        } catch (e: SecurityException) {
-            LOG.error("SecurityException in SAF", e)
+        } catch (_: SecurityException) {
+            // no-op
         }
     }
 
@@ -138,13 +157,10 @@ internal object SAFHelper {
 
             success
         } catch (e: IOException) {
-            LOG.error("IOException in SAF", e)
             false
         } catch (e: SecurityException) {
-            LOG.error("SecurityException in SAF", e)
             false
         } catch (e: IllegalArgumentException) {
-            LOG.error("IllegalArgumentException in SAF", e)
             false
         }
     }
