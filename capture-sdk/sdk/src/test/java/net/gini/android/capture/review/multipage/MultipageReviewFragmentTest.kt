@@ -168,7 +168,7 @@ class MultipageReviewFragmentTest {
     }
 
     @Test
-    fun `Process document view is shown`() {
+    fun `process document view is shown`() {
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
         GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(
