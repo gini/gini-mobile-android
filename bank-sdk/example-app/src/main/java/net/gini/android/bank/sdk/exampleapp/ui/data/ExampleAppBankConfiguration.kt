@@ -5,11 +5,12 @@ import kotlinx.parcelize.Parcelize
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.FileImportValidator
 
 
 @Parcelize
-data class Configuration(
+data class ExampleAppBankConfiguration(
     // setup sdk with default configurations
     val isDefaultSDKConfigurationsEnabled: Boolean = false,
 
@@ -151,6 +152,15 @@ data class Configuration(
     // enable return reasons dialog
     val isReturnReasonsEnabled: Boolean = false,
 
+    // enable show warning for paid invoices
+    val isAlreadyPaidHintEnabled: Boolean = true,
+
+    // enable payment due hint
+    val isPaymentDueHintEnabled: Boolean = true,
+
+    //  payment due hint threshold days
+    val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
+
     // Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
 
@@ -187,13 +197,16 @@ data class Configuration(
     // enable Capture Sdk
     val isCaptureSDK: Boolean = false,
 
+    // enable/disable save invoices locally feature
+    val saveInvoicesLocallyEnabled: Boolean = true,
+
 ) : Parcelable {
 
-    companion object {
+    companion object Companion {
         fun setupSDKWithDefaultConfiguration(
-            currentConfiguration: Configuration,
+            currentConfiguration: ExampleAppBankConfiguration,
             defaultCaptureConfiguration: CaptureConfiguration,
-        ): Configuration {
+        ): ExampleAppBankConfiguration {
             return currentConfiguration.copy(
                 isFileImportEnabled = defaultCaptureConfiguration.fileImportEnabled,
                 isQrCodeEnabled = defaultCaptureConfiguration.qrCodeScanningEnabled,
@@ -203,6 +216,9 @@ data class Configuration(
                 isFlashDefaultStateEnabled = defaultCaptureConfiguration.flashOnByDefault,
                 documentImportEnabledFileTypes = defaultCaptureConfiguration.documentImportEnabledFileTypes,
                 isBottomNavigationBarEnabled = defaultCaptureConfiguration.bottomNavigationBarEnabled,
+                isAlreadyPaidHintEnabled = defaultCaptureConfiguration.alreadyPaidHintEnabled,
+                isPaymentDueHintEnabled = defaultCaptureConfiguration.paymentDueHintEnabled,
+                paymentDueHintThresholdDays = defaultCaptureConfiguration.paymentDueHintThresholdDays,
                 isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
@@ -211,7 +227,8 @@ data class Configuration(
                 isAllowScreenshotsEnabled = defaultCaptureConfiguration.allowScreenshots,
                 isSkontoEnabled = defaultCaptureConfiguration.skontoEnabled,
                 isTransactionDocsEnabled = defaultCaptureConfiguration.transactionDocsEnabled,
-                isCaptureSDK = currentConfiguration.isCaptureSDK
+                isCaptureSDK = currentConfiguration.isCaptureSDK,
+                saveInvoicesLocallyEnabled = currentConfiguration.saveInvoicesLocallyEnabled
             )
         }
     }

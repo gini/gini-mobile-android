@@ -52,6 +52,7 @@ class AnalysisFragmentTest {
                 override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
                     return AnalysisFragment().apply {
                         setListener(mock())
+                        setBankSDKBridge(mock())
                         setCancelListener(mock())
                     }.also { fragment ->
                         fragment.viewLifecycleOwnerLiveData.observeForever { viewLifecycleOwner ->

@@ -18,9 +18,11 @@ import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityConfigurationBinding
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CAMERA_PERMISSION_BUNDLE
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
-import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
+import net.gini.android.capture.util.SharedPreferenceHelper
+import net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -107,7 +109,7 @@ class ConfigurationActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun updateUIWithConfigurationObject(configuration: Configuration) {
+    private fun updateUIWithConfigurationObject(configuration: ExampleAppBankConfiguration) {
         // setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.isChecked =
             configuration.isDefaultSDKConfigurationsEnabled
@@ -115,6 +117,8 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.switchOpenWith.isChecked = configuration.isFileImportEnabled
         // Capture SDK
         binding.layoutFeatureToggle.switchCaptureSdk.isChecked = configuration.isCaptureSDK
+        // Saving Invoices Locally
+        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature.isChecked = configuration.saveInvoicesLocallyEnabled
         // QR code scanning
         binding.layoutFeatureToggle.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
         // only QR code scanning
@@ -223,6 +227,18 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable return assistant
         binding.layoutFeatureToggle.switchReturnAssistantFeature.isChecked =
             configuration.isReturnAssistantEnabled
+
+        // enable payment hints
+        binding.layoutFeatureToggle.switchSetupAlreadyPaidHintEnabled.isChecked =
+            configuration.isAlreadyPaidHintEnabled
+
+        // enable payment due hint
+        binding.layoutFeatureToggle.switchPaymentDueHint.isChecked =
+            configuration.isPaymentDueHintEnabled
+
+        // set payment due hint threshold days
+        binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays.hint =
+            configuration.paymentDueHintThresholdDays.toString()
 
         // enable return reasons dialog
         binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked =
@@ -556,6 +572,37 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
+        //enable payment hints for showing warning
+        binding.layoutFeatureToggle.switchSetupAlreadyPaidHintEnabled.setOnCheckedChangeListener{ _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isAlreadyPaidHintEnabled = isChecked
+                )
+            )
+        }
+
+        //enable payment due hint for showing warning
+        binding.layoutFeatureToggle.switchPaymentDueHint.setOnCheckedChangeListener{ _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isPaymentDueHintEnabled = isChecked
+                )
+            )
+        }
+
+        // set payment due hint threshold days
+        binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays
+            .doAfterTextChanged {
+                if (it.toString().isNotEmpty()) {
+                    configurationViewModel.setConfiguration(
+                        configurationViewModel.configurationFlow.value.copy(
+                            paymentDueHintThresholdDays = it.toString().toInt()
+                        )
+                    )
+                }
+            }
+
+
         // enable supported format help screen
         binding.layoutHelpToggles.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
@@ -601,6 +648,21 @@ class ConfigurationActivity : AppCompatActivity() {
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
                         isEventTrackerEnabled = isChecked
+                    )
+                )
+            }
+
+        // for internal testing: To simulate the SAF first time experience, in which the picker
+        // will be shown
+        binding.layoutFeatureToggle.btnRemoveSafData.setOnClickListener {
+            SharedPreferenceHelper.saveString(SAF_STORAGE_URI_KEY, "", this)
+        }
+        // For testing Save Invoices Locally SDK flag, this is how clients can enable/disable it
+        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature
+            .setOnCheckedChangeListener { _, isChecked ->
+                configurationViewModel.setConfiguration(
+                    configurationViewModel.configurationFlow.value.copy(
+                        saveInvoicesLocallyEnabled = isChecked
                     )
                 )
             }

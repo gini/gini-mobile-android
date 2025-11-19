@@ -11,7 +11,9 @@ object CaptureSdkIsolatedKoinContext {
             educationModule,
             qrEducationModule,
             invoiceEducationModule,
-            EInvoiceModule
+            EInvoiceModule,
+            saveInvoicesLocallyModule,
+            paymentHintsModule
         )
     }
 

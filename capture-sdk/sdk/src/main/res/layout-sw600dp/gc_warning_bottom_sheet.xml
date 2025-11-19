@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?attr/colorSurface"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/WarningBottomSheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/gc_large">
+
+            <ImageView
+                android:id="@+id/warningIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:foregroundGravity="center"
+                android:layout_marginVertical="@dimen/gc_analysis_hint_icon_size"
+                android:background="@drawable/gc_bg_warning_circle"
+                app:layout_constraintEnd_toEndOf="@+id/WarningBottomSheet"
+                app:layout_constraintStart_toStartOf="@id/WarningBottomSheet"
+                app:layout_constraintTop_toTopOf="@+id/WarningBottomSheet"
+                app:tint="?attr/colorSecondary" />
+
+            <!-- Only the text area scrolls to support 200% font scale without clipping -->
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/textScroll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:layout_marginHorizontal="@dimen/gc_analysis_hint_icon_size"
+                android:layout_marginTop="@dimen/gc_analysis_hint_icon_size"
+                android:overScrollMode="ifContentScrolls"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintTop_toBottomOf="@+id/warningIcon"
+                app:layout_constraintStart_toStartOf="@+id/WarningBottomSheet"
+                app:layout_constraintEnd_toEndOf="@+id/WarningBottomSheet"
+                app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage"
+                android:layout_marginStart="@dimen/gc_medium_12">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="@+id/textScroll"
+                app:layout_constraintStart_toStartOf="@+id/textScroll"
+                app:layout_constraintTop_toBottomOf="@+id/warningIcon">
+
+                <TextView
+                    android:id="@+id/warningTitle"
+                    android:gravity="center"
+                    style="@style/GiniCaptureTheme.Typography.Headline5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/gc_medium" />
+
+                <TextView
+                    android:id="@+id/warningDescription"
+                    android:gravity="center"
+                    style="@style/GiniCaptureTheme.Typography.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_button"
+                style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_analysis_hint_icon_size"
+                android:layout_marginHorizontal="@dimen/gc_analysis_hint_icon_size"
+                android:text="@string/gc_cancel_transfer"
+                app:layout_constraintTop_toBottomOf="@id/textScroll"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                 />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/proceed_button"
+                style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/gc_medium"
+                android:layout_marginHorizontal="@dimen/gc_analysis_hint_icon_size"
+                android:layout_marginBottom="@dimen/gc_analysis_hint_icon_size"
+                android:text="@string/gc_proceed_anyway"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cancel_button" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

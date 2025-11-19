@@ -36,7 +36,7 @@
             android:layout_gravity="center"
             android:background="?attr/backgroundColor"
             android:scaleType="fitCenter"
-            tools:src="@drawable/gc_no_camera" />
+             />
 
     </FrameLayout>
 
@@ -78,6 +78,16 @@
             android:layout_weight="1" />
 
     </LinearLayout>
+
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/gc_payment_due_hint_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/gc_education_container"

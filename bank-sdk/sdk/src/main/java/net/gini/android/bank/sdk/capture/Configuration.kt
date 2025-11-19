@@ -142,6 +142,27 @@ data class CaptureConfiguration(
     val bottomNavigationBarEnabled: Boolean = false,
 
     /**
+     * Enable/disable the payment hint.
+     *
+     * On by default.
+     */
+    val alreadyPaidHintEnabled: Boolean = true,
+
+    /**
+     * Enable/disable the payment due hint.
+     *
+     * On by default.
+     */
+    val paymentDueHintEnabled: Boolean = true,
+
+    /**
+     * Set the payment due hint threshold days
+     *
+     * 5 by default.
+     */
+    val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
+
+    /**
      * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
      */
     val onboardingNavigationBarBottomAdapter: OnboardingNavigationBarBottomAdapter? = null,
@@ -228,7 +249,12 @@ data class CaptureConfiguration(
      */
     val transactionDocsEnabled: Boolean = false,
 
-    val giniComposableStyleProvider: GiniComposableStyleProvider? = null
+    val giniComposableStyleProvider: GiniComposableStyleProvider? = null,
+
+    /**
+     * Enable/disable the save invoices locally feature
+     */
+    val saveInvoicesLocallyEnabled: Boolean = true,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -247,8 +273,12 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
         .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
+        .setAlreadyPaidHintEnabled(configuration.alreadyPaidHintEnabled)
+        .setPaymentDueHintEnabled(configuration.paymentDueHintEnabled)
+        .setPaymentDueHintThresholdDays(configuration.paymentDueHintThresholdDays)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
+        .setSaveInvoicesLocallyEnabled(configuration.saveInvoicesLocallyEnabled)
         .addCustomUploadMetadata(GiniBank.USER_COMMENT_GINI_BANK_VERSION, BuildConfig.VERSION_NAME)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }

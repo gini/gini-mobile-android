@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
-
+import net.gini.android.capture.analysis.warning.WarningType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +37,10 @@ public interface FragmentImplCallback {
 
     void startActivityForResult(Intent intent, int requestCode);
 
+    // kept it default, so only the fragments that need it have to implement it
+    default void executeSafIntent(Intent intent) {
+        /* no-op */
+    }
     void showAlertDialog(@NonNull final String message,
             @NonNull final String positiveButtonTitle,
             @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
@@ -46,6 +50,8 @@ public interface FragmentImplCallback {
 
     @NonNull
     FragmentManager getChildFragmentManager();
+
+    default void showWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {}
 
     @NonNull
     FragmentManager getParentFragmentManager();

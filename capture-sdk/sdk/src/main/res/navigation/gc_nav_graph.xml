@@ -54,6 +54,9 @@
             <argument
                 android:name="GC_ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE"
                 app:argType="string" />
+            <argument
+                android:name="GC_ARGS_SAVE_INVOICES"
+                app:argType="boolean" />
         </action>
         <action
             android:id="@+id/to_error_fragment"
