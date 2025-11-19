@@ -9,6 +9,8 @@ on:
   push:
   pull_request:
     types: [opened, edited, reopened, synchronize]
+    paths:
+      - 'bank-api-library/**'
 jobs:
   build:
     name: Build and analyze
