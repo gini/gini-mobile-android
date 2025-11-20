@@ -11,23 +11,44 @@ on:
     paths:
       - 'bank-api-library/**'
 
+#jobs:
+#  sonarqubeScan1:
+#    name: BankApiLibrarySonarQubeScan
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#      - name: SonarQube Scan
+#        uses: SonarSource/sonarqube-scan-action@v6
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_PROJECT_KEY: bank-api-library
+#          SONAR_ORGANIZATION: gini
+#          SONAR_HOST_URL: https://sonarcloud.io
+#        with:
+#          projectBaseDir: bank-api-library/
+
 jobs:
   sonarqubeScan1:
-    name: BankApiLibrarySonarQubeScan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Build and Run Sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_PROJECT_KEY: bank-api-library
-          SONAR_ORGANIZATION: gini
-          SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          projectBaseDir: bank-api-library/
+        run: |
+          cd bank-api-library
+          ./gradlew sonarqube \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.host.url=https://sonarcloud.io
 
 
 #name: SonarQube
