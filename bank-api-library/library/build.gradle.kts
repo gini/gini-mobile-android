@@ -5,7 +5,7 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
-    id ("org.sonarqube") version "7.0.1.6134"
+    id ("org.sonarqube") version "5.1.0.4882"
     alias(libs.plugins.devtools.ksp)
 }
 
