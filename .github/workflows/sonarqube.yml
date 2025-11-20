@@ -11,7 +11,6 @@ on:
     paths:
       - 'bank-api-library/**'
 
-
 jobs:
   sonarqubeScan1:
     name: BankApiLibrarySonarQubeScan
@@ -24,11 +23,11 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: bank-api-library
+          SONAR_ORGANIZATION: gini
+          SONAR_HOST_URL: https://sonarcloud.io
         with:
           projectBaseDir: bank-api-library/
-          sonarProjectKey: bank-api-library
-          sonarOrganization: gini
-          sonarHostUrl: https://sonarcloud.io
 
 
 #name: SonarQube
