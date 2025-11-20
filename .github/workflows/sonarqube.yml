@@ -3,13 +3,45 @@ permissions:
   contents: write
   packages: write
 
-on:
-  workflow_dispatch:
-  push:
-  pull_request:
-    types: [ opened, edited, reopened, synchronize ]
-    paths:
-      - 'bank-api-library/**'
+  name: SonarQube Analysis
+  on:
+    workflow_dispatch:
+    push:
+      branches: [ "*" ]
+    pull_request:
+
+  jobs:
+    sonar:
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Set up JDK
+          uses: actions/setup-java@v4
+          with:
+            distribution: "temurin"
+            java-version: "17"
+
+        - name: Build Bank API Library
+          run: ./gradlew :bank-api-library:library:assembleDebug
+
+        - name: SonarQube Scan
+          run: ./gradlew :bank-api-library:library:sonarqube \
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.host.url="https://sonarcloud.io"
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
+#on:
+#  workflow_dispatch:
+#  push:
+#  pull_request:
+#    types: [ opened, edited, reopened, synchronize ]
+#    paths:
+#      - 'bank-api-library/**'
 
 #jobs:
 #  sonarqubeScan1:
@@ -29,24 +61,24 @@ on:
 #        with:
 #          projectBaseDir: bank-api-library/
 
-jobs:
-  sonarqubeScan1:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Build and Run Sonar
-        run: |
-          ./gradlew bank-api-library:library:sonar \
-          -Dsonar.host.url=https://sonarcloud.io
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#jobs:
+#  sonarqubeScan1:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#      - name: Setup Java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '17'
+#      - name: Build and Run Sonar
+#        run: |
+#          ./gradlew bank-api-library:library:sonar \
+#          -Dsonar.host.url=https://sonarcloud.io
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 #name: SonarQube
 #
