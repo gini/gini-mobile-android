@@ -10,7 +10,7 @@ permissions:
       branches: [ "*" ]
     pull_request:
 
-  jobs:
+jobs:
     sonar:
       runs-on: ubuntu-latest
 
