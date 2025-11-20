@@ -13,7 +13,6 @@ on:
       paths:
         - 'bank-api-library/**'
 
-
 jobs:
     sonar:
       runs-on: ubuntu-latest
@@ -32,7 +31,7 @@ jobs:
           run: ./gradlew :bank-api-library:library:assembleDebug
 
         - name: SonarQube Scan
-          run: ./gradlew bank-api-library:library:sonarqube
+          run: ./gradlew :bank-api-library:library:sonar
           env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
