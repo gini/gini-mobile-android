@@ -34,7 +34,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBa
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableStyleProvider
-import net.gini.android.bank.sdk.exampleapp.ui.data.Configuration
+import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.capture.GiniCaptureDebug
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator
@@ -59,7 +59,7 @@ class ConfigurationViewModel @Inject constructor(
     private val _disableCameraPermissionFlow = MutableStateFlow(false)
     val disableCameraPermissionFlow: StateFlow<Boolean> = _disableCameraPermissionFlow
 
-    private val _configurationFlow = MutableStateFlow(Configuration())
+    private val _configurationFlow = MutableStateFlow(ExampleAppBankConfiguration())
 
     fun getAlwaysAttachSetting(context: Context): Boolean {
         configureGiniBank(context) // Gini Bank should be configured before using transactionDocs
@@ -77,18 +77,18 @@ class ConfigurationViewModel @Inject constructor(
         }
     }
 
-    val configurationFlow: StateFlow<Configuration> = _configurationFlow
+    val configurationFlow: StateFlow<ExampleAppBankConfiguration> = _configurationFlow
 
     fun disableCameraPermission(cameraPermission: Boolean) {
         _disableCameraPermissionFlow.value = cameraPermission
     }
 
-    fun setConfiguration(configuration: Configuration) {
+    fun setConfiguration(configuration: ExampleAppBankConfiguration) {
         _configurationFlow.value = configuration
     }
 
     fun setupSDKWithDefaultConfigurations() {
-        _configurationFlow.value = Configuration.setupSDKWithDefaultConfiguration(
+        _configurationFlow.value = ExampleAppBankConfiguration.setupSDKWithDefaultConfiguration(
             configurationFlow.value,
             CaptureConfiguration(defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled)
         )
@@ -122,7 +122,11 @@ class ConfigurationViewModel @Inject constructor(
             // enable bottom navigation bar
             bottomNavigationBarEnabled = configuration.isBottomNavigationBarEnabled,
             // enable payment hints
-            paymentHintsEnabled = configuration.isPaymentHintsEnabled,
+            alreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
+            // enable payment due hint
+            paymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
+            // set payment due hint threshold days
+            paymentDueHintThresholdDays = configuration.paymentDueHintThresholdDays,
             // enable onboarding screens at first launch
             showOnboardingAtFirstRun = configuration.isOnboardingAtFirstRunEnabled,
             // enable onboarding at every launch
@@ -142,6 +146,9 @@ class ConfigurationViewModel @Inject constructor(
 
             // enable transaction docs
             transactionDocsEnabled = configuration.isTransactionDocsEnabled,
+
+            // enables saving invoices locally after analysis
+            saveInvoicesLocallyEnabled = configuration.saveInvoicesLocallyEnabled,
         )
 
         // enable Help screens custom bottom navigation bar

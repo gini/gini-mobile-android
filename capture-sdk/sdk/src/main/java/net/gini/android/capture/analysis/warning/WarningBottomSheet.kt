@@ -174,7 +174,7 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
         binding.warningTitle.text = titleText
         binding.warningDescription.text = descText
 
-        binding.warningIcon?.contentDescription = getString(R.string.warning_icon_description)
+        binding.warningIcon?.contentDescription = getString(R.string.gc_warning_icon_content_description)
         binding.warningIcon?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
 
         binding.cancelButton.setOnClickListener {

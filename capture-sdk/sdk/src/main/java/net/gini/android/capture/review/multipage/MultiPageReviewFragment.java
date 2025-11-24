@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.tabs.TabLayout;
 
 import net.gini.android.capture.Document;
@@ -54,6 +55,7 @@ import net.gini.android.capture.review.multipage.previews.MiddlePageManager;
 import net.gini.android.capture.review.multipage.previews.PreviewFragmentListener;
 import net.gini.android.capture.review.multipage.previews.PreviewPagesAdapter;
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter;
+import net.gini.android.capture.saveinvoiceslocally.SaveInvoicesFeatureEvaluator;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent;
 import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_MAP_KEY;
@@ -102,6 +104,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
     private PreviewPagesAdapter mPreviewPagesAdapter;
     private RecyclerView mRecyclerView;
     private Button mButtonNext;
+    private ConstraintLayout mSaveInvoicesWrapper;
+    private MaterialSwitch mSaveInvoicesSwitch;
     private LinearLayout mAddPagesWrapperLayout;
     private Button mAddPagesButton;
     private TabLayout mTabIndicator;
@@ -294,11 +298,25 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
         setupTopNavigationBar();
 
+        handleViewsForSavingInvoices();
+
         if (mMultiPageDocument != null) {
             updateNextButtonVisibility();
             initRecyclerView();
             delayWithBlueRect();
         }
+    }
+
+    private void handleViewsForSavingInvoices() {
+        if (SaveInvoicesFeatureEvaluator.INSTANCE.shouldShowSaveInvoicesLocallyView()) {
+            updateSaveInvoicesBackground();
+            mSaveInvoicesWrapper.setVisibility(View.VISIBLE);
+        } else
+            mSaveInvoicesWrapper.setVisibility(View.GONE);
+
+        mSaveInvoicesSwitch.setOnCheckedChangeListener((
+                buttonView,
+                isChecked) -> updateSaveInvoicesBackground());
     }
 
 
@@ -440,6 +458,8 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
 
     private void bindViews(final View view) {
         mButtonNext = view.findViewById(R.id.gc_button_next);
+        mSaveInvoicesWrapper = view.findViewById(R.id.gc_save_invoices_wrapper);
+        mSaveInvoicesSwitch = view.findViewById(R.id.gc_save_invoices_switch);
         mTabIndicator = view.findViewById(R.id.gc_tab_indicator);
         mTopAdapterInjectedViewContainer = view.findViewById(R.id.gc_navigation_top_bar);
         mAddPagesWrapperLayout = view.findViewById(R.id.gc_add_pages_wrapper);
@@ -453,6 +473,11 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         // In phones and tablets regardless of orientation this bottom bar is needed.
         if (ContextHelper.isPortraitOrTablet(requireContext()))
             setReviewNavigationBarBottomAdapter(view);
+        else {
+            // this is landscape mode in phones only , where we don't show the bottom bar but
+            // we have to handle visibility of add pages.
+            handleAddPagesVisibility();
+        }
     }
 
     private void setInjectedLoadingIndicatorContainer() {
@@ -466,6 +491,14 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
                 }
             }));
         }
+    }
+
+    private void updateSaveInvoicesBackground() {
+        mSaveInvoicesWrapper.setBackgroundResource(
+                mSaveInvoicesSwitch.isChecked()
+                        ? R.drawable.gc_bg_on_save_invoices_locally
+                        : R.drawable.gc_bg_off_save_invoices_locally
+        );
     }
 
     private void setReviewNavigationBarBottomAdapter(View view) {
@@ -589,12 +622,15 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         }
     }
 
+    private void handleAddPagesVisibility() {
+        mAddPagesWrapperLayout.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
+        mAddPagesButton.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
+    }
     private void setInputHandlers() {
         ClickListenerExtKt.setIntervalClickListener(mButtonNext, v -> onNextButtonClicked());
 
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            mAddPagesWrapperLayout.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
-            mAddPagesButton.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
+            handleAddPagesVisibility();
         }
 
         ClickListenerExtKt.setIntervalClickListener(mAddPagesButton, v -> {
@@ -621,6 +657,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toCameraFragmentForFirstPage());
         } else {
             doDeleteDocumentAndUpdateUI(document);
+            handleViewsForSavingInvoices();
         }
     }
 
@@ -751,7 +788,16 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             );
         }
         mNextClicked = true;
-        NavHostFragment.findNavController(this).navigate(MultiPageReviewFragmentDirections.toAnalysisFragment(mMultiPageDocument, ""));
+        NavHostFragment.findNavController(this).navigate(
+                MultiPageReviewFragmentDirections.toAnalysisFragment(
+                        mMultiPageDocument,
+                        "",
+                        SaveInvoicesFeatureEvaluator.INSTANCE.shouldSaveInvoicesLocally(
+                                mSaveInvoicesWrapper.getVisibility(),
+                                mSaveInvoicesSwitch.isChecked()
+                        )
+                )
+        );
     }
 
     @Override

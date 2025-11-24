@@ -28,5 +28,17 @@ import androidx.annotation.Nullable;
         }
     }
 
+    /**
+     * Checks if the payment state indicates that the document is already paid.
+     *
+     * @return true if the payment state is {@link #PAID}, false otherwise.
+     */
     public boolean isPaid() { return this == PAID; }
+
+    /**
+     * Checks if the payment state indicates that the document is to be paid.
+     *
+     * @return true if the payment state is {@link #TO_BE_PAID}, false otherwise.
+     */
+    public boolean toBePaid() { return this == TO_BE_PAID; }
 }

@@ -199,12 +199,14 @@ internal constructor(
             isUserJourneyAnalyticsEnabled = configuration.isUserJourneyAnalyticsEnabled,
             isSkontoEnabled = configuration.isSkontoEnabled,
             isReturnAssistantEnabled = configuration.isReturnAssistantEnabled,
-            isTransactionDocsEnabled = configuration.transactionDocsEnabled,
-            isQrCodeEducationEnabled = configuration.qrCodeEducationEnabled,
-            isInstantPaymentEnabled = configuration.instantPaymentEnabled,
-            paymentHintsEnabled = configuration.paymentHintsEnabled,
+            isTransactionDocsEnabled = configuration.isTransactionDocsEnabled,
+            isQrCodeEducationEnabled = configuration.isQrCodeEducationEnabled,
+            isInstantPaymentEnabled = configuration.isInstantPaymentEnabled,
+            isAlreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
+            isPaymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
             isEInvoiceEnabled = configuration.isEInvoiceEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
+            isSavePhotosLocallyEnabled = configuration.isSavePhotosLocallyEnabled
         )
 
     @Suppress("LongMethod")

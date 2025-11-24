@@ -31,6 +31,7 @@
     <string name="gc_multi_page_review_add_pages_subtitle">Seiten hinzufügen</string>
 
     <string name="gc_analysis_activity_indicator_message">Dokument wird analysiert</string>
+    <string name="gc_analysis_activity_indicator_message_save_invoices_locally">Dokument wird analysiert &amp; Download in Mediathek vorbereitet</string>
     <string name="gc_pdf_analysis_activity_indicator_message">%s\nwird analysiert</string>
     <string name="gc_photo_tip_align">Das gesamte Dokument sollte sich im Rahmen befinden</string>
     <string name="gc_photo_tip_multipage">Es ist möglich mehrere Seiten eines Dokuments zu scannen</string>
@@ -163,6 +164,10 @@
     <string name="gc_unknown_qr_code">QR-Code ohne Zahlinformationen</string>
     <string name="gc_retrieving_invoice">Rechnung wird übermittelt</string>
     <string name="gc_payment_details_visible">Sind alle Zahlungsinformationen gut lesbar?</string>
+    <string name="gc_save_invoices_feature_title">In Galerie speichern</string>
+    <string name="gc_save_invoices_feature_subtitle">Eine Kopie dieser Rechnung wird automatisch in deiner Galerie gespeichert.</string>
+    <string name="gc_invoice_file_name">FotoUeberweisung_Rechnung_%1$d_%2$d</string>
+    <string name="gc_invoice_saving_success_toast_text">Rechnung wurde in Galerie gespeichert.</string>
     <string name="gc_pages">Seite</string>
     <string name="gc_process_documents">Verarbeiten</string>
     <string name="gc_continue">Verarbeiten</string>
@@ -193,14 +198,20 @@
     <string name="gc_invoice_education_content_description">analyse der Rechnung läuft</string>
 
     <!--   region Warning -->
-    <string name="gc_cancel_transfer">Überweisung abbrechen</string>
-    <string name="gc_proceed_anyway">Trotzdem fortfahren</string>
+    <string name="gc_cancel_transfer">Überweisung Abbrechen</string>
+    <string name="gc_proceed_anyway">Trotzdem Fortfahren</string>
     <string name="gc_document_marked_paid_title">Dokument als bezahlt gekennzeichnet</string>
     <string name="gc_document_marked_paid_desc">
         Auf diesem Dokument steht, dass es bereits bezahlt wurde. Bitte prüfen Sie den Hinweis in dem Dokument, um sicherzugehen.
     </string>
     <string name="gc_warning_title_dialog">Warndialog</string>
-    <string name="warning_icon_description">Warnsymbol</string>
+    <string name="gc_warning_icon_content_description">Warnsymbol</string>
+    <!--   endregion -->
+
+    <!--   region Due Date -->
+    <string name="gc_dismiss_message">Hinweis Schließen</string>
+    <string name="gc_due_date_hint">\u0020Deine Rechnung ist am %1$s fällig. Du könntest sie als Terminüberweisung anlegen.</string>
+    <string name="gc_due_date_hint_tip">Tipp:</string>
     <!--   endregion -->
 
 </resources>

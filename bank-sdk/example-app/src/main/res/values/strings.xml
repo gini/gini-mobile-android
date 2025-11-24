@@ -59,7 +59,9 @@
     <string name="relaunch_to_use_default_configuration">Please relaunch the app to use the default GiniConfiguration values.</string>
     <string name="close_screen_for_configurations_to_take_place">The configuration changes will take effect after closing this screen.</string>
     <string name="default_sdk_configuration_switch_label">SDK default configurations</string>
-    <string name="payment_hint_switch_label">Payment Hint State</string>
+    <string name="already_paid_hint_switch_label">Already Paid Hint</string>
+    <string name="payment_due_hint_switch_label">Payment Due Hint</string>
+    <string name="payment_due_hint_threshold_days_label">Payment Due Hint Threshold Days</string>
     <string name="open_with_switch_label">Open with</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>
     <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>
@@ -91,6 +93,7 @@
     <string name="custom_onboarding_lighting_page_switch_label">Onboarding \`lighting\` page custom illustration</string>
     <string name="custom_onboarding_qr_code_page_switch_label">Onboarding \`QR code\` page custom illustration</string>
     <string name="custom_onboarding_multi_page_switch_label">Onboarding \`multi page\` page custom illustration</string>
+    <string name="configuration_button_remove_saf_data">Remove SAF Data</string>
 
     <string name="onboarding_custom_bottom_nav_bar_switch_label">Onboarding custom bottom navigation bar</string>
     <string name="onboarding_custom_bottom_nav_bar_switch_description">The custom bottom navigation bar is shown if \`Bottom navigation bar\` is also enabled.</string>
@@ -111,7 +114,6 @@
     <string name="custom_primary_compose_button_switch_label">Custom primary button in Skonto</string>
     <string name="return_assistant_feature_switch_label">Return assistant feature</string>
     <string name="return_assistant_feature_switch_description">Present a digital representation of the invoice</string>
-    <string name="payment_hint_switch_description">Toggle to show a warning when an invoice is marked as paid or similar states</string>
     <string name="skonto_feature_switch_label">Skonto feature</string>
     <string name="transaction_docs_feature_switch_label">Transaction Docs feature</string>
     <string name="return_assistant_onboarding_custom_illustration_switch_label">Return assistant onboarding custom illustration</string>
@@ -120,6 +122,7 @@
     <string name="return_assistant_onboarding_bottom_navigation_bar_switch_label">Return assistant onboarding bottom navigation bar</string>
     <string name="return_assistant_bottom_navigation_bar_switch_label">Return assistant bottom navigation bar</string>
     <string name="event_tracker_switch_label">Event tracker</string>
+    <string name="save_invoices_feature_label">Save Invoices Locally</string>
     <string name="return_reasons_dialog_switch_label">Return reasons dialog</string>
     <string name="gini_error_switch_label">Gini error logger</string>
     <string name="custom_error_switch_label">Custom error logger</string>

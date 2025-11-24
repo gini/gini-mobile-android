@@ -1,15 +1,11 @@
 package net.gini.android.capture.analysis;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import net.gini.android.capture.CaptureSDKResult;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureHelper;
 import net.gini.android.capture.document.GiniCaptureDocument;
@@ -19,6 +15,8 @@ import net.gini.android.capture.internal.network.AnalysisNetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestResult;
 import net.gini.android.capture.internal.network.NetworkRequestsManager;
 import net.gini.android.capture.network.AnalysisResult;
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
+import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 
 import org.junit.After;
@@ -34,9 +32,14 @@ import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import jersey.repackaged.jsr166e.CompletableFuture;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * Created by Alpar Szotyori on 14.05.2019.
@@ -500,5 +503,48 @@ public class AnalysisInteractorTest {
         // Then
         verify(networkRequestsManager).cancel(document);
         verify(networkRequestsManager).delete(document);
+    }
+
+    @Test
+    public void toCaptureResult_shouldMapFieldsCorrectly() {
+        Map<String, GiniCaptureSpecificExtraction> extractions = new HashMap<>();
+        Map<String, GiniCaptureCompoundExtraction> compoundExtractions = new HashMap<>();
+        List<GiniCaptureReturnReason> returnReasons = new ArrayList<>();
+        extractions.put("amountToPay", mock(GiniCaptureSpecificExtraction.class));
+        compoundExtractions.put("iban", mock(GiniCaptureCompoundExtraction.class));
+        returnReasons.add(mock(GiniCaptureReturnReason.class));
+
+        AnalysisInteractor.ResultHolder resultHolder = new AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                extractions,
+                compoundExtractions,
+                returnReasons,
+                "docId",
+                "fileName"
+        );
+
+        CaptureSDKResult.Success result = AnalysisInteractor.ResultHolder.toCaptureResult(resultHolder);
+
+        assertThat(result.getSpecificExtractions()).isEqualTo(extractions);
+        assertThat(result.getCompoundExtractions()).isEqualTo(compoundExtractions);
+        assertThat(result.getReturnReasons()).isEqualTo(returnReasons);
+    }
+
+    @Test
+    public void toCaptureResult_shouldHandleEmptyFields() {
+        AnalysisInteractor.ResultHolder resultHolder = new AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
+                Collections.emptyMap(),
+                Collections.emptyMap(),
+                Collections.emptyList(),
+                null,
+                null
+        );
+
+        CaptureSDKResult.Success result = AnalysisInteractor.ResultHolder.toCaptureResult(resultHolder);
+
+        assertThat(result.getSpecificExtractions()).isEmpty();
+        assertThat(result.getCompoundExtractions()).isEmpty();
+        assertThat(result.getReturnReasons()).isEmpty();
     }
 }

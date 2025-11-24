@@ -29,6 +29,7 @@
     <string name="gc_onboarding_qr_code_message">Besides invoices, QR codes are also supported</string>
     <string name="gc_multi_page_review_add_pages_subtitle">Add a page</string>
     <string name="gc_analysis_activity_indicator_message">Analyzing documents</string>
+    <string name="gc_analysis_activity_indicator_message_save_invoices_locally">Analyzing documents &amp; preparing download to local gallery</string>
     <string name="gc_pdf_analysis_activity_indicator_message">Analyzing\n%s</string>
     <string name="gc_photo_tip_align">Capture the entire page within the frame shown on the camera screen</string>
     <string name="gc_photo_tip_multipage">It\'s possible to scan an invoice with multiple pages</string>
@@ -146,6 +147,10 @@
     <string name="gc_unknown_qr_code">Unknown QR code</string>
     <string name="gc_retrieving_invoice">Retrieving invoice</string>
     <string name="gc_payment_details_visible">Make sure the payment details are visible</string>
+    <string name="gc_save_invoices_feature_title">Save to gallery</string>
+    <string name="gc_save_invoices_feature_subtitle">A copy of the invoice will be saved to your local gallery.</string>
+    <string name="gc_invoice_saving_success_toast_text">Image saved to gallery</string>
+    <string name="gc_invoice_file_name">PhotoPayment_Invoice_%1$d_%2$d</string>
     <string name="gc_pages">Pages</string>
     <string name="gc_process_documents">Process</string>
     <string name="gc_continue">Continue</string>
@@ -175,12 +180,18 @@
     <!--   endregion -->
 
     <!--   region Warning -->
-    <string name="gc_cancel_transfer">Cancel transfer</string>
-    <string name="gc_proceed_anyway">Proceed anyway</string>
+    <string name="gc_cancel_transfer">Cancel Transfer</string>
+    <string name="gc_proceed_anyway">Proceed Anyway</string>
     <string name="gc_document_marked_paid_title">Document marked as paid</string>
     <string name="gc_document_marked_paid_desc">This document states that it has already been paid. Please check the note in the document to be sure.</string>
     <string name="gc_warning_title_dialog">Warning Dialog</string>
-    <string name="warning_icon_description">Warning icon</string>
+    <string name="gc_warning_icon_content_description">Warning icon</string>
+    <!--   endregion -->
+
+    <!--   region Due Date -->
+    <string name="gc_dismiss_message">Dismiss Message</string>
+    <string name="gc_due_date_hint">\u0020Your invoice is due on %1$s. You could set it up as a scheduled transfer.</string>
+    <string name="gc_due_date_hint_tip">Tip:</string>
     <!--   endregion -->
 
 </resources>

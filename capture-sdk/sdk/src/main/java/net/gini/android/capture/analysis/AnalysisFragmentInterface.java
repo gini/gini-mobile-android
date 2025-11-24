@@ -1,8 +1,8 @@
 package net.gini.android.capture.analysis;
 
-import android.view.View;
-
 import androidx.annotation.NonNull;
+
+import net.gini.android.capture.BankSDKBridge;
 
 /**
  * Internal use only.
@@ -25,4 +25,16 @@ public interface AnalysisFragmentInterface {
      * @param listener {@link AnalysisFragmentListener} instance
      */
     void setListener(@NonNull final AnalysisFragmentListener listener);
+
+    /**
+     * <p>
+     *     Set a bridge for Bank SDK properties to be used in the analysis of the Capture SDK.
+     * </p>
+     * <p>
+     *     <b>Note:</b> the bridge is expected to be available until the fragment is
+     *     attached to an activity. Make sure to set the bridge before that.
+     * </p>
+     * @param bankSDKBridge is used to transfer data from Bank SDK to Analysis screen of Capture SDK
+     */
+    void setBankSDKBridge(@NonNull final BankSDKBridge bankSDKBridge);
 }

@@ -3,6 +3,7 @@ package net.gini.android.capture.analysis;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,6 +12,7 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCaptureBasePresenter;
 import net.gini.android.capture.GiniCaptureBaseView;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.paymentDueHint.PaymentDueHintDismissListener;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.util.Size;
@@ -40,7 +42,7 @@ interface AnalysisScreenContract {
             return mPresenter;
         }
 
-        abstract void showScanAnimation();
+        abstract void showScanAnimation(Boolean isSavingInvoicesLocallyEnabled);
 
         abstract void hideScanAnimation();
 
@@ -64,10 +66,12 @@ interface AnalysisScreenContract {
         abstract void showHints(List<AnalysisHint> hints);
 
         abstract void showError(String errorMessage, Document document);
-        abstract void showPaidWarningThen(@NonNull WarningType warningType, @NonNull Runnable onProceed);
+        abstract void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed);
+        abstract void showPaymentDueHint(PaymentDueHintDismissListener listener, String dueDate);
         abstract void showError(ErrorType errorType, Document document);
 
         abstract void showEducation(EducationCompleteListener listener);
+        abstract void processInvoiceSaving();
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements
@@ -79,5 +83,13 @@ interface AnalysisScreenContract {
         }
 
         abstract void finish();
+
+        abstract void resumeInterruptedFlow();
+
+        abstract List<Uri> assembleMultiPageDocumentUris();
+
+        abstract void updateInvoiceSavingState(Boolean isInProgress);
+
+        abstract void releaseMutexForEducation();
     }
 }

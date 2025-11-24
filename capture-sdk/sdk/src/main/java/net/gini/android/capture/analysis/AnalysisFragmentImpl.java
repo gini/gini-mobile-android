@@ -1,11 +1,15 @@
 package net.gini.android.capture.analysis;
 
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -23,10 +28,12 @@ import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
+import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
+import net.gini.android.capture.analysis.paymentDueHint.PaymentDueHintDismissListener;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -42,6 +49,8 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty;
+import net.gini.android.capture.util.SAFHelper;
+import net.gini.android.capture.util.SharedPreferenceHelper;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -53,9 +62,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
@@ -63,7 +75,7 @@ import kotlin.Unit;
 class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AnalysisFragmentImpl.class);
-
+    protected static final String INVOICE_SAVING_IN_PROGRESS_KEY = "invoiceSavingInProgress";
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
     private TextView mAnalysisMessageTextView;
@@ -78,25 +90,32 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     UserAnalyticsEventTracker userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
     AnalysisFragmentExtension fragmentExtension = new AnalysisFragmentExtension();
 
+    private boolean isInvoiceSavingInProgress = false;
+
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
                          @NonNull final Document document,
-                         final String documentAnalysisErrorMessage) {
+                         final String documentAnalysisErrorMessage,
+                         final Boolean mIsInvoiceSavingEnabled) {
         mFragment = fragment;
         if (mFragment.getActivity() == null) {
             throw new IllegalStateException("Missing activity for fragment.");
         }
         mCancelListener = cancelListener;
-        createPresenter(mFragment.getActivity(), document, documentAnalysisErrorMessage); // NOPMD - overridable for testing
+        createPresenter(mFragment.getActivity(), document,
+                documentAnalysisErrorMessage,
+                mIsInvoiceSavingEnabled
+        ); // NOPMD - overridable for testing
     }
 
     @VisibleForTesting
     void createPresenter(@NonNull final Activity activity, @NonNull final Document document,
-                         final String documentAnalysisErrorMessage) {
+                         final String documentAnalysisErrorMessage,
+                         final Boolean mIsInvoiceSavingEnabled) {
 
         addUserAnalyticEvents(document);
         new AnalysisScreenPresenter(activity, this, document,
-                documentAnalysisErrorMessage);
+                documentAnalysisErrorMessage, mIsInvoiceSavingEnabled);
     }
 
     private void addUserAnalyticEvents(@NonNull Document document) {
@@ -124,7 +143,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showScanAnimation() {
+    public void setBankSDKBridge(BankSDKBridge bankSDKBridge) {
+        getPresenter().setBankSDKBridge(bankSDKBridge);
+    }
+
+    @Override
+    void showScanAnimation(Boolean isSavingInvoicesLocallyEnabled) {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
         isScanAnimationActive = true;
         if (injectedLoadingIndicatorContainer != null)
@@ -132,6 +156,15 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 adapter.onVisible();
                 return Unit.INSTANCE;
             });
+
+        Context context = mFragment.getActivity();
+        if (context == null) return;
+
+        int messageResId = isSavingInvoicesLocallyEnabled
+                ? R.string.gc_analysis_activity_indicator_message_save_invoices_locally
+                : R.string.gc_analysis_activity_indicator_message;
+
+        mAnalysisMessageTextView.setText(context.getString(messageResId));
     }
 
     @Override
@@ -146,12 +179,100 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             mAnalysisMessageTextView.setVisibility(View.GONE);
     }
 
+    @Override
     void showEducation(EducationCompleteListener listener) {
         fragmentExtension.showEducation(() -> {
             hideEducation();
             listener.onComplete();
             return Unit.INSTANCE;
         });
+    }
+
+    /**
+     * - Handles the folder selected by the user and saves files into it.
+     * - Persists the folder permission via SAF and stores the folder URI in shared preferences.
+     * - Storing the URI ensures that future saves can bypass the SAF picker dialog and write
+     *   directly to the folder. otherwise, the SAF dialog would appear every time a file is saved.
+     *
+     * @param folderUri The URI of the folder selected by the user.
+     * @param intent The Intent returned from the folder picker containing the folder data.
+     */
+    public void processSafFolderSelection(Uri folderUri, Intent intent) {
+        Context context = mFragment.getActivity();
+        if (context == null) return;
+
+        SAFHelper.INSTANCE.persistFolderPermission(context, intent);
+
+        // saving SAF URI to shared preferences for future use, so the SAF dialog doesn't
+        // have to be shown every time a file is saved
+
+        SharedPreferenceHelper.INSTANCE.saveString(
+                SAF_STORAGE_URI_KEY,
+                folderUri.toString(), context);
+
+        int result = SAFHelper.INSTANCE.saveFilesToFolder(
+                context , folderUri,
+                getPresenter().assembleMultiPageDocumentUris()
+        );
+
+        notifyUserAboutSafResult(result, context);
+    }
+
+    private void notifyUserAboutSafResult(int count, @NonNull Context context) {
+        if (count > 0)
+            Toast.makeText(context,
+                    context.getString(R.string.gc_invoice_saving_success_toast_text),
+                    Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Checks if the app has permission to save files in the given folder URI, selected by the user.
+     *
+     * @param folderUri The folder URI to check.
+     * @return True if the URI is valid and write permission is granted.
+     */
+    private Boolean haveSavePermission(String folderUri) {
+        return folderUri != null && !folderUri.isEmpty() &&
+                SAFHelper.INSTANCE.hasWritePermission(
+                        Objects.requireNonNull(mFragment.getActivity()), Uri.parse(folderUri));
+    }
+
+    private void saveInvoices(String folderUri) {
+        Context context = mFragment.getActivity();
+        if (context == null) return;
+
+        Uri treeUri = Uri.parse(folderUri);
+
+        int result = SAFHelper.INSTANCE.saveFilesToFolder(
+                context,
+                treeUri,
+                getPresenter().assembleMultiPageDocumentUris());
+
+        notifyUserAboutSafResult(result, context);
+
+        getPresenter().resumeInterruptedFlow();
+        isInvoiceSavingInProgress = false;
+    }
+
+    @Override
+    void processInvoiceSaving() {
+        isInvoiceSavingInProgress = true;
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress);
+
+        String folderUri = SharedPreferenceHelper.INSTANCE.getString(
+                SAF_STORAGE_URI_KEY,
+                Objects.requireNonNull(mFragment.getActivity()));
+
+        Boolean haveSavePermission = haveSavePermission(folderUri);
+        if (haveSavePermission)
+            saveInvoices(folderUri);
+        else {
+            mFragment.executeSafIntent(SAFHelper.INSTANCE.createFolderPickerIntent());
+        }
+    }
+
+    public Boolean getIsInvoiceSavingInProgress() {
+        return isInvoiceSavingInProgress;
     }
 
     void hideEducation() {
@@ -226,8 +347,17 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showPaidWarningThen(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
-            mFragment.showWarning(warningType, onProceed);
+    void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
+        mFragment.showWarning(warningType, onProceed);
+    }
+
+    @Override
+    void showPaymentDueHint(PaymentDueHintDismissListener listener, String dueDate) {
+        fragmentExtension.showPaymentDueHint(() -> {
+                    listener.onDismiss();
+                    return Unit.INSTANCE;
+                },
+                dueDate);
     }
 
     @Override
@@ -257,8 +387,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mImageDocumentView.setRotation(rotationForDisplay);
     }
 
+    // Required by superclass
     public void onCreate(final Bundle savedInstanceState) {
-        // Required by superclass, no changes need to remove it.
+        if (savedInstanceState != null)
+            isInvoiceSavingInProgress = savedInstanceState.getBoolean(INVOICE_SAVING_IN_PROGRESS_KEY, false);
     }
 
 
@@ -358,6 +490,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onResume() {
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress);
         getPresenter().start();
     }
 

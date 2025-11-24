@@ -6,9 +6,11 @@ data class Configuration(
     val isSkontoEnabled: Boolean,
     val isReturnAssistantEnabled: Boolean,
     val amplitudeApiKey: String?,
-    val transactionDocsEnabled: Boolean,
-    val instantPaymentEnabled: Boolean,
+    val isTransactionDocsEnabled: Boolean,
+    val isInstantPaymentEnabled: Boolean,
     val isEInvoiceEnabled: Boolean,
-    val qrCodeEducationEnabled: Boolean,
-    val paymentHintsEnabled: Boolean
+    val isQrCodeEducationEnabled: Boolean,
+    val isSavePhotosLocallyEnabled: Boolean,
+    val isAlreadyPaidHintEnabled: Boolean,
+    val isPaymentDueHintEnabled: Boolean,
 )

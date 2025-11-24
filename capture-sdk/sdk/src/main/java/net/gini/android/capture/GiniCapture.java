@@ -89,6 +89,7 @@ import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SI
  */
 public class GiniCapture {
 
+    public static final int PAYMENT_DUE_HINT_THRESHOLD_DAYS = 5;
     private static final Logger LOG = LoggerFactory.getLogger(GiniCapture.class);
     private static GiniCapture sInstance;
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
@@ -120,7 +121,9 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance;
     private final boolean isBottomNavigationBarEnabled;
-    private final boolean isPaymentHintsEnabled;
+    private final boolean isAlreadyPaidHintEnabled;
+    private final boolean isPaymentDueHintEnabled;
+    private final int paymentDueHintThresholdDays;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -131,6 +134,7 @@ public class GiniCapture {
     private final GiniComposableStyleProvider mGiniComposableStyleProvider;
     private final EntryPoint entryPoint;
     private final boolean allowScreenshots;
+    private final boolean saveInvoicesLocallyEnabled;
 
     private final Map<String, String> mCustomUploadMetadata;
 
@@ -428,7 +432,9 @@ public class GiniCapture {
         helpNavigationBarBottomAdapterInstance = builder.getHelpNavigationBarBottomAdapterInstance();
         errorNavigationBarBottomAdapterInstance = builder.getErrorNavigationBarBottomAdapterInstance();
         isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
-        isPaymentHintsEnabled = builder.isPaymentHintsEnabled();
+        isAlreadyPaidHintEnabled = builder.isAlreadyPaidHintEnabled();
+        isPaymentDueHintEnabled = builder.isPaymentDueHintEnabled();
+        paymentDueHintThresholdDays = builder.getPaymentDueHintThresholdDays();
         onboardingAlignCornersIllustrationAdapterInstance = builder.getOnboardingAlignCornersIllustrationAdapterInstance();
         onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
         onboardingMultiPageIllustrationAdapterInstance = builder.getOnboardingMultiPageIllustrationAdapterInstance();
@@ -439,6 +445,7 @@ public class GiniCapture {
         onButtonLoadingIndicatorAdapterInstance = builder.getOnButtonLoadingIndicatorAdapterInstance();
         entryPoint = builder.getEntryPoint();
         allowScreenshots = builder.getAllowScreenshots();
+        saveInvoicesLocallyEnabled = builder.getSaveInvoicesLocallyEnabled();
         mCustomUploadMetadata = builder.getCustomUploadMetadata();
         mGiniComposableStyleProvider = builder.getGiniComposableStyleProvider();
     }
@@ -717,8 +724,16 @@ public class GiniCapture {
         return isBottomNavigationBarEnabled;
     }
 
-    public boolean isPaymentHintsEnabled() {
-        return isPaymentHintsEnabled;
+    public boolean isAlreadyPaidHintEnabled() {
+        return isAlreadyPaidHintEnabled;
+    }
+
+    public boolean isPaymentDueHintEnabled() {
+        return isPaymentDueHintEnabled;
+    }
+
+    public int getPaymentDueHintThresholdDays() {
+        return paymentDueHintThresholdDays;
     }
 
     @Nullable
@@ -798,6 +813,10 @@ public class GiniCapture {
      */
     public boolean getAllowScreenshots() {
         return allowScreenshots;
+    }
+
+    public boolean getSaveInvoicesEnabled() {
+        return saveInvoicesLocallyEnabled;
     }
 
     /**
@@ -920,7 +939,9 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultErrorNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private boolean isBottomNavigationBarEnabled = false;
-        private boolean isPaymentHintsEnabled = true;
+        private boolean isAlreadyPaidHintEnabled = true;
+        private boolean isPaymentDueHintEnabled = true;
+        private int paymentDueHintThresholdDays = PAYMENT_DUE_HINT_THRESHOLD_DAYS;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -931,6 +952,7 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
         private boolean allowScreenshots = true;
+        private boolean savingInvoicesLocallyEnabled = true;
 
         private Map<String, String> customUploadMetadata;
         private GiniComposableStyleProvider giniComposableStyleProvider;
@@ -1341,8 +1363,18 @@ public class GiniCapture {
             return this;
         }
 
-        public Builder setPaymentHintsEnabled(final Boolean enabled){
-            isPaymentHintsEnabled = enabled;
+        public Builder setAlreadyPaidHintEnabled(final Boolean enabled){
+            isAlreadyPaidHintEnabled = enabled;
+            return this;
+        }
+
+        public Builder setPaymentDueHintEnabled(final Boolean enabled){
+            isPaymentDueHintEnabled = enabled;
+            return this;
+        }
+
+        public Builder setPaymentDueHintThresholdDays(final int thresholdDays){
+            paymentDueHintThresholdDays = thresholdDays;
             return this;
         }
 
@@ -1350,8 +1382,16 @@ public class GiniCapture {
             return isBottomNavigationBarEnabled;
         }
 
-        private boolean isPaymentHintsEnabled(){
-            return isPaymentHintsEnabled;
+        private boolean isAlreadyPaidHintEnabled(){
+            return isAlreadyPaidHintEnabled;
+        }
+
+        private boolean isPaymentDueHintEnabled(){
+            return isPaymentDueHintEnabled;
+        }
+
+        private int getPaymentDueHintThresholdDays(){
+            return paymentDueHintThresholdDays;
         }
 
         @NonNull
@@ -1494,6 +1534,15 @@ public class GiniCapture {
 
         private boolean getAllowScreenshots() {
             return allowScreenshots;
+        }
+
+        public Builder setSaveInvoicesLocallyEnabled(boolean savingInvoicesLocallyEnabled) {
+            this.savingInvoicesLocallyEnabled = savingInvoicesLocallyEnabled;
+            return this;
+        }
+
+        private boolean getSaveInvoicesLocallyEnabled() {
+            return savingInvoicesLocallyEnabled;
         }
 
         public Builder addCustomUploadMetadata(String key, String value) {

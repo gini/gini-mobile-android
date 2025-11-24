@@ -15,7 +15,9 @@ data class ConfigurationResponse(
     @Json(name = "qrCodeEducationEnabled") val qrCodeEducationEnabled: Boolean?,
     @Json(name = "instantPaymentEnabled") val instantPaymentEnabled: Boolean?,
     @Json(name = "eInvoiceEnabled") val eInvoiceEnabled: Boolean?,
-    @Json(name = "paymentHintsEnabled") val paymentHintsEnabled: Boolean?,
+    @Json(name = "alreadyPaidHintEnabled") val alreadyPaidHintEnabled: Boolean?,
+    @Json(name = "paymentDueHintEnabled") val paymentDueHintEnabled: Boolean?,
+    @Json(name = "savePhotosLocallyEnabled") val savePhotosLocallyEnabled: Boolean?,
 )
 
 internal fun ConfigurationResponse.toConfiguration() = Configuration(
@@ -24,10 +26,12 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     isSkontoEnabled = skontoEnabled ?: false,
     isReturnAssistantEnabled = returnAssistantEnabled ?: false,
     amplitudeApiKey = amplitudeApiKey,
-    transactionDocsEnabled = transactionDocsEnabled ?: false,
-    qrCodeEducationEnabled = qrCodeEducationEnabled ?: false,
-    instantPaymentEnabled = instantPaymentEnabled ?: false,
+    isTransactionDocsEnabled = transactionDocsEnabled ?: false,
+    isQrCodeEducationEnabled = qrCodeEducationEnabled ?: false,
+    isInstantPaymentEnabled = instantPaymentEnabled ?: false,
     isEInvoiceEnabled = eInvoiceEnabled ?: false,
-    paymentHintsEnabled = paymentHintsEnabled ?: false
+    isAlreadyPaidHintEnabled = alreadyPaidHintEnabled ?: false,
+    isPaymentDueHintEnabled = paymentDueHintEnabled ?: false,
+    isSavePhotosLocallyEnabled = savePhotosLocallyEnabled ?: false,
 )
 

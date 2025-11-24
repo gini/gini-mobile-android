@@ -49,6 +49,7 @@ class GiniCaptureFragment(
     CancelListener {
 
     private lateinit var navController: NavController
+    private var bankSDKBridge: BankSDKBridge? = null
     private var giniCaptureFragmentListener: GiniCaptureFragmentListener? = null
     private lateinit var oncePerInstallEventStore: OncePerInstallEventStore
 
@@ -79,10 +80,15 @@ class GiniCaptureFragment(
         this.giniCaptureFragmentListener = listener
     }
 
+    fun setBankSDKBridge(listener: BankSDKBridge?) {
+        this.bankSDKBridge = listener
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         childFragmentManager.fragmentFactory = CaptureFragmentFactory(
             cameraListener = this,
             analysisFragmentListener = this,
+            bankSDKBridge = bankSDKBridge,
             enterManuallyButtonListener = this,
             cancelListener = this
         )
@@ -338,6 +344,7 @@ class GiniCaptureFragment(
 class CaptureFragmentFactory(
     private val cameraListener: CameraFragmentListener,
     private val analysisFragmentListener: AnalysisFragmentListener,
+    private val bankSDKBridge: BankSDKBridge?,
     private val enterManuallyButtonListener: EnterManuallyButtonListener,
     private val cancelListener: CancelListener
 ) : FragmentFactory() {
@@ -355,6 +362,7 @@ class CaptureFragmentFactory(
                     setListener(
                         analysisFragmentListener
                     )
+                    setBankSDKBridge(bankSDKBridge)
                     setCancelListener(cancelListener)
                 }
 
