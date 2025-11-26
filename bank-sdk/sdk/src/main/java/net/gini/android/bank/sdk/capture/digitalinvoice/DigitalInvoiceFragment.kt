@@ -498,6 +498,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceOnboardingFragment())
     }
 
+    @Suppress("SwallowedException")
     private fun scrollList(toTop: Boolean) {
         val delay: Long = if (toTop) 350 else 200
         binding.lineItems.postDelayed({
