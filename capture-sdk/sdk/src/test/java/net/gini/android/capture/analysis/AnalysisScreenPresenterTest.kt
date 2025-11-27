@@ -12,6 +12,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.atLeast
 import com.nhaarman.mockitokotlin2.atLeastOnce
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -23,6 +24,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import jersey.repackaged.jsr166e.CompletableFuture
@@ -37,6 +39,7 @@ import net.gini.android.capture.BankSDKProperties
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
+import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.document.DocumentFactory
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.ImageDocument
@@ -62,6 +65,9 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.util.Collections
 import java.util.concurrent.CancellationException
+import kotlin.invoke
+import kotlin.run
+import kotlin.text.get
 
 /**
  * Created by Alpar Szotyori on 10.05.2019.
@@ -924,6 +930,71 @@ class AnalysisScreenPresenterTest {
 
             verify { presenter.proceedWithExtractions(mockResultHolder) }
         }
+    @Test
+    fun `showAlreadyPaidHint calls handleSaveInvoicesLocally immediately when isSavingInvoicesInProgress is true`() {
+        val view = mockk<AnalysisScreenContract.View>(relaxed = true)
+        val presenter = spyk(AnalysisScreenPresenterExtension(view))
+        val resultHolder = mockk<AnalysisInteractor.ResultHolder>(relaxed = true)
+        val activity = mockk<Activity>(relaxed = true)
+
+        every { presenter.handleSaveInvoicesLocally(any(), any(), any(), any()) } just Runs
+
+        presenter.showAlreadyPaidHint(
+            mIsInvoiceSavingEnabled = true,
+            isSavingInvoicesInProgress = true,
+            resultHolder = resultHolder,
+            activity = activity
+        )
+
+        io.mockk.verify {
+            presenter.handleSaveInvoicesLocally(
+                mIsInvoiceSavingEnabled = true,
+                isSavingInvoicesInProgress = true,
+                resultHolder = resultHolder,
+                activity = activity
+            )
+        }
+    }
+
+    @Test
+    fun `showAlreadyPaidHint calls showAlreadyPaidWarning and handleSaveInvoicesLocally when isSavingInvoicesInProgress is false`() {
+        val view = mock<AnalysisScreenContract.View>()
+        val presenter = spy(AnalysisScreenPresenterExtension(view))
+        val resultHolder = mock<AnalysisInteractor.ResultHolder>()
+        val activity = mock<Activity>()
+
+        // Use doAnswer for void methods on spies
+        doAnswer { invocation ->
+            val lambda = invocation.getArgument<() -> Unit>(0)
+            lambda.invoke()
+            null
+        }.whenever(presenter).doWhenEducationFinished(any())
+
+        // Capture the callback passed to showAlreadyPaidWarning
+        val callbackCaptor = argumentCaptor<Runnable>()
+
+        presenter.showAlreadyPaidHint(
+            mIsInvoiceSavingEnabled = false,
+            isSavingInvoicesInProgress = false,
+            resultHolder = resultHolder,
+            activity = activity
+        )
+
+        // showAlreadyPaidWarning should be called
+        verify(view).showAlreadyPaidWarning(eq(WarningType.DOCUMENT_MARKED_AS_PAID), callbackCaptor.capture())
+
+        // Simulate user action on the warning
+        callbackCaptor.firstValue.run()
+
+        // handleSaveInvoicesLocally should be called with isSavingInvoicesInProgress = false
+        verify(presenter).handleSaveInvoicesLocally(
+            mIsInvoiceSavingEnabled = false,
+            isSavingInvoicesInProgress = false,
+            resultHolder = resultHolder,
+            activity = activity
+        )
+    }
+
 
     @Test
     fun `proceedWithExtractions calls onExtractionsAvailable with correct arguments`() {

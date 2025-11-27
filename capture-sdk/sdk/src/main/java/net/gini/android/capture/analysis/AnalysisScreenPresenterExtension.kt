@@ -173,7 +173,7 @@ internal class AnalysisScreenPresenterExtension(
         }
     }
 
-    private fun handleSaveInvoicesLocally(
+    fun handleSaveInvoicesLocally(
         mIsInvoiceSavingEnabled: Boolean,
         isSavingInvoicesInProgress: Boolean,
         resultHolder: ResultHolder,
@@ -253,7 +253,7 @@ internal class AnalysisScreenPresenterExtension(
         if (educationMutex.isLocked) educationMutex.unlock()
     }
 
-    private fun doWhenEducationFinished(action: () -> Unit) {
+     fun doWhenEducationFinished(action: () -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             educationMutex.withLock {
                 withContext(Dispatchers.Main) {
