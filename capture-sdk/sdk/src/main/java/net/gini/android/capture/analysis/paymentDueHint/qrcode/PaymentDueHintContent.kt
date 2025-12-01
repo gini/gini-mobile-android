@@ -163,7 +163,7 @@ fun DismissCard(
 
 @Composable
 fun AnimatedProgressBar(
-    durationMillis: Int = 3_000,
+    durationMillis: Int = 5_000,
     onFinished: () -> Unit = {},
     screenColorScheme: PaymentDueHintColors,
 ) {
