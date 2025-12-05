@@ -30,6 +30,7 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.paymentHints.GetAlreadyPaidHintEnabledUseCase
+import net.gini.android.capture.paymentHints.GetCreditNoteHintEnabledUseCase
 import net.gini.android.capture.paymentHints.GetPaymentDueHintEnabledUseCase
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
@@ -47,6 +48,9 @@ internal class AnalysisScreenPresenterExtension(
 
     val paymentDueHintEnabledUseCase:
             GetPaymentDueHintEnabledUseCase by getGiniCaptureKoin().inject()
+
+    val creditNoteHintEnabledUseCase:
+            GetCreditNoteHintEnabledUseCase by getGiniCaptureKoin().inject()
 
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()
