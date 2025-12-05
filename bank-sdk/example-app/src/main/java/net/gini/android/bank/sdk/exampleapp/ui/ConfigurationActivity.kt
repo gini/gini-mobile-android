@@ -240,6 +240,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays.hint =
             configuration.paymentDueHintThresholdDays.toString()
 
+        // enable credit note hint
+        binding.layoutFeatureToggle.switchCreditNoteHint.isChecked =
+            configuration.isCreditNoteHintEnabled
+
         // enable return reasons dialog
         binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked =
             configuration.isReturnReasonsEnabled
@@ -602,6 +606,14 @@ class ConfigurationActivity : AppCompatActivity() {
                 }
             }
 
+        //enable credit note hint for showing warning
+        binding.layoutFeatureToggle.switchCreditNoteHint.setOnCheckedChangeListener{ _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCreditNoteHintEnabled = isChecked
+                )
+            )
+        }
 
         // enable supported format help screen
         binding.layoutHelpToggles.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->

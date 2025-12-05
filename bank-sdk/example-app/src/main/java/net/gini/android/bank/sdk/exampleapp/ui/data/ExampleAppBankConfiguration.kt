@@ -161,6 +161,9 @@ data class ExampleAppBankConfiguration(
     //  payment due hint threshold days
     val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
 
+    // enable credit note hint
+    val isCreditNoteHintEnabled: Boolean = true,
+
     // Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
 
@@ -219,6 +222,7 @@ data class ExampleAppBankConfiguration(
                 isAlreadyPaidHintEnabled = defaultCaptureConfiguration.alreadyPaidHintEnabled,
                 isPaymentDueHintEnabled = defaultCaptureConfiguration.paymentDueHintEnabled,
                 paymentDueHintThresholdDays = defaultCaptureConfiguration.paymentDueHintThresholdDays,
+                isCreditNoteHintEnabled = defaultCaptureConfiguration.creditNoteHintEnabled,
                 isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
