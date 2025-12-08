@@ -7,7 +7,7 @@ plugins {
     kotlin("android")
     id("kotlin-parcelize")
     id("jacoco")
-    id ("org.sonarqube") version "5.1.0.4882"
+    id ("org.sonarqube")
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.devtools.ksp)

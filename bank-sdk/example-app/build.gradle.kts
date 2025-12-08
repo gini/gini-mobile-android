@@ -8,7 +8,7 @@ plugins {
     kotlin("android")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
-    id ("org.sonarqube") version "5.1.0.4882"
+    id ("org.sonarqube")
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
     alias(libs.plugins.compose.compiler)
