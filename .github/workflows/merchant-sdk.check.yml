@@ -1,7 +1,8 @@
 name: Check Merchant SDK
 
 permissions:
-  contents: read
+  contents: write
+  packages: write
 
 on:
   workflow_dispatch:
@@ -18,6 +19,8 @@ on:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
       MERCHANT_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+        required: true
+      SONAR_TOKEN:
         required: true
 
 concurrency:
