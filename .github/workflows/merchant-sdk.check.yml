@@ -172,7 +172,7 @@ jobs:
       - name: Build modules for Sonar
         run: |
           ./gradlew merchant-sdk:sdk:assembleDebug \
-                    merchant-sdk:example-app:assembleDevExampleAppDebug
+                    merchant-sdk:example-app:assembleDebug
 
       # Run Sonar on both modules
       - name: SonarQube Scan
