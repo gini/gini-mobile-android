@@ -174,8 +174,11 @@ jobs:
       # Build both modules (example-app depends on sdk)
       - name: Build modules for Sonar
         run: |
-          ./gradlew merchant-sdk:sdk:assembleDebug \
-                    merchant-sdk:example-app:assembleDebug
+          ./gradlew \
+            merchant-sdk:sdk:assembleDebug \
+            merchant-sdk:example-app:assembleDebug \
+            -PclientId="gini-mobile-ci" \
+            -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
       # Run Sonar on both modules
       - name: SonarQube Scan
