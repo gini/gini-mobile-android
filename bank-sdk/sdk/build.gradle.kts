@@ -7,9 +7,21 @@ plugins {
     kotlin("android")
     id("kotlin-parcelize")
     id("jacoco")
+    id ("org.sonarqube") version "5.1.0.4882"
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.devtools.ksp)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "bank-sdk")
+        property("sonar.organization", "gini")
+        property("sonar.java.binaries", "build/classes")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.exclusions", "**/*.java")
+    }
 }
 
 jacoco {
