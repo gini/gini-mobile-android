@@ -11,12 +11,10 @@ plugins {
 
 sonar {
     properties {
-        property("sonar.projectKey", "bank-api-library")
+        property("sonar.projectKey", "android-bank-api-library")
         property("sonar.organization", "gini")
-        property("sonar.java.binaries", "build/classes")
         property("sonar.sources", "src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.exclusions", "**/*.java")
     }
 }
 android {
