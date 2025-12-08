@@ -153,3 +153,28 @@ jobs:
         with:
           name: health-sdk-ktlint-report
           path: health-sdk/sdk/build/reports/ktlint/**/*.html
+
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: "gradle"
+
+      # Build both modules (example-app depends on sdk)
+      - name: Build modules for Sonar
+        run: |
+          ./gradlew health-sdk:sdk:assembleDebug \
+                    health-sdk:example-app:assembleDevExampleAppDebug
+
+      # Run Sonar on both modules
+      - name: SonarQube Scan
+        run: ./gradlew health-sdk:sdk:sonar health-sdk:example-app:sonar --info --stacktrace
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

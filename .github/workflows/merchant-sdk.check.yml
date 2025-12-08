@@ -154,3 +154,28 @@ jobs:
         with:
           name: merchant-sdk-ktlint-report
           path: merchant-sdk/sdk/build/reports/ktlint/**/*.html
+
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: "gradle"
+
+      # Build both modules (example-app depends on sdk)
+      - name: Build modules for Sonar
+        run: |
+          ./gradlew merchant-sdk:sdk:assembleDebug \
+                    merchant-sdk:example-app:assembleDevExampleAppDebug
+
+      # Run Sonar on both modules
+      - name: SonarQube Scan
+        run: ./gradlew merchant-sdk:sdk:sonar merchant-sdk:example-app:sonar --info --stacktrace
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

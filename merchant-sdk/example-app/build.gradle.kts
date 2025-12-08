@@ -6,8 +6,16 @@ plugins {
     id("com.android.application")
     kotlin("android")
     alias(libs.plugins.devtools.ksp)
+    id ("org.sonarqube")
 }
 
+sonar {
+    properties {
+        property("sonar.projectKey", "android-merchant-sdk")
+        property("sonar.organization", "gini")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
 android {
     namespace = "net.gini.android.merchant.sdk.exampleapp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
