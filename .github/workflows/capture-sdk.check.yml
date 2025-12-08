@@ -341,7 +341,7 @@ jobs:
       - name: Build modules for Sonar
         run: |
           ./gradlew capture-sdk:sdk:assembleDebug \
-                    capture-sdk:default-network:assembleDevExampleAppDebug
+                    capture-sdk:default-network:assembleDebug
 
       # Run Sonar on both modules
       - name: SonarQube Scan

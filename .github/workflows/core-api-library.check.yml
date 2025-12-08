@@ -184,7 +184,6 @@ jobs:
         with:
           name: core-api-library-ktlint-report
           path: core-api-library/library/build/reports/ktlint/**/*.html
-
   sonar:
     runs-on: ubuntu-latest
     steps:
@@ -196,11 +195,16 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
+          cache: "gradle"
 
-      - name: Build Bank API Library
-        run: ./gradlew :bank-api-library:library:assembleDebug
+      # Build both modules (example-app depends on sdk)
+      - name: Build modules for Sonar
+        run: |
+          ./gradlew core-api-library:library:assembleDebug \
+                    core-api-library:shared-tests:assembleDebug
 
+      # Run Sonar on both modules
       - name: SonarQube Scan
-        run: ./gradlew :bank-api-library:library:sonar --info --stacktrace
+        run: ./gradlew core-api-library:library:sonar core-api-library:shared-tests:sonar --info --stacktrace
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
