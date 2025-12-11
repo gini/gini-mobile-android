@@ -27,7 +27,7 @@
             android:padding="@dimen/gc_large">
 
             <TextView
-                android:id="@+id/warningTitle"
+                android:id="@+id/gc_warningTitle_warningBottomSheet"
                 style="@style/GiniCaptureTheme.Typography.Headline5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
                 android:paddingBottom="@dimen/gc_medium" />
 
             <TextView
-                android:id="@+id/warningDescription"
+                android:id="@+id/gc_warningDescription_warningBottomSheet"
                 style="@style/GiniCaptureTheme.Typography.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,21 +56,23 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancel_button"
-            style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/gc_cancel_transfer" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/proceed_button"
+            android:id="@+id/gc_proceedButton_warningBottomSheet"
             style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/gc_large"
             android:text="@string/gc_proceed_anyway" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/gc_cancelButton_warningBottomSheet"
+            style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/gc_cancel_transfer" />
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
