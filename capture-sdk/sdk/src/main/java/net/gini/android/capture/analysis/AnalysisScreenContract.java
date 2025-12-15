@@ -67,6 +67,7 @@ interface AnalysisScreenContract {
 
         abstract void showError(String errorMessage, Document document);
         abstract void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed);
+        abstract void showCreditNoteWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed);
         abstract void showPaymentDueHint(PaymentDueHintDismissListener listener, String dueDate);
         abstract void showError(ErrorType errorType, Document document);
 

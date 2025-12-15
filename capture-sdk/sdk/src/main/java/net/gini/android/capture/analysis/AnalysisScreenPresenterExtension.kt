@@ -177,6 +177,36 @@ internal class AnalysisScreenPresenterExtension(
         }
     }
 
+    fun showCreditNoteHint(
+        mIsInvoiceSavingEnabled: Boolean,
+        isSavingInvoicesInProgress: Boolean,
+        resultHolder: ResultHolder,
+        activity: Activity
+    ) {
+        if (isSavingInvoicesInProgress) {
+            handleSaveInvoicesLocally(
+                mIsInvoiceSavingEnabled,
+                true,
+                resultHolder,
+                activity
+            )
+        } else {
+            doWhenEducationFinished {
+                view.showCreditNoteWarning(
+                    WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE
+                ) {
+                    handleSaveInvoicesLocally(
+                        mIsInvoiceSavingEnabled,
+                        false,
+                        resultHolder,
+                        activity
+                    )
+                }
+            }
+        }
+    }
+
+
     private fun handleSaveInvoicesLocally(
         mIsInvoiceSavingEnabled: Boolean,
         isSavingInvoicesInProgress: Boolean,
