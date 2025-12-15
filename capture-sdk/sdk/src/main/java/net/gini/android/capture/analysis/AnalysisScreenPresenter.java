@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -352,7 +353,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                             successResultHolder,
                                             getActivity());
                                 } else if (shouldShowCreditNoteWarning(resultHolder)) {
-                                    successResultHolder = resultHolder;
+                                    successResultHolder = removeAmountToPay(resultHolder);
                                     shouldClearImageCaches = false;
                                     extension.showCreditNoteHint(
                                             mIsInvoiceSavingEnabled,
@@ -665,6 +666,21 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         final GiniCaptureSpecificExtraction businessDocTypeExtraction = extractions.get(EXTRACTION_BUSINESS_DOC_TYPE);
         final String paymentStateValue = businessDocTypeExtraction != null ? businessDocTypeExtraction.getValue() : null;
         return BusinessDocType.from(paymentStateValue);
+    }
+
+    private AnalysisInteractor.ResultHolder removeAmountToPay(@NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        Map<String, GiniCaptureSpecificExtraction> extractions = new HashMap<>(resultHolder.getExtractions());
+        extractions.remove("amountToPay");
+        return new AnalysisInteractor.ResultHolder(
+                resultHolder.getResult(),
+                extractions,
+                new HashMap<>(),
+                new ArrayList<>(),
+                resultHolder.getDocumentId(),
+                resultHolder.getDocumentFileName()
+        );
+
+
     }
 
 }
