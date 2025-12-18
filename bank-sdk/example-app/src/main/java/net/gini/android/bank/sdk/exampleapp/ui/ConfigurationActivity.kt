@@ -25,6 +25,7 @@ import net.gini.android.capture.util.SharedPreferenceHelper
 import net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY
 import javax.inject.Inject
 
+@Suppress("LargeClass")
 @AndroidEntryPoint
 class ConfigurationActivity : AppCompatActivity() {
 
@@ -109,6 +110,7 @@ class ConfigurationActivity : AppCompatActivity() {
         finish()
     }
 
+    @Suppress("LongMethod")
     private fun updateUIWithConfigurationObject(configuration: ExampleAppBankConfiguration) {
         // setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.isChecked =
@@ -118,7 +120,8 @@ class ConfigurationActivity : AppCompatActivity() {
         // Capture SDK
         binding.layoutFeatureToggle.switchCaptureSdk.isChecked = configuration.isCaptureSDK
         // Saving Invoices Locally
-        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature.isChecked = configuration.saveInvoicesLocallyEnabled
+        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature.isChecked =
+            configuration.saveInvoicesLocallyEnabled
         // QR code scanning
         binding.layoutFeatureToggle.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
         // only QR code scanning
