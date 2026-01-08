@@ -8,10 +8,20 @@ plugins {
     kotlin("android")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
+    id ("org.sonarqube")
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.devtools.ksp)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-bank-sdk")
+        property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 // TODO: construct version code and name in fastlane and inject them

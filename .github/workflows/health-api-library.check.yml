@@ -238,4 +238,23 @@ jobs:
         with:
           name: health-api-library-ktlint-report
           path: health-api-library/library/build/reports/ktlint/**/*.html
-          
+
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Build health API Library
+        run: ./gradlew :health-api-library:library:assembleDebug
+
+      - name: SonarQube Scan
+        run: ./gradlew :health-api-library:library:sonar --info --stacktrace
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

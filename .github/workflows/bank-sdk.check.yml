@@ -1,7 +1,8 @@
 name: Check Bank SDK
 
 permissions:
-  contents: read
+  contents: write
+  packages: write
 
 on:
   workflow_dispatch:
@@ -18,6 +19,8 @@ on:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
       BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+        required: true
+      SONAR_TOKEN:
         required: true
 
 concurrency:
@@ -251,3 +254,27 @@ jobs:
         with:
           name: bank-sdk-ktlint-report
           path: bank-sdk/sdk/build/reports/ktlint/**/*.html
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: "gradle"
+
+      # Build both modules (example-app depends on sdk)
+      - name: Build modules for Sonar
+        run: |
+          ./gradlew bank-sdk:sdk:assembleDebug \
+                    bank-sdk:example-app:assembleDevExampleAppDebug
+
+      # Run Sonar on both modules
+      - name: SonarQube Scan
+        run: ./gradlew bank-sdk:sdk:sonar bank-sdk:example-app:sonar --info --stacktrace
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

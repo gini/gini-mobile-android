@@ -1,6 +1,16 @@
 plugins {
     id("com.android.library")
     kotlin("android")
+    id ("org.sonarqube")
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-core-api-library")
+        property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 android {

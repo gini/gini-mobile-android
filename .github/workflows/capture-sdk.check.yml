@@ -1,7 +1,9 @@
 name: Check Capture SDK
 
 permissions:
-  contents: read
+  contents: write
+  packages: write
+
 
 on:
   workflow_dispatch:
@@ -322,3 +324,27 @@ jobs:
         with:
           name: capture-sdk-ktlint-report
           path: capture-sdk/sdk/build/reports/ktlint/**/*.html
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: "gradle"
+
+      # Build both modules (example-app depends on sdk)
+      - name: Build modules for Sonar
+        run: |
+          ./gradlew capture-sdk:sdk:assembleDebug \
+                    capture-sdk:default-network:assembleDebug
+
+      # Run Sonar on both modules
+      - name: SonarQube Scan
+        run: ./gradlew capture-sdk:sdk:sonar capture-sdk:default-network:sonar --info --stacktrace
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
