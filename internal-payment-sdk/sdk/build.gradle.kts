@@ -14,6 +14,7 @@ plugins {
 sonar {
     properties {
         property("sonar.projectKey", "android-internal-payment-sdk")
+        property("sonar.projectName", "Android Internal Payment SDK")
         property("sonar.organization", "gini")
         property("sonar.host.url", "https://sonarcloud.io")
     }

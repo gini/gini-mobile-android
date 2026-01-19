@@ -13,6 +13,7 @@ plugins {
 sonar {
     properties {
         property("sonar.projectKey", "android-health-api-library")
+        property("sonar.projectName", "Android Health API Library")
         property("sonar.organization", "gini")
         property("sonar.host.url", "https://sonarcloud.io")
     }

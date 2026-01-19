@@ -10,6 +10,7 @@ plugins {
 sonar {
     properties {
         property("sonar.projectKey", "android-core-api-library")
+        property("sonar.projectName", "Android Core API Library")
         property("sonar.organization", "gini")
         property("sonar.sources", "src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")

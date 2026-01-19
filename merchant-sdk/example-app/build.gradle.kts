@@ -12,6 +12,7 @@ plugins {
 sonar {
     properties {
         property("sonar.projectKey", "android-merchant-sdk")
+        property("sonar.projectName", "Android Merchant SDK")
         property("sonar.organization", "gini")
         property("sonar.host.url", "https://sonarcloud.io")
     }
