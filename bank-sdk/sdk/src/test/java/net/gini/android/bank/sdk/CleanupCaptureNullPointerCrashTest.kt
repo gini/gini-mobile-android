@@ -30,7 +30,7 @@ class CleanupCaptureNullPointerCrashTest {
      * Verifies that [cleanupCapture] does not crash when called before [setCaptureConfiguration].
      */
     @Test
-    fun `cleanupCapture crashes with NullPointerException when GiniCapture was never initialized`() {
+    fun `cleanupCapture does not crash with NullPointerException when GiniCapture was never initialized`() {
         val context = ApplicationProvider.getApplicationContext<Context>()
 
         // Call cleanupCapture without ever calling setCaptureConfiguration
@@ -42,7 +42,7 @@ class CleanupCaptureNullPointerCrashTest {
      * Verifies that calling [cleanupCapture] multiple times does not crash.
      */
     @Test
-    fun `cleanupCapture crashes with NullPointerException when called twice`() {
+    fun `cleanupCapture does not crash with NullPointerException when called twice`() {
         val context = ApplicationProvider.getApplicationContext<Context>()
 
         // First, set up the capture configuration with a mock network service
