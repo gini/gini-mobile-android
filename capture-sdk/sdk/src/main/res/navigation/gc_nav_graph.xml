@@ -31,23 +31,23 @@
         <action
             android:id="@+id/to_camera_fragment_for_first_page"
             app:destination="@id/gc_destination_camera_fragment"
-            app:popUpTo="@id/gc_destination_review_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim" />
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_review_fragment"
+            app:popUpToInclusive="true" />
         <!--        popUpTo and popUpToInclusive are needed to make the camera screen the start destination again -->
         <!--        (i.e., replace the review screen with the camera screen in the back stack) -->
         <action
             android:id="@+id/to_analysis_fragment"
             app:destination="@id/gc_destination_analysis_fragment"
-            app:popUpTo="@id/gc_destination_review_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_review_fragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="GC_ARGS_DOCUMENT"
                 app:argType="net.gini.android.capture.Document" />
@@ -61,12 +61,12 @@
         <action
             android:id="@+id/to_error_fragment"
             app:destination="@id/gc_destination_error_fragment"
-            app:popUpTo="@id/gc_destination_review_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_review_fragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="GC_ARGS_ERROR"
                 app:argType="net.gini.android.capture.error.ErrorType" />
@@ -95,12 +95,12 @@
         <action
             android:id="@+id/to_error_fragment_with_error_type"
             app:destination="@id/gc_destination_error_fragment"
-            app:popUpTo="@id/gc_destination_analysis_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_analysis_fragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="GC_ARGS_ERROR"
                 app:argType="net.gini.android.capture.error.ErrorType" />
@@ -112,12 +112,12 @@
         <action
             android:id="@+id/to_error_fragment_with_error_message"
             app:destination="@id/gc_destination_error_fragment"
-            app:popUpTo="@id/gc_destination_analysis_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_analysis_fragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="ARGS_CUSTOM_ERROR"
                 app:argType="string" />
@@ -129,12 +129,12 @@
         <action
             android:id="@+id/to_no_results_fragment"
             app:destination="@id/gc_destination_noresults_fragment"
-            app:popUpTo="@id/gc_destination_analysis_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_analysis_fragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="GC_ARGS_DOCUMENT"
                 app:argType="net.gini.android.capture.Document" />
@@ -149,12 +149,12 @@
         <action
             android:id="@+id/to_review_fragment"
             app:destination="@id/gc_destination_review_fragment"
-            app:popUpTo="@id/gc_destination_camera_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_camera_fragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="GC_SHOULD_SCROLL_TO_LAST_PAGE"
                 app:argType="boolean" />
@@ -164,12 +164,12 @@
         <action
             android:id="@+id/to_analysis_fragment"
             app:destination="@id/gc_destination_analysis_fragment"
-            app:popUpTo="@id/gc_destination_camera_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_camera_fragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="GC_ARGS_DOCUMENT"
                 app:argType="net.gini.android.capture.Document" />
@@ -191,29 +191,30 @@
         <action
             android:id="@+id/to_help_fragment"
             app:destination="@id/gc_destination_help_fragment"
-            app:popUpTo="@id/gc_destination_camera_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim"/>
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_camera_fragment"
+            app:popUpToInclusive="true" />
         <!-- popUpTo and popUpToInclusive are needed to replace the camera screen with the help screen in the back stack -->
         <!-- The camera preview is not restarted otherwise. It has something to do with the SurfaceView, but I couldn't find the root cause. -->
         <action
             android:id="@+id/to_error_fragment"
             app:destination="@id/gc_destination_error_fragment"
-            app:popUpTo="@id/gc_destination_camera_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_camera_fragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="GC_ARGS_ERROR"
                 app:argType="net.gini.android.capture.error.ErrorType" />
             <argument
                 android:name="ARGS_DOCUMENT"
-                app:argType="net.gini.android.capture.Document" />
+                app:argType="net.gini.android.capture.Document"
+                app:nullable="true" />
 
         </action>
         <action
@@ -222,16 +223,16 @@
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim"/>
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim" />
         <action
             android:id="@+id/to_no_results_fragment"
             app:destination="@id/gc_destination_noresults_fragment"
-            app:popUpTo="@id/gc_destination_camera_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim">
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_camera_fragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="GC_ARGS_DOCUMENT"
                 app:argType="net.gini.android.capture.Document" />
@@ -267,12 +268,12 @@
         <action
             android:id="@+id/to_camera_fragment"
             app:destination="@id/gc_destination_camera_fragment"
-            app:popUpTo="@id/gc_destination_help_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim" />
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_help_fragment"
+            app:popUpToInclusive="true" />
         <!-- popUpTo and popUpToInclusive are needed to make the camera screen the start destination again -->
     </fragment>
 
@@ -280,19 +281,19 @@
         android:id="@+id/gc_destination_file_import_help_fragment"
         android:name="net.gini.android.capture.help.FileImportHelpFragment"
         android:label="fragment_help"
-        tools:layout="@layout/gc_fragment_file_import_help"></fragment>
+        tools:layout="@layout/gc_fragment_file_import_help" />
 
     <fragment
         android:id="@+id/gc_destination_photo_tips_help_fragment"
         android:name="net.gini.android.capture.help.PhotoTipsHelpFragment"
         android:label="fragment_help"
-        tools:layout="@layout/gc_fragment_photo_tips_help"></fragment>
+        tools:layout="@layout/gc_fragment_photo_tips_help" />
 
     <fragment
         android:id="@+id/gc_destination_supported_formats_help_fragment"
         android:name="net.gini.android.capture.help.SupportedFormatsHelpFragment"
         android:label="fragment_help"
-        tools:layout="@layout/gc_fragment_supported_formats_help"></fragment>
+        tools:layout="@layout/gc_fragment_supported_formats_help" />
 
 
     <fragment
@@ -303,12 +304,12 @@
         <action
             android:id="@+id/to_camera_fragment"
             app:destination="@id/gc_destination_camera_fragment"
-            app:popUpTo="@id/gc_destination_error_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim" />
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_error_fragment"
+            app:popUpToInclusive="true" />
 
     </fragment>
 
@@ -320,25 +321,23 @@
         <action
             android:id="@+id/to_camera_fragment"
             app:destination="@id/gc_destination_camera_fragment"
-            app:popUpTo="@id/gc_destination_noresults_fragment"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/gc_nav_enter_anim"
             app:exitAnim="@anim/gc_nav_exit_anim"
             app:popEnterAnim="@anim/gc_nav_pop_enter_anim"
-            app:popExitAnim="@anim/gc_nav_pop_exit_anim" />
+            app:popExitAnim="@anim/gc_nav_pop_exit_anim"
+            app:popUpTo="@id/gc_destination_noresults_fragment"
+            app:popUpToInclusive="true" />
 
     </fragment>
 
     <fragment
         android:id="@+id/gc_destination_onboarding_fragment"
         android:name="net.gini.android.capture.onboarding.OnboardingFragment"
-        android:label="fragment_onboarding">
-    </fragment>
+        android:label="fragment_onboarding" />
 
     <fragment
         android:id="@+id/gc_destination_zoom_in_preview_fragment"
         android:name="net.gini.android.capture.review.zoom.ZoomInPreviewFragment"
-        android:label="fragment_zoom_in_preview">
-    </fragment>
+        android:label="fragment_zoom_in_preview" />
 
 </navigation>

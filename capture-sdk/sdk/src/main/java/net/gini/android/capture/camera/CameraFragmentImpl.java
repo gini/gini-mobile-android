@@ -538,7 +538,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private void checkGiniCaptureInstance() {
         if (!GiniCapture.hasInstance()) {
-            mFragment.findNavController().navigate(CameraFragmentDirections.toErrorFragment(ErrorType.GENERAL, mMultiPageDocument));
+            mFragment.findNavController().navigate(CameraFragmentDirections.toErrorFragment(
+                    ErrorType.GENERAL, mMultiPageDocument));
         }
     }
 
