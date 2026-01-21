@@ -389,14 +389,18 @@ public class GiniCapture {
      * Destroys the {@link GiniCapture} instance and frees up used resources.
      */
     public static void cleanup(Context context) {
-        sInstance.mDocumentDataMemoryCache.clear();
-        sInstance.mPhotoMemoryCache.clear();
-        sInstance.mInternal.setUpdatedCompoundExtractions(emptyMap());
-        sInstance.mImageMultiPageDocumentMemoryStore.clear();
-        sInstance.internal().setReviewScreenAnalysisError(null);
-        sInstance = null; // NOPMD
+        if (sInstance != null) {
+            sInstance.mDocumentDataMemoryCache.clear();
+            sInstance.mPhotoMemoryCache.clear();
+            sInstance.mInternal.setUpdatedCompoundExtractions(emptyMap());
+            sInstance.mImageMultiPageDocumentMemoryStore.clear();
+            sInstance.internal().setReviewScreenAnalysisError(null);
+            sInstance = null; // NOPMD
+        }
         UserAnalytics.INSTANCE.cleanup();
-        ImageDiskStore.clear(context);
+        if (context != null) {
+            ImageDiskStore.clear(context);
+        }
     }
 
     private static synchronized void createInstance(@NonNull final Builder builder) {
@@ -1363,17 +1367,17 @@ public class GiniCapture {
             return this;
         }
 
-        public Builder setAlreadyPaidHintEnabled(final Boolean enabled){
+        public Builder setAlreadyPaidHintEnabled(final Boolean enabled) {
             isAlreadyPaidHintEnabled = enabled;
             return this;
         }
 
-        public Builder setPaymentDueHintEnabled(final Boolean enabled){
+        public Builder setPaymentDueHintEnabled(final Boolean enabled) {
             isPaymentDueHintEnabled = enabled;
             return this;
         }
 
-        public Builder setPaymentDueHintThresholdDays(final int thresholdDays){
+        public Builder setPaymentDueHintThresholdDays(final int thresholdDays) {
             paymentDueHintThresholdDays = thresholdDays;
             return this;
         }
@@ -1382,15 +1386,15 @@ public class GiniCapture {
             return isBottomNavigationBarEnabled;
         }
 
-        private boolean isAlreadyPaidHintEnabled(){
+        private boolean isAlreadyPaidHintEnabled() {
             return isAlreadyPaidHintEnabled;
         }
 
-        private boolean isPaymentDueHintEnabled(){
+        private boolean isPaymentDueHintEnabled() {
             return isPaymentDueHintEnabled;
         }
 
-        private int getPaymentDueHintThresholdDays(){
+        private int getPaymentDueHintThresholdDays() {
             return paymentDueHintThresholdDays;
         }
 
