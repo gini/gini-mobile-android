@@ -21,6 +21,7 @@ jobs:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
       BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         
   release:
     needs: check
