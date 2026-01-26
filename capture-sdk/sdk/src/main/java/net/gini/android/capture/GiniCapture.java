@@ -958,7 +958,7 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingQRCodeIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapter = new InjectedViewAdapterInstance<>(new DefaultLoadingIndicatorAdapter());
-        private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultReviewNavigationBarBottomAdapter());
+        private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultReviewNavigationBarBottomAdapter());
 
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
@@ -1434,16 +1434,6 @@ public class GiniCapture {
             return this;
         }
 
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the review screen.
-         *
-         * @param adapter a {@link ReviewNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setReviewBottomBarNavigationAdapter(@NonNull final ReviewNavigationBarBottomAdapter adapter) {
-            reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
-        }
 
         private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> getReviewNavigationBarBottomAdapterInstance() {
             return reviewNavigationBarBottomAdapterInstance;
