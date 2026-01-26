@@ -120,7 +120,6 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance;
-    private final boolean isBottomNavigationBarEnabled;
     private final boolean isAlreadyPaidHintEnabled;
     private final boolean isPaymentDueHintEnabled;
     private final int paymentDueHintThresholdDays;
@@ -435,7 +434,6 @@ public class GiniCapture {
         onboardingNavigationBarBottomAdapterInstance = builder.getOnboardingNavigationBarBottomAdapterInstance();
         helpNavigationBarBottomAdapterInstance = builder.getHelpNavigationBarBottomAdapterInstance();
         errorNavigationBarBottomAdapterInstance = builder.getErrorNavigationBarBottomAdapterInstance();
-        isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
         isAlreadyPaidHintEnabled = builder.isAlreadyPaidHintEnabled();
         isPaymentDueHintEnabled = builder.isPaymentDueHintEnabled();
         paymentDueHintThresholdDays = builder.getPaymentDueHintThresholdDays();
@@ -724,8 +722,18 @@ public class GiniCapture {
         return cameraNavigationBarBottomAdapterInstance.getViewAdapter();
     }
 
+    /**
+     * Since the bottom navigation bar is disabled now ( as of Jan 2026),
+     * this method always returns false.
+     * <p>
+     * Once the codebase is cleaned up fully, this method will be removed as well.
+     * For now, it is kept with default false value because it is still used in multiple places.
+     * <p>
+     * For now marking it as deprecated to indicate it should not be used anymore.
+     */
+    @Deprecated
     public boolean isBottomNavigationBarEnabled() {
-        return isBottomNavigationBarEnabled;
+        return false;
     }
 
     public boolean isAlreadyPaidHintEnabled() {
@@ -942,7 +950,6 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultErrorNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
-        private boolean isBottomNavigationBarEnabled = false;
         private boolean isAlreadyPaidHintEnabled = true;
         private boolean isPaymentDueHintEnabled = true;
         private int paymentDueHintThresholdDays = PAYMENT_DUE_HINT_THRESHOLD_DAYS;
@@ -1355,18 +1362,6 @@ public class GiniCapture {
             return cameraNavigationBarBottomAdapterInstance;
         }
 
-        /**
-         * Enable/disable the bottom navigation bar.
-         * <p>
-         * Disabled by default.
-         *
-         * @return the {@link Builder} instance
-         */
-        public Builder setBottomNavigationBarEnabled(final Boolean enabled) {
-            isBottomNavigationBarEnabled = enabled;
-            return this;
-        }
-
         public Builder setAlreadyPaidHintEnabled(final Boolean enabled) {
             isAlreadyPaidHintEnabled = enabled;
             return this;
@@ -1381,11 +1376,6 @@ public class GiniCapture {
             paymentDueHintThresholdDays = thresholdDays;
             return this;
         }
-
-        private boolean isBottomNavigationBarEnabled() {
-            return isBottomNavigationBarEnabled;
-        }
-
         private boolean isAlreadyPaidHintEnabled() {
             return isAlreadyPaidHintEnabled;
         }
