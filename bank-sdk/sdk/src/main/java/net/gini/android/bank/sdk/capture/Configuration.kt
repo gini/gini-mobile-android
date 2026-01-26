@@ -186,11 +186,6 @@ data class CaptureConfiguration(
     val onButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter? = null,
 
     /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the camera screen.
-     */
-    val cameraNavigationBarBottomAdapter: CameraNavigationBarBottomAdapter? = null,
-
-    /**
      * Set an adapter implementation to show a custom bottom navigation bar on the review screen.
      */
     val reviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter? = null,
@@ -299,11 +294,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
             configuration.customLoadingIndicatorAdapter?.let { setLoadingIndicatorAdapter(it) }
             configuration.onButtonLoadingIndicatorAdapter?.let {
                 setOnButtonLoadingIndicatorAdapter(
-                    it
-                )
-            }
-            configuration.cameraNavigationBarBottomAdapter?.let {
-                setCameraNavigationBarBottomAdapter(
                     it
                 )
             }
