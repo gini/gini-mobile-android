@@ -141,9 +141,6 @@ class ConfigurationActivity : AppCompatActivity() {
             else -> R.id.btn_fileImportOnlyPdf
         }
         binding.layoutFeatureToggle.toggleBtnFileImportSetup.check(checkButtonId)
-        // enable Error screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowErrorScreenCustomBottomNavbar.isChecked =
-            configuration.isErrorScreensCustomBottomNavBarEnabled
         // enable review screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.isChecked =
             configuration.isReviewScreenCustomBottomNavBarEnabled
@@ -396,17 +393,6 @@ class ConfigurationActivity : AppCompatActivity() {
                 }
             )
         }
-
-        // enable Error screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles
-            .switchShowErrorScreenCustomBottomNavbar
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isErrorScreensCustomBottomNavBarEnabled = isChecked
-                    )
-                )
-            }
 
         // enable review screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
