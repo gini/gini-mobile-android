@@ -148,11 +148,6 @@ class ConfigurationViewModel @Inject constructor(
             // enables saving invoices locally after analysis
             saveInvoicesLocallyEnabled = configuration.saveInvoicesLocallyEnabled,
         )
-
-        // enable Help screens custom bottom navigation bar
-        if (configuration.isHelpScreensCustomBottomNavBarEnabled)
-            captureConfiguration =
-                captureConfiguration.copy(helpNavigationBarBottomAdapter = CustomHelpNavigationBarBottomAdapter())
         // enable Error screens custom bottom navigation bar
         if (configuration.isErrorScreensCustomBottomNavBarEnabled)
             captureConfiguration =
