@@ -156,11 +156,6 @@ data class CaptureConfiguration(
     val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
 
     /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
-     */
-    val onboardingNavigationBarBottomAdapter: OnboardingNavigationBarBottomAdapter? = null,
-
-    /**
      * Set an adapter implementation to show a custom illustration on the "align corners" onboarding page.
      */
     val onboardingAlignCornersIllustrationAdapter: OnboardingIllustrationAdapter? = null,
@@ -304,11 +299,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
             configuration.customLoadingIndicatorAdapter?.let { setLoadingIndicatorAdapter(it) }
             configuration.onButtonLoadingIndicatorAdapter?.let {
                 setOnButtonLoadingIndicatorAdapter(
-                    it
-                )
-            }
-            configuration.onboardingNavigationBarBottomAdapter?.let {
-                setOnboardingNavigationBarBottomAdapter(
                     it
                 )
             }
