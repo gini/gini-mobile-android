@@ -947,9 +947,9 @@ public class GiniCapture {
         private int mImportedFileSizeBytesLimit = FILE_SIZE_LIMIT;
         private InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultNavigationBarTopAdapter());
         private final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
-        private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
+        private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultErrorNavigationBarBottomAdapter());
-        private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
+        private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private boolean isAlreadyPaidHintEnabled = true;
         private boolean isPaymentDueHintEnabled = true;
         private int paymentDueHintThresholdDays = PAYMENT_DUE_HINT_THRESHOLD_DAYS;
@@ -1302,17 +1302,6 @@ public class GiniCapture {
         @NonNull
         private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> getOnboardingNavigationBarBottomAdapterInstance() {
             return navigationBarBottomAdapterInstance;
-        }
-
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
-         *
-         * @param adapter a {@link HelpNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setHelpNavigationBarBottomAdapter(@NonNull final HelpNavigationBarBottomAdapter adapter) {
-            helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
         }
 
         @NonNull
