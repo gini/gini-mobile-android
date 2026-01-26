@@ -13,7 +13,6 @@ import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureNetworkService
 import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
-import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.ui.components.GiniComposableStyleProvider
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
@@ -182,11 +181,6 @@ data class CaptureConfiguration(
     val onButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter? = null,
 
     /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the review screen.
-     */
-    val reviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter? = null,
-
-    /**
      * Set an adapter implementation to show a custom bottom navigation bar on the Skonto screen.
      */
     val skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter? = null,
@@ -281,11 +275,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
             configuration.customLoadingIndicatorAdapter?.let { setLoadingIndicatorAdapter(it) }
             configuration.onButtonLoadingIndicatorAdapter?.let {
                 setOnButtonLoadingIndicatorAdapter(
-                    it
-                )
-            }
-            configuration.reviewNavigationBarBottomAdapter?.let {
-                setReviewBottomBarNavigationAdapter(
                     it
                 )
             }
