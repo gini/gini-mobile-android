@@ -51,10 +51,6 @@ data class ExampleAppBankConfiguration(
     // on/off switch to show a custom adapter implementation
     val isErrorScreensCustomBottomNavBarEnabled: Boolean = false,
 
-    // enable camera screens custom bottom navigation bar
-    // net.gini.android.capture.GiniCapture.Builder#setCameraNavigationBarBottomAdapter → on/off switch to show a custom adapter implementation
-    val isCameraBottomNavBarEnabled: Boolean = false,
-
     // enable review screens custom bottom navigation bar
     // net.gini.android.capture.GiniCapture.Builder#setReviewBottomBarNavigationAdapter →  on/off switch to show a custom adapter implementation
     val isReviewScreenCustomBottomNavBarEnabled: Boolean = false,

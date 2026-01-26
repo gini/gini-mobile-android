@@ -147,9 +147,6 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable Error screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchShowErrorScreenCustomBottomNavbar.isChecked =
             configuration.isErrorScreensCustomBottomNavBarEnabled
-        // enable camera screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchCameraScreenCustomBottomNavbar.isChecked =
-            configuration.isCameraBottomNavBarEnabled
         // enable review screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.isChecked =
             configuration.isReviewScreenCustomBottomNavBarEnabled
@@ -422,15 +419,6 @@ class ConfigurationActivity : AppCompatActivity() {
                     )
                 )
             }
-
-        // enable camera screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchCameraScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isCameraBottomNavBarEnabled = isChecked
-                )
-            )
-        }
 
         // enable review screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->

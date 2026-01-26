@@ -158,11 +158,6 @@ class ConfigurationViewModel @Inject constructor(
             captureConfiguration =
                 captureConfiguration.copy(errorNavigationBarBottomAdapter = CustomErrorNavigationBarBottomAdapter())
 
-        // enable camera screens custom bottom navigation bar
-        if (configuration.isCameraBottomNavBarEnabled)
-            captureConfiguration =
-                captureConfiguration.copy(cameraNavigationBarBottomAdapter = CustomCameraNavigationBarBottomAdapter())
-
         // enable review screens custom bottom navigation bar
         if (configuration.isReviewScreenCustomBottomNavBarEnabled)
             captureConfiguration =
