@@ -20,6 +20,8 @@ on:
         required: true
       CAPTURE_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
         required: true
+      SONAR_TOKEN:
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
