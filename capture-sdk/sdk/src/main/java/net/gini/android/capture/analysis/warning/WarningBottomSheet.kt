@@ -179,7 +179,7 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
     private fun bindUi() {
         binding.gcWarningTitleWarningBottomSheet.text = titleText
         binding.gcWarningDescriptionWarningBottomSheet.text = descText
-        icon?.let { binding.gcWarningIconWarningBottomSheet?.setBackgroundResource(it) }
+        icon?.let { binding.gcWarningIconWarningBottomSheet?.setImageResource(it) }
 
         binding.gcWarningIconWarningBottomSheet?.contentDescription =
             getString(R.string.gc_warning_icon_content_description)
