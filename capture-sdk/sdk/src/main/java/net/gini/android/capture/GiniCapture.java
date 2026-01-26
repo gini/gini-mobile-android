@@ -946,7 +946,7 @@ public class GiniCapture {
         private ErrorLoggerListener mCustomErrorLoggerListener;
         private int mImportedFileSizeBytesLimit = FILE_SIZE_LIMIT;
         private InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultNavigationBarTopAdapter());
-        private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
+        private final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultErrorNavigationBarBottomAdapter());
         private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
@@ -1297,17 +1297,6 @@ public class GiniCapture {
         @NonNull
         private InjectedViewAdapterInstance<NavigationBarTopAdapter> getNavigationBarTopAdapterInstance() {
             return navigationBarTopAdapterInstance;
-        }
-
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
-         *
-         * @param adapter an {@link OnboardingNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setOnboardingNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter adapter) {
-            navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
         }
 
         @NonNull
