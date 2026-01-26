@@ -135,12 +135,6 @@ data class CaptureConfiguration(
     val navigationBarTopAdapter: NavigationBarTopAdapter? = null,
 
     /**
-     * Enable/disable the bottom navigation bar.
-     *
-     * Disabled by default.
-     */
-
-    /**
      * Enable/disable the payment hint.
      *
      * On by default.
