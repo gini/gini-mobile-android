@@ -13,7 +13,7 @@ plugins {
 sonar {
     properties {
         property("sonar.projectKey", "android-capture-sdk")
-        property("sonar.projectName", "Android Capture SDK")
+        property("sonar.projectName", "Android Capture SDK Default Network")
         property("sonar.organization", "gini")
         property("sonar.sources", "src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")
