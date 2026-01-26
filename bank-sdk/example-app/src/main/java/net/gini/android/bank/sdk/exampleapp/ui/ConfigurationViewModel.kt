@@ -145,11 +145,6 @@ class ConfigurationViewModel @Inject constructor(
             saveInvoicesLocallyEnabled = configuration.saveInvoicesLocallyEnabled,
         )
 
-        // enable review screens custom bottom navigation bar
-        if (configuration.isReviewScreenCustomBottomNavBarEnabled)
-            captureConfiguration =
-                captureConfiguration.copy(reviewNavigationBarBottomAdapter = CustomReviewNavigationBarBottomAdapter())
-
         // enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
         // enable custom onboarding pages

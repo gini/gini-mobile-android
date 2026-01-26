@@ -141,9 +141,7 @@ class ConfigurationActivity : AppCompatActivity() {
             else -> R.id.btn_fileImportOnlyPdf
         }
         binding.layoutFeatureToggle.toggleBtnFileImportSetup.check(checkButtonId)
-        // enable review screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.isChecked =
-            configuration.isReviewScreenCustomBottomNavBarEnabled
+
         // enable skonto screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.isChecked =
             configuration.isSkontoCustomNavBarEnabled
@@ -391,15 +389,6 @@ class ConfigurationActivity : AppCompatActivity() {
                         documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.NONE
                     )
                 }
-            )
-        }
-
-        // enable review screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isReviewScreenCustomBottomNavBarEnabled = isChecked
-                )
             )
         }
 
