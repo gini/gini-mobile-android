@@ -1309,17 +1309,6 @@ public class GiniCapture {
             return helpNavigationBarBottomAdapterInstance;
         }
 
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
-         *
-         * @param adapter a {@link ErrorNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setErrorNavigationBarBottomAdapter(@NonNull final ErrorNavigationBarBottomAdapter adapter) {
-            errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
-        }
-
         @NonNull
         private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> getErrorNavigationBarBottomAdapterInstance() {
             return errorNavigationBarBottomAdapterInstance;
