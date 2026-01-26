@@ -139,7 +139,6 @@ data class CaptureConfiguration(
      *
      * Disabled by default.
      */
-    val bottomNavigationBarEnabled: Boolean = false,
 
     /**
      * Enable/disable the payment hint.
@@ -272,7 +271,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setCustomHelpItems(configuration.customHelpItems)
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
-        .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
         .setAlreadyPaidHintEnabled(configuration.alreadyPaidHintEnabled)
         .setPaymentDueHintEnabled(configuration.paymentDueHintEnabled)
         .setPaymentDueHintThresholdDays(configuration.paymentDueHintThresholdDays)
