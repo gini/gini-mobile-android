@@ -1336,17 +1336,6 @@ public class GiniCapture {
             return errorNavigationBarBottomAdapterInstance;
         }
 
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the camera screen.
-         *
-         * @param adapter a {@link CameraNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setCameraNavigationBarBottomAdapter(@NonNull final CameraNavigationBarBottomAdapter adapter) {
-            cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
-        }
-
         private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> getCameraNavigationBarBottomAdapterInstance() {
             return cameraNavigationBarBottomAdapterInstance;
         }
