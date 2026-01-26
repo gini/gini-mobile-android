@@ -119,8 +119,6 @@ class ConfigurationViewModel @Inject constructor(
             flashOnByDefault = configuration.isFlashDefaultStateEnabled,
             // set file import type
             documentImportEnabledFileTypes = configuration.documentImportEnabledFileTypes,
-            // enable bottom navigation bar
-            bottomNavigationBarEnabled = configuration.isBottomNavigationBarEnabled,
             // enable payment hints
             alreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
             // enable payment due hint

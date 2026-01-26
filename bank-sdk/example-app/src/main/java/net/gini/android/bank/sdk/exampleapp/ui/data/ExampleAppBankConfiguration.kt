@@ -215,7 +215,6 @@ data class ExampleAppBankConfiguration(
                 isFlashButtonDisplayed = defaultCaptureConfiguration.flashButtonEnabled,
                 isFlashDefaultStateEnabled = defaultCaptureConfiguration.flashOnByDefault,
                 documentImportEnabledFileTypes = defaultCaptureConfiguration.documentImportEnabledFileTypes,
-                isBottomNavigationBarEnabled = defaultCaptureConfiguration.bottomNavigationBarEnabled,
                 isAlreadyPaidHintEnabled = defaultCaptureConfiguration.alreadyPaidHintEnabled,
                 isPaymentDueHintEnabled = defaultCaptureConfiguration.paymentDueHintEnabled,
                 paymentDueHintThresholdDays = defaultCaptureConfiguration.paymentDueHintThresholdDays,
