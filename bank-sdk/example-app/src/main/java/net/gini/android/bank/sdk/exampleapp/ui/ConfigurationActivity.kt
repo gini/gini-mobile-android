@@ -187,9 +187,6 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable multi page in custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingMultiPage.isChecked =
             configuration.isMultiPageInCustomOnboardingEnabled
-        // enable custom navigation bar in custom onboarding pages
-        binding.layoutBottomNavigationToggles.switchOnboardingCustomNavBar.isChecked =
-            configuration.isCustomNavigationBarInCustomOnboardingEnabled
         // enable button's custom loading indicator
         binding.layoutGeneralUiCustomizationToggles.switchButtonsCustomLoadingIndicator.isChecked =
             configuration.isButtonsCustomLoadingIndicatorEnabled
@@ -534,14 +531,7 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
-        // enable custom navigation bar in custom onboarding pages
-        binding.layoutBottomNavigationToggles.switchOnboardingCustomNavBar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isCustomNavigationBarInCustomOnboardingEnabled = isChecked
-                )
-            )
-        }
+
         // enable button's custom loading indicator
         binding.layoutGeneralUiCustomizationToggles.switchButtonsCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(

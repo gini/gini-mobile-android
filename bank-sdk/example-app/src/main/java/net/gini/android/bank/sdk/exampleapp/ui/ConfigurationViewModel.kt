@@ -224,12 +224,6 @@ class ConfigurationViewModel @Inject constructor(
             )
         }
 
-        // enable custom navigation bar in custom onboarding pages
-        if (configuration.isCustomNavigationBarInCustomOnboardingEnabled)
-            captureConfiguration = captureConfiguration.copy(
-                onboardingNavigationBarBottomAdapter = CustomOnboardingNavigationBarBottomAdapter()
-            )
-
         // enable button's custom loading indicator
         if (configuration.isButtonsCustomLoadingIndicatorEnabled) {
             captureConfiguration = captureConfiguration.copy(

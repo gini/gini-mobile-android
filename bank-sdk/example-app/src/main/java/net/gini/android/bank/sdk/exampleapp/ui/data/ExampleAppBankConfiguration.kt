@@ -89,11 +89,6 @@ data class ExampleAppBankConfiguration(
     // net.gini.android.capture.GiniCapture.Builder#setOnboardingMultiPageIllustrationAdapter
     val isMultiPageInCustomOnboardingEnabled: Boolean = false,
 
-    //  enable custom navigation bar in custom onboarding pages
-    // net.gini.android.capture.GiniCapture.Builder#setOnboardingNavigationBarBottomAdapter
-    val isCustomNavigationBarInCustomOnboardingEnabled: Boolean = false,
-
-
     // enable button's custom loading indicator
     // net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
     val isButtonsCustomLoadingIndicatorEnabled: Boolean = false,
