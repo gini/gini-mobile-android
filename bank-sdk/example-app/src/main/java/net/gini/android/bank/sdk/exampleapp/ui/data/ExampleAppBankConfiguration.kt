@@ -42,10 +42,6 @@ data class ExampleAppBankConfiguration(
     // net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
     val documentImportEnabledFileTypes: DocumentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
 
-    // enable bottom navigation bar
-    // net.gini.android.capture.GiniCapture.Builder#setBottomNavigationBarEnabled → on/off switch
-    val isBottomNavigationBarEnabled: Boolean = false,
-
     // enable Help screens custom bottom navigation bar
     // net.gini.android.capture.GiniCapture.Builder#setHelpNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
     val isHelpScreensCustomBottomNavBarEnabled: Boolean = false,

@@ -141,9 +141,6 @@ class ConfigurationActivity : AppCompatActivity() {
             else -> R.id.btn_fileImportOnlyPdf
         }
         binding.layoutFeatureToggle.toggleBtnFileImportSetup.check(checkButtonId)
-        // enable bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowBottomNavbar.isChecked =
-            configuration.isBottomNavigationBarEnabled
         // enable Help screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchShowHelpScreenCustomBottomNavbar.isChecked =
             configuration.isHelpScreensCustomBottomNavBarEnabled
@@ -406,15 +403,6 @@ class ConfigurationActivity : AppCompatActivity() {
                         documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.NONE
                     )
                 }
-            )
-        }
-
-        // enable bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isBottomNavigationBarEnabled = isChecked
-                )
             )
         }
 
