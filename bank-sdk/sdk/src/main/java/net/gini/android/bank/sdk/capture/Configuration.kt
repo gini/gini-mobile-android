@@ -7,16 +7,13 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter
 import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
 import net.gini.android.capture.help.HelpItem
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT
 import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureNetworkService
 import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
-import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter
 import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.ui.components.GiniComposableStyleProvider
@@ -195,10 +192,6 @@ data class CaptureConfiguration(
      */
     val skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter? = null,
 
-    /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
-     */
-    val helpNavigationBarBottomAdapter: HelpNavigationBarBottomAdapter? = null,
 
     /**
      * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
@@ -302,7 +295,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
                     it
                 )
             }
-            configuration.helpNavigationBarBottomAdapter?.let { setHelpNavigationBarBottomAdapter(it) }
             configuration.errorNavigationBarBottomAdapter?.let { setErrorNavigationBarBottomAdapter(it) }
             configuration.giniComposableStyleProvider?.let { setGiniComposableStyleProvider(it) }
         }
