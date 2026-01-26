@@ -7,7 +7,6 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
 import net.gini.android.capture.help.HelpItem
 import net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT
 import net.gini.android.capture.logging.ErrorLoggerListener
@@ -194,11 +193,6 @@ data class CaptureConfiguration(
 
 
     /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
-     */
-    val errorNavigationBarBottomAdapter: ErrorNavigationBarBottomAdapter? = null,
-
-    /**
      * Set the entry point used for launching the SDK. See [EntryPoint] for possible values.
      *
      * Default value is [EntryPoint.BUTTON].
@@ -295,7 +289,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
                     it
                 )
             }
-            configuration.errorNavigationBarBottomAdapter?.let { setErrorNavigationBarBottomAdapter(it) }
             configuration.giniComposableStyleProvider?.let { setGiniComposableStyleProvider(it) }
         }
 }
