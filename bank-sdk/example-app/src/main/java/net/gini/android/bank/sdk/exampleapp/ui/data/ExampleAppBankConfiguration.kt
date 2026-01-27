@@ -138,9 +138,6 @@ data class ExampleAppBankConfiguration(
     // Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
 
-    // Digital invoice bottom navigation bar
-    val isDigitalInvoiceBottomNavigationBarEnabled: Boolean = false,
-
     // Debug mode
     val isDebugModeEnabled: Boolean = true,
 
