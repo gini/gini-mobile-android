@@ -18,7 +18,6 @@ import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceSkontoNavigationBarBottomAdapter
@@ -26,7 +25,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomLottiLoadingIndica
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustrationAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableStyleProvider
@@ -273,11 +271,6 @@ class ConfigurationViewModel @Inject constructor(
                 )
         }
 
-        // Digital invoice help bottom navigation bar
-        if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled) {
-            GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter =
-                CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
-        }
 
         if (configuration.isSkontoCustomNavBarEnabled) {
             GiniBank.skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter()

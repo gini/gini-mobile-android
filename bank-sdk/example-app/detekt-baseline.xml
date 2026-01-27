@@ -48,7 +48,6 @@
     <ID>MaxLineLength:ConfigurationViewModel.kt$ConfigurationViewModel$if</ID>
     <ID>MaxLineLength:ConfigurationViewModel.kt$ConfigurationViewModel$networkService = if (configuration.isDebugModeEnabled) giniCaptureDefaultNetworkServiceDebugEnabled else giniCaptureDefaultNetworkServiceDebugDisabled</ID>
     <ID>MaxLineLength:CustomCameraNavigationBarBottomAdapter.kt$CustomCameraNavigationBarBottomAdapter$val binding = CustomCameraNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
-    <ID>MaxLineLength:CustomDigitalInvoiceHelpNavigationBarBottomAdapter.kt$CustomDigitalInvoiceHelpNavigationBarBottomAdapter$val binding = CustomDigitalInvoiceHelpNavigationBarBottomBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
     <ID>MaxLineLength:CustomDigitalInvoiceNavigationBarBottomAdapter.kt$CustomDigitalInvoiceNavigationBarBottomAdapter$binding = CustomDigitalInvoiceNavigationBarBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
     <ID>MaxLineLength:CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter.kt$CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter$val binding = CustomDigitalInvoiceOnboardingBottomNavigationBarBinding.inflate(LayoutInflater.from(container.context), container, false)</ID>
     <ID>MaxLineLength:CustomOnboardingNavigationBarBottomAdapter.kt$CustomOnboardingNavigationBarBottomAdapter$OnboardingNavigationBarBottomButton.GET_STARTED -> viewBinding?.buttonGetStarted?.visibility = View.VISIBLE</ID>
