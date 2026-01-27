@@ -42,8 +42,6 @@ data class ExampleAppBankConfiguration(
     // net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
     val documentImportEnabledFileTypes: DocumentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
 
-    // enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
-
     // enable onboarding screens at first launch
     // net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboardingAtFirstRun → on/off switch
     val isOnboardingAtFirstRunEnabled: Boolean = true,
@@ -146,9 +144,6 @@ data class ExampleAppBankConfiguration(
 
     // enable Skonto
     val isSkontoEnabled: Boolean = true,
-
-    // Skonto help Custom bottom navigation
-    val isSkontoHelpCustomNavBarEnabled: Boolean = false,
 
     // enable transaction docs
     val isTransactionDocsEnabled: Boolean = true,
