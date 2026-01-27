@@ -153,9 +153,6 @@ data class ExampleAppBankConfiguration(
     // Skonto help Custom bottom navigation
     val isSkontoHelpCustomNavBarEnabled: Boolean = false,
 
-    // Digital Invoice Skonto Custom bottom navigation
-    val isDigitalInvoiceSkontoCustomNavBarEnabled: Boolean = false,
-
     // enable transaction docs
     val isTransactionDocsEnabled: Boolean = true,
 

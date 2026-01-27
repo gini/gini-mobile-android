@@ -18,7 +18,6 @@ import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomLottiLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
@@ -274,13 +273,6 @@ class ConfigurationViewModel @Inject constructor(
             GiniBank.skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter()
         } else {
             GiniBank.skontoNavigationBarBottomAdapter = null
-        }
-
-        if (configuration.isDigitalInvoiceSkontoCustomNavBarEnabled) {
-            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter =
-                CustomDigitalInvoiceSkontoNavigationBarBottomAdapter()
-        } else {
-            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter = null
         }
 
         if (configuration.isSkontoHelpCustomNavBarEnabled) {
