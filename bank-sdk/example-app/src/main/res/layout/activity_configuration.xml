@@ -47,14 +47,6 @@
             android:layout_marginBottom="16dp" />
 
         <include
-            android:id="@+id/layout_bottomNavigationToggles"
-            layout="@layout/layout_bottom_navigation_toggles"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="16dp" />
-
-        <include
             android:id="@+id/layout_onboardingToggles"
             layout="@layout/layout_onboarding_toggles"
             android:layout_width="match_parent"
