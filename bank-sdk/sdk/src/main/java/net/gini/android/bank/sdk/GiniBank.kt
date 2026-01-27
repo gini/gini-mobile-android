@@ -118,13 +118,6 @@ object GiniBank {
     internal var skontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
         null
 
-    var skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter?
-        set(value) {
-            skontoNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = skontoNavigationBarBottomAdapterInstance?.viewAdapter
-
     internal var digitalInvocieSkontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
         null
 
