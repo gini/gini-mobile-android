@@ -95,12 +95,6 @@ object GiniBank {
      */
     internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
         InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
-    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance =
-                InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceOnboardingNavigationBarBottomAdapterInstance.viewAdapter
 
     internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
         InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
@@ -334,9 +328,6 @@ object GiniBank {
         )
         captureConfiguration = null
         giniCapture = null
-
-        digitalInvoiceOnboardingNavigationBarBottomAdapter =
-            DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
 
         digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(
             R.drawable.gbs_digital_invoice_list_image,
