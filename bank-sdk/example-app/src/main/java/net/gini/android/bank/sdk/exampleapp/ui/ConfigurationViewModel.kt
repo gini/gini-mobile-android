@@ -23,7 +23,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAd
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustrationAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoHelpNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableStyleProvider
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.capture.GiniCaptureDebug
@@ -266,13 +265,6 @@ class ConfigurationViewModel @Inject constructor(
                 CustomOnboardingIllustrationAdapter(
                     R.raw.ai_animation
                 )
-        }
-
-
-        if (configuration.isSkontoCustomNavBarEnabled) {
-            GiniBank.skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter()
-        } else {
-            GiniBank.skontoNavigationBarBottomAdapter = null
         }
 
         if (configuration.isSkontoHelpCustomNavBarEnabled) {

@@ -144,9 +144,6 @@ data class ExampleAppBankConfiguration(
     // Is Allow Screenshots
     val isAllowScreenshotsEnabled: Boolean = true,
 
-    // Skonto Custom bottom navigation
-    val isSkontoCustomNavBarEnabled: Boolean = false,
-
     // enable Skonto
     val isSkontoEnabled: Boolean = true,
 

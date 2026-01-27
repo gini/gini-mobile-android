@@ -142,9 +142,6 @@ class ConfigurationActivity : AppCompatActivity() {
         }
         binding.layoutFeatureToggle.toggleBtnFileImportSetup.check(checkButtonId)
 
-        // enable skonto screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.isChecked =
-            configuration.isSkontoCustomNavBarEnabled
         // enable skonto help screens custom bottom navigation bar
         binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar.isChecked =
             configuration.isSkontoHelpCustomNavBarEnabled
@@ -373,15 +370,6 @@ class ConfigurationActivity : AppCompatActivity() {
                         documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.NONE
                     )
                 }
-            )
-        }
-
-        // enable skonto screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isSkontoCustomNavBarEnabled = isChecked
-                )
             )
         }
 
