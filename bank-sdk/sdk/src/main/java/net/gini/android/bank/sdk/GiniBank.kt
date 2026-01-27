@@ -114,12 +114,6 @@ object GiniBank {
 
     internal var digitalInvoiceNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceNavigationBarBottomAdapter> =
         InjectedViewAdapterInstance(DefaultDigitalInvoiceNavigationBarBottomAdapter())
-    var digitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceNavigationBarBottomAdapterInstance.viewAdapter
-
 
     internal var skontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
         null
@@ -334,7 +328,6 @@ object GiniBank {
             R.string.gbs_digital_invoice_onboarding_text_1
         )
 
-        digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
         releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }
