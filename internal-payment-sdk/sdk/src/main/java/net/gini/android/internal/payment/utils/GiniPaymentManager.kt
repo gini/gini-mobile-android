@@ -17,7 +17,11 @@ internal class GiniPaymentManager(
     val giniHealthAPI: GiniHealthAPI?,
     val paymentEventListener: PaymentEventListener?
 ) {
-    suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) {
+    suspend fun onPayment(
+        paymentProviderApp: PaymentProviderApp?,
+        paymentDetails: PaymentDetails,
+        documentId: String?
+    ) {
         if (giniHealthAPI == null) {
             LOG.error("GiniHealthApi instance must be set")
             throw NullPointerException("Cannot initiate payment: No GiniHealthApi instance set")
@@ -36,13 +40,17 @@ internal class GiniPaymentManager(
 
         paymentEventListener?.onLoading()
         try {
-            paymentEventListener?.onPaymentRequestCreated(getPaymentRequest(paymentProviderApp, paymentDetails), paymentProviderApp.name)
+            paymentEventListener?.onPaymentRequestCreated(getPaymentRequest(documentId,paymentProviderApp, paymentDetails), paymentProviderApp.name)
         } catch (throwable: Throwable) {
             paymentEventListener?.onError(Exception(throwable))
         }
     }
 
-    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?): PaymentRequest {
+    suspend fun getPaymentRequest(
+        documentId: String?,
+        paymentProviderApp: PaymentProviderApp?,
+        paymentDetails: PaymentDetails?
+    ): PaymentRequest {
         if (giniHealthAPI == null) {
             LOG.error("Cannot create PaymentRequest: No GiniHealthApi instance set")
             throw NullPointerException("Cannot create PaymentRequest: No GiniHealthApi instance set")
@@ -60,6 +68,7 @@ internal class GiniPaymentManager(
 
         return when (val createPaymentRequestResource = giniHealthAPI.documentManager.createPaymentRequest(
             PaymentRequestInput(
+                sourceDocumentLocation = documentId?.let { "documents/${documentId}" },
                 paymentProvider = paymentProviderApp.paymentProvider.id,
                 recipient = paymentDetails.recipient,
                 iban = paymentDetails.iban,

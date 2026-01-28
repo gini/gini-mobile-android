@@ -128,7 +128,7 @@ class PaymentFlowViewModel(
             sendFeedback()
         }
         paymentDetails?.let {
-            giniInternalPaymentModule.onPayment(initialSelectedPaymentProvider, it.toCommonPaymentDetails())
+            giniInternalPaymentModule.onPayment(documentId,initialSelectedPaymentProvider, it.toCommonPaymentDetails())
         }
     }
 
@@ -152,7 +152,10 @@ class PaymentFlowViewModel(
         sharePdf(initialSelectedPaymentProvider, externalCacheDir, fileName, viewModelScope, paymentRequestFlow.value)
     }
 
-    override suspend fun getPaymentRequest(): PaymentRequest = giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails?.toCommonPaymentDetails())
+    override suspend fun getPaymentRequest(): PaymentRequest = giniInternalPaymentModule.getPaymentRequest(
+        documentId = documentId,
+        paymentProviderApp= initialSelectedPaymentProvider,
+        paymentDetails= paymentDetails?.toCommonPaymentDetails())
 
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
 

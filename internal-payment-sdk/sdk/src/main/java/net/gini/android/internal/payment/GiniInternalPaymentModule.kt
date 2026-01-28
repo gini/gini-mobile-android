@@ -149,9 +149,9 @@ class GiniInternalPaymentModule(private val context: Context,
 
     val eventsFlow: SharedFlow<InternalPaymentEvents> = _eventsFlow
 
-    suspend fun getPaymentRequest(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?) =
-        giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails)
-    suspend fun onPayment(paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails)
+    suspend fun getPaymentRequest(documentId: String?, paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?) =
+        giniPaymentManager.getPaymentRequest(documentId, paymentProviderApp, paymentDetails)
+    suspend fun onPayment(documentId: String?,paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails,documentId)
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
     suspend fun getConfigurations() {

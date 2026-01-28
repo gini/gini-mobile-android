@@ -72,6 +72,84 @@ class HealthApiDocumentRemoteSourceTest {
             createPaymentRequest(accessToken, PaymentRequestInput("", "", "", "", ""))
         }
     }
+    @Test
+    fun `prefixes baseUrl to sourceDocumentLocation when it is not null`() = runTest {
+        // Given
+        val accessToken = UUID.randomUUID().toString()
+        val documentServiceAuthInterceptor = DocumentServiceAuthInterceptor()
+
+        val baseUrl = "https://health.gini.net/"
+        val apiType = GiniHealthApiType(
+            apiVersion = 1,
+            baseUrl = baseUrl
+        )
+        val testSubject = HealthApiDocumentRemoteSource(
+            StandardTestDispatcher(testScheduler),
+            documentServiceAuthInterceptor,
+            // Make sure this type uses your baseUrl (depends on your actual implementation)
+            apiType,
+            ""
+        )
+
+        val input = PaymentRequestInput(
+            sourceDocumentLocation = "documents/96fd66ac-86e5-4eaf-9cb9-9eef0f5fe597",
+            paymentProvider = "pp",
+            recipient = "recipient",
+            iban = "iban",
+            amount = "10:EUR",
+            bic = null,
+            purpose = "purpose"
+        )
+
+        // When
+        testSubject.createPaymentRequest(accessToken, input)
+        advanceUntilIdle()
+
+        // Then
+        val body = documentServiceAuthInterceptor.lastPaymentRequestBody
+        Truth.assertThat(body).isNotNull()
+        Truth.assertThat(body!!.sourceDocumentLocation)
+            .isEqualTo(baseUrl + "documents/96fd66ac-86e5-4eaf-9cb9-9eef0f5fe597")
+    }
+
+    @Test
+    fun `does not set sourceDocumentLocation when it is null`() = runTest {
+        // Given
+        val accessToken = UUID.randomUUID().toString()
+        val documentServiceAuthInterceptor = DocumentServiceAuthInterceptor()
+
+        val baseUrl = "https://health.gini.net/"
+        val apiType = GiniHealthApiType(
+            apiVersion = 1,
+            baseUrl = baseUrl
+        )
+
+        val testSubject = HealthApiDocumentRemoteSource(
+            StandardTestDispatcher(testScheduler),
+            documentServiceAuthInterceptor,
+            apiType,
+            ""
+        )
+
+        val input = PaymentRequestInput(
+            sourceDocumentLocation = null,
+            paymentProvider = "pp",
+            recipient = "recipient",
+            iban = "iban",
+            amount = "10:EUR",
+            bic = null,
+            purpose = "purpose"
+        )
+
+        // When
+        testSubject.createPaymentRequest(accessToken, input)
+        advanceUntilIdle()
+
+        // Then
+        val body = documentServiceAuthInterceptor.lastPaymentRequestBody
+        Truth.assertThat(body).isNotNull()
+        Truth.assertThat(body!!.sourceDocumentLocation).isNull()
+    }
 
     private inline fun verifyAuthorizationHeader(
         expectedAuthorizationHeader: String,
@@ -102,6 +180,8 @@ class HealthApiDocumentRemoteSourceTest {
     private class DocumentServiceAuthInterceptor : HealthApiDocumentService {
 
         var bearerAuthHeader: String? = null
+        var lastPaymentRequestBody: PaymentRequestBody? = null
+
 
         override suspend fun getPages(bearer: Map<String, String>, documentId: String): Response<List<PageResponse>> {
             bearerAuthHeader = bearer["Authorization"]
@@ -140,6 +220,7 @@ class HealthApiDocumentRemoteSourceTest {
             body: PaymentRequestBody
         ): Response<ResponseBody> {
             bearerAuthHeader = bearer["Authorization"]
+            lastPaymentRequestBody = body
             return Response.success(null, Headers.Builder().set("Location", "somewhere").build())
         }
 
