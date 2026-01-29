@@ -1,5 +1,7 @@
 package net.gini.android.capture.network;
 
+import androidx.annotation.NonNull;
+
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureReturnReason;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
@@ -7,8 +9,6 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by Alpar Szotyori on 29.01.2018.
