@@ -6,6 +6,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.gini.android.core.api.Resource.Companion.wrapInResource
 import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.mapper.createCompositeJson
 import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
@@ -380,37 +381,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
             box = Box.fromApiResponse(responseData.getJSONObject("box"))
         }
         return Extraction(value, entity, box)
-    }
-
-    @Throws(JSONException::class)
-    private fun createCompositeJson(documents: List<Document>): ByteArray {
-        val documentRotationMap = linkedMapOf<Document, Int>()
-        for (document in documents) {
-            documentRotationMap[document] = 0
-        }
-
-        return createCompositeJson(documentRotationMap)
-    }
-
-    @Throws(JSONException::class)
-    private fun createCompositeJson(documentRotationMap: LinkedHashMap<Document, Int>): ByteArray {
-        val jsonObject = JSONObject()
-        val partialDocuments = JSONArray()
-
-        for (entry in documentRotationMap.entries) {
-            val document = entry.key
-            var rotation = entry.value
-
-            rotation = ((rotation % 360) + 360) % 360
-            val partialDoc = JSONObject()
-            partialDoc.put("document", document.uri)
-            partialDoc.put("rotationDelta", rotation)
-            partialDocuments.put(partialDoc)
-        }
-
-        jsonObject.put("partialDocuments", partialDocuments)
-
-        return jsonObject.toString().toByteArray(Utils.CHARSET_UTF8)
     }
 
     protected suspend inline fun <T> withAccessToken(crossinline block: suspend (String) -> Resource<T>): Resource<T> {

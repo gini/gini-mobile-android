@@ -20,7 +20,7 @@ data class ConfigurationResponse(
     @Json(name = "savePhotosLocallyEnabled") val savePhotosLocallyEnabled: Boolean?,
 )
 
-internal fun ConfigurationResponse.toConfiguration() = Configuration(
+fun ConfigurationResponse.toConfiguration() = Configuration(
     clientID = clientID ?: "",
     isUserJourneyAnalyticsEnabled = userJourneyAnalyticsEnabled ?: false,
     isSkontoEnabled = skontoEnabled ?: false,

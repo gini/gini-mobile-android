@@ -28,6 +28,7 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.network.model.ReturnReasonsMapper
 import net.gini.android.capture.network.model.SpecificExtractionMapper
+import net.gini.android.capture.network.model.toAnalysisResult
 import net.gini.android.capture.network.model.toCaptureDocumentLayout
 import net.gini.android.capture.network.model.toCaptureDocumentPages
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
@@ -37,6 +38,7 @@ import net.gini.android.core.api.DocumentMetadata
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.CredentialsStore
 import net.gini.android.core.api.authorization.SessionManager
+
 import okhttp3.Cache
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -378,27 +380,19 @@ internal constructor(
 
                 analyzedGiniApiDocument = compositeDocument
 
-                val extractions =
-                    SpecificExtractionMapper.mapToGiniCapture(allExtractions.specificExtractions)
-                val compoundExtractions =
-                    CompoundExtractionsMapper.mapToGiniCapture(allExtractions.compoundExtractions)
-                val returnReasons =
-                    ReturnReasonsMapper.mapToGiniCapture(allExtractions.returnReasons)
+                val analysisResult = toAnalysisResult(compositeDocument, allExtractions)
 
                 LOG.debug(
                     "Document analysis success for documents {}: " +
                             "extractions = {}; compoundExtractions = {}; returnReasons = {}",
-                    giniApiDocumentIdRotationMap, extractions, compoundExtractions, returnReasons
+                    giniApiDocumentIdRotationMap,
+                    analysisResult.extractions,
+                    analysisResult.compoundExtractions,
+                    analysisResult.returnReasons
                 )
 
                 callback.success(
-                    AnalysisResult(
-                        compositeDocument.id,
-                        compositeDocument.filename,
-                        extractions,
-                        compoundExtractions,
-                        returnReasons
-                    )
+                    analysisResult
                 )
             }
         }
