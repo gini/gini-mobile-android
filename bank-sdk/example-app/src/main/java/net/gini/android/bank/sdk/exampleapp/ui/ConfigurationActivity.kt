@@ -240,10 +240,6 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays.hint =
             configuration.paymentDueHintThresholdDays.toString()
 
-        // enable return reasons dialog
-        binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked =
-            configuration.isReturnReasonsEnabled
-
         // Digital invoice onboarding custom illustration
         binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration.isChecked =
             configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled
@@ -733,16 +729,6 @@ class ConfigurationActivity : AppCompatActivity() {
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
                         isReturnAssistantEnabled = isChecked
-                    )
-                )
-            }
-
-        // enable return reasons dialog
-        binding.layoutReturnAssistantToggles.switchReturnReasonsDialog
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isReturnReasonsEnabled = isChecked
                     )
                 )
             }
