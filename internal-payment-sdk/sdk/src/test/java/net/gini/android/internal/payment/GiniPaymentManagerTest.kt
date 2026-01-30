@@ -32,7 +32,6 @@ class GiniPaymentManagerTest {
     private lateinit var paymentComponent: PaymentComponent
     private lateinit var giniPaymentModule: GiniInternalPaymentModule
     private lateinit var giniHealthAPI: GiniHealthAPI
-    private var documentId = "96fd66ac-86e5-4eaf-9cb9-9eef0f5fe597"
     private val paymentDetails = PaymentDetails(recipient = "recipient",
         iban = "iban",
         amount = "10",
@@ -54,7 +53,7 @@ class GiniPaymentManagerTest {
         val giniPaymentManager = GiniPaymentManager(null, null)
 
         //When
-        giniPaymentManager.onPayment(null, paymentDetails, documentId)
+        giniPaymentManager.onPayment(null, paymentDetails, null)
     }
 
     @Test
@@ -63,7 +62,7 @@ class GiniPaymentManagerTest {
         val giniPaymentManager = GiniPaymentManager(giniHealthAPI, paymentEventListener)
 
         // When
-        giniPaymentManager.onPayment(null, paymentDetails, documentId)
+        giniPaymentManager.onPayment(null, paymentDetails, null)
 
         //Then
         verify(exactly = 0) { paymentEventListener.onError(Exception("No selected payment provider app")) }
@@ -82,7 +81,7 @@ class GiniPaymentManagerTest {
                 icon = null,
                 paymentProvider = mockk(relaxed = true),
                 installedPaymentProviderApp = null
-            ), paymentDetails, documentId
+            ), paymentDetails, null
         )
 
         //Then
@@ -102,7 +101,7 @@ class GiniPaymentManagerTest {
                 icon = null,
                 paymentProvider = mockk(relaxed = true),
                 installedPaymentProviderApp = mockk(relaxed = true)
-            ), paymentDetails, documentId
+            ), paymentDetails, null
         )
 
         //Then
@@ -115,7 +114,7 @@ class GiniPaymentManagerTest {
         val giniPaymentManager = GiniPaymentManager(null, null)
 
         //When
-        giniPaymentManager.getPaymentRequest(documentId, null, paymentDetails)
+        giniPaymentManager.getPaymentRequest(null, null, paymentDetails)
     }
 
     @Test(expected = Exception::class)
@@ -124,7 +123,7 @@ class GiniPaymentManagerTest {
         val giniPaymentManager = GiniPaymentManager(giniHealthAPI, null)
 
         //When
-        giniPaymentManager.getPaymentRequest(documentId, null, paymentDetails)
+        giniPaymentManager.getPaymentRequest(null, null, paymentDetails)
     }
 
     @Test(expected = Exception::class)
@@ -141,7 +140,7 @@ class GiniPaymentManagerTest {
             installedPaymentProviderApp = mockk(relaxed = true)
         )
         // When - Then
-        giniPaymentManager.getPaymentRequest(documentId, paymentProviderApp, paymentDetails)
+        giniPaymentManager.getPaymentRequest(null, paymentProviderApp, paymentDetails)
     }
 
     @Test(expected = Exception::class)
@@ -158,7 +157,7 @@ class GiniPaymentManagerTest {
             installedPaymentProviderApp = mockk(relaxed = true)
         )
         // When - Then
-        giniPaymentManager.getPaymentRequest(documentId, paymentProviderApp, paymentDetails)
+        giniPaymentManager.getPaymentRequest(null, paymentProviderApp, paymentDetails)
     }
 
     @Test
@@ -179,7 +178,7 @@ class GiniPaymentManagerTest {
         )
         // When
         val paymentRequest = giniPaymentManager.getPaymentRequest(
-            documentId,
+            null,
             paymentProviderApp,
             paymentDetails
         )
@@ -191,6 +190,7 @@ class GiniPaymentManagerTest {
     @Test
     fun `sets sourceDocumentLocation to documents_documentId when documentId is not null`() = runTest {
         // Given
+        val documentUri ="https://health-api.gini.net/documents/065da89f-2f3c-45dc-a6da-cc90b5e8c242"
         val paymentEventListener: PaymentEventListener = mockk(relaxed = true)
         val giniPaymentManager = GiniPaymentManager(giniHealthAPI, paymentEventListener)
 
@@ -213,10 +213,10 @@ class GiniPaymentManagerTest {
                 Resource.Success(mockk(relaxed = true))
 
         // When
-        giniPaymentManager.getPaymentRequest(documentId, paymentProviderApp, paymentDetails)
+        giniPaymentManager.getPaymentRequest(documentUri, paymentProviderApp, paymentDetails)
 
         // Then
-        assertThat(inputSlot.captured.sourceDocumentLocation).isEqualTo("documents/$documentId")
+        assertThat(inputSlot.captured.sourceDocumentLocation).isEqualTo(documentUri)
     }
 
     @Test

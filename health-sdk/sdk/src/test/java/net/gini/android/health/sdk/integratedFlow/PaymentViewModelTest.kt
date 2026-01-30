@@ -170,7 +170,7 @@ class PaymentFlowViewModelTest {
     @Test
     fun `forwards on payment action to giniPayment`() = runTest {
         // Given
-        coEvery { giniInternalPaymentModule!!.onPayment(any(), any()) } coAnswers {  }
+        coEvery { giniInternalPaymentModule!!.onPayment(null,any(), any()) } coAnswers {  }
         val savedStateHandle = SavedStateHandle(
             mapOf(
                 "paymentDetails" to PaymentDetails("", "", "", ""),
@@ -185,7 +185,7 @@ class PaymentFlowViewModelTest {
 
         // Then
         viewModel.onPayment()
-        coVerify(exactly = 1) { giniInternalPaymentModule!!.onPayment(any(), any()) }
+        coVerify(exactly = 1) { giniInternalPaymentModule!!.onPayment(null,any(), any()) }
     }
 
     @Test
@@ -222,7 +222,7 @@ class PaymentFlowViewModelTest {
             savedStateHandle = savedStateHandle,
             giniHealth = giniHealth!!
         )
-        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED, "", "") }
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(null,any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED, "", "") }
 
         val paymentRequest = viewModel.getPaymentRequest()
         assertThat(paymentRequest.id).isEqualTo("1234")
@@ -277,7 +277,7 @@ class PaymentFlowViewModelTest {
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
 
-        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN, "", "") }
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(null,any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN, "", "") }
 
         val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
@@ -289,7 +289,7 @@ class PaymentFlowViewModelTest {
         viewModel.onPaymentButtonTapped()
 
         // Then
-        coVerify { giniInternalPaymentModule!!.getPaymentRequest(any(), any()) }
+        coVerify { giniInternalPaymentModule!!.getPaymentRequest(null,any(), any()) }
     }
 
     @Test

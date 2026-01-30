@@ -65,7 +65,7 @@ class OrderDetailsViewModel(
                 val paymentProviders = paymentProvidersAppsState.paymentProviderApps
                 paymentProviders.first { it.paymentProvider.id == PAYMENT_PROVIDER_ID_FOR_PAYMENT_REQUEST }.runCatching {
                     giniHealth.giniInternalPaymentModule.getPaymentRequest(
-                        documentId = null,
+                        documentUri = null,
                         paymentProviderApp= this,
                         paymentDetails = getPaymentDetails()
                     ).also {

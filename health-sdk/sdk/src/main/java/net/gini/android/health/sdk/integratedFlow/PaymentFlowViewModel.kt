@@ -46,14 +46,16 @@ class PaymentFlowViewModel(
         get() = savedStateHandle.get("paymentFlowConfiguration")
         set(value) = savedStateHandle.set("paymentFlowConfiguration", value)
 
-    private val backstack: Stack<DisplayedScreen> = Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
+    private val backstack: Stack<DisplayedScreen> =
+        Stack<DisplayedScreen>().also { it.add(DisplayedScreen.Nothing) }
     private var initialSelectedPaymentProvider: PaymentProviderApp? = null
 
     override val paymentNextStepFlow = MutableSharedFlow<PaymentNextStep>(
         extraBufferCapacity = 1,
     )
     override val paymentRequestFlow: MutableStateFlow<PaymentRequest?> = MutableStateFlow(null)
-    override val giniInternalPaymentModule: GiniInternalPaymentModule = giniHealth.giniInternalPaymentModule
+    override val giniInternalPaymentModule: GiniInternalPaymentModule =
+        giniHealth.giniInternalPaymentModule
 
     val paymentComponent = giniInternalPaymentModule.paymentComponent
 
@@ -99,10 +101,15 @@ class PaymentFlowViewModel(
         setDisplayedScreen()
     }
 
-    fun getLastBackstackEntry() = if (backstack.isNotEmpty()) backstack.peek() else DisplayedScreen.Nothing
+    fun getLastBackstackEntry() =
+        if (backstack.isNotEmpty()) backstack.peek() else DisplayedScreen.Nothing
 
     private fun setDisplayedScreen() = viewModelScope.launch {
-        giniInternalPaymentModule.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed(getLastBackstackEntry().toInternalDisplayedScreen()))
+        giniInternalPaymentModule.emitSdkEvent(
+            GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed(
+                getLastBackstackEntry().toInternalDisplayedScreen()
+            )
+        )
     }
 
     fun paymentProviderAppChanged(paymentProviderApp: PaymentProviderApp): Boolean {
@@ -127,8 +134,14 @@ class PaymentFlowViewModel(
         documentId?.let {
             sendFeedback()
         }
+        val documentUri = resolveDocumentUri()
+
         paymentDetails?.let {
-            giniInternalPaymentModule.onPayment(documentId,initialSelectedPaymentProvider, it.toCommonPaymentDetails())
+            giniInternalPaymentModule.onPayment(
+                documentUri,
+                initialSelectedPaymentProvider,
+                it.toCommonPaymentDetails()
+            )
         }
     }
 
@@ -136,7 +149,12 @@ class PaymentFlowViewModel(
 
     fun emitShareWithStartedEvent() {
         paymentRequestFlow.value?.let {
-            giniInternalPaymentModule.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(it.id, initialSelectedPaymentProvider?.name ?: ""))
+            giniInternalPaymentModule.emitSdkEvent(
+                GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(
+                    it.id,
+                    initialSelectedPaymentProvider?.name ?: ""
+                )
+            )
         }
         shareWithFlowStarted.tryEmit(true)
     }
@@ -149,17 +167,34 @@ class PaymentFlowViewModel(
         documentId?.let {
             sendFeedback()
         }
-        sharePdf(initialSelectedPaymentProvider, externalCacheDir, fileName, viewModelScope, paymentRequestFlow.value)
+        sharePdf(
+            initialSelectedPaymentProvider,
+            externalCacheDir,
+            fileName,
+            viewModelScope,
+            paymentRequestFlow.value
+        )
     }
 
-    override suspend fun getPaymentRequest(): PaymentRequest = giniInternalPaymentModule.getPaymentRequest(
-        documentId = documentId,
-        paymentProviderApp= initialSelectedPaymentProvider,
-        paymentDetails= paymentDetails?.toCommonPaymentDetails())
+    override suspend fun getPaymentRequest(): PaymentRequest {
+        val documentUri = resolveDocumentUri()
 
-    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> = giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)
+        return giniInternalPaymentModule.getPaymentRequest(
+            documentUri = documentUri,
+            paymentProviderApp = initialSelectedPaymentProvider,
+            paymentDetails = paymentDetails?.toCommonPaymentDetails()
+        )
+    }
 
-    override suspend fun getPaymentRequestImage(paymentRequest: PaymentRequest): Resource<ByteArray> = giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestImage(paymentRequest.id)
+    override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> =
+        giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(
+            paymentRequest.id
+        )
+
+    override suspend fun getPaymentRequestImage(paymentRequest: PaymentRequest): Resource<ByteArray> =
+        giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestImage(
+            paymentRequest.id
+        )
 
     fun setFlowCancelled() {
         giniInternalPaymentModule.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled)
@@ -186,22 +221,57 @@ class PaymentFlowViewModel(
         }
     }
 
+    private suspend fun resolveDocumentUri(): String? {
+        return when (val documentResult = giniHealth.documentFlow.value) {
+            is ResultWrapper.Success -> documentResult.value.uri?.toString()
+            is ResultWrapper.Error,
+            is ResultWrapper.Loading -> null
+        }
+    }
+
     fun setExternalCacheDir(directory: File?) {
         externalCacheDir = directory
     }
 
     private fun handleInternalEvents(event: GiniInternalPaymentModule.InternalPaymentEvents) {
         when (event) {
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Error(event.throwable), viewModelScope)
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> getPaymentProviderApp()?.let { giniHealth.setOpenBankState(GiniHealth.PaymentState.Success(
-                net.gini.android.health.sdk.review.model.PaymentRequest(event.paymentRequestId, it)
-            ), viewModelScope) }
-            is GiniInternalPaymentModule.InternalPaymentEvents.NoAction -> giniHealth.setOpenBankState(GiniHealth.PaymentState.NoAction, viewModelScope)
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnLoading -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Loading, viewModelScope)
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> giniHealth.setOpenBankState(GiniHealth.PaymentState.Cancel, viewModelScope)
-            is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> giniHealth.setDisplayedScreen(event.displayedScreen)
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred -> giniHealth.setOpenBankState(
+                GiniHealth.PaymentState.Error(event.throwable),
+                viewModelScope
+            )
+
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnFinishedWithPaymentRequestCreated -> getPaymentProviderApp()?.let {
+                giniHealth.setOpenBankState(
+                    GiniHealth.PaymentState.Success(
+                        net.gini.android.health.sdk.review.model.PaymentRequest(
+                            event.paymentRequestId,
+                            it
+                        )
+                    ), viewModelScope
+                )
+            }
+
+            is GiniInternalPaymentModule.InternalPaymentEvents.NoAction -> giniHealth.setOpenBankState(
+                GiniHealth.PaymentState.NoAction,
+                viewModelScope
+            )
+
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnLoading -> giniHealth.setOpenBankState(
+                GiniHealth.PaymentState.Loading,
+                viewModelScope
+            )
+
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnCancelled -> giniHealth.setOpenBankState(
+                GiniHealth.PaymentState.Cancel,
+                viewModelScope
+            )
+
+            is GiniInternalPaymentModule.InternalPaymentEvents.OnScreenDisplayed -> giniHealth.setDisplayedScreen(
+                event.displayedScreen
+            )
         }
     }
+
     @Suppress("UNCHECKED_CAST")
     class PaymentFlowViewModelFactory(
         private val giniHealth: GiniHealth,

@@ -38,7 +38,6 @@ class GiniInternalPaymentModuleTest {
     private lateinit var giniPaymentManager: GiniPaymentManager
     private lateinit var paymentComponent: PaymentComponent
     private lateinit var documentManager: HealthApiDocumentManager
-    private var documentId = "96fd66ac-86e5-4eaf-9cb9-9eef0f5fe597"
     private val invalidPaymentRequest = PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED, "", "")
     private val paymentProviderApp = PaymentProviderApp(
         name = "payment provider",
@@ -73,7 +72,7 @@ class GiniInternalPaymentModuleTest {
     fun `gets payment request`() = runTest {
         // Given
         coEvery { giniPaymentManager.getPaymentRequest(
-            documentId,
+            null,
             paymentProviderApp,
             paymentDetails
         ) } coAnswers { invalidPaymentRequest }
@@ -94,7 +93,7 @@ class GiniInternalPaymentModuleTest {
         val giniInternalPaymentModule = GiniInternalPaymentModule(context, giniHealthAPI)
 
         // When
-        val paymentRequest = giniInternalPaymentModule.getPaymentRequest(documentId ,paymentProviderApp, paymentDetails)
+        val paymentRequest = giniInternalPaymentModule.getPaymentRequest(null ,paymentProviderApp, paymentDetails)
 
         // Then
         assertThat(paymentRequest.id).isEqualTo(invalidPaymentRequest.id)

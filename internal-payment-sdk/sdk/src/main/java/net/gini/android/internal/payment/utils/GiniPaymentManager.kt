@@ -20,7 +20,7 @@ internal class GiniPaymentManager(
     suspend fun onPayment(
         paymentProviderApp: PaymentProviderApp?,
         paymentDetails: PaymentDetails,
-        documentId: String?
+        documentUri: String?
     ) {
         if (giniHealthAPI == null) {
             LOG.error("GiniHealthApi instance must be set")
@@ -40,14 +40,20 @@ internal class GiniPaymentManager(
 
         paymentEventListener?.onLoading()
         try {
-            paymentEventListener?.onPaymentRequestCreated(getPaymentRequest(documentId,paymentProviderApp, paymentDetails), paymentProviderApp.name)
+            paymentEventListener?.onPaymentRequestCreated(
+                getPaymentRequest(
+                    documentUri,
+                    paymentProviderApp,
+                    paymentDetails
+                ), paymentProviderApp.name
+            )
         } catch (throwable: Throwable) {
             paymentEventListener?.onError(Exception(throwable))
         }
     }
 
     suspend fun getPaymentRequest(
-        documentId: String?,
+        documentUri: String?,
         paymentProviderApp: PaymentProviderApp?,
         paymentDetails: PaymentDetails?
     ): PaymentRequest {
@@ -66,20 +72,21 @@ internal class GiniPaymentManager(
 
         var paymentRequestId: String? = null
 
-        return when (val createPaymentRequestResource = giniHealthAPI.documentManager.createPaymentRequest(
-            PaymentRequestInput(
-                sourceDocumentLocation = documentId?.let { "documents/${documentId}" },
-                paymentProvider = paymentProviderApp.paymentProvider.id,
-                recipient = paymentDetails.recipient,
-                iban = paymentDetails.iban,
-                amount = "${paymentDetails.amount.toBackendFormat()}:EUR",
-                bic = null,
-                purpose = paymentDetails.purpose,
-            )
-        ).mapSuccess {
-            paymentRequestId = it.data
-            giniHealthAPI.documentManager.getPaymentRequest(it.data)
-        }) {
+        return when (val createPaymentRequestResource =
+            giniHealthAPI.documentManager.createPaymentRequest(
+                PaymentRequestInput(
+                    sourceDocumentLocation = documentUri,
+                    paymentProvider = paymentProviderApp.paymentProvider.id,
+                    recipient = paymentDetails.recipient,
+                    iban = paymentDetails.iban,
+                    amount = "${paymentDetails.amount.toBackendFormat()}:EUR",
+                    bic = null,
+                    purpose = paymentDetails.purpose,
+                )
+            ).mapSuccess {
+                paymentRequestId = it.data
+                giniHealthAPI.documentManager.getPaymentRequest(it.data)
+            }) {
             is Resource.Cancelled -> throw Exception("Cancelled")
             is Resource.Error -> throw Exception(createPaymentRequestResource.exception)
             is Resource.Success -> paymentRequestId?.let {

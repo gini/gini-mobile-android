@@ -29,16 +29,17 @@ import org.slf4j.LoggerFactory
 /**
  * Entrypoint to common functionality for HealthSDK and MerchantSDK.
  */
-class GiniInternalPaymentModule(private val context: Context,
-                                private val clientId: String = "",
-                                private val clientSecret: String = "",
-                                private val emailDomain: String = "",
-                                private val sessionManager: SessionManager? = null,
-                                private val baseUrl: String = "",
-                                private val userCenterApiBaseUrl: String? = null,
-                                private val debuggingEnabled: Boolean = false,
-                                private val apiVersion: Int = DEFAULT_API_VERSION,
-                                ) {
+class GiniInternalPaymentModule(
+    private val context: Context,
+    private val clientId: String = "",
+    private val clientSecret: String = "",
+    private val emailDomain: String = "",
+    private val sessionManager: SessionManager? = null,
+    private val baseUrl: String = "",
+    private val userCenterApiBaseUrl: String? = null,
+    private val debuggingEnabled: Boolean = false,
+    private val apiVersion: Int = DEFAULT_API_VERSION,
+) {
 
     constructor(
         context: Context,
@@ -75,24 +76,29 @@ class GiniInternalPaymentModule(private val context: Context,
     private val giniPaymentManager: GiniPaymentManager
         get() {
             _giniPaymentManager?.let { return it }
-                ?: return GiniPaymentManager(this.giniHealthAPI, object: PaymentEventListener {
-                override fun onError(e: Exception) {
-                    _eventsFlow.tryEmit(InternalPaymentEvents.OnErrorOccurred(e))
-                }
+                ?: return GiniPaymentManager(this.giniHealthAPI, object : PaymentEventListener {
+                    override fun onError(e: Exception) {
+                        _eventsFlow.tryEmit(InternalPaymentEvents.OnErrorOccurred(e))
+                    }
 
-                override fun onLoading() {
-                    _eventsFlow.tryEmit(InternalPaymentEvents.OnLoading)
-                }
+                    override fun onLoading() {
+                        _eventsFlow.tryEmit(InternalPaymentEvents.OnLoading)
+                    }
 
-                override fun onPaymentRequestCreated(
-                    paymentRequest: PaymentRequest,
-                    paymentProviderName: String
-                ) {
-                    _eventsFlow.tryEmit(InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(paymentRequest.id, paymentProviderName))
+                    override fun onPaymentRequestCreated(
+                        paymentRequest: PaymentRequest,
+                        paymentProviderName: String
+                    ) {
+                        _eventsFlow.tryEmit(
+                            InternalPaymentEvents.OnFinishedWithPaymentRequestCreated(
+                                paymentRequest.id,
+                                paymentProviderName
+                            )
+                        )
+                    }
+                }).also {
+                    _giniPaymentManager = it
                 }
-            }).also {
-                _giniPaymentManager = it
-            }
         }
 
     val giniHealthAPI: GiniHealthAPI
@@ -108,7 +114,11 @@ class GiniInternalPaymentModule(private val context: Context,
                             apiVersion = apiVersion
                         )
                     } else {
-                        GiniHealthAPIBuilder(context, sessionManager = sessionManager, apiVersion = apiVersion)
+                        GiniHealthAPIBuilder(
+                            context,
+                            sessionManager = sessionManager,
+                            apiVersion = apiVersion
+                        )
                     }.apply {
                         setApiBaseUrl(baseUrl)
                         if (userCenterApiBaseUrl != null) {
@@ -149,9 +159,19 @@ class GiniInternalPaymentModule(private val context: Context,
 
     val eventsFlow: SharedFlow<InternalPaymentEvents> = _eventsFlow
 
-    suspend fun getPaymentRequest(documentId: String?, paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails?) =
-        giniPaymentManager.getPaymentRequest(documentId, paymentProviderApp, paymentDetails)
-    suspend fun onPayment(documentId: String?,paymentProviderApp: PaymentProviderApp?, paymentDetails: PaymentDetails) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails,documentId)
+    suspend fun getPaymentRequest(
+        documentUri: String?,
+        paymentProviderApp: PaymentProviderApp?,
+        paymentDetails: PaymentDetails?
+    ) =
+        giniPaymentManager.getPaymentRequest(documentUri, paymentProviderApp, paymentDetails)
+
+    suspend fun onPayment(
+        documentUri: String?,
+        paymentProviderApp: PaymentProviderApp?,
+        paymentDetails: PaymentDetails
+    ) = giniPaymentManager.onPayment(paymentProviderApp, paymentDetails, documentUri)
+
     suspend fun loadPaymentProviderApps() = paymentComponent.loadPaymentProviderApps()
 
     suspend fun getConfigurations() {
@@ -166,14 +186,17 @@ class GiniInternalPaymentModule(private val context: Context,
                         saveSDKCommunicationTone(tone.name)
                     }
                 }
+
                 is Resource.Error -> {
                     LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                         .error("Getting configuration from server failed: ${configurations.exception}")
                 }
+
                 is Resource.Cancelled -> {
                     LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                         .error("Getting configuration from server was cancelled")
                 }
+
                 else -> {
                     /**
                      * this block is added because tests were failing in GiniHealthTest. It should not happen because we
@@ -213,18 +236,22 @@ class GiniInternalPaymentModule(private val context: Context,
         GiniPaymentPreferences(context).saveIngredientBrandVisibility(visibility.name)
     }
 
-    internal fun getIngredientBrandVisibility() = GiniPaymentPreferences(context).getIngredientBrandVisibility()
+    internal fun getIngredientBrandVisibility() =
+        GiniPaymentPreferences(context).getIngredientBrandVisibility()
 
     internal fun saveSDKCommunicationTone(tone: String) =
         GiniPaymentPreferences(context).saveSDKCommunicationTone(tone)
 
     internal class GiniPaymentPreferences(context: Context) {
-        private val sharedPreferences = context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)
+        private val sharedPreferences =
+            context.getSharedPreferences("GiniPaymentPreferences", Context.MODE_PRIVATE)
 
-        fun saveSDKLanguage(value: GiniLocalization?, isCalledByClient :Boolean = true) {
+        fun saveSDKLanguage(value: GiniLocalization?, isCalledByClient: Boolean = true) {
             val editor: SharedPreferences.Editor = sharedPreferences.edit()
             editor.putString(SDK_LANGUAGE_PREFS_KEY, value?.readableName?.uppercase())
-            if (value != null && !getLanguageOverriddenByUser() && isCalledByClient) saveLanguageOverriddenByUser(true)
+            if (value != null && !getLanguageOverriddenByUser() && isCalledByClient) saveLanguageOverriddenByUser(
+                true
+            )
             editor.apply()
         }
 
@@ -239,7 +266,8 @@ class GiniInternalPaymentModule(private val context: Context,
             editor.apply()
         }
 
-        fun getReturningUser(): Boolean = sharedPreferences.getBoolean(RETURNING_USER_PREFS_KEY, false)
+        fun getReturningUser(): Boolean =
+            sharedPreferences.getBoolean(RETURNING_USER_PREFS_KEY, false)
 
         fun saveIngredientBrandVisibility(visibility: String) {
             sharedPreferences.edit().apply {
@@ -275,12 +303,13 @@ class GiniInternalPaymentModule(private val context: Context,
 
         fun saveLanguageOverriddenByUser(value: Boolean) {
             val editor: SharedPreferences.Editor = sharedPreferences.edit()
-            editor.putBoolean(SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY, value )
+            editor.putBoolean(SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY, value)
             editor.apply()
         }
 
         fun getLanguageOverriddenByUser() = sharedPreferences.getBoolean(
-            SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY, false)
+            SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY, false
+        )
 
     }
 
@@ -288,9 +317,11 @@ class GiniInternalPaymentModule(private val context: Context,
 
     companion object {
         private const val SDK_LANGUAGE_PREFS_KEY = "SDK_LANGUAGE_PREFS_KEY"
-        private const val SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY = "SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY"
+        private const val SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY =
+            "SDK_LANGUAGE_OVERRIDDEN_BY_CLIENT_PREFS_KEY"
         private const val RETURNING_USER_PREFS_KEY = "RETURNING_USER_PREFS_KEY"
-        private const val INGREDIENT_BRAND_VISIBILITY_PREFS_KEY = "INGREDIENT_BRAND_VISIBILITY_PREFS_KEY"
+        private const val INGREDIENT_BRAND_VISIBILITY_PREFS_KEY =
+            "INGREDIENT_BRAND_VISIBILITY_PREFS_KEY"
         private const val SDK_COMMUNICATION_TONE_PREFS_KEY = "SDK_COMMUNICATION_TONE_PREFS_KEY"
         private const val DEFAULT_API_VERSION = 1
         const val SHARE_WITH_INTENT_FILTER = "share_intent_filter"

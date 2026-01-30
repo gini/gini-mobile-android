@@ -75,10 +75,7 @@ class HealthApiDocumentRemoteSource internal constructor(
         val response = SafeApiRequest.apiRequest {
             documentService.createPaymentRequest(
                 bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
-                body = if (paymentRequestInput.sourceDocumentLocation != null)
-                    paymentRequestInput.toPaymentRequestBody()
-                        .copy(sourceDocumentLocation = giniApiType.baseUrl + paymentRequestInput.sourceDocumentLocation)
-                else paymentRequestInput.toPaymentRequestBody()
+                body = paymentRequestInput.toPaymentRequestBody()
             )
         }
 
