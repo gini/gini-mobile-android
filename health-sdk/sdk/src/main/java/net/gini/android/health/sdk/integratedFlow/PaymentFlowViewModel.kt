@@ -224,7 +224,7 @@ class PaymentFlowViewModel(
     private suspend fun resolveDocumentUri(): String? {
         return when (val documentResult = giniHealth.documentFlow.value) {
             is ResultWrapper.Success -> documentResult.value.uri?.toString()
-            is ResultWrapper.Error,
+            is ResultWrapper.Error -> null
             is ResultWrapper.Loading -> null
         }
     }

@@ -19,6 +19,7 @@ import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.review.model.PaymentDetails
+import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.health.sdk.util.DisplayedScreen
 import net.gini.android.internal.payment.GiniInternalPaymentModule
@@ -171,6 +172,8 @@ class PaymentFlowViewModelTest {
     fun `forwards on payment action to giniPayment`() = runTest {
         // Given
         coEvery { giniInternalPaymentModule!!.onPayment(null,any(), any()) } coAnswers {  }
+        every { giniHealth!!.documentFlow.value } returns ResultWrapper.Error(Exception())
+
         val savedStateHandle = SavedStateHandle(
             mapOf(
                 "paymentDetails" to PaymentDetails("", "", "", ""),
@@ -222,6 +225,8 @@ class PaymentFlowViewModelTest {
             savedStateHandle = savedStateHandle,
             giniHealth = giniHealth!!
         )
+        every { giniHealth!!.documentFlow.value } returns ResultWrapper.Error(Exception())
+
         coEvery { giniInternalPaymentModule!!.getPaymentRequest(null,any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED, "", "") }
 
         val paymentRequest = viewModel.getPaymentRequest()
@@ -276,8 +281,10 @@ class PaymentFlowViewModelTest {
 
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
+        //fix next code
+        every { giniHealth!!.documentFlow.value } returns ResultWrapper.Error(Exception())
 
-        coEvery { giniInternalPaymentModule!!.getPaymentRequest(null,any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN, "", "") }
+        coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(),any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN, "", "") }
 
         val savedStateHandle = SavedStateHandle()
         val viewModel = PaymentFlowViewModel(
