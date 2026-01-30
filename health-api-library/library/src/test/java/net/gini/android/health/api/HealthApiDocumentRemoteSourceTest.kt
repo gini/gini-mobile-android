@@ -92,7 +92,7 @@ class HealthApiDocumentRemoteSourceTest {
         )
 
         val input = PaymentRequestInput(
-            sourceDocumentLocation = "documents/96fd66ac-86e5-4eaf-9cb9-9eef0f5fe597",
+            sourceDocumentLocation = "https://health-api.gini.net/documents/065da89f-2f3c-45dc-a6da-cc90b5e8c242",
             paymentProvider = "pp",
             recipient = "recipient",
             iban = "iban",
@@ -109,7 +109,7 @@ class HealthApiDocumentRemoteSourceTest {
         val body = documentServiceAuthInterceptor.lastPaymentRequestBody
         Truth.assertThat(body).isNotNull()
         Truth.assertThat(body!!.sourceDocumentLocation)
-            .isEqualTo(baseUrl + "documents/96fd66ac-86e5-4eaf-9cb9-9eef0f5fe597")
+            .isEqualTo("https://health-api.gini.net/documents/065da89f-2f3c-45dc-a6da-cc90b5e8c242")
     }
 
     @Test
