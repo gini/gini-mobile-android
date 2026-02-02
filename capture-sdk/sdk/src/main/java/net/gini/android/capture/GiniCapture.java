@@ -170,24 +170,6 @@ public class GiniCapture {
     /**
      * Configure and create a new instance using the returned {@link Builder}.
      *
-     * @return a new {@link Builder}
-     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context)}
-     *                               before trying to create a new instance
-     * @deprecated Please use {@link #newInstance(Context)} which allows instance recreation without having to
-     * call {@link #cleanup(Context)} first.
-     */
-    @NonNull
-    @Deprecated
-    public static synchronized Builder newInstance() {
-        if (sInstance != null) {
-            throw new IllegalStateException("An instance was already created. Call GiniCapture.cleanup() before creating a new instance.");
-        }
-        return new Builder();
-    }
-
-    /**
-     * Configure and create a new instance using the returned {@link Builder}.
-     *
      * @param context Android context
      * @return a new {@link Builder}
      */
