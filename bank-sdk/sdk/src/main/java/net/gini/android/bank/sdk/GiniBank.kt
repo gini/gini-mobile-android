@@ -292,29 +292,6 @@ object GiniBank {
         BankSdkIsolatedKoinContext.clean()
     }
 
-
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * @param context Android context
-     *
-     */
-    @Deprecated(
-        "Please use cleanupCapture(context). This method will be removed in a future release.",
-        ReplaceWith("cleanupCapture(context)")
-    )
-    fun releaseCapture(
-        context: Context
-    ) {
-        cleanupCapture(context)
-    }
-
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * @param context Android context
-     *
-     */
     fun cleanupCapture(
         context: Context
     ) {
