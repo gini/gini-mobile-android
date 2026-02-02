@@ -137,6 +137,11 @@ android {
         create("qa") {
             dimension = "environment"
         }
+        create("qaUnique"){
+            dimension = "environment"
+            val v = project(":bank-sdk:sdk").project.version.toString().replace(".", "_")
+            applicationIdSuffix = ".qa$v"
+        }
         create("exampleApp") {
             isDefault = true
             dimension = "purpose"
