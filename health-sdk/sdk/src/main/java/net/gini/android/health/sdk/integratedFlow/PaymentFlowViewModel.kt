@@ -134,7 +134,7 @@ class PaymentFlowViewModel(
         documentId?.let {
             sendFeedback()
         }
-        val documentUri = resolveDocumentUri()
+        val documentUri = if (documentId == null) null else resolveDocumentUri()
 
         paymentDetails?.let {
             giniInternalPaymentModule.onPayment(
