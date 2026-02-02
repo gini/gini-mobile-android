@@ -182,23 +182,6 @@ object GiniBank {
 
     /**
      * Sets configuration for Capture feature.
-     * Note that configuration is immutable. [cleanupCapture] needs to be called before passing a new configuration.
-     *
-     * @throws IllegalStateException if capture is already configured.
-     */
-    @Deprecated(
-        "Please use setCaptureConfiguration(context, captureConfiguration) which allows instance recreation without having to call releaseCapture()",
-        ReplaceWith("setCaptureConfiguration(context, captureConfiguration)")
-    )
-    fun setCaptureConfiguration(captureConfiguration: CaptureConfiguration) {
-        check(giniCapture == null) { "Gini Capture already configured. Call releaseCapture() before setting a new configuration." }
-        GiniBank.captureConfiguration = captureConfiguration
-        GiniCapture.newInstance().applyConfiguration(captureConfiguration).build()
-        giniCapture = GiniCapture.getInstance()
-    }
-
-    /**
-     * Sets configuration for Capture feature.
      */
     fun setCaptureConfiguration(context: Context, captureConfiguration: CaptureConfiguration) {
         GiniBank.captureConfiguration = captureConfiguration
