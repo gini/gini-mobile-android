@@ -47,8 +47,6 @@ import net.gini.android.capture.ImportedFileValidationException
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
-import net.gini.android.capture.requirements.GiniCaptureRequirements
-import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import net.gini.android.core.api.Resource
@@ -274,19 +272,6 @@ object GiniBank {
         releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }
-
-    /**
-     *  Checks hardware requirements for Capture feature.
-     *  Requirements are not enforced, but are recommended to be checked before using.
-     *
-     * @deprecated Checking the requirements is no longer necessary and this method will be removed in a future release.
-     *             The majority of Android devices already meet the SDK's requirements.
-     */
-    @Deprecated(
-        "Checking the requirements is no longer necessary and this method will be removed in a future release."
-    )
-    fun checkCaptureRequirements(context: Context): RequirementsReport =
-        GiniCaptureRequirements.checkRequirements(context)
 
     /**
      * Screen API for starting the capture flow.
