@@ -195,11 +195,8 @@
     <ID>NewLineAtEndOfFile:AutoClearedValue.kt$net.gini.android.capture.internal.util.AutoClearedValue.kt</ID>
     <ID>NewLineAtEndOfFile:BufferedUserAnalyticsEventTracker.kt$net.gini.android.capture.tracking.useranalytics.BufferedUserAnalyticsEventTracker.kt</ID>
     <ID>NewLineAtEndOfFile:BundleHelper.kt$net.gini.android.capture.internal.util.BundleHelper.kt</ID>
-    <ID>NewLineAtEndOfFile:CameraHolder.kt$net.gini.android.capture.requirements.CameraHolder.kt</ID>
-    <ID>NewLineAtEndOfFile:CameraParametersHelper.kt$net.gini.android.capture.internal.camera.api.CameraParametersHelper.kt</ID>
     <ID>NewLineAtEndOfFile:CameraPreviewContainer.kt$net.gini.android.capture.internal.camera.view.CameraPreviewContainer.kt</ID>
     <ID>NewLineAtEndOfFile:CameraXController.kt$net.gini.android.capture.internal.camera.api.camerax.CameraXController.kt</ID>
-    <ID>NewLineAtEndOfFile:CameraXHolder.kt$net.gini.android.capture.requirements.CameraXHolder.kt</ID>
     <ID>NewLineAtEndOfFile:CancelListener.kt$net.gini.android.capture.internal.util.CancelListener.kt</ID>
     <ID>NewLineAtEndOfFile:CaptureSDKResult.kt$net.gini.android.capture.CaptureSDKResult.kt</ID>
     <ID>NewLineAtEndOfFile:ClickListenerExt.kt$net.gini.android.capture.internal.ui.ClickListenerExt.kt</ID>
