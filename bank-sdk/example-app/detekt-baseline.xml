@@ -60,15 +60,12 @@
     <ID>NewLineAtEndOfFile:CaptureFlowHostActivity.kt$net.gini.android.bank.sdk.exampleapp.ui.CaptureFlowHostActivity.kt</ID>
     <ID>NewLineAtEndOfFile:ConfigurationActivity.kt$net.gini.android.bank.sdk.exampleapp.ui.ConfigurationActivity.kt</ID>
     <ID>NewLineAtEndOfFile:ConfigurationViewModel.kt$net.gini.android.bank.sdk.exampleapp.ui.ConfigurationViewModel.kt</ID>
-    <ID>NewLineAtEndOfFile:CustomCameraNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomCameraNavigationBarBottomAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:CustomDigitalInvoiceNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceNavigationBarBottomAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:CustomHelpActivity.kt$net.gini.android.bank.sdk.exampleapp.ui.CustomHelpActivity.kt</ID>
     <ID>NewLineAtEndOfFile:CustomNavigationBarTopAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:CustomOnButtonLoadingIndicatorAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingIndicatorAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:CustomOnboardingIllustrationAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustrationAdapter.kt</ID>
-    <ID>NewLineAtEndOfFile:CustomOnboardingNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigationBarBottomAdapter.kt</ID>
-    <ID>NewLineAtEndOfFile:CustomReviewNavigationBarBottomAdapter.kt$net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter.kt</ID>
     <ID>NewLineAtEndOfFile:DocumentAnalyzer.kt$net.gini.android.bank.sdk.exampleapp.core.DocumentAnalyzer.kt</ID>
     <ID>NewLineAtEndOfFile:ExampleApp.kt$net.gini.android.bank.sdk.exampleapp.ExampleApp.kt</ID>
     <ID>NewLineAtEndOfFile:ExampleUtil.kt$net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.kt</ID>
