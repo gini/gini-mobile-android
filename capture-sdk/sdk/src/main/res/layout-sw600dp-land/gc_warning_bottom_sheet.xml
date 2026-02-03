@@ -15,7 +15,7 @@
             android:padding="@dimen/gc_large">
 
             <ImageView
-                android:id="@+id/warningIcon"
+                android:id="@+id/gc_warningIcon_warningBottomSheet"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:foregroundGravity="center"
@@ -28,7 +28,7 @@
 
             <!-- Only the text area scrolls to support 200% font scale without clipping -->
             <androidx.core.widget.NestedScrollView
-                android:id="@+id/textScroll"
+                android:id="@+id/gc_textScroll_warningBottomSheet"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fillViewport="true"
@@ -36,7 +36,7 @@
                 android:layout_marginTop="@dimen/gc_analysis_hint_icon_size"
                 android:overScrollMode="ifContentScrolls"
                 app:layout_constrainedHeight="true"
-                app:layout_constraintTop_toBottomOf="@+id/warningIcon"
+                app:layout_constraintTop_toBottomOf="@+id/gc_warningIcon_warningBottomSheet"
                 app:layout_constraintStart_toStartOf="@+id/WarningBottomSheet"
                 app:layout_constraintEnd_toEndOf="@+id/WarningBottomSheet"
                 app:layout_constraintWidth_percent="@dimen/gc_analysis_preview_width_percentage"
@@ -48,12 +48,12 @@
                 android:orientation="vertical"
                 android:layout_gravity="center"
                 android:gravity="center"
-                app:layout_constraintEnd_toEndOf="@+id/textScroll"
-                app:layout_constraintStart_toStartOf="@+id/textScroll"
-                app:layout_constraintTop_toBottomOf="@+id/warningIcon">
+                app:layout_constraintEnd_toEndOf="@+id/gc_textScroll_warningBottomSheet"
+                app:layout_constraintStart_toStartOf="@+id/gc_textScroll_warningBottomSheet"
+                app:layout_constraintTop_toBottomOf="@+id/gc_warningIcon_warningBottomSheet">
 
                 <TextView
-                    android:id="@+id/warningTitle"
+                    android:id="@+id/gc_warningTitle_warningBottomSheet"
                     android:gravity="center"
                     style="@style/GiniCaptureTheme.Typography.Headline5"
                     android:layout_width="wrap_content"
@@ -61,7 +61,7 @@
                     android:paddingBottom="@dimen/gc_medium" />
 
                 <TextView
-                    android:id="@+id/warningDescription"
+                    android:id="@+id/gc_warningDescription_warningBottomSheet"
                     android:gravity="center"
                     style="@style/GiniCaptureTheme.Typography.Body1"
                     android:layout_width="wrap_content"
@@ -71,20 +71,20 @@
             </androidx.core.widget.NestedScrollView>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/cancel_button"
+                android:id="@+id/gc_cancelButton_warningBottomSheet"
                 style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_analysis_hint_icon_size"
                 android:layout_marginHorizontal="@dimen/gc_analysis_hint_icon_size"
                 android:text="@string/gc_cancel_transfer"
-                app:layout_constraintTop_toBottomOf="@id/textScroll"
+                app:layout_constraintTop_toBottomOf="@id/gc_textScroll_warningBottomSheet"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                  />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/proceed_button"
+                android:id="@+id/gc_proceedButton_warningBottomSheet"
                 style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

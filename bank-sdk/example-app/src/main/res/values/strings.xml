@@ -62,6 +62,7 @@
     <string name="already_paid_hint_switch_label">Already Paid Hint</string>
     <string name="payment_due_hint_switch_label">Payment Due Hint</string>
     <string name="payment_due_hint_threshold_days_label">Payment Due Hint Threshold Days</string>
+    <string name="credit_note_hint_switch_label">Credit Note Hint</string>
     <string name="open_with_switch_label">Open with</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>
     <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>

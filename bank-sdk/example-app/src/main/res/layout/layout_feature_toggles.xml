@@ -204,5 +204,11 @@
             tools:text="Hello@World and stuff and foo and bar and whatchamacallit" />
     </com.google.android.material.textfield.TextInputLayout>
 
-</LinearLayout>
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_creditNoteHint"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/credit_note_hint_switch_label" />
 
+</LinearLayout>

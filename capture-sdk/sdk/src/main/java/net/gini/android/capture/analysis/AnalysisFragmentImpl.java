@@ -1,8 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -68,6 +65,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY;
 
 /**
  * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
@@ -349,6 +347,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
+        mFragment.showWarning(warningType, onProceed);
+    }
+
+    @Override
+    void showCreditNoteWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
         mFragment.showWarning(warningType, onProceed);
     }
 

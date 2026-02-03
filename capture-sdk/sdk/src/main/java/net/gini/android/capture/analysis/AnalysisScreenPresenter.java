@@ -12,6 +12,7 @@ import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.analysis.warning.BusinessDocType;
 import net.gini.android.capture.analysis.warning.WarningPaymentState;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +68,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     private static final String EXTRACTION_PAYMENT_STATE = "paymentState";
     private static final String EXTRACTION_PAYMENT_DUE_DATE = "paymentDueDate";
+    private static final String EXTRACTION_BUSINESS_DOC_TYPE = "businessDocType";
 
     private static final Logger LOG = LoggerFactory.getLogger(AnalysisScreenPresenter.class);
 
@@ -349,6 +352,14 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                             isSavingInvoicesInProgress,
                                             successResultHolder,
                                             getActivity());
+                                } else if (shouldShowCreditNoteWarning(resultHolder)) {
+                                    successResultHolder = removeAmountToPay(resultHolder);
+                                    shouldClearImageCaches = false;
+                                    extension.showCreditNoteHint(
+                                            mIsInvoiceSavingEnabled,
+                                            isSavingInvoicesInProgress,
+                                            successResultHolder,
+                                            getActivity());
                                 } else if (shouldShowPaymentDueHint(resultHolder)) {
                                     successResultHolder = resultHolder;
                                     shouldClearImageCaches = false;
@@ -573,6 +584,22 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         return state.isPaid();
     }
 
+    private boolean shouldShowCreditNoteWarning(
+            @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        // Feature flags / config
+        final boolean creditNoteHintClientFlagEnabled = extension.getCreditNoteHintEnabledUseCase().invoke();
+
+        final boolean creditNoteHintSDKFlag = GiniCapture.hasInstance() && GiniCapture.getInstance().isCreditNoteHintEnabled();
+
+        if (!creditNoteHintClientFlagEnabled || !creditNoteHintSDKFlag) {
+            return false;
+        }
+
+        // business doc type
+        final BusinessDocType businessDocType = extractBusinessDocType(resultHolder.getExtractions());
+        return businessDocType.isCreditNote();
+    }
+
     private boolean shouldShowPaymentDueHint(
             @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
 
@@ -631,6 +658,29 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         final GiniCaptureSpecificExtraction ps = extractions.get(EXTRACTION_PAYMENT_STATE);
         final String paymentStateValue = ps != null ? ps.getValue() : null;
         return WarningPaymentState.from(paymentStateValue);
+    }
+
+    // extracts the business doc type from extractions
+    private BusinessDocType extractBusinessDocType(
+            @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
+        final GiniCaptureSpecificExtraction businessDocTypeExtraction = extractions.get(EXTRACTION_BUSINESS_DOC_TYPE);
+        final String paymentStateValue = businessDocTypeExtraction != null ? businessDocTypeExtraction.getValue() : null;
+        return BusinessDocType.from(paymentStateValue);
+    }
+
+    private AnalysisInteractor.ResultHolder removeAmountToPay(@NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        Map<String, GiniCaptureSpecificExtraction> extractions = new HashMap<>(resultHolder.getExtractions());
+        extractions.remove("amountToPay");
+        return new AnalysisInteractor.ResultHolder(
+                resultHolder.getResult(),
+                extractions,
+                new HashMap<>(),
+                new ArrayList<>(),
+                resultHolder.getDocumentId(),
+                resultHolder.getDocumentFileName()
+        );
+
+
     }
 
 }

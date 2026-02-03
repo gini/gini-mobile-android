@@ -25,6 +25,7 @@ import net.gini.android.capture.util.SharedPreferenceHelper
 import net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY
 import javax.inject.Inject
 
+@Suppress("LargeClass")
 @AndroidEntryPoint
 class ConfigurationActivity : AppCompatActivity() {
 
@@ -109,6 +110,7 @@ class ConfigurationActivity : AppCompatActivity() {
         finish()
     }
 
+    @Suppress("LongMethod")
     private fun updateUIWithConfigurationObject(configuration: ExampleAppBankConfiguration) {
         // setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.isChecked =
@@ -118,7 +120,8 @@ class ConfigurationActivity : AppCompatActivity() {
         // Capture SDK
         binding.layoutFeatureToggle.switchCaptureSdk.isChecked = configuration.isCaptureSDK
         // Saving Invoices Locally
-        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature.isChecked = configuration.saveInvoicesLocallyEnabled
+        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature.isChecked =
+            configuration.saveInvoicesLocallyEnabled
         // QR code scanning
         binding.layoutFeatureToggle.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
         // only QR code scanning
@@ -239,6 +242,10 @@ class ConfigurationActivity : AppCompatActivity() {
         // set payment due hint threshold days
         binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays.hint =
             configuration.paymentDueHintThresholdDays.toString()
+
+        // enable credit note hint
+        binding.layoutFeatureToggle.switchCreditNoteHint.isChecked =
+            configuration.isCreditNoteHintEnabled
 
         // enable return reasons dialog
         binding.layoutReturnAssistantToggles.switchReturnReasonsDialog.isChecked =
@@ -602,6 +609,14 @@ class ConfigurationActivity : AppCompatActivity() {
                 }
             }
 
+        //enable credit note hint for showing warning
+        binding.layoutFeatureToggle.switchCreditNoteHint.setOnCheckedChangeListener{ _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCreditNoteHintEnabled = isChecked
+                )
+            )
+        }
 
         // enable supported format help screen
         binding.layoutHelpToggles.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->

@@ -124,6 +124,7 @@ public class GiniCapture {
     private final boolean isAlreadyPaidHintEnabled;
     private final boolean isPaymentDueHintEnabled;
     private final int paymentDueHintThresholdDays;
+    private final boolean isCreditNoteHintEnabled;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -439,6 +440,7 @@ public class GiniCapture {
         isAlreadyPaidHintEnabled = builder.isAlreadyPaidHintEnabled();
         isPaymentDueHintEnabled = builder.isPaymentDueHintEnabled();
         paymentDueHintThresholdDays = builder.getPaymentDueHintThresholdDays();
+        isCreditNoteHintEnabled = builder.isCreditNoteHintEnabled();
         onboardingAlignCornersIllustrationAdapterInstance = builder.getOnboardingAlignCornersIllustrationAdapterInstance();
         onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
         onboardingMultiPageIllustrationAdapterInstance = builder.getOnboardingMultiPageIllustrationAdapterInstance();
@@ -740,6 +742,10 @@ public class GiniCapture {
         return paymentDueHintThresholdDays;
     }
 
+    public boolean isCreditNoteHintEnabled() {
+        return isCreditNoteHintEnabled;
+    }
+
     @Nullable
     public OnboardingIllustrationAdapter getOnboardingAlignCornersIllustrationAdapter() {
         if (onboardingAlignCornersIllustrationAdapterInstance == null) {
@@ -946,6 +952,7 @@ public class GiniCapture {
         private boolean isAlreadyPaidHintEnabled = true;
         private boolean isPaymentDueHintEnabled = true;
         private int paymentDueHintThresholdDays = PAYMENT_DUE_HINT_THRESHOLD_DAYS;
+        private boolean isCreditNoteHintEnabled = true;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -1382,6 +1389,11 @@ public class GiniCapture {
             return this;
         }
 
+        public Builder setCreditNoteHintEnabled(final Boolean enabled){
+            isCreditNoteHintEnabled = enabled;
+            return this;
+        }
+
         private boolean isBottomNavigationBarEnabled() {
             return isBottomNavigationBarEnabled;
         }
@@ -1396,6 +1408,10 @@ public class GiniCapture {
 
         private int getPaymentDueHintThresholdDays() {
             return paymentDueHintThresholdDays;
+        }
+
+        private boolean isCreditNoteHintEnabled(){
+            return isCreditNoteHintEnabled;
         }
 
         @NonNull

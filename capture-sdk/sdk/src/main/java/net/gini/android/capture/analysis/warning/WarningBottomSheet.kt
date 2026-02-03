@@ -39,6 +39,7 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
 
     private var titleText: CharSequence? = null
     private var descText: CharSequence? = null
+    private var icon: Int? = null
 
     var listener: Listener? = null
 
@@ -54,6 +55,7 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
         if (type != null) {
             titleText = getString(type.titleRes)
             descText = getString(type.descriptionRes)
+            icon = type.iconRes
         }
     }
 
@@ -135,9 +137,11 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
                                 BottomSheetBehavior.STATE_COLLAPSED -> {
                                     state = BottomSheetBehavior.STATE_EXPANDED
                                 }
+
                                 BottomSheetBehavior.STATE_HIDDEN -> {
                                     state = BottomSheetBehavior.STATE_EXPANDED
                                 }
+
                                 else -> Unit
                             }
                         }
@@ -149,11 +153,13 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
             }
         }
     }
+
     override fun onStart() {
         super.onStart()
 
         if (!resources.getBoolean(R.bool.gc_is_tablet) &&
-            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        ) {
 
             val bottomSheet = (dialog as? BottomSheetDialog)
                 ?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
@@ -171,26 +177,28 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun bindUi() {
-        binding.warningTitle.text = titleText
-        binding.warningDescription.text = descText
+        binding.gcWarningTitleWarningBottomSheet.text = titleText
+        binding.gcWarningDescriptionWarningBottomSheet.text = descText
+        icon?.let { binding.gcWarningIconWarningBottomSheet?.setImageResource(it) }
 
-        binding.warningIcon?.contentDescription = getString(R.string.gc_warning_icon_content_description)
-        binding.warningIcon?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        binding.gcWarningIconWarningBottomSheet?.contentDescription =
+            getString(R.string.gc_warning_icon_content_description)
+        binding.gcWarningIconWarningBottomSheet?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
 
-        binding.cancelButton.setOnClickListener {
+        binding.gcCancelButtonWarningBottomSheet.setOnClickListener {
             listener?.onCancelAction()
             dismissAllowingStateLoss()
         }
-        binding.proceedButton.setOnClickListener {
+        binding.gcProceedButtonWarningBottomSheet.setOnClickListener {
             listener?.onProceedAction()
             dismissAllowingStateLoss()
         }
     }
 
 
-
     companion object {
         private const val ARG_TYPE = "arg_type"
+
         @JvmStatic
         fun newInstance(type: WarningType) = WarningBottomSheet().apply {
             arguments = Bundle().apply {

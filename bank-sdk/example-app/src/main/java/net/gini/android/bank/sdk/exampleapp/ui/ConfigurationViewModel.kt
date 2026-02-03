@@ -121,12 +121,14 @@ class ConfigurationViewModel @Inject constructor(
             documentImportEnabledFileTypes = configuration.documentImportEnabledFileTypes,
             // enable bottom navigation bar
             bottomNavigationBarEnabled = configuration.isBottomNavigationBarEnabled,
-            // enable payment hints
+            // enable already paid hint
             alreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
             // enable payment due hint
             paymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
             // set payment due hint threshold days
             paymentDueHintThresholdDays = configuration.paymentDueHintThresholdDays,
+            // enable credit note hint
+            creditNoteHintEnabled = configuration.isCreditNoteHintEnabled,
             // enable onboarding screens at first launch
             showOnboardingAtFirstRun = configuration.isOnboardingAtFirstRunEnabled,
             // enable onboarding at every launch

@@ -198,12 +198,14 @@
     <string name="gc_invoice_education_content_description">analyse der Rechnung läuft</string>
 
     <!--   region Warning -->
-    <string name="gc_cancel_transfer">Überweisung Abbrechen</string>
-    <string name="gc_proceed_anyway">Trotzdem Fortfahren</string>
+    <string name="gc_cancel_transfer">Überweisung abbrechen</string>
+    <string name="gc_proceed_anyway">Trotzdem fortfahren</string>
     <string name="gc_document_marked_paid_title">Dokument als bezahlt gekennzeichnet</string>
     <string name="gc_document_marked_paid_desc">
         Auf diesem Dokument steht, dass es bereits bezahlt wurde. Bitte prüfen Sie den Hinweis in dem Dokument, um sicherzugehen.
     </string>
+    <string name="gc_document_marked_credit_note_title">Achtung: Gutschrift hochgeladen</string>
+    <string name="gc_document_marked_credit_note_desc">Anscheinend haben Sie eine Gutschrift statt einer Rechnung hochgeladen. Bitte überprüfen Sie Ihr Dokument auf den Begriff „Gutschrift“ oder ob der Betrag negativ ist.</string>
     <string name="gc_warning_title_dialog">Warndialog</string>
     <string name="gc_warning_icon_content_description">Warnsymbol</string>
     <!--   endregion -->

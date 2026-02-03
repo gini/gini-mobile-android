@@ -39,15 +39,18 @@ data class ExampleAppBankConfiguration(
     val isFlashDefaultStateEnabled: Boolean = false,
 
     // set import document type support
-    // net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
-    val documentImportEnabledFileTypes: DocumentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
+    // net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes →
+    //      radio buttons to select an available enum value
+    val documentImportEnabledFileTypes: DocumentImportEnabledFileTypes =
+        DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
 
     // enable bottom navigation bar
     // net.gini.android.capture.GiniCapture.Builder#setBottomNavigationBarEnabled → on/off switch
     val isBottomNavigationBarEnabled: Boolean = false,
 
     // enable Help screens custom bottom navigation bar
-    // net.gini.android.capture.GiniCapture.Builder#setHelpNavigationBarBottomAdapter →  on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setHelpNavigationBarBottomAdapter →
+    //      on/off switch to show a custom adapter implementation
     val isHelpScreensCustomBottomNavBarEnabled: Boolean = false,
 
     // enable Error screens custom bottom navigation bar
@@ -56,11 +59,13 @@ data class ExampleAppBankConfiguration(
     val isErrorScreensCustomBottomNavBarEnabled: Boolean = false,
 
     // enable camera screens custom bottom navigation bar
-    // net.gini.android.capture.GiniCapture.Builder#setCameraNavigationBarBottomAdapter → on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setCameraNavigationBarBottomAdapter →
+    //      on/off switch to show a custom adapter implementation
     val isCameraBottomNavBarEnabled: Boolean = false,
 
     // enable review screens custom bottom navigation bar
-    // net.gini.android.capture.GiniCapture.Builder#setReviewBottomBarNavigationAdapter →  on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setReviewBottomBarNavigationAdapter →
+    //      on/off switch to show a custom adapter implementation
     val isReviewScreenCustomBottomNavBarEnabled: Boolean = false,
 
     // enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
@@ -74,7 +79,8 @@ data class ExampleAppBankConfiguration(
     val isOnboardingAtEveryLaunchEnabled: Boolean = false,
 
     // enable custom onboarding pages
-    // net.gini.android.capture.GiniCapture.Builder#setCustomOnboardingPages → on/off switch to show custom onboarding pages
+    // net.gini.android.capture.GiniCapture.Builder#setCustomOnboardingPages →
+    //      on/off switch to show custom onboarding pages
     val isCustomOnboardingPagesEnabled: Boolean = false,
 
     // enable align corners in custom onboarding pages
@@ -86,7 +92,8 @@ data class ExampleAppBankConfiguration(
     val isLightingInCustomOnboardingEnabled: Boolean = false,
 
     // enable QR code in custom onboarding pages
-    // net.gini.android.capture.GiniCapture.Builder#setOnboardingQRCodeIllustrationAdapter-> on/off switch to show custom adapter with animated illustrations
+    // net.gini.android.capture.GiniCapture.Builder#setOnboardingQRCodeIllustrationAdapter->
+    //      on/off switch to show custom adapter with animated illustrations
     val isQRCodeInCustomOnboardingEnabled: Boolean = false,
 
     // enable multi page in custom onboarding pages
@@ -99,11 +106,13 @@ data class ExampleAppBankConfiguration(
 
 
     // enable button's custom loading indicator
-    // net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter →
+    //      on/off switch to show a custom adapter implementation
     val isButtonsCustomLoadingIndicatorEnabled: Boolean = false,
 
     // enable screen's custom loading indicator
-    // net.gini.android.capture.GiniCapture.Builder#setLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setLoadingIndicatorAdapter →
+    //      on/off switch to show a custom adapter implementation
 
     val isScreenCustomLoadingIndicatorEnabled: Boolean = false,
 
@@ -116,7 +125,8 @@ data class ExampleAppBankConfiguration(
     val isCustomHelpItemsEnabled: Boolean = false,
 
     // enable custom navigation bar
-    // net.gini.android.capture.GiniCapture.Builder#setNavigationBarTopAdapter →  on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setNavigationBarTopAdapter →
+    //    on/off switch to show a custom adapter implementation
     val isCustomNavBarEnabled: Boolean = false,
 
     // enable custom primary button in compose
@@ -160,6 +170,9 @@ data class ExampleAppBankConfiguration(
 
     //  payment due hint threshold days
     val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
+
+    // enable credit note hint
+    val isCreditNoteHintEnabled: Boolean = true,
 
     // Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
@@ -219,6 +232,7 @@ data class ExampleAppBankConfiguration(
                 isAlreadyPaidHintEnabled = defaultCaptureConfiguration.alreadyPaidHintEnabled,
                 isPaymentDueHintEnabled = defaultCaptureConfiguration.paymentDueHintEnabled,
                 paymentDueHintThresholdDays = defaultCaptureConfiguration.paymentDueHintThresholdDays,
+                isCreditNoteHintEnabled = defaultCaptureConfiguration.creditNoteHintEnabled,
                 isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,
