@@ -175,10 +175,12 @@ object GiniBank {
     }
 
     /**
+     * The return reasons dialog will be deleted in the next release.
+     * Right now, we are removing the public API for showing the return reasons dialog.
      * Shows the return reasons dialog in the return assistant, if enabled.
      * Note that it is disabled by default.
      */
-    var enableReturnReasons = false
+    internal var enableReturnReasons = false
 
     /**
      * Sets configuration for Capture feature.

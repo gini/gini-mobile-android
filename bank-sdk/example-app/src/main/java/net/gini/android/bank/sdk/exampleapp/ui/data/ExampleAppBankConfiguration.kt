@@ -149,9 +149,6 @@ data class ExampleAppBankConfiguration(
     // enable return assistant
     val isReturnAssistantEnabled: Boolean = true,
 
-    // enable return reasons dialog
-    val isReturnReasonsEnabled: Boolean = false,
-
     // enable show warning for paid invoices
     val isAlreadyPaidHintEnabled: Boolean = true,
 

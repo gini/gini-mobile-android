@@ -293,9 +293,6 @@ class ConfigurationViewModel @Inject constructor(
         }
         GiniBank.setCaptureConfiguration(context, captureConfiguration)
 
-        // enable return reasons dialog
-        GiniBank.enableReturnReasons = configuration.isReturnReasonsEnabled
-
         // Digital invoice onboarding custom illustration
         if (configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled) {
             GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
