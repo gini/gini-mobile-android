@@ -271,7 +271,6 @@
     <ID>ThrowsCount:Extensions.kt$@Throws(CameraException::class) private fun cropByteArray(data: ByteArray, cropRect: Rect?): ByteArray</ID>
     <ID>ThrowsCount:IBANValidator.kt$IBANValidator$@Throws(IllegalIBANException::class) private fun validateLength(iban: String)</ID>
     <ID>TooGenericExceptionCaught:CameraXController.kt$CameraXController$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:CameraXHolder.kt$CameraXHolder$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DeviceInfo.kt$DeviceInfo.CachedInfo$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ErrorType.kt$ErrorType.Companion$e: Exception</ID>
     <ID>TooManyFunctions:CameraXController.kt$CameraXController : CameraInterface</ID>
