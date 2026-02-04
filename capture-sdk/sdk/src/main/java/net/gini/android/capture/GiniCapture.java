@@ -120,7 +120,6 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance;
     private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance;
-    private final boolean isBottomNavigationBarEnabled;
     private final boolean isAlreadyPaidHintEnabled;
     private final boolean isPaymentDueHintEnabled;
     private final int paymentDueHintThresholdDays;
@@ -435,7 +434,6 @@ public class GiniCapture {
         onboardingNavigationBarBottomAdapterInstance = builder.getOnboardingNavigationBarBottomAdapterInstance();
         helpNavigationBarBottomAdapterInstance = builder.getHelpNavigationBarBottomAdapterInstance();
         errorNavigationBarBottomAdapterInstance = builder.getErrorNavigationBarBottomAdapterInstance();
-        isBottomNavigationBarEnabled = builder.isBottomNavigationBarEnabled();
         isAlreadyPaidHintEnabled = builder.isAlreadyPaidHintEnabled();
         isPaymentDueHintEnabled = builder.isPaymentDueHintEnabled();
         paymentDueHintThresholdDays = builder.getPaymentDueHintThresholdDays();
@@ -724,8 +722,18 @@ public class GiniCapture {
         return cameraNavigationBarBottomAdapterInstance.getViewAdapter();
     }
 
+    /**
+     * Since the bottom navigation bar is disabled now ( as of Jan 2026),
+     * this method always returns false.
+     * <p>
+     * Once the codebase is cleaned up fully, this method will be removed as well.
+     * For now, it is kept with default false value because it is still used in multiple places.
+     * <p>
+     * For now marking it as deprecated to indicate it should not be used anymore.
+     */
+    @Deprecated
     public boolean isBottomNavigationBarEnabled() {
-        return isBottomNavigationBarEnabled;
+        return false;
     }
 
     public boolean isAlreadyPaidHintEnabled() {
@@ -938,11 +946,10 @@ public class GiniCapture {
         private ErrorLoggerListener mCustomErrorLoggerListener;
         private int mImportedFileSizeBytesLimit = FILE_SIZE_LIMIT;
         private InjectedViewAdapterInstance<NavigationBarTopAdapter> navigationBarTopAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultNavigationBarTopAdapter());
-        private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
-        private InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
-        private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultErrorNavigationBarBottomAdapter());
-        private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
-        private boolean isBottomNavigationBarEnabled = false;
+        private final InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnboardingNavigationBarBottomAdapter());
+        private final InjectedViewAdapterInstance<HelpNavigationBarBottomAdapter> helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultHelpNavigationBarBottomAdapter());
+        private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultErrorNavigationBarBottomAdapter());
+        private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private boolean isAlreadyPaidHintEnabled = true;
         private boolean isPaymentDueHintEnabled = true;
         private int paymentDueHintThresholdDays = PAYMENT_DUE_HINT_THRESHOLD_DAYS;
@@ -951,7 +958,7 @@ public class GiniCapture {
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingQRCodeIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<CustomLoadingIndicatorAdapter> loadingIndicatorAdapter = new InjectedViewAdapterInstance<>(new DefaultLoadingIndicatorAdapter());
-        private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultReviewNavigationBarBottomAdapter());
+        private final InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultReviewNavigationBarBottomAdapter());
 
         private InjectedViewAdapterInstance<OnButtonLoadingIndicatorAdapter> onButtonLoadingIndicatorAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultOnButtonLoadingIndicatorAdapter());
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
@@ -1292,31 +1299,9 @@ public class GiniCapture {
             return navigationBarTopAdapterInstance;
         }
 
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
-         *
-         * @param adapter an {@link OnboardingNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setOnboardingNavigationBarBottomAdapter(@NonNull final OnboardingNavigationBarBottomAdapter adapter) {
-            navigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
-        }
-
         @NonNull
         private InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> getOnboardingNavigationBarBottomAdapterInstance() {
             return navigationBarBottomAdapterInstance;
-        }
-
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
-         *
-         * @param adapter a {@link HelpNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setHelpNavigationBarBottomAdapter(@NonNull final HelpNavigationBarBottomAdapter adapter) {
-            helpNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
         }
 
         @NonNull
@@ -1324,47 +1309,13 @@ public class GiniCapture {
             return helpNavigationBarBottomAdapterInstance;
         }
 
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
-         *
-         * @param adapter a {@link ErrorNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setErrorNavigationBarBottomAdapter(@NonNull final ErrorNavigationBarBottomAdapter adapter) {
-            errorNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
-        }
-
         @NonNull
         private InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> getErrorNavigationBarBottomAdapterInstance() {
             return errorNavigationBarBottomAdapterInstance;
         }
 
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the camera screen.
-         *
-         * @param adapter a {@link CameraNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setCameraNavigationBarBottomAdapter(@NonNull final CameraNavigationBarBottomAdapter adapter) {
-            cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
-        }
-
         private InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> getCameraNavigationBarBottomAdapterInstance() {
             return cameraNavigationBarBottomAdapterInstance;
-        }
-
-        /**
-         * Enable/disable the bottom navigation bar.
-         * <p>
-         * Disabled by default.
-         *
-         * @return the {@link Builder} instance
-         */
-        public Builder setBottomNavigationBarEnabled(final Boolean enabled) {
-            isBottomNavigationBarEnabled = enabled;
-            return this;
         }
 
         public Builder setAlreadyPaidHintEnabled(final Boolean enabled) {
@@ -1381,11 +1332,6 @@ public class GiniCapture {
             paymentDueHintThresholdDays = thresholdDays;
             return this;
         }
-
-        private boolean isBottomNavigationBarEnabled() {
-            return isBottomNavigationBarEnabled;
-        }
-
         private boolean isAlreadyPaidHintEnabled() {
             return isAlreadyPaidHintEnabled;
         }
@@ -1488,16 +1434,6 @@ public class GiniCapture {
             return this;
         }
 
-        /**
-         * Set an adapter implementation to show a custom bottom navigation bar on the review screen.
-         *
-         * @param adapter a {@link ReviewNavigationBarBottomAdapter} interface implementation
-         * @return the {@link Builder} instance
-         */
-        public Builder setReviewBottomBarNavigationAdapter(@NonNull final ReviewNavigationBarBottomAdapter adapter) {
-            reviewNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(adapter);
-            return this;
-        }
 
         private InjectedViewAdapterInstance<ReviewNavigationBarBottomAdapter> getReviewNavigationBarBottomAdapterInstance() {
             return reviewNavigationBarBottomAdapterInstance;

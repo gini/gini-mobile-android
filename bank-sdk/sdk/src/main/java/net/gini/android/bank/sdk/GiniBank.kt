@@ -88,27 +88,6 @@ object GiniBank {
         get() = giniGankTransactions
             ?: error("Transaction list not initialized. Call `initializeTransactionListFeature(...)` first.")
 
-    /**
-     * Bottom navigation bar adapters. Could be changed to custom ones.
-     */
-    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
-    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance =
-                InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceOnboardingNavigationBarBottomAdapterInstance.viewAdapter
-
-    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
-    var digitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceHelpNavigationBarBottomAdapterInstance =
-                InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceHelpNavigationBarBottomAdapterInstance.viewAdapter
-
     internal var digitalInvoiceOnboardingIllustrationAdapterInstance: InjectedViewAdapterInstance<OnboardingIllustrationAdapter> =
         InjectedViewAdapterInstance(
             ImageOnboardingIllustrationAdapter(
@@ -122,45 +101,34 @@ object GiniBank {
         }
         get() = digitalInvoiceOnboardingIllustrationAdapterInstance.viewAdapter
 
+    /**
+     * Below listed internal bottom bar instances are only kept here because they are used in many
+     * places, Once the code clean up happens, these must be removed as we drop support for custom
+     * bottom bars.
+     * - [digitalInvoiceNavigationBarBottomAdapterInstance]
+     * - [digitalInvocieSkontoNavigationBarBottomAdapterInstance]
+     * - [digitalInvoiceHelpNavigationBarBottomAdapterInstance]
+     * - [digitalInvoiceOnboardingNavigationBarBottomAdapterInstance]
+     * - [skontoHelpNavigationBarBottomAdapterInstance]
+     * - [skontoNavigationBarBottomAdapterInstance]
+     * */
+    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
+
+    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
+
     internal var digitalInvoiceNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceNavigationBarBottomAdapter> =
         InjectedViewAdapterInstance(DefaultDigitalInvoiceNavigationBarBottomAdapter())
-    var digitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceNavigationBarBottomAdapterInstance.viewAdapter
-
 
     internal var skontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
         null
 
-    var skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter?
-        set(value) {
-            skontoNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = skontoNavigationBarBottomAdapterInstance?.viewAdapter
-
     internal var digitalInvocieSkontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
         null
 
-    var digitalInvoiceSkontoNavigationBarBottomAdapter: DigitalInvoiceSkontoNavigationBarBottomAdapter?
-        set(value) {
-            digitalInvocieSkontoNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = digitalInvocieSkontoNavigationBarBottomAdapterInstance?.viewAdapter
-
     internal var skontoHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? =
         null
-
-    var skontoHelpNavigationBarBottomAdapter: SkontoHelpNavigationBarBottomAdapter?
-        set(value) {
-            skontoHelpNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = skontoHelpNavigationBarBottomAdapterInstance?.viewAdapter
-
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -341,17 +309,11 @@ object GiniBank {
         captureConfiguration = null
         giniCapture = null
 
-        digitalInvoiceOnboardingNavigationBarBottomAdapter =
-            DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-        digitalInvoiceHelpNavigationBarBottomAdapter =
-            DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
-
         digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(
             R.drawable.gbs_digital_invoice_list_image,
             R.string.gbs_digital_invoice_onboarding_text_1
         )
 
-        digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
         releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }

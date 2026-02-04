@@ -141,34 +141,6 @@ class ConfigurationActivity : AppCompatActivity() {
             else -> R.id.btn_fileImportOnlyPdf
         }
         binding.layoutFeatureToggle.toggleBtnFileImportSetup.check(checkButtonId)
-        // enable bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowBottomNavbar.isChecked =
-            configuration.isBottomNavigationBarEnabled
-        // enable Help screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowHelpScreenCustomBottomNavbar.isChecked =
-            configuration.isHelpScreensCustomBottomNavBarEnabled
-        // enable Error screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowErrorScreenCustomBottomNavbar.isChecked =
-            configuration.isErrorScreensCustomBottomNavBarEnabled
-        // enable camera screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchCameraScreenCustomBottomNavbar.isChecked =
-            configuration.isCameraBottomNavBarEnabled
-        // enable review screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.isChecked =
-            configuration.isReviewScreenCustomBottomNavBarEnabled
-        // enable skonto screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.isChecked =
-            configuration.isSkontoCustomNavBarEnabled
-        // enable skonto help screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar.isChecked =
-            configuration.isSkontoHelpCustomNavBarEnabled
-
-        // enable digital invoice skonto screen custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar.isChecked =
-            configuration.isDigitalInvoiceSkontoCustomNavBarEnabled
-
-        // enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
-
         // enable onboarding screens at first launch
         binding.layoutOnboardingToggles.switchOnboardingScreensAtFirstRun.isChecked =
             configuration.isOnboardingAtFirstRunEnabled
@@ -190,9 +162,6 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable multi page in custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingMultiPage.isChecked =
             configuration.isMultiPageInCustomOnboardingEnabled
-        // enable custom navigation bar in custom onboarding pages
-        binding.layoutBottomNavigationToggles.switchOnboardingCustomNavBar.isChecked =
-            configuration.isCustomNavigationBarInCustomOnboardingEnabled
         // enable button's custom loading indicator
         binding.layoutGeneralUiCustomizationToggles.switchButtonsCustomLoadingIndicator.isChecked =
             configuration.isButtonsCustomLoadingIndicatorEnabled
@@ -243,18 +212,6 @@ class ConfigurationActivity : AppCompatActivity() {
         // Digital invoice onboarding custom illustration
         binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration.isChecked =
             configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled
-
-        // Digital invoice help bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceHelpBottomNavigationBar.isChecked =
-            configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled
-
-        // Digital invoice onboarding bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceOnboardingBottomNavigationBar.isChecked =
-            configuration.isDigitalInvoiceOnboardingBottomNavigationBarEnabled
-
-        // Digital invoice bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceBottomNavigationBar.isChecked =
-            configuration.isDigitalInvoiceBottomNavigationBarEnabled
 
         // Allow screenshots
         binding.layoutDebugDevelopmentOptionsToggles.switchAllowScreenshots.isChecked =
@@ -405,84 +362,6 @@ class ConfigurationActivity : AppCompatActivity() {
             )
         }
 
-        // enable bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isBottomNavigationBarEnabled = isChecked
-                )
-            )
-        }
-
-        // enable Help screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchShowHelpScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isHelpScreensCustomBottomNavBarEnabled = isChecked
-                )
-            )
-        }
-
-        // enable Error screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles
-            .switchShowErrorScreenCustomBottomNavbar
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isErrorScreensCustomBottomNavBarEnabled = isChecked
-                    )
-                )
-            }
-
-        // enable camera screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchCameraScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isCameraBottomNavBarEnabled = isChecked
-                )
-            )
-        }
-
-        // enable review screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchReviewScreenCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isReviewScreenCustomBottomNavBarEnabled = isChecked
-                )
-            )
-        }
-
-        // enable skonto screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchSkontoCustomBottomNavbar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isSkontoCustomNavBarEnabled = isChecked
-                )
-            )
-        }
-
-        // enable skonto screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchSkontoHelpCustomBottomNavbar
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isSkontoHelpCustomNavBarEnabled = isChecked
-                    )
-                )
-            }
-
-        // enable digital invoice skonto screens custom bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceSkontoCustomBottomNavbar
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isDigitalInvoiceSkontoCustomNavBarEnabled = isChecked
-                    )
-                )
-            }
-
-        // enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
-
         // enable onboarding screens at first launch
         binding.layoutOnboardingToggles.switchOnboardingScreensAtFirstRun.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
@@ -542,14 +421,7 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             )
         }
-        // enable custom navigation bar in custom onboarding pages
-        binding.layoutBottomNavigationToggles.switchOnboardingCustomNavBar.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isCustomNavigationBarInCustomOnboardingEnabled = isChecked
-                )
-            )
-        }
+
         // enable button's custom loading indicator
         binding.layoutGeneralUiCustomizationToggles.switchButtonsCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
@@ -739,36 +611,6 @@ class ConfigurationActivity : AppCompatActivity() {
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
                         isDigitalInvoiceOnboardingCustomIllustrationEnabled = isChecked
-                    )
-                )
-            }
-
-        // Digital invoice help bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceHelpBottomNavigationBar
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isDigitalInvoiceHelpBottomNavigationBarEnabled = isChecked
-                    )
-                )
-            }
-
-        // Digital invoice onboarding bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceOnboardingBottomNavigationBar
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isDigitalInvoiceOnboardingBottomNavigationBarEnabled = isChecked
-                    )
-                )
-            }
-
-        // Digital invoice bottom navigation bar
-        binding.layoutBottomNavigationToggles.switchDigitalInvoiceBottomNavigationBar
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isDigitalInvoiceBottomNavigationBarEnabled = isChecked
                     )
                 )
             }

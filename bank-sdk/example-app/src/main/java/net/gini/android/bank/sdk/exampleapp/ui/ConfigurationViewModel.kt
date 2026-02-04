@@ -18,21 +18,10 @@ import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomCameraNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceHelpNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomDigitalInvoiceSkontoNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomErrorNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomHelpNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomLottiLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnButtonLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingIllustrationAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomOnboardingNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomReviewNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoHelpNavigationBarBottomAdapter
-import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomSkontoNavigationBarBottomAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.composables.CustomGiniComposableStyleProvider
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.capture.GiniCaptureDebug
@@ -119,8 +108,6 @@ class ConfigurationViewModel @Inject constructor(
             flashOnByDefault = configuration.isFlashDefaultStateEnabled,
             // set file import type
             documentImportEnabledFileTypes = configuration.documentImportEnabledFileTypes,
-            // enable bottom navigation bar
-            bottomNavigationBarEnabled = configuration.isBottomNavigationBarEnabled,
             // enable payment hints
             alreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
             // enable payment due hint
@@ -150,25 +137,6 @@ class ConfigurationViewModel @Inject constructor(
             // enables saving invoices locally after analysis
             saveInvoicesLocallyEnabled = configuration.saveInvoicesLocallyEnabled,
         )
-
-        // enable Help screens custom bottom navigation bar
-        if (configuration.isHelpScreensCustomBottomNavBarEnabled)
-            captureConfiguration =
-                captureConfiguration.copy(helpNavigationBarBottomAdapter = CustomHelpNavigationBarBottomAdapter())
-        // enable Error screens custom bottom navigation bar
-        if (configuration.isErrorScreensCustomBottomNavBarEnabled)
-            captureConfiguration =
-                captureConfiguration.copy(errorNavigationBarBottomAdapter = CustomErrorNavigationBarBottomAdapter())
-
-        // enable camera screens custom bottom navigation bar
-        if (configuration.isCameraBottomNavBarEnabled)
-            captureConfiguration =
-                captureConfiguration.copy(cameraNavigationBarBottomAdapter = CustomCameraNavigationBarBottomAdapter())
-
-        // enable review screens custom bottom navigation bar
-        if (configuration.isReviewScreenCustomBottomNavBarEnabled)
-            captureConfiguration =
-                captureConfiguration.copy(reviewNavigationBarBottomAdapter = CustomReviewNavigationBarBottomAdapter())
 
         // enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
 
@@ -225,12 +193,6 @@ class ConfigurationViewModel @Inject constructor(
                 )
             )
         }
-
-        // enable custom navigation bar in custom onboarding pages
-        if (configuration.isCustomNavigationBarInCustomOnboardingEnabled)
-            captureConfiguration = captureConfiguration.copy(
-                onboardingNavigationBarBottomAdapter = CustomOnboardingNavigationBarBottomAdapter()
-            )
 
         // enable button's custom loading indicator
         if (configuration.isButtonsCustomLoadingIndicatorEnabled) {
@@ -299,44 +261,6 @@ class ConfigurationViewModel @Inject constructor(
                 CustomOnboardingIllustrationAdapter(
                     R.raw.ai_animation
                 )
-        }
-
-        // Digital invoice help bottom navigation bar
-        if (configuration.isDigitalInvoiceHelpBottomNavigationBarEnabled) {
-            GiniBank.digitalInvoiceHelpNavigationBarBottomAdapter =
-                CustomDigitalInvoiceHelpNavigationBarBottomAdapter()
-        }
-
-        if (configuration.isSkontoCustomNavBarEnabled) {
-            GiniBank.skontoNavigationBarBottomAdapter = CustomSkontoNavigationBarBottomAdapter()
-        } else {
-            GiniBank.skontoNavigationBarBottomAdapter = null
-        }
-
-        if (configuration.isDigitalInvoiceSkontoCustomNavBarEnabled) {
-            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter =
-                CustomDigitalInvoiceSkontoNavigationBarBottomAdapter()
-        } else {
-            GiniBank.digitalInvoiceSkontoNavigationBarBottomAdapter = null
-        }
-
-        if (configuration.isSkontoHelpCustomNavBarEnabled) {
-            GiniBank.skontoHelpNavigationBarBottomAdapter =
-                CustomSkontoHelpNavigationBarBottomAdapter()
-        } else {
-            GiniBank.skontoHelpNavigationBarBottomAdapter = null
-        }
-
-        // Digital invoice onboarding bottom navigation bar
-        if (configuration.isDigitalInvoiceOnboardingBottomNavigationBarEnabled) {
-            GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapter =
-                CustomDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-        }
-
-        // Digital invoice bottom navigation bar
-        if (configuration.isDigitalInvoiceBottomNavigationBarEnabled) {
-            GiniBank.digitalInvoiceNavigationBarBottomAdapter =
-                CustomDigitalInvoiceNavigationBarBottomAdapter()
         }
 
         // Debug mode
