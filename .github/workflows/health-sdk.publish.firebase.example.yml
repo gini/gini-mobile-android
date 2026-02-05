@@ -43,9 +43,23 @@ jobs:
           cache: 'gradle'
 
       - name: Create google-services.json
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p health-sdk/example-app
-          echo "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > health-sdk/example-app/google-services.json
+          printf '%s' '${{ secrets.GOOGLE_SERVICES_JSON_B64 }}' | base64 --decode > health-sdk/example-app/google-services.json
+
+      # Optional but useful to fail fast if the secret/file is wrong
+      - name: Validate google-services.json
+        shell: bash
+        run: |
+          python3 - << 'PY'
+          import json
+          p="health-sdk/example-app/google-services.json"
+          with open(p,"r",encoding="utf-8") as f:
+              json.load(f)
+          print("google-services.json is valid JSON")
+          PY
 
       - name: setup ruby
         uses: ruby/setup-ruby@44511735964dcb71245e7e55f72539531f7bc0eb # v1.257.0
@@ -84,7 +98,7 @@ jobs:
           .github/publish_to_firebase.sh
         shell: bash
         env:
-          INPUT_APPID: ${{secrets.GINI_HEALTH_SDK_EXAMPLE_APP_FIREBASE_ID}}
+          INPUT_APPID: ${{ secrets.GINI_HEALTH_SDK_EXAMPLE_APP_FIREBASE_ID }}
           INPUT_SERVICECREDENTIALSFILECONTENT: ${{ secrets.FIREBASE_CREDENTIAL_FILE_CONTENT }}
           INPUT_FILE: health-sdk/example-app/build/outputs/apk/qa/release/example-app-qa-release.apk
           INPUT_GROUPS: testers
