@@ -22,6 +22,7 @@ jobs:
   check:
     uses: ./.github/workflows/health-sdk.check.yml
     secrets:
+      GOOGLE_SERVICES_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_B64 }}
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
       HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
