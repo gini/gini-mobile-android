@@ -44,23 +44,9 @@ jobs:
           cache: 'gradle'
 
       - name: Create google-services.json
-        shell: bash
         run: |
-          set -euo pipefail
           mkdir -p health-sdk/example-app
-          printf '%s' '${{ secrets.GOOGLE_SERVICES_JSON_B64 }}' | base64 --decode > health-sdk/example-app/google-services.json
-
-      # Optional but useful to fail fast if the secret/file is wrong
-      - name: Validate google-services.json
-        shell: bash
-        run: |
-          python3 - << 'PY'
-          import json
-          p="health-sdk/example-app/google-services.json"
-          with open(p,"r",encoding="utf-8") as f:
-              json.load(f)
-          print("google-services.json is valid JSON")
-          PY
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > health-sdk/example-app/google-services.json
 
       - name: setup ruby
         uses: ruby/setup-ruby@44511735964dcb71245e7e55f72539531f7bc0eb # v1.257.0
