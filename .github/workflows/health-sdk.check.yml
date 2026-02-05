@@ -21,6 +21,8 @@ on:
         required: true
       SONAR_TOKEN:
         required: true
+      GOOGLE_SERVICES_JSON_B64:
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-check
