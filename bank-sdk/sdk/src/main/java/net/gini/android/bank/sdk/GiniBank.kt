@@ -150,23 +150,6 @@ object GiniBank {
 
     /**
      * Sets configuration for Capture feature.
-     * Note that configuration is immutable. [cleanupCapture] needs to be called before passing a new configuration.
-     *
-     * @throws IllegalStateException if capture is already configured.
-     */
-    @Deprecated(
-        "Please use setCaptureConfiguration(context, captureConfiguration) which allows instance recreation without having to call releaseCapture()",
-        ReplaceWith("setCaptureConfiguration(context, captureConfiguration)")
-    )
-    fun setCaptureConfiguration(captureConfiguration: CaptureConfiguration) {
-        check(giniCapture == null) { "Gini Capture already configured. Call releaseCapture() before setting a new configuration." }
-        GiniBank.captureConfiguration = captureConfiguration
-        GiniCapture.newInstance().applyConfiguration(captureConfiguration).build()
-        giniCapture = GiniCapture.getInstance()
-    }
-
-    /**
-     * Sets configuration for Capture feature.
      */
     fun setCaptureConfiguration(context: Context, captureConfiguration: CaptureConfiguration) {
         GiniBank.captureConfiguration = captureConfiguration
@@ -236,70 +219,6 @@ object GiniBank {
 
     }
 
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * Please provide the required transfer summary to improve the future extraction accuracy.
-     * Follow the recommendations below:
-     *
-     * - Provide values for all necessary fields, including those that were not extracted.</li>
-     * - Provide the final data approved by the user (and not the initially extracted only).</li>
-     * - Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
-     *
-     * @param context Android context
-     * @param paymentRecipient payment receiver
-     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
-     * @param paymentPurpose statement what this payment is for
-     * @param iban international bank account
-     * @param bic bank identification code
-     * @param amount accepts extracted amount and currency
-     *
-     * @deprecated Use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [cleanupCapture] to let the SDK free up used resources.
-     */
-    @Deprecated(
-        "Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources.",
-        ReplaceWith("releaseCapture(context)")
-    )
-    fun releaseCapture(
-        context: Context,
-        paymentRecipient: String,
-        paymentReference: String,
-        paymentPurpose: String,
-        iban: String,
-        bic: String,
-        amount: Amount
-    ) {
-        sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
-        )
-        cleanupCapture(context)
-        releaseTransactionDocsFeature(context)
-        BankSdkIsolatedKoinContext.clean()
-    }
-
-
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * @param context Android context
-     *
-     */
-    @Deprecated(
-        "Please use cleanupCapture(context). This method will be removed in a future release.",
-        ReplaceWith("cleanupCapture(context)")
-    )
-    fun releaseCapture(
-        context: Context
-    ) {
-        cleanupCapture(context)
-    }
-
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * @param context Android context
-     *
-     */
     fun cleanupCapture(
         context: Context
     ) {

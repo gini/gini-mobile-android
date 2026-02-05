@@ -169,24 +169,6 @@ public class GiniCapture {
     /**
      * Configure and create a new instance using the returned {@link Builder}.
      *
-     * @return a new {@link Builder}
-     * @throws IllegalStateException when an instance already exists. Call {@link #cleanup(Context)}
-     *                               before trying to create a new instance
-     * @deprecated Please use {@link #newInstance(Context)} which allows instance recreation without having to
-     * call {@link #cleanup(Context)} first.
-     */
-    @NonNull
-    @Deprecated
-    public static synchronized Builder newInstance() {
-        if (sInstance != null) {
-            throw new IllegalStateException("An instance was already created. Call GiniCapture.cleanup() before creating a new instance.");
-        }
-        return new Builder();
-    }
-
-    /**
-     * Configure and create a new instance using the returned {@link Builder}.
-     *
      * @param context Android context
      * @return a new {@link Builder}
      */
@@ -353,35 +335,6 @@ public class GiniCapture {
             });
         }
 
-    }
-
-
-    /**
-     * Destroys the {@link GiniCapture} instance and frees up used resources.
-     *
-     * <p>Please provide the required transfer summary to improve the future extraction accuracy.
-     * Follow the recommendations below:
-     *
-     * <ul>
-     *     <li>Provide values for all necessary fields, including those that were not extracted.</li>
-     *     <li>Provide the final data approved by the user (and not the initially extracted only).</li>
-     *     <li>Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
-     * </ul>
-     *
-     * @param context          Android context
-     * @param paymentRecipient payment receiver
-     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
-     * @param paymentPurpose   statement what this payment is for
-     * @param iban             international bank account
-     * @param bic              bank identification code
-     * @param amount           accepts extracted amount and currency
-     * @deprecated Use {@link #sendTransferSummary(String, String, String, String, String, Amount, Boolean)} to provide the required transfer summary first (if the user has completed TAN verification) and then {@link #cleanup(Context)} to let the SDK free up used resources.
-     */
-
-    @Deprecated
-    public static synchronized void cleanup(@NonNull final Context context, @NonNull final String paymentRecipient, @NonNull final String paymentReference, @NonNull final String paymentPurpose, @NonNull final String iban, @NonNull final String bic, @NonNull final Amount amount) {
-        sendTransferSummary(paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount, null);
-        cleanup(context);
     }
 
     /**

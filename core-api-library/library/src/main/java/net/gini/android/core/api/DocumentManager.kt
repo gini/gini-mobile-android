@@ -130,22 +130,6 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         documentRepository.pollDocument(document)
 
     /**
-     * Gets the layout of a document. The layout of the document describes the textual content of a document with
-     * positional information, based on the processed document.
-     *
-     * @param document The document for which the layouts is requested.
-     * @return [Resource] with a [JSONObject] instance containing the layout or information about the error
-     */
-    @Deprecated(
-        "This method is deprecated and can be deleted in future. Use another one, please.",
-        replaceWith = ReplaceWith("getLayoutModel(documentId)")
-    )
-    suspend fun getLayout(
-        document: Document
-    ): Resource<JSONObject> =
-        documentRepository.getLayout(document)
-
-    /**
      * Gets the pages of a document.
      *
      * @param documentId The document ID for which the pages are requested.

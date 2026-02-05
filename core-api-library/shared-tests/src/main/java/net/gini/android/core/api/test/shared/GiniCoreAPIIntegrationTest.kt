@@ -409,22 +409,6 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         Assert.assertTrue("Partial document upload should have failed", partialDocument is Resource.Error)
     }
 
-    @Test
-    fun getDocumentLayout() = runTest(timeout = 30.seconds) {
-        // Given
-        val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
-        val testDocumentAsStream = assetManager.open("test.jpg")
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
-        val testDocument = TestUtils.createByteArray(testDocumentAsStream)
-        val documentExtractionsMap = processDocument(testDocument, "image/jpeg", "test.jpg", DocumentManager.DocumentType.INVOICE)
-
-        // When
-        val layout = giniCoreApi.documentManager.getLayout(documentExtractionsMap.keys.first())
-
-        // Then
-        Assert.assertNotNull(layout.dataOrThrow.optJSONArray("pages"))
-    }
-
     @Throws(InterruptedException::class)
     protected suspend fun processDocument(documentBytes: ByteArray, contentType: String, filename: String, documentType: DocumentManager.DocumentType
     ): Map<Document, E> {

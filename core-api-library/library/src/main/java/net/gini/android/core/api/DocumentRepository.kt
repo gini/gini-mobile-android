@@ -232,17 +232,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         }
     }
 
-    @Deprecated( "This method is deprecated and can be deleted in future. Use another one, please.",
-        replaceWith = ReplaceWith("getLayoutModel(documentId)"))
-    suspend fun getLayout(document: Document): Resource<JSONObject> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                val layoutJsonString = documentRemoteSource.getLayout(accessToken, document.id)
-                JSONObject(layoutJsonString)
-            }
-        }
-    }
-
     suspend fun getDocumentLayout(documentId: String) : Resource<DocumentLayout> {
         return withAccessToken { accessToken ->
             wrapInResource {
