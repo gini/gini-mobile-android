@@ -1,7 +1,7 @@
 name: Check Health SDK
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 on:
