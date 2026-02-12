@@ -1,8 +1,7 @@
 name: Check Core API Library
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 on:
   workflow_dispatch:
@@ -12,6 +11,9 @@ on:
       - 'core-api-library/**'
       - 'gradle/**'
   workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
