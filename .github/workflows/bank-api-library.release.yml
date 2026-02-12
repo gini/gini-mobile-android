@@ -16,6 +16,7 @@ jobs:
     uses: ./.github/workflows/bank-api-library.check.yml
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   release:
     needs: check

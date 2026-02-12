@@ -1,8 +1,7 @@
 name: Check Capture SDK
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 
 on:
