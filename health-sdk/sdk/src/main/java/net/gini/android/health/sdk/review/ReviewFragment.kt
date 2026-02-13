@@ -110,8 +110,6 @@ class ReviewFragment private constructor(
     private val viewModel: ReviewViewModel by viewModels {
         viewModelFactory ?: object : ViewModelProvider.Factory {}
     }
-    private var imeVisibleNow: Boolean = false
-    private var preRKeyboardTracker: ViewTreeObserver.OnGlobalLayoutListener? = null
     private var preRKeyboardTracker: ViewTreeObserver.OnGlobalLayoutListener? = null
 
     private var binding: GhsFragmentReviewBinding by autoCleared()
@@ -219,12 +217,6 @@ class ReviewFragment private constructor(
 
         // handling keyboard in Version <= Q (Pie and below) after orientation change
         if (preQ()) {
-            startPreRKeyboardTracker(view)
-            restoreImeIfNeeded(view, savedInstanceState)
-        }
-
-        // handling keyboard in Version <= Q (Pie and below) after orientation change
-        if (preQ()) {
             startKeyboardTracker(view)
             restoreImeIfNeeded(view, savedInstanceState)
         }
@@ -255,23 +247,6 @@ class ReviewFragment private constructor(
     private fun restoreImeIfNeeded(root: View, savedInstanceState: Bundle?) {
         val focusedId = savedInstanceState?.getInt(KEY_FOCUSED_ID) ?: View.NO_ID
         val imeWasVisible = savedInstanceState?.getBoolean(KEY_IME_WAS_VISIBLE) ?: false
-        if (focusedId == View.NO_ID || !imeWasVisible) return
-
-        root.post {
-            val et = root.findViewById<EditText>(focusedId)
-            if (et?.isShown == true && et.isEnabled && et.isFocusable) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    delay(VIEW_SETTLE_DELAY_MS)
-                    et.showKeyboard() // Helper already requests focus
-                }
-            }
-        }
-    }
-
-
-    private fun restoreImeIfNeeded(root: View, savedInstanceState: Bundle?) {
-        val focusedId = savedInstanceState?.getInt(KEY_FOCUSED_ID) ?: View.NO_ID
-        val imeWasVisible = savedInstanceState?.getBoolean(KEY_IME_WAS_VISIBLE) ?: false
         if (focusedId == View.NO_ID || !imeWasVisible ||
             binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode() == ReviewViewStateLandscape.COLLAPSED
         ) return
@@ -286,7 +261,6 @@ class ReviewFragment private constructor(
             }
         }
     }
-
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -634,25 +608,10 @@ class ReviewFragment private constructor(
             val focusedId = view?.findFocus()?.id ?: View.NO_ID
             outState.putInt(KEY_FOCUSED_ID, focusedId)
         }
-        val height = view?.findViewById<ViewPager2>(HealthR.id.pager)?.layoutParams?.height ?: -1
-        outState.putInt(PAGER_HEIGHT, height)
-        if (preQ()) {
-            val focusedId = view?.findFocus()?.id ?: View.NO_ID
-            outState.putInt(KEY_FOCUSED_ID, focusedId)
-            outState.putBoolean(KEY_IME_WAS_VISIBLE, imeVisibleNow)
-        }
         super.onSaveInstanceState(outState)
     }
     private fun preQ() = Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q
 
-    override fun onDestroyView() {
-        preRKeyboardTracker?.let {
-            view?.viewTreeObserver?.removeOnGlobalLayoutListener(it)
-        }
-        preRKeyboardTracker = null
-        super.onDestroyView()
-    }
-    private fun preQ() = Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q
 
     override fun onDestroyView() {
         mediator?.detach()
