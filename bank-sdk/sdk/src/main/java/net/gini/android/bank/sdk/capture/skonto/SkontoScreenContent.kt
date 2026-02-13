@@ -16,6 +16,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -76,6 +77,7 @@ import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.invisibleToUser
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -83,6 +85,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import kotlinx.coroutines.delay
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.colors.SkontoScreenColors
@@ -125,6 +128,10 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private const val KEYBOARD_ANIMATION_DELAY_MS = 400L
+private const val INFO_DIALOG_DIM_AMOUNT = 0.8f
+private val INFO_DIALOG_BORDER_WIDTH = 1.dp
+private val INFO_DIALOG_CORNER_RADIUS = 28.dp
+
 @Composable
 internal fun SkontoScreenContent(
     isBottomNavigationBarEnabled: Boolean,
@@ -367,7 +374,8 @@ private fun ScreenReadyState(
                     amountFormatter = amountFormatter,
                     fullAmountValidationError = state.fullAmountValidationError,
                     onFullAmountFieldFocused = onFullAmountFieldFocused,
-                    shouldFieldShowKeyboard = shouldFieldShowKeyboard
+                    shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+                    isLandScape = isLandScape,
                 )
 
                 if (isLandScape && customBottomNavBarAdapter == null) {
@@ -621,6 +629,7 @@ private fun InvoicePreviewSection(
 
     }
 }
+
 @Suppress("CyclomaticComplexMethod")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -784,11 +793,14 @@ private fun SkontoSection(
                     resources = resources,
                     amountFormatter = amountFormatter
                 ),
-                shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive)
+                shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive),
+                isPhoneInLandscape = isLandScape,
+
             )
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
             val pressed by dueDateOnClickSource.collectIsPressedAsState()
+
             /**
              * In landscape mode on phones, we don't need the dueDateOnClickSource
              * because we have very less space, and we cannot pass null as interactionSource.
@@ -826,10 +838,11 @@ private fun SkontoSection(
                     onDueDateFieldFocused()
                 }
             }
-
+            val calendarIconContentDescription =
+                stringResource(id = R.string.gbs_skonto_calendar_icon_content_description)
             GiniTextInput(
                 modifier = textInputModifier,
-                enabled = isActive,
+                enabled = if (isPhoneInLandscape) false else isActive,
                 interactionSource = activeInteractionSource,
                 readOnly = true,
                 colors = colors.dueDateTextFieldColor,
@@ -844,6 +857,9 @@ private fun SkontoSection(
                                     isDatePickerVisible = true
                                     onDueDateFieldFocused()
                                 },
+                                modifier = Modifier.semantics {
+                                    contentDescription = calendarIconContentDescription
+                                },
                                 interactionSource = dueDateOnClickSource
                             ) {
                                 CalendarIcon()
@@ -854,7 +870,9 @@ private fun SkontoSection(
                             CalendarIcon()
                         }
                     }
-                }
+                },
+                isDate = true,
+                isPhoneInLandscape = isPhoneInLandscape
             )
         }
     }
@@ -880,6 +898,7 @@ fun CalendarIcon() {
         contentDescription = null
     )
 }
+
 private fun getSkontoSelectableDates() = object : SelectableDates {
 
     val minDateCalendar = Calendar.getInstance().apply {
@@ -988,9 +1007,17 @@ private fun InfoDialog(
         properties = DialogProperties(),
         onDismissRequest = onDismissRequest
     ) {
+        (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(
+            INFO_DIALOG_DIM_AMOUNT
+        )
         Card(
-            modifier = modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(28.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .border(
+                    INFO_DIALOG_BORDER_WIDTH, color = colors.borderColor,
+                    shape = RoundedCornerShape(INFO_DIALOG_CORNER_RADIUS)
+                ),
+            shape = RoundedCornerShape(INFO_DIALOG_CORNER_RADIUS),
             colors = CardDefaults.cardColors(
                 containerColor = colors.cardBackgroundColor
             )
@@ -1032,8 +1059,9 @@ private fun WithoutSkontoSection(
     fullAmountValidationError: SkontoScreenState.Ready.FullAmountValidationError?,
     modifier: Modifier = Modifier,
     shouldFieldShowKeyboard: Boolean = false,
-    hideFieldsForTalkBack: Boolean
-) {
+    hideFieldsForTalkBack: Boolean,
+    isLandScape: Boolean = false
+    ) {
     val resources = LocalContext.current.resources
     val focusManager = LocalFocusManager.current
     val view = LocalView.current
@@ -1097,7 +1125,8 @@ private fun WithoutSkontoSection(
                     bringIntoViewRequester.bringIntoView()
                 }
             }
-
+            val isPhoneInLandscape =
+                !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
             GiniAmountTextInput(
                 modifier = Modifier
                     .then(
@@ -1106,7 +1135,8 @@ private fun WithoutSkontoSection(
                                 invisibleToUser()
                             }
                         else Modifier
-                    ).then(Modifier.bringIntoViewRequester(bringIntoViewRequester))
+                    )
+                    .then(Modifier.bringIntoViewRequester(bringIntoViewRequester))
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .onFocusChanged {
@@ -1140,7 +1170,8 @@ private fun WithoutSkontoSection(
                 shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive),
                 onNewValue = {
                     newAmount = it
-                }
+                },
+                isPhoneInLandscape = isPhoneInLandscape
             )
         }
     }

@@ -3,7 +3,18 @@ import net.gini.gradle.*
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
+    id ("org.sonarqube")
+    alias(libs.plugins.devtools.ksp)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-core-api-library")
+        property("sonar.projectName", "Android Core API Library")
+        property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 android {
@@ -14,6 +25,14 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    packaging {
+        resources {
+            merges += "META-INF/LICENSE-notice.md"
+            merges += "META-INF/LICENSE.md"
+        }
+    }
+
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         testOptions.targetSdk = libs.versions.android.targetSdk.get().toInt()
@@ -70,7 +89,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.moshi.core)
     implementation(libs.retrofit.moshi.converter)
-    kapt(libs.moshi.codegen)
+    ksp(libs.moshi.codegen)
     implementation(libs.okhttp3.logging.interceptor)
 
     androidTestImplementation(libs.kotlinx.coroutines.test)

@@ -14,6 +14,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -59,15 +60,19 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -574,6 +579,8 @@ private fun SkontoSection(
     val focusManager = LocalFocusManager.current
 
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
+    val isPhoneInLandscape =
+        !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
     Card(
         modifier = modifier,
         shape = RectangleShape,
@@ -702,7 +709,8 @@ private fun SkontoSection(
                 supportingText = skontoAmountValidationError?.toErrorMessage(
                     resources = resources,
                 ),
-                shouldFieldShowKeyboard = shouldFieldShowKeyboard
+                shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+                isPhoneInLandscape = isPhoneInLandscape
             )
 
             val dueDateOnClickSource = remember { MutableInteractionSource() }
@@ -719,8 +727,6 @@ private fun SkontoSection(
              * when it is not in landscape mode of phones.
              * */
             val defaultInteractionSource = remember { MutableInteractionSource() }
-            val isPhoneInLandscape =
-                !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
 
             val activeInteractionSource =
                 if (isPhoneInLandscape) defaultInteractionSource else dueDateOnClickSource
@@ -745,9 +751,12 @@ private fun SkontoSection(
                 }
             }
 
+            val calendarIconContentDescription =
+                stringResource(id = R.string.gbs_skonto_calendar_icon_content_description)
+
             GiniTextInput(
                 modifier = textInputModifier,
-                enabled = isActive,
+                enabled = if (isPhoneInLandscape) false else isActive,
                 interactionSource = activeInteractionSource,
                 readOnly = true,
                 colors = colors.dueDateTextFieldColor,
@@ -762,6 +771,9 @@ private fun SkontoSection(
                                     isDatePickerVisible = true
                                     onDueDateFieldFocused()
                                 },
+                                modifier = Modifier.semantics {
+                                    contentDescription = calendarIconContentDescription
+                                },
                                 interactionSource = dueDateOnClickSource
                             ) {
                                 CalendarIcon()
@@ -772,7 +784,9 @@ private fun SkontoSection(
                             CalendarIcon()
                         }
                     }
-                }
+                },
+                isDate = true,
+                isPhoneInLandscape = isPhoneInLandscape
             )
         }
     }
@@ -934,8 +948,11 @@ private fun InfoDialog(
         properties = DialogProperties(),
         onDismissRequest = onDismissRequest
     ) {
+        (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0.8f)
         Card(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .border(1.dp, color = colors.borderColor, shape = RoundedCornerShape(28.dp)),
             shape = RoundedCornerShape(28.dp),
             colors = CardDefaults.cardColors(
                 containerColor = colors.cardBackgroundColor

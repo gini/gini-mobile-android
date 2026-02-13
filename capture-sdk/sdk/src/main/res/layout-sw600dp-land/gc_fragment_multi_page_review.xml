@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -46,7 +45,7 @@
             android:id="@+id/gc_view_pager_wrapper"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_above="@+id/gc_thumbnails_panel"
+            android:layout_above="@+id/gc_tab_indicator"
             android:layout_marginBottom="@dimen/gc_large_24"
             app:layout_constraintBottom_toTopOf="@+id/gc_tab_indicator"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +75,7 @@
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="@dimen/gc_large_32"
             android:backgroundTint="@android:color/transparent"
-            app:layout_constraintBottom_toTopOf="@+id/gc_process_documents_wrapper"
+            app:layout_constraintBottom_toTopOf="@+id/gc_save_invoices_wrapper"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:tabBackground="@drawable/gc_tab_selector"
@@ -86,6 +85,59 @@
             app:tabPaddingEnd="@dimen/gc_medium"
             app:tabSelectedTextColor="@android:color/transparent"
             app:tabTextColor="@android:color/transparent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gc_save_invoices_wrapper"
+            android:layout_width="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            android:minWidth="@dimen/gc_save_invoices_locally_view_tablet_minimum_width"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/gc_medium_12"
+            android:layout_marginBottom="@dimen/gc_large"
+            android:background="@drawable/gc_bg_on_save_invoices_locally"
+            android:paddingVertical="@dimen/gc_large_20"
+            android:paddingStart="@dimen/gc_large"
+            android:paddingEnd="@dimen/gc_large"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/gc_process_documents_wrapper">
+
+            <TextView
+                android:id="@+id/gc_save_invoices_title"
+                style="@style/GiniCaptureTheme.Typography.Subtitle1"
+                android:textColor="?attr/colorOnBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="@string/gc_save_invoices_feature_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/gc_navigation_top_bar" />
+
+
+            <TextView
+                android:id="@+id/gc_save_invoices_sub_title"
+                style="@style/GiniCaptureTheme.Typography.Caption1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="@string/gc_save_invoices_feature_subtitle"
+                app:layout_constraintEnd_toStartOf="@+id/gc_save_invoices_switch"
+                app:layout_constraintStart_toStartOf="@id/gc_save_invoices_title"
+                app:layout_constraintTop_toBottomOf="@id/gc_save_invoices_title" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/gc_save_invoices_switch"
+                style="@style/GiniCaptureTheme.Switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                app:showText="false"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:switchPadding="0dp"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

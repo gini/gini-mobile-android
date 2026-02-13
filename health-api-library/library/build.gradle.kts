@@ -5,8 +5,18 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
     id("jacoco")
+    alias(libs.plugins.devtools.ksp)
+    id ("org.sonarqube")
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-health-api-library")
+        property("sonar.projectName", "Android Health API Library")
+        property("sonar.organization", "gini")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 jacoco {
@@ -87,7 +97,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.moshi.core)
-    kapt(libs.moshi.codegen)
+    ksp(libs.moshi.codegen)
 
     androidTestImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)

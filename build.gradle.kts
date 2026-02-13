@@ -3,6 +3,11 @@
 import net.gini.gradle.ReleaseOrderPlugin
 import net.gini.gradle.DependencyUpdatesPlugin
 
+plugins {
+    alias(libs.plugins.devtools.ksp) apply false
+    id("org.sonarqube") version "5.1.0.4882" apply false
+}
+
 buildscript {
     repositories {
         google()
@@ -26,6 +31,17 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle.kts files
+    }
+}
+// build.gradle.kts (root)
+subprojects {
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.apache.commons" && requested.name == "commons-compress") {
+                useVersion("1.26.1")
+                because("Avoid NoSuchMethodError in Sonar task due to mismatched commons-compress")
+            }
+        }
     }
 }
 

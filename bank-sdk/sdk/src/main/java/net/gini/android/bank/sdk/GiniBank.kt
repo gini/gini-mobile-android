@@ -47,8 +47,6 @@ import net.gini.android.capture.ImportedFileValidationException
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
-import net.gini.android.capture.requirements.GiniCaptureRequirements
-import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import net.gini.android.core.api.Resource
@@ -90,27 +88,6 @@ object GiniBank {
         get() = giniGankTransactions
             ?: error("Transaction list not initialized. Call `initializeTransactionListFeature(...)` first.")
 
-    /**
-     * Bottom navigation bar adapters. Could be changed to custom ones.
-     */
-    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
-    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance =
-                InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceOnboardingNavigationBarBottomAdapterInstance.viewAdapter
-
-    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
-    var digitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceHelpNavigationBarBottomAdapterInstance =
-                InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceHelpNavigationBarBottomAdapterInstance.viewAdapter
-
     internal var digitalInvoiceOnboardingIllustrationAdapterInstance: InjectedViewAdapterInstance<OnboardingIllustrationAdapter> =
         InjectedViewAdapterInstance(
             ImageOnboardingIllustrationAdapter(
@@ -124,45 +101,34 @@ object GiniBank {
         }
         get() = digitalInvoiceOnboardingIllustrationAdapterInstance.viewAdapter
 
+    /**
+     * Below listed internal bottom bar instances are only kept here because they are used in many
+     * places, Once the code clean up happens, these must be removed as we drop support for custom
+     * bottom bars.
+     * - [digitalInvoiceNavigationBarBottomAdapterInstance]
+     * - [digitalInvocieSkontoNavigationBarBottomAdapterInstance]
+     * - [digitalInvoiceHelpNavigationBarBottomAdapterInstance]
+     * - [digitalInvoiceOnboardingNavigationBarBottomAdapterInstance]
+     * - [skontoHelpNavigationBarBottomAdapterInstance]
+     * - [skontoNavigationBarBottomAdapterInstance]
+     * */
+    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
+
+    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
+
     internal var digitalInvoiceNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceNavigationBarBottomAdapter> =
         InjectedViewAdapterInstance(DefaultDigitalInvoiceNavigationBarBottomAdapter())
-    var digitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceNavigationBarBottomAdapterInstance.viewAdapter
-
 
     internal var skontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
         null
 
-    var skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter?
-        set(value) {
-            skontoNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = skontoNavigationBarBottomAdapterInstance?.viewAdapter
-
     internal var digitalInvocieSkontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
         null
 
-    var digitalInvoiceSkontoNavigationBarBottomAdapter: DigitalInvoiceSkontoNavigationBarBottomAdapter?
-        set(value) {
-            digitalInvocieSkontoNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = digitalInvocieSkontoNavigationBarBottomAdapterInstance?.viewAdapter
-
     internal var skontoHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? =
         null
-
-    var skontoHelpNavigationBarBottomAdapter: SkontoHelpNavigationBarBottomAdapter?
-        set(value) {
-            skontoHelpNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = skontoHelpNavigationBarBottomAdapterInstance?.viewAdapter
-
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -175,27 +141,12 @@ object GiniBank {
     }
 
     /**
+     * The return reasons dialog will be deleted in the next release.
+     * Right now, we are removing the public API for showing the return reasons dialog.
      * Shows the return reasons dialog in the return assistant, if enabled.
      * Note that it is disabled by default.
      */
-    var enableReturnReasons = false
-
-    /**
-     * Sets configuration for Capture feature.
-     * Note that configuration is immutable. [cleanupCapture] needs to be called before passing a new configuration.
-     *
-     * @throws IllegalStateException if capture is already configured.
-     */
-    @Deprecated(
-        "Please use setCaptureConfiguration(context, captureConfiguration) which allows instance recreation without having to call releaseCapture()",
-        ReplaceWith("setCaptureConfiguration(context, captureConfiguration)")
-    )
-    fun setCaptureConfiguration(captureConfiguration: CaptureConfiguration) {
-        check(giniCapture == null) { "Gini Capture already configured. Call releaseCapture() before setting a new configuration." }
-        GiniBank.captureConfiguration = captureConfiguration
-        GiniCapture.newInstance().applyConfiguration(captureConfiguration).build()
-        giniCapture = GiniCapture.getInstance()
-    }
+    internal var enableReturnReasons = false
 
     /**
      * Sets configuration for Capture feature.
@@ -268,70 +219,6 @@ object GiniBank {
 
     }
 
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * Please provide the required transfer summary to improve the future extraction accuracy.
-     * Follow the recommendations below:
-     *
-     * - Provide values for all necessary fields, including those that were not extracted.</li>
-     * - Provide the final data approved by the user (and not the initially extracted only).</li>
-     * - Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
-     *
-     * @param context Android context
-     * @param paymentRecipient payment receiver
-     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
-     * @param paymentPurpose statement what this payment is for
-     * @param iban international bank account
-     * @param bic bank identification code
-     * @param amount accepts extracted amount and currency
-     *
-     * @deprecated Use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [cleanupCapture] to let the SDK free up used resources.
-     */
-    @Deprecated(
-        "Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources.",
-        ReplaceWith("releaseCapture(context)")
-    )
-    fun releaseCapture(
-        context: Context,
-        paymentRecipient: String,
-        paymentReference: String,
-        paymentPurpose: String,
-        iban: String,
-        bic: String,
-        amount: Amount
-    ) {
-        sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
-        )
-        cleanupCapture(context)
-        releaseTransactionDocsFeature(context)
-        BankSdkIsolatedKoinContext.clean()
-    }
-
-
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * @param context Android context
-     *
-     */
-    @Deprecated(
-        "Please use cleanupCapture(context). This method will be removed in a future release.",
-        ReplaceWith("cleanupCapture(context)")
-    )
-    fun releaseCapture(
-        context: Context
-    ) {
-        cleanupCapture(context)
-    }
-
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * @param context Android context
-     *
-     */
     fun cleanupCapture(
         context: Context
     ) {
@@ -341,33 +228,14 @@ object GiniBank {
         captureConfiguration = null
         giniCapture = null
 
-        digitalInvoiceOnboardingNavigationBarBottomAdapter =
-            DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-        digitalInvoiceHelpNavigationBarBottomAdapter =
-            DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
-
         digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(
             R.drawable.gbs_digital_invoice_list_image,
             R.string.gbs_digital_invoice_onboarding_text_1
         )
 
-        digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
         releaseTransactionDocsFeature(context)
         BankSdkIsolatedKoinContext.clean()
     }
-
-    /**
-     *  Checks hardware requirements for Capture feature.
-     *  Requirements are not enforced, but are recommended to be checked before using.
-     *
-     * @deprecated Checking the requirements is no longer necessary and this method will be removed in a future release.
-     *             The majority of Android devices already meet the SDK's requirements.
-     */
-    @Deprecated(
-        "Checking the requirements is no longer necessary and this method will be removed in a future release."
-    )
-    fun checkCaptureRequirements(context: Context): RequirementsReport =
-        GiniCaptureRequirements.checkRequirements(context)
 
     /**
      * Screen API for starting the capture flow.

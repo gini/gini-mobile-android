@@ -4,12 +4,9 @@ import android.app.Activity
 import com.google.common.collect.Lists
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
 import junitparams.JUnitParamsRunner
@@ -53,8 +50,8 @@ class OnboardingScreenPresenterTest {
     @Before
     fun setUp() {
         mUserAnalyticsEventTracker = mockk<UserAnalyticsEventTracker>().apply {
-            every { trackEvent(any()) } just Runs
-            every { trackEvent(any(), any()) } just Runs
+            every { trackEvent(any()) } returns true
+            every { trackEvent(any(), any()) } returns true
         }
         mActivity = mockk()
 
@@ -293,84 +290,25 @@ class OnboardingScreenPresenterTest {
     }
 
     @Test
-    fun `use default onboarding bottom navigation bar if enabled`() {
+    fun `show skip and next buttons when not on last page`() {
         // Given
-        GiniCapture.Builder()
-            .setBottomNavigationBarEnabled(true)
-            .build()
+        GiniCapture.Builder().build()
         val presenter = createPresenter()
 
         // When
         presenter.start()
 
         // Then
-        verify {
-            mView.setNavigationBarBottomAdapterInstance(
-                eq(
-                    GiniCapture.getInstance()
-                        .internal().onboardingNavigationBarBottomAdapterInstance
-                )
-            )
-        }
+
+        verify { mView.showSkipAndNextButtons() }
+        verify(exactly = 0) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
+
     }
 
     @Test
-    fun `use custom onboarding bottom navigation bar if enabled`() {
-        // Given
-        val customOnboardingNavigationBarBottomAdapter =
-            mockk<OnboardingNavigationBarBottomAdapter>()
-        GiniCapture.Builder()
-            .setBottomNavigationBarEnabled(true)
-            .setOnboardingNavigationBarBottomAdapter(customOnboardingNavigationBarBottomAdapter)
-            .build()
-        val presenter = createPresenter()
-
-        // When
-        presenter.start()
-
-        // Then
-        verify {
-            mView.setNavigationBarBottomAdapterInstance(
-                eq(
-                    GiniCapture.getInstance()
-                        .internal().onboardingNavigationBarBottomAdapterInstance
-                )
-            )
-        }
-    }
-
-    @Test
-    @Parameters("false", "true")
-    fun `show skip and next buttons when not on last page - (isBottomNavigationBarEnabled) `(
-        isBottomNavigationBarEnabled: Boolean
-    ) {
+    fun `show skip and next buttons after going back from the last page`() {
         // Given
         GiniCapture.Builder()
-            .setBottomNavigationBarEnabled(isBottomNavigationBarEnabled)
-            .build()
-        val presenter = createPresenter()
-
-        // When
-        presenter.start()
-
-        // Then
-        if (isBottomNavigationBarEnabled) {
-            verify(exactly = 0) { mView.showSkipAndNextButtons() }
-            verify { mView.showSkipAndNextButtonsInNavigationBarBottom() }
-        } else {
-            verify { mView.showSkipAndNextButtons() }
-            verify(exactly = 0) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
-        }
-    }
-
-    @Test
-    @Parameters("false", "true")
-    fun `show skip and next buttons after going back from the last page - (isBottomNavigationBarEnabled) `(
-        isBottomNavigationBarEnabled: Boolean
-    ) {
-        // Given
-        GiniCapture.Builder()
-            .setBottomNavigationBarEnabled(isBottomNavigationBarEnabled)
             .build()
         val presenter = createPresenter()
 
@@ -394,23 +332,14 @@ class OnboardingScreenPresenterTest {
         presenter.onScrolledToPage(0)
 
         // Then
-        if (isBottomNavigationBarEnabled) {
-            verify(exactly = 0) { mView.showSkipAndNextButtons() }
-            verify(exactly = 2) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
-        } else {
-            verify(exactly = 2) { mView.showSkipAndNextButtons() }
-            verify(exactly = 0) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
-        }
+        verify(exactly = 2) { mView.showSkipAndNextButtons() }
+        verify(exactly = 0) { mView.showSkipAndNextButtonsInNavigationBarBottom() }
     }
 
     @Test
-    @Parameters("false", "true")
-    fun `show 'get started' button when on last page - (isBottomNavigationBarEnabled) `(
-        isBottomNavigationBarEnabled: Boolean
-    ) {
+    fun `show 'get started' button when on last page`() {
         // Given
         GiniCapture.Builder()
-            .setBottomNavigationBarEnabled(isBottomNavigationBarEnabled)
             .build()
         val presenter = createPresenter()
 
@@ -433,28 +362,8 @@ class OnboardingScreenPresenterTest {
         presenter.onScrolledToPage(1)
 
         // Then
-        if (isBottomNavigationBarEnabled) {
-            verify(exactly = 0) { mView.showGetStartedButton() }
-            verify { mView.showGetStartedButtonInNavigationBarBottom() }
-        } else {
-            verify { mView.showGetStartedButton() }
-            verify(exactly = 0) { mView.showGetStartedButtonInNavigationBarBottom() }
-        }
-    }
-
-    @Test
-    fun `hides buttons when bottom navigation bar is enabled`() {
-        // Given
-        GiniCapture.Builder()
-            .setBottomNavigationBarEnabled(true)
-            .build()
-        val presenter = createPresenter()
-
-        // When
-        presenter.start()
-
-        // Then
-        verify { mView.hideButtons() }
+        verify { mView.showGetStartedButton() }
+        verify(exactly = 0) { mView.showGetStartedButtonInNavigationBarBottom() }
     }
 
 }

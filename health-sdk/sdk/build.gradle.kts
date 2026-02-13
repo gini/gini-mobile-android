@@ -10,9 +10,18 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("kotlin-parcelize")
-    kotlin("kapt")
+    alias(libs.plugins.devtools.ksp)
+    id ("org.sonarqube")
 }
 
+sonar {
+    properties {
+        property("sonar.projectKey", "android-health-sdk")
+        property("sonar.projectName", "Android Health SDK")
+        property("sonar.organization", "gini")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
 android {
     // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml)
     namespace = "net.gini.android.health.sdk"
@@ -124,7 +133,7 @@ dependencies {
     implementation(libs.photoview)
     implementation(libs.insetter)
     implementation(libs.datastore.preferences)
-    kapt(libs.moshi.codegen)
+    ksp(libs.moshi.codegen)
     implementation(libs.moshi.core)
 
     debugImplementation(libs.androidx.test.core.ktx)

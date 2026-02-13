@@ -74,6 +74,9 @@
         <item name="backgroundTint">?attr/backgroundColor</item>
     </style>
 
+    <style name="Root.GiniCaptureTheme.BottomSheetDialog" parent="Theme.Design.BottomSheetDialog" />
+    <style name="GiniCaptureTheme.BottomSheetDialog" parent="Root.GiniCaptureTheme.BottomSheetDialog" />
+
     <style name="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Widget.Material3.Button.UnelevatedButton">
         <item name="cornerRadius">4dp</item>
         <item name="android:textAllCaps">false</item>
@@ -82,5 +85,20 @@
         <item name="android:minHeight">@dimen/gc_unelevated_button_height</item>
     </style>
     <style name="GiniCaptureTheme.Widget.Button.UnelevatedButton" parent="Root.GiniCaptureTheme.Widget.Button.UnelevatedButton"/>
+
+    <style name="CircleShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="Root.GiniCaptureTheme.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="useMaterialThemeColors">false</item>
+        <item name="thumbTint">@color/gc_switch_thumb_color</item>
+        <item name="trackTint">@color/gc_switch_track_color</item>
+        <item name="trackDecorationTint">@color/gc_switch_outline_color</item>
+
+    </style>
+    <style name="GiniCaptureTheme.Switch" parent="Root.GiniCaptureTheme.Switch" />
+
 
 </resources>

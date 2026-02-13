@@ -1,9 +1,10 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
-
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+
+import net.gini.android.capture.CaptureSDKResult;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureDebug;
 import net.gini.android.capture.document.GiniCaptureDocument;
@@ -22,9 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-
 import jersey.repackaged.jsr166e.CompletableFuture;
+
+import static net.gini.android.capture.internal.network.NetworkRequestsManager.isCancellation;
 
 /**
  * Created by Alpar Szotyori on 09.05.2019.
@@ -201,6 +202,21 @@ public class AnalysisInteractor {
             mReturnReasons = returnReasons;
             mGiniApiDocumentId = giniApiDocumentId;
             mGiniApiDocumentFileName = giniApiDocumentFilename;
+        }
+
+        /**
+         * <p>
+         *     This is a mapper to convert ResultHolder in AnalysisInteractor to CaptureSDKResult.Success.
+         * </p>
+         * @param resultHolder a result from the AnalysisInteractor
+         * @return CaptureSDKResult.Success returns the success result of the Capture SDK
+         */
+        public static CaptureSDKResult.Success toCaptureResult(@NonNull final ResultHolder resultHolder) {
+            return new CaptureSDKResult.Success(
+                    resultHolder.mExtractions,
+                    resultHolder.mCompoundExtractions,
+                    resultHolder.mReturnReasons
+            );
         }
 
         @NonNull

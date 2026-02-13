@@ -12,5 +12,8 @@ data class Configuration(
     val isQrCodeEducationEnabled: Boolean,
     val isInstantPaymentEnabled: Boolean,
     val isEInvoiceEnabled: Boolean,
-    val amplitudeApiKey: String
+    val amplitudeApiKey: String,
+    val isSavePhotosLocallyEnabled: Boolean,
+    val isAlreadyPaidHintEnabled: Boolean,
+    val isPaymentDueHintEnabled: Boolean,
 )

@@ -1,5 +1,9 @@
 name: Check Health SDK
 
+permissions:
+  contents: write
+  packages: write
+
 on:
   workflow_dispatch:
   pull_request:
@@ -14,6 +18,8 @@ on:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
       HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+        required: true
+      SONAR_TOKEN:
         required: true
 
 concurrency:
@@ -59,7 +65,7 @@ jobs:
       - name: build release example app for QA
         run: >
           ./gradlew health-sdk:example-app:assembleQaRelease
-          -PclientId="gini-mobile-test" 
+          -PclientId="gini-mobile-ci" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="health_sdk_example.jks"
           -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
@@ -75,7 +81,7 @@ jobs:
       - name: build release example app for production
         run: >
           ./gradlew health-sdk:example-app:assembleProdRelease 
-          -PclientId="gini-mobile-test" 
+          -PclientId="gini-mobile-ci" 
           -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
           -PreleaseKeystoreFile="health_sdk_example.jks"
           -PreleaseKeystorePassword='${{ secrets.HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}'
@@ -150,3 +156,31 @@ jobs:
         with:
           name: health-sdk-ktlint-report
           path: health-sdk/sdk/build/reports/ktlint/**/*.html
+
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: "gradle"
+
+      # Build both modules (example-app depends on sdk)
+      - name: Build modules for Sonar
+        run: |
+          ./gradlew \
+            health-sdk:sdk:assembleDebug \
+            health-sdk:example-app:assembleDebug \
+            -PclientId="gini-mobile-ci" \
+            -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+
+      # Run Sonar on both modules
+      - name: SonarQube Scan
+        run: ./gradlew health-sdk:sdk:sonar health-sdk:example-app:sonar --info --stacktrace
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

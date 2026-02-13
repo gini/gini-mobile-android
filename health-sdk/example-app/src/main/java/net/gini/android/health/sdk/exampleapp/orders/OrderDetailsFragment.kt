@@ -29,9 +29,9 @@ import net.gini.android.health.sdk.util.hideKeyboard
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
 import net.gini.android.internal.payment.utils.extensions.setIntervalClickListener
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.math.BigDecimal
 import java.text.DecimalFormat
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.NumberFormat
 import java.util.Locale
 import net.gini.android.internal.payment.R as internalR

@@ -6,13 +6,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.nhaarman.mockitokotlin2.*
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.camera.api.CameraInterface
@@ -100,8 +95,8 @@ class CameraFragmentImplTest {
             on { visibility } doReturn View.INVISIBLE
         }
         val analyticsTrackerMock = mock<UserAnalyticsEventTracker> {
-            on { trackEvent(any()) }.then {}
-            on { trackEvent(any(), any()) }.then {}
+            on { trackEvent(any()) }.thenReturn(true)
+            on { trackEvent(any(), any()) }.thenReturn(true)
         }
 
         fragmentImpl.mLayoutNoPermission = noPermissionLayoutMock

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -35,7 +36,6 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.utils.DisplayedScreen
 import net.gini.android.internal.payment.utils.extensions.applyWindowInsetsWithTopPadding
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.slf4j.LoggerFactory
 
 open class InvoicesActivity : AppCompatActivity() {
@@ -54,22 +54,11 @@ open class InvoicesActivity : AppCompatActivity() {
         val isFragmentInBackStack = fragment != null && fragment.isAdded
 
         setSiblingViewsEnabled(!isFragmentInBackStack)
-        if (isFragmentInBackStack) {
-            setActivityTitle(DisplayedScreen.ReviewScreen)
-        }
 
         supportFragmentManager.addOnBackStackChangedListener {
-
             val findFragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
             val isFragmentInBackStackChanged = findFragment != null && findFragment.isAdded
-
             setSiblingViewsEnabled(!isFragmentInBackStackChanged)
-
-            if (!isFragmentInBackStackChanged) {
-                title = resources.getString(R.string.title_activity_invoices)
-            }
-
-            invalidateOptionsMenu()
         }
 
 

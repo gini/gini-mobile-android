@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -29,6 +30,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
@@ -37,7 +39,6 @@ import dev.chrisbanes.insetter.windowInsetTypesOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
-import net.gini.android.health.sdk.R as HealthR
 import net.gini.android.internal.payment.R as InternalPaymentR
 import net.gini.android.health.sdk.databinding.GhsFragmentReviewBinding
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
@@ -60,6 +61,7 @@ import net.gini.android.internal.payment.utils.extensions.onKeyboardAction
 import net.gini.android.internal.payment.utils.extensions.wrappedWithGiniPaymentThemeAndLocale
 import net.gini.android.internal.payment.utils.showKeyboard
 import org.jetbrains.annotations.VisibleForTesting
+import kotlin.math.abs
 
 /**
  * Listener for [ReviewFragment] events.
@@ -84,7 +86,7 @@ internal interface ReviewFragmentListener {
 /**
  * Delay duration (in milliseconds) used to allow the view to settle down before requesting focus.
  *
- * A value of 200ms was chosen based on observed behaviour on Android Q (API 29) and below, where
+ * A value of 200ms was chosen based on observed behaviour on Android 10 devices and below, where
  * immediately requesting keyboard focus after view creation can result in the keyboard not
  * appearing.
  * This delay helps ensure that the keyboard is reliably shown when the field requests focus.
@@ -105,7 +107,7 @@ class ReviewFragment private constructor(
 
     constructor() : this(null)
 
-    private val viewModel: ReviewViewModel by viewModels{
+    private val viewModel: ReviewViewModel by viewModels {
         viewModelFactory ?: object : ViewModelProvider.Factory {}
     }
     private var isImeVisible: Boolean = false
@@ -114,8 +116,16 @@ class ReviewFragment private constructor(
     private var binding: GhsFragmentReviewBinding by autoCleared()
     private var documentPageAdapter: DocumentPageAdapter by autoCleared()
     private var isKeyboardShown = false
+    private var imeWasVisible = false
     private var errorSnackbar: Snackbar? = null
+    private var ranPostRotateFix = false
+    private var mediator: TabLayoutMediator? = null
 
+    private val pageCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            viewModel.reviewPagerPosition = position
+        }
+    }
 
     @VisibleForTesting
     internal val reviewViewListener = object : ReviewViewListener {
@@ -169,14 +179,33 @@ class ReviewFragment private constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val documentPagerHeight = savedInstanceState?.getInt(PAGER_HEIGHT, -1) ?: -1
         viewModel.userPreferences = UserPreferences(requireContext())
+
+
+        imeWasVisible = savedInstanceState?.getBoolean(KEY_IME_WAS_VISIBLE) ?: false
+        ranPostRotateFix = false
+
+
+        // Fire once on the first portrait layout pass where IME is hidden.
+        if (imeWasVisible) {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+                val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+                if (!imeVisible && !ranPostRotateFix && resources.isLandscapeOrientation().not()) {
+                    ranPostRotateFix = true
+                    v.post { restorePagerAndImeAfterRotation() }
+                }
+                insets
+            }
+        } else if (resources.isLandscapeOrientation().not()) {
+            restorePagerAndImeAfterRotation()
+        }
+
         with(binding) {
             ghsPaymentDetails.reviewComponent = viewModel.reviewComponent
             setStateListeners()
             setKeyboardAnimation()
-            removePagerConstraintAndSetPreviousHeightIfNeeded(documentPagerHeight)
         }
+
         // Set info bar bottom margin programmatically to reuse radius dimension with negative sign
         binding.paymentDetailsInfoBar.updateLayoutParams<ConstraintLayout.LayoutParams> {
             bottomMargin =
@@ -189,15 +218,39 @@ class ReviewFragment private constructor(
 
         // handling keyboard in Version <= Q (Pie and below) after orientation change
         if (preQ()) {
-            startPreRKeyboardTracker(view)
+            startKeyboardTracker(view)
             restoreImeIfNeeded(view, savedInstanceState)
+        }
+    }
+
+    private fun restorePagerAndImeAfterRotation() {
+        binding.pager.doOnPreDraw {
+            applyPagerConstraintFromCurrentSize()
+        }
+    }
+
+    private fun applyPagerConstraintFromCurrentSize() {
+        val h = when {
+            viewModel.pagerHeight > 0 -> viewModel.pagerHeight
+            binding.pager.height > 0 -> binding.pager.height
+            else -> ViewGroup.LayoutParams.WRAP_CONTENT
+        }
+
+        viewModel.pagerHeight = h
+        ConstraintSet().apply {
+            clone(binding.constraintRoot)
+            constrainHeight(binding.pager.id, h)
+            clear(binding.pager.id, ConstraintSet.BOTTOM) // if that’s part of your logic
+            applyTo(binding.constraintRoot)
         }
     }
 
     private fun restoreImeIfNeeded(root: View, savedInstanceState: Bundle?) {
         val focusedId = savedInstanceState?.getInt(KEY_FOCUSED_ID) ?: View.NO_ID
         val imeWasVisible = savedInstanceState?.getBoolean(KEY_IME_WAS_VISIBLE) ?: false
-        if (focusedId == View.NO_ID || !imeWasVisible) return
+        if (focusedId == View.NO_ID || !imeWasVisible ||
+            binding.ghsPaymentDetails.reviewComponent?.getReviewViewStateInLandscapeMode() == ReviewViewStateLandscape.COLLAPSED
+        ) return
 
         root.post {
             val et = root.findViewById<EditText>(focusedId)
@@ -209,7 +262,6 @@ class ReviewFragment private constructor(
             }
         }
     }
-
 
     private fun GhsFragmentReviewBinding.setStateListeners() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -254,12 +306,19 @@ class ReviewFragment private constructor(
                 documentPageAdapter.submitList(documentPagesResult.pagesList.also { pages ->
                     indicator.isVisible = true
                     indicator.importantForAccessibility =
-                        if (pages.size > 1) View.IMPORTANT_FOR_ACCESSIBILITY_YES else View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                        if (pages.size > 1) View.IMPORTANT_FOR_ACCESSIBILITY_YES
+                        else View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
                     indicator.focusable = if (pages.size > 1) View.FOCUSABLE else View.NOT_FOCUSABLE
                     pager.isUserInputEnabled = pages.size > 1
                     indicator.isEnabled = pages.size > 1
                     indicator.alpha = if (pages.size > 1) 1f else 0f
-                })
+                }) {
+                    // <- runs after the adapter has items
+                    val pos = viewModel.reviewPagerPosition
+                        .coerceIn(0, (documentPageAdapter.itemCount - 1).coerceAtLeast(0))
+                    if (pager.currentItem != pos) pager.setCurrentItem(pos, false)
+                }
+
             }
 
             is DocumentPagesResult.Error -> {
@@ -285,12 +344,24 @@ class ReviewFragment private constructor(
     private fun GhsFragmentReviewBinding.configureOrientation() {
         pager.isVisible = true
         pager.adapter = documentPageAdapter
-      val mediator = TabLayoutMediator(indicator, pager) { tab, _ ->
-          tab.view.isFocusable = documentPageAdapter.itemCount > 1
-          tab.view.isClickable = true
-      }
-        mediator.attach()
+
+        (pager.adapter as RecyclerView.Adapter<*>).stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
+        pager.registerOnPageChangeCallback(pageCallback)
+
+        if (documentPageAdapter.itemCount > 0) {
+            val pos = viewModel.reviewPagerPosition
+                .coerceIn(0, documentPageAdapter.itemCount - 1)
+            if (pager.currentItem != pos) pager.setCurrentItem(pos, false)
+        }
+
+        mediator = TabLayoutMediator(indicator, pager) { tab, _ ->
+            tab.view.isFocusable = documentPageAdapter.itemCount > 1
+            tab.view.isClickable = true
+        }.also { it.attach() }
     }
+
     private fun GhsFragmentReviewBinding.handleError(text: String, onRetry: () -> Unit) {
         if (viewModel.configuration.handleErrorsInternally) {
             showSnackbar(text, onRetry)
@@ -298,7 +369,9 @@ class ReviewFragment private constructor(
     }
 
     private fun GhsFragmentReviewBinding.showSnackbar(text: String, onRetry: () -> Unit) {
-        val context = requireContext().wrappedWithGiniPaymentThemeAndLocale(viewModel.paymentComponent.getGiniPaymentLanguage(requireContext()))
+        val context = requireContext().wrappedWithGiniPaymentThemeAndLocale(
+            viewModel.paymentComponent.getGiniPaymentLanguage(requireContext())
+        )
         errorSnackbar?.dismiss()
         errorSnackbar = Snackbar.make(context, root, text, Snackbar.LENGTH_INDEFINITE).apply {
             if (context.getFontScale() < 1.5) {
@@ -333,23 +406,6 @@ class ReviewFragment private constructor(
         }
     }
 
-    private fun GhsFragmentReviewBinding.removePagerConstraintAndSetPreviousHeightIfNeeded(savedHeight: Int) {
-        if (resources.isLandscapeOrientation()) return
-        root.post {
-            if (savedHeight == 0) return@post
-            ConstraintSet().apply {
-                clone(constraintRoot)
-                constrainHeight(HealthR.id.pager, pager.height)
-                clear(HealthR.id.pager, ConstraintSet.BOTTOM)
-                applyTo(constraintRoot)
-            }
-            if (savedHeight > 0) {
-                val pagerLayoutParams = binding.pager.layoutParams
-                pagerLayoutParams.height = savedHeight
-                binding.pager.layoutParams = pagerLayoutParams
-            }
-        }
-    }
 
     private fun GhsFragmentReviewBinding.setKeyboardAnimation() {
         ViewCompat.setWindowInsetsAnimationCallback(
@@ -416,13 +472,15 @@ class ReviewFragment private constructor(
             })
     }
 
-    private fun startPreRKeyboardTracker(root: View) {
+    private fun startKeyboardTracker(root: View) {
         val listener = ViewTreeObserver.OnGlobalLayoutListener {
             val r = android.graphics.Rect()
             root.getWindowVisibleDisplayFrame(r)
             val visible = r.height()
             val heightDiff = root.rootView.height - visible
-            isImeVisible = heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // keyboard threshold
+            imeWasVisible =
+                imeWasVisible || (heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO) // keyboard threshold
+
         }
         root.viewTreeObserver.addOnGlobalLayoutListener(listener)
         preRKeyboardTracker = listener
@@ -493,6 +551,19 @@ class ReviewFragment private constructor(
         binding.root.post {
             setupConstraintsForTabLayout((dragHandle?.height ?: 0) + bottomLayout.height)
         }
+        binding.root.doOnPreDraw {
+            ConstraintSet().apply {
+                clone(binding.constraintRoot)
+                constrainHeight(
+                    binding.pager.id,
+                    abs(
+                        binding.pager.measuredHeight - ((dragHandle?.height
+                            ?: 0) + bottomLayout.height)
+                    )
+                )
+                applyTo(binding.constraintRoot)
+            }
+        }
         dragHandle?.setOnClickListener {
             fieldsLayout.alpha = if (it.isVisible) 0f else 1f
             val currentState =
@@ -527,26 +598,47 @@ class ReviewFragment private constructor(
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        val height = view?.findViewById<ViewPager2>(HealthR.id.pager)?.layoutParams?.height ?: -1
-        outState.putInt(PAGER_HEIGHT, height)
+        val visibleNow: Boolean = if (!preQ()) {
+            ViewCompat.getRootWindowInsets(requireView())
+                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: imeWasVisible
+        } else {
+            imeWasVisible // kept up to date by startKeyboardTracker()
+        }
+        outState.putBoolean(KEY_IME_WAS_VISIBLE, visibleNow)
         if (preQ()) {
             val focusedId = view?.findFocus()?.id ?: View.NO_ID
             outState.putInt(KEY_FOCUSED_ID, focusedId)
-            outState.putBoolean(KEY_IME_WAS_VISIBLE, isImeVisible)
         }
         super.onSaveInstanceState(outState)
     }
     private fun preQ() = Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q
 
+
     override fun onDestroyView() {
+        mediator?.detach()
+        mediator = null
+
         preRKeyboardTracker?.let {
             view?.viewTreeObserver?.removeOnGlobalLayoutListener(it)
         }
         preRKeyboardTracker = null
         super.onDestroyView()
     }
+
+
     internal companion object {
-        private const val PAGER_HEIGHT = "pager_height"
+        /**
+         * Delay duration (in milliseconds) used to allow the view to settle down before requesting focus.
+         *
+         * A value of 200ms was chosen based on observed behaviour on Android 10 devices and below, where
+         * immediately requesting keyboard focus after view creation can result in the keyboard not
+         * appearing.
+         * This delay helps ensure that the keyboard is reliably shown when the field requests focus.
+         */
+        private const val VIEW_SETTLE_DELAY_MS = 200L
+        private const val KEY_IME_WAS_VISIBLE = "ime_was_visible"
+        private const val KEY_FOCUSED_ID = "focused_view_id"
+        private const val KEYBOARD_VISIBILITY_RATIO = 0.25f
 
         fun newInstance(
             giniHealth: GiniHealth,
@@ -557,7 +649,14 @@ class ReviewFragment private constructor(
             paymentFlowConfiguration: PaymentFlowConfiguration
         ): ReviewFragment {
             // Store non-Parcelable dependencies in holder
-            val viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(giniHealth, configuration, paymentComponent, documentId, paymentFlowConfiguration, listener)
+            val viewModelFactory: ViewModelProvider.Factory = ReviewViewModel.Factory(
+                giniHealth,
+                configuration,
+                paymentComponent,
+                documentId,
+                paymentFlowConfiguration,
+                listener
+            )
             return ReviewFragment(viewModelFactory)
         }
 

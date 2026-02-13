@@ -55,7 +55,6 @@ import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
 import net.gini.android.capture.internal.camera.api.CameraException;
 import net.gini.android.capture.internal.camera.api.CameraInterface;
-import net.gini.android.capture.internal.camera.api.OldCameraController;
 import net.gini.android.capture.internal.camera.api.UIExecutor;
 import net.gini.android.capture.internal.camera.api.camerax.CameraXController;
 import net.gini.android.capture.internal.camera.photo.Photo;
@@ -95,10 +94,6 @@ import net.gini.android.capture.network.Error;
 import net.gini.android.capture.network.model.GiniCaptureExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.noresults.NoResultsFragment;
-import net.gini.android.capture.requirements.CameraHolder;
-import net.gini.android.capture.requirements.CameraResolutionRequirement;
-import net.gini.android.capture.requirements.CameraXHolder;
-import net.gini.android.capture.requirements.RequirementReport;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.CameraScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
@@ -538,7 +533,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private void checkGiniCaptureInstance() {
         if (!GiniCapture.hasInstance()) {
-            mFragment.findNavController().navigate(CameraFragmentDirections.toErrorFragment(ErrorType.GENERAL, mMultiPageDocument));
+            mFragment.findNavController().navigate(CameraFragmentDirections.toErrorFragment(
+                    ErrorType.GENERAL, mMultiPageDocument));
         }
     }
 
@@ -2055,19 +2051,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     @NonNull
     protected CameraInterface createCameraController(final Activity activity) {
-        if (canUseCameraX(activity)) {
-            LOG.info("Using CameraX");
-            return new CameraXController(activity);
-        }
-        LOG.info("Using old camera api");
-        return new OldCameraController(activity);
-    }
-
-    private boolean canUseCameraX(@NonNull final Context context) {
-        final CameraHolder cameraHolder = new CameraXHolder(context);
-        final RequirementReport requirementReport = new CameraResolutionRequirement(cameraHolder).check();
-        cameraHolder.closeCamera();
-        return requirementReport.isFulfilled();
+        return new CameraXController(activity);
     }
 
     private void handleError(final GiniCaptureError.ErrorCode errorCode,

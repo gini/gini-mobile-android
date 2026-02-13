@@ -21,6 +21,7 @@ data class GiniColorScheme(
     val badge: Badge = Badge(),
     val button: Button = Button(),
     val buttonOutlined: ButtonOutlined = ButtonOutlined(),
+    val progressBarButton: ProgressBarButton = ProgressBarButton(),
     val textField: TextField = TextField(),
     val toggles: Toggles = Toggles(),
     val dialogs: Dialogs = Dialogs(),
@@ -120,6 +121,14 @@ data class GiniColorScheme(
     )
 
     @Immutable
+    data class ProgressBarButton(
+        val container: Color = Color.Unspecified,
+        val content: Color = Color.Unspecified,
+        val border: Color = Color.Unspecified,
+        val progress: Color = Color.Unspecified,
+    )
+
+    @Immutable
     data class TextField(
         val container: Color = Color.Unspecified,
         val text: Text = Text(),
@@ -186,7 +195,8 @@ data class GiniColorScheme(
     data class Dialogs(
         val container: Color = Color.Unspecified,
         val text: Color = Color.Unspecified,
-        val labelText: Color = Color.Unspecified
+        val labelText: Color = Color.Unspecified,
+        val borderColor: Color = Color.Unspecified,
     )
 
     @Immutable
@@ -283,6 +293,12 @@ internal fun giniLightColorScheme(
             container = light04,
             content = dark02
         ),
+        progressBarButton = GiniColorScheme.ProgressBarButton(
+            container = light02,
+            content = dark02,
+            border = light04,
+            progress = accent01
+        ),
         textField = GiniColorScheme.TextField(
             container = light01,
             text = GiniColorScheme.TextField.Text(
@@ -317,9 +333,10 @@ internal fun giniLightColorScheme(
             )
         ),
         dialogs = GiniColorScheme.Dialogs(
-            container = light03,
+            container = light02,
             text = dark01,
-            labelText = accent01
+            labelText = accent01,
+            borderColor = light03
         ),
         icons = GiniColorScheme.Icons(secondary = light06),
         datePicker = GiniColorScheme.DatePicker(
@@ -412,6 +429,12 @@ internal fun giniDarkColorScheme(
             container = dark04,
             content = light01
         ),
+        progressBarButton = GiniColorScheme.ProgressBarButton(
+            container = dark02,
+            content = light01,
+            border = light01,
+            progress = accent01
+        ),
         textField = GiniColorScheme.TextField(
             container = dark02,
             text = GiniColorScheme.TextField.Text(
@@ -450,9 +473,10 @@ internal fun giniDarkColorScheme(
             )
         ),
         dialogs = GiniColorScheme.Dialogs(
-            container = dark03,
+            container = dark02,
             text = light01,
-            labelText = accent01
+            labelText = accent01,
+            borderColor = dark03
         ),
         icons = GiniColorScheme.Icons(secondary = dark06),
         datePicker = GiniColorScheme.DatePicker(

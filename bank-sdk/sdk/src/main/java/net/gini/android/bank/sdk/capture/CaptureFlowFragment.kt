@@ -29,6 +29,7 @@ import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoInvoiceHighlig
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragment
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
+import net.gini.android.bank.sdk.capture.skonto.model.SkontoInvoiceHighlightBoxes
 import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
@@ -42,6 +43,8 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureFragmentDirections
 import net.gini.android.capture.GiniCaptureFragmentListener
+import net.gini.android.capture.BankSDKProperties
+import net.gini.android.capture.BankSDKBridge
 import net.gini.android.capture.camera.CameraFragmentListener
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.ContextHelper
@@ -54,12 +57,14 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsU
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.util.protectViewFromInsets
 
+@Suppress("TooManyFunctions")
 class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     Fragment(),
     GiniCaptureFragmentListener,
     DigitalInvoiceFragmentListener,
     SkontoFragmentListener,
-    CancelListener {
+    CancelListener,
+    BankSDKBridge {
 
     private lateinit var navController: NavController
     private lateinit var captureFlowFragmentListener: CaptureFlowFragmentListener
@@ -93,10 +98,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private lateinit var composeView: ComposeView
 
-    private fun setReturnReasonsEventProperty() {
+    private fun setBankSdkVersionEventProperty() {
         userAnalyticsEventTracker?.setUserProperty(
             setOf(
-                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
                 UserAnalyticsUserProperty.BankSdkVersionName(BuildConfig.VERSION_NAME),
             )
         )
@@ -126,7 +130,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         composeView = view.findViewById(R.id.gbs_compose_view)
-        setReturnReasonsEventProperty()
+        setBankSdkVersionEventProperty()
         view.protectViewFromInsets()
         userAnalyticsEventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
@@ -157,7 +161,14 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         childFragmentManager.fragmentFactory =
-            CaptureFlowFragmentFactory(this, openWithDocument, this, this, this)
+           CaptureFlowFragmentFactory(
+                giniCaptureFragmentListener = this,
+                bankSDKBridge = this,
+                openWithDocument = openWithDocument,
+                digitalInvoiceListener = this,
+                skontoListener = this,
+                cancelCallback = this
+            )
         super.onCreate(savedInstanceState)
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
@@ -169,8 +180,8 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean(attachToTransactionDialogStateKey , attachDocumentDialogShowing)
-        outState.putParcelable(activityResultKey , captureResult)
+        outState.putBoolean(attachToTransactionDialogStateKey, attachDocumentDialogShowing)
+        outState.putParcelable(activityResultKey, captureResult)
         willBeRestored = true
     }
 
@@ -344,20 +355,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         }
 
         try {
-            skontoExtractionsHandler.initialize(
-                result.specificExtractions,
-                result.compoundExtractions
-            )
-
-            val skontoData = skontoDataExtractor.extractSkontoData(
-                result.specificExtractions,
-                result.compoundExtractions
-            )
-
-            val highlightBoxes = skontoInvoiceHighlightsExtractor.extract(
-                result.compoundExtractions
-            )
-
+            val (skontoData, highlightBoxes) = extractSkontoData(result)
             navController.navigate(
                 GiniCaptureFragmentDirections.toSkontoFragment(
                     data = skontoData,
@@ -368,6 +366,25 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
             fallback()
         }
     }
+
+    @Throws(NoSuchElementException::class)
+    fun extractSkontoData(result: CaptureSDKResult.Success): Pair<SkontoData, List<SkontoInvoiceHighlightBoxes>> {
+        skontoExtractionsHandler.initialize(
+            result.specificExtractions,
+            result.compoundExtractions
+        )
+
+        val skontoData = skontoDataExtractor.extractSkontoData(
+            result.specificExtractions,
+            result.compoundExtractions
+        )
+
+        val highlightBoxes = skontoInvoiceHighlightsExtractor.extract(
+            result.compoundExtractions
+        )
+        return Pair(skontoData, highlightBoxes)
+    }
+
 
     private fun finishWithResult(result: CaptureResult) {
         if (!ContextHelper.isTablet(requireContext())) {
@@ -452,6 +469,32 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
             )
         )
     }
+
+    override fun getBankSDKProperties(captureResult: CaptureSDKResult.Success): BankSDKProperties {
+        val skontoSDKFlag = GiniBank.getCaptureConfiguration()?.skontoEnabled == true
+        val returnAssistantSDKFlag =
+            GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true
+        val isSkontoExtractionsValid: Boolean = try {
+            extractSkontoData(captureResult)
+            true
+        } catch (_: NoSuchElementException) {
+            false
+        }
+
+        val isReturnAssistantExtractionsValid: Boolean = try {
+            LineItemsValidator.validate(captureResult.compoundExtractions)
+            true
+        } catch (_: DigitalInvoiceException) {
+            false
+        }
+
+        return BankSDKProperties(
+            isSkontoSDKFlagEnabled = skontoSDKFlag,
+            isReturnAssistantSDKFlagEnabled = returnAssistantSDKFlag,
+            isSkontoExtractionsValid = isSkontoExtractionsValid,
+            isReturnAssistantExtractionsValid = isReturnAssistantExtractionsValid
+        )
+    }
 }
 
 interface CaptureFlowFragmentListener {
@@ -467,6 +510,7 @@ interface CaptureFlowFragmentListener {
 
 class CaptureFlowFragmentFactory(
     private val giniCaptureFragmentListener: GiniCaptureFragmentListener,
+    private val bankSDKBridge: BankSDKBridge,
     private var openWithDocument: Document? = null,
     private val digitalInvoiceListener: DigitalInvoiceFragmentListener,
     private val skontoListener: SkontoFragmentListener,
@@ -481,6 +525,7 @@ class CaptureFlowFragmentFactory(
                     setListener(
                         giniCaptureFragmentListener
                     )
+                    setBankSDKBridge(bankSDKBridge)
                 }
 
             DigitalInvoiceFragment::class.java.name -> DigitalInvoiceFragment().apply {

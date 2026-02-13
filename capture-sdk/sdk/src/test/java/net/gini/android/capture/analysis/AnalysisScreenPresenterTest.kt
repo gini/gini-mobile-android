@@ -8,12 +8,41 @@ import android.graphics.Bitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
+import com.nhaarman.mockitokotlin2.atLeast
+import com.nhaarman.mockitokotlin2.atLeastOnce
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.spyk
+import io.mockk.verify
 import jersey.repackaged.jsr166e.CompletableFuture
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
-import net.gini.android.capture.*
-import net.gini.android.capture.document.*
+import kotlinx.coroutines.test.runTest
+import net.gini.android.capture.AsyncCallback
+import net.gini.android.capture.BankSDKBridge
+import net.gini.android.capture.BankSDKProperties
+import net.gini.android.capture.Document
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.GiniCaptureHelper
+import net.gini.android.capture.document.DocumentFactory
+import net.gini.android.capture.document.GiniCaptureDocument
+import net.gini.android.capture.document.ImageDocument
+import net.gini.android.capture.document.ImageDocumentFake
+import net.gini.android.capture.document.PdfDocument
+import net.gini.android.capture.document.PdfDocumentFake
 import net.gini.android.capture.internal.document.DocumentRenderer
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
 import net.gini.android.capture.internal.util.FileImportHelper.ShowAlertCallback
@@ -31,7 +60,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import java.util.*
+import java.util.Collections
 import java.util.concurrent.CancellationException
 
 /**
@@ -118,7 +147,7 @@ class AnalysisScreenPresenterTest {
         if (analysisInteractor == null) {
             presenter = object : AnalysisScreenPresenter(
                 mActivity, mView,
-                document, documentAnalysisErrorMessage
+                document, documentAnalysisErrorMessage, false
             ) {
                 public override fun createDocumentRenderer() {
                     mDocumentRenderer = documentRenderer
@@ -128,7 +157,7 @@ class AnalysisScreenPresenterTest {
             presenter = object : AnalysisScreenPresenter(
                 mActivity, mView, document,
                 documentAnalysisErrorMessage,
-                analysisInteractor
+                analysisInteractor, false
             ) {
                 public override fun createDocumentRenderer() {
                     mDocumentRenderer = documentRenderer
@@ -136,6 +165,9 @@ class AnalysisScreenPresenterTest {
             }
         }
         presenter.setListener(listener)
+
+        val bankSDKBridge = mock<BankSDKBridge>()
+        presenter.setBankSDKBridge(bankSDKBridge)
         return presenter
     }
 
@@ -229,7 +261,7 @@ class AnalysisScreenPresenterTest {
         presenter.start()
 
         // Then
-        verify(mView, atLeastOnce()).showScanAnimation()
+        verify(mView, atLeastOnce()).showScanAnimation(false)
     }
 
     @Test
@@ -382,7 +414,7 @@ class AnalysisScreenPresenterTest {
 
         // Then
         // Two times, because scan animation is also started when starting the presenter
-        verify(mView, atLeast(2)).showScanAnimation()
+        verify(mView, atLeast(2)).showScanAnimation(false)
     }
 
     @Test
@@ -795,4 +827,133 @@ class AnalysisScreenPresenterTest {
             .onAnalysisScreenEvent(Event(AnalysisScreenEvent.ERROR, errorDetails))
     }
 
+    // Test for isRAOrSkontoIncludedInExtractions
+    @Test
+    fun `isRAOrSkontoIncludedInExtractions returns true when Skonto or RA is enabled and valid`() {
+        val presenter = AnalysisScreenPresenterExtension(mock())
+        val resultHolder = AnalysisInteractor.ResultHolder(
+            AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
+            emptyMap(),
+            emptyMap(),
+            emptyList(),
+            "dummy",
+            "dummy"
+        )
+        val bankSDKBridge = mock<BankSDKBridge>()
+        val bankSDKProperties = mock<BankSDKProperties>()
+
+        whenever(bankSDKBridge.getBankSDKProperties(any())).thenReturn(bankSDKProperties)
+        presenter.bankSDKBridge = bankSDKBridge
+
+        whenever(bankSDKProperties.isSkontoSDKFlagEnabled).thenReturn(true)
+        whenever(bankSDKProperties.isSkontoExtractionsValid).thenReturn(true)
+        whenever(bankSDKProperties.isReturnAssistantSDKFlagEnabled).thenReturn(false)
+        whenever(bankSDKProperties.isReturnAssistantExtractionsValid).thenReturn(false)
+
+        assertTrue(presenter.isRAOrSkontoIncludedInExtractions(resultHolder))
+
+        whenever(bankSDKProperties.isSkontoSDKFlagEnabled).thenReturn(false)
+        whenever(bankSDKProperties.isSkontoExtractionsValid).thenReturn(false)
+        whenever(bankSDKProperties.isReturnAssistantSDKFlagEnabled).thenReturn(true)
+        whenever(bankSDKProperties.isReturnAssistantExtractionsValid).thenReturn(true)
+
+        assertTrue(presenter.isRAOrSkontoIncludedInExtractions(resultHolder))
+    }
+
+    @Test
+    fun `isRAOrSkontoIncludedInExtractions returns false when neither Skonto nor RA is enabled and valid`() {
+        val presenter = AnalysisScreenPresenterExtension(mock())
+        val resultHolder = AnalysisInteractor.ResultHolder(
+            AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
+            emptyMap(),
+            emptyMap(),
+            emptyList(),
+            "dummy",
+            "dummy"
+        )
+        val bankSDKBridge = mock<BankSDKBridge>()
+        val bankSDKProperties = mock<BankSDKProperties>()
+
+        whenever(bankSDKBridge.getBankSDKProperties(any())).thenReturn(bankSDKProperties)
+        presenter.bankSDKBridge = bankSDKBridge
+
+        whenever(bankSDKProperties.isSkontoSDKFlagEnabled).thenReturn(false)
+        whenever(bankSDKProperties.isSkontoExtractionsValid).thenReturn(false)
+        whenever(bankSDKProperties.isReturnAssistantSDKFlagEnabled).thenReturn(false)
+        whenever(bankSDKProperties.isReturnAssistantExtractionsValid).thenReturn(false)
+
+        assertFalse(presenter.isRAOrSkontoIncludedInExtractions(resultHolder))
+    }
+
+    @Test
+    fun `isRAOrSkontoIncludedInExtractions returns false when bankSDKBridge is null`() {
+        val presenter = AnalysisScreenPresenterExtension(mock())
+        val resultHolder = AnalysisInteractor.ResultHolder(
+            AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
+            emptyMap(),
+            emptyMap(),
+            emptyList(),
+            "dummy",
+            "dummy"
+        )
+
+        presenter.bankSDKBridge = null
+
+        assertFalse(presenter.isRAOrSkontoIncludedInExtractions(resultHolder))
+    }
+
+    @Test
+    fun `proceedWithExtractionsWhenEducationFinished calls proceedWithExtractions after education finished`() =
+        runTest {
+
+            val mockView = mockk<AnalysisScreenContract.View>(relaxed = true)
+            val presenter: AnalysisScreenPresenterExtension =
+                spyk(AnalysisScreenPresenterExtension(mockView))
+            val mockResultHolder = mockk<AnalysisInteractor.ResultHolder>(relaxed = true)
+            every { presenter["doWhenEducationFinished"](any<() -> Unit>()) } answers {
+                firstArg<() -> Unit>().invoke()
+            }
+            every { presenter.proceedWithExtractions(any()) } just Runs
+
+            presenter.proceedWithExtractionsWhenEducationFinished(
+                mockResultHolder,
+                mIsInvoiceSavingEnabled = false,
+                isSavingInvoicesInProgress = false,
+                mActivity
+            )
+
+            verify { presenter.proceedWithExtractions(mockResultHolder) }
+        }
+
+    @Test
+    fun `proceedWithExtractions calls onExtractionsAvailable with correct arguments`() {
+        // Arrange
+        val view = mock<AnalysisScreenContract.View>()
+        val listener = mock<AnalysisFragmentListener>()
+        val presenter = AnalysisScreenPresenterExtension(view)
+        presenter.listener = listener
+
+        val extractions = mapOf("key1" to mock<GiniCaptureSpecificExtraction>())
+        val compoundExtractions = mapOf("key2" to mock<GiniCaptureCompoundExtraction>())
+        val returnReasons = listOf(mock<GiniCaptureReturnReason>())
+
+        val resultHolder = mock<AnalysisInteractor.ResultHolder> {
+            on { this.extractions } doReturn extractions
+            on { this.compoundExtractions } doReturn compoundExtractions
+            on { this.returnReasons } doReturn returnReasons
+        }
+
+        // Act
+        presenter.proceedWithExtractions(resultHolder)
+
+        // Assert
+        verify(listener).onExtractionsAvailable(
+            extractions,
+            compoundExtractions,
+            returnReasons
+        )
+    }
+
+
 }
+

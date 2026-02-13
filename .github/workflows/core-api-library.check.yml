@@ -1,5 +1,8 @@
 name: Check Core API Library
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
   pull_request:
@@ -8,6 +11,9 @@ on:
       - 'core-api-library/**'
       - 'gradle/**'
   workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [ 22, 26, 31 ]
+        api-level: [ 23, 26, 31 ]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -47,7 +53,7 @@ jobs:
 
       - name: create avd and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
         with:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
@@ -58,7 +64,7 @@ jobs:
 
       - name: run instrumented tests
         timeout-minutes: 20
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
         with:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
@@ -180,4 +186,27 @@ jobs:
         with:
           name: core-api-library-ktlint-report
           path: core-api-library/library/build/reports/ktlint/**/*.html
-          
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+          cache: "gradle"
+
+      # Build both modules (example-app depends on sdk)
+      - name: Build modules for Sonar
+        run: |
+          ./gradlew core-api-library:library:assembleDebug \
+                    core-api-library:shared-tests:assembleDebug
+
+      # Run Sonar on both modules
+      - name: SonarQube Scan
+        run: ./gradlew core-api-library:library:sonar core-api-library:shared-tests:sonar --info --stacktrace
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -5,10 +5,22 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
     id("kotlin-parcelize")
     id("jacoco")
+    id ("org.sonarqube")
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.devtools.ksp)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-bank-sdk")
+        property("sonar.projectName", "Android Bank SDK")
+        property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 jacoco {
@@ -55,9 +67,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
 
     buildTypes {
         debug {
@@ -151,7 +160,7 @@ dependencies {
     testImplementation(libs.jUnitParams)
 
     androidTestImplementation(libs.moshi.core)
-    kaptAndroidTest(libs.moshi.codegen)
+    kspAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.androidx.test.junit.ktx)
     androidTestImplementation(libs.androidx.test.espresso.core)
 }

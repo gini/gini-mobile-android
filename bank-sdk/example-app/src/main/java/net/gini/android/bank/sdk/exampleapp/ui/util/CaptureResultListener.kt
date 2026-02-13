@@ -46,7 +46,8 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
                 context.startActivity(
                     ExtractionsActivity.getStartIntent(
                         context,
-                        result.specificExtractions
+                        result.specificExtractions,
+                        true
                     )
                 )
                 context.finish()

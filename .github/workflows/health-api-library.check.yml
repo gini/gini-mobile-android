@@ -1,5 +1,8 @@
 name: Check Health API Library
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
@@ -67,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [22, 33]
+        api-level: [23, 33]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -96,7 +99,7 @@ jobs:
 
       - name: create avd and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
         with:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
@@ -107,8 +110,8 @@ jobs:
 
       - name: "run instrumented tests using Health API environment: ${{ inputs.healthApiEnvironment }}"
         timeout-minutes: 20
-        uses: reactivecircus/android-emulator-runner@v2
-        if: ${{ inputs.healthApiEnvironment != 'staging' || matrix.api-level != 22 }}
+        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
+        if: ${{ inputs.healthApiEnvironment != 'staging' || matrix.api-level != 23 }}
         with:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
@@ -118,7 +121,7 @@ jobs:
           script: >
             adb uninstall net.gini.android.health.api.test ;
             ./gradlew -Pandroid.testInstrumentationRunnerArguments.apiEnv=${{ inputs.healthApiEnvironment }} health-api-library:library:connectedCheck
-            -PtestClientId='gini-mobile-test'
+            -PtestClientId='gini-mobile-ci'
             -PtestClientSecret='${{ inputs.healthApiEnvironment == 'staging' && secrets.STAGING_GINI_MOBILE_TEST_CLIENT_SECRET || secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}'
             -PtestApiUri='${{ inputs.healthApiEnvironment == 'staging' && 'https://health-api.stage.gini.net' || 'https://health-api.gini.net' }}'
             -PtestUserCenterUri='${{ inputs.healthApiEnvironment == 'staging' && 'https://user.stage.gini.net' || 'https://user.gini.net' }}'
@@ -235,4 +238,23 @@ jobs:
         with:
           name: health-api-library-ktlint-report
           path: health-api-library/library/build/reports/ktlint/**/*.html
-          
+
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Build health API Library
+        run: ./gradlew :health-api-library:library:assembleDebug
+
+      - name: SonarQube Scan
+        run: ./gradlew :health-api-library:library:sonar --info --stacktrace
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

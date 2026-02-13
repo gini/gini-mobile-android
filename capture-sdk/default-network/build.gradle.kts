@@ -6,8 +6,18 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
     id("jacoco")
+    id ("org.sonarqube")
+    alias(libs.plugins.devtools.ksp)
+}
+sonar {
+    properties {
+        property("sonar.projectKey", "android-capture-sdk")
+        property("sonar.projectName", "Android Capture SDK Default Network")
+        property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 jacoco {
@@ -95,7 +105,7 @@ dependencies {
     testImplementation(libs.truth)
 
     androidTestImplementation(libs.moshi.core)
-    kaptAndroidTest(libs.moshi.codegen)
+    kspAndroidTest(libs.moshi.codegen)
     androidTestImplementation(libs.kotlinx.coroutines.core)
     androidTestImplementation(libs.kotlinx.coroutines.android)
     androidTestImplementation(libs.androidx.test.runner)

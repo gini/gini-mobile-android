@@ -7,7 +7,19 @@ plugins {
     kotlin("android")
     id("kotlin-parcelize")
     id("jacoco")
+    id ("org.sonarqube")
     id("androidx.navigation.safeargs")
+    alias(libs.plugins.compose.compiler)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-capture-sdk")
+        property("sonar.projectName", "Android Capture SDK")
+        property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 jacoco {
@@ -54,9 +66,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
 
 
     buildTypes {
@@ -176,7 +185,7 @@ dependencies {
     testImplementation(libs.androidx.test.espresso.intents)
     testImplementation(libs.jUnitParams)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation (libs.json.testing)
+    testImplementation (libs.jsonJava)
     testImplementation(libs.mockk)
 
     debugImplementation(libs.androidx.test.core.ktx)
@@ -192,7 +201,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.androidx.multidex)
-
+    testImplementation(libs.mockito.kotlin2)
+    androidTestImplementation(libs.mockito.kotlin2)
     androidTestUtil(libs.androidx.test.orchestrator)
 }
 

@@ -6,6 +6,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import net.gini.android.bank.sdk.exampleapp.ui.ConfigurationViewModel
 import net.gini.android.bank.sdk.exampleapp.ui.fragment.ComposeFragment
+import net.gini.android.capture.internal.util.ContextHelper
 
 @AndroidEntryPoint
 class TransactionDetailsFragment : ComposeFragment() {
@@ -15,10 +16,13 @@ class TransactionDetailsFragment : ComposeFragment() {
 
     @Composable
     override fun ScreenContent() {
+        val isPhoneLandscape =
+            !ContextHelper.isPortraitOrTablet(requireContext())
         TransactionDetailsScreen(
             configurationViewModel = configurationViewModel,
             viewModel = viewModel,
-            navigateBack = { findNavController().navigateUp() }
+            navigateBack = { findNavController().navigateUp() },
+            isPhoneLandscape = isPhoneLandscape
         )
     }
 }

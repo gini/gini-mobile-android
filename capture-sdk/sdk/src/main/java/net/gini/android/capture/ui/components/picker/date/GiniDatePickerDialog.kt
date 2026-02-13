@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,6 +59,11 @@ fun GiniDatePickerDialog(
         onDismissRequest = onDismissRequest
     ) {
         Card(
+            colors = with(colors) {
+                CardDefaults.cardColors(
+                    containerColor = containerColor
+                )
+            },
             modifier = if (isLandScape) modifier
                 .fillMaxWidth(0.65f)
                 .fillMaxHeight(0.90f)
@@ -79,6 +85,8 @@ fun GiniDatePickerDialog(
                         todayContentColor = textDateToday,
                         todayDateBorderColor = dateSelected,
                         dividerColor = divider,
+                        containerColor = containerColor,
+                        disabledDayContentColor = textDateDisabled
                     )
                 }
             )

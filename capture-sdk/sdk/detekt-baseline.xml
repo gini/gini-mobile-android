@@ -195,11 +195,8 @@
     <ID>NewLineAtEndOfFile:AutoClearedValue.kt$net.gini.android.capture.internal.util.AutoClearedValue.kt</ID>
     <ID>NewLineAtEndOfFile:BufferedUserAnalyticsEventTracker.kt$net.gini.android.capture.tracking.useranalytics.BufferedUserAnalyticsEventTracker.kt</ID>
     <ID>NewLineAtEndOfFile:BundleHelper.kt$net.gini.android.capture.internal.util.BundleHelper.kt</ID>
-    <ID>NewLineAtEndOfFile:CameraHolder.kt$net.gini.android.capture.requirements.CameraHolder.kt</ID>
-    <ID>NewLineAtEndOfFile:CameraParametersHelper.kt$net.gini.android.capture.internal.camera.api.CameraParametersHelper.kt</ID>
     <ID>NewLineAtEndOfFile:CameraPreviewContainer.kt$net.gini.android.capture.internal.camera.view.CameraPreviewContainer.kt</ID>
     <ID>NewLineAtEndOfFile:CameraXController.kt$net.gini.android.capture.internal.camera.api.camerax.CameraXController.kt</ID>
-    <ID>NewLineAtEndOfFile:CameraXHolder.kt$net.gini.android.capture.requirements.CameraXHolder.kt</ID>
     <ID>NewLineAtEndOfFile:CancelListener.kt$net.gini.android.capture.internal.util.CancelListener.kt</ID>
     <ID>NewLineAtEndOfFile:CaptureSDKResult.kt$net.gini.android.capture.CaptureSDKResult.kt</ID>
     <ID>NewLineAtEndOfFile:ClickListenerExt.kt$net.gini.android.capture.internal.ui.ClickListenerExt.kt</ID>
@@ -260,6 +257,7 @@
     <ID>NewLineAtEndOfFile:UserAnalyticsUserProperty.kt$net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsUserProperty.kt</ID>
     <ID>NewLineAtEndOfFile:Width.kt$net.gini.android.capture.ui.theme.modifier.Width.kt</ID>
     <ID>ReturnCount:CameraXController.kt$CameraXController$override fun open(): CompletableFuture&lt;Void></ID>
+    <ID>ReturnCount:AccessibilityHelpers.kt$fun getSpokenDateForTalkBack(date: String): String</ID>
     <ID>ReturnCount:CameraXController.kt$CameraXController$override fun takePicture(): CompletableFuture&lt;Photo></ID>
     <ID>ReturnCount:ErrorFragmentImpl.kt$ErrorFragmentImpl$private fun shouldAllowRetakeImages(): Boolean</ID>
     <ID>ReturnCount:ErrorType.kt$ErrorType.Companion$@JvmStatic fun typeFromError(error: Error): ErrorType</ID>
@@ -273,7 +271,6 @@
     <ID>ThrowsCount:Extensions.kt$@Throws(CameraException::class) private fun cropByteArray(data: ByteArray, cropRect: Rect?): ByteArray</ID>
     <ID>ThrowsCount:IBANValidator.kt$IBANValidator$@Throws(IllegalIBANException::class) private fun validateLength(iban: String)</ID>
     <ID>TooGenericExceptionCaught:CameraXController.kt$CameraXController$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:CameraXHolder.kt$CameraXHolder$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DeviceInfo.kt$DeviceInfo.CachedInfo$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ErrorType.kt$ErrorType.Companion$e: Exception</ID>
     <ID>TooManyFunctions:CameraXController.kt$CameraXController : CameraInterface</ID>

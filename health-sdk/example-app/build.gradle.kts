@@ -5,8 +5,18 @@ import net.gini.gradle.readLocalPropertiesToMap
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
     id("kotlin-parcelize")
+    alias(libs.plugins.devtools.ksp)
+    id ("org.sonarqube")
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-health-sdk")
+        property("sonar.projectName", "Android Health SDK")
+        property("sonar.organization", "gini")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 android {
@@ -98,19 +108,17 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.koin.androidx.scope)
-    implementation(libs.koin.androidx.viewmodel)
-    implementation(libs.koin.androidx.fragment)
     implementation(libs.insetter)
     implementation(libs.datastore.preferences)
     implementation(libs.moshi.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    kapt(libs.moshi.codegen)
-    implementation(libs.logback.android.core)
-    implementation(libs.logback.android.classic) {
-        // workaround issue #73
-        exclude(group = "com.google.android", module = "android")
-    }
+    ksp(libs.moshi.codegen)
+    implementation(libs.logback.android)
+
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
     testImplementation(libs.junit)
 

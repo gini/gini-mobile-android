@@ -8,6 +8,16 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+    id ("org.sonarqube")
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-internal-payment-sdk")
+        property("sonar.projectName", "Android Internal Payment SDK")
+        property("sonar.organization", "gini")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 android {
@@ -100,11 +110,13 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.truth)
     androidTestImplementation(libs.androidx.test.junit)
     testImplementation(libs.androidx.test.espresso.core)
     testImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.test.junit)
 }
 
 apply<PublishToMavenPlugin>()
