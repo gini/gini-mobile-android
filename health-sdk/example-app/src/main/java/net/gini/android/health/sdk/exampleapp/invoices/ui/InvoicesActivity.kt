@@ -54,22 +54,11 @@ open class InvoicesActivity : AppCompatActivity() {
         val isFragmentInBackStack = fragment != null && fragment.isAdded
 
         setSiblingViewsEnabled(!isFragmentInBackStack)
-        if (isFragmentInBackStack) {
-            setActivityTitle(DisplayedScreen.ReviewScreen)
-        }
 
         supportFragmentManager.addOnBackStackChangedListener {
-
             val findFragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
             val isFragmentInBackStackChanged = findFragment != null && findFragment.isAdded
-
             setSiblingViewsEnabled(!isFragmentInBackStackChanged)
-
-            if (!isFragmentInBackStackChanged) {
-                title = resources.getString(R.string.title_activity_invoices)
-            }
-
-            invalidateOptionsMenu()
         }
 
 

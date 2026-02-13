@@ -122,7 +122,7 @@ class GiniHealth(
     val openBankState: StateFlow<PaymentState> = _openBankState
 
     private val _displayedScreen: MutableSharedFlow<DisplayedScreen> =
-        MutableSharedFlow(extraBufferCapacity = 1)
+        MutableSharedFlow(replay = 1, extraBufferCapacity = 1)
 
     /**
      * A flow for exposing the [DisplayedScreen] currently visible. It always starts with [DisplayedScreen.Nothing].
