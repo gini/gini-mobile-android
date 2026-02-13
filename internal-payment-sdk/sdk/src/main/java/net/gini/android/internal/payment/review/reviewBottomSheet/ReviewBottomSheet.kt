@@ -153,7 +153,7 @@ class ReviewBottomSheet private constructor(
             val visible = r.height()
             val heightDiff = root.rootView.height - visible
             imeVisibleNow =
-                heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // ~keyboard threshold
+                heightDiff > root.rootView.height * KEYBOARD_VISIBILITY_RATIO // keyboard threshold
         }
         root.viewTreeObserver.addOnGlobalLayoutListener(listener)
         preRKeyboardTracker = listener
