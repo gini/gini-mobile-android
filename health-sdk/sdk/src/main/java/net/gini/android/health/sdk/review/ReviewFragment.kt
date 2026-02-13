@@ -84,18 +84,6 @@ internal interface ReviewFragmentListener {
 }
 
 /**
- * Delay duration (in milliseconds) used to allow the view to settle down before requesting focus.
- *
- * A value of 200ms was chosen based on observed behaviour on Android 10 devices and below, where
- * immediately requesting keyboard focus after view creation can result in the keyboard not
- * appearing.
- * This delay helps ensure that the keyboard is reliably shown when the field requests focus.
- */
-private const val VIEW_SETTLE_DELAY_MS = 200L
-private const val KEY_IME_WAS_VISIBLE = "ime_was_visible"
-private const val KEY_FOCUSED_ID = "focused_view_id"
-private const val KEYBOARD_VISIBILITY_RATIO = 0.25f
-/**
  * The [ReviewFragment] displays an invoice’s pages and payment information extractions. It also lets users pay the
  * invoice with the bank they selected in the [BankSelectionBottomSheet].
  *
@@ -110,7 +98,6 @@ class ReviewFragment private constructor(
     private val viewModel: ReviewViewModel by viewModels {
         viewModelFactory ?: object : ViewModelProvider.Factory {}
     }
-    private var isImeVisible: Boolean = false
     private var preRKeyboardTracker: ViewTreeObserver.OnGlobalLayoutListener? = null
 
     private var binding: GhsFragmentReviewBinding by autoCleared()
@@ -217,7 +204,7 @@ class ReviewFragment private constructor(
         }
 
         // handling keyboard in Version <= Q (Pie and below) after orientation change
-        if (preQ()) {
+        if (isAndroidQOrBelow()) {
             startKeyboardTracker(view)
             restoreImeIfNeeded(view, savedInstanceState)
         }
@@ -598,20 +585,20 @@ class ReviewFragment private constructor(
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        val visibleNow: Boolean = if (!preQ()) {
+        val visibleNow: Boolean = if (!isAndroidQOrBelow()) {
             ViewCompat.getRootWindowInsets(requireView())
                 ?.isVisible(WindowInsetsCompat.Type.ime()) ?: imeWasVisible
         } else {
             imeWasVisible // kept up to date by startKeyboardTracker()
         }
         outState.putBoolean(KEY_IME_WAS_VISIBLE, visibleNow)
-        if (preQ()) {
+        if (isAndroidQOrBelow()) {
             val focusedId = view?.findFocus()?.id ?: View.NO_ID
             outState.putInt(KEY_FOCUSED_ID, focusedId)
         }
         super.onSaveInstanceState(outState)
     }
-    private fun preQ() = Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q
+    private fun isAndroidQOrBelow() = Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q
 
 
     override fun onDestroyView() {
