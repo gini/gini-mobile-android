@@ -30,7 +30,6 @@ import net.gini.android.core.api.models.Payment
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.response.DeleteDocumentErrorResponse
 import net.gini.android.health.api.response.DeletePaymentRequestErrorResponse
-import net.gini.android.health.sdk.GiniHealth.TrustMarkerResponse
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
