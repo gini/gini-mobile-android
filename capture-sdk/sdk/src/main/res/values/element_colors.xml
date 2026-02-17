@@ -2,5 +2,6 @@
 <resources>
 
     <color name="gc_camera_title_color">@color/gc_light_01</color>
+    <color name="skonto_section_title_text_color">@color/gc_dark_02</color>
 
 </resources>
