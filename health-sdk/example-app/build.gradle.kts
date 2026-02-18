@@ -8,6 +8,8 @@ plugins {
     id("kotlin-parcelize")
     alias(libs.plugins.devtools.ksp)
     id ("org.sonarqube")
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.google.services)
 }
 
 sonar {
@@ -101,6 +103,9 @@ dependencies {
 
     implementation(project(":health-sdk:sdk"))
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.fragment.ktx)
