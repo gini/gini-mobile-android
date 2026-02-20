@@ -102,7 +102,7 @@ internal class PaymentFlowViewModel(
     }
 
     fun onPayment() = viewModelScope.launch {
-        giniMerchant.giniInternalPaymentModule.onPayment(initialSelectedPaymentProvider, paymentDetails)
+        giniMerchant.giniInternalPaymentModule.onPayment(null,initialSelectedPaymentProvider, paymentDetails)
     }
 
     fun getPaymentProviderApp() = initialSelectedPaymentProvider
@@ -123,7 +123,7 @@ internal class PaymentFlowViewModel(
     }
 
     override suspend fun getPaymentRequest(): PaymentRequest =
-        giniInternalPaymentModule.getPaymentRequest(initialSelectedPaymentProvider, paymentDetails)
+        giniInternalPaymentModule.getPaymentRequest(null,initialSelectedPaymentProvider, paymentDetails)
 
     override suspend fun getPaymentRequestDocument(paymentRequest: PaymentRequest): Resource<ByteArray> =
         giniInternalPaymentModule.giniHealthAPI.documentManager.getPaymentRequestDocument(paymentRequest.id)

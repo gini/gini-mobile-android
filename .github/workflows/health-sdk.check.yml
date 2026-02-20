@@ -21,6 +21,8 @@ on:
         required: true
       SONAR_TOKEN:
         required: true
+      GOOGLE_SERVICES_JSON_B64:
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-check
@@ -61,6 +63,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
+
+      - name: Create google-services.json
+        run: |
+          mkdir -p health-sdk/example-app
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > health-sdk/example-app/google-services.json
 
       - name: build release example app for QA
         run: >
@@ -169,6 +176,10 @@ jobs:
           distribution: "temurin"
           java-version: "17"
           cache: "gradle"
+      - name: Create google-services.json
+        run: |
+          mkdir -p health-sdk/example-app
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > health-sdk/example-app/google-services.json
 
       # Build both modules (example-app depends on sdk)
       - name: Build modules for Sonar
