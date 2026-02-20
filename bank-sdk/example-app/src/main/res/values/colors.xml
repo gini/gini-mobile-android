@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="gc_camera_title_color">#006ECF</color>
+    <color name="skonto_section_title_text_color">#006ECF</color>
+
     <color name="gc_color_01">@color/gc_light_01</color>
     <color name="gc_color_02">@color/gc_light_02</color>
     <color name="gc_color_03">@color/gc_light_03</color>
