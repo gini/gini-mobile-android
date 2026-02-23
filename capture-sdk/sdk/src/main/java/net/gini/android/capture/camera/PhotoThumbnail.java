@@ -116,8 +116,9 @@ public class PhotoThumbnail extends ConstraintLayout {
 
     private static void setBitmapOrBlack(@NonNull final ImageView imageView,
             @Nullable final ThumbnailBitmap stackBitmap) {
-        if (stackBitmap != null) {
-            imageView.setImageBitmap(stackBitmap.getRotatedBitmap());
+        Bitmap bitmap = (stackBitmap != null) ? stackBitmap.getRotatedBitmap() : null;
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
         } else {
             imageView.setImageBitmap(null);
             imageView.setBackgroundColor(Color.BLACK);
@@ -136,7 +137,7 @@ public class PhotoThumbnail extends ConstraintLayout {
         }
 
         final Bitmap getRotatedBitmap() {
-            if (rotatedBitmap == null) {
+            if (rotatedBitmap == null && bitmap != null) {
                 Matrix matrix = new Matrix();
                 matrix.postRotate(rotation);
                 rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
