@@ -37,6 +37,7 @@ import net.gini.android.core.api.DocumentMetadata
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.CredentialsStore
 import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.http.GiniHttpClientProvider
 import okhttp3.Cache
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -629,6 +630,7 @@ internal constructor(
         private var connectionTimeoutUnit: TimeUnit? = null
         private var documentMetadata: DocumentMetadata? = null
         private var trustManager: TrustManager? = null
+        private var httpClientProvider: GiniHttpClientProvider? = null
         private var isDebuggingEnabled = false
 
         /**
@@ -662,6 +664,7 @@ internal constructor(
                 )
             }
             trustManager?.let { giniApiBuilder.setTrustManager(it) }
+            httpClientProvider?.let { giniApiBuilder.setHttpClientProvider(it) }
             giniApiBuilder.setDebuggingEnabled(isDebuggingEnabled)
             val giniBankApi = giniApiBuilder.build()
             return GiniCaptureDefaultNetworkService(giniBankApi, documentMetadata, mContext)
@@ -814,6 +817,33 @@ internal constructor(
          */
         fun setTrustManager(trustManager: TrustManager): Builder {
             this.trustManager = trustManager
+            return this
+        }
+
+        /**
+         * Set a custom [GiniHttpClientProvider] to provide a configured OkHttpClient.
+         *
+         * This allows full control over HTTP client configuration including TLS/SSL settings,
+         * proxies, custom interceptors, logging, and more.
+         *
+         * **Important**: When a custom provider is set, it will override any HTTP-related
+         * settings configured via other builder methods such as:
+         * - [setCache]
+         * - [setTrustManager]
+         * - [setConnectionTimeout] and [setConnectionTimeoutUnit]
+         * - [setNetworkSecurityConfigResId]
+         * - [setDebuggingEnabled]
+         *
+         * If you want to use the SDK's default HTTP client configuration with custom modifications,
+         * consider using [net.gini.android.core.api.http.DefaultGiniHttpClientProvider.Builder]
+         * to configure the provider.
+         *
+         * @param provider A [GiniHttpClientProvider] implementation
+         * @return the [Builder] instance
+         * @see net.gini.android.core.api.http.DefaultGiniHttpClientProvider
+         */
+        fun setHttpClientProvider(provider: GiniHttpClientProvider): Builder {
+            this.httpClientProvider = provider
             return this
         }
 
