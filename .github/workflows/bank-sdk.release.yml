@@ -59,14 +59,14 @@ jobs:
             echo "🚀 Detected release version: $VERSION - will publish to Maven Central Staging"
           fi
 
-      - name: "publish to Sonatype Snapshots repo at https://oss.sonatype.org/content/repositories/snapshots/"
+      - name: "publish to Maven Central snapshots repo at https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
         if: steps.version_check.outputs.is_snapshot == 'true'
         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7  # v3.1.0
         with:
           lane: 'publish_to_maven_snapshots_repo'
           options: >
             {
-              "repo_url": "https://oss.sonatype.org/content/repositories/snapshots/",
+              "repo_url": "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/",
               "repo_user": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}",
               "repo_password": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}",
               "project_id": "bank-sdk",
