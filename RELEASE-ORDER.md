@@ -1,47 +1,47 @@
 DO NOT EDIT MANUALLY!
 Automatically created by the updateReleaseOrderFile task.
 
-Release order for :capture-sdk:sdk 4.0.0:
- 1. :capture-sdk:sdk 4.0.0
+Release order for :capture-sdk:sdk 4.1.0-SNAPSHOT:
+ 1. :capture-sdk:sdk 4.1.0-SNAPSHOT
 
-Release order for :core-api-library:library 3.0.0:
- 1. :core-api-library:library 3.0.0
+Release order for :core-api-library:library 3.1.0-SNAPSHOT:
+ 1. :core-api-library:library 3.1.0-SNAPSHOT
 
-Release order for :bank-api-library:library 4.0.0:
- 1. :core-api-library:library 3.0.0
- 2. :bank-api-library:library 4.0.0
+Release order for :bank-api-library:library 4.1.0-SNAPSHOT:
+ 1. :core-api-library:library 3.1.0-SNAPSHOT
+ 2. :bank-api-library:library 4.1.0-SNAPSHOT
 
 Release order for :health-api-library:library 5.4.0:
- 1. :core-api-library:library 3.0.0
+ 1. :core-api-library:library 3.1.0-SNAPSHOT
  2. :health-api-library:library 5.4.0
 
 Release order for :internal-payment-sdk:sdk 1.5.1:
- 1. :core-api-library:library 3.0.0
+ 1. :core-api-library:library 3.1.0-SNAPSHOT
  2. :health-api-library:library 5.4.0
  3. :internal-payment-sdk:sdk 1.5.1
 
 Release order for :health-sdk:sdk 5.5.1:
- 1. :core-api-library:library 3.0.0
+ 1. :core-api-library:library 3.1.0-SNAPSHOT
  2. :health-api-library:library 5.4.0
  3. :internal-payment-sdk:sdk 1.5.1
  4. :health-sdk:sdk 5.5.1
 
-Release order for :capture-sdk:default-network 4.0.0:
- 1. :core-api-library:library 3.0.0
- 2. :bank-api-library:library 4.0.0
- 3. :capture-sdk:sdk 4.0.0
- 4. :capture-sdk:default-network 4.0.0
+Release order for :capture-sdk:default-network 4.1.0-SNAPSHOT:
+ 1. :core-api-library:library 3.1.0-SNAPSHOT
+ 2. :bank-api-library:library 4.1.0-SNAPSHOT
+ 3. :capture-sdk:sdk 4.1.0-SNAPSHOT
+ 4. :capture-sdk:default-network 4.1.0-SNAPSHOT
 
 Release order for :merchant-sdk:sdk 1.0.0:
- 1. :core-api-library:library 3.0.0
+ 1. :core-api-library:library 3.1.0-SNAPSHOT
  2. :health-api-library:library 5.4.0
  3. :internal-payment-sdk:sdk 1.5.1
  4. :merchant-sdk:sdk 1.0.0
 
-Release order for :bank-sdk:sdk 4.0.0:
- 1. :core-api-library:library 3.0.0
- 2. :bank-api-library:library 4.0.0
- 3. :capture-sdk:sdk 4.0.0
- 4. :capture-sdk:default-network 4.0.0
- 5. :bank-sdk:sdk 4.0.0
+Release order for :bank-sdk:sdk 4.1.0-SNAPSHOT:
+ 1. :core-api-library:library 3.1.0-SNAPSHOT
+ 2. :bank-api-library:library 4.1.0-SNAPSHOT
+ 3. :capture-sdk:sdk 4.1.0-SNAPSHOT
+ 4. :capture-sdk:default-network 4.1.0-SNAPSHOT
+ 5. :bank-sdk:sdk 4.1.0-SNAPSHOT
 
