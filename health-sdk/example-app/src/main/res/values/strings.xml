@@ -51,4 +51,94 @@
     <string name="payment_request_error_deleting">Payment Request Deletion Failed</string>
     <string name="payment_requests_unauthorized">unauthorized payment request: </string>
     <string name="payment_requests_not_found">not found payment request: </string>
+
+    <!-- Error messages for GiniHealthException error codes -->
+    <!-- Generic errors (1xxx) -->
+    <string name="error_unknown">An unknown error occurred. Please try again.</string>
+    <string name="error_1000_unknown">Unknown error, please contact support.</string>
+    <string name="error_1100_processing_failed">Could not process your request. Please try again.</string>
+
+    <!-- Field validation errors (2xxx) -->
+    <string name="error_2000_validation">Please check your input and try again.</string>
+    <string name="error_2001_purpose_missing">Payment purpose is required.</string>
+    <string name="error_2002_purpose_length">Payment purpose must be between 4 and 200 characters.</string>
+    <string name="error_2003_recipient_missing">Payment recipient is required.</string>
+    <string name="error_2004_recipient_length">Payment recipient must not exceed 200 characters.</string>
+    <string name="error_2005_iban_missing">IBAN is required.</string>
+    <string name="error_2006_iban_length">IBAN must be between 12 and 35 characters.</string>
+    <string name="error_2007_iban_invalid">Please provide a valid IBAN number.</string>
+    <string name="error_2008_amount_missing">Payment amount is required.</string>
+    <string name="error_2009_amount_length">Payment amount must not exceed 100 characters.</string>
+    <string name="error_2010_amount_format">Invalid payment amount format.</string>
+    <string name="error_2011_bic_length">BIC must not exceed 11 characters.</string>
+    <string name="error_2012_bic_invalid">Please provide a valid BIC number.</string>
+    <string name="error_2013_unauthorized_documents">Some documents are not authorized.</string>
+    <string name="error_2014_documents_not_found">Some documents were not found.</string>
+    <string name="error_2015_composite_docs_missing">Missing composite document information.</string>
+    <string name="error_2016_unauthorized_payment_requests">Some payment requests are not authorized.</string>
+    <string name="error_2017_payment_requests_not_found">Some payment requests were not found.</string>
+    <string name="error_2100_entity_validation_failed">Validation failed. Please check your input.</string>
+
+    <!-- Document and resource errors (22xx-25xx) -->
+    <string name="error_2201_layout_not_found">Document layout not found.</string>
+    <string name="error_2202_page_not_found">Page not found.</string>
+    <string name="error_2203_resource_load_failed">Failed to load resource content.</string>
+    <string name="error_2204_feedback_failed">Could not process extraction feedback.</string>
+    <string name="error_2205_feedback_invalid">Extraction feedback is invalid.</string>
+    <string name="error_2206_feedback_unsupported_media">Unsupported media type for extraction feedback.</string>
+    <string name="error_2300_media_type_exception">Media type error occurred.</string>
+    <string name="error_2301_media_type_not_supported">Media type is not supported.</string>
+    <string name="error_2302_media_type_not_acceptable">Media type is not acceptable.</string>
+    <string name="error_2400_too_many_requests">Too many requests. Please try again later.</string>
+    <string name="error_2500_resource_not_found">Resource not found.</string>
+    <string name="error_2501_document_not_found">Document not found.</string>
+    <string name="error_2502_payment_provider_icon_not_found">Payment provider icon not found.</string>
+    <string name="error_2503_payment_request_not_found">Payment request not found.</string>
+    <string name="error_2504_payment_not_found">Payment not found.</string>
+    <string name="error_2505_source_document_not_found">Source document not found.</string>
+    <string name="error_2506_cover_page_not_found">Cover page not found.</string>
+    <string name="error_2507_extractions_not_found">Extractions not found.</string>
+    <string name="error_2508_payment_provider_not_found">Payment provider not found.</string>
+
+    <!-- Service errors (26xx-29xx) -->
+    <string name="error_2600_third_party_service">Third party service error. Please try again.</string>
+    <string name="error_2700_type_mismatch">Data type mismatch error.</string>
+    <string name="error_2800_service_unavailable">Service is temporarily unavailable. Please try again later.</string>
+    <string name="error_2900_unauthorized_operation">This operation is not authorized.</string>
+    <string name="error_2901_unauthorized_deletion">Payment request deletion is not authorized.</string>
+
+    <!-- Request errors (3xxx-4xxx) -->
+    <string name="error_3000_entity_too_large">Request is too large.</string>
+    <string name="error_3100_parse_failed">Could not parse request.</string>
+    <string name="error_3200_connection_aborted">Connection was aborted.</string>
+    <string name="error_3300_timeout">Request timed out. Please try again.</string>
+    <string name="error_3400_method_not_supported">This operation is not supported.</string>
+    <string name="error_3500_missing_path_variable">Missing required path variable.</string>
+    <string name="error_3600_missing_request_parameter">Missing required request parameter.</string>
+    <string name="error_3700_missing_request_part">Missing required request part.</string>
+    <string name="error_3800_request_binding">Request binding error.</string>
+    <string name="error_3900_validation">Validation error.</string>
+    <string name="error_4000_no_handler_found">No handler found for this request.</string>
+    <string name="error_4100_response_exception">Error in response.</string>
+    <string name="error_4200_message_not_writable">Message could not be written.</string>
+
+    <!-- HTTP Status Code error messages -->
+    <string name="error_status_400_bad_request">Bad request. Please check your input.</string>
+    <string name="error_status_401_unauthorized">Unauthorized. Please check your credentials.</string>
+    <string name="error_status_403_forbidden">Access forbidden.</string>
+    <string name="error_status_404_not_found">Resource not found.</string>
+    <string name="error_status_408_timeout">Request timed out. Please try again.</string>
+    <string name="error_status_413_too_large">Request is too large.</string>
+    <string name="error_status_415_unsupported_media">Unsupported media type.</string>
+    <string name="error_status_429_too_many_requests">Too many requests. Please wait and try again.</string>
+    <string name="error_status_500_server_error">Server error. Please try again later.</string>
+    <string name="error_status_503_unavailable">Service unavailable. Please try again later.</string>
+
+    <!-- Error dialog strings -->
+    <string name="error_dialog_title">Error</string>
+    <string name="error_dialog_retry">Retry</string>
+    <string name="error_dialog_cancel">Cancel</string>
+    <string name="error_request_id">Request ID: %s</string>
+    <string name="error_full_message">Error code: %1$s\nMessage: %2$s\nHTTP status: %3$s
+ </string>
 </resources>

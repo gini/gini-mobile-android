@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gini.android.core.api.Resource
+import net.gini.android.internal.payment.GiniHealthException
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
@@ -40,7 +41,14 @@ interface FlowBottomSheetsManager {
                         giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(Exception("Cancelled")))
                     }
                     is Resource.Error -> {
-                        giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(byteArrayResource.exception ?: Exception("Error")))
+                        giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(
+                            GiniHealthException(
+                                message = byteArrayResource.exception?.message ?: "Failed to get payment request document",
+                                statusCode = byteArrayResource.responseStatusCode,
+                                errorResponse = byteArrayResource.errorResponse,
+                                cause = byteArrayResource.exception
+                            )
+                        ))
                     }
                     is Resource.Success -> {
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, fileName)

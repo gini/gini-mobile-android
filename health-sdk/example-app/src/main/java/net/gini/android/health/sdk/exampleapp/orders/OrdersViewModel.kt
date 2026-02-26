@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.gini.android.health.api.response.DeletePaymentRequestErrorResponse
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.orders.data.OrdersRepository
 import net.gini.android.health.sdk.exampleapp.orders.data.model.Order
@@ -16,6 +15,7 @@ import net.gini.android.health.sdk.exampleapp.orders.data.model.OrderItem
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
+import net.gini.android.internal.payment.GiniHealthException
 import org.slf4j.LoggerFactory
 
 class OrdersViewModel(
@@ -34,10 +34,10 @@ class OrdersViewModel(
     val errorsFlow: SharedFlow<String> = _errorsFlow
 
     private val _deletePaymentRequestErrorsFlow =
-        MutableSharedFlow<DeletePaymentRequestErrorResponse?>(
+        MutableSharedFlow<GiniHealthException>(
             extraBufferCapacity = 1
         )
-    val deletePaymentRequestErrorsFlow: SharedFlow<DeletePaymentRequestErrorResponse?> =
+    val deletePaymentRequestErrorsFlow: SharedFlow<GiniHealthException> =
         _deletePaymentRequestErrorsFlow
 
     private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
@@ -65,15 +65,13 @@ class OrdersViewModel(
     }
 
 
-    fun deletePaymentRequest(requestId: String) = viewModelScope.launch {
-        val errorResponse = giniHealth.deletePaymentRequest(requestId)
-
-        if (errorResponse == null) {
-            ordersRepository.deleteRequestIdAndExpiryDate(requestId)
-        } else {
-            _errorsFlow.emit(errorResponse)
+    fun deletePaymentRequests(orderIds: List<String>) = viewModelScope.launch {
+        try {
+            giniHealth.deletePaymentRequests(orderIds)
+            ordersRepository.deleteRequestIdsAndExpiryDates(orderIds)
+        } catch (e: GiniHealthException) {
+            _deletePaymentRequestErrorsFlow.emit(e)
         }
-
     }
 
     fun getPaymentFragmentForPaymentDetails(paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration?): Result<PaymentFragment> {
@@ -85,13 +83,13 @@ class OrdersViewModel(
         }
     }
 
-    fun deletePaymentRequests(orderIds: List<String>) = viewModelScope.launch {
-        val deletePaymentRequestErrorResponse = giniHealth.deletePaymentRequests(orderIds)
-
-        if (deletePaymentRequestErrorResponse == null) {
-            ordersRepository.deleteRequestIdsAndExpiryDates(orderIds)
+    fun deletePaymentRequest(requestId: String) = viewModelScope.launch {
+        try {
+            giniHealth.deletePaymentRequest(requestId)
+            ordersRepository.deleteRequestIdAndExpiryDate(requestId)
+        } catch (e: GiniHealthException) {
+            _deletePaymentRequestErrorsFlow.emit(e)
         }
-        _deletePaymentRequestErrorsFlow.emit(deletePaymentRequestErrorResponse)
     }
 
 

@@ -25,8 +25,10 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.MainActivity
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityReviewBinding
+import net.gini.android.health.sdk.exampleapp.util.showGiniHealthErrorDialog
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.internal.payment.GiniHealthException
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import org.slf4j.LoggerFactory
 
@@ -76,28 +78,50 @@ class ReviewActivity : AppCompatActivity() {
         lifecycleScope.launch {
             documentId = (viewModel.giniHealth.documentFlow.value as ResultWrapper.Success<Document>).value.id
 
-            val isDocumentPayable = viewModel.giniHealth.checkIfDocumentIsPayable(documentId ?: "")
-            val containsMultipleDocuments = viewModel.giniHealth.checkIfDocumentContainsMultipleDocuments(documentId ?: "")
+            try {
+                val isDocumentPayable = viewModel.giniHealth.checkIfDocumentIsPayable(documentId ?: "")
+                val containsMultipleDocuments = viewModel.giniHealth.checkIfDocumentContainsMultipleDocuments(documentId ?: "")
 
-            if (!isDocumentPayable || containsMultipleDocuments) {
-                val alertTitle = when {
-                    !isDocumentPayable && containsMultipleDocuments -> {
-                        getString(R.string.multiple_documents) + " & " + getString(R.string.document_not_payable_title)
+                if (!isDocumentPayable || containsMultipleDocuments) {
+                    val alertTitle = when {
+                        !isDocumentPayable && containsMultipleDocuments -> {
+                            getString(R.string.multiple_documents) + " & " + getString(R.string.document_not_payable_title)
+                        }
+                        !isDocumentPayable -> {
+                            getString(R.string.document_not_payable_title)
+                        }
+                        else -> {
+                            getString(R.string.multiple_documents)
+                        }
                     }
-                    !isDocumentPayable -> {
-                        getString(R.string.document_not_payable_title)
-                    }
-                    else -> {
-                        getString(R.string.multiple_documents)
-                    }
+
+                    AlertDialog.Builder(this@ReviewActivity)
+                        .setTitle(alertTitle)
+                        .setMessage(R.string.document_not_payable_message)
+                        .setPositiveButton(android.R.string.ok
+                        ) { _, _ -> finish() }
+                        .setOnDismissListener {
+                            finish()
+                        }
+                        .show()
+                    return@launch
                 }
+            } catch (e: GiniHealthException) {
+                // Show error dialog using extension function
+                showGiniHealthErrorDialog(
+                    exception = e,
+                    onRetry = { recreate() },
+                    onDismiss = { finish() }
+                )
+                return@launch
+            } catch (e: Exception) {
+                // Handle other unexpected exceptions
+                LOG.error("Unexpected error checking document: ${e.message}", e)
 
                 AlertDialog.Builder(this@ReviewActivity)
-                    .setTitle(alertTitle)
-                    .setMessage(R.string.document_not_payable_message)
-                    .setPositiveButton(android.R.string.ok
-                    ) { _, _ -> finish() }
-                    .setOnDismissListener {
+                    .setTitle(R.string.error_dialog_title)
+                    .setMessage(e.message ?: getString(R.string.error_unknown))
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
                         finish()
                     }
                     .show()
@@ -114,9 +138,25 @@ class ReviewActivity : AppCompatActivity() {
                             is PaymentProviderAppsState.Error -> {
                                 binding.progress.visibility = View.INVISIBLE
 
+                                // Cast to GiniHealthException if available for detailed error info
+                                val giniException = paymentProviderAppsState.throwable as? GiniHealthException
+
+                                val errorMessage = buildString {
+                                    append("Failed to load payment provider apps:\n\n")
+                                    append(paymentProviderAppsState.throwable.message ?: "Unknown error")
+
+                                    giniException?.statusCode?.let { status ->
+                                        append("\n\nHTTP Status: $status")
+                                    }
+
+                                    giniException?.requestId?.let { reqId ->
+                                        append("\nRequest ID: $reqId")
+                                    }
+                                }
+
                                 AlertDialog.Builder(this@ReviewActivity)
                                     .setTitle(R.string.failed_to_load_bank_apps)
-                                    .setMessage(paymentProviderAppsState.throwable.message)
+                                    .setMessage(errorMessage)
                                     .setPositiveButton(android.R.string.ok, null)
                                     .show()
                             }
@@ -144,10 +184,25 @@ class ReviewActivity : AppCompatActivity() {
                 }
 
                 launch {
-                    viewModel.giniHealth.openBankState.collect {
-                        if (it is GiniHealth.PaymentState.Success || it is GiniHealth.PaymentState.Cancel) {
-                            supportFragmentManager.popBackStack()
-                            binding.payInvoiceButton.root.visibility = View.VISIBLE
+                    viewModel.giniHealth.openBankState.collect { paymentState ->
+                        when (paymentState) {
+                            is GiniHealth.PaymentState.Success, is GiniHealth.PaymentState.Cancel -> {
+                                supportFragmentManager.popBackStack()
+                                binding.payInvoiceButton.root.visibility = View.VISIBLE
+                            }
+                            is GiniHealth.PaymentState.Error -> {
+                                // Show error dialog for payment flow errors
+                                showGiniHealthErrorDialog(
+                                    exception = paymentState.throwable,
+                                    onDismiss = {
+                                        supportFragmentManager.popBackStack()
+                                        binding.payInvoiceButton.root.visibility = View.VISIBLE
+                                    }
+                                )
+                            }
+                            else -> {
+                                // No action needed for other states
+                            }
                         }
                     }
                 }

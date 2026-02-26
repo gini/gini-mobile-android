@@ -47,7 +47,7 @@ class GiniPaymentManagerTest {
         giniHealthAPI = mockk(relaxed = true)
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = IllegalStateException::class)
     fun `throws exception if trying to make payment when GiniHealthAPI is null`() = runTest {
         //Given
         val giniPaymentManager = GiniPaymentManager(null, null)
@@ -108,7 +108,7 @@ class GiniPaymentManagerTest {
         verify(exactly = 0) { paymentEventListener.onPaymentRequestCreated(any(), any()) }
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = IllegalStateException::class)
     fun `throws exception if trying to get payment request when GiniHealthAPI is null`() = runTest {
         //Given
         val giniPaymentManager = GiniPaymentManager(null, null)
@@ -117,7 +117,7 @@ class GiniPaymentManagerTest {
         giniPaymentManager.getPaymentRequest(null, null, paymentDetails)
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = IllegalArgumentException::class)
     fun `throws exception if trying to get payment request when paymentProviderApp is null`() = runTest {
         //Given
         val giniPaymentManager = GiniPaymentManager(giniHealthAPI, null)
@@ -126,7 +126,7 @@ class GiniPaymentManagerTest {
         giniPaymentManager.getPaymentRequest(null, null, paymentDetails)
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = GiniHealthException::class)
     fun `throws exception if getting payment request was cancelled`() = runTest {
         //Given
         val giniPaymentManager = GiniPaymentManager(giniHealthAPI, null)
@@ -143,7 +143,7 @@ class GiniPaymentManagerTest {
         giniPaymentManager.getPaymentRequest(null, paymentProviderApp, paymentDetails)
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = GiniHealthException::class)
     fun `throws exception if getting payment request returned with an error`() = runTest {
         //Given
         val giniPaymentManager = GiniPaymentManager(giniHealthAPI, null)

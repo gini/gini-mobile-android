@@ -22,6 +22,7 @@ import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.test.ViewModelTestCoroutineRule
 import net.gini.android.health.sdk.util.DisplayedScreen
+import net.gini.android.internal.payment.GiniHealthException
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
@@ -172,7 +173,14 @@ class PaymentFlowViewModelTest {
     fun `forwards on payment action to giniPayment`() = runTest {
         // Given
         coEvery { giniInternalPaymentModule!!.onPayment(null,any(), any()) } coAnswers {  }
-        every { giniHealth!!.documentFlow.value } returns ResultWrapper.Error(Exception())
+        every { giniHealth!!.documentFlow.value } returns ResultWrapper.Error(
+            exception = GiniHealthException(
+                message = "Test error",
+                cause = null,
+                statusCode = null,
+                errorResponse = null
+            )
+        )
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -225,7 +233,14 @@ class PaymentFlowViewModelTest {
             savedStateHandle = savedStateHandle,
             giniHealth = giniHealth!!
         )
-        every { giniHealth!!.documentFlow.value } returns ResultWrapper.Error(Exception())
+        every { giniHealth!!.documentFlow.value } returns ResultWrapper.Error(
+            exception = GiniHealthException(
+                message = "Test error",
+                cause = null,
+                statusCode = null,
+                errorResponse = null
+            )
+        )
 
         coEvery { giniInternalPaymentModule!!.getPaymentRequest(null,any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.PAID_ADJUSTED, "", "") }
 
@@ -281,8 +296,15 @@ class PaymentFlowViewModelTest {
 
         every { paymentComponent!!.selectedPaymentProviderAppFlow } returns MutableStateFlow(
             SelectedPaymentProviderAppState.AppSelected(paymentProviderApp))
-        //fix next code
-        every { giniHealth!!.documentFlow.value } returns ResultWrapper.Error(Exception())
+
+        every { giniHealth!!.documentFlow.value } returns ResultWrapper.Error(
+            exception = GiniHealthException(
+                message = "Test error",
+                cause = null,
+                statusCode = null,
+                errorResponse = null
+            )
+        )
 
         coEvery { giniInternalPaymentModule!!.getPaymentRequest(any(),any(), any()) } coAnswers { PaymentRequest("1234", null, null, "", "", null, "20", "", PaymentRequest.Status.OPEN, "", "") }
 

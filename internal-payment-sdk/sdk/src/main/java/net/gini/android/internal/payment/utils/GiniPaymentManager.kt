@@ -3,6 +3,7 @@ package net.gini.android.internal.payment.utils
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.models.PaymentRequestInput
+import net.gini.android.internal.payment.GiniHealthException
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.api.model.toPaymentRequest
@@ -72,23 +73,33 @@ internal class GiniPaymentManager(
 
         var paymentRequestId: String? = null
 
-        return when (val createPaymentRequestResource =
-            giniHealthAPI.documentManager.createPaymentRequest(
-                PaymentRequestInput(
-                    sourceDocumentLocation = documentUri,
-                    paymentProvider = paymentProviderApp.paymentProvider.id,
-                    recipient = paymentDetails.recipient,
-                    iban = paymentDetails.iban,
-                    amount = "${paymentDetails.amount.toBackendFormat()}:EUR",
-                    bic = null,
-                    purpose = paymentDetails.purpose,
-                )
-            ).mapSuccess {
-                paymentRequestId = it.data
-                giniHealthAPI.documentManager.getPaymentRequest(it.data)
-            }) {
+        // API call: Use GiniHealthException for API errors to preserve error details
+        return when (val createPaymentRequestResource = giniHealthAPI.documentManager.createPaymentRequest(
+            PaymentRequestInput(
+                sourceDocumentLocation = documentUri,
+                paymentProvider = paymentProviderApp.paymentProvider.id,
+                recipient = paymentDetails.recipient,
+                iban = paymentDetails.iban,
+                amount = "${paymentDetails.amount.toBackendFormat()}:EUR",
+                bic = null,
+                purpose = paymentDetails.purpose,
+            )
+        ).mapSuccess {
+            paymentRequestId = it.data
+            giniHealthAPI.documentManager.getPaymentRequest(it.data)
+        }) {
             is Resource.Cancelled -> throw Exception("Cancelled")
-            is Resource.Error -> throw Exception(createPaymentRequestResource.exception)
+            is Resource.Error -> {
+                // API error: Use GiniHealthException to preserve error details
+                throw GiniHealthException(
+                    message = createPaymentRequestResource.exception?.message
+                        ?: createPaymentRequestResource.message
+                        ?: "Failed to create payment request",
+                    statusCode = createPaymentRequestResource.responseStatusCode,
+                    errorResponse = createPaymentRequestResource.errorResponse,
+                    cause = createPaymentRequestResource.exception
+                )
+            }
             is Resource.Success -> paymentRequestId?.let {
                 createPaymentRequestResource.data.toPaymentRequest(it)
             } ?: throw Exception("Payment request ID is null")
