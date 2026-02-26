@@ -60,7 +60,9 @@ class CustomHttpClientProvider(
                 addInterceptor { chain ->
                     val originalRequest = chain.request()
                     val requestWithHeaders = originalRequest.newBuilder()
-                        .header("X-Custom-Header", "CustomValue")
+                        // Add trackable headers for Charles Proxy verification
+                        .addHeader("X-Custom-HTTP-Client", "Enabled")
+                        .addHeader("X-Custom-Timeout", customTimeoutSeconds.toString())
                         .build()
                     chain.proceed(requestWithHeaders)
                 }

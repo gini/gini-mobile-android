@@ -235,6 +235,10 @@ class ConfigurationActivity : AppCompatActivity() {
 
         binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.hint =
             configuration.clientSecret
+
+        // Custom HTTP client toggle
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient.isChecked =
+            configuration.isCustomHttpClientEnabled
     }
 
     @Suppress("CyclomaticComplexMethod", "LongMethod")
@@ -632,6 +636,23 @@ class ConfigurationActivity : AppCompatActivity() {
                     configurationViewModel.configurationFlow.value.copy(
                         isDebugModeEnabled = isChecked
                     )
+                )
+            }
+
+        // Custom HTTP client
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient
+            .setOnCheckedChangeListener { _, isChecked ->
+                val configurationFlow = configurationViewModel.configurationFlow.value
+                configurationViewModel.setConfiguration(
+                    configurationFlow.copy(
+                        isCustomHttpClientEnabled = isChecked
+                    )
+                )
+                // Reinitialize network services with the new flag
+                defaultNetworkServicesProvider.reinitNetworkServices(
+                    configurationFlow.clientId.ifEmpty { getString(R.string.gini_api_client_id) },
+                    configurationFlow.clientSecret.ifEmpty { getString(R.string.gini_api_client_secret) },
+                    isChecked
                 )
             }
 
