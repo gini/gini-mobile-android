@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   check:
+    if: ${{ !contains(github.ref, 'SNAPSHOT') && !contains(github.ref, 'snapshot') }}
     uses: ./.github/workflows/bank-sdk.check.yml
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
@@ -27,6 +28,7 @@ jobs:
         
   release:
     needs: check
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - name: checkout
