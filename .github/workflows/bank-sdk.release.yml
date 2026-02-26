@@ -71,6 +71,7 @@ jobs:
               "repo_password": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}",
               "project_id": "bank-sdk",
               "module_id": "sdk",
+              "build_number": "${{ github.run_number }}",
               "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
               "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
             }
