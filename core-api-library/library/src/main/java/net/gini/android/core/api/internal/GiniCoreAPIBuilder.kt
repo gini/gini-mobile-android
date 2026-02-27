@@ -334,7 +334,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val retrofit = Retrofit.Builder()
             .baseUrl(mUserCenterApiBaseUrl)
             .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
-            .client(createOkHttpClient())
+            .client(createUserApiOkHttpClient())  // Use user API client without authentication
             .build()
         mUserApiRetrofit = retrofit
         return retrofit
@@ -352,6 +352,60 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         return retrofit
     }
 
+    /**
+     * Creates an OkHttpClient specifically for user API (login/registration).
+     * This client does NOT include authentication interceptors to avoid circular dependency.
+     */
+    private fun createUserApiOkHttpClient(): OkHttpClient {
+        // If a custom provider is set, use it as a base
+        if (mHttpClientProvider != null) {
+            val baseClient = mHttpClientProvider!!.provideOkHttpClient()
+            
+            // Clone the consumer's client and add SDK's required User-Agent
+            return baseClient.newBuilder()
+                .apply {
+                    // Add SDK's required User-Agent header
+                    addInterceptor { chain ->
+                        val request = chain.request()
+                        // Only add User-Agent if not already set by consumer
+                        val hasUserAgent = request.header("User-Agent") != null
+                        if (hasUserAgent) {
+                            chain.proceed(request)
+                        } else {
+                            chain.proceed(
+                                request.newBuilder()
+                                    .header(
+                                        "User-Agent",
+                                        System.getProperty("http.agent") ?: FALLBACK_USER_AGENT
+                                    )
+                                    .build()
+                            )
+                        }
+                    }
+                }
+                .build()
+        }
+
+        // Otherwise, create a default provider with the configured settings
+        return DefaultGiniHttpClientProvider.builder(context)
+            .setHostnames(getHostnames())
+            .apply {
+                if (mNetworkSecurityConfigResId != 0) {
+                    setNetworkSecurityConfigResId(mNetworkSecurityConfigResId)
+                }
+                mCache?.let { setCache(it) }
+                mTrustManager?.let { setTrustManager(it) }
+                setConnectionTimeoutInMs(mTimeoutInMs)
+                setDebuggingEnabled(isDebuggingEnabled)
+            }
+            .build()
+            .provideOkHttpClient()
+    }
+
+    /**
+     * Creates an OkHttpClient for authenticated API requests.
+     * This client includes authentication interceptor and authenticator.
+     */
     private fun createOkHttpClient(): OkHttpClient {
         // If a custom provider is set, use it as a base and add SDK's required configuration on top
         if (mHttpClientProvider != null) {
