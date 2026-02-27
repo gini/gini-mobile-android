@@ -41,14 +41,17 @@ interface FlowBottomSheetsManager {
                         giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(Exception("Cancelled")))
                     }
                     is Resource.Error -> {
-                        giniInternalPaymentModule?.emitSdkEvent(GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(
-                            GiniHealthException(
-                                message = byteArrayResource.exception?.message ?: "Failed to get payment request document",
-                                statusCode = byteArrayResource.responseStatusCode,
-                                errorResponse = byteArrayResource.errorResponse,
-                                cause = byteArrayResource.exception
+                        giniInternalPaymentModule?.emitSdkEvent(
+                            GiniInternalPaymentModule.InternalPaymentEvents.OnErrorOccurred(
+                                GiniHealthException(
+                                    message = byteArrayResource.exception?.message
+                                        ?: "Failed to get payment request document",
+                                    statusCode = byteArrayResource.responseStatusCode,
+                                    errorResponse = byteArrayResource.errorResponse,
+                                    cause = byteArrayResource.exception
+                                )
                             )
-                        ))
+                        )
                     }
                     is Resource.Success -> {
                         val newFile = externalCacheDir?.createTempPdfFile(byteArrayResource.data, fileName)

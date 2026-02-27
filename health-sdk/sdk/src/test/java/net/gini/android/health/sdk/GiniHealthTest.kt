@@ -233,16 +233,11 @@ class GiniHealthTest {
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Error(exception = Exception("Failed to get document"))
         coEvery { documentManager.getConfigurations() } returns mockk(relaxed = true)
 
-        var exception: Exception? = null
-
-        try {
+        val exception = assertThrowsSuspend<GiniHealthException> {
             giniHealth.checkIfDocumentIsPayable(document.id)
-        } catch (e: Exception) {
-            exception = e
         }
 
-        assertNotNull(exception)
-        Truth.assertThat(exception!!.message).contains("Failed to get document")
+        Truth.assertThat(exception.message).contains("Failed to get document")
     }
 
     @Test
@@ -278,16 +273,11 @@ class GiniHealthTest {
         coEvery { documentManager.getAllExtractionsWithPolling(any()) } returns Resource.Error(exception = Exception("Failed to get extractions"))
         coEvery { documentManager.getDocument(any<String>()) } returns Resource.Success(document)
 
-        var exception: Exception? = null
-
-        try {
+        val exception = assertThrowsSuspend<GiniHealthException> {
             giniHealth.checkIfDocumentIsPayable(document.id)
-        } catch (e: Exception) {
-            exception = e
         }
 
-        assertNotNull(exception)
-        Truth.assertThat(exception!!.message).contains("Failed to get extractions")
+        Truth.assertThat(exception.message).contains("Failed to get extractions")
     }
 
     fun `Document payable check throws GiniHealthException with status code if get extractions API call fails`() = runTest {
@@ -579,10 +569,10 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Throws GiniHealthException when delete payment request was cancelled`() = runTest {
+    fun `Throws Exception when delete payment request was cancelled`() = runTest {
         coEvery { giniHealthAPI.documentManager.deletePaymentRequest(any()) } returns Resource.Cancelled()
 
-        val exception = assertThrowsSuspend<GiniHealthException> {
+        val exception = assertThrowsSuspend<Exception> {
             giniHealth.deletePaymentRequest("")
         }
 
@@ -617,16 +607,13 @@ class GiniHealthTest {
             message = "Payment request not found"
         )
 
-        // Act: Call getPayment function
-        val result = try {
+        // Act & Assert: Call getPayment function and expect GiniHealthException
+        val exception = assertThrowsSuspend<GiniHealthException> {
             giniHealth.getPayment("d89f26ab-a374-4c69-ae83-a88b078e4c49")
-            null // This should not be reached
-        } catch (e: Exception) {
-            e.message
         }
 
-        // Assert: Check that the error message is returned
-        assertEquals("Payment request not found", result)
+        // Assert: Check that the error message is correct
+        Truth.assertThat(exception.message).isEqualTo("Payment request not found")
     }
 
     @Test
@@ -647,12 +634,12 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Throws GiniHealthException when getPayment request was cancelled`() = runTest {
+    fun `Throws Exception when getPayment request was cancelled`() = runTest {
         // Arrange: Mock cancelled response from documentManager.getPayment
         coEvery { documentManager.getPayment(any()) } returns Resource.Cancelled()
 
-        // Act & Assert: Call getPayment function and expect exception
-        val exception = assertThrowsSuspend<GiniHealthException> {
+        // Act & Assert: Call getPayment function and expect Exception
+        val exception = assertThrowsSuspend<Exception> {
             giniHealth.getPayment("d89f26ab-a374-4c69-ae83-a88b078e4c49")
         }
 
@@ -806,10 +793,10 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `Throws GiniHealthException when batch delete payment requests is cancelled`() = runTest {
+    fun `Throws Exception when batch delete payment requests is cancelled`() = runTest {
         coEvery { documentManager.deletePaymentRequests(any()) } returns Resource.Cancelled()
 
-        val exception = assertThrowsSuspend<GiniHealthException> {
+        val exception = assertThrowsSuspend<Exception> {
             giniHealth.deletePaymentRequests(listOf())
         }
 
@@ -878,8 +865,9 @@ class GiniHealthTest {
         try {
             giniHealth.checkIfDocumentIsPayable(document.id)
             Truth.assertWithMessage("Expected exception to be thrown").fail()
-        } catch (e: Exception) {
-            // Old error handling - just check message is accessible
+        } catch (e: GiniHealthException) {
+            // Since GiniHealthException extends Throwable (not Exception), 
+            // this tests backward compatibility for Exception catch blocks
             Truth.assertThat(e.message).isNotNull()
             Truth.assertThat(e.message).contains("Network error")
         }
@@ -914,8 +902,9 @@ class GiniHealthTest {
         try {
             giniHealth.getPayment("test-id")
             Truth.assertWithMessage("Expected exception to be thrown").fail()
-        } catch (e: Exception) {
-            // Old error handling - just check message
+        } catch (e: GiniHealthException) {
+            // Since GiniHealthException extends Throwable (not Exception),
+            // this tests backward compatibility for Exception catch blocks
             Truth.assertThat(e.message).isNotNull()
             Truth.assertThat(e.message).contains("Payment not found")
         }
