@@ -23,7 +23,7 @@ import net.gini.android.health.sdk.exampleapp.databinding.ActivityOrdersBinding
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
 import net.gini.android.health.sdk.exampleapp.util.add
 import net.gini.android.health.sdk.exampleapp.util.isInTheFuture
-import net.gini.android.health.sdk.exampleapp.util.showAlertDialog
+import net.gini.android.health.sdk.exampleapp.util.showGiniHealthErrorDialog
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.PaymentDetails
 import net.gini.android.internal.payment.utils.DisplayedScreen
@@ -112,31 +112,12 @@ class OrdersActivity : AppCompatActivity() {
     }
 
     private suspend fun observeDeletePaymentErrors() {
-        viewModel.deletePaymentRequestErrorsFlow.collect { error ->
-            error?.let { deletePaymentRequestErrorResponse ->
-                if (deletePaymentRequestErrorResponse.message != null) {
-                    this@OrdersActivity.showAlertDialog(
-                        getString(R.string.payment_request_error_deleting),
-                        deletePaymentRequestErrorResponse.message ?: ""
-                    )
-                    return@collect
-                }
-
-                var errorMessage = ""
-
-                deletePaymentRequestErrorResponse.unauthorizedPaymentRequests?.let {
-                    errorMessage += "${getString(R.string.payment_requests_unauthorized)} $it"
-                }
-
-                deletePaymentRequestErrorResponse.notFoundPaymentRequests?.let {
-                    errorMessage += "\n${getString(R.string.payment_requests_not_found)} $it"
-                }
-                this@OrdersActivity.showAlertDialog(
-                    getString(R.string.payment_request_error_deleting),
-                    errorMessage
-                )
-            }
-
+        viewModel.deletePaymentRequestErrorsFlow.collect { exception ->
+            // Show error dialog using extension function
+            showGiniHealthErrorDialog(
+                exception = exception,
+                onDismiss = { /* Error acknowledged */ }
+            )
         }
     }
 
@@ -154,7 +135,15 @@ class OrdersActivity : AppCompatActivity() {
                 is GiniHealth.PaymentState.Cancel -> {
                     supportFragmentManager.popBackStack()
                 }
-                else -> Unit
+                is GiniHealth.PaymentState.Error -> {
+                    showGiniHealthErrorDialog(
+                        exception = paymentState.throwable,
+                        onDismiss = { supportFragmentManager.popBackStack() }
+                    )
+
+                }
+
+                else -> {}
             }
         }
     }

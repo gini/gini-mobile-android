@@ -7,18 +7,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.gini.android.health.api.response.DeleteDocumentErrorResponse
+import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
-import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.internal.payment.GiniHealthException
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
-    private val invoicesRepository: InvoicesRepository,
+     val invoicesRepository: InvoicesRepository,
     private val giniHealth: GiniHealth
 ) : ViewModel() {
 
@@ -40,10 +40,10 @@ class InvoicesViewModel(
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
 
-    private val _deleteDocumentsFlow = MutableSharedFlow<DeleteDocumentErrorResponse?>(
+    private val _deleteDocumentsFlow = MutableSharedFlow<GiniHealthException?>(
         extraBufferCapacity = 1
     )
-    val deleteDocumentsFlow: SharedFlow<DeleteDocumentErrorResponse?> = _deleteDocumentsFlow
+    val deleteDocumentsFlow: SharedFlow<GiniHealthException?> = _deleteDocumentsFlow
 
     fun updateDocument() {
         viewModelScope.launch {
@@ -67,13 +67,22 @@ class InvoicesViewModel(
         }
     }
 
+    fun resetUploadState() {
+        invoicesRepository.resetUploadState()
+    }
+
     fun batchDelete(documentIds: List<String>) {
         viewModelScope.launch {
-            val deleteDocumentsRequest = giniHealth.deleteDocuments(documentIds)
-            if (deleteDocumentsRequest == null) {
-                invoicesRepository.deleteDocuments(documentIds)
+            try {
+                val deleteDocumentsRequest = giniHealth.deleteDocuments(documentIds)
+                if (deleteDocumentsRequest == null) {
+                    invoicesRepository.deleteDocuments(documentIds)
+                }
+                _deleteDocumentsFlow.tryEmit(null)
+            } catch (e: GiniHealthException) {
+                _deleteDocumentsFlow.tryEmit(e)
             }
-            _deleteDocumentsFlow.tryEmit(deleteDocumentsRequest)
+
         }
     }
 

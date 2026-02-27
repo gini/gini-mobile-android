@@ -28,9 +28,12 @@ import net.gini.android.health.sdk.exampleapp.MainActivity
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
+import net.gini.android.internal.payment.GiniHealthException
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.health.sdk.exampleapp.util.ApiErrorParser
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
+import net.gini.android.health.sdk.exampleapp.util.showGiniHealthErrorDialog
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
@@ -87,10 +90,26 @@ open class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.uploadHardcodedInvoicesStateFlow.collect { uploadState ->
                         if (uploadState is Failure) {
+                            // Format detailed error message
+                            val errorMessage = buildString {
+                                append("Failed to upload invoices:\n\n")
+
+                                uploadState.errors.forEachIndexed { index, error ->
+                                    if (index > 0) append("\n---\n")
+                                    append(ApiErrorParser.formatErrorMessage(error))
+                                }
+                            }
+
+                            // Show error dialog
                             AlertDialog.Builder(this@InvoicesActivity)
                                 .setTitle(R.string.upload_failed)
-                                .setMessage(uploadState.errors.toSet().joinToString(", "))
-                                .setPositiveButton(android.R.string.ok, null)
+                                .setMessage(errorMessage)
+                                .setPositiveButton(android.R.string.ok) { _, _ ->
+                                    viewModel.resetUploadState()
+                                }
+                                .setOnDismissListener {
+                                    viewModel.resetUploadState()
+                                }
                                 .show()
                         }
 
@@ -99,11 +118,36 @@ open class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
                         if (paymentProviderAppsState is PaymentProviderAppsState.Error) {
+                            // Cast to GiniHealthException if available for detailed error info
+                            val giniException = paymentProviderAppsState.throwable as? GiniHealthException
+
+                            val errorMessage = buildString {
+                                append("Failed to load payment provider apps:\n\n")
+
+                                if (giniException != null) {
+                                    append(giniException.parsedMessage)
+
+                                    giniException.statusCode?.let { status ->
+                                        append("\n\nHTTP Status: $status")
+                                    }
+
+                                    giniException.requestId?.let { reqId ->
+                                        append("\nRequest ID: $reqId")
+                                    }
+                                } else {
+                                    // Simple exception - just show message
+                                    append(paymentProviderAppsState.throwable.message ?: "Unknown error")
+                                }
+                            }
+
                             AlertDialog.Builder(this@InvoicesActivity)
                                 .setTitle(R.string.failed_to_load_bank_apps)
-                                .setMessage(paymentProviderAppsState.throwable.message)
+                                .setMessage(errorMessage)
                                 .setPositiveButton(android.R.string.ok, null)
                                 .show()
+
+                            // OLD WAY (backward compatible - for reference):
+                            // .setMessage(paymentProviderAppsState.throwable.message)  // ← Would show raw JSON
                         }
 
                     }
@@ -124,6 +168,13 @@ open class InvoicesActivity : AppCompatActivity() {
                             }
                             is GiniHealth.PaymentState.Cancel -> {
                                 supportFragmentManager.popBackStack()
+                            }
+                            is GiniHealth.PaymentState.Error -> {
+                                // Show error dialog using extension function
+                                showGiniHealthErrorDialog(
+                                    exception = paymentState.throwable,
+                                    onDismiss = { supportFragmentManager.popBackStack() }
+                                )
                             }
                             else -> {}
                         }
@@ -164,32 +215,13 @@ open class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.deleteDocumentsFlow.collect { response ->
-                        response?.let { deleteDocumentErrorResponse ->
-                            if (deleteDocumentErrorResponse.message != null) {
-                                AlertDialog.Builder(this@InvoicesActivity)
-                                    .setTitle(getString(R.string.could_not_delete_documents))
-                                    .setMessage(deleteDocumentErrorResponse.message)
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .show()
-                                return@collect
-                            }
-
-                            var errorMessage = ""
-                            deleteDocumentErrorResponse.unauthorizedDocuments?.let {
-                                errorMessage += "${getString(R.string.unauthorized_documents)} $it"
-                            }
-                            deleteDocumentErrorResponse.notFoundDocuments?.let {
-                                errorMessage += "\n${getString(R.string.not_found_documents)} $it"
-                            }
-                            deleteDocumentErrorResponse.missingCompositeDocuments?.let {
-                                errorMessage += "\n${getString(R.string.missing_composite_documents)} $it"
-                            }
-                            AlertDialog.Builder(this@InvoicesActivity)
-                                .setTitle(getString(R.string.could_not_delete_documents))
-                                .setMessage(errorMessage)
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
+                    viewModel.deleteDocumentsFlow.collect { exception ->
+                        exception?.let { e ->
+                            // Show error dialog using extension function
+                            showGiniHealthErrorDialog(
+                                exception = e,
+                                onDismiss = { /* Error acknowledged */ }
+                            )
                         }
                     }
                 }

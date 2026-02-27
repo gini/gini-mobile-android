@@ -13,6 +13,7 @@ import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.HealthApiDocumentManager
 import net.gini.android.health.api.models.PaymentProvider
+import net.gini.android.internal.payment.GiniHealthException
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.R
 import net.gini.android.internal.payment.api.model.PaymentDetails
@@ -89,7 +90,7 @@ class GiniPaymentTest {
         giniPayment.getPaymentRequest(documentId, paymentProviderApp, paymentDetails)
     }
 
-    @Test(expected = Exception::class)
+    @Test(expected = GiniHealthException::class)
     fun `throws exception if payment request was not successful`() = runTest {
         // Given
         coEvery { documentManager.createPaymentRequest(any()) } coAnswers  { Resource.Error() }
