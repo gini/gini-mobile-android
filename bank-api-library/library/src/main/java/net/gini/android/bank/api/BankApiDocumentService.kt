@@ -18,7 +18,7 @@ internal interface BankApiDocumentService : DocumentService {
 
     @POST("documents/{id}/extractions/feedback")
     override suspend fun sendFeedback(
-        @HeaderMap bearer: Map<String, String>, @Path("id") id: String, @Body params: RequestBody
+        @Path("id") id: String, @Body params: RequestBody
     )
             : Response<ResponseBody>
 

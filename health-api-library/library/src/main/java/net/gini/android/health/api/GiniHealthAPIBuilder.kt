@@ -57,7 +57,7 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     }
 
     override fun createDocumentRepository(): HealthApiDocumentRepository {
-        return HealthApiDocumentRepository(createDocumentRemoteSource(), getSessionManager(), healthApiType)
+        return HealthApiDocumentRepository(createDocumentRemoteSource(), healthApiType)
     }
 
     /**

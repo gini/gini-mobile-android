@@ -19,7 +19,7 @@ import retrofit2.http.Path
 internal interface HealthApiDocumentService: DocumentService {
 
     @POST("documents/{documentId}/extractions")
-    override suspend fun sendFeedback(@HeaderMap bearer: Map<String, String>, @Path("documentId") id: String, @Body params: RequestBody): Response<ResponseBody>
+    override suspend fun sendFeedback(@Path("documentId") id: String, @Body params: RequestBody): Response<ResponseBody>
 
     @GET("/documents/{documentId}/pages")
     suspend fun getPages(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<List<PageResponse>>

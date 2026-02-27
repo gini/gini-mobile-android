@@ -66,7 +66,6 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
     override fun createDocumentRepository(): BankApiDocumentRepository {
         return BankApiDocumentRepository(
             createDocumentRemoteSource(),
-            getSessionManager(),
             bankApiType,
             createTrackingAnalysisRemoteSource()
         )
