@@ -107,6 +107,8 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.junit.ktx)
+    testImplementation(libs.mockk)
+    testImplementation(libs.okhttp3.mockwebserver)
 }
 
 apply<PublishToMavenPlugin>()
