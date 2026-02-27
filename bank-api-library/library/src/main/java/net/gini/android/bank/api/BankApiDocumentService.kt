@@ -11,12 +11,14 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 internal interface BankApiDocumentService : DocumentService {
 
     @POST("documents/{id}/extractions/feedback")
+    @Headers("Content-Type: application/vnd.gini.v1+json")
     override suspend fun sendFeedback(
         @Path("id") id: String, @Body params: RequestBody
     )

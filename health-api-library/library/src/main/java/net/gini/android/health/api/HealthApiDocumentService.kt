@@ -13,12 +13,14 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.HTTP
 import retrofit2.http.HeaderMap
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 internal interface HealthApiDocumentService: DocumentService {
 
     @POST("documents/{documentId}/extractions")
+    @Headers("Content-Type: application/vnd.gini.v4+json")
     override suspend fun sendFeedback(@Path("documentId") id: String, @Body params: RequestBody): Response<ResponseBody>
 
     @GET("/documents/{documentId}/pages")
