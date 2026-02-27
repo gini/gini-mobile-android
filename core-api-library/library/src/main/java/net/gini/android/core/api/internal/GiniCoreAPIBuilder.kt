@@ -21,6 +21,8 @@ import net.gini.android.core.api.authorization.UserRepository
 import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.authorization.X509TrustManagerAdapter
 import net.gini.android.core.api.http.DefaultGiniHttpClientProvider
+import net.gini.android.core.api.http.GiniAuthenticationInterceptor
+import net.gini.android.core.api.http.GiniAuthenticator
 import net.gini.android.core.api.http.GiniHttpClientProvider
 import net.gini.android.core.api.models.ExtractionsContainer
 import okhttp3.Cache
@@ -358,6 +360,13 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             // Clone the consumer's client and add SDK's required interceptors
             return baseClient.newBuilder()
                 .apply {
+                    // Add authentication interceptor FIRST (before consumer's interceptors)
+                    // This ensures all requests get authenticated automatically
+                    addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
+                    
+                    // Add authenticator for token refresh on 401 responses
+                    authenticator(GiniAuthenticator(getSessionManager()))
+                    
                     // Add SDK's required User-Agent header
                     // This is placed at the end of the interceptor chain so consumer's interceptors run first
                     addInterceptor { chain ->
@@ -395,7 +404,11 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             }
             .build()
 
-        return defaultProvider.provideOkHttpClient()
+        // Add authentication to default client as well
+        return defaultProvider.provideOkHttpClient().newBuilder()
+            .addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
+            .authenticator(GiniAuthenticator(getSessionManager()))
+            .build()
     }
 
     @Synchronized
