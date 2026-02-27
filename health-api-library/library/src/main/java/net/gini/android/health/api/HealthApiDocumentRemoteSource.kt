@@ -29,21 +29,21 @@ class HealthApiDocumentRemoteSource internal constructor(
 
     internal suspend fun getPages(documentId: String): List<PageResponse> = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getPages(buildHeaderMap(contentType = giniApiType.giniJsonMediaType), documentId)
+            documentService.getPages(documentId)
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
     internal suspend fun getPaymentProviders(): List<PaymentProviderResponse> = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getPaymentProviders(buildHeaderMap(contentType = giniApiType.giniJsonMediaType))
+            documentService.getPaymentProviders()
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
     internal suspend fun getPaymentProvider(providerId: String): PaymentProviderResponse = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getPaymentProvider(buildHeaderMap(contentType = giniApiType.giniJsonMediaType), providerId)
+            documentService.getPaymentProvider(providerId)
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
@@ -51,7 +51,6 @@ class HealthApiDocumentRemoteSource internal constructor(
     suspend fun createPaymentRequest(paymentRequestInput: PaymentRequestInput): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.createPaymentRequest(
-                buildHeaderMap(contentType = giniApiType.giniJsonMediaType),
                 paymentRequestInput.toPaymentRequestBody()
             )
         }
@@ -63,7 +62,6 @@ class HealthApiDocumentRemoteSource internal constructor(
     suspend fun getPaymentRequestDocument(paymentRequestId: String): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(
-                buildHeaderMap(contentType = giniApiType.giniPaymentRequestDocumentMediaType, accept = giniApiType.giniPaymentRequestDocumentMediaType),
                 paymentRequestId
             )
         }
@@ -73,7 +71,6 @@ class HealthApiDocumentRemoteSource internal constructor(
     suspend fun deletePaymentRequest(paymentRequestId: String): Unit = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.deletePaymentRequest(
-                buildHeaderMap(contentType = giniApiType.giniPaymentRequestDocumentMediaType),
                 paymentRequestId
             )
         }
@@ -83,7 +80,6 @@ class HealthApiDocumentRemoteSource internal constructor(
     suspend fun getPaymentRequestImage(paymentRequestId: String): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(
-                buildHeaderMap(contentType = giniApiType.giniPaymentRequestDocumentPngMediaType, accept = giniApiType.giniPaymentRequestDocumentPngMediaType),
                 paymentRequestId
             )
         }
@@ -92,9 +88,7 @@ class HealthApiDocumentRemoteSource internal constructor(
 
     suspend fun getConfigurations(): ConfigurationResponse = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getConfigurations(
-                buildHeaderMap(contentType = giniApiType.giniJsonMediaType)
-            )
+            documentService.getConfigurations()
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
@@ -103,7 +97,6 @@ class HealthApiDocumentRemoteSource internal constructor(
         val response =
             SafeApiRequest.apiRequest {
             documentService.batchDeleteDocuments(
-                buildHeaderMap(contentType = giniApiType.giniJsonMediaType),
                 documentIds
             )
         }
@@ -114,7 +107,6 @@ class HealthApiDocumentRemoteSource internal constructor(
         val response =
             SafeApiRequest.apiRequest {
             documentService.batchDeletePaymentRequests(
-                buildHeaderMap(contentType = giniApiType.giniJsonMediaType),
                 paymentRequestIds
             )
         }

@@ -26,18 +26,15 @@ internal interface BankApiDocumentService : DocumentService {
 
     @POST("paymentRequests/{id}/payment")
     suspend fun resolvePaymentRequests(
-        @HeaderMap bearer: Map<String, String>,
         @Path("id") id: String,
         @Body input: ResolvePaymentBody
     ): Response<ResolvePaymentResponse>
 
     @POST("events/error")
     suspend fun logErrorEvent(
-        @HeaderMap bearer: Map<String, String>,
         @Body errorEvent: ErrorEvent
     ): Response<ResponseBody>
 
     @GET("configurations")
-    suspend fun getConfigurations(@HeaderMap bearer: Map<String, String>)
-            : Response<ConfigurationResponse>
+    suspend fun getConfigurations(): Response<ConfigurationResponse>
 }

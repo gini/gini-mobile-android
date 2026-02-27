@@ -26,11 +26,7 @@ class BankApiDocumentRemoteSource internal constructor(
     suspend fun resolvePaymentRequests(id: String, input: ResolvePaymentInput)
             : ResolvedPayment = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.resolvePaymentRequests(
-                buildHeaderMap(
-                    contentType = giniApiType.giniJsonMediaType
-                ), id, input.toResolvePaymentBody()
-            )
+            documentService.resolvePaymentRequests(id, input.toResolvePaymentBody())
         }
         response.body()?.toResolvedPayment()
             ?: throw ApiException.forResponse("Empty response body", response)
@@ -39,22 +35,14 @@ class BankApiDocumentRemoteSource internal constructor(
     suspend fun logErrorEvent(errorEvent: ErrorEvent): Unit =
         withContext(coroutineContext) {
             SafeApiRequest.apiRequest {
-                documentService.logErrorEvent(
-                    buildHeaderMap(
-                        contentType = giniApiType.giniJsonMediaType
-                    ), errorEvent
-                )
+                documentService.logErrorEvent(errorEvent)
             }
         }
 
     suspend fun getConfigurations(): Configuration =
         withContext(coroutineContext) {
             val response = SafeApiRequest.apiRequest {
-                documentService.getConfigurations(
-                    buildHeaderMap(
-                        giniApiType.giniJsonMediaType
-                    )
-                )
+                documentService.getConfigurations()
             }
             response.body()?.toConfiguration()
                 ?: throw ApiException.forResponse("Empty response body", response)
