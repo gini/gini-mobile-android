@@ -12,50 +12,77 @@ import retrofit2.http.*
 
 /**
  * Internal use only.
+ * 
+ * Retrofit service interface for document-related API endpoints.
+ * 
+ * **Note**: Authentication is handled automatically by [GiniAuthenticationInterceptor].
+ * No need to pass Bearer tokens manually via @HeaderMap.
  */
 interface DocumentService {
 
     @POST("documents/")
-    suspend fun uploadDocument(@HeaderMap bearer: Map<String, String>, @Body bytes: RequestBody, @Query("filename") fileName: String?, @Query("doctype") docType: String?): Response<ResponseBody>
+    @Headers("Content-Type: application/octet-stream")
+    suspend fun uploadDocument(
+        @Body bytes: RequestBody,
+        @Query("filename") fileName: String?,
+        @Query("doctype") docType: String?,
+        @HeaderMap headers: Map<String, String> = emptyMap()
+    ): Response<ResponseBody>
 
     @GET("documents/{documentId}")
-    suspend fun getDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
+    suspend fun getDocument(
+        @Path("documentId") documentId: String
+    ): Response<ResponseBody>
 
     @GET
-    suspend fun getDocumentFromUri(@HeaderMap bearer: Map<String, String>, @Url uri:String): Response<ResponseBody>
+    suspend fun getDocumentFromUri(
+        @Url uri: String
+    ): Response<ResponseBody>
 
     @GET("documents/{documentId}/extractions")
-    suspend fun getExtractions(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
+    suspend fun getExtractions(
+        @Path("documentId") documentId: String
+    ): Response<ResponseBody>
 
-    suspend fun sendFeedback(bearer: Map<String, String>, id: String, params: RequestBody): Response<ResponseBody> {
+    suspend fun sendFeedback(id: String, params: RequestBody): Response<ResponseBody> {
         throw NotImplementedError("sendFeedback must be overridden by interfaces extending DocumentService")
     }
 
     @DELETE("documents/{documentId}")
-    suspend fun deleteDocument(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<ResponseBody>
+    suspend fun deleteDocument(
+        @Path("documentId") documentId: String
+    ): Response<ResponseBody>
 
     @DELETE
-    suspend fun deleteDocumentFromUri(@HeaderMap bearer: Map<String, String>, @Url documentUri: Uri): Response<ResponseBody>
+    suspend fun deleteDocumentFromUri(
+        @Url documentUri: Uri
+    ): Response<ResponseBody>
 
     @GET("documents/{documentId}/layout")
     suspend fun getDocumentLayout(
-        @HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String
-    ) : Response<DocumentLayoutResponse>
+        @Path("documentId") documentId: String
+    ): Response<DocumentLayoutResponse>
 
     @GET("documents/{documentId}/pages")
     suspend fun getDocumentPages(
-        @HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String
-    ) : Response<List<DocumentPageResponse>>
+        @Path("documentId") documentId: String
+    ): Response<List<DocumentPageResponse>>
 
     @GET("paymentRequests/{id}")
-    suspend fun getPaymentRequest(@HeaderMap bearer: Map<String, String>, @Path("id") id: String): Response<PaymentRequestResponse>
+    suspend fun getPaymentRequest(
+        @Path("id") id: String
+    ): Response<PaymentRequestResponse>
 
     @GET("paymentRequests")
-    suspend fun getPaymentRequests(@HeaderMap bearer: Map<String, String>): Response<List<PaymentRequestResponse>>
+    suspend fun getPaymentRequests(): Response<List<PaymentRequestResponse>>
 
     @GET("paymentRequests/{id}/payment")
-    suspend fun getPayment(@HeaderMap bearer: Map<String, String>, @Path("id") id: String): Response<PaymentResponse>
+    suspend fun getPayment(
+        @Path("id") id: String
+    ): Response<PaymentResponse>
 
     @GET
-    suspend fun getFile(@HeaderMap bearer: Map<String, String>, @Url location:String): Response<ResponseBody>
+    suspend fun getFile(
+        @Url location: String
+    ): Response<ResponseBody>
 }
