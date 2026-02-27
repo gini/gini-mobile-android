@@ -2,10 +2,7 @@ package net.gini.android.core.api
 
 import android.net.Uri
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import net.gini.android.core.api.Resource.Companion.wrapInResource
-import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
@@ -26,104 +23,84 @@ import org.json.JSONObject
 
 /**
  * Internal use only.
+ * 
+ * Repository for document-related operations.
+ * 
+ * **Note**: Authentication is handled automatically by [GiniAuthenticationInterceptor].
+ * No need to pass access tokens - they are added automatically to all HTTP requests.
  */
 abstract class DocumentRepository<E: ExtractionsContainer>(
     private val documentRemoteSource: DocumentRemoteSource,
-    protected val sessionManager: SessionManager,
     private val giniApiType: GiniApiType
 ) {
 
-    /*
-    We need mutex lock because otherwise when the user upload multiple documents at first use of the app, the app
-    creates multiple users (equal to number of documents) and we will get a server error (the document does not belong to the user)!
-    We are using a Mutex to prevent coroutines from retrieving access tokens in parallel. This way even when multiple uploads are started only one user is created.
-     */
-    val accessTokenMutex = Mutex()
-
     suspend fun deletePartialDocumentAndParents(documentId: String): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val document = getDocumentInternal(accessToken, documentId)
-                for (uri in document.compositeDocuments) {
-                    documentRemoteSource.deleteDocument(accessToken, uri)
-                }
-                documentRemoteSource.deleteDocument(accessToken, document.id)
+        wrapInResource {
+            val document = getDocumentInternal(documentId)
+            for (uri in document.compositeDocuments) {
+                documentRemoteSource.deleteDocument(uri)
             }
+            documentRemoteSource.deleteDocument(document.id)
         }
 
     suspend fun deleteDocument(documentId: String): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.deleteDocument(accessToken, documentId)
-            }
+        wrapInResource {
+            documentRemoteSource.deleteDocument(documentId)
         }
 
-    private suspend fun getDocumentInternal(accessToken: String, uri: Uri): Document =
-        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocumentFromUri(accessToken, uri)))
+    private suspend fun getDocumentInternal(uri: Uri): Document =
+        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocumentFromUri(uri)))
 
-    private suspend fun getDocumentInternal(accessToken: String, documentId: String): Document =
-        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(accessToken, documentId)))
+    private suspend fun getDocumentInternal(documentId: String): Document =
+        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(documentId)))
 
     open suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
                                            filename: String? = null,
                                            documentType: DocumentManager.DocumentType? = null,
                                            documentMetadata: DocumentMetadata? = null): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val uri = documentRemoteSource.uploadDocument(
-                    accessToken,
-                    documentData,
-                    MediaTypes.forPartialDocument(giniApiType.giniPartialMediaType, contentType),
-                    filename,
-                    documentType?.apiDoctypeHint,
-                    documentMetadata?.metadata
-                )
-                getDocumentInternal(accessToken, uri)
-            }
+        wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(
+                documentData,
+                MediaTypes.forPartialDocument(giniApiType.giniPartialMediaType, contentType),
+                filename,
+                documentType?.apiDoctypeHint,
+                documentMetadata?.metadata
+            )
+            getDocumentInternal(uri)
         }
 
     suspend fun createCompositeDocument(documents: List<Document>, documentType: DocumentManager.DocumentType?): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val uri = documentRemoteSource.uploadDocument(
-                    accessToken,
-                    createCompositeJson(documents),
-                    giniApiType.giniCompositeJsonMediaType,
-                    null,
-                    documentType?.apiDoctypeHint,
-                    null
-                )
-                getDocumentInternal(accessToken, uri)
-            }
+        wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(
+                createCompositeJson(documents),
+                giniApiType.giniCompositeJsonMediaType,
+                null,
+                documentType?.apiDoctypeHint,
+                null
+            )
+            getDocumentInternal(uri)
         }
 
     suspend fun createCompositeDocument(documentRotationMap: LinkedHashMap<Document, Int>, documentType: DocumentManager.DocumentType?): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val uri = documentRemoteSource.uploadDocument(
-                    accessToken,
-                    createCompositeJson(documentRotationMap),
-                    giniApiType.giniCompositeJsonMediaType,
-                    null,
-                    documentType?.apiDoctypeHint,
-                    null
-                )
-                getDocumentInternal(accessToken, uri)
-            }
+        wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(
+                createCompositeJson(documentRotationMap),
+                giniApiType.giniCompositeJsonMediaType,
+                null,
+                documentType?.apiDoctypeHint,
+                null
+            )
+            getDocumentInternal(uri)
         }
 
     suspend fun getDocument(documentId: String): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(accessToken, documentId)))
-            }
+        wrapInResource {
+            Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(documentId)))
         }
 
     suspend fun getDocument(uri: Uri): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                getDocumentInternal(accessToken, uri)
-            }
+        wrapInResource {
+            getDocumentInternal(uri)
         }
 
     @Throws(Exception::class)
@@ -132,17 +109,15 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
                                             responseJSON: JSONObject): E
 
     suspend fun getAllExtractions(document: Document): Resource<E> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                val extractionsJSONObject = JSONObject(documentRemoteSource.getExtractions(accessToken, document.id))
-                val candidates = extractionCandidatesFromApiResponse(extractionsJSONObject.getJSONObject("candidates"))
-                val specificExtractions =
-                    parseSpecificExtractions(extractionsJSONObject.getJSONObject("extractions"), candidates)
-                val compoundExtractions =
-                    parseCompoundExtractions(extractionsJSONObject.optJSONObject("compoundExtractions"), candidates)
+        return wrapInResource {
+            val extractionsJSONObject = JSONObject(documentRemoteSource.getExtractions(document.id))
+            val candidates = extractionCandidatesFromApiResponse(extractionsJSONObject.getJSONObject("candidates"))
+            val specificExtractions =
+                parseSpecificExtractions(extractionsJSONObject.getJSONObject("extractions"), candidates)
+            val compoundExtractions =
+                parseCompoundExtractions(extractionsJSONObject.optJSONObject("compoundExtractions"), candidates)
 
-                createExtractionsContainer(specificExtractions, compoundExtractions, extractionsJSONObject)
-            }
+            createExtractionsContainer(specificExtractions, compoundExtractions, extractionsJSONObject)
         }
     }
 
@@ -185,10 +160,8 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         val bodyJSON = JSONObject()
         bodyJSON.put("feedback", feedbackForExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.sendFeedback(accessToken, document.id, body)
-            }
+        return wrapInResource {
+            documentRemoteSource.sendFeedback(document.id, body)
         }
     }
 
@@ -225,57 +198,43 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         bodyJSON.put("extractions", feedbackForExtractions)
         bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.sendFeedback(accessToken, document.id, body)
-            }
+        return wrapInResource {
+            documentRemoteSource.sendFeedback(document.id, body)
         }
     }
 
     suspend fun getDocumentLayout(documentId: String) : Resource<DocumentLayout> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                 documentRemoteSource.getDocumentLayout(accessToken, documentId)
-            }
+        return wrapInResource {
+             documentRemoteSource.getDocumentLayout(documentId)
         }
     }
 
     suspend fun getDocumentPages(documentId: String) : Resource<List<DocumentPage>> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getDocumentPages(accessToken, documentId)
-            }
+        return wrapInResource {
+            documentRemoteSource.getDocumentPages(documentId)
         }
     }
 
     suspend fun getFile(location: String): Resource<ByteArray> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getFile(accessToken, location)
-            }
+        wrapInResource {
+            documentRemoteSource.getFile(location)
         }
 
     suspend fun getPaymentRequest(id: String): Resource<PaymentRequest> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPaymentRequest(accessToken, id).toPaymentRequest()
-            }
+        return wrapInResource {
+            documentRemoteSource.getPaymentRequest(id).toPaymentRequest()
         }
     }
 
     suspend fun getPaymentRequests(): Resource<List<PaymentRequest>> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPaymentRequests(accessToken).map { it.toPaymentRequest() }
-            }
+        return wrapInResource {
+            documentRemoteSource.getPaymentRequests().map { it.toPaymentRequest() }
         }
     }
 
     suspend fun getPayment(id: String): Resource<Payment> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPayment(accessToken, id)
-            }
+        wrapInResource {
+            documentRemoteSource.getPayment(id)
         }
 
     @Throws(JSONException::class)
@@ -400,16 +359,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         jsonObject.put("partialDocuments", partialDocuments)
 
         return jsonObject.toString().toByteArray(Utils.CHARSET_UTF8)
-    }
-
-    protected suspend inline fun <T> withAccessToken(crossinline block: suspend (String) -> Resource<T>): Resource<T> {
-        return accessTokenMutex.withLock {
-            return@withLock when (val getSession = sessionManager.getSession()) {
-                is Resource.Cancelled -> Resource.Cancelled()
-                is Resource.Error -> Resource.Error(getSession)
-                is Resource.Success -> block(getSession.data.accessToken)
-            }
-        }
     }
 
     companion object {

@@ -151,6 +151,9 @@ data class ExampleAppBankConfiguration(
     // enable/disable save invoices locally feature
     val saveInvoicesLocallyEnabled: Boolean = true,
 
+    // enable/disable custom HTTP client provider (for testing network customization)
+    val isCustomHttpClientEnabled: Boolean = false,
+
 ) : Parcelable {
 
     companion object Companion {

@@ -12,15 +12,25 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
 
     private var clientSecret: String? = null
     private var clientId: String? = null
+    private var useCustomHttpClient: Boolean = false
+    
     var giniBankAPI: GiniBankAPI = bindGiniBankAPI(context, logger)
     var defaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService
     = bindGiniCaptureNetworkServiceDebugEnabled(context, logger)
     var defaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService
     = bindGiniCaptureNetworkServiceDebugDisabled(context, logger)
 
-    fun reinitNetworkServices(clientId: String, clientSecret: String) {
+    fun reinitNetworkServices(
+        clientId: String, 
+        clientSecret: String,
+        enableCustomHttpClient: Boolean = false
+    ) {
         this.clientId = clientId
         this.clientSecret = clientSecret
+        this.useCustomHttpClient = enableCustomHttpClient
+        
+        logger.info("Reinitializing network services with custom HTTP client: $enableCustomHttpClient")
+        
         defaultNetworkServiceDebugEnabled = bindGiniCaptureNetworkServiceDebugEnabled(context, logger)
         defaultNetworkServiceDebugDisabled = bindGiniCaptureNetworkServiceDebugDisabled(context, logger)
         giniBankAPI = bindGiniBankAPI(context, logger)
@@ -57,7 +67,7 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
         logger: org.slf4j.Logger,
     ): GiniCaptureDefaultNetworkService.Builder {
         val clientIdAndSecret = getClientIdAndClientSecret(context, logger)
-        return GiniCaptureDefaultNetworkService
+        val builder = GiniCaptureDefaultNetworkService
             .builder(context)
             .setClientCredentials(
                 clientId ?: clientIdAndSecret.first,
@@ -65,6 +75,20 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
                 "example.com"
             )
             .setDocumentMetadata(getDocumentMetaData())
+        
+        // Check if custom HTTP client should be used
+        if (useCustomHttpClient) {
+            logger.info("✅ Using CustomHttpClientProvider with trackable header")
+            builder.setHttpClientProvider(
+                CustomHttpClientProvider(
+                    enableDetailedLogging = true
+                )
+            )
+        } else {
+            logger.info("Using default HTTP client")
+        }
+        
+        return builder
     }
 
     private fun getClientIdAndClientSecret(

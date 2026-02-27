@@ -13,38 +13,40 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.HTTP
 import retrofit2.http.HeaderMap
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 internal interface HealthApiDocumentService: DocumentService {
 
     @POST("documents/{documentId}/extractions")
-    override suspend fun sendFeedback(@HeaderMap bearer: Map<String, String>, @Path("documentId") id: String, @Body params: RequestBody): Response<ResponseBody>
+    @Headers("Content-Type: application/vnd.gini.v4+json")
+    override suspend fun sendFeedback(@Path("documentId") id: String, @Body params: RequestBody): Response<ResponseBody>
 
     @GET("/documents/{documentId}/pages")
-    suspend fun getPages(@HeaderMap bearer: Map<String, String>, @Path("documentId") documentId: String): Response<List<PageResponse>>
+    suspend fun getPages(@Path("documentId") documentId: String): Response<List<PageResponse>>
 
     @GET("/paymentProviders")
-    suspend fun getPaymentProviders(@HeaderMap bearer: Map<String, String>): Response<List<PaymentProviderResponse>>
+    suspend fun getPaymentProviders(): Response<List<PaymentProviderResponse>>
 
     @GET("/paymentProviders/{providerId}")
-    suspend fun getPaymentProvider(@HeaderMap bearer: Map<String, String>, @Path("providerId") documentId: String): Response<PaymentProviderResponse>
+    suspend fun getPaymentProvider(@Path("providerId") documentId: String): Response<PaymentProviderResponse>
 
     @POST("/paymentRequests")
-    suspend fun createPaymentRequest(@HeaderMap bearer: Map<String, String>, @Body body: PaymentRequestBody): Response<ResponseBody>
+    suspend fun createPaymentRequest(@Body body: PaymentRequestBody): Response<ResponseBody>
 
     @GET("/paymentRequests/{paymentRequestId}")
-    suspend fun getPaymentRequestDocument(@HeaderMap bearer: Map<String, String>, @Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
+    suspend fun getPaymentRequestDocument(@Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
 
     @DELETE("/paymentRequests/{paymentRequestId}")
-    suspend fun deletePaymentRequest(@HeaderMap bearer: Map<String, String>, @Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
+    suspend fun deletePaymentRequest(@Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
 
     @GET("/configurations")
-    suspend fun getConfigurations(@HeaderMap bearer: Map<String, String>): Response<ConfigurationResponse>
+    suspend fun getConfigurations(): Response<ConfigurationResponse>
 
     @HTTP(method = "DELETE", path = "/documents", hasBody = true)
-    suspend fun batchDeleteDocuments(@HeaderMap bearer: Map<String, String>, @Body body: List<String>): Response<Void>
+    suspend fun batchDeleteDocuments(@Body body: List<String>): Response<Void>
 
     @HTTP(method = "DELETE", path = "/paymentRequests", hasBody = true)
-    suspend fun batchDeletePaymentRequests(@HeaderMap bearer: Map<String, String>, @Body body: List<String>): Response<Unit>
+    suspend fun batchDeletePaymentRequests(@Body body: List<String>): Response<Unit>
 }

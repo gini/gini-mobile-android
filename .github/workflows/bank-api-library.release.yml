@@ -10,6 +10,8 @@ on:
     tags:
       - 'bank-api-library;[0-9]+.[0-9]+.[0-9]+'
       - 'bank-api-library;[0-9]+.[0-9]+.[0-9]+-beta[0-9][0-9]'
+      - 'bank-api-library;[0-9]+.[0-9]+.[0-9]+-SNAPSHOT'
+      - 'bank-api-library;[0-9]+.[0-9]+.[0-9]+-snapshot'
 
 jobs:
   check:
@@ -37,8 +39,40 @@ jobs:
         with:
           ruby-version: '3.2.0'
           bundler-cache: true
+
+      - name: Extract version and detect snapshot
+        id: version_check
+        run: |
+          VERSION=$(./gradlew bank-api-library:library:printVersion -q)
+          echo "version=$VERSION"
+          
+          if echo "$VERSION" | grep -iq "SNAPSHOT"; then
+            echo "is_snapshot=true" >> $GITHUB_OUTPUT
+            echo "📦 Detected SNAPSHOT version: $VERSION - will publish to Maven Central Portal snapshots"
+          else
+            echo "is_snapshot=false" >> $GITHUB_OUTPUT
+            echo "🚀 Detected release version: $VERSION - will publish to Maven Central Staging"
+          fi
+
+      - name: "publish to Maven Central Portal snapshots repo at https://central.sonatype.com/repository/maven-snapshots/"
+        if: steps.version_check.outputs.is_snapshot == 'true'
+        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7  # v3.1.0
+        with:
+          lane: 'publish_to_maven_snapshots_repo'
+          options: >
+            {
+              "repo_url": "https://central.sonatype.com/repository/maven-snapshots/",
+              "repo_user": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}",
+              "repo_password": "${{ secrets.MAVEN_CENTRAL_USER_TOKEN_PASSWORD }}",
+              "project_id": "bank-api-library",
+              "module_id": "library",
+              "build_number": "${{ github.run_number }}",
+              "signing_key_base64": "${{ secrets.MAVEN_CENTRAL_SIGNING_KEY_BASE64 }}",
+              "signing_password": "${{ secrets.MAVEN_CENTRAL_SIGNING_PASSWORD }}"
+            }
     
       - name: "publish to Maven Central staging repo at https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+        if: steps.version_check.outputs.is_snapshot == 'false'
         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7  # v3.1.0
         with:
           lane: 'publish_to_maven_repo'
@@ -56,6 +90,7 @@ jobs:
             }
 
       - name: Upload staging repository to Central Portal
+        if: steps.version_check.outputs.is_snapshot == 'false'
         env:
           PORTAL_NAMESPACE: net.gini
           TOKEN_USER: ${{ secrets.MAVEN_CENTRAL_USER_TOKEN_USERNAME }}

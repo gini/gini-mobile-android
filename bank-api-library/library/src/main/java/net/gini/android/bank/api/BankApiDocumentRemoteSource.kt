@@ -23,41 +23,26 @@ class BankApiDocumentRemoteSource internal constructor(
     baseUriString: String
 ) : DocumentRemoteSource(coroutineContext, documentService, giniApiType, baseUriString) {
 
-    suspend fun resolvePaymentRequests(accessToken: String, id: String, input: ResolvePaymentInput)
+    suspend fun resolvePaymentRequests(id: String, input: ResolvePaymentInput)
             : ResolvedPayment = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.resolvePaymentRequests(
-                bearerHeaderMap(
-                    accessToken,
-                    contentType = giniApiType.giniJsonMediaType
-                ), id, input.toResolvePaymentBody()
-            )
+            documentService.resolvePaymentRequests(id, input.toResolvePaymentBody())
         }
         response.body()?.toResolvedPayment()
             ?: throw ApiException.forResponse("Empty response body", response)
     }
 
-    suspend fun logErrorEvent(accessToken: String, errorEvent: ErrorEvent): Unit =
+    suspend fun logErrorEvent(errorEvent: ErrorEvent): Unit =
         withContext(coroutineContext) {
             SafeApiRequest.apiRequest {
-                documentService.logErrorEvent(
-                    bearerHeaderMap(
-                        accessToken,
-                        contentType = giniApiType.giniJsonMediaType
-                    ), errorEvent
-                )
+                documentService.logErrorEvent(errorEvent)
             }
         }
 
-    suspend fun getConfigurations(accessToken: String): Configuration =
+    suspend fun getConfigurations(): Configuration =
         withContext(coroutineContext) {
             val response = SafeApiRequest.apiRequest {
-                documentService.getConfigurations(
-                    bearerHeaderMap(
-                        accessToken,
-                        giniApiType.giniJsonMediaType
-                    )
-                )
+                documentService.getConfigurations()
             }
             response.body()?.toConfiguration()
                 ?: throw ApiException.forResponse("Empty response body", response)

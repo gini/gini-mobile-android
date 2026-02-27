@@ -20,6 +20,10 @@ import net.gini.android.core.api.authorization.UserRemoteSource
 import net.gini.android.core.api.authorization.UserRepository
 import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.authorization.X509TrustManagerAdapter
+import net.gini.android.core.api.http.DefaultGiniHttpClientProvider
+import net.gini.android.core.api.http.GiniAuthenticationInterceptor
+import net.gini.android.core.api.http.GiniAuthenticator
+import net.gini.android.core.api.http.GiniHttpClientProvider
 import net.gini.android.core.api.models.ExtractionsContainer
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -70,12 +74,8 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mUserRemoteSource: UserRemoteSource? = null
     private var mDocumentManager: DM? = null
     private var mDocumentRepository: DR? = null
+    private var mHttpClientProvider: GiniHttpClientProvider? = null
     private var isDebuggingEnabled = false
-    private val httpLoggingInterceptor: HttpLoggingInterceptor by lazy {
-        HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-    }
 
     /**
      * Set the resource id for the network security configuration xml to enable public key pinning.
@@ -198,6 +198,33 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     }
 
     /**
+     * Set a custom [GiniHttpClientProvider] to provide a configured [OkHttpClient].
+     *
+     * This allows full control over HTTP client configuration including TLS/SSL settings,
+     * proxies, custom interceptors, logging, and more.
+     *
+     * **Important**: The SDK will use your provided client as a base and add its own
+     * required configuration on top using [OkHttpClient.newBuilder]. This ensures:
+     * - Your custom configuration (proxy, timeouts, interceptors, TLS) is preserved
+     * - The SDK can add its required headers (User-Agent) and interceptors
+     * - Both consumer and SDK needs are satisfied
+     *
+     * The SDK will only add the User-Agent header if you haven't already set one.
+     *
+     * If a provider is set, it will be used instead of the SDK's default client creation.
+     * The provider's client will override any HTTP-related settings configured via other
+     * builder methods (e.g., [setCache], [setTrustManager], [setConnectionTimeoutInMs]).
+     *
+     * @param provider A [GiniHttpClientProvider] implementation
+     * @return The builder instance to enable chaining.
+     * @see DefaultGiniHttpClientProvider for the SDK's default implementation
+     */
+    open fun setHttpClientProvider(provider: GiniHttpClientProvider): GiniCoreAPIBuilder<DM, G, DR, E> {
+        mHttpClientProvider = provider
+        return this
+    }
+
+    /**
      * Builds an instance with the configuration settings of the builder instance.
      *
      * @return The fully configured instance.
@@ -307,7 +334,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val retrofit = Retrofit.Builder()
             .baseUrl(mUserCenterApiBaseUrl)
             .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
-            .client(createOkHttpClient())
+            .client(createUserApiOkHttpClient())  // Use user API client without authentication
             .build()
         mUserApiRetrofit = retrofit
         return retrofit
@@ -325,86 +352,117 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         return retrofit
     }
 
-    private fun createOkHttpClient() = OkHttpClient.Builder()
-        .apply {
-            // Set system user agent string or fallback user agent if it's not available
-            addInterceptor { chain ->
-                chain.proceed(
-                    chain.request()
-                        .newBuilder()
-                        .header(
-                            "User-Agent",
-                            System.getProperty("http.agent") ?: FALLBACK_USER_AGENT
-                        )
-                        .build()
-                )
-            }
-
-            getTrustManagers()?.let { trustManagers ->
-                createSSLSocketFactory(trustManagers)?.let { socketFactory ->
-                    sslSocketFactory(socketFactory, X509TrustManagerAdapter(trustManagers[0]))
+    /**
+     * Creates an OkHttpClient specifically for user API (login/registration).
+     * This client does NOT include authentication interceptors to avoid circular dependency.
+     */
+    private fun createUserApiOkHttpClient(): OkHttpClient {
+        // If a custom provider is set, use it as a base
+        if (mHttpClientProvider != null) {
+            val baseClient = mHttpClientProvider!!.provideOkHttpClient()
+            
+            // Clone the consumer's client and add SDK's required User-Agent
+            return baseClient.newBuilder()
+                .apply {
+                    // Add SDK's required User-Agent header
+                    addInterceptor { chain ->
+                        val request = chain.request()
+                        // Only add User-Agent if not already set by consumer
+                        val hasUserAgent = request.header("User-Agent") != null
+                        if (hasUserAgent) {
+                            chain.proceed(request)
+                        } else {
+                            chain.proceed(
+                                request.newBuilder()
+                                    .header(
+                                        "User-Agent",
+                                        System.getProperty("http.agent") ?: FALLBACK_USER_AGENT
+                                    )
+                                    .build()
+                            )
+                        }
+                    }
                 }
-            }
-
-            if (mCache != null) {
-                cache(mCache)
-            }
-
-            if (isDebuggingEnabled) {
-                Log.w(
-                    LOG_TAG,
-                    "Logging interceptor is enabled. Make sure to disable debugging for release builds!"
-                )
-                addInterceptor(httpLoggingInterceptor)
-            }
+                .build()
         }
-        .connectTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
-        .readTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
-        .writeTimeout(mTimeoutInMs.toLong(), TimeUnit.MILLISECONDS)
-        .build()
 
-    private fun createSSLSocketFactory(trustManagers: Array<TrustManager>?): SSLSocketFactory? {
-        return try {
-            val sslContext: SSLContext = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // Since Android 10 (Q) TLSv1.3 is default
-                // https://developer.android.com/reference/javax/net/ssl/SSLSocket#default-configuration-for-different-android-versions
-                // We still need to set it explicitly to be able to call init() on the SSLContext instance
-                SSLContext.getInstance("TLSv1.3")
-            } else {
-                // Force TLSv1.2 on older versions
-                SSLContext.getInstance("TLSv1.2")
+        // Otherwise, create a default provider with the configured settings
+        return DefaultGiniHttpClientProvider.builder(context)
+            .setHostnames(getHostnames())
+            .apply {
+                if (mNetworkSecurityConfigResId != 0) {
+                    setNetworkSecurityConfigResId(mNetworkSecurityConfigResId)
+                }
+                mCache?.let { setCache(it) }
+                mTrustManager?.let { setTrustManager(it) }
+                setConnectionTimeoutInMs(mTimeoutInMs)
+                setDebuggingEnabled(isDebuggingEnabled)
             }
-            sslContext.init(null, trustManagers, null)
-            sslContext.socketFactory
-        } catch (ignore: NoSuchAlgorithmException) {
-            null
-        } catch (ignore: KeyManagementException) {
-            null
-        }
+            .build()
+            .provideOkHttpClient()
     }
 
-    private fun getTrustManagers(): Array<TrustManager>? {
-        if (mTrustManager != null) {
-            return arrayOf(mTrustManager!!)
+    /**
+     * Creates an OkHttpClient for authenticated API requests.
+     * This client includes authentication interceptor and authenticator.
+     */
+    private fun createOkHttpClient(): OkHttpClient {
+        // If a custom provider is set, use it as a base and add SDK's required configuration on top
+        if (mHttpClientProvider != null) {
+            val baseClient = mHttpClientProvider!!.provideOkHttpClient()
+            
+            // Clone the consumer's client and add SDK's required interceptors
+            return baseClient.newBuilder()
+                .apply {
+                    // Add authentication interceptor FIRST (before consumer's interceptors)
+                    // This ensures all requests get authenticated automatically
+                    addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
+                    
+                    // Add authenticator for token refresh on 401 responses
+                    authenticator(GiniAuthenticator(getSessionManager()))
+                    
+                    // Add SDK's required User-Agent header
+                    // This is placed at the end of the interceptor chain so consumer's interceptors run first
+                    addInterceptor { chain ->
+                        val request = chain.request()
+                        // Only add User-Agent if not already set by consumer
+                        val hasUserAgent = request.header("User-Agent") != null
+                        if (hasUserAgent) {
+                            chain.proceed(request)
+                        } else {
+                            chain.proceed(
+                                request.newBuilder()
+                                    .header(
+                                        "User-Agent",
+                                        System.getProperty("http.agent") ?: FALLBACK_USER_AGENT
+                                    )
+                                    .build()
+                            )
+                        }
+                    }
+                }
+                .build()
         }
-        val pubKeyManager = createPubKeyManager()
-        return if (pubKeyManager != null) {
-            arrayOf(pubKeyManager)
-        } else null
-    }
 
-    private fun createPubKeyManager(): PubKeyManager? {
-        val builder = PubKeyManager.builder(context)
-        val hostnames = getHostnames();
-        if (hostnames.isNotEmpty()) {
-            builder.setHostnames(hostnames)
-        }
-        if (mNetworkSecurityConfigResId != 0) {
-            builder.setNetworkSecurityConfigResId(mNetworkSecurityConfigResId)
-        }
-        return if (builder.canBuild()) {
-            builder.build()
-        } else null
+        // Otherwise, create a default provider with the configured settings
+        val defaultProvider = DefaultGiniHttpClientProvider.builder(context)
+            .setHostnames(getHostnames())
+            .apply {
+                if (mNetworkSecurityConfigResId != 0) {
+                    setNetworkSecurityConfigResId(mNetworkSecurityConfigResId)
+                }
+                mCache?.let { setCache(it) }
+                mTrustManager?.let { setTrustManager(it) }
+                setConnectionTimeoutInMs(mTimeoutInMs)
+                setDebuggingEnabled(isDebuggingEnabled)
+            }
+            .build()
+
+        // Add authentication to default client as well
+        return defaultProvider.provideOkHttpClient().newBuilder()
+            .addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
+            .authenticator(GiniAuthenticator(getSessionManager()))
+            .build()
     }
 
     @Synchronized
@@ -444,7 +502,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
 
     companion object {
         const val LOG_TAG = "GiniCoreAPIBuilder"
-        val FALLBACK_USER_AGENT =
+        private val FALLBACK_USER_AGENT =
             "okhttp/${okhttp3.OkHttp.VERSION} (Android ${Build.VERSION.RELEASE}; ${Build.MODEL} Build/${Build.ID})"
     }
 }

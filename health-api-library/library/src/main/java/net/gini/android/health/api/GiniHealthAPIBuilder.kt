@@ -4,6 +4,7 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.GiniApiType
 import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.http.GiniHttpClientProvider
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.core.api.models.ExtractionsContainer
 
@@ -56,7 +57,22 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     }
 
     override fun createDocumentRepository(): HealthApiDocumentRepository {
-        return HealthApiDocumentRepository(createDocumentRemoteSource(), getSessionManager(), healthApiType)
+        return HealthApiDocumentRepository(createDocumentRemoteSource(), healthApiType)
+    }
+
+    /**
+     * Set a custom [GiniHttpClientProvider] to provide a configured OkHttpClient.
+     *
+     * This allows full control over HTTP client configuration including TLS/SSL settings,
+     * proxies, custom interceptors, logging, and more.
+     *
+     * @param provider A [GiniHttpClientProvider] implementation
+     * @return The builder instance to enable chaining
+     * @see net.gini.android.core.api.http.DefaultGiniHttpClientProvider
+     */
+    override fun setHttpClientProvider(provider: GiniHttpClientProvider): GiniHealthAPIBuilder {
+        super.setHttpClientProvider(provider)
+        return this
     }
 
     companion object {

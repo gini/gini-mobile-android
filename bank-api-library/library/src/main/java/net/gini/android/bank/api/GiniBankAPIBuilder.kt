@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.core.api.GiniApiType
 import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.http.GiniHttpClientProvider
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 
 /**
@@ -65,9 +66,23 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
     override fun createDocumentRepository(): BankApiDocumentRepository {
         return BankApiDocumentRepository(
             createDocumentRemoteSource(),
-            getSessionManager(),
             bankApiType,
             createTrackingAnalysisRemoteSource()
         )
+    }
+
+    /**
+     * Set a custom [GiniHttpClientProvider] to provide a configured OkHttpClient.
+     *
+     * This allows full control over HTTP client configuration including TLS/SSL settings,
+     * proxies, custom interceptors, logging, and more.
+     *
+     * @param provider A [GiniHttpClientProvider] implementation
+     * @return The builder instance to enable chaining
+     * @see net.gini.android.core.api.http.DefaultGiniHttpClientProvider
+     */
+    override fun setHttpClientProvider(provider: GiniHttpClientProvider): GiniBankAPIBuilder {
+        super.setHttpClientProvider(provider)
+        return this
     }
 }
