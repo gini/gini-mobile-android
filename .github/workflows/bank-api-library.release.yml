@@ -44,7 +44,7 @@ jobs:
         id: version_check
         run: |
           VERSION=$(./gradlew bank-api-library:library:printVersion -q)
-          echo "version=$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
           
           if echo "$VERSION" | grep -iq "SNAPSHOT"; then
             echo "is_snapshot=true" >> $GITHUB_OUTPUT
