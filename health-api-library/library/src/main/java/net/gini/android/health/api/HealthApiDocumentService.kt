@@ -36,7 +36,10 @@ internal interface HealthApiDocumentService: DocumentService {
     suspend fun createPaymentRequest(@Body body: PaymentRequestBody): Response<ResponseBody>
 
     @GET("/paymentRequests/{paymentRequestId}")
-    suspend fun getPaymentRequestDocument(@Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
+    suspend fun getPaymentRequestDocument(
+        @Path("paymentRequestId") paymentRequestId: String,
+        @HeaderMap headers: Map<String, String> = emptyMap()
+    ): Response<ResponseBody>
 
     @DELETE("/paymentRequests/{paymentRequestId}")
     suspend fun deletePaymentRequest(@Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>

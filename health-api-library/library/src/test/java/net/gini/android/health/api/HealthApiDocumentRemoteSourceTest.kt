@@ -185,7 +185,8 @@ class HealthApiDocumentRemoteSourceTest {
         }
 
         override suspend fun getPaymentRequestDocument(
-            paymentRequestId: String
+            paymentRequestId: String,
+            headers: Map<String, String>
         ): Response<ResponseBody> {
             return Response.success(null)
         }

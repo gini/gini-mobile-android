@@ -62,7 +62,8 @@ class HealthApiDocumentRemoteSource internal constructor(
     suspend fun getPaymentRequestDocument(paymentRequestId: String): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(
-                paymentRequestId
+                paymentRequestId,
+                mapOf("Accept" to giniApiType.giniPaymentRequestDocumentMediaType)
             )
         }
         response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
@@ -80,7 +81,8 @@ class HealthApiDocumentRemoteSource internal constructor(
     suspend fun getPaymentRequestImage(paymentRequestId: String): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(
-                paymentRequestId
+                paymentRequestId,
+                mapOf("Accept" to giniApiType.giniPaymentRequestDocumentPngMediaType)
             )
         }
         response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
