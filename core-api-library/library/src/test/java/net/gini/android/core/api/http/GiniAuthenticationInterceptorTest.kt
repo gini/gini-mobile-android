@@ -12,6 +12,7 @@ import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -108,7 +109,7 @@ class GiniAuthenticationInterceptorTest {
         // When
         val request = Request.Builder()
             .url(mockWebServer.url("/users"))
-            .post(okhttp3.RequestBody.create(null, ""))
+            .post("".toRequestBody(null))
             .build()
         
         okHttpClient.newCall(request).execute()

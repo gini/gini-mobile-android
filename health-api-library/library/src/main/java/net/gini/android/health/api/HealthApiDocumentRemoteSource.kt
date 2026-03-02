@@ -63,7 +63,10 @@ class HealthApiDocumentRemoteSource internal constructor(
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(
                 paymentRequestId,
-                mapOf("Accept" to giniApiType.giniPaymentRequestDocumentMediaType)
+                mapOf(
+                    "Content-Type" to giniApiType.giniPaymentRequestDocumentMediaType,
+                    "Accept" to giniApiType.giniPaymentRequestDocumentMediaType
+                )
             )
         }
         response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
@@ -82,7 +85,10 @@ class HealthApiDocumentRemoteSource internal constructor(
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequestDocument(
                 paymentRequestId,
-                mapOf("Accept" to giniApiType.giniPaymentRequestDocumentPngMediaType)
+                mapOf(
+                    "Content-Type" to giniApiType.giniPaymentRequestDocumentPngMediaType,
+                    "Accept" to giniApiType.giniPaymentRequestDocumentPngMediaType
+                )
             )
         }
         response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)

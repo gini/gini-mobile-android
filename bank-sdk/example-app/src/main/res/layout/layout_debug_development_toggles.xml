@@ -130,7 +130,7 @@
             android:maxLines="1"
             android:textColor="@drawable/edittext_selector"
             android:textSize="18sp"
-            tools:text="CloentSecret" />
+            tools:text="ClientSecret" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.switchmaterial.SwitchMaterial

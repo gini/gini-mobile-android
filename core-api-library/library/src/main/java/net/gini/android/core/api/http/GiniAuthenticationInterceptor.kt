@@ -92,7 +92,7 @@ internal class GiniAuthenticationInterceptor(
             // OAuth token requests (client credentials, refresh token)
             url.contains("/oauth/token") -> true
             // User creation (anonymous user registration)
-            url.contains("/users") && method == "POST" -> true
+            url.endsWith("/users") && method == "POST" -> true
             else -> false
         }
     }
