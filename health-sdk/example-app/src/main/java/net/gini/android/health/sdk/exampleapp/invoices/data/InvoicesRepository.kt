@@ -91,10 +91,9 @@ class InvoicesRepository(
 
     suspend fun refreshInvoices() = withContext(coroutineContext) {
         _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Loading
-        val documentsWithExtractions = mutableListOf<DocumentWithExtractions>()
-        val errors = mutableListOf<ErrorDetail>()
 
-        val jobs = invoicesFlow.value.map { document ->
+        // Return results from each async block instead of mutating shared lists
+        val results = invoicesFlow.value.map { document ->
             async {
                 val emptyDocument = createEmptyDocument(document.documentId)
                 val extractionsResult = giniHealthAPI.documentManager.getAllExtractions(
@@ -110,7 +109,7 @@ class InvoicesRepository(
                                 extractionsResult.data,
                                 isPayable
                             )
-                            documentsWithExtractions.add(documentWithExtractions)
+                            RefreshResult.Success(documentWithExtractions)
                         } catch (e: GiniHealthException) {
                             // Store document with unknown payable status (default to false)
                             val documentWithExtractions = DocumentWithExtractions.fromDocumentAndExtractions(
@@ -118,7 +117,7 @@ class InvoicesRepository(
                                 extractionsResult.data,
                                 false
                             )
-                            documentsWithExtractions.add(documentWithExtractions)
+                            RefreshResult.Success(documentWithExtractions)
                         }
                     }
                     is Resource.Error -> {
@@ -132,16 +131,22 @@ class InvoicesRepository(
                             statusCode = extractionsResult.responseStatusCode,
                             errorResponse = extractionsResult.errorResponse  // Already parsed!
                         )
-                        errors.add(errorDetail)
+                        RefreshResult.Error(errorDetail)
                     }
                     is Resource.Cancelled -> {
                         LOG.warn("Get extractions cancelled for document ${emptyDocument.id}")
+                        RefreshResult.Cancelled
                     }
                 }
             }
-        }
+        }.awaitAll()
 
-        jobs.awaitAll()
+        // Thread-safe: Build lists after all async operations complete
+        val documentsWithExtractions = results.filterIsInstance<RefreshResult.Success>()
+            .map { it.document }
+        val errors = results.filterIsInstance<RefreshResult.Error>()
+            .map { it.error }
+
         invoicesLocalDataSource.refreshInvoices(documentsWithExtractions)
 
         if (errors.isNotEmpty()) {
@@ -227,4 +232,14 @@ data class ErrorDetail(
     val errorCode: String? = errorResponse?.items?.firstOrNull()?.code,
     val requestId: String? = errorResponse?.requestId
 )
+
+/**
+ * Sealed class to represent the result of each refresh operation.
+ * Used to avoid thread-safety issues when collecting results from parallel async operations.
+ */
+private sealed class RefreshResult {
+    data class Success(val document: DocumentWithExtractions) : RefreshResult()
+    data class Error(val error: ErrorDetail) : RefreshResult()
+    object Cancelled : RefreshResult()
+}
 
