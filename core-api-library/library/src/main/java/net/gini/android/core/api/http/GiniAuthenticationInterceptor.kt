@@ -64,7 +64,11 @@ internal class GiniAuthenticationInterceptor(
                     }
                 }
             }
+        } catch (e: IOException) {
+            // Re-throw IOExceptions directly (already have descriptive error messages)
+            throw e
         } catch (e: Exception) {
+            // Only wrap unexpected exceptions (e.g. NullPointerException, IllegalStateException)
             throw IOException("Authentication failed: ${e.message}", e)
         }
 
