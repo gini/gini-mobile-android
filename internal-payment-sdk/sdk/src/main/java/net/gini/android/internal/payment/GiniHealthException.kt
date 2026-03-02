@@ -6,6 +6,8 @@ import net.gini.android.core.api.response.ErrorResponse
 /**
  * Exception thrown by Gini SDK operations.
  *
+ * This class extends [Exception] to ensure backward compatibility.
+ *
  * @property message Raw error message (may be JSON string for backward compatibility)
  * @property cause The underlying cause of this exception (preserves original exception type for backward compatibility)
  * @property statusCode HTTP status code from the API response
@@ -16,7 +18,7 @@ open class GiniHealthException(
     cause: Throwable? = null,
     val statusCode: Int? = null,
     val errorResponse: ErrorResponse? = null
-) : Throwable(message, cause) {
+) : Exception(message, cause) {
 
     /**
      * Human-readable parsed error message extracted from the error response.
@@ -24,9 +26,8 @@ open class GiniHealthException(
      * This property provides a clean, user-friendly error message suitable for display.
      * Priority order:
      * 1. Top-level message field (e.g., "Validation of the request entity failed")
-     * 2. First error item's message (e.g., "Service unavailable, please try again later")
-     * 3. Raw message (JSON string fallback for backward compatibility)
-     * 4. "Unknown error" (last resort)
+     * 2. Raw message (JSON string fallback for backward compatibility)
+     * 3. "Unknown error" (last resort)
      *
      * **Use this for displaying errors to users** instead of the raw `message` property.
      *

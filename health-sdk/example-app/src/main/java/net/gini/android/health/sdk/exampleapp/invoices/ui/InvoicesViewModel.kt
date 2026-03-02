@@ -18,7 +18,7 @@ import net.gini.android.internal.payment.GiniHealthException
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
-     val invoicesRepository: InvoicesRepository,
+    private val invoicesRepository: InvoicesRepository,
     private val giniHealth: GiniHealth
 ) : ViewModel() {
 
@@ -91,7 +91,7 @@ class InvoicesViewModel(
             invoicesRepository.invoicesFlow.value.find { it.documentId == documentId }
 
         return if (documentWithExtractions != null) {
-            return try {
+             try {
                 val paymentReviewFragment = invoicesRepository.giniHealth.getPaymentFragmentWithDocument(
                     documentWithExtractions.documentId,
                     PaymentFlowConfiguration(

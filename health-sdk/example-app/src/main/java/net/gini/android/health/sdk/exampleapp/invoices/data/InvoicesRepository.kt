@@ -11,6 +11,7 @@ import net.gini.android.core.api.MediaTypes
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.response.ErrorResponse
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
@@ -222,7 +223,7 @@ sealed class UploadHardcodedInvoicesState {
 data class ErrorDetail(
     val message: String,
     val statusCode: Int? = null,
-    val errorResponse: net.gini.android.core.api.response.ErrorResponse? = null,
+    val errorResponse: ErrorResponse? = null,
     val errorCode: String? = errorResponse?.items?.firstOrNull()?.code,
     val requestId: String? = errorResponse?.requestId
 )

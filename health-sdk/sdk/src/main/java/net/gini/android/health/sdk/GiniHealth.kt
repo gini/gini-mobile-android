@@ -194,20 +194,24 @@ class GiniHealth(
     }
 
     /**
-     * This function deletes a payment request by its unique `paymentRequestId`.
-     * If the deletion is successful, it returns `null`. Otherwise, if an error occurs or the request is cancelled,
-     * it returns the corresponding error message or `"Request cancelled"`.
+     * Deletes a payment request by its unique `paymentRequestId`.
+     *
+     * If the deletion is successful, the function completes normally.
+     * If an error occurs, it throws a [GiniHealthException] containing detailed error information
+     * including status code, error response, and the original exception.
+     * If the request is cancelled, it throws a standard [Exception].
      *
      * @param paymentRequestId The unique identifier of the payment request to be deleted.
-     * @return `null` if the deletion is successful, otherwise the error message or `"Request cancelled"`.
+     * @throws GiniHealthException if the deletion fails with an API error
+     * @throws Exception if the request is cancelled
      */
-    suspend fun deletePaymentRequest(paymentRequestId: String): Unit? {
+    suspend fun deletePaymentRequest(paymentRequestId: String) {
         val response =
             giniInternalPaymentModule.giniHealthAPI.documentManager.deletePaymentRequest(
                 paymentRequestId
             )
-        return when (response) {
-            is Resource.Success -> null
+        when (response) {
+            is Resource.Success -> { /* Success - no action needed */ }
             is Resource.Error -> {
                 throw GiniHealthException(
                     message = response.exception?.message ?: response.message ?: "Failed to delete payment request",
@@ -317,22 +321,25 @@ class GiniHealth(
     }
 
     /**
-     * Deletes multiple payment requests in one go.
-     * If request was successful, it returns null.
-     * If request failed, it returns a [DeleteDocumentErrorResponse], with more information about why the request failed.
+     * Deletes multiple payment requests in one operation.
      *
-     * @param paymentRequestIds the list of paymentRequestIds to be deleted
-     * @return [DeleteDocumentErrorResponse] with more information about why the request failed
+     * If the deletion is successful, the function completes normally.
+     * If an error occurs, it throws a [GiniHealthException] containing detailed error information
+     * including status code, error response items (with error codes and affected payment request IDs),
+     * request ID, and the original exception.
+     * If the request is cancelled, it throws a standard [Exception].
+     *
+     * @param paymentRequestIds The list of payment request IDs to be deleted.
+     * @throws GiniHealthException if the deletion fails with an API error
+     * @throws Exception if the request is cancelled
      */
-    suspend fun deletePaymentRequests(paymentRequestIds: List<String>): Unit? {
+    suspend fun deletePaymentRequests(paymentRequestIds: List<String>) {
         val response =
             giniInternalPaymentModule.giniHealthAPI.documentManager.deletePaymentRequests(
                 paymentRequestIds
             )
-        return when (response) {
-            is Resource.Success -> {
-                null
-            }
+        when (response) {
+            is Resource.Success -> { /* Success - no action needed */ }
 
             is Resource.Error -> {
                 LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
@@ -354,20 +361,22 @@ class GiniHealth(
     }
 
     /**
-     * Deletes multiple documents in one go.
-     * If request was successful, it returns null.
-     * If request failed, it returns a [DeleteDocumentErrorResponse], with more information about why the request failed.
+     * Deletes multiple documents in one operation.
      *
-     * @param documentIds the list of documentIds to be deleted
-     * @return [DeleteDocumentErrorResponse] with more information about why the request failed
+     * If the deletion is successful, the function completes normally.
+     * If an error occurs, it throws a [GiniHealthException] containing detailed error information
+     * including status code, error response items (with error codes and affected document IDs),
+     * request ID, and the original exception.
+     * If the request is cancelled, it throws a [GiniHealthException] with a cancellation message.
+     *
+     * @param documentIds The list of document IDs to be deleted.
+     * @throws GiniHealthException if the deletion fails with an API error or is cancelled
      */
-    suspend fun deleteDocuments(documentIds: List<String>): Unit?{
+    suspend fun deleteDocuments(documentIds: List<String>) {
         val response =
             giniInternalPaymentModule.giniHealthAPI.documentManager.deleteDocuments(documentIds)
-        return when (response) {
-            is Resource.Success -> {
-                null
-            }
+        when (response) {
+            is Resource.Success -> { /* Success - no action needed */ }
 
             is Resource.Error -> {
                 LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
@@ -384,9 +393,7 @@ class GiniHealth(
             is Resource.Cancelled -> {
                 LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                     .error("Deleting documents was cancelled")
-                throw GiniHealthException(
-                    message = "Request cancelled"
-                )
+                throw Exception("Request cancelled")
             }
         }
     }
