@@ -95,10 +95,6 @@ class DefaultGiniHttpClientProvider private constructor(
             cache?.let { cache(it) }
 
             if (isDebuggingEnabled) {
-                Log.w(
-                    LOG_TAG,
-                    "Logging interceptor is enabled. Make sure to disable debugging for release builds!"
-                )
                 addInterceptor(httpLoggingInterceptor)
             }
         }

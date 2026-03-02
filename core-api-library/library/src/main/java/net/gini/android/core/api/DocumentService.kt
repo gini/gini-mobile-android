@@ -21,7 +21,6 @@ import retrofit2.http.*
 interface DocumentService {
 
     @POST("documents/")
-    @Headers("Content-Type: application/octet-stream")
     suspend fun uploadDocument(
         @Body bytes: RequestBody,
         @Query("filename") fileName: String?,
