@@ -406,15 +406,18 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             // Clone the consumer's client and add SDK's required interceptors
             return baseClient.newBuilder()
                 .apply {
-                    // Add authentication interceptor FIRST (before consumer's interceptors)
-                    // This ensures all requests get authenticated automatically
+                    // Add authentication interceptor
+                    // Note: This runs AFTER consumer's interceptors (newBuilder() copies them first)
+                    // This ensures the SDK always adds authentication, even if consumer's interceptors
+                    // modify the request. Consumer's logging interceptors won't see the Authorization
+                    // header, but this is intentional for security.
                     addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
                     
                     // Add authenticator for token refresh on 401 responses
                     authenticator(GiniAuthenticator(getSessionManager()))
                     
                     // Add SDK's required User-Agent header
-                    // This is placed at the end of the interceptor chain so consumer's interceptors run first
+                    // This runs last (after consumer's interceptors and our auth interceptor)
                     addInterceptor { chain ->
                         val request = chain.request()
                         // Only add User-Agent if not already set by consumer
