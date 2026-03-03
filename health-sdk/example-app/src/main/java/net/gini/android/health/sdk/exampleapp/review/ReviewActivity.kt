@@ -180,6 +180,31 @@ class ReviewActivity : AppCompatActivity() {
                         if (extractedPaymentDetails is ResultWrapper.Success) {
                             doctorName = extractedPaymentDetails.value.extractions?.specificExtractions?.get(MED_PROVIDER)
                         }
+                        if (extractedPaymentDetails is ResultWrapper.Error){
+                            showGiniHealthErrorDialog(
+                                exception = extractedPaymentDetails.error,
+                                onRetry = { },
+                                onDismiss = { finish() }
+                            )
+                        }
+                    }
+                }
+                launch {
+                    viewModel.giniHealth.documentFlow.collect { result ->
+                        when (result) {
+                            is ResultWrapper.Error -> {
+                                // Show error dialog for document loading errors
+                                showGiniHealthErrorDialog(
+                                    exception = result.error,
+                                    onRetry = { /* Retry logic if needed */ },
+                                    onDismiss = { /* Error acknowledged */ }
+                                )
+                            }
+                            is ResultWrapper.Success -> {
+                            }
+                            is ResultWrapper.Loading -> {
+                            }
+                        }
                     }
                 }
 

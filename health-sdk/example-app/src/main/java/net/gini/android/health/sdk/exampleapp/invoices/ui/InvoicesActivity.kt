@@ -225,6 +225,52 @@ open class InvoicesActivity : AppCompatActivity() {
                         }
                     }
                 }
+
+                // Observe documentFlow for errors when loading documents
+                launch {
+                    viewModel.documentFlow.collect { result ->
+                        when (result) {
+                            is ResultWrapper.Error -> {
+                                LOG.debug("documentFlow error in InvoicesActivity: ${result.error.message}")
+                                // Show error dialog for document loading errors
+                                showGiniHealthErrorDialog(
+                                    exception = result.error,
+                                    onRetry = { /* Retry logic if needed */ },
+                                    onDismiss = { /* Error acknowledged */ }
+                                )
+                            }
+                            is ResultWrapper.Success -> {
+                                LOG.debug("Document loaded successfully in InvoicesActivity: ${result.value.id}")
+                            }
+                            is ResultWrapper.Loading -> {
+                                LOG.debug("Document loading in InvoicesActivity")
+                            }
+                        }
+                    }
+                }
+
+                // Observe paymentFlow for extraction errors
+                launch {
+                    viewModel.paymentFlow.collect { result ->
+                        when (result) {
+                            is ResultWrapper.Error -> {
+                                LOG.debug("paymentFlow error in InvoicesActivity: ${result.error.message}")
+                                // Show error dialog for extraction errors
+                                showGiniHealthErrorDialog(
+                                    exception = result.error,
+                                    onRetry = { /* Retry logic if needed */ },
+                                    onDismiss = { /* Error acknowledged */ }
+                                )
+                            }
+                            is ResultWrapper.Success -> {
+                                LOG.debug("Extractions loaded successfully in InvoicesActivity")
+                            }
+                            is ResultWrapper.Loading -> {
+                                LOG.debug("Extractions loading in InvoicesActivity")
+                            }
+                        }
+                    }
+                }
             }
         }
 

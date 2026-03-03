@@ -7,14 +7,19 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.exampleapp.MainActivity.Companion.PAYMENT_FLOW_CONFIGURATION
 import net.gini.android.health.sdk.exampleapp.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityUploadBinding
 import net.gini.android.health.sdk.exampleapp.review.ReviewActivity
 import net.gini.android.health.sdk.exampleapp.upload.UploadViewModel.UploadState
+import net.gini.android.health.sdk.exampleapp.util.showGiniHealthErrorDialog
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
+import net.gini.android.health.sdk.review.model.ResultWrapper
 
 class UploadActivity : AppCompatActivity() {
 
@@ -28,6 +33,43 @@ class UploadActivity : AppCompatActivity() {
             viewModel.uploadDocuments(contentResolver, intent.pageUris)
         }
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.giniHealth.paymentFlow.collect { extractedPaymentDetails ->
+                        if (extractedPaymentDetails is ResultWrapper.Success) {
+                        }
+                        if (extractedPaymentDetails is ResultWrapper.Error) {
+                            showGiniHealthErrorDialog(
+                                exception = extractedPaymentDetails.error,
+                                onRetry = { },
+                                onDismiss = { finish() }
+                            )
+                        }
+                    }
+                }
+                launch {
+                    viewModel.giniHealth.documentFlow.collect { result ->
+                        when (result) {
+                            is ResultWrapper.Error -> {
+                                // Show error dialog for document loading errors
+                                showGiniHealthErrorDialog(
+                                    exception = result.error,
+                                    onRetry = { /* Retry logic if needed */ },
+                                    onDismiss = { /* Error acknowledged */ }
+                                )
+                            }
+
+                            is ResultWrapper.Success -> {
+                            }
+
+                            is ResultWrapper.Loading -> {
+                            }
+                        }
+                    }
+                }
+            }
+        }
         lifecycleScope.launchWhenStarted {
             viewModel.uploadState.collect { uploadState ->
                 binding.updateViews(uploadState)
@@ -48,7 +90,14 @@ class UploadActivity : AppCompatActivity() {
         message.isVisible = uploadState !is UploadState.Loading
         payment.isEnabled = uploadState is UploadState.Success
         message.text = when (uploadState) {
-            is UploadState.Failure -> getString(R.string.upload_failed)
+            is UploadState.Failure -> {
+                showGiniHealthErrorDialog(
+                    exception = uploadState.throwable,
+                    onRetry = { viewModel.uploadDocuments(contentResolver, intent.pageUris) },
+                    onDismiss = { finish() }
+                )
+                getString(R.string.upload_failed)
+            }
             is UploadState.Success -> getString(R.string.upload_succeeded)
             else -> ""
         }

@@ -49,7 +49,7 @@ internal class GiniPaymentManager(
                 ), paymentProviderApp.name
             )
         } catch (throwable: Throwable) {
-            paymentEventListener?.onError(Exception(throwable))
+            paymentEventListener?.onError(throwable)
         }
     }
 
