@@ -25,6 +25,9 @@ class GiniApiHeaderInterceptorTest {
         mockWebServer.start()
         
         giniApiType = TestGiniApiType()
+        // Note: Using addInterceptor for tests (not addNetworkInterceptor like production)
+        // Both work here since we're testing without Retrofit. In production, we use
+        // addNetworkInterceptor to run after Retrofit adds its default headers.
         client = OkHttpClient.Builder()
             .addInterceptor(GiniApiHeaderInterceptor(giniApiType))
             .build()
@@ -99,6 +102,23 @@ class GiniApiHeaderInterceptorTest {
         // Then
         val recordedRequest = mockWebServer.takeRequest()
         assertEquals("text/plain", recordedRequest.getHeader("Content-Type"))
+    }
+
+    @Test
+    fun `replaces application json Content-Type with versioned media type`() {
+        // Given - simulates what Retrofit's Moshi converter does
+        mockWebServer.enqueue(MockResponse().setResponseCode(200))
+        val request = Request.Builder()
+            .url(mockWebServer.url("/test"))
+            .header("Content-Type", "application/json; charset=UTF-8")
+            .build()
+
+        // When
+        client.newCall(request).execute().use { }
+
+        // Then
+        val recordedRequest = mockWebServer.takeRequest()
+        assertEquals("application/vnd.gini.v4+json", recordedRequest.getHeader("Content-Type"))
     }
 
     @Test

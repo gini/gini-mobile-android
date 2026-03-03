@@ -8,13 +8,16 @@ import java.io.IOException
 /**
  * Internal use only.
  *
- * OkHttp interceptor that automatically adds API-specific headers to all requests.
+ * OkHttp network interceptor that ensures API-specific headers are present on all requests.
  * Uses [GiniApiType] to determine the correct versioned media types.
  *
+ * Registered as a network interceptor to run after Retrofit adds its default headers,
+ * ensuring we can properly replace Retrofit's "application/json" with versioned media types.
+ *
  * This interceptor:
- * - Adds Accept header with versioned media type (e.g., "application/vnd.gini.v4+json")
- * - Adds Content-Type header with versioned media type for non-GET requests
- * - Only adds headers if not already present (allows manual override)
+ * - Adds Accept header with versioned media type if not present (e.g., "application/vnd.gini.v4+json")
+ * - Replaces Retrofit's "application/json" Content-Type with versioned media type
+ * - Preserves explicitly-set non-JSON Content-Type headers (e.g., for file uploads)
  * - Supports dynamic API versions through GiniApiType
  */
 internal class GiniApiHeaderInterceptor(
@@ -31,11 +34,14 @@ internal class GiniApiHeaderInterceptor(
             requestBuilder.header("Accept", giniApiType.giniJsonMediaType)
         }
 
-        // Add Content-Type header for non-GET requests if not already present
-        // GET requests typically don't need Content-Type, but some Gini APIs expect it
-        if (originalRequest.header("Content-Type") == null) {
-            requestBuilder.header("Content-Type", giniApiType.giniJsonMediaType)
+        // Add or replace Content-Type header
+        // Retrofit's Moshi converter sets "application/json" but Gini API requires versioned media type
+        val existingContentType = originalRequest.header("Content-Type")
+        if (existingContentType == null || existingContentType.startsWith("application/json")) {
+            requestBuilder.removeHeader("Content-Type")
+            requestBuilder.addHeader("Content-Type", giniApiType.giniJsonMediaType)
         }
+        // If Content-Type is explicitly set to something else (not application/json), respect it
 
         return chain.proceed(requestBuilder.build())
     }

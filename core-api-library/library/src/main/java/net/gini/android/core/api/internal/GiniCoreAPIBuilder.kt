@@ -407,15 +407,15 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             // Clone the consumer's client and add SDK's required interceptors
             return baseClient.newBuilder()
                 .apply {
-                    // Add API header interceptor for Accept and Content-Type headers
-                    // This runs FIRST to add required API versioning headers
-                    addInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
+                    // Add API header interceptor as network interceptor
+                    // Network interceptors run AFTER application interceptors, ensuring:
+                    // 1. Consumer's logging interceptors can see requests (they run first)
+                    // 2. We can replace Retrofit's default headers with versioned API headers
+                    // 3. Our headers are guaranteed to be correct on the actual network request
+                    addNetworkInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
                     
-                    // Add authentication interceptor
-                    // Note: This runs AFTER consumer's interceptors (newBuilder() copies them first)
-                    // This ensures the SDK always adds authentication, even if consumer's interceptors
-                    // modify the request. Consumer's logging interceptors won't see the Authorization
-                    // header, but this is intentional for security.
+                    // Add authentication interceptor as application interceptor
+                    // This ensures authentication happens for all requests, including redirects
                     addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
                     
                     // Add authenticator for token refresh on 401 responses
@@ -458,9 +458,11 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             }
             .build()
 
-        // Add authentication to default client as well
+        // Add SDK interceptors to default client
+        // Network interceptor for API headers (runs after Retrofit adds default headers)
+        // Application interceptor for authentication (handles auth for all requests)
         return defaultProvider.provideOkHttpClient().newBuilder()
-            .addInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
+            .addNetworkInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
             .addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
             .authenticator(GiniAuthenticator(getSessionManager()))
             .build()
