@@ -1,5 +1,6 @@
 package net.gini.android.core.api.http
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -20,6 +21,27 @@ import java.io.IOException
  * - Automatically adds "Authorization: Bearer <token>" header to requests
  * - Skips authentication for specific endpoints (OAuth token, user creation)
  * - Uses a mutex to prevent parallel token fetches (important for first-time user creation)
+ *
+ * ## Threading and Performance Considerations
+ *
+ * **Important:** This interceptor uses `runBlocking` to bridge between OkHttp's synchronous
+ * interceptor API and the asynchronous `SessionManager.getSession()` suspend function.
+ * This blocks the calling thread (typically an OkHttp worker thread) during token fetch.
+ *
+ * **Performance Impact:**
+ * - Under normal operation, tokens are cached and fetched quickly (~milliseconds)
+ * - First-time user creation may take longer (network round-trip)
+ * - Under high load with many parallel requests, thread pool contention is possible
+ * - The [accessTokenMutex] serializes token fetches to prevent duplicate user creation
+ *
+ * **Why runBlocking is necessary:**
+ * OkHttp interceptors must be synchronous, but `SessionManager` is designed as a
+ * suspend function to integrate with coroutine-based repositories and services.
+ * Alternative approaches (pre-fetching tokens, synchronous SessionManager) would
+ * complicate the architecture or break existing async patterns.
+ *
+ * **Trade-off:** We accept blocking a worker thread briefly for the benefit of
+ * automatic authentication and cleaner architecture (no manual token passing).
  */
 internal class GiniAuthenticationInterceptor(
     private val sessionManager: SessionManager
@@ -27,10 +49,18 @@ internal class GiniAuthenticationInterceptor(
 
     /**
      * Mutex to prevent coroutines from retrieving access tokens in parallel.
-     * This ensures that even when multiple uploads are started, only one user is created.
-     * Moved from DocumentRepository to centralize auth logic.
+     * 
+     * This ensures that even when multiple uploads are started simultaneously, only one
+     * anonymous user is created on the backend. Without this mutex, parallel document
+     * uploads could trigger multiple user creation requests, leading to race conditions.
+     * 
+     * **Thread Safety:** This mutex is internal (not private) to allow visibility in tests
+     * that verify concurrent request handling, though it should never be accessed directly
+     * by production code.
+     * 
+     * Moved from DocumentRepository to centralize auth logic in the interceptor layer.
      */
-    private val accessTokenMutex = Mutex()
+    internal val accessTokenMutex = Mutex()
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -47,19 +77,20 @@ internal class GiniAuthenticationInterceptor(
         }
 
         // Fetch access token synchronously (required in interceptor context)
+        // Use Dispatchers.IO to avoid blocking the main thread pool
         val accessToken = try {
-            runBlocking {
+            runBlocking(Dispatchers.IO) {
                 accessTokenMutex.withLock {
                     when (val sessionResult = sessionManager.getSession()) {
                         is Resource.Success -> sessionResult.data.accessToken
                         is Resource.Error -> {
                             throw IOException(
-                                "Failed to get session: ${sessionResult.exception?.message}",
+                                "Failed to get session for ${originalRequest.method} ${originalRequest.url}: ${sessionResult.exception?.message}",
                                 sessionResult.exception
                             )
                         }
                         is Resource.Cancelled -> {
-                            throw IOException("Session fetch was cancelled")
+                            throw IOException("Session fetch was cancelled for ${originalRequest.method} ${originalRequest.url}")
                         }
                     }
                 }
