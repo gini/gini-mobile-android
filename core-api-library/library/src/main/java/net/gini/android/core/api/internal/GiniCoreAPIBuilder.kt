@@ -19,6 +19,7 @@ import net.gini.android.core.api.authorization.UserRemoteSource
 import net.gini.android.core.api.authorization.UserRepository
 import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.http.DefaultGiniHttpClientProvider
+import net.gini.android.core.api.http.GiniApiHeaderInterceptor
 import net.gini.android.core.api.http.GiniAuthenticationInterceptor
 import net.gini.android.core.api.http.GiniAuthenticator
 import net.gini.android.core.api.http.GiniHttpClientProvider
@@ -406,6 +407,10 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             // Clone the consumer's client and add SDK's required interceptors
             return baseClient.newBuilder()
                 .apply {
+                    // Add API header interceptor for Accept and Content-Type headers
+                    // This runs FIRST to add required API versioning headers
+                    addInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
+                    
                     // Add authentication interceptor
                     // Note: This runs AFTER consumer's interceptors (newBuilder() copies them first)
                     // This ensures the SDK always adds authentication, even if consumer's interceptors
@@ -455,6 +460,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
 
         // Add authentication to default client as well
         return defaultProvider.provideOkHttpClient().newBuilder()
+            .addInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
             .addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
             .authenticator(GiniAuthenticator(getSessionManager()))
             .build()
