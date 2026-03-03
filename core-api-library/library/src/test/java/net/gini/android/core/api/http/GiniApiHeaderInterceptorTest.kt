@@ -39,7 +39,7 @@ class GiniApiHeaderInterceptorTest {
     }
 
     @Test
-    fun `adds Accept header when not present`() {
+    fun `does not add Accept header`() {
         // Given
         mockWebServer.enqueue(MockResponse().setResponseCode(200))
         val request = Request.Builder()
@@ -49,9 +49,9 @@ class GiniApiHeaderInterceptorTest {
         // When
         client.newCall(request).execute().use { }
 
-        // Then
+        // Then - Accept header should not be added by interceptor
         val recordedRequest = mockWebServer.takeRequest()
-        assertEquals("application/vnd.gini.v4+json", recordedRequest.getHeader("Accept"))
+        assertEquals(null, recordedRequest.getHeader("Accept"))
     }
 
     @Test
@@ -71,7 +71,7 @@ class GiniApiHeaderInterceptorTest {
     }
 
     @Test
-    fun `does not override existing Accept header`() {
+    fun `preserves explicitly set Accept header`() {
         // Given
         mockWebServer.enqueue(MockResponse().setResponseCode(200))
         val request = Request.Builder()
@@ -137,9 +137,9 @@ class GiniApiHeaderInterceptorTest {
         // When
         customClient.newCall(request).execute().use { }
 
-        // Then
+        // Then - Only Content-Type should use dynamic version
         val recordedRequest = mockWebServer.takeRequest()
-        assertEquals("application/vnd.gini.v5+json", recordedRequest.getHeader("Accept"))
+        assertEquals(null, recordedRequest.getHeader("Accept"))
         assertEquals("application/vnd.gini.v5+json", recordedRequest.getHeader("Content-Type"))
     }
 

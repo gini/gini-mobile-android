@@ -8,17 +8,21 @@ import java.io.IOException
 /**
  * Internal use only.
  *
- * OkHttp network interceptor that ensures API-specific headers are present on all requests.
+ * OkHttp network interceptor that ensures correct Content-Type headers for API requests.
  * Uses [GiniApiType] to determine the correct versioned media types.
  *
  * Registered as a network interceptor to run after Retrofit adds its default headers,
  * ensuring we can properly replace Retrofit's "application/json" with versioned media types.
  *
  * This interceptor:
- * - Adds Accept header with versioned media type if not present (e.g., "application/vnd.gini.v4+json")
- * - Replaces Retrofit's "application/json" Content-Type with versioned media type
+ * - Replaces Retrofit's "application/json" Content-Type with versioned media type (e.g., "application/vnd.gini.v4+json")
  * - Preserves explicitly-set non-JSON Content-Type headers (e.g., for file uploads)
  * - Supports dynamic API versions through GiniApiType
+ *
+ * Note: This interceptor does NOT manage Accept headers for the main Gini API (pay-api.gini.net).
+ * The main API works without explicit Accept headers, relying on content negotiation.
+ * However, other APIs like the User Center API may still require explicit Accept headers,
+ * which should be passed via @HeaderMap or set via @Headers annotation as needed.
  */
 internal class GiniApiHeaderInterceptor(
     private val giniApiType: GiniApiType
@@ -29,13 +33,8 @@ internal class GiniApiHeaderInterceptor(
         val originalRequest = chain.request()
         val requestBuilder = originalRequest.newBuilder()
 
-        // Add Accept header if not already present
-        if (originalRequest.header("Accept") == null) {
-            requestBuilder.header("Accept", giniApiType.giniJsonMediaType)
-        }
-
-        // Add or replace Content-Type header
-        // Retrofit's Moshi converter sets "application/json" but Gini API requires versioned media type
+        // Replace Retrofit's default "application/json" Content-Type with versioned media type
+        // This is required for POST/PUT/PATCH requests with JSON bodies
         val existingContentType = originalRequest.header("Content-Type")
         if (existingContentType == null || existingContentType.startsWith("application/json")) {
             requestBuilder.removeHeader("Content-Type")

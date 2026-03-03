@@ -410,7 +410,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
                     // Add API header interceptor as network interceptor
                     // Network interceptors run AFTER application interceptors, ensuring:
                     // 1. Consumer's logging interceptors can see requests (they run first)
-                    // 2. We can replace Retrofit's default headers with versioned API headers
+                    // 2. We can replace Retrofit's default Content-Type with versioned media type
                     // 3. Our headers are guaranteed to be correct on the actual network request
                     addNetworkInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
                     
@@ -459,7 +459,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             .build()
 
         // Add SDK interceptors to default client
-        // Network interceptor for API headers (runs after Retrofit adds default headers)
+        // Network interceptor for API headers (replaces Retrofit's Content-Type with versioned media type)
         // Application interceptor for authentication (handles auth for all requests)
         return defaultProvider.provideOkHttpClient().newBuilder()
             .addNetworkInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
