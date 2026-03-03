@@ -13,8 +13,22 @@ import okhttp3.OkHttpClient
  * - Cache configuration
  *
  * **Important**: The SDK will use your provided client as a base and add its own required
- * configuration on top (such as User-Agent header). Your configuration will be preserved,
- * and the SDK will layer its requirements using [OkHttpClient.newBuilder].
+ * configuration on top. Your configuration will be preserved, and the SDK will layer its
+ * requirements using [OkHttpClient.newBuilder].
+ *
+ * The SDK adds the following configuration:
+ * - **User-Agent header**: Identifies requests as coming from the Gini SDK
+ * - **GiniApiHeaderInterceptor** (network interceptor): Replaces Retrofit's default
+ *   `application/json` Content-Type with versioned media types (e.g., `application/vnd.gini.v4+json`)
+ * - **GiniAuthenticationInterceptor** (application interceptor): Automatically adds Bearer
+ *   authentication tokens to all API requests
+ * - **GiniAuthenticator**: Handles automatic token refresh on 401 Unauthorized responses
+ *
+ * **Interceptor ordering** (important for custom interceptors):
+ * 1. Your application interceptors (from provided client) - run first
+ * 2. SDK's authentication interceptor - adds Bearer token
+ * 3. SDK's network interceptor - replaces Content-Type header
+ * 4. SDK's authenticator - handles 401 token refresh
  *
  * ## Usage Example
  *
@@ -40,9 +54,11 @@ import okhttp3.OkHttpClient
  * ## Important Notes
  *
  * - The provided [OkHttpClient] should be properly configured with reasonable timeouts
- * - The SDK will add required headers (User-Agent) only if you haven't already set them
- * - Your interceptors will run before the SDK's required interceptors
- * - If you need logging, consider using [okhttp3.logging.HttpLoggingInterceptor]
+ * - Your application interceptors will run BEFORE SDK interceptors (giving you visibility into all requests)
+ * - Your network interceptors will run BEFORE SDK network interceptors
+ * - The SDK only adds headers if you haven't already set them (allows manual override)
+ * - If you need logging, add [okhttp3.logging.HttpLoggingInterceptor] as an application interceptor
+ *   so it can see SDK-added headers
  * - The client may be shared across multiple Gini API instances if desired
  *
  * @see DefaultGiniHttpClientProvider for the SDK's default implementation

@@ -25,9 +25,9 @@ class GiniApiHeaderInterceptorTest {
         mockWebServer.start()
         
         giniApiType = TestGiniApiType()
-        // Note: Using addInterceptor for tests (not addNetworkInterceptor like production)
-        // Both work here since we're testing without Retrofit. In production, we use
-        // addNetworkInterceptor to run after Retrofit adds its default headers.
+        // Note: Most tests use addInterceptor for simplicity since we're testing without Retrofit.
+        // See the `network interceptor validates proper header replacement order` test for
+        // validation of production network interceptor behavior.
         client = OkHttpClient.Builder()
             .addInterceptor(GiniApiHeaderInterceptor(giniApiType))
             .build()
@@ -141,6 +141,41 @@ class GiniApiHeaderInterceptorTest {
         val recordedRequest = mockWebServer.takeRequest()
         assertEquals(null, recordedRequest.getHeader("Accept"))
         assertEquals("application/vnd.gini.v5+json", recordedRequest.getHeader("Content-Type"))
+    }
+
+    @Test
+    fun `network interceptor validates proper header replacement order`() {
+        // Given - Using network interceptor like production
+        // This test validates that network interceptors run AFTER application interceptors,
+        // which is critical for replacing Retrofit's default headers.
+        //
+        // This validates the production interceptor ordering documented in GiniCoreAPIBuilder:
+        // 1. Consumer's application interceptors (cloned from provided client)
+        // 2. SDK's application interceptor (GiniAuthenticationInterceptor - adds auth)
+        // 3. SDK's network interceptor (GiniApiHeaderInterceptor - replaces headers)
+        // 4. SDK's authenticator (GiniAuthenticator - handles 401 refresh)
+        val networkClient = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                // Simulate what Retrofit does (application interceptor adds default headers)
+                val request = chain.request().newBuilder()
+                    .header("Content-Type", "application/json; charset=UTF-8")
+                    .build()
+                chain.proceed(request)
+            }
+            .addNetworkInterceptor(GiniApiHeaderInterceptor(giniApiType))
+            .build()
+
+        mockWebServer.enqueue(MockResponse().setResponseCode(200))
+        val request = Request.Builder()
+            .url(mockWebServer.url("/test"))
+            .build()
+
+        // When
+        networkClient.newCall(request).execute().use { }
+
+        // Then - Network interceptor should replace the application/json header
+        val recordedRequest = mockWebServer.takeRequest()
+        assertEquals("application/vnd.gini.v4+json", recordedRequest.getHeader("Content-Type"))
     }
 
     private class TestGiniApiType(private val apiVersion: Int = 4) : GiniApiType {
