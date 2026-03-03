@@ -192,6 +192,7 @@ dependencies {
 
     debugImplementation(libs.androidx.test.core.ktx)
     testImplementation(libs.androidx.fragment.testing)
+    androidTestImplementation(libs.androidx.fragment.testing)
 
     androidTestImplementation(libs.androidx.test.core.ktx)
     androidTestImplementation(libs.androidx.test.junit.ktx)
