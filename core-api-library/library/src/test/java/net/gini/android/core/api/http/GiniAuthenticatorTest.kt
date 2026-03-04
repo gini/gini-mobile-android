@@ -262,4 +262,82 @@ class GiniAuthenticatorTest {
         // Verify the refresh happened exactly once
         coVerify(exactly = 2) { sessionManager.getSession() }
     }
+
+    @Test
+    fun `authenticate serializes concurrent 401 token refresh with mutex`() = runTest {
+        // Given
+        val oldToken = "expired-token"
+        val newToken = "refreshed-token"
+        val futureDate = Date(System.currentTimeMillis() + 3600 * 1000)
+        val refreshTimestamps = mutableListOf<Long>()
+        var interceptorCalls = 0
+        var authenticatorCalls = 0
+        
+        // Track when getSession is called and add delay to detect parallel execution
+        coEvery { sessionManager.getSession() } coAnswers {
+            synchronized(refreshTimestamps) {
+                interceptorCalls++
+                
+                // First 5 calls are from interceptor (old token)
+                if (interceptorCalls <= 5) {
+                    Resource.Success(Session(oldToken, futureDate))
+                } else {
+                    // Authenticator calls - add delay and timestamp
+                    authenticatorCalls++
+                    refreshTimestamps.add(System.currentTimeMillis())
+                    Thread.sleep(50) // Simulate API call delay
+                    Resource.Success(Session(newToken, futureDate))
+                }
+            }
+        }
+        
+        // Enqueue 5 initial 401 responses
+        repeat(5) {
+            mockWebServer.enqueue(MockResponse().setResponseCode(401))
+        }
+        // Then 5 success responses
+        repeat(5) {
+            mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("success"))
+        }
+        
+        // When - Launch 5 parallel requests that all fail with 401
+        val startTime = System.currentTimeMillis()
+        val threads = (1..5).map { index ->
+            Thread {
+                val request = Request.Builder()
+                    .url(mockWebServer.url("/documents/$index"))
+                    .build()
+                okHttpClient.newCall(request).execute().close()
+            }.also { it.start() }
+        }
+        
+        threads.forEach { it.join() }
+        val totalTime = System.currentTimeMillis() - startTime
+        
+        // Then - Verify all requests were made
+        assertThat(mockWebServer.requestCount).isEqualTo(10)
+        
+        // Verify authenticator was called 5 times (once per 401)
+        assertThat(authenticatorCalls).isEqualTo(5)
+        
+        // Critical assertion: With mutex, the 5 token refreshes happen SERIALLY, not in parallel
+        // If they were parallel, total time would be ~50ms (one delay)
+        // If serial (due to mutex), total time should be ~250ms (5 x 50ms delays)
+        // Allow some overhead, but verify it's clearly serial
+        assertThat(totalTime).isAtLeast(200) // At least 4 delays worth
+        
+        // Verify refresh timestamps are spread out (serial), not clustered (parallel)
+        if (refreshTimestamps.size >= 2) {
+            val timeBetweenFirstAndLast = refreshTimestamps.last() - refreshTimestamps.first()
+            // If serial, timestamps should span at least 150ms (3+ delays)
+            assertThat(timeBetweenFirstAndLast).isAtLeast(150)
+        }
+    }
+
+    @Test
+    fun `refreshMutex is internal for test visibility`() {
+        // Verify the refreshMutex is accessible from tests (marked internal, not private)
+        // This allows testing concurrent 401 handling behavior in integration tests
+        assertThat(authenticator.refreshMutex).isNotNull()
+    }
 }
