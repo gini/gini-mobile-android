@@ -59,6 +59,11 @@ internal class GiniAuthenticator(
      * - `accessTokenMutex`: Prevents parallel first-time authentication (user creation)
      * - `refreshMutex`: Prevents parallel token refresh on 401 responses
      * 
+     * **Why separate mutexes?** Sharing a single mutex would serialize all authentication
+     * operations, causing unnecessary bottlenecks. The interceptor mutex handles the common
+     * case (adding tokens to requests), while this mutex handles the rare case (refreshing
+     * expired tokens). Keeping them separate allows better concurrency.
+     * 
      * **Thread Safety:** This mutex is internal (not private) to allow visibility in tests
      * that verify concurrent 401 handling, though it should never be accessed directly
      * by production code.

@@ -407,19 +407,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             // Clone the consumer's client and add SDK's required interceptors
             return baseClient.newBuilder()
                 .apply {
-                    // Add API header interceptor as network interceptor
-                    // Network interceptors run AFTER application interceptors, ensuring:
-                    // 1. Consumer's logging interceptors can see requests (they run first)
-                    // 2. We can replace Retrofit's default Content-Type with versioned media type
-                    // 3. Our headers are guaranteed to be correct on the actual network request
-                    addNetworkInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
-                    
-                    // Add authentication interceptor as application interceptor
-                    // This ensures authentication happens for all requests, including redirects
-                    addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
-                    
-                    // Add authenticator for token refresh on 401 responses
-                    authenticator(GiniAuthenticator(getSessionManager()))
+                    configureSDKInterceptors(this)
                     
                     // Add SDK's required User-Agent header
                     // This runs last (after consumer's interceptors and our auth interceptor)
@@ -462,10 +450,34 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         // Network interceptor for API headers (replaces Retrofit's Content-Type with versioned media type)
         // Application interceptor for authentication (handles auth for all requests)
         return defaultProvider.provideOkHttpClient().newBuilder()
-            .addNetworkInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
-            .addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
-            .authenticator(GiniAuthenticator(getSessionManager()))
+            .apply { configureSDKInterceptors(this) }
             .build()
+    }
+
+    /**
+     * Configures an OkHttpClient.Builder with SDK-required interceptors and authenticator.
+     * 
+     * Adds:
+     * - GiniApiHeaderInterceptor (network interceptor) for versioned Content-Type headers
+     * - GiniAuthenticationInterceptor (application interceptor) for Bearer token auth
+     * - GiniAuthenticator for automatic 401 token refresh
+     * 
+     * Used by both custom provider and default provider paths to ensure consistent configuration.
+     */
+    private fun configureSDKInterceptors(builder: OkHttpClient.Builder) {
+        // Add API header interceptor as network interceptor
+        // Network interceptors run AFTER application interceptors, ensuring:
+        // 1. Consumer's logging interceptors can see requests (they run first)
+        // 2. We can replace Retrofit's default Content-Type with versioned media type
+        // 3. Our headers are guaranteed to be correct on the actual network request
+        builder.addNetworkInterceptor(GiniApiHeaderInterceptor(getGiniApiType()))
+        
+        // Add authentication interceptor as application interceptor
+        // This ensures authentication happens for all requests, including redirects
+        builder.addInterceptor(GiniAuthenticationInterceptor(getSessionManager()))
+        
+        // Add authenticator for token refresh on 401 responses
+        builder.authenticator(GiniAuthenticator(getSessionManager()))
     }
 
     @Synchronized

@@ -56,7 +56,8 @@ import okhttp3.OkHttpClient
  * - The provided [OkHttpClient] should be properly configured with reasonable timeouts
  * - Your application interceptors will run BEFORE SDK interceptors (giving you visibility into all requests)
  * - Your network interceptors will run BEFORE SDK network interceptors
- * - The SDK only adds headers if you haven't already set them (allows manual override)
+ * - The SDK will automatically set Content-Type to versioned media types (e.g., `application/vnd.gini.v4+json`)
+ *   for JSON requests. Non-JSON Content-Types (e.g., `multipart/form-data`) are preserved as-is
  * - If you need logging, add [okhttp3.logging.HttpLoggingInterceptor] as an application interceptor
  *   so it can see SDK-added headers
  * - The client may be shared across multiple Gini API instances if desired
