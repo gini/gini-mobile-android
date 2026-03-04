@@ -21,7 +21,7 @@ import okhttp3.Route
  * - Intercepts 401 responses
  * - Fetches a fresh token from SessionManager
  * - Retries the request with the new token
- * - Gives up after one retry to avoid infinite loops
+ * - Gives up after [MAX_AUTH_RETRIES] attempts to avoid infinite loops
  *
  * ## Threading and Performance Considerations
  *
@@ -76,8 +76,8 @@ internal class GiniAuthenticator(
             return null // Not an auth issue, let other error handlers deal with it
         }
 
-        // Prevent infinite retry loop - if we already retried once, give up
-        if (responseCount(response) >= 2) {
+        // Prevent infinite retry loop - if we already retried MAX_AUTH_RETRIES times, give up
+        if (responseCount(response) >= MAX_AUTH_RETRIES) {
             return null // Failed after retry, give up
         }
 
@@ -130,5 +130,13 @@ internal class GiniAuthenticator(
             priorResponse = priorResponse.priorResponse
         }
         return result
+    }
+
+    companion object {
+        /**
+         * Maximum number of authentication retry attempts.
+         * After this many 401 responses, give up to prevent infinite retry loops.
+         */
+        private const val MAX_AUTH_RETRIES = 2
     }
 }

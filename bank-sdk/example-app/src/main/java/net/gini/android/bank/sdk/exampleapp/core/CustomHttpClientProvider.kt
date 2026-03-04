@@ -79,8 +79,14 @@ class CustomHttpClientProvider(
 
     /**
      * Simple logging interceptor that logs HTTP requests and responses.
-     * For production use with more features, add the okhttp-logging-interceptor dependency
-     * and use okhttp3.logging.HttpLoggingInterceptor instead.
+     * 
+     * **Note**: This is a basic example for demonstration purposes only.
+     * For production use, consider using a proper logging library like:
+     * - okhttp3.logging.HttpLoggingInterceptor (add `com.squareup.okhttp3:logging-interceptor` dependency)
+     * - Timber with custom OkHttp integration
+     * 
+     * Production logging should support different log levels, proper redaction of sensitive data,
+     * and integration with your app's logging infrastructure.
      */
     private class LoggingInterceptor : Interceptor {
         @Throws(IOException::class)

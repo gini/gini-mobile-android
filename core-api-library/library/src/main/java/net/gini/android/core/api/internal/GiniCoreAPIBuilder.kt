@@ -210,6 +210,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      *
      * @param provider A [GiniHttpClientProvider] implementation
      * @return The builder instance to enable chaining.
+     * @since 3.1.0
      * @see DefaultGiniHttpClientProvider for the SDK's default implementation
      */
     open fun setHttpClientProvider(provider: GiniHttpClientProvider): GiniCoreAPIBuilder<DM, G, DR, E> {

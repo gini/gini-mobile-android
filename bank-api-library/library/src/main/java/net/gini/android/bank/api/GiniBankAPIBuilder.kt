@@ -79,6 +79,7 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
      *
      * @param provider A [GiniHttpClientProvider] implementation
      * @return The builder instance to enable chaining
+     * @since 4.1.0
      * @see net.gini.android.core.api.http.DefaultGiniHttpClientProvider
      */
     override fun setHttpClientProvider(provider: GiniHttpClientProvider): GiniBankAPIBuilder {

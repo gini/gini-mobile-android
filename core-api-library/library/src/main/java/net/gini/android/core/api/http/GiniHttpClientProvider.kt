@@ -62,6 +62,7 @@ import okhttp3.OkHttpClient
  *   so it can see SDK-added headers
  * - The client may be shared across multiple Gini API instances if desired
  *
+ * @since 3.1.0
  * @see DefaultGiniHttpClientProvider for the SDK's default implementation
  */
 interface GiniHttpClientProvider {
