@@ -75,17 +75,6 @@ abstract class DocumentRemoteSource(
         response.body()?.string() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
-    @Deprecated(
-        "This method is deprecated and can be deleted in future. Use another one, please.",
-        replaceWith = ReplaceWith("getLayoutModel(accessToken, documentId)")
-    )
-    suspend fun getLayout(accessToken: String, documentId: String): String = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
-            documentService.getLayoutForDocument(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId)
-        }
-        response.body()?.string() ?: throw ApiException.forResponse("Empty response body", response)
-    }
-
     suspend fun getDocumentLayout(accessToken: String, documentId: String): DocumentLayout =
         withContext(coroutineContext) {
             val response = SafeApiRequest.apiRequest {

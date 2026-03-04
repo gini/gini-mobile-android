@@ -10,7 +10,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import net.gini.android.capture.R
-import net.gini.android.capture.internal.textrecognition.MLKitTextRecognizer.Companion.LOG
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -29,6 +30,7 @@ import java.io.OutputStream
 
 internal object SAFHelper {
 
+    val LOG: Logger = LoggerFactory.getLogger(SAFHelper::class.java)
     /**
     * Checks if the app has write permission for the given folder URI.
     *
@@ -38,10 +40,31 @@ internal object SAFHelper {
     */
 
     fun hasWritePermission(context: Context, folderUri: Uri): Boolean {
+        if (directoryExists(context, folderUri).not()) return false
         val result = context.contentResolver.persistedUriPermissions.any {
             it.uri == folderUri && it.isWritePermission
         }
         return result
+    }
+
+    /**
+     * Checks if the directory exists and is accessible.
+     *
+     * @param context The context used to access the content resolver.
+     * @param folderUri The URI of the folder to check.
+     * @return True if the directory exists and is accessible, false otherwise.
+     */
+    private fun directoryExists(context: Context, folderUri: Uri): Boolean {
+        return try {
+            val documentFile = DocumentFile.fromTreeUri(context, folderUri)
+            documentFile?.exists() == true && documentFile.isDirectory
+        } catch (e: SecurityException) {
+            LOG.error("SecurityException checking directory existence", e)
+            false
+        } catch (e: IllegalArgumentException) {
+            LOG.error("IllegalArgumentException checking directory existence", e)
+            false
+        }
     }
 
     /**

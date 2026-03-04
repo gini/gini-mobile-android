@@ -98,10 +98,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private lateinit var composeView: ComposeView
 
-    private fun setReturnReasonsEventProperty() {
+    private fun setBankSdkVersionEventProperty() {
         userAnalyticsEventTracker?.setUserProperty(
             setOf(
-                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
                 UserAnalyticsUserProperty.BankSdkVersionName(BuildConfig.VERSION_NAME),
             )
         )
@@ -131,7 +130,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         composeView = view.findViewById(R.id.gbs_compose_view)
-        setReturnReasonsEventProperty()
+        setBankSdkVersionEventProperty()
         view.protectViewFromInsets()
         userAnalyticsEventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()

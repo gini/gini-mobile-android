@@ -123,7 +123,6 @@
     <string name="return_assistant_bottom_navigation_bar_switch_label">Return assistant bottom navigation bar</string>
     <string name="event_tracker_switch_label">Event tracker</string>
     <string name="save_invoices_feature_label">Save Invoices Locally</string>
-    <string name="return_reasons_dialog_switch_label">Return reasons dialog</string>
     <string name="gini_error_switch_label">Gini error logger</string>
     <string name="custom_error_switch_label">Custom error logger</string>
     <string name="imported_file_size_bytes_limit">Imported File Size Bytes Limit</string>

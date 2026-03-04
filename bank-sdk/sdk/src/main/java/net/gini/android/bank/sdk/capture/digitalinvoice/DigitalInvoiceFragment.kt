@@ -498,13 +498,18 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceOnboardingFragment())
     }
 
+    @Suppress("SwallowedException")
     private fun scrollList(toTop: Boolean) {
         val delay: Long = if (toTop) 350 else 200
         binding.lineItems.postDelayed({
             smoothScroller.targetPosition = if (toTop) 0 else lineItemsAdapter.itemCount
-            (binding.lineItems.layoutManager as? LinearLayoutManager)?.startSmoothScroll(
-                smoothScroller
-            )
+            try {
+                (binding.lineItems.layoutManager as? LinearLayoutManager)?.startSmoothScroll(
+                    smoothScroller
+                )
+            } catch (exception: IllegalStateException) {
+                // Exception intentionally ignored
+            }
         }, delay)
 
     }

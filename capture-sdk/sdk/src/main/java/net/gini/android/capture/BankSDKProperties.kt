@@ -9,7 +9,7 @@ package net.gini.android.capture
  * @param isSkontoExtractionsValid validates if the extraction in the compound extractions
  * contain valid Skonto data
  * @param isReturnAssistantExtractionsValid validates if the extraction in the compound extractions
- * contain valid Return Assistant data data
+ * contain valid Return Assistant data
  *
  * Internal use only.
  */

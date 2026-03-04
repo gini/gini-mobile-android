@@ -27,7 +27,7 @@ class AnalysisFragmentExtension {
         paymentDueHintView.setContent {
             GiniTheme {
                 PaymentDueHintContent(
-                    dueDate = formatDateToGermanStyle(dueDate),
+                    dueDate = formatDateToLocalStyle(dueDate),
                     onDismiss = onDismiss
                 )
             }
@@ -54,7 +54,8 @@ class AnalysisFragmentExtension {
     fun hideEducation() {
         educationView.visibility = View.GONE
     }
-    fun formatDateToGermanStyle(dateString: String): String {
+
+    fun formatDateToLocalStyle(dateString: String): String {
         return try {
             val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())
             val outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())

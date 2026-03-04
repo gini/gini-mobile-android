@@ -256,6 +256,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void processInvoiceSaving() {
+        if (mFragment.getActivity() == null) return;
         isInvoiceSavingInProgress = true;
         getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress);
 

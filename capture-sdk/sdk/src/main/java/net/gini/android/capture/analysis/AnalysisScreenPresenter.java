@@ -35,17 +35,15 @@ import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_K
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.concurrent.TimeUnit;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
@@ -615,17 +613,13 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         return resultHolder.getExtractions().get(EXTRACTION_PAYMENT_DUE_DATE) != null ?
                 resultHolder.getExtractions().get(EXTRACTION_PAYMENT_DUE_DATE).getValue() : "";
     }
-
-    //TODO: check the validity of remaining day
-    private int calculateRemainingDays(@NonNull final String paymentDueDate) {
+    private int calculateRemainingDays(@NonNull String paymentDueDate) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            sdf.setLenient(false);
-            Date dueDate = sdf.parse(paymentDueDate);
-            Date today = new Date();
-            long diffMillis = (dueDate != null ? dueDate.getTime() : 0) - today.getTime();
-            return (int) TimeUnit.MILLISECONDS.toDays(diffMillis);
-        } catch (ParseException e) {
+            LocalDate today = LocalDate.now();
+            LocalDate dueDate = LocalDate.parse(paymentDueDate);
+
+            return (int) ChronoUnit.DAYS.between(today, dueDate);
+        } catch (DateTimeParseException e) {
             LOG.error("Failed to parse payment due date: " + paymentDueDate, e);
             return 0;
         }

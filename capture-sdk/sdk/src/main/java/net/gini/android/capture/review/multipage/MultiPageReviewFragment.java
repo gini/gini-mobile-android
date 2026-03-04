@@ -473,6 +473,11 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         // In phones and tablets regardless of orientation this bottom bar is needed.
         if (ContextHelper.isPortraitOrTablet(requireContext()))
             setReviewNavigationBarBottomAdapter(view);
+        else {
+            // this is landscape mode in phones only , where we don't show the bottom bar but
+            // we have to handle visibility of add pages.
+            handleAddPagesVisibility();
+        }
     }
 
     private void setInjectedLoadingIndicatorContainer() {
@@ -617,12 +622,15 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
         }
     }
 
+    private void handleAddPagesVisibility() {
+        mAddPagesWrapperLayout.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
+        mAddPagesButton.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
+    }
     private void setInputHandlers() {
         ClickListenerExtKt.setIntervalClickListener(mButtonNext, v -> onNextButtonClicked());
 
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().isBottomNavigationBarEnabled()) {
-            mAddPagesWrapperLayout.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
-            mAddPagesButton.setVisibility(GiniCapture.getInstance().isMultiPageEnabled() ? View.VISIBLE : View.GONE);
+            handleAddPagesVisibility();
         }
 
         ClickListenerExtKt.setIntervalClickListener(mAddPagesButton, v -> {

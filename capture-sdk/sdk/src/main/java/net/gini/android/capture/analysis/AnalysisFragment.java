@@ -42,6 +42,8 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     private AnalysisFragmentImpl mFragmentImpl;
     private AnalysisFragmentListener mListener;
     private BankSDKBridge bankSDKBridge;
+    private FragmentManager fragmentManager;
+
     private CancelListener mCancelListener;
     private ActivityResultLauncher<Intent> safFolderIntentLauncher;
 
@@ -54,6 +56,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         registerSafFolderSelectionHandler();
+        fragmentManager = requireActivity().getSupportFragmentManager();
         mFragmentImpl = createFragmentImpl();
         mFragmentImpl.onCreate(savedInstanceState);
     }
@@ -228,9 +231,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
 
     @Override
     public void showWarning(@NonNull WarningType type, @NonNull Runnable onProceed) {
-        FragmentManager fm = getParentFragmentManager();
-
-        WarningBottomSheet sheet = (WarningBottomSheet) fm.findFragmentByTag(WARNING_TAG);
+        WarningBottomSheet sheet = (WarningBottomSheet)  fragmentManager.findFragmentByTag(WARNING_TAG);
         if (sheet == null) {
             sheet = WarningBottomSheet.Companion.newInstance(type);
         }
@@ -238,10 +239,10 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         sheet.setCancelable(false);
         sheet.setListener(makeWarningListener(onProceed));
         if (!sheet.isAdded()) {
-            if (!fm.isStateSaved()) {
-                sheet.show(fm, WARNING_TAG);
+            if (!fragmentManager.isStateSaved()) {
+                sheet.show(fragmentManager, WARNING_TAG);
             } else {
-                fm.beginTransaction().add(sheet, WARNING_TAG).commitAllowingStateLoss();
+                fragmentManager.beginTransaction().add(sheet, WARNING_TAG).commitAllowingStateLoss();
             }
         }
     }

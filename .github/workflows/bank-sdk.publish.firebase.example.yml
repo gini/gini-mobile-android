@@ -1,7 +1,8 @@
 name: Publish Bank SDK Example App QA Build to Firebase distribution
 
 permissions:
-  contents: read
+  contents: write
+  packages: write
 
 on:
   workflow_dispatch:
@@ -24,7 +25,8 @@ jobs:
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
       BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD: ${{ secrets.BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD }}
-        
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   publish_to_firebase_distribution:
     needs: check
     runs-on: ubuntu-latest

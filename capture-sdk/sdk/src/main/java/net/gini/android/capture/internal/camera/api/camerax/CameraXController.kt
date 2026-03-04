@@ -11,7 +11,6 @@ import android.view.MotionEvent
 import android.view.Surface
 import android.view.View
 import android.view.ViewConfiguration
-import androidx.annotation.RequiresApi
 import androidx.camera.core.*
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
@@ -45,7 +44,6 @@ private const val AE_SIZE = AF_SIZE * 1.5f
 private const val SHUTTER_VIBRATION_DURATION_MS = 50L
 private const val FOCUS_VIBRATION_DURATION_MS = 10L
 
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 internal class CameraXController(val activity: Activity) : CameraInterface {
 
     private val cameraLifecycle: CameraLifecycle = CameraLifecycle()

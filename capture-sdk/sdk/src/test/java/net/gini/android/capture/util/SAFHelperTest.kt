@@ -51,21 +51,39 @@ class SAFHelperTest {
 
     @Test
     fun `hasWritePermission returns true when permission exists`() {
-        val uri = mockk<Uri>()
+        mockkStatic(DocumentFile::class)
+
+        val uri = mockk<Uri>(relaxed = true)
+        val documentFile = mockk<DocumentFile>()
         val permission = mockk<android.content.UriPermission>()
+
+        every { DocumentFile.fromTreeUri(context, uri) } returns documentFile
+        every { documentFile.exists() } returns true
+        every { documentFile.isDirectory } returns true
         every { permission.uri } returns uri
         every { permission.isWritePermission } returns true
         every { resolver.persistedUriPermissions } returns listOf(permission)
 
         assertTrue(SAFHelper.hasWritePermission(context, uri))
+
+        unmockkStatic(DocumentFile::class)
     }
 
     @Test
     fun `hasWritePermission returns false when permission not found`() {
-        val uri = mockk<Uri>()
+        mockkStatic(DocumentFile::class)
+
+        val uri = mockk<Uri>(relaxed = true)
+        val documentFile = mockk<DocumentFile>()
+
+        every { DocumentFile.fromTreeUri(context, uri) } returns documentFile
+        every { documentFile.exists() } returns true
+        every { documentFile.isDirectory } returns true
         every { resolver.persistedUriPermissions } returns emptyList()
 
         assertFalse(SAFHelper.hasWritePermission(context, uri))
+
+        unmockkStatic(DocumentFile::class)
     }
 
     @Test
