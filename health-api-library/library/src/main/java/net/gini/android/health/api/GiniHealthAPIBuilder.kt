@@ -7,6 +7,8 @@ import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.http.GiniHttpClientProvider
 import net.gini.android.core.api.internal.GiniCoreAPIBuilder
 import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.health.api.http.HealthApiAcceptHeaderInterceptor
+import okhttp3.OkHttpClient
 
 /**
  * Created by Alpár Szotyori on 14.10.22.
@@ -34,6 +36,12 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
 ) : GiniCoreAPIBuilder<HealthApiDocumentManager, GiniHealthAPI, HealthApiDocumentRepository, ExtractionsContainer>(context, clientId, clientSecret, emailDomain, sessionManager) {
 
     private val healthApiType = GiniHealthApiType(apiVersion)
+    private var customHttpClientProvider: GiniHttpClientProvider? = null
+
+    init {
+        // Wrap any HTTP client provider to add Health API-specific Accept headers
+        super.setHttpClientProvider(HealthApiHttpClientProviderWrapper(healthApiType))
+    }
 
     override fun getGiniApiType(): GiniApiType {
         return healthApiType
@@ -71,8 +79,29 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
      * @see net.gini.android.core.api.http.DefaultGiniHttpClientProvider
      */
     override fun setHttpClientProvider(provider: GiniHttpClientProvider): GiniHealthAPIBuilder {
-        super.setHttpClientProvider(provider)
+        customHttpClientProvider = provider
+        // Wrap the custom provider to add Health API-specific Accept headers
+        super.setHttpClientProvider(HealthApiHttpClientProviderWrapper(healthApiType, provider))
         return this
+    }
+
+    /**
+     * Internal wrapper that adds Health API-specific Accept header interceptor.
+     */
+    private class HealthApiHttpClientProviderWrapper(
+        private val giniApiType: GiniApiType,
+        private val baseProvider: GiniHttpClientProvider? = null
+    ) : GiniHttpClientProvider {
+        
+        override fun provideOkHttpClient(): OkHttpClient {
+            val baseClient = baseProvider?.provideOkHttpClient() 
+                ?: OkHttpClient()
+            
+            // Add Health API-specific Accept header interceptor
+            return baseClient.newBuilder()
+                .addInterceptor(HealthApiAcceptHeaderInterceptor(giniApiType))
+                .build()
+        }
     }
 
     companion object {
