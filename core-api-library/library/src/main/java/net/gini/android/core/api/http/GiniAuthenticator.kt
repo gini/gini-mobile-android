@@ -93,6 +93,11 @@ internal class GiniAuthenticator(
                             null
                         }
                         is Resource.Cancelled -> {
+                            // Note: We return null here to stop retry attempts gracefully.
+                            // In the authenticator context (handling 401), returning null tells OkHttp
+                            // to give up retrying and return the 401 to the caller.
+                            // This is different from GiniAuthenticationInterceptor, which throws IOException
+                            // to fail the entire request chain (since it's adding initial auth, not retrying).
                             null
                         }
                     }

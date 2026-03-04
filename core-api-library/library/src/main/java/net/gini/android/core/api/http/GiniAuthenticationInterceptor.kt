@@ -90,6 +90,10 @@ internal class GiniAuthenticationInterceptor(
                             )
                         }
                         is Resource.Cancelled -> {
+                            // Note: We throw IOException here to propagate cancellation to the caller.
+                            // In the interceptor, we want the entire request chain to fail if auth is cancelled.
+                            // This is different from GiniAuthenticator, which returns null to stop retrying
+                            // (since it's handling a 401 response, not an initial request).
                             throw IOException("Session fetch was cancelled for ${originalRequest.method} ${originalRequest.url}")
                         }
                     }
