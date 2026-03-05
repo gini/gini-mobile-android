@@ -39,7 +39,7 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     private var customHttpClientProvider: GiniHttpClientProvider? = null
 
     init {
-        // Wrap any HTTP client provider to add Health API-specific Accept headers
+        // Set a wrapper that will add Health API interceptor to whatever client the parent creates
         super.setHttpClientProvider(HealthApiHttpClientProviderWrapper(healthApiType))
     }
 
@@ -79,25 +79,35 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
      * @see net.gini.android.core.api.http.DefaultGiniHttpClientProvider
      */
     override fun setHttpClientProvider(provider: GiniHttpClientProvider): GiniHealthAPIBuilder {
+        // Store the custom provider
         customHttpClientProvider = provider
-        // Wrap the custom provider to add Health API-specific Accept headers
+        // Wrap it to add Health API interceptor
         super.setHttpClientProvider(HealthApiHttpClientProviderWrapper(healthApiType, provider))
         return this
     }
 
     /**
      * Internal wrapper that adds Health API-specific Accept header interceptor.
+     * 
+     * This wrapper:
+     * 1. Gets the base HTTP client (either from custom provider or lets parent create default)
+     * 2. Adds the Health API Accept header interceptor on top
+     * 3. Returns the enhanced client
+     * 
+     * This ensures all parent configurations (TrustManager, cache, timeouts, auth) are preserved.
      */
-    private class HealthApiHttpClientProviderWrapper(
+    private inner class HealthApiHttpClientProviderWrapper(
         private val giniApiType: GiniApiType,
         private val baseProvider: GiniHttpClientProvider? = null
     ) : GiniHttpClientProvider {
         
         override fun provideOkHttpClient(): OkHttpClient {
+            // Get the base client - either from custom provider or create empty base
             val baseClient = baseProvider?.provideOkHttpClient() 
                 ?: OkHttpClient()
             
             // Add Health API-specific Accept header interceptor
+            // Important: Add as interceptor (not network interceptor) to run BEFORE parent's SDK interceptors
             return baseClient.newBuilder()
                 .addInterceptor(HealthApiAcceptHeaderInterceptor(giniApiType))
                 .build()

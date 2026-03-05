@@ -81,6 +81,7 @@ interface DocumentService {
     ): Response<PaymentResponse>
 
     @GET
+    @Headers("Accept: image/jpeg")
     suspend fun getFile(
         @Url location: String
     ): Response<ResponseBody>
