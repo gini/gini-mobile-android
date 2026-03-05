@@ -13,6 +13,7 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
     private var clientSecret: String? = null
     private var clientId: String? = null
     private var useCustomHttpClient: Boolean = false
+    private var testInvalidBaseUrl: Boolean = false
     
     var giniBankAPI: GiniBankAPI = bindGiniBankAPI(context, logger)
     var defaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService
@@ -23,13 +24,15 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
     fun reinitNetworkServices(
         clientId: String, 
         clientSecret: String,
-        enableCustomHttpClient: Boolean = false
+        enableCustomHttpClient: Boolean = false,
+        testInvalidBaseUrl: Boolean = false
     ) {
         this.clientId = clientId
         this.clientSecret = clientSecret
         this.useCustomHttpClient = enableCustomHttpClient
+        this.testInvalidBaseUrl = testInvalidBaseUrl
         
-        logger.info("Reinitializing network services with custom HTTP client: $enableCustomHttpClient")
+        logger.info("Reinitializing network services with custom HTTP client: $enableCustomHttpClient, invalid base URL test: $testInvalidBaseUrl")
         
         defaultNetworkServiceDebugEnabled = bindGiniCaptureNetworkServiceDebugEnabled(context, logger)
         defaultNetworkServiceDebugDisabled = bindGiniCaptureNetworkServiceDebugDisabled(context, logger)
@@ -83,6 +86,15 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
                     enableDetailedLogging = true
                 )
             )
+        }
+        
+        // For testing: set invalid base URL on the Capture SDK network service too
+        if (testInvalidBaseUrl) {
+            val userTestUrl = "https://pay.gini.net/this-path-does-not-exist/"
+            val testUrl = "https://pay-api.gini.net/this-path-does-not-exist/"
+            builder.setBaseUrl(testUrl)
+            builder.setUserCenterBaseUrl(userTestUrl)
+            logger.warn("⚠️ TEST MODE: Setting invalid base URL on Capture network service to: $testUrl")
         }
         
         return builder
