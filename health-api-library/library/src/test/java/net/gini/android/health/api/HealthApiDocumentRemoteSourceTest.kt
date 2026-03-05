@@ -98,7 +98,9 @@ class HealthApiDocumentRemoteSourceTest {
             return Response.success(listOf(PageResponse(0, emptyMap())))
         }
 
-        override suspend fun getPaymentProviders(): Response<List<PaymentProviderResponse>> {
+        override suspend fun getPaymentProviders(
+            headers: Map<String, String>
+        ): Response<List<PaymentProviderResponse>> {
             return Response.success(
                 listOf(
                     PaymentProviderResponse(
@@ -117,13 +119,15 @@ class HealthApiDocumentRemoteSourceTest {
         }
 
         override suspend fun getPaymentProvider(
-            documentId: String
+            documentId: String,
+            headers: Map<String, String>
         ): Response<PaymentProviderResponse> {
             return Response.success(PaymentProviderResponse("", "", "", AppVersionResponse(""), Colors("", ""), "", "", listOf("android"), listOf()))
         }
 
         override suspend fun createPaymentRequest(
-            body: PaymentRequestBody
+            body: PaymentRequestBody,
+            headers: Map<String, String>
         ): Response<ResponseBody> {
             return Response.success(null, Headers.Builder().set("Location", "somewhere").build())
         }
@@ -192,12 +196,15 @@ class HealthApiDocumentRemoteSourceTest {
         }
 
         override suspend fun deletePaymentRequest(
-            paymentRequestId: String
+            paymentRequestId: String,
+            headers: Map<String, String>
         ): Response<ResponseBody> {
             return Response.success(null)
         }
 
-        override suspend fun getConfigurations(): Response<ConfigurationResponse> {
+        override suspend fun getConfigurations(
+            headers: Map<String, String>
+        ): Response<ConfigurationResponse> {
             return Response.success(null)
         }
 

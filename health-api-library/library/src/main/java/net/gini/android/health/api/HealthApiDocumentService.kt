@@ -27,13 +27,21 @@ internal interface HealthApiDocumentService: DocumentService {
     suspend fun getPages(@Path("documentId") documentId: String): Response<List<PageResponse>>
 
     @GET("/paymentProviders")
-    suspend fun getPaymentProviders(): Response<List<PaymentProviderResponse>>
+    suspend fun getPaymentProviders(
+        @HeaderMap headers: Map<String, String> = emptyMap()
+    ): Response<List<PaymentProviderResponse>>
 
     @GET("/paymentProviders/{providerId}")
-    suspend fun getPaymentProvider(@Path("providerId") documentId: String): Response<PaymentProviderResponse>
+    suspend fun getPaymentProvider(
+        @Path("providerId") documentId: String,
+        @HeaderMap headers: Map<String, String> = emptyMap()
+    ): Response<PaymentProviderResponse>
 
     @POST("/paymentRequests")
-    suspend fun createPaymentRequest(@Body body: PaymentRequestBody): Response<ResponseBody>
+    suspend fun createPaymentRequest(
+        @Body body: PaymentRequestBody,
+        @HeaderMap headers: Map<String, String> = emptyMap()
+    ): Response<ResponseBody>
 
     @GET("/paymentRequests/{paymentRequestId}")
     suspend fun getPaymentRequestDocument(
@@ -42,10 +50,15 @@ internal interface HealthApiDocumentService: DocumentService {
     ): Response<ResponseBody>
 
     @DELETE("/paymentRequests/{paymentRequestId}")
-    suspend fun deletePaymentRequest(@Path("paymentRequestId") paymentRequestId: String): Response<ResponseBody>
+    suspend fun deletePaymentRequest(
+        @Path("paymentRequestId") paymentRequestId: String,
+        @HeaderMap headers: Map<String, String> = emptyMap()
+    ): Response<ResponseBody>
 
     @GET("/configurations")
-    suspend fun getConfigurations(): Response<ConfigurationResponse>
+    suspend fun getConfigurations(
+        @HeaderMap headers: Map<String, String> = emptyMap()
+    ): Response<ConfigurationResponse>
 
     @HTTP(method = "DELETE", path = "/documents", hasBody = true)
     suspend fun batchDeleteDocuments(@Body body: List<String>): Response<Void>

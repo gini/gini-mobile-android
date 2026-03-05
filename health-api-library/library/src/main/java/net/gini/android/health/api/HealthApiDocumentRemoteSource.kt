@@ -36,14 +36,19 @@ class HealthApiDocumentRemoteSource internal constructor(
 
     internal suspend fun getPaymentProviders(): List<PaymentProviderResponse> = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getPaymentProviders()
+            documentService.getPaymentProviders(
+                mapOf("Accept" to giniApiType.giniJsonMediaType)
+            )
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
     internal suspend fun getPaymentProvider(providerId: String): PaymentProviderResponse = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getPaymentProvider(providerId)
+            documentService.getPaymentProvider(
+                providerId,
+                mapOf("Accept" to giniApiType.giniJsonMediaType)
+            )
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
@@ -51,7 +56,11 @@ class HealthApiDocumentRemoteSource internal constructor(
     suspend fun createPaymentRequest(paymentRequestInput: PaymentRequestInput): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.createPaymentRequest(
-                paymentRequestInput.toPaymentRequestBody()
+                paymentRequestInput.toPaymentRequestBody(),
+                mapOf(
+                    "Content-Type" to giniApiType.giniJsonMediaType,
+                    "Accept" to giniApiType.giniJsonMediaType
+                )
             )
         }
 
@@ -75,7 +84,8 @@ class HealthApiDocumentRemoteSource internal constructor(
     suspend fun deletePaymentRequest(paymentRequestId: String): Unit = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.deletePaymentRequest(
-                paymentRequestId
+                paymentRequestId,
+                mapOf("Accept" to giniApiType.giniJsonMediaType)
             )
         }
         response.body()
@@ -96,7 +106,9 @@ class HealthApiDocumentRemoteSource internal constructor(
 
     suspend fun getConfigurations(): ConfigurationResponse = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getConfigurations()
+            documentService.getConfigurations(
+                mapOf("Accept" to giniApiType.giniJsonMediaType)
+            )
         }
         response.body() ?: throw ApiException.forResponse("Empty response body", response)
     }
