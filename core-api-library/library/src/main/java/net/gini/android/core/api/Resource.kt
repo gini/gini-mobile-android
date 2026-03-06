@@ -1,6 +1,8 @@
 package net.gini.android.core.api
 
+import com.squareup.moshi.Moshi
 import net.gini.android.core.api.requests.ApiException
+import net.gini.android.core.api.response.ErrorResponse
 import java.util.concurrent.CancellationException
 
 /**
@@ -30,7 +32,8 @@ sealed class Resource<T>(
         override val responseStatusCode: Int? = null,
         override val responseHeaders: Map<String, List<String>>? = null,
         override val responseBody: String? = null,
-        val exception: Exception? = null
+        val exception: Exception? = null,
+        val errorResponse: ErrorResponse? = null  // Parsed error response
     ) : Resource<T>(null, responseStatusCode, responseHeaders, responseBody) {
 
         /**
@@ -41,21 +44,42 @@ sealed class Resource<T>(
             error.responseStatusCode,
             error.responseHeaders,
             error.responseBody,
-            error.exception
+            error.exception,
+            error.errorResponse
         )
 
         companion object {
+            private val moshi by lazy { Moshi.Builder().build() }
+
+            /**
+             * Parse error response JSON to ErrorResponse object.
+             * Internal use only.
+             */
+            private fun parseErrorResponse(responseBody: String?): ErrorResponse? {
+                if (responseBody.isNullOrBlank()) return null
+
+                return try {
+                    moshi.adapter(ErrorResponse::class.java).lenient().fromJson(responseBody)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+
             /**
              * Internal use only.
              */
-            fun <T> fromApiException(apiException: ApiException): Error<T> =
-                Error(
+            fun <T> fromApiException(apiException: ApiException): Error<T> {
+                val parsedError = parseErrorResponse(apiException.responseBody)
+
+                return Error(
                     apiException.message,
                     apiException.responseStatusCode,
                     apiException.responseHeaders,
                     apiException.responseBody,
-                    apiException
+                    apiException,
+                    parsedError
                 )
+            }
         }
     }
 
