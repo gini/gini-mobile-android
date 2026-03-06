@@ -49,6 +49,7 @@ Parameters:
   repo_password       - the password to use for authentication
   project_id          - the id of the project to be released (e.g., health-sdk, health-api-lib)
   module_id           - the id of the project's module to be released (e.g., sdk, lib)
+  build_number        - (optional) the build number to use; defaults to 1 if not provided
   signing_key_base64  - the base64 ascii-armored pgp secret key (see https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys)
   signing_password    - the password for the signing key
 

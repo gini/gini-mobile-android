@@ -101,6 +101,8 @@ android {
             jvmTarget = "1.8"
         }
     }
+    
+    testBuildType = "debug"
 
     sourceSets {
         getByName("debug") {
@@ -189,7 +191,8 @@ dependencies {
     testImplementation(libs.mockk)
 
     debugImplementation(libs.androidx.test.core.ktx)
-    debugImplementation(libs.androidx.fragment.testing)
+    testImplementation(libs.androidx.fragment.testing)
+    androidTestImplementation(libs.androidx.fragment.testing)
 
     androidTestImplementation(libs.androidx.test.core.ktx)
     androidTestImplementation(libs.androidx.test.junit.ktx)
@@ -237,5 +240,19 @@ tasks.getByName<DokkaTask>("dokkaHtml") {
             matchingRegex.set("""net\.gini\.android\.capture\.review\.multipage\.thumbnails""")
             suppress.set(true)
         }
+    }
+}
+
+// Disable release unit tests since they can't access test resources
+// Note: testBuildType = "debug" alone doesn't prevent compilation of release tests
+afterEvaluate {
+    tasks.named("compileReleaseUnitTestKotlin").configure {
+        enabled = false
+    }
+    tasks.named("compileReleaseUnitTestJavaWithJavac").configure {
+        enabled = false
+    }
+    tasks.named("testReleaseUnitTest").configure {
+        enabled = false
     }
 }

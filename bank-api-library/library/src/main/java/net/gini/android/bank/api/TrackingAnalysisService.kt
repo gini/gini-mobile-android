@@ -17,7 +17,6 @@ internal interface TrackingAnalysisService : DocumentService {
         "Accept: application/json"
     )
     suspend fun sendEvents(
-        @Header("Authorization") token: String,
         @Body amplitudeBody: AmplitudeRequestBody
     ): Response<ResponseBody>
 }

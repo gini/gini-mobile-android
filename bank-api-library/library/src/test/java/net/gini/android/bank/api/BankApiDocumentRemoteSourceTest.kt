@@ -34,44 +34,40 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 class BankApiDocumentRemoteSourceTest {
 
+    // Note: Authentication is now handled by GiniAuthenticationInterceptor
+    // These tests verify that RemoteSource methods work without manual token passing
+
     @Test
-    fun `sets bearer authorization header with capital case 'Bearer' in resolvePaymentRequests`() = runTest {
-        val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
-            resolvePaymentRequests(accessToken, "", ResolvePaymentInput("", "", "", ""))
+    fun `resolvePaymentRequests works without manual auth`() = runTest {
+        verifyMethodCall(this) {
+            resolvePaymentRequests("", ResolvePaymentInput("", "", "", ""))
         }
     }
 
     @Test
-    fun `sets bearer authorization header with capital case 'Bearer' in getPayment`() = runTest {
-        val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
-            getPayment(accessToken, "")
+    fun `getPayment works without manual auth`() = runTest {
+        verifyMethodCall(this) {
+            getPayment("")
         }
     }
 
     @Test
-    fun `sets bearer authorization header with capital case 'Bearer' in logErrorEvent`() = runTest {
-        val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
-            logErrorEvent(accessToken, ErrorEvent("", "", "", "", "", "", ""))
+    fun `logErrorEvent works without manual auth`() = runTest {
+        verifyMethodCall(this) {
+            logErrorEvent(ErrorEvent("", "", "", "", "", "", ""))
         }
     }
 
-    private inline fun verifyAuthorizationHeader(
-        expectedAuthorizationHeader: String,
+    private inline fun verifyMethodCall(
         testScope: TestScope,
         testBlock: BankApiDocumentRemoteSource.() -> Unit
     ) {
         // Given
-        val documentServiceAuthInterceptor = DocumentServiceAuthInterceptor()
+        val mockService = MockBankApiDocumentService()
         val testSubject =
             BankApiDocumentRemoteSource(
                 StandardTestDispatcher(testScope.testScheduler),
-                documentServiceAuthInterceptor,
+                mockService,
                 GiniBankApiType(1),
                 ""
             )
@@ -82,38 +78,30 @@ class BankApiDocumentRemoteSourceTest {
         }
         testScope.advanceUntilIdle()
 
-        // Then
-        Truth.assertThat(documentServiceAuthInterceptor.bearerAuthHeader).isNotNull()
-        Truth.assertThat(documentServiceAuthInterceptor.bearerAuthHeader).isEqualTo(expectedAuthorizationHeader)
+        // Then - just verify no exception thrown
+        // Authentication is tested in GiniAuthenticationInterceptorTest
     }
 
-    private class DocumentServiceAuthInterceptor : BankApiDocumentService {
-
-        var bearerAuthHeader: String? = null
+    private class MockBankApiDocumentService : BankApiDocumentService {
 
         override suspend fun resolvePaymentRequests(
-            bearer: Map<String, String>,
             id: String,
             input: ResolvePaymentBody
         ): Response<ResolvePaymentResponse> {
-            bearerAuthHeader = bearer["Authorization"]
             return Response.success(ResolvePaymentResponse("", "", "", null, "", "", ""))
         }
 
-        override suspend fun getPayment(bearer: Map<String, String>, id: String): Response<PaymentResponse> {
-            bearerAuthHeader = bearer["Authorization"]
+        override suspend fun getPayment(id: String): Response<PaymentResponse> {
             return Response.success(PaymentResponse("", "", "", null, "", ""))
         }
 
         override suspend fun logErrorEvent(
-            bearer: Map<String, String>,
             errorEvent: ErrorEvent
         ): Response<ResponseBody> {
-            bearerAuthHeader = bearer["Authorization"]
             return Response.success(null)
         }
 
-        override suspend fun getConfigurations(bearer: Map<String, String>): Response<ConfigurationResponse> {
+        override suspend fun getConfigurations(): Response<ConfigurationResponse> {
             return Response.success(
                 ConfigurationResponse(
                     null,
@@ -133,89 +121,66 @@ class BankApiDocumentRemoteSourceTest {
         }
 
         override suspend fun uploadDocument(
-            bearer: Map<String, String>,
             bytes: RequestBody,
             fileName: String?,
-            docType: String?
+            docType: String?,
+            headers: Map<String, String>
         ): Response<ResponseBody> {
-            // Is tested in core api library
             return Response.success(null)
         }
 
-        override suspend fun getDocument(bearer: Map<String, String>, documentId: String): Response<ResponseBody> {
-            // Is tested in core api library
+        override suspend fun getDocument(documentId: String): Response<ResponseBody> {
             return Response.success(null)
         }
 
-        override suspend fun getDocumentFromUri(bearer: Map<String, String>, uri: String): Response<ResponseBody> {
-            // Is tested in core api library
+        override suspend fun getDocumentFromUri(uri: String): Response<ResponseBody> {
             return Response.success(null)
         }
 
-        override suspend fun getExtractions(bearer: Map<String, String>, documentId: String): Response<ResponseBody> {
-            // Is tested in core api library
+        override suspend fun getExtractions(documentId: String): Response<ResponseBody> {
             return Response.success(null)
         }
 
-        override suspend fun deleteDocument(bearer: Map<String, String>, documentId: String): Response<ResponseBody> {
-            // Is tested in core api library
+        override suspend fun deleteDocument(documentId: String): Response<ResponseBody> {
             return Response.success(null)
         }
 
         override suspend fun deleteDocumentFromUri(
-            bearer: Map<String, String>,
             documentUri: Uri
         ): Response<ResponseBody> {
-            // Is tested in core api library
-            return Response.success(null)
-        }
-
-        override suspend fun getLayoutForDocument(
-            bearer: Map<String, String>,
-            documentId: String
-        ): Response<ResponseBody> {
-            // Is tested in core api library
             return Response.success(null)
         }
 
         override suspend fun getPaymentRequest(
-            bearer: Map<String, String>,
             id: String
         ): Response<PaymentRequestResponse> {
-            // Is tested in core api library
             return Response.success(null)
         }
 
         override suspend fun getDocumentLayout(
-            bearer: Map<String, String>,
             documentId: String
         ): Response<DocumentLayoutResponse> {
             return Response.success(null)
         }
 
         override suspend fun getDocumentPages(
-            bearer: Map<String, String>,
             documentId: String
         ): Response<List<DocumentPageResponse>> {
             return Response.success(null)
         }
 
-        override suspend fun getPaymentRequests(bearer: Map<String, String>): Response<List<PaymentRequestResponse>> {
-            // Is tested in core api library
+        override suspend fun getPaymentRequests(): Response<List<PaymentRequestResponse>> {
             return Response.success(null)
         }
 
-        override suspend fun getFile(bearer: Map<String, String>, location: String): Response<ResponseBody> {
-            // Is tested in core api library
+        override suspend fun getFile(location: String): Response<ResponseBody> {
             return Response.success(null)
         }
 
         override suspend fun sendFeedback(
-            bearer: Map<String, String>,
             id: String,
             params: RequestBody
         ): Response<ResponseBody> {
-            // Is tested in core api library
             return Response.success(null)
         }
 

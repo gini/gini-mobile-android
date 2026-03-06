@@ -52,12 +52,14 @@ internal class UserRemoteSource(
         }
     }
 
+    // User Center API requires explicit Accept header (unlike main Gini API)
     private fun basicHeaderMap(): Map<String, String> {
         val encoded = Base64.encodeToString("${clientId}:${clientSecret}".toByteArray(), Base64.NO_WRAP)
         return mapOf(JsonAcceptHeader().toPair(),
             BasicAuthorizatonHeader(encoded).toPair())
     }
 
+    // User Center API requires explicit Accept header (unlike main Gini API)
     private fun bearerHeaderMap(accessToken: String): Map<String, String> {
         return mapOf(JsonAcceptHeader().toPair(),
             BearerAuthorizatonHeader(accessToken).toPair())

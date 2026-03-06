@@ -6,7 +6,6 @@ import net.gini.android.core.api.DocumentMetadata
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Resource.Companion.wrapInResource
-import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
@@ -32,9 +31,8 @@ import org.json.JSONObject
  */
 class HealthApiDocumentRepository(
     private val documentRemoteSource: HealthApiDocumentRemoteSource,
-    sessionManager: SessionManager,
     private val giniApiType: GiniHealthApiType
-) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, sessionManager, giniApiType) {
+) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, giniApiType) {
 
     override suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
                                                filename: String?,
@@ -60,95 +58,75 @@ class HealthApiDocumentRepository(
         documentId: String,
         page: Int
     ): Resource<ByteArray> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val imageUri = getPages(accessToken, documentId)
-                    .getPageByPageNumber(page)
-                    .getLargestImageUriSmallerThan(Size(2000, 2000))
+        wrapInResource {
+            val imageUri = getPages(documentId)
+                .getPageByPageNumber(page)
+                .getLargestImageUriSmallerThan(Size(2000, 2000))
 
-                if (imageUri != null) {
-                    documentRemoteSource.getFile(accessToken, imageUri.toString())
-                } else {
-                    throw NoSuchElementException("No page image found for page number $page in document $documentId")
-                }
+            if (imageUri != null) {
+                documentRemoteSource.getFile(imageUri.toString())
+            } else {
+                throw NoSuchElementException("No page image found for page number $page in document $documentId")
             }
         }
 
-    private suspend fun getPages(accessToken: String, documentId: String): List<Page> =
-        documentRemoteSource.getPages(accessToken, documentId)
+    private suspend fun getPages(documentId: String): List<Page> =
+        documentRemoteSource.getPages(documentId)
             .toPageList(documentRemoteSource.baseUri)
 
     suspend fun getPaymentProviders(): Resource<List<PaymentProvider>> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPaymentProviders(accessToken)
-                    .filter { paymentProvider ->
-                        paymentProvider.isEnabled()
-                    }
-                    .map { paymentProviderResponse ->
-                        val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
-                        paymentProviderResponse.toPaymentProvider(icon)
-                    }
-            }
+        return wrapInResource {
+            documentRemoteSource.getPaymentProviders()
+                .filter { paymentProvider ->
+                    paymentProvider.isEnabled()
+                }
+                .map { paymentProviderResponse ->
+                    val icon = documentRemoteSource.getFile(paymentProviderResponse.iconLocation)
+                    paymentProviderResponse.toPaymentProvider(icon)
+                }
         }
     }
 
     suspend fun getPaymentProvider(providerId: String): Resource<PaymentProvider> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val paymentProviderResponse = documentRemoteSource.getPaymentProvider(accessToken, providerId)
-                val icon = documentRemoteSource.getFile(accessToken, paymentProviderResponse.iconLocation)
-                paymentProviderResponse.toPaymentProvider(icon)
-            }
+        wrapInResource {
+            val paymentProviderResponse = documentRemoteSource.getPaymentProvider(providerId)
+            val icon = documentRemoteSource.getFile(paymentProviderResponse.iconLocation)
+            paymentProviderResponse.toPaymentProvider(icon)
         }
 
     suspend fun createPaymentRequest(paymentRequestInput: PaymentRequestInput): Resource<String> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.createPaymentRequest(accessToken, paymentRequestInput)
-            }
+        return wrapInResource {
+            documentRemoteSource.createPaymentRequest(paymentRequestInput)
         }
     }
 
     suspend fun getPaymentRequestDocument(paymentRequestId: String): Resource<ByteArray> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPaymentRequestDocument(accessToken, paymentRequestId)
-            }
+        wrapInResource {
+            documentRemoteSource.getPaymentRequestDocument(paymentRequestId)
         }
 
     suspend fun deletePaymentRequest(paymentRequestId: String): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.deletePaymentRequest(accessToken, paymentRequestId)
-            }
+        wrapInResource {
+            documentRemoteSource.deletePaymentRequest(paymentRequestId)
         }
 
     suspend fun getPaymentRequestImage(paymentRequestId: String): Resource<ByteArray> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPaymentRequestImage(accessToken, paymentRequestId)
-            }
+        wrapInResource {
+            documentRemoteSource.getPaymentRequestImage(paymentRequestId)
         }
 
     suspend fun getConfigurations(): Resource<ConfigurationResponse> =
-        withAccessToken {  accessToken ->
-            wrapInResource {
-                documentRemoteSource.getConfigurations(accessToken)
-            }
+        wrapInResource {
+            documentRemoteSource.getConfigurations()
         }
 
     suspend fun deleteDocuments(documentIds: List<String>): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.deleteDocuments(accessToken, documentIds)
-            }
+        wrapInResource {
+            documentRemoteSource.deleteDocuments(documentIds)
         }
 
     suspend fun deletePaymentRequests(paymentRequestIds: List<String>): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.deletePaymentRequests(accessToken, paymentRequestIds)
-            }
+        wrapInResource {
+            documentRemoteSource.deletePaymentRequests(paymentRequestIds)
         }
 }

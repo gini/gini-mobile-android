@@ -2,10 +2,9 @@ package net.gini.android.core.api.authorization
 
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Utils
-import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import org.json.JSONObject
-import java.util.*
+import java.util.UUID
 
 /**
  * The [AnonymousSessionManager] is a [SessionManager] implementation that uses anonymous Gini users.

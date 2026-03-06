@@ -151,6 +151,12 @@ data class ExampleAppBankConfiguration(
     // enable/disable save invoices locally feature
     val saveInvoicesLocallyEnabled: Boolean = true,
 
+    // enable/disable custom HTTP client provider (for testing network customization)
+    val isCustomHttpClientEnabled: Boolean = false,
+
+    // Test mode: set invalid base URL to reproduce 404 fallback issue
+    val isTestInvalidBaseUrlEnabled: Boolean = false,
+
 ) : Parcelable {
 
     companion object Companion {

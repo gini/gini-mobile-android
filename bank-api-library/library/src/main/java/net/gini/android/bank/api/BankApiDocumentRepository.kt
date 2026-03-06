@@ -10,7 +10,6 @@ import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Resource.Companion.wrapInResource
-import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.SpecificExtraction
 import org.json.JSONArray
@@ -22,10 +21,9 @@ import org.json.JSONObject
  */
 class BankApiDocumentRepository(
     private val documentRemoteSource: BankApiDocumentRemoteSource,
-    sessionManager: SessionManager,
     giniApiType: GiniBankApiType,
     private val trackingAnalysisRemoteSource: TrackingAnalysisRemoteSource
-) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, sessionManager, giniApiType) {
+) : DocumentRepository<ExtractionsContainer>(documentRemoteSource, giniApiType) {
 
     override fun createExtractionsContainer(
         specificExtractions: Map<String, SpecificExtraction>,
@@ -42,35 +40,26 @@ class BankApiDocumentRepository(
         requestId: String,
         resolvePaymentInput: ResolvePaymentInput
     ): Resource<ResolvedPayment> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.resolvePaymentRequests(
-                    accessToken,
-                    requestId,
-                    resolvePaymentInput
-                )
-            }
+        wrapInResource {
+            documentRemoteSource.resolvePaymentRequests(
+                requestId,
+                resolvePaymentInput
+            )
         }
 
     suspend fun logErrorEvent(errorEvent: ErrorEvent): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.logErrorEvent(accessToken, errorEvent)
-            }
+        wrapInResource {
+            documentRemoteSource.logErrorEvent(errorEvent)
         }
 
     suspend fun getConfigurations(): Resource<Configuration> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getConfigurations(accessToken)
-            }
+        wrapInResource {
+            documentRemoteSource.getConfigurations()
         }
 
     suspend fun sendEvents(amplitudeRoot: AmplitudeRoot): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                trackingAnalysisRemoteSource.sendEvents(accessToken, amplitudeRoot)
-            }
+        wrapInResource {
+            trackingAnalysisRemoteSource.sendEvents(amplitudeRoot)
         }
 
 

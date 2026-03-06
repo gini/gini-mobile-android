@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityConfigurationBinding
@@ -235,6 +236,14 @@ class ConfigurationActivity : AppCompatActivity() {
 
         binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.hint =
             configuration.clientSecret
+
+        // Custom HTTP client toggle
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient.isChecked =
+            configuration.isCustomHttpClientEnabled
+
+        // Test Invalid Base URL toggle
+        binding.layoutDebugDevelopmentOptionsToggles.switchTestInvalidBaseUrl.isChecked =
+            configuration.isTestInvalidBaseUrlEnabled
     }
 
     @Suppress("CyclomaticComplexMethod", "LongMethod")
@@ -633,6 +642,46 @@ class ConfigurationActivity : AppCompatActivity() {
                         isDebugModeEnabled = isChecked
                     )
                 )
+            }
+
+        // Custom HTTP client
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient
+            .setOnCheckedChangeListener { _, isChecked ->
+                val configurationFlow = configurationViewModel.configurationFlow.value
+                configurationViewModel.setConfiguration(
+                    configurationFlow.copy(
+                        isCustomHttpClientEnabled = isChecked
+                    )
+                )
+                // Reinitialize network services with the new flag
+                defaultNetworkServicesProvider.reinitNetworkServices(
+                    configurationFlow.clientId.ifEmpty { getString(R.string.gini_api_client_id) },
+                    configurationFlow.clientSecret.ifEmpty { getString(R.string.gini_api_client_secret) },
+                    isChecked,
+                    configurationFlow.isTestInvalidBaseUrlEnabled
+                )
+                // CRITICAL: Update the SDK with the new API instance
+                GiniBank.setGiniApi(defaultNetworkServicesProvider.giniBankAPI)
+            }
+
+        // Test Invalid Base URL (for reproducing 404 fallback issue)
+        binding.layoutDebugDevelopmentOptionsToggles.switchTestInvalidBaseUrl
+            .setOnCheckedChangeListener { _, isChecked ->
+                val configurationFlow = configurationViewModel.configurationFlow.value
+                configurationViewModel.setConfiguration(
+                    configurationFlow.copy(
+                        isTestInvalidBaseUrlEnabled = isChecked
+                    )
+                )
+                // Reinitialize network services with the new flag
+                defaultNetworkServicesProvider.reinitNetworkServices(
+                    configurationFlow.clientId.ifEmpty { getString(R.string.gini_api_client_id) },
+                    configurationFlow.clientSecret.ifEmpty { getString(R.string.gini_api_client_secret) },
+                    configurationFlow.isCustomHttpClientEnabled,
+                    isChecked
+                )
+                // CRITICAL: Update the SDK with the new API instance
+                GiniBank.setGiniApi(defaultNetworkServicesProvider.giniBankAPI)
             }
 
         // enable Skonto

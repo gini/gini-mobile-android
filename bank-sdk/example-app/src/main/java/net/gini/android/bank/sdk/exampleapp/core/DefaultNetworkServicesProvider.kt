@@ -12,15 +12,28 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
 
     private var clientSecret: String? = null
     private var clientId: String? = null
+    private var useCustomHttpClient: Boolean = false
+    private var testInvalidBaseUrl: Boolean = false
+    
     var giniBankAPI: GiniBankAPI = bindGiniBankAPI(context, logger)
     var defaultNetworkServiceDebugEnabled: GiniCaptureDefaultNetworkService
     = bindGiniCaptureNetworkServiceDebugEnabled(context, logger)
     var defaultNetworkServiceDebugDisabled: GiniCaptureDefaultNetworkService
     = bindGiniCaptureNetworkServiceDebugDisabled(context, logger)
 
-    fun reinitNetworkServices(clientId: String, clientSecret: String) {
+    fun reinitNetworkServices(
+        clientId: String, 
+        clientSecret: String,
+        enableCustomHttpClient: Boolean = false,
+        testInvalidBaseUrl: Boolean = false
+    ) {
         this.clientId = clientId
         this.clientSecret = clientSecret
+        this.useCustomHttpClient = enableCustomHttpClient
+        this.testInvalidBaseUrl = testInvalidBaseUrl
+        
+        logger.info("Reinitializing network services with custom HTTP client: $enableCustomHttpClient, invalid base URL test: $testInvalidBaseUrl")
+        
         defaultNetworkServiceDebugEnabled = bindGiniCaptureNetworkServiceDebugEnabled(context, logger)
         defaultNetworkServiceDebugDisabled = bindGiniCaptureNetworkServiceDebugDisabled(context, logger)
         giniBankAPI = bindGiniBankAPI(context, logger)
@@ -57,7 +70,7 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
         logger: org.slf4j.Logger,
     ): GiniCaptureDefaultNetworkService.Builder {
         val clientIdAndSecret = getClientIdAndClientSecret(context, logger)
-        return GiniCaptureDefaultNetworkService
+        val builder = GiniCaptureDefaultNetworkService
             .builder(context)
             .setClientCredentials(
                 clientId ?: clientIdAndSecret.first,
@@ -65,6 +78,26 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
                 "example.com"
             )
             .setDocumentMetadata(getDocumentMetaData())
+        
+        // Check if custom HTTP client should be used
+        if (useCustomHttpClient) {
+            builder.setHttpClientProvider(
+                CustomHttpClientProvider(
+                    enableDetailedLogging = true
+                )
+            )
+        }
+        
+        // For testing: set invalid base URL on the Capture SDK network service too
+        if (testInvalidBaseUrl) {
+            val userTestUrl = "https://pay.gini.net/this-path-does-not-exist/"
+            val testUrl = "https://pay-api.gini.net/this-path-does-not-exist/"
+            builder.setBaseUrl(testUrl)
+            builder.setUserCenterBaseUrl(userTestUrl)
+            logger.warn("⚠️ TEST MODE: Setting invalid base URL on Capture network service to: $testUrl")
+        }
+        
+        return builder
     }
 
     private fun getClientIdAndClientSecret(
