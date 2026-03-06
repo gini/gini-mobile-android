@@ -30,7 +30,6 @@ import net.gini.android.core.api.models.Payment
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.response.DeleteDocumentErrorResponse
 import net.gini.android.health.api.response.DeletePaymentRequestErrorResponse
-import net.gini.android.health.sdk.GiniHealth.TrustMarkerResponse
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
@@ -122,7 +121,7 @@ class GiniHealth(
     val openBankState: StateFlow<PaymentState> = _openBankState
 
     private val _displayedScreen: MutableSharedFlow<DisplayedScreen> =
-        MutableSharedFlow(extraBufferCapacity = 1)
+        MutableSharedFlow(replay = 1, extraBufferCapacity = 1)
 
     /**
      * A flow for exposing the [DisplayedScreen] currently visible. It always starts with [DisplayedScreen.Nothing].

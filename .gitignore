@@ -10,3 +10,4 @@ captures
 fastlane/report.xml
 .vscode
 .kotlin/
+**/google-services.json
