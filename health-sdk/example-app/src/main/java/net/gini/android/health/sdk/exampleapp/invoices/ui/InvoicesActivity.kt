@@ -235,7 +235,6 @@ open class InvoicesActivity : AppCompatActivity() {
                                 // Show error dialog for document loading errors
                                 showGiniHealthErrorDialog(
                                     exception = result.error,
-                                    onRetry = { /* Retry logic if needed */ },
                                     onDismiss = { /* Error acknowledged */ }
                                 )
                             }
@@ -245,6 +244,17 @@ open class InvoicesActivity : AppCompatActivity() {
                             is ResultWrapper.Loading -> {
                                 LOG.debug("Document loading in InvoicesActivity")
                             }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.extractionErrorFlow.collect { error ->
+                        error?.let {
+                            LOG.debug("Extraction error in InvoicesActivity: ${it.message}")
+                            showGiniHealthErrorDialog(
+                                exception = it,
+                                onDismiss = { /* Error acknowledged */ }
+                            )
                         }
                     }
                 }
@@ -258,7 +268,6 @@ open class InvoicesActivity : AppCompatActivity() {
                                 // Show error dialog for extraction errors
                                 showGiniHealthErrorDialog(
                                     exception = result.error,
-                                    onRetry = { /* Retry logic if needed */ },
                                     onDismiss = { /* Error acknowledged */ }
                                 )
                             }

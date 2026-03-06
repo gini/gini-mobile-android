@@ -168,12 +168,11 @@ class OrdersActivity : AppCompatActivity() {
                 supportFragmentManager.add(paymentFragment)
             }
             .onFailure { error ->
-                LOG.error("Error getting payment review fragment", )
-                AlertDialog.Builder(this@OrdersActivity)
-                    .setTitle(getString(R.string.could_not_start_payment_review))
-                    .setMessage(error.message)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
+                LOG.error("Error getting payment review fragment")
+                showGiniHealthErrorDialog(
+                    exception = error,
+                    onDismiss = { /* Error acknowledged */ }
+                )
             }
     }
 

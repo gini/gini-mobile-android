@@ -34,10 +34,10 @@ class OrdersViewModel(
     val errorsFlow: SharedFlow<String> = _errorsFlow
 
     private val _deletePaymentRequestErrorsFlow =
-        MutableSharedFlow<GiniHealthException>(
+        MutableSharedFlow<Exception>(
             extraBufferCapacity = 1
         )
-    val deletePaymentRequestErrorsFlow: SharedFlow<GiniHealthException> =
+    val deletePaymentRequestErrorsFlow: SharedFlow<Exception> =
         _deletePaymentRequestErrorsFlow
 
     private var paymentFlowConfiguration: PaymentFlowConfiguration? = null
@@ -69,7 +69,7 @@ class OrdersViewModel(
         try {
             giniHealth.deletePaymentRequests(orderIds)
             ordersRepository.deleteRequestIdsAndExpiryDates(orderIds)
-        } catch (e: GiniHealthException) {
+        } catch (e: Exception) {
             _deletePaymentRequestErrorsFlow.emit(e)
         }
     }

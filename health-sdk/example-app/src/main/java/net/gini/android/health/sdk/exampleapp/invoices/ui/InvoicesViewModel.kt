@@ -38,6 +38,9 @@ class InvoicesViewModel(
     val documentFlow = invoicesRepository.giniHealth.documentFlow
     val paymentFlow = invoicesRepository.giniHealth.paymentFlow
 
+    // Expose extraction error flow from repository
+    val extractionErrorFlow = invoicesRepository.extractionErrorFlow
+
     private val _startIntegratedPaymentFlow = MutableSharedFlow<PaymentDetails>(
         extraBufferCapacity = 1
     )

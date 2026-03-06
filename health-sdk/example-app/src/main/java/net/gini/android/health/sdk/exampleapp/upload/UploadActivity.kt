@@ -42,7 +42,6 @@ class UploadActivity : AppCompatActivity() {
                         if (extractedPaymentDetails is ResultWrapper.Error) {
                             showGiniHealthErrorDialog(
                                 exception = extractedPaymentDetails.error,
-                                onRetry = { },
                                 onDismiss = { finish() }
                             )
                         }
@@ -55,7 +54,6 @@ class UploadActivity : AppCompatActivity() {
                                 // Show error dialog for document loading errors
                                 showGiniHealthErrorDialog(
                                     exception = result.error,
-                                    onRetry = { /* Retry logic if needed */ },
                                     onDismiss = { /* Error acknowledged */ }
                                 )
                             }
@@ -93,7 +91,6 @@ class UploadActivity : AppCompatActivity() {
             is UploadState.Failure -> {
                 showGiniHealthErrorDialog(
                     exception = uploadState.throwable,
-                    onRetry = { viewModel.uploadDocuments(contentResolver, intent.pageUris) },
                     onDismiss = { finish() }
                 )
                 getString(R.string.upload_failed)

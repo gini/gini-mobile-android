@@ -7,68 +7,49 @@ import net.gini.android.internal.payment.GiniHealthException
 
 /**
  * Extension function to show an error dialog for any Throwable.
- * If it's a GiniHealthException, shows detailed error information.
+ * If it's a GiniHealthException, shows detailed error information including error codes,
+ * request IDs, and structured error messages.
+ *
+ * Distinguishes between:
+ * - API errors (cause is ApiException) → Uses structured errorResponse
+ * - Non-API errors (cause is NOT ApiException) → Uses exception message directly
  *
  * @param exception The Throwable to display
- * @param onRetry Optional callback for retry action (only shown if error is retryable)
  * @param onDismiss Optional callback when dialog is dismissed
  */
 fun Context.showGiniHealthErrorDialog(
     exception: Throwable,
-    onRetry: (() -> Unit)? = null,
     onDismiss: (() -> Unit)? = null
 ) {
-    // Check if it's a GiniHealthException to show detailed error info
-    val giniException = exception as? GiniHealthException
+    // Determine error message based on exception type
+    val errorMessage = when (exception) {
+        is GiniHealthException -> {
+            // Smart cast: exception is automatically GiniHealthException here
+            val message = GiniHealthErrorHandler.getUserFriendlyMessage(exception, this)
 
-    // Get user-friendly error message
-    val errorMessage = if (giniException != null) {
-        GiniHealthErrorHandler.getUserFriendlyMessage(giniException, this)
-    } else {
-        exception.message ?: getString(R.string.error_unknown)
-    }
-
-    // Build detailed message with request ID if available
-    val detailedMessage = if (giniException?.requestId != null) {
-        "$errorMessage\n\n${getString(R.string.error_request_id, giniException.requestId)}"
-    } else {
-        errorMessage
-    }
-
-    val dialogBuilder = AlertDialog.Builder(this)
-        .setTitle(R.string.error_dialog_title)
-        .setMessage(detailedMessage)
-
-    // Show retry button if error is retryable and callback is provided
-    val isRetryable = giniException?.let { GiniHealthErrorHandler.isRetryable(it) } ?: false
-    if (isRetryable && onRetry != null) {
-        dialogBuilder
-            .setPositiveButton(R.string.error_dialog_retry) { _, _ ->
-                onRetry()
+            // Add request ID if available
+            if (exception.requestId != null) {
+                "$message\n\n${getString(R.string.error_request_id, exception.requestId)}"
+            } else {
+                message
             }
-            .setNegativeButton(R.string.error_dialog_cancel) { _, _ ->
-                onDismiss?.invoke()
-            }
-    } else {
-        dialogBuilder.setPositiveButton(android.R.string.ok) { _, _ ->
-            onDismiss?.invoke()
+        }
+        else -> {
+            // Handle non-GiniHealthException throwables
+            exception.message ?: getString(R.string.error_unknown)
         }
     }
 
-    dialogBuilder.setOnDismissListener {
-        onDismiss?.invoke()
-    }
-
-    dialogBuilder.show()
-}
-
-/**
- * Simplified error dialog without retry option.
- */
-fun Context.showGiniHealthErrorDialog(
-    exception: Throwable,
-    onDismiss: (() -> Unit)? = null
-) {
-    showGiniHealthErrorDialog(exception, onRetry = null, onDismiss = onDismiss)
+    // Show dialog with single OK/Dismiss button
+    AlertDialog.Builder(this)
+        .setTitle(R.string.error_dialog_title)
+        .setMessage(errorMessage)
+        .setPositiveButton(android.R.string.ok) { _, _ ->
+            onDismiss?.invoke()
+        }
+        .setOnDismissListener {
+            onDismiss?.invoke()
+        }
+        .show()
 }
 

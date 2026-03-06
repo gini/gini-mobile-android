@@ -28,6 +28,7 @@ object ApiErrorParser {
                         }
                     }
                 }
+                append("\nStatus Code: ${response.statusCode}")
                 append("\nRequest ID: ${response.requestId}")
             }
         }

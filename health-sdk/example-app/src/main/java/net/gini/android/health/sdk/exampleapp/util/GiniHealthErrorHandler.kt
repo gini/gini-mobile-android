@@ -1,6 +1,7 @@
 package net.gini.android.health.sdk.exampleapp.util
 
 import android.content.Context
+import net.gini.android.core.api.requests.ApiException
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.internal.payment.GiniHealthException
 
@@ -20,10 +21,18 @@ object GiniHealthErrorHandler {
      * @return A user-friendly error message
      */
     fun getUserFriendlyMessage(exception: GiniHealthException, context: Context): String {
-        val errorCode = exception.errorItems?.firstOrNull()?.code ?: "N/A"
-        val errorMessage = exception.message ?: context.getString(R.string.error_unknown)
-        val statusCode = exception.statusCode?.toString() ?: "N/A"
-        return context.getString(R.string.error_full_message, errorCode, errorMessage, statusCode)
+        // Check if the cause is an ApiException (API error) or something else (timeout, network, etc.)
+        return if (exception.cause is ApiException) {
+            // API error: Use structured error response with error codes, items, etc.
+            val errorCode = exception.errorItems?.firstOrNull()?.code ?: "N/A"
+            val errorMessage = exception.errorResponse?.message ?: context.getString(R.string.error_unknown)
+            val statusCode = exception.statusCode?.toString() ?: "N/A"
+            context.getString(R.string.error_full_message, errorCode, errorMessage, statusCode)
+        } else {
+            // Non-API error (e.g., SocketTimeoutException, UnknownHostException):
+            // Use the exception message directly
+            exception.message ?: context.getString(R.string.error_unknown)
+        }
     }
 
     /**

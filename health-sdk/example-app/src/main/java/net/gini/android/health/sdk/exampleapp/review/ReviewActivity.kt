@@ -110,7 +110,6 @@ class ReviewActivity : AppCompatActivity() {
                 // Show error dialog using extension function
                 showGiniHealthErrorDialog(
                     exception = e,
-                    onRetry = { recreate() },
                     onDismiss = { finish() }
                 )
                 return@launch
@@ -183,7 +182,6 @@ class ReviewActivity : AppCompatActivity() {
                         if (extractedPaymentDetails is ResultWrapper.Error){
                             showGiniHealthErrorDialog(
                                 exception = extractedPaymentDetails.error,
-                                onRetry = { },
                                 onDismiss = { finish() }
                             )
                         }
@@ -196,7 +194,6 @@ class ReviewActivity : AppCompatActivity() {
                                 // Show error dialog for document loading errors
                                 showGiniHealthErrorDialog(
                                     exception = result.error,
-                                    onRetry = { /* Retry logic if needed */ },
                                     onDismiss = { /* Error acknowledged */ }
                                 )
                             }

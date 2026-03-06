@@ -153,7 +153,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
 
         val startTimestamp = System.currentTimeMillis()
         do {
-            when (val apiDocumentResource = getDocument(document.id)) {
+            when (val apiDocumentResource = getDocument("document.id")) {
                 is Resource.Success -> {
                     if (apiDocumentResource.data?.state != Document.ProcessingState.PENDING) {
                         return apiDocumentResource
