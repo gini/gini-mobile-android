@@ -14,27 +14,19 @@ import net.gini.android.core.api.Utils
 import net.gini.android.core.api.authorization.AnonymousSessionManager
 import net.gini.android.core.api.authorization.CredentialsStore
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore
-import net.gini.android.core.api.authorization.PubKeyManager
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.authorization.UserRemoteSource
 import net.gini.android.core.api.authorization.UserRepository
 import net.gini.android.core.api.authorization.UserService
-import net.gini.android.core.api.authorization.X509TrustManagerAdapter
 import net.gini.android.core.api.http.DefaultGiniHttpClientProvider
 import net.gini.android.core.api.http.GiniHttpClientProvider
 import net.gini.android.core.api.models.ExtractionsContainer
 import okhttp3.Cache
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.net.MalformedURLException
 import java.net.URL
-import java.security.KeyManagementException
-import java.security.NoSuchAlgorithmException
-import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 
 /**

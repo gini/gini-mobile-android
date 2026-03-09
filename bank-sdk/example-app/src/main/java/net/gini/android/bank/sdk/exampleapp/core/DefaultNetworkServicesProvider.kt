@@ -78,7 +78,7 @@ class DefaultNetworkServicesProvider (internal val context: Context, internal va
         
         // Check if custom HTTP client should be used
         if (useCustomHttpClient) {
-            logger.info("✅ Using CustomHttpClientProvider with trackable header")
+            logger.info("Using CustomHttpClientProvider with trackable header")
             builder.setHttpClientProvider(
                 CustomHttpClientProvider(
                     enableDetailedLogging = true
