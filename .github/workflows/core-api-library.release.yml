@@ -47,10 +47,10 @@ jobs:
           
           if echo "$VERSION" | grep -iq "SNAPSHOT"; then
             echo "is_snapshot=true" >> $GITHUB_OUTPUT
-            echo "📦 Detected SNAPSHOT version: $VERSION - will publish to Maven Central Portal snapshots"
+            echo "Detected SNAPSHOT version: $VERSION - will publish to Maven Central Portal snapshots"
           else
             echo "is_snapshot=false" >> $GITHUB_OUTPUT
-            echo "🚀 Detected release version: $VERSION - will publish to Maven Central Staging"
+            echo "Detected release version: $VERSION - will publish to Maven Central Staging"
           fi
 
       - name: "publish to Maven Central Portal snapshots repo at https://central.sonatype.com/repository/maven-snapshots/"
