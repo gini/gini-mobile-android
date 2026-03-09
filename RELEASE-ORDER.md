@@ -38,10 +38,10 @@ Release order for :merchant-sdk:sdk 1.0.0:
  3. :internal-payment-sdk:sdk 1.5.1
  4. :merchant-sdk:sdk 1.0.0
 
-Release order for :bank-sdk:sdk 4.0.1:
+Release order for :bank-sdk:sdk 4.1.0:
  1. :core-api-library:library 3.1.0
  2. :bank-api-library:library 4.1.0
  3. :capture-sdk:sdk 4.1.0
  4. :capture-sdk:default-network 4.1.0
- 5. :bank-sdk:sdk 4.0.1
+ 5. :bank-sdk:sdk 4.1.0
 
