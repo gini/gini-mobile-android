@@ -147,6 +147,7 @@
     <string name="use_custom_credentials_label">Use custom credentials</string>
     <string name="gini_client_id_label">Client Id</string>
     <string name="client_secret_label">Client Secret</string>
+    <string name="custom_http_client_switch_label">Enable Custom HTTP Client</string>
 
     <string name="configuration_transaction_docs_enabled">Transaction Docs enabled</string>
     <string name="configuration_transaction_docs_always_attach_docs">Always attach invoices</string>
