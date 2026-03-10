@@ -13,6 +13,7 @@ class CustomLocaleContextWrapper(base: Context) : ContextWrapper(base) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 config.setLocale(locale)
             } else {
+                @Suppress("DEPRECATION")
                 config.locale = locale
             }
             config.setLayoutDirection(locale)

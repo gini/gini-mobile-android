@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.core.os.BundleCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
@@ -464,12 +465,16 @@ class GiniHealth(
                 val state = registry?.consumeRestoredStateForKey(PROVIDER)
                 if (capturedArguments == null) {
                     capturedArguments = when (state?.getString(CAPTURED_ARGUMENTS_TYPE)) {
-                        CAPTURED_ARGUMENTS_ID -> state.getParcelable<CapturedArguments.DocumentId>(
-                            CAPTURED_ARGUMENTS
+                        CAPTURED_ARGUMENTS_ID -> BundleCompat.getParcelable(
+                            state,
+                            CAPTURED_ARGUMENTS,
+                            CapturedArguments.DocumentId::class.java
                         )
 
-                        CAPTURED_ARGUMENTS_DOCUMENT -> state.getParcelable<CapturedArguments.DocumentInstance>(
-                            CAPTURED_ARGUMENTS
+                        CAPTURED_ARGUMENTS_DOCUMENT -> BundleCompat.getParcelable(
+                            state,
+                            CAPTURED_ARGUMENTS,
+                            CapturedArguments.DocumentInstance::class.java
                         )
 
                         else -> null

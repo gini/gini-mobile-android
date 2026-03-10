@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.BundleCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -314,7 +315,7 @@ open class PaymentFragment private constructor(
             } else if (viewModel.paymentFlowConfiguration?.shouldShowReviewBottomDialog == true) {
                 if (isProcessDeathWithSdk) {
                     val args = requireArguments()
-                    val paymentDetails = args.getParcelable<PaymentDetails>("paymentDetails")
+                    val paymentDetails = BundleCompat.getParcelable(args, "paymentDetails", PaymentDetails::class.java)
                     viewModel.giniInternalPaymentModule.setPaymentDetails(paymentDetails?.toCommonPaymentDetails())
                 }
                 showReviewBottomDialog()
@@ -324,7 +325,7 @@ open class PaymentFragment private constructor(
         } else {
             if (isProcessDeathWithSdk) {
                 val args = requireArguments()
-                val paymentDetails = args.getParcelable<PaymentDetails>("paymentDetails")
+                val paymentDetails = BundleCompat.getParcelable(args, "paymentDetails", PaymentDetails::class.java)
                 paymentDetails?.let {
                     viewModel.giniInternalPaymentModule.setPaymentDetails(it.toCommonPaymentDetails())
                 }
