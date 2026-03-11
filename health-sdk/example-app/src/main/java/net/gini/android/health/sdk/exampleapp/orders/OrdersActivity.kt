@@ -143,7 +143,9 @@ class OrdersActivity : AppCompatActivity() {
 
                 }
 
-                else -> {}
+                else -> {
+                    // No implementation needed for other states
+                }
             }
         }
     }

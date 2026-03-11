@@ -33,39 +33,15 @@ class UploadActivity : AppCompatActivity() {
             viewModel.uploadDocuments(contentResolver, intent.pageUris)
         }
 
+        observeFlows(binding)
+        setupPaymentButton(binding)
+    }
+
+    private fun observeFlows(binding: ActivityUploadBinding) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.giniHealth.paymentFlow.collect { extractedPaymentDetails ->
-                        if (extractedPaymentDetails is ResultWrapper.Success) {
-                        }
-                        if (extractedPaymentDetails is ResultWrapper.Error) {
-                            showGiniHealthErrorDialog(
-                                exception = extractedPaymentDetails.error,
-                                onDismiss = { finish() }
-                            )
-                        }
-                    }
-                }
-                launch {
-                    viewModel.giniHealth.documentFlow.collect { result ->
-                        when (result) {
-                            is ResultWrapper.Error -> {
-                                // Show error dialog for document loading errors
-                                showGiniHealthErrorDialog(
-                                    exception = result.error,
-                                    onDismiss = { /* Error acknowledged */ }
-                                )
-                            }
-
-                            is ResultWrapper.Success -> {
-                            }
-
-                            is ResultWrapper.Loading -> {
-                            }
-                        }
-                    }
-                }
+                launch { observePaymentFlow() }
+                launch { observeDocumentFlow() }
             }
         }
         lifecycleScope.launchWhenStarted {
@@ -73,7 +49,45 @@ class UploadActivity : AppCompatActivity() {
                 binding.updateViews(uploadState)
             }
         }
+    }
 
+    private suspend fun observePaymentFlow() {
+        viewModel.giniHealth.paymentFlow.collect { extractedPaymentDetails ->
+            if (extractedPaymentDetails is ResultWrapper.Success) {
+                // no implementation needed
+            }
+            if (extractedPaymentDetails is ResultWrapper.Error) {
+                showGiniHealthErrorDialog(
+                    exception = extractedPaymentDetails.error,
+                    onDismiss = { /* Error acknowledged */ }
+                )
+            }
+        }
+    }
+
+    private suspend fun observeDocumentFlow() {
+        viewModel.giniHealth.documentFlow.collect { result ->
+            when (result) {
+                is ResultWrapper.Error -> {
+                    // Show error dialog for document loading errors
+                    showGiniHealthErrorDialog(
+                        exception = result.error,
+                        onDismiss = { /* Error acknowledged */ }
+                    )
+                }
+
+                is ResultWrapper.Success -> {
+                    // no implementation needed
+                }
+
+                is ResultWrapper.Loading -> {
+                    // no implementation needed
+                }
+            }
+        }
+    }
+
+    private fun setupPaymentButton(binding: ActivityUploadBinding) {
         binding.payment.setOnClickListener {
             startActivity(ReviewActivity.getStartIntent(this, intent.pageUris).apply {
                 IntentCompat.getParcelableExtra(intent, PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java)?.let {

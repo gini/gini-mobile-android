@@ -94,67 +94,82 @@ class OrderDetailsFragment : Fragment() {
             statusBars = false,
             navigationBars = false,
         )
+        observeViewModelFlows()
+        setupInputListeners()
+    }
+
+    private fun observeViewModelFlows() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                launch {
-                    ordersViewModel.selectedOrderItem.collectLatest { orderItem ->
-                        if (orderItem == null) {
-                            return@collectLatest
-                        }
-                        orderDetailsViewModel.setOrder(orderItem.order)
-                    }
-                }
-                launch {
-                    orderDetailsViewModel.orderFlow.collectLatest { order ->
-                        showOrder(order)
-                    }
-                }
-                launch {
-                    ordersViewModel.openBankState.collect { openBankState ->
-                        if (openBankState is GiniHealth.PaymentState.Success) {
-                            requireActivity().title =
-                                resources.getString(R.string.title_activity_invoices)
-                            requireActivity().supportFragmentManager.popBackStack()
-                        }
-                        if (openBankState is GiniHealth.PaymentState.Error) {
-                            requireContext().showGiniHealthErrorDialog(
-                                exception = openBankState.throwable,
-                                onDismiss = {  requireActivity().supportFragmentManager.popBackStack() }
-                            )
-
-                        }
-                    }
-                }
-                launch {
-                    ordersViewModel.displayedScreen.collect { screen ->
-                        setTitle(screen)
-                    }
-                }
-                launch {
-                    orderDetailsViewModel.errorFlow.collect { error ->
-                        when (error) {
-                            is OrderDetailsViewModel.Error.ErrorMessage -> showError(error.error)
-                            OrderDetailsViewModel.Error.GenericError -> showError(getString(internalR.string.gps_generic_error_message))
-                            OrderDetailsViewModel.Error.InvalidIban -> showError(getString(internalR.string.gps_error_input_invalid_iban))
-                            OrderDetailsViewModel.Error.PaymentDetailsIncomplete -> showError(getString(R.string.payment_details_incomplete))
-                            null -> Unit
-                        }
-                    }
-                }
-                launch {
-                    // Observe payment provider apps flow for errors
-                    ordersViewModel.giniHealth.giniInternalPaymentModule.paymentComponent.paymentProviderAppsFlow.collect { state ->
-                        if (state is PaymentProviderAppsState.Error) {
-                            requireContext().showGiniHealthErrorDialog(
-                                exception = state.throwable,
-                                onDismiss = { /* Error acknowledged */ }
-                            )
-                        }
-                    }
-                }
+                launch { observeSelectedOrderItem() }
+                launch { observeOrderFlow() }
+                launch { observeOpenBankState() }
+                launch { observeDisplayedScreen() }
+                launch { observeErrorFlow() }
+                launch { observePaymentProviderAppsFlow() }
             }
         }
-        setupInputListeners()
+    }
+
+    private suspend fun observeSelectedOrderItem() {
+        ordersViewModel.selectedOrderItem.collectLatest { orderItem ->
+            if (orderItem == null) {
+                return@collectLatest
+            }
+            orderDetailsViewModel.setOrder(orderItem.order)
+        }
+    }
+
+    private suspend fun observeOrderFlow() {
+        orderDetailsViewModel.orderFlow.collectLatest { order ->
+            showOrder(order)
+        }
+    }
+
+    private suspend fun observeOpenBankState() {
+        ordersViewModel.openBankState.collect { openBankState ->
+            if (openBankState is GiniHealth.PaymentState.Success) {
+                requireActivity().title =
+                    resources.getString(R.string.title_activity_invoices)
+                requireActivity().supportFragmentManager.popBackStack()
+            }
+            if (openBankState is GiniHealth.PaymentState.Error) {
+                requireContext().showGiniHealthErrorDialog(
+                    exception = openBankState.throwable,
+                    onDismiss = { requireActivity().supportFragmentManager.popBackStack() }
+                )
+            }
+        }
+    }
+
+    private suspend fun observeDisplayedScreen() {
+        ordersViewModel.displayedScreen.collect { screen ->
+            setTitle(screen)
+        }
+    }
+
+    private suspend fun observeErrorFlow() {
+        orderDetailsViewModel.errorFlow.collect { error ->
+            when (error) {
+                is OrderDetailsViewModel.Error.ErrorMessage -> showError(error.error)
+                OrderDetailsViewModel.Error.GenericError -> showError(getString(internalR.string.gps_generic_error_message))
+                OrderDetailsViewModel.Error.InvalidIban -> showError(getString(internalR.string.gps_error_input_invalid_iban))
+                OrderDetailsViewModel.Error.PaymentDetailsIncomplete -> showError(getString(R.string.payment_details_incomplete))
+                null -> Unit
+            }
+        }
+    }
+
+    private suspend fun observePaymentProviderAppsFlow() {
+        // Observe payment provider apps flow for errors
+        ordersViewModel.giniHealth.giniInternalPaymentModule.paymentComponent.paymentProviderAppsFlow.collect { state ->
+            if (state is PaymentProviderAppsState.Error) {
+                requireContext().showGiniHealthErrorDialog(
+                    exception = state.throwable,
+                    onDismiss = { /* Error acknowledged */ }
+                )
+            }
+        }
     }
 
     private fun setTitle(screen: DisplayedScreen) {

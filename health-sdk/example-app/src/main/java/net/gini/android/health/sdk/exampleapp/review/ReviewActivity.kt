@@ -198,8 +198,10 @@ class ReviewActivity : AppCompatActivity() {
                                 )
                             }
                             is ResultWrapper.Success -> {
+                                // no implementation needed
                             }
                             is ResultWrapper.Loading -> {
+                                // no implementation needed
                             }
                         }
                     }
