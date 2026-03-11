@@ -607,10 +607,10 @@ open class PaymentFragment private constructor(
     companion object {
 
         /**
-         * Creates an instance of [PaymentFragment] for the case when payment is initiated with payment details
+         * Creates an instance of [PaymentFragment] for the case when payment is initiated with a documentId
          *
          * @param giniHealth The [GiniHealth] instance
-         * @param paymentDetails the [PaymentDetails] with which the payment will be initiated
+         * @param documentId the id of the document to be paid
          * @param paymentFlowConfiguration The [PaymentFlowConfiguration]
          */
 
@@ -628,12 +628,13 @@ open class PaymentFragment private constructor(
         }
 
         /**
-         * Creates an instance of [PaymentFragment] for the case when payment is initiated with a documentId
+         * Creates an instance of [PaymentFragment] for the case when payment is initiated with payment details
          *
          * @param giniHealth The [GiniHealth] instance
-         * @param documentId the id of the document to be paid
+         * @param paymentDetails the [PaymentDetails] with which the payment will be initiated
          * @param paymentFlowConfiguration The [PaymentFlowConfiguration]
          */
+
 
         fun newInstance(
             giniHealth: GiniHealth,

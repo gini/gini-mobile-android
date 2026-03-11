@@ -1,9 +1,14 @@
 package net.gini.android.internal.payment.utils
 
 import android.R
+import android.content.Context
 import android.content.res.ColorStateList
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.view.WindowInsets
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
@@ -85,3 +90,15 @@ internal suspend fun <T> Flow<T>.withPrev() = flow {
         prev = it
     }
 }
+
+
+fun View.showKeyboard() {
+    requestFocus()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        windowInsetsController?.show(WindowInsets.Type.ime())
+    } else {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+    }
+}
+
