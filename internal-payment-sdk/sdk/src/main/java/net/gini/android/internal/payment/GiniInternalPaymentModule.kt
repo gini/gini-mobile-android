@@ -77,7 +77,7 @@ class GiniInternalPaymentModule(
         get() {
             _giniPaymentManager?.let { return it }
                 ?: return GiniPaymentManager(this.giniHealthAPI, object : PaymentEventListener {
-                    override fun onError(e: Exception) {
+                    override fun onError(e: Throwable) {
                         _eventsFlow.tryEmit(InternalPaymentEvents.OnErrorOccurred(e))
                     }
 

@@ -51,4 +51,37 @@
     <string name="payment_request_error_deleting">Payment Request Deletion Failed</string>
     <string name="payment_requests_unauthorized">unauthorized payment request: </string>
     <string name="payment_requests_not_found">not found payment request: </string>
+
+    <!-- Error messages for GiniHealthException error codes -->
+    <!-- Generic errors (1xxx) -->
+    <string name="error_unknown">An unknown error occurred. Please try again.</string>
+    <string name="error_1000_unknown">Unknown error, please contact support.</string>
+    <string name="error_1100_processing_failed">Could not process your request. Please try again.</string>
+
+    <!-- Service errors (26xx-29xx) -->
+    <string name="error_2600_third_party_service">Third party service error. Please try again.</string>
+    <string name="error_2700_type_mismatch">Data type mismatch error.</string>
+    <string name="error_2800_service_unavailable">Service is temporarily unavailable. Please try again later.</string>
+    <string name="error_2900_unauthorized_operation">This operation is not authorized.</string>
+    <string name="error_2901_unauthorized_deletion">Payment request deletion is not authorized.</string>
+
+    <!-- HTTP Status Code error messages -->
+    <string name="error_status_400_bad_request">Bad request. Please check your input.</string>
+    <string name="error_status_401_unauthorized">Unauthorized. Please check your credentials.</string>
+    <string name="error_status_403_forbidden">Access forbidden.</string>
+    <string name="error_status_404_not_found">Resource not found.</string>
+    <string name="error_status_408_timeout">Request timed out. Please try again.</string>
+    <string name="error_status_413_too_large">Request is too large.</string>
+    <string name="error_status_415_unsupported_media">Unsupported media type.</string>
+    <string name="error_status_429_too_many_requests">Too many requests. Please wait and try again.</string>
+    <string name="error_status_500_server_error">Server error. Please try again later.</string>
+    <string name="error_status_503_unavailable">Service unavailable. Please try again later.</string>
+
+    <!-- Error dialog strings -->
+    <string name="error_dialog_title">Error</string>
+    <string name="error_dialog_retry">Retry</string>
+    <string name="error_dialog_cancel">Cancel</string>
+    <string name="error_request_id">Request ID: %s</string>
+    <string name="error_full_message">Error code: %1$s\nMessage: %2$s\nHTTP status: %3$s
+ </string>
 </resources>

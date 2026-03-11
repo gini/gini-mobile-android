@@ -77,6 +77,11 @@ class OrderDetailsViewModel(
                     _errorFlow.value = Error.ErrorMessage(it.message ?: "")
                 }
             }
+            is PaymentProviderAppsState.Error -> {
+                _errorFlow.value = Error.ErrorMessage(
+                    paymentProvidersAppsState.throwable.message ?: "Failed to load payment providers"
+                )
+            }
             else -> {
                 _errorFlow.value = Error.GenericError
             }

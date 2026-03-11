@@ -4,11 +4,11 @@ import android.content.Context
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.core.os.BundleCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
-import com.squareup.moshi.Moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,8 +28,6 @@ import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.Payment
 import net.gini.android.health.api.GiniHealthAPI
-import net.gini.android.health.api.response.DeleteDocumentErrorResponse
-import net.gini.android.health.api.response.DeletePaymentRequestErrorResponse
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
@@ -38,6 +36,7 @@ import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.review.model.toCommonPaymentDetails
 import net.gini.android.health.sdk.review.model.toPaymentDetails
 import net.gini.android.health.sdk.review.model.wrapToResult
+import net.gini.android.internal.payment.GiniHealthException
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.utils.DisplayedScreen
@@ -87,7 +86,6 @@ class GiniHealth(
 
     private val _documentFlow = MutableStateFlow<ResultWrapper<Document>>(ResultWrapper.Loading())
 
-    private lateinit var moshi: Moshi
     /**
      * A flow for getting the [Document] set for review [setDocumentForReview].
      *
@@ -197,29 +195,33 @@ class GiniHealth(
     }
 
     /**
-     * This function deletes a payment request by its unique `paymentRequestId`.
-     * If the deletion is successful, it returns `null`. Otherwise, if an error occurs or the request is cancelled,
-     * it returns the corresponding error message or `"Request cancelled"`.
+     * Deletes a payment request by its unique `paymentRequestId`.
+     *
+     * If the deletion is successful, the function completes normally.
+     * If an error occurs, it throws a [GiniHealthException] containing detailed error information
+     * including status code, error response, and the original exception.
+     * If the request is cancelled, it throws a standard [Exception].
      *
      * @param paymentRequestId The unique identifier of the payment request to be deleted.
-     * @return `null` if the deletion is successful, otherwise the error message or `"Request cancelled"`.
+     * @throws GiniHealthException if the deletion fails with an API error
+     * @throws Exception if the request is cancelled
      */
-    suspend fun deletePaymentRequest(paymentRequestId: String): String? {
+    suspend fun deletePaymentRequest(paymentRequestId: String) {
         val response =
             giniInternalPaymentModule.giniHealthAPI.documentManager.deletePaymentRequest(
                 paymentRequestId
             )
-        return when (response) {
-            is Resource.Success -> null
-            is Resource.Error -> if (response.message.isNullOrEmpty()) {
-                when (response.responseStatusCode) {
-                    404 -> "Payment request not found"
-                    else -> "Failed to delete payment request"
-                }
-            } else
-                response.message
-
-            is Resource.Cancelled -> "Request cancelled"
+        when (response) {
+            is Resource.Success -> { /* Success - no action needed */ }
+            is Resource.Error -> {
+                throw GiniHealthException(
+                    message = response.exception?.message ?: response.message ?: "Failed to delete payment request",
+                    cause = response.exception,
+                    statusCode = response.responseStatusCode,
+                    errorResponse = response.errorResponse
+                )
+            }
+            is Resource.Cancelled -> throw Exception("Request cancelled")
         }
     }
 
@@ -253,7 +255,9 @@ class GiniHealth(
                 }
 
                 is ResultWrapper.Error -> {
-                    _paymentFlow.value = ResultWrapper.Error(Throwable("Failed to get document"))
+                    _paymentFlow.value = ResultWrapper.Error(
+                        documentResult.error
+                    )
                 }
 
                 is ResultWrapper.Loading -> {}
@@ -280,7 +284,7 @@ class GiniHealth(
      *
      * @param id the id of the payment request to retrieve the payment details
      * @return the [Payment] object containing the payment details
-     * @throws Exception if the request fails or is cancelled, with the error message
+     * @throws GiniHealthException if the request fails, with error codes, status code, message, and request ID
      *
      */
     suspend fun getPayment(id: String): Payment {
@@ -290,7 +294,12 @@ class GiniHealth(
                 LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                     .error("Failed to get payment with id: ${response.exception}")
 
-                throw Exception(response.message ?: "Error")
+                throw GiniHealthException(
+                    message = response.exception?.message ?: response.message ?: "Failed to get payment",
+                    cause = response.exception,
+                    statusCode = response.responseStatusCode,
+                    errorResponse = response.errorResponse
+                )
             }
 
             is Resource.Cancelled -> throw Exception("Request cancelled")
@@ -313,85 +322,79 @@ class GiniHealth(
     }
 
     /**
-     * Deletes multiple payment requests in one go.
-     * If request was successful, it returns null.
-     * If request failed, it returns a [DeleteDocumentErrorResponse], with more information about why the request failed.
+     * Deletes multiple payment requests in one operation.
      *
-     * @param paymentRequestIds the list of paymentRequestIds to be deleted
-     * @return [DeleteDocumentErrorResponse] with more information about why the request failed
+     * If the deletion is successful, the function completes normally.
+     * If an error occurs, it throws a [GiniHealthException] containing detailed error information
+     * including status code, error response items (with error codes and affected payment request IDs),
+     * request ID, and the original exception.
+     * If the request is cancelled, it throws a standard [Exception].
+     *
+     * @param paymentRequestIds The list of payment request IDs to be deleted.
+     * @throws GiniHealthException if the deletion fails with an API error
+     * @throws Exception if the request is cancelled
      */
-    suspend fun deletePaymentRequests(paymentRequestIds: List<String>): DeletePaymentRequestErrorResponse? {
+    suspend fun deletePaymentRequests(paymentRequestIds: List<String>) {
         val response =
             giniInternalPaymentModule.giniHealthAPI.documentManager.deletePaymentRequests(
                 paymentRequestIds
             )
-        return when (response) {
-            is Resource.Success -> {
-                null
-            }
+        when (response) {
+            is Resource.Success -> { /* Success - no action needed */ }
 
             is Resource.Error -> {
                 LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                     .error("Failed to delete payment requests with ids: ${response.exception}")
-
-
-                response.message?.let { failureMessage ->
-                    if (!this::moshi.isInitialized) {
-                        moshi = Moshi.Builder()
-                            .build()
-                    }
-                    val deleteDocumentsError =
-                        moshi.adapter(DeletePaymentRequestErrorResponse::class.java)
-                            .lenient().fromJson(failureMessage)
-                    return deleteDocumentsError
-                }
-                return DeletePaymentRequestErrorResponse(message = "Unknown error occurred")
+                throw GiniHealthException(
+                    message = response.exception?.message ?: response.message ?: "Failed to delete payment requests",
+                    cause = response.exception,
+                    statusCode = response.responseStatusCode,
+                    errorResponse = response.errorResponse
+                )
             }
 
             is Resource.Cancelled -> {
                 LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                     .error("Deleting payment requests was cancelled")
-                DeletePaymentRequestErrorResponse(message = "Delete payment requests request was cancelled")
+                throw Exception("Request cancelled")
             }
         }
     }
 
     /**
-     * Deletes multiple documents in one go.
-     * If request was successful, it returns null.
-     * If request failed, it returns a [DeleteDocumentErrorResponse], with more information about why the request failed.
+     * Deletes multiple documents in one operation.
      *
-     * @param documentIds the list of documentIds to be deleted
-     * @return [DeleteDocumentErrorResponse] with more information about why the request failed
+     * If the deletion is successful, the function completes normally.
+     * If an error occurs, it throws a [GiniHealthException] containing detailed error information
+     * including status code, error response items (with error codes and affected document IDs),
+     * request ID, and the original exception.
+     * If the request is cancelled, it throws a [GiniHealthException] with a cancellation message.
+     *
+     * @param documentIds The list of document IDs to be deleted.
+     * @throws GiniHealthException if the deletion fails with an API error or is cancelled
      */
-    suspend fun deleteDocuments(documentIds: List<String>): DeleteDocumentErrorResponse? {
+    suspend fun deleteDocuments(documentIds: List<String>) {
         val response =
             giniInternalPaymentModule.giniHealthAPI.documentManager.deleteDocuments(documentIds)
-        return when (response) {
-            is Resource.Success -> {
-                null
-            }
+        when (response) {
+            is Resource.Success -> { /* Success - no action needed */ }
 
             is Resource.Error -> {
                 LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                     .error("Failed to delete documents with ids: ${response.exception}")
-                response.message?.let { failureMessage ->
-                    if (!this::moshi.isInitialized) {
-                        moshi = Moshi.Builder()
-                            .build()
-                    }
-                    val deleteDocumentsError =
-                        moshi.adapter(DeleteDocumentErrorResponse::class.java).lenient()
-                            .fromJson(failureMessage)
-                    return deleteDocumentsError
-                }
-                return DeleteDocumentErrorResponse()
+
+                throw GiniHealthException(
+                    message = response.exception?.message ?: response.message ?: "Failed to delete document",
+                    cause = response.exception,
+                    statusCode = response.responseStatusCode,
+                    errorResponse = response.errorResponse
+                )
             }
 
             is Resource.Cancelled -> {
                 LoggerFactory.getLogger(GiniInternalPaymentModule::class.java)
                     .error("Deleting documents was cancelled")
-                DeleteDocumentErrorResponse(message = "Delete documents request was cancelled")
+                throw Exception("Request cancelled")
             }
         }
     }
@@ -403,7 +406,14 @@ class GiniHealth(
             }
         return when (extractionsResource) {
             is Resource.Cancelled -> null
-            is Resource.Error -> throw Exception(extractionsResource.exception)
+            is Resource.Error -> {
+                throw GiniHealthException(
+                    message = extractionsResource.exception?.message ?: "Failed to get extractions",
+                    cause = extractionsResource.exception,
+                    statusCode = extractionsResource.responseStatusCode,
+                    errorResponse = extractionsResource.errorResponse
+                )
+            }
             is Resource.Success -> extractionsResource.data
         }
     }
@@ -455,12 +465,16 @@ class GiniHealth(
                 val state = registry?.consumeRestoredStateForKey(PROVIDER)
                 if (capturedArguments == null) {
                     capturedArguments = when (state?.getString(CAPTURED_ARGUMENTS_TYPE)) {
-                        CAPTURED_ARGUMENTS_ID -> state.getParcelable<CapturedArguments.DocumentId>(
-                            CAPTURED_ARGUMENTS
+                        CAPTURED_ARGUMENTS_ID -> BundleCompat.getParcelable(
+                            state,
+                            CAPTURED_ARGUMENTS,
+                            CapturedArguments.DocumentId::class.java
                         )
 
-                        CAPTURED_ARGUMENTS_DOCUMENT -> state.getParcelable<CapturedArguments.DocumentInstance>(
-                            CAPTURED_ARGUMENTS
+                        CAPTURED_ARGUMENTS_DOCUMENT -> BundleCompat.getParcelable(
+                            state,
+                            CAPTURED_ARGUMENTS,
+                            CapturedArguments.DocumentInstance::class.java
                         )
 
                         else -> null
