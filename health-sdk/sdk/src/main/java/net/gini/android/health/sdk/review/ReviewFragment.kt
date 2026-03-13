@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.ViewTreeObserver
 import android.widget.EditText
+import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.ViewCompat
@@ -227,7 +228,30 @@ class ReviewFragment private constructor(
         ConstraintSet().apply {
             clone(binding.constraintRoot)
             constrainHeight(binding.pager.id, h)
-            clear(binding.pager.id, ConstraintSet.BOTTOM) // if that’s part of your logic
+            clear(binding.pager.id, ConstraintSet.BOTTOM)
+            
+            // For Android 15+: Explicitly preserve close button constraints
+            // to prevent it from moving when applyTo() recalculates all constraints
+            if (Build.VERSION.SDK_INT >= 35) {
+                val closeButtonId = binding.close.id
+                
+                // Clear any potentially stale constraints
+                clear(closeButtonId, ConstraintSet.START)
+                clear(closeButtonId, ConstraintSet.BOTTOM)
+                
+                // Re-establish the correct constraints
+                connect(closeButtonId, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                connect(closeButtonId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                connect(closeButtonId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                setVerticalBias(closeButtonId, 0.0f)
+                
+                // Preserve margins
+                val marginTop = resources.getDimensionPixelSize(InternalPaymentR.dimen.gps_small)
+                val marginEnd = resources.getDimensionPixelSize(InternalPaymentR.dimen.gps_large)
+                setMargin(closeButtonId, ConstraintSet.TOP, marginTop)
+                setMargin(closeButtonId, ConstraintSet.END, marginEnd)
+            }
+            
             applyTo(binding.constraintRoot)
         }
     }
@@ -391,6 +415,15 @@ class ReviewFragment private constructor(
                 margin(top = true)
             }
         }
+        
+        // For Android 15+, force the close button to stay at a fixed position
+        // by resetting any translation that might have been applied
+        if (Build.VERSION.SDK_INT >= 35) {
+            close.post {
+                close.translationX = 0f
+                close.translationY = 0f
+            }
+        }
     }
 
 
@@ -548,6 +581,29 @@ class ReviewFragment private constructor(
                             ?: 0) + bottomLayout.height)
                     )
                 )
+                
+                // For Android 15+: Explicitly preserve close button constraints in landscape
+                // to prevent it from moving when applyTo() recalculates all constraints
+                if (Build.VERSION.SDK_INT >= 35) {
+                    val closeButtonId = binding.close.id
+                    
+                    // Clear any potentially stale constraints
+                    clear(closeButtonId, ConstraintSet.START)
+                    clear(closeButtonId, ConstraintSet.BOTTOM)
+                    
+                    // Re-establish the correct constraints
+                    connect(closeButtonId, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                    connect(closeButtonId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                    connect(closeButtonId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                    setVerticalBias(closeButtonId, 0.0f)
+                    
+                    // Preserve margins
+                    val marginTop = resources.getDimensionPixelSize(InternalPaymentR.dimen.gps_small)
+                    val marginEnd = resources.getDimensionPixelSize(InternalPaymentR.dimen.gps_large)
+                    setMargin(closeButtonId, ConstraintSet.TOP, marginTop)
+                    setMargin(closeButtonId, ConstraintSet.END, marginEnd)
+                }
+                
                 applyTo(binding.constraintRoot)
             }
         }
