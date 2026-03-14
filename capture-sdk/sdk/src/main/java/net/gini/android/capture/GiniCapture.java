@@ -918,6 +918,8 @@ public class GiniCapture {
         private boolean allowScreenshots = true;
         private boolean savingInvoicesLocallyEnabled = true;
 
+        private ProductTag mProductTag = ProductTag.SepaExtractions.INSTANCE;
+
         private Map<String, String> customUploadMetadata;
         private GiniComposableStyleProvider giniComposableStyleProvider;
 
@@ -1457,6 +1459,23 @@ public class GiniCapture {
 
         private GiniComposableStyleProvider getGiniComposableStyleProvider() {
             return giniComposableStyleProvider;
+        }
+
+        /**
+         * Set the product tag to identify which extraction type to use.
+         *
+         * Default is {@link ProductTag.SepaExtractions}.
+         *
+         * @param productTag the {@link ProductTag} to use
+         * @return the {@link Builder} instance
+         */
+        public Builder setProductTag(@NonNull final ProductTag productTag) {
+            mProductTag = productTag;
+            return this;
+        }
+
+        private ProductTag getProductTag() {
+            return mProductTag;
         }
     }
 
