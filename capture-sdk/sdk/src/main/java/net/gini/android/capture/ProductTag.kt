@@ -1,12 +1,16 @@
 package net.gini.android.capture
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * Product tag to identify which extraction type to use.
  *
  *
  * @property value The string value of the product tag
  */
-sealed class ProductTag(val value: String) {
+@Parcelize
+sealed class ProductTag(val value: String) : Parcelable {
 
     /**
      * SEPA extractions - shows normal extractions.
@@ -31,5 +35,6 @@ sealed class ProductTag(val value: String) {
      *
      * @property customValue The custom product tag value
      */
+    @Parcelize
     data class OtherProductTag(val customValue: String) : ProductTag(customValue)
 }
