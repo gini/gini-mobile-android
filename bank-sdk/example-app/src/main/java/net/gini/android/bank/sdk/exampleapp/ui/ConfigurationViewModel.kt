@@ -136,6 +136,9 @@ class ConfigurationViewModel @Inject constructor(
 
             // enables saving invoices locally after analysis
             saveInvoicesLocallyEnabled = configuration.saveInvoicesLocallyEnabled,
+
+            // product tag
+            productTag = configuration.productTag,
         )
 
         // enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
