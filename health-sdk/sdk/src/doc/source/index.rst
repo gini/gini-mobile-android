@@ -25,6 +25,7 @@ Table of contents
     event-tracking
     testing
     customization
+    accessibility
     data-safety
     reference
     license
