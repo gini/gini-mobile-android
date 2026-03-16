@@ -227,8 +227,54 @@ class ReviewFragment private constructor(
         ConstraintSet().apply {
             clone(binding.constraintRoot)
             constrainHeight(binding.pager.id, h)
-            clear(binding.pager.id, ConstraintSet.BOTTOM) // if that’s part of your logic
+            clear(binding.pager.id, ConstraintSet.BOTTOM)
+            
+            // HEAL-139: Apply Android 15+ close button position fix
+            applyAndroid15CloseButtonFix(this, binding.close.id)
+            
             applyTo(binding.constraintRoot)
+        }
+    }
+
+    /**
+     * Applies Android 15+ specific constraint fixes to lock the close button position.
+     * 
+     * On API 35+ (Android 15/16), ConstraintSet.applyTo() recalculates all constraints,
+     * causing the close button to shift during device rotation. This method adds a
+     * BOTTOM constraint and vertical bias (not present in the original XML layout) to
+     * create a "locked" position that keeps the button anchored to the top-right corner
+     * even during constraint recalculation.
+     * 
+     * This workaround should be removed if/when Android fixes the underlying constraint
+     * calculation issue in future API levels.
+     * 
+     * @param constraintSet The ConstraintSet to apply the close button fixes to
+     * @param closeButtonId The view ID of the close button
+     */
+    private fun applyAndroid15CloseButtonFix(constraintSet: ConstraintSet, closeButtonId: Int) {
+        if (Build.VERSION.SDK_INT >= 35) {
+            constraintSet.apply {
+                // Clear any potentially stale constraints
+                clear(closeButtonId, ConstraintSet.START)
+                clear(closeButtonId, ConstraintSet.BOTTOM)
+                
+                // Re-establish constraints: END+TOP from XML, plus BOTTOM+bias for position locking
+                connect(closeButtonId, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                connect(closeButtonId, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                connect(closeButtonId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)  // Added: locks vertical position
+                setVerticalBias(closeButtonId, 0.0f)  // Added: 0.0 = top, 1.0 = bottom
+                
+                // Calculate margins: base margin + status bar inset
+                // This ensures proper spacing without relying on potentially incorrect current state
+                val baseMarginTop = resources.getDimensionPixelSize(InternalPaymentR.dimen.gps_small)
+                val baseMarginEnd = resources.getDimensionPixelSize(InternalPaymentR.dimen.gps_large)
+                
+                val windowInsets = ViewCompat.getRootWindowInsets(binding.root)
+                val statusBarInset = windowInsets?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+                
+                setMargin(closeButtonId, ConstraintSet.TOP, baseMarginTop + statusBarInset)
+                setMargin(closeButtonId, ConstraintSet.END, baseMarginEnd)
+            }
         }
     }
 
@@ -391,6 +437,15 @@ class ReviewFragment private constructor(
                 margin(top = true)
             }
         }
+        
+        // For Android 15+, force the close button to stay at a fixed position
+        // by resetting any translation that might have been applied
+        if (Build.VERSION.SDK_INT >= 35) {
+            close.post {
+                close.translationX = 0f
+                close.translationY = 0f
+            }
+        }
     }
 
 
@@ -548,6 +603,10 @@ class ReviewFragment private constructor(
                             ?: 0) + bottomLayout.height)
                     )
                 )
+                
+                // Apply Android 15+ close button position fix in landscape
+                applyAndroid15CloseButtonFix(this, binding.close.id)
+                
                 applyTo(binding.constraintRoot)
             }
         }
