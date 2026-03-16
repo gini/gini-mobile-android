@@ -112,6 +112,7 @@ androidx-test-orchestrator = { module = "androidx.test:orchestrator", version.re
 androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-junit" }
 androidx-test-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "androidx-test-junit" }
 androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+androidx-test-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espresso" }
 androidx-test-espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espresso" }
 androidx-test-espresso-idlingresource = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espresso" }
 androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
