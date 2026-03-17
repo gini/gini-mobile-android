@@ -136,6 +136,7 @@ public class GiniCapture {
     private final boolean saveInvoicesLocallyEnabled;
 
     private final Map<String, String> mCustomUploadMetadata;
+    private final ProductTag mProductTag;
 
 
     /**
@@ -402,6 +403,7 @@ public class GiniCapture {
         allowScreenshots = builder.getAllowScreenshots();
         saveInvoicesLocallyEnabled = builder.getSaveInvoicesLocallyEnabled();
         mCustomUploadMetadata = builder.getCustomUploadMetadata();
+        mProductTag = builder.getProductTag();
         mGiniComposableStyleProvider = builder.getGiniComposableStyleProvider();
     }
 
@@ -480,6 +482,16 @@ public class GiniCapture {
     @Nullable
     public ArrayList<OnboardingPage> getCustomOnboardingPages() { // NOPMD - ArrayList required (Bundle)
         return mCustomOnboardingPages;
+    }
+
+    /**
+     * Returns the configured product tag.
+     *
+     * @return the {@link ProductTag}
+     */
+    @NonNull
+    public ProductTag getProductTag() {
+        return mProductTag;
     }
 
     /**
