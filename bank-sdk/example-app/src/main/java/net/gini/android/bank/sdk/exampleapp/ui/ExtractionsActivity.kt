@@ -28,6 +28,7 @@ import net.gini.android.bank.sdk.transactiondocs.ui.extractions.view.Transaction
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.ProductTag
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.util.protectViewFromInsets
 import java.math.BigDecimal
@@ -46,6 +47,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
+    private var mProductTag: ProductTag = ProductTag.SepaExtractions
 
     @Inject
     internal lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
@@ -115,6 +117,10 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 getParcelable<GiniCaptureSpecificExtraction>(name)?.let { mExtractions[name] = it }
             }
         }
+        
+        // Read productTag
+        mProductTag = intent.getParcelableExtra(EXTRA_IN_PRODUCT_TAG) ?: ProductTag.SepaExtractions
+        android.util.Log.d("ExtractionsActivity", "📥 Received ProductTag: ${mProductTag.value}")
     }
 
     private fun setUpRecyclerView(binding: ActivityExtractionsBinding) {
@@ -237,16 +243,21 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     companion object {
         const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
+        const val EXTRA_IN_PRODUCT_TAG = "EXTRA_IN_PRODUCT_TAG"
         var isCaptureSDKExtractions : Boolean = false
         fun getStartIntent(
-            context: Context, extractionsBundle: Map<String, GiniCaptureSpecificExtraction>,
+            context: Context, 
+            extractionsBundle: Map<String, GiniCaptureSpecificExtraction>,
+            productTag: ProductTag = ProductTag.SepaExtractions,
             isCaptureSdkExtractions: Boolean = false
         ): Intent {
             isCaptureSDKExtractions = isCaptureSdkExtractions
+            android.util.Log.d("ExtractionsActivity", "📤 Sending ProductTag: ${productTag.value}")
             return Intent(context, ExtractionsActivity::class.java).apply {
                 putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
                     extractionsBundle.map { putParcelable(it.key, it.value) }
                 })
+                putExtra(EXTRA_IN_PRODUCT_TAG, productTag)
             }
         }
     }
