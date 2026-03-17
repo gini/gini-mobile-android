@@ -28,6 +28,8 @@ import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.TransactionDocsActivity
 import net.gini.android.capture.Document
 import net.gini.android.capture.EntryPoint
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.ProductTag
 import net.gini.android.capture.util.CancellationToken
 
 /**
@@ -210,7 +212,11 @@ class MainActivity : AppCompatActivity() {
     private fun onCaptureResult(result: CaptureResult) {
         when (result) {
             is CaptureResult.Success -> {
-                startActivity(ExtractionsActivity.getStartIntent(this, result.specificExtractions))
+                startActivity(ExtractionsActivity.getStartIntent(
+                    this,
+                    result.specificExtractions,
+                    GiniCapture.getInstance().productTag)
+                )
             }
 
             is CaptureResult.Error -> {

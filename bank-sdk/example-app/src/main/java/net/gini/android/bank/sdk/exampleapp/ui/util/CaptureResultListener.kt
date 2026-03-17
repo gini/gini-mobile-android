@@ -5,6 +5,7 @@ import android.widget.Toast
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.ui.ExtractionsActivity
 import net.gini.android.capture.CaptureSDKResult
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureFragmentListener
 
 class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener {
@@ -47,6 +48,7 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
                     ExtractionsActivity.getStartIntent(
                         context,
                         result.specificExtractions,
+                        GiniCapture.getInstance().productTag,
                         true
                     )
                 )
