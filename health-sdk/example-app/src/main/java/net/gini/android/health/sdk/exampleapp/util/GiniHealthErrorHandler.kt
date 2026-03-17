@@ -24,10 +24,29 @@ object GiniHealthErrorHandler {
         // Check if the cause is an ApiException (API error) or something else (timeout, network, etc.)
         return if (exception.cause is ApiException) {
             // API error: Use structured error response with error codes, items, etc.
-            val errorCode = exception.errorItems?.firstOrNull()?.code ?: "N/A"
             val errorMessage = exception.errorResponse?.message ?: context.getString(R.string.error_unknown)
             val statusCode = exception.statusCode?.toString() ?: "N/A"
-            context.getString(R.string.error_full_message, errorCode, errorMessage, statusCode)
+            val builder = StringBuilder(context.getString(R.string.error_full_message, errorMessage, statusCode))
+
+            // Append all error items (code, message, documentIdList)
+            val items = exception.errorItems
+            if (!items.isNullOrEmpty()) {
+                builder.append("\n").append(context.getString(R.string.error_items_header))
+                items.forEach { item ->
+                    val itemMessage = item.message ?: "N/A"
+                    builder.append("\n").append(
+                        context.getString(R.string.error_item_detail, item.code, itemMessage)
+                    )
+                    val docIds = item.documentIdList
+                    if (!docIds.isNullOrEmpty()) {
+                        builder.append("\n").append(
+                            context.getString(R.string.error_item_document_ids, docIds.joinToString(", "))
+                        )
+                    }
+                }
+            }
+
+            builder.toString()
         } else {
             // Non-API error (e.g., SocketTimeoutException, UnknownHostException):
             // Use the exception message directly

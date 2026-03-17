@@ -82,6 +82,8 @@
     <string name="error_dialog_retry">Retry</string>
     <string name="error_dialog_cancel">Cancel</string>
     <string name="error_request_id">Request ID: %s</string>
-    <string name="error_full_message">Error code: %1$s\nMessage: %2$s\nHTTP status: %3$s
- </string>
+    <string name="error_full_message">Message: %1$s\nHTTP status: %2$s</string>
+    <string name="error_items_header">Error Items:</string>
+    <string name="error_item_detail">• Code: %1$s | Message: %2$s</string>
+    <string name="error_item_document_ids">  Document IDs: %s</string>
 </resources>
