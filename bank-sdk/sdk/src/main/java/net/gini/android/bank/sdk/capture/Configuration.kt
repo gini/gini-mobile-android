@@ -230,7 +230,6 @@ data class CaptureConfiguration(
      *
      * Default is [ProductTag.SepaExtractions] for backward compatibility.
      *
-     * Access this value anywhere via [GiniBank.getCaptureConfiguration]?.productTag
      */
     val productTag: ProductTag = ProductTag.SepaExtractions,
 )
