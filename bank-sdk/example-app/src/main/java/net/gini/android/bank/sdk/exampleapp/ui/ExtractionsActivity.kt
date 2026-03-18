@@ -191,10 +191,14 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 is ProductTag.CxExtractions -> {
                     android.util.Log.d("ExtractionsActivity", "→ Using CX extraction fields (READONLY)")
                     
+                    // For CX: Clear specific extractions and ONLY use compound extractions
+                    mExtractions.clear()
+                    android.util.Log.d("ExtractionsActivity", "→ CX: Cleared specific extractions, using only compound")
+                    
                     // Flatten compound extractions into mExtractions
                     val cxFields = flattenCompoundExtractions()
                     
-                    // Merge CX fields into mExtractions
+                    // Replace with CX fields
                     mExtractions.putAll(cxFields)
                     
                     cxExtractionFields // Use CX field mapping
