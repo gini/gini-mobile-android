@@ -145,20 +145,24 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     /**
      * Converts compound extractions to flat specific extractions for CX payments.
      * Takes the first payment option from compound extraction and flattens it.
+     * ONLY processes crossBorderPayment compound extraction, ignores line items.
      */
     private fun flattenCompoundExtractions(): Map<String, GiniCaptureSpecificExtraction> {
         val flattened = mutableMapOf<String, GiniCaptureSpecificExtraction>()
         
-        mCompoundExtractions.forEach { (compoundName, compoundExtraction) ->
-            // Take first payment option (index 0)
-            if (compoundExtraction.specificExtractionMaps.isNotEmpty()) {
-                val firstOption = compoundExtraction.specificExtractionMaps[0]
-                
-                firstOption.forEach { (fieldName, specificExtraction) ->
-                    flattened[fieldName] = specificExtraction
+        // Filter to ONLY crossBorderPayment compound extraction (exclude line items)
+        mCompoundExtractions.entries
+            .filter { (compoundName, _) -> compoundName == "crossBorderPayment" }
+            .forEach { (compoundName, compoundExtraction) ->
+                // Take first payment option (index 0)
+                if (compoundExtraction.specificExtractionMaps.isNotEmpty()) {
+                    val firstOption = compoundExtraction.specificExtractionMaps[0]
+                    
+                    firstOption.forEach { (fieldName, specificExtraction) ->
+                        flattened[fieldName] = specificExtraction
+                    }
                 }
             }
-        }
         
         return flattened
     }
