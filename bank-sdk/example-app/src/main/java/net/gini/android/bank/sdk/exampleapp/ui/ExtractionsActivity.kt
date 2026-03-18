@@ -219,9 +219,24 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                     )
                 }
             }
+            
+            // For CX: filter out empty fields (only show fields with values)
+            val extractionsToShow = when (mProductTag) {
+                is ProductTag.CxExtractions -> {
+                    val nonEmptyExtractions = mExtractions.filter { (_, extraction) ->
+                        extraction.value.isNotBlank()
+                    }
+                    android.util.Log.d("ExtractionsActivity", "→ CX: Showing ${nonEmptyExtractions.size} non-empty fields (out of ${mExtractions.size})")
+                    nonEmptyExtractions
+                }
+                else -> {
+                    // SEPA: show all fields (including empty ones) - UNCHANGED
+                    mExtractions
+                }
+            }
 
             adapter = ExtractionsAdapter(
-                getSortedExtractions(mExtractions),
+                getSortedExtractions(extractionsToShow),
                 this@ExtractionsActivity,
                 editableFields
             ).also {
