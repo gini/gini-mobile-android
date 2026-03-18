@@ -48,6 +48,7 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
                     ExtractionsActivity.getStartIntent(
                         context,
                         result.specificExtractions,
+                        result.compoundExtractions,
                         GiniCapture.getInstance().productTag,
                         true
                     )

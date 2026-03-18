@@ -145,7 +145,8 @@ class ClientBankSDKFragment :
                     ExtractionsActivity.getStartIntent(
                         requireContext(),
                         result.specificExtractions,
-                        GiniCapture.getInstance().productTag
+                        result.compoundExtractions,
+                        GiniCapture.getInstance().productTag,
                     )
                 )
                 activity?.finish()

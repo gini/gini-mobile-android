@@ -215,6 +215,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(ExtractionsActivity.getStartIntent(
                     this,
                     result.specificExtractions,
+                    result.compoundExtractions,
                     GiniCapture.getInstance().productTag)
                 )
             }
