@@ -136,12 +136,10 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 getParcelable<GiniCaptureCompoundExtraction>(name)?.let { tempMap[name] = it }
             }
             mCompoundExtractions = tempMap
-            android.util.Log.d("ExtractionsActivity", "📥 Received ${tempMap.size} compound extractions")
         }
         
         // Read productTag
         mProductTag = intent.getParcelableExtra(EXTRA_IN_PRODUCT_TAG) ?: ProductTag.SepaExtractions
-        android.util.Log.d("ExtractionsActivity", "📥 Received ProductTag: ${mProductTag.value}")
     }
 
     /**
@@ -152,20 +150,16 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         val flattened = mutableMapOf<String, GiniCaptureSpecificExtraction>()
         
         mCompoundExtractions.forEach { (compoundName, compoundExtraction) ->
-            android.util.Log.d("ExtractionsActivity", "📦 Compound: $compoundName has ${compoundExtraction.specificExtractionMaps.size} options")
-            
             // Take first payment option (index 0)
             if (compoundExtraction.specificExtractionMaps.isNotEmpty()) {
                 val firstOption = compoundExtraction.specificExtractionMaps[0]
                 
                 firstOption.forEach { (fieldName, specificExtraction) ->
-                    android.util.Log.d("ExtractionsActivity", "  → Field: $fieldName = ${specificExtraction.value}")
                     flattened[fieldName] = specificExtraction
                 }
             }
         }
         
-        android.util.Log.d("ExtractionsActivity", "→ Total flattened CX fields: ${flattened.size}")
         return flattened
     }
 
@@ -175,15 +169,10 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             layoutManager = LinearLayoutManager(this@ExtractionsActivity)
 
             // Check productTag to determine which extractions to show
-            android.util.Log.d("ExtractionsActivity", "🏷️ Checking ProductTag: ${mProductTag.value}")
-            
             val fieldsToDisplay = when (mProductTag) {
                 is ProductTag.CxExtractions -> {
-                    android.util.Log.d("ExtractionsActivity", "→ Using CX extraction fields (READONLY)")
-                    
                     // For CX: Clear specific extractions and ONLY use compound extractions
                     mExtractions.clear()
-                    android.util.Log.d("ExtractionsActivity", "→ CX: Cleared specific extractions, using only compound")
                     
                     // Flatten compound extractions into mExtractions
                     val cxFields = flattenCompoundExtractions()
@@ -194,7 +183,6 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                     cxExtractionFields // Use CX field mapping
                 }
                 else -> {
-                    android.util.Log.d("ExtractionsActivity", "→ Using SEPA extraction fields (default)")
                     editableSpecificExtractions // Use SEPA field mapping (default)
                 }
             }
@@ -220,7 +208,6 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                     val nonEmptyExtractions = mExtractions.filter { (_, extraction) ->
                         extraction.value.isNotBlank()
                     }
-                    android.util.Log.d("ExtractionsActivity", "→ CX: Showing ${nonEmptyExtractions.size} non-empty fields (out of ${mExtractions.size})")
                     nonEmptyExtractions
                 }
                 else -> {
@@ -347,8 +334,6 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             isCaptureSdkExtractions: Boolean = false
         ): Intent {
             isCaptureSDKExtractions = isCaptureSdkExtractions
-            android.util.Log.d("ExtractionsActivity", "📤 Sending ProductTag: ${productTag.value}")
-            android.util.Log.d("ExtractionsActivity", "📤 Sending ${compoundExtractions.size} compound extractions")
             return Intent(context, ExtractionsActivity::class.java).apply {
                 putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
                     extractionsBundle.map { putParcelable(it.key, it.value) }
