@@ -20,7 +20,6 @@ import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.ProductTag
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
 

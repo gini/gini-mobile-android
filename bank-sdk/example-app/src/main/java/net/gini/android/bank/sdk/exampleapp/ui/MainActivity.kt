@@ -29,7 +29,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.transactiondocs.TransactionDocsAc
 import net.gini.android.capture.Document
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.ProductTag
 import net.gini.android.capture.util.CancellationToken
 
 /**
