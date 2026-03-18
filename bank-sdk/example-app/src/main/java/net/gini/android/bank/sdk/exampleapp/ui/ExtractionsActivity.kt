@@ -142,16 +142,6 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         // Read productTag
         mProductTag = intent.getParcelableExtra(EXTRA_IN_PRODUCT_TAG) ?: ProductTag.SepaExtractions
         android.util.Log.d("ExtractionsActivity", "📥 Received ProductTag: ${mProductTag.value}")
-        
-        // Log exact JSON toString
-        android.util.Log.d("ExtractionsActivity", "═══════════════════════════════════════")
-        android.util.Log.d("ExtractionsActivity", "📋 SPECIFIC EXTRACTIONS JSON:")
-        android.util.Log.d("ExtractionsActivity", mExtractions.toString())
-        
-        android.util.Log.d("ExtractionsActivity", "")
-        android.util.Log.d("ExtractionsActivity", "📦 COMPOUND EXTRACTIONS JSON:")
-        android.util.Log.d("ExtractionsActivity", mCompoundExtractions.toString())
-        android.util.Log.d("ExtractionsActivity", "═══════════════════════════════════════")
     }
 
     /**
