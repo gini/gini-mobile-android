@@ -29,6 +29,7 @@ import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ProductTag
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.util.protectViewFromInsets
 import java.math.BigDecimal
@@ -46,6 +47,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private lateinit var binding: ActivityExtractionsBinding
 
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
+    private var mCompoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap()
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
     private var mProductTag: ProductTag = ProductTag.SepaExtractions
 
@@ -63,6 +65,15 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         "bic" to "bic",
         "amountToPay" to "amount",
         "instantPayment" to "text"
+    )
+
+    // CX (cross-border) extraction fields
+    private val cxExtractionFields = hashMapOf(
+        "paymentRecipient" to "companyname",
+        "paymentPurpose" to "text",
+        "iban" to "iban",
+        "bic" to "bic",
+        "amountToPay" to "amount"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,9 +129,54 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             }
         }
         
+        // Read compound extractions
+        intent.extras?.getParcelable<Bundle>(EXTRA_IN_COMPOUND_EXTRACTIONS)?.run {
+            val tempMap = mutableMapOf<String, GiniCaptureCompoundExtraction>()
+            keySet().forEach { name ->
+                getParcelable<GiniCaptureCompoundExtraction>(name)?.let { tempMap[name] = it }
+            }
+            mCompoundExtractions = tempMap
+            android.util.Log.d("ExtractionsActivity", "📥 Received ${tempMap.size} compound extractions")
+        }
+        
         // Read productTag
         mProductTag = intent.getParcelableExtra(EXTRA_IN_PRODUCT_TAG) ?: ProductTag.SepaExtractions
         android.util.Log.d("ExtractionsActivity", "📥 Received ProductTag: ${mProductTag.value}")
+        
+        // Log exact JSON toString
+        android.util.Log.d("ExtractionsActivity", "═══════════════════════════════════════")
+        android.util.Log.d("ExtractionsActivity", "📋 SPECIFIC EXTRACTIONS JSON:")
+        android.util.Log.d("ExtractionsActivity", mExtractions.toString())
+        
+        android.util.Log.d("ExtractionsActivity", "")
+        android.util.Log.d("ExtractionsActivity", "📦 COMPOUND EXTRACTIONS JSON:")
+        android.util.Log.d("ExtractionsActivity", mCompoundExtractions.toString())
+        android.util.Log.d("ExtractionsActivity", "═══════════════════════════════════════")
+    }
+
+    /**
+     * Converts compound extractions to flat specific extractions for CX payments.
+     * Takes the first payment option from compound extraction and flattens it.
+     */
+    private fun flattenCompoundExtractions(): Map<String, GiniCaptureSpecificExtraction> {
+        val flattened = mutableMapOf<String, GiniCaptureSpecificExtraction>()
+        
+        mCompoundExtractions.forEach { (compoundName, compoundExtraction) ->
+            android.util.Log.d("ExtractionsActivity", "📦 Compound: $compoundName has ${compoundExtraction.specificExtractionMaps.size} options")
+            
+            // Take first payment option (index 0)
+            if (compoundExtraction.specificExtractionMaps.isNotEmpty()) {
+                val firstOption = compoundExtraction.specificExtractionMaps[0]
+                
+                firstOption.forEach { (fieldName, specificExtraction) ->
+                    android.util.Log.d("ExtractionsActivity", "  → Field: $fieldName = ${specificExtraction.value}")
+                    flattened[fieldName] = specificExtraction
+                }
+            }
+        }
+        
+        android.util.Log.d("ExtractionsActivity", "→ Total flattened CX fields: ${flattened.size}")
+        return flattened
     }
 
     private fun setUpRecyclerView(binding: ActivityExtractionsBinding) {
@@ -128,10 +184,32 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@ExtractionsActivity)
 
-            editableSpecificExtractions.forEach {
-                if (!mExtractions.containsKey(it.key)) {
-                    mExtractions[it.key] = GiniCaptureSpecificExtraction(
-                        it.key, "", it.value, null, emptyList()
+            // Check productTag to determine which extractions to show
+            android.util.Log.d("ExtractionsActivity", "🏷️ Checking ProductTag: ${mProductTag.value}")
+            
+            val fieldsToDisplay = when (mProductTag) {
+                is ProductTag.CxExtractions -> {
+                    android.util.Log.d("ExtractionsActivity", "→ Using CX extraction fields")
+                    
+                    // Flatten compound extractions into mExtractions
+                    val cxFields = flattenCompoundExtractions()
+                    
+                    // Merge CX fields into mExtractions
+                    mExtractions.putAll(cxFields)
+                    
+                    cxExtractionFields // Use CX field mapping
+                }
+                else -> {
+                    android.util.Log.d("ExtractionsActivity", "→ Using SEPA extraction fields (default)")
+                    editableSpecificExtractions // Use SEPA field mapping (default)
+                }
+            }
+            
+            // Ensure all expected fields exist (populate missing ones with empty values)
+            fieldsToDisplay.forEach { (extractionName, entityName) ->
+                if (!mExtractions.containsKey(extractionName)) {
+                    mExtractions[extractionName] = GiniCaptureSpecificExtraction(
+                        extractionName, "", entityName, null, emptyList()
                     )
                 }
             }
@@ -139,7 +217,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             adapter = ExtractionsAdapter(
                 getSortedExtractions(mExtractions),
                 this@ExtractionsActivity,
-                editableSpecificExtractions.keys.toList()
+                fieldsToDisplay.keys.toList()
             ).also {
                 mExtractionsAdapter = it
             }
@@ -243,19 +321,25 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     companion object {
         const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
+        const val EXTRA_IN_COMPOUND_EXTRACTIONS = "EXTRA_IN_COMPOUND_EXTRACTIONS"
         const val EXTRA_IN_PRODUCT_TAG = "EXTRA_IN_PRODUCT_TAG"
         var isCaptureSDKExtractions : Boolean = false
         fun getStartIntent(
             context: Context, 
             extractionsBundle: Map<String, GiniCaptureSpecificExtraction>,
+            compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
             productTag: ProductTag = ProductTag.SepaExtractions,
             isCaptureSdkExtractions: Boolean = false
         ): Intent {
             isCaptureSDKExtractions = isCaptureSdkExtractions
             android.util.Log.d("ExtractionsActivity", "📤 Sending ProductTag: ${productTag.value}")
+            android.util.Log.d("ExtractionsActivity", "📤 Sending ${compoundExtractions.size} compound extractions")
             return Intent(context, ExtractionsActivity::class.java).apply {
                 putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
                     extractionsBundle.map { putParcelable(it.key, it.value) }
+                })
+                putExtra(EXTRA_IN_COMPOUND_EXTRACTIONS, Bundle().apply {
+                    compoundExtractions.map { putParcelable(it.key, it.value) }
                 })
                 putExtra(EXTRA_IN_PRODUCT_TAG, productTag)
             }
