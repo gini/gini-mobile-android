@@ -189,7 +189,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             
             val fieldsToDisplay = when (mProductTag) {
                 is ProductTag.CxExtractions -> {
-                    android.util.Log.d("ExtractionsActivity", "→ Using CX extraction fields")
+                    android.util.Log.d("ExtractionsActivity", "→ Using CX extraction fields (READONLY)")
                     
                     // Flatten compound extractions into mExtractions
                     val cxFields = flattenCompoundExtractions()
@@ -205,6 +205,12 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 }
             }
             
+            // Determine editable fields based on productTag
+            val editableFields = when (mProductTag) {
+                is ProductTag.CxExtractions -> emptyList() // CX = all fields readonly
+                else -> editableSpecificExtractions.keys.toList() // SEPA = only these 7 editable (UNCHANGED)
+            }
+            
             // Ensure all expected fields exist (populate missing ones with empty values)
             fieldsToDisplay.forEach { (extractionName, entityName) ->
                 if (!mExtractions.containsKey(extractionName)) {
@@ -217,7 +223,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             adapter = ExtractionsAdapter(
                 getSortedExtractions(mExtractions),
                 this@ExtractionsActivity,
-                fieldsToDisplay.keys.toList()
+                editableFields
             ).also {
                 mExtractionsAdapter = it
             }
