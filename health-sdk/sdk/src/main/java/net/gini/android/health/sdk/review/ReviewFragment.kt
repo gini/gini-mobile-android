@@ -206,6 +206,8 @@ class ReviewFragment private constructor(
             startKeyboardTracker(view)
             restoreImeIfNeeded(view, savedInstanceState)
         }
+
+        applyCloseButtonStatusBarInsetOnce()
     }
 
     private fun restorePagerAndImeAfterRotation() {
@@ -227,6 +229,41 @@ class ReviewFragment private constructor(
             constrainHeight(binding.pager.id, h)
             clear(binding.pager.id, ConstraintSet.BOTTOM)
             applyTo(binding.constraintRoot)
+        }
+    }
+
+    /**
+     * Shifts the close button down by the status-bar height exactly once, using [View.post].
+     *
+     * Why NOT [ViewCompat.setOnApplyWindowInsetsListener] + [View.updateLayoutParams]:
+     *  - [ViewCompat.setOnApplyWindowInsetsListener] is dispatched by ViewRootImpl
+     *    **before** the measure/layout phase in every traversal.  On API 35+ (Android 15/16)
+     *    the IME open/close also triggers a new traversal, so the callback would fire again
+     *    (or, if already removed, a stale [View.requestLayout] call from [updateLayoutParams]
+     *    could still be in-flight and processed mid-animation), causing the close button to
+     *    jump downward — the exact regression reported in HEAL-36.
+     *
+     * Why [View.translationY] instead of [View.updateLayoutParams]:
+     *  - [View.translationY] is a rendering transform; it calls [View.invalidate] only —
+     *    **no [View.requestLayout], no layout-traversal disruption**.
+     *  - [androidx.constraintlayout.widget.ConstraintSet.applyTo] only updates layout params;
+     *    it does **not** reset [View.translationY], so the offset survives every
+     *    [applyPagerConstraintFromCurrentSize] / [setupLandscapeBehavior] call.
+     *
+     * Why [View.post]:
+     *  - Defers to after the first drawn frame, when [ViewCompat.getRootWindowInsets] is
+     *    guaranteed non-null and the status-bar height is stable.
+     *  - Runs in a quiet period (between frames) — not during any IME animation.
+     */
+    private fun applyCloseButtonStatusBarInsetOnce() {
+        binding.close.post {
+            if (!isAdded) return@post
+            val statusBarTop = ViewCompat.getRootWindowInsets(binding.root)
+                ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+            // translationY shifts the button visually without calling requestLayout().
+            // The XML already provides the base top margin (gps_small); we only add the
+            // status-bar height on top of that visual position.
+            binding.close.translationY = statusBarTop.toFloat()
         }
     }
 
