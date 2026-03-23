@@ -256,14 +256,17 @@ class ReviewFragment private constructor(
      *  - Runs in a quiet period (between frames) — not during any IME animation.
      */
     private fun applyCloseButtonStatusBarInsetOnce() {
-        binding.close.post {
+        val root = binding.root
+        val close = binding.close
+        close.post {
             if (!isAdded) return@post
-            val statusBarTop = ViewCompat.getRootWindowInsets(binding.root)
+            if (!close.isAttachedToWindow) return@post
+            val statusBarTop = ViewCompat.getRootWindowInsets(root)
                 ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
             // translationY shifts the button visually without calling requestLayout().
             // The XML already provides the base top margin (gps_small); we only add the
             // status-bar height on top of that visual position.
-            binding.close.translationY = statusBarTop.toFloat()
+            close.translationY = statusBarTop.toFloat()
         }
     }
 
