@@ -7,6 +7,7 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.util.FileImportValidator
+import net.gini.android.capture.ProductTag
 
 
 @Parcelize
@@ -153,6 +154,9 @@ data class ExampleAppBankConfiguration(
 
     // enable/disable custom HTTP client provider (for testing network customization)
     val isCustomHttpClientEnabled: Boolean = false,
+
+    // product tag
+    val productTag: ProductTag = ProductTag.SepaExtractions,
 
 ) : Parcelable {
 

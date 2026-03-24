@@ -136,6 +136,7 @@ public class GiniCapture {
     private final boolean saveInvoicesLocallyEnabled;
 
     private final Map<String, String> mCustomUploadMetadata;
+    private final ProductTag mProductTag;
 
 
     /**
@@ -402,6 +403,7 @@ public class GiniCapture {
         allowScreenshots = builder.getAllowScreenshots();
         saveInvoicesLocallyEnabled = builder.getSaveInvoicesLocallyEnabled();
         mCustomUploadMetadata = builder.getCustomUploadMetadata();
+        mProductTag = builder.getProductTag();
         mGiniComposableStyleProvider = builder.getGiniComposableStyleProvider();
     }
 
@@ -480,6 +482,16 @@ public class GiniCapture {
     @Nullable
     public ArrayList<OnboardingPage> getCustomOnboardingPages() { // NOPMD - ArrayList required (Bundle)
         return mCustomOnboardingPages;
+    }
+
+    /**
+     * Returns the configured product tag.
+     *
+     * @return the {@link ProductTag}
+     */
+    @NonNull
+    public ProductTag getProductTag() {
+        return mProductTag;
     }
 
     /**
@@ -917,6 +929,8 @@ public class GiniCapture {
         private EntryPoint entryPoint = Internal.DEFAULT_ENTRY_POINT;
         private boolean allowScreenshots = true;
         private boolean savingInvoicesLocallyEnabled = true;
+
+        private ProductTag mProductTag = ProductTag.SepaExtractions.INSTANCE;
 
         private Map<String, String> customUploadMetadata;
         private GiniComposableStyleProvider giniComposableStyleProvider;
@@ -1457,6 +1471,23 @@ public class GiniCapture {
 
         private GiniComposableStyleProvider getGiniComposableStyleProvider() {
             return giniComposableStyleProvider;
+        }
+
+        /**
+         * Set the product tag to identify which extraction type to use.
+         *
+         * Default is {@link ProductTag.SepaExtractions}.
+         *
+         * @param productTag the {@link ProductTag} to use
+         * @return the {@link Builder} instance
+         */
+        public Builder setProductTag(@NonNull final ProductTag productTag) {
+            mProductTag = productTag;
+            return this;
+        }
+
+        private ProductTag getProductTag() {
+            return mProductTag;
         }
     }
 
