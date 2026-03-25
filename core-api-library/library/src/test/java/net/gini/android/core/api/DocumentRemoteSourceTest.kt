@@ -86,7 +86,7 @@ class DocumentRemoteSourceTest {
         val accessToken = UUID.randomUUID().toString()
         val expectedAuthorizationHeader = "Bearer $accessToken"
         verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
-            getLayout(accessToken, "")
+            getDocumentLayout(accessToken, "")
         }
     }
 
@@ -194,12 +194,20 @@ class DocumentRemoteSourceTest {
             return Response.success(null)
         }
 
-        override suspend fun getLayoutForDocument(
+        override suspend fun getDocumentLayout(
             bearer: Map<String, String>,
             documentId: String
-        ): Response<ResponseBody> {
+        ): Response<DocumentLayoutResponse> {
             bearerAuthHeader = bearer["Authorization"]
-            return Response.success("response".toResponseBody())
+            return Response.success(DocumentLayoutResponse(emptyList()))
+        }
+
+        override suspend fun getDocumentPages(
+            bearer: Map<String, String>,
+            documentId: String
+        ): Response<List<DocumentPageResponse>> {
+            bearerAuthHeader = bearer["Authorization"]
+            return Response.success(emptyList())
         }
 
         override suspend fun getPaymentRequest(
@@ -237,20 +245,5 @@ class DocumentRemoteSourceTest {
             return Response.success(null)
         }
 
-        override suspend fun getDocumentLayout(
-            bearer: Map<String, String>,
-            documentId: String
-        ): Response<DocumentLayoutResponse> {
-            bearerAuthHeader = bearer["Authorization"]
-            return Response.success(null)
-        }
-
-        override suspend fun getDocumentPages(
-            bearer: Map<String, String>,
-            documentId: String
-        ): Response<List<DocumentPageResponse>> {
-            bearerAuthHeader = bearer["Authorization"]
-            return Response.success(null)
-        }
     }
 }
