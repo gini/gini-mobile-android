@@ -207,7 +207,7 @@ class ReviewFragment private constructor(
             restoreImeIfNeeded(view, savedInstanceState)
         }
 
-        applyCloseButtonStatusBarInsetOnce()
+        applyCloseButtonStatusBarInset()
     }
 
     private fun restorePagerAndImeAfterRotation() {
@@ -233,15 +233,30 @@ class ReviewFragment private constructor(
     }
 
     /**
-     * Shifts the close button down by the status-bar height exactly once, using [View.post].
+     * Applies the status-bar inset to the close button via [View.translationY], once.
      *
-     * Why NOT [ViewCompat.setOnApplyWindowInsetsListener] + [View.updateLayoutParams]:
-     *  - [ViewCompat.setOnApplyWindowInsetsListener] is dispatched by ViewRootImpl
-     *    **before** the measure/layout phase in every traversal.  On API 35+ (Android 15/16)
-     *    the IME open/close also triggers a new traversal, so the callback would fire again
-     *    (or, if already removed, a stale [View.requestLayout] call from [updateLayoutParams]
-     *    could still be in-flight and processed mid-animation), causing the close button to
-     *    jump downward — the exact regression reported in HEAL-36.
+     * Uses [View.doOnPreDraw] so the computation runs **after the first layout pass** —
+     * at that point [View.getLocationInWindow] accurately reflects any padding already
+     * applied by the host to the fragment container.
+     *
+     * Why [View.doOnPreDraw] instead of [ViewCompat.setOnApplyWindowInsetsListener]:
+     *  - [ViewCompat.setOnApplyWindowInsetsListener] fires **before** measure/layout in
+     *    every traversal.  On Android 15+ (API 35) the system dispatches insets to all views
+     *    (bypassing the older [androidx.coordinatorlayout.widget.CoordinatorLayout] filter),
+     *    so the callback fires again when the IME opens/closes.  At that moment
+     *    [View.getLocationInWindow] still returns the **pre-layout** root position, so the
+     *    effective-inset calculation would be wrong and cause a double-shift downward.
+     *  - [View.doOnPreDraw] fires after layout, giving an accurate [View.getLocationInWindow]
+     *    value, and the one-shot nature of [View.doOnPreDraw] means the IME never re-triggers
+     *    this code.
+     *
+     * Why [View.getLocationInWindow] (effective-inset approach):
+     *  - If the host has already offset the fragment container below the status bar
+     *    (e.g. by applying `paddingTop = statusBarHeight` to the content view),
+     *    `rootTopInWindow` will equal `statusBarTop` and the effective inset will be **zero**
+     *    — no extra [View.translationY] is needed and no double-shift occurs.
+     *  - If the host has not applied any inset, `rootTopInWindow` will be 0 and
+     *    [View.translationY] will equal the full status-bar height.
      *
      * Why [View.translationY] instead of [View.updateLayoutParams]:
      *  - [View.translationY] is a rendering transform; it calls [View.invalidate] only —
@@ -249,24 +264,23 @@ class ReviewFragment private constructor(
      *  - [androidx.constraintlayout.widget.ConstraintSet.applyTo] only updates layout params;
      *    it does **not** reset [View.translationY], so the offset survives every
      *    [applyPagerConstraintFromCurrentSize] / [setupLandscapeBehavior] call.
-     *
-     * Why [View.post]:
-     *  - Defers to after the first drawn frame, when [ViewCompat.getRootWindowInsets] is
-     *    guaranteed non-null and the status-bar height is stable.
-     *  - Runs in a quiet period (between frames) — not during any IME animation.
      */
-    private fun applyCloseButtonStatusBarInsetOnce() {
+    private fun applyCloseButtonStatusBarInset() {
         val root = binding.root
         val close = binding.close
-        close.post {
-            if (!isAdded) return@post
-            if (!close.isAttachedToWindow) return@post
+        // doOnPreDraw is a one-shot listener — it removes itself after the first callback.
+        // This guarantees that keyboard open/close events never re-trigger this code.
+        root.doOnPreDraw {
+            if (!close.isAttachedToWindow) return@doOnPreDraw
+            val location = IntArray(2)
+            root.getLocationInWindow(location)
+            val rootTopInWindow = location[1]
             val statusBarTop = ViewCompat.getRootWindowInsets(root)
                 ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
-            // translationY shifts the button visually without calling requestLayout().
-            // The XML already provides the base top margin (gps_small); we only add the
-            // status-bar height on top of that visual position.
-            close.translationY = statusBarTop.toFloat()
+            // Effective inset = how much MORE the button needs to be shifted beyond what
+            // the host has already provided via container offset/padding.
+            val effectiveInset = (statusBarTop - rootTopInWindow).coerceAtLeast(0)
+            close.translationY = effectiveInset.toFloat()
         }
     }
 
