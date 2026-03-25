@@ -232,39 +232,6 @@ class ReviewFragment private constructor(
         }
     }
 
-    /**
-     * Applies the status-bar inset to the close button via [View.translationY], once.
-     *
-     * Uses [View.doOnPreDraw] so the computation runs **after the first layout pass** —
-     * at that point [View.getLocationInWindow] accurately reflects any padding already
-     * applied by the host to the fragment container.
-     *
-     * Why [View.doOnPreDraw] instead of [ViewCompat.setOnApplyWindowInsetsListener]:
-     *  - [ViewCompat.setOnApplyWindowInsetsListener] fires **before** measure/layout in
-     *    every traversal.  On Android 15+ (API 35) the system dispatches insets to all views
-     *    (bypassing the older [androidx.coordinatorlayout.widget.CoordinatorLayout] filter),
-     *    so the callback fires again when the IME opens/closes.  At that moment
-     *    [View.getLocationInWindow] still returns the **pre-layout** root position, so the
-     *    effective-inset calculation would be wrong and cause a double-shift downward.
-     *  - [View.doOnPreDraw] fires after layout, giving an accurate [View.getLocationInWindow]
-     *    value, and the one-shot nature of [View.doOnPreDraw] means the IME never re-triggers
-     *    this code.
-     *
-     * Why [View.getLocationInWindow] (effective-inset approach):
-     *  - If the host has already offset the fragment container below the status bar
-     *    (e.g. by applying `paddingTop = statusBarHeight` to the content view),
-     *    `rootTopInWindow` will equal `statusBarTop` and the effective inset will be **zero**
-     *    — no extra [View.translationY] is needed and no double-shift occurs.
-     *  - If the host has not applied any inset, `rootTopInWindow` will be 0 and
-     *    [View.translationY] will equal the full status-bar height.
-     *
-     * Why [View.translationY] instead of [View.updateLayoutParams]:
-     *  - [View.translationY] is a rendering transform; it calls [View.invalidate] only —
-     *    **no [View.requestLayout], no layout-traversal disruption**.
-     *  - [androidx.constraintlayout.widget.ConstraintSet.applyTo] only updates layout params;
-     *    it does **not** reset [View.translationY], so the offset survives every
-     *    [applyPagerConstraintFromCurrentSize] / [setupLandscapeBehavior] call.
-     */
     private fun applyCloseButtonStatusBarInset() {
         val root = binding.root
         val close = binding.close
