@@ -170,14 +170,6 @@ class BankApiDocumentRemoteSourceTest {
             return Response.success(null)
         }
 
-        override suspend fun getLayoutForDocument(
-            bearer: Map<String, String>,
-            documentId: String
-        ): Response<ResponseBody> {
-            // Is tested in core api library
-            return Response.success(null)
-        }
-
         override suspend fun getPaymentRequest(
             bearer: Map<String, String>,
             id: String
