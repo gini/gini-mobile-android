@@ -402,7 +402,7 @@ class ReviewFragment private constructor(
             if (context.getFontScale() < 1.5) {
                 anchorView = paymentDetailsScrollview
             }
-            setTextMaxLines(if (resources.isLandscapeOrientation()) 1 else 3)
+            setTextMaxLines(if (resources.isLandscapeOrientation()) 2 else 3)
             setAction(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) {
                 onRetry()
             }
