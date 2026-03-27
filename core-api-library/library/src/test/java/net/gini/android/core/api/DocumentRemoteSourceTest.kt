@@ -82,7 +82,7 @@ class DocumentRemoteSourceTest {
     }
 
     @Test
-    fun `sets bearer authorization header with capital case 'Bearer' in getLayout`() = runTest {
+    fun `sets bearer authorization header with capital case 'Bearer' in getDocumentLayout`() = runTest {
         val accessToken = UUID.randomUUID().toString()
         val expectedAuthorizationHeader = "Bearer $accessToken"
         verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
