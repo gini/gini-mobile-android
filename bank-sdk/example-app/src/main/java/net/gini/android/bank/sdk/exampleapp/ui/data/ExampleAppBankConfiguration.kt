@@ -156,7 +156,7 @@ data class ExampleAppBankConfiguration(
     val isCustomHttpClientEnabled: Boolean = false,
 
     // product tag
-    val productTag: ProductTag = ProductTag.SepaExtractions,
+    val productTag: ProductTag = ProductTag.CxExtractions,
 
 ) : Parcelable {
 
