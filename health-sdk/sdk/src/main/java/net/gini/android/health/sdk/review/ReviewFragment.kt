@@ -383,7 +383,7 @@ class ReviewFragment private constructor(
             if (context.getFontScale() < 1.5) {
                 anchorView = paymentDetailsScrollview
             }
-            setTextMaxLines(3)
+            setTextMaxLines(if (resources.isLandscapeOrientation()) 2 else 3)
             setAction(getLocaleStringResource(net.gini.android.internal.payment.R.string.gps_snackbar_retry)) {
                 onRetry()
             }
@@ -614,6 +614,9 @@ class ReviewFragment private constructor(
     override fun onDestroyView() {
         mediator?.detach()
         mediator = null
+
+        errorSnackbar?.dismiss()
+        errorSnackbar = null
 
         preRKeyboardTracker?.let {
             view?.viewTreeObserver?.removeOnGlobalLayoutListener(it)
