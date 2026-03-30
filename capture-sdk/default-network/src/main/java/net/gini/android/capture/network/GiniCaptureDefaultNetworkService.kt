@@ -244,10 +244,7 @@ internal constructor(
             contentType = document.mimeType,
             filename = null,
             documentType = null,
-            documentMetadata?.copy()?.apply {
-                setUploadMetadata(uploadMetadata)
-                productTagValue?.let { setProductTag(it) }
-            } ?: DocumentMetadata().apply {
+            (documentMetadata?.copy() ?: DocumentMetadata()).apply {
                 setUploadMetadata(uploadMetadata)
                 productTagValue?.let { setProductTag(it) }
             }
