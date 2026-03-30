@@ -143,7 +143,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         // Filter to ONLY crossBorderPayment compound extraction (exclude line items)
         mCompoundExtractions.entries
             .filter { (compoundName, _) -> compoundName == "crossBorderPayment" }
-            .forEach { (compoundName, compoundExtraction) ->
+            .forEach { (_, compoundExtraction) ->
                 // Take first payment option (index 0)
                 if (compoundExtraction.specificExtractionMaps.isNotEmpty()) {
                     val firstOption = compoundExtraction.specificExtractionMaps[0]
