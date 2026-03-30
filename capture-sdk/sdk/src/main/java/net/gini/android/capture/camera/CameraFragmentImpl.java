@@ -605,8 +605,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     protected void initQRCodeReader() {
-        if (GiniCapture.hasInstance()
-                && GiniCapture.getInstance().getProductTag() == ProductTag.CxExtractions.INSTANCE) {
+
+        final GiniCapture giniCapture = GiniCapture.hasInstance() ? GiniCapture.getInstance() : null;
+
+        // Skip initialization for CxExtractions
+        if (giniCapture != null
+                && giniCapture.getProductTag() == ProductTag.CxExtractions.INSTANCE) {
             return;
         }
         if (mPaymentQRCodeReader != null) {
