@@ -74,6 +74,7 @@ class GiniCaptureDefaultNetworkServiceTest {
         coEvery {
             documentManager.createCompositeDocument(
                 any<LinkedHashMap<net.gini.android.core.api.models.Document, Int>>(),
+                any(),
                 any()
             )
         } returns Resource.Success(compositeDocument)

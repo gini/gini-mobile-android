@@ -237,16 +237,16 @@ internal constructor(
         }
 
         val uploadMetadata = document.generateUploadMetadata(context)
+        val productTagValue = runCatching { GiniCapture.getInstance().productTag.value }.getOrNull()
 
         val partialDocumentResource = giniBankApi.documentManager.createPartialDocument(
             document = documentData,
             contentType = document.mimeType,
             filename = null,
             documentType = null,
-            documentMetadata?.copy()?.apply {
+            (documentMetadata?.copy() ?: DocumentMetadata()).apply {
                 setUploadMetadata(uploadMetadata)
-            } ?: DocumentMetadata().apply {
-                setUploadMetadata(uploadMetadata)
+                productTagValue?.let { setProductTag(it) }
             }
         )
 
@@ -343,8 +343,16 @@ internal constructor(
 
         analyzedGiniApiDocument = null
 
+        val productTagValue = runCatching { GiniCapture.getInstance().productTag.value }.getOrNull()
+        val compositeDocumentMetadata = DocumentMetadata().apply {
+            productTagValue?.let { setProductTag(it) }
+        }
+
         val compositeDocumentAndExtractionsResource =
-            giniBankApi.documentManager.createCompositeDocument(giniApiDocumentRotationMap)
+            giniBankApi.documentManager.createCompositeDocument(
+                giniApiDocumentRotationMap,
+                documentMetadata = compositeDocumentMetadata
+            )
                 .mapSuccess { compositeDocumentResource ->
                     val compositeDocument = compositeDocumentResource.data
                     giniApiDocuments[compositeDocument.id] = compositeDocument

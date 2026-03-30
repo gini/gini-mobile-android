@@ -17,13 +17,13 @@ sealed class ProductTag(val value: String) : Parcelable {
      * This is the default behavior.
      */
     @Parcelize
-    object SepaExtractions : ProductTag("sepa-extractions")
+    object SepaExtractions : ProductTag("sepaExtractions")
 
     /**
      * Cross-border extractions - shows compound extractions.
      */
     @Parcelize
-    object CxExtractions : ProductTag("cx-extractions")
+    object CxExtractions : ProductTag("cxExtractions")
 
     /**
      * Auto-detect extractions.
@@ -31,7 +31,7 @@ sealed class ProductTag(val value: String) : Parcelable {
      * Note: This option is reserved for future use and is not yet available for customer use.
      */
     @Parcelize
-    object AutoDetectExtractions : ProductTag("auto-detect-extractions")
+    object AutoDetectExtractions : ProductTag("autoDetectExtractions")
 
     /**
      * Custom product tag for extensibility.
