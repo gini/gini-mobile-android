@@ -940,7 +940,22 @@ public class GiniCapture {
          */
         public void build() {
             checkNetworkingImplementations();
+            // Override feature flags that are incompatible with ProductTag.CxExtractions
+            applyProductTagOverrides();
             createInstance(this);
+        }
+
+        /**
+         * Applies configuration overrides based on the selected ProductTag.
+         * ProductTag.CxExtractions does not support QR code scanning.
+         * Therefore, all QR code–related flags are automatically set to false,
+         * regardless of the values provided by the caller.
+         */
+        private void applyProductTagOverrides() {
+            if (mProductTag == ProductTag.CxExtractions.INSTANCE) {
+                mQRCodeScanningEnabled = false;
+                mOnlyQRCodeScanningEnabled = false;
+            }
         }
 
         private void checkNetworkingImplementations() {
