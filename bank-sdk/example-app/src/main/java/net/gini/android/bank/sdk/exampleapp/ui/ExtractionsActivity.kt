@@ -66,15 +66,6 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         "instantPayment" to "text"
     )
 
-    // CX (cross-border) extraction fields
-    private val cxExtractionFields = hashMapOf(
-        "paymentRecipient" to "companyname",
-        "paymentPurpose" to "text",
-        "iban" to "iban",
-        "bic" to "bic",
-        "amountToPay" to "amount"
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExtractionsBinding.inflate(layoutInflater)
@@ -182,7 +173,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                     // Replace with CX fields
                     mExtractions.putAll(cxFields)
                     
-                    cxExtractionFields // Use CX field mapping
+                    emptyMap() // No schema needed for CX; fields come directly from compound extractions
                 } else {
                     editableSpecificExtractions // Use SEPA field mapping (default)
                 }
@@ -194,7 +185,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 editableSpecificExtractions.keys.toList() // SEPA = only these 7 editable (UNCHANGED)
             }
             
-            // Ensure all expected fields exist (populate missing ones with empty values)
+            // Ensure all expected SEPA fields exist (populate missing ones with empty values)
             fieldsToDisplay.forEach { (extractionName, entityName) ->
                 if (!mExtractions.containsKey(extractionName)) {
                     mExtractions[extractionName] = GiniCaptureSpecificExtraction(
