@@ -35,6 +35,7 @@ import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.BankSDKBridge
 import net.gini.android.capture.BankSDKProperties
 import net.gini.android.capture.Document
+import net.gini.android.capture.ProductTag
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.document.DocumentFactory
@@ -955,5 +956,150 @@ class AnalysisScreenPresenterTest {
     }
 
 
-}
+    // region CX extractions — no-results routing
 
+    @Test
+    @Throws(Exception::class)
+    fun `CX mode - crossBorderPayment absent - should proceed to no-extractions screen`() {
+        // Given
+        whenever(mActivity.getString(anyInt())).thenReturn("A String")
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
+        analysisFuture.complete(
+            AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                emptyMap(),
+                emptyMap(),
+                emptyList(),
+                "dummy_doc_id",
+                "dummy_doc_filename",
+            )
+        )
+        val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
+        val presenter = createPresenterWithAnalysisFuture(
+            imageDocument,
+            giniCapture = giniCapture,
+            analysisFuture = analysisFuture
+        )
+        val listener = mock<AnalysisFragmentListener>()
+        presenter.setListener(listener)
+
+        // When
+        presenter.start()
+
+        // Then
+        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `CX mode - crossBorderPayment present but empty specificExtractionMaps - should proceed to no-extractions screen`() {
+        // Given
+        whenever(mActivity.getString(anyInt())).thenReturn("A String")
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val emptyCbp = GiniCaptureCompoundExtraction("crossBorderPayment", emptyList())
+        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
+        analysisFuture.complete(
+            AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                emptyMap(),
+                mapOf("crossBorderPayment" to emptyCbp),
+                emptyList(),
+                "dummy_doc_id",
+                "dummy_doc_filename",
+            )
+        )
+        val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
+        val presenter = createPresenterWithAnalysisFuture(
+            imageDocument,
+            giniCapture = giniCapture,
+            analysisFuture = analysisFuture
+        )
+        val listener = mock<AnalysisFragmentListener>()
+        presenter.setListener(listener)
+
+        // When
+        presenter.start()
+
+        // Then
+        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `CX mode - crossBorderPayment has fields - should forward extractions`() {
+        // Given
+        whenever(mActivity.getString(anyInt())).thenReturn("A String")
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val cbpRow = mapOf("amount" to mock<GiniCaptureSpecificExtraction>())
+        val cbp = GiniCaptureCompoundExtraction("crossBorderPayment", listOf(cbpRow))
+        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
+        analysisFuture.complete(
+            AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                emptyMap(),
+                mapOf("crossBorderPayment" to cbp),
+                emptyList(),
+                "dummy_doc_id",
+                "dummy_doc_filename",
+            )
+        )
+        val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
+        val presenter = createPresenterWithAnalysisFuture(
+            imageDocument,
+            giniCapture = giniCapture,
+            analysisFuture = analysisFuture
+        )
+        val listener = mock<AnalysisFragmentListener>()
+        presenter.setListener(listener)
+
+        // When
+        presenter.start()
+
+        // Then
+        TestScope().launch {
+            verify(listener).onExtractionsAvailable(any(), any(), any())
+            verify(listener, never()).onProceedToNoExtractionsScreen(any())
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `SEPA mode - empty specific extractions - should proceed to no-extractions screen (regression)`() {
+        // Given
+        whenever(mActivity.getString(anyInt())).thenReturn("A String")
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
+        analysisFuture.complete(
+            AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                emptyMap(),
+                emptyMap(),
+                emptyList(),
+                "dummy_doc_id",
+                "dummy_doc_filename",
+            )
+        )
+        // Default SEPA product tag
+        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val listener = mock<AnalysisFragmentListener>()
+        presenter.setListener(listener)
+
+        // When
+        presenter.start()
+
+        // Then
+        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+    }
+
+    // endregion
+
+    private fun createGiniCaptureInstanceWithProductTag(productTag: ProductTag): GiniCapture {
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
+            .setGiniCaptureNetworkService(mock())
+            .setProductTag(productTag)
+            .build()
+        return GiniCapture.getInstance()
+    }
+
+}

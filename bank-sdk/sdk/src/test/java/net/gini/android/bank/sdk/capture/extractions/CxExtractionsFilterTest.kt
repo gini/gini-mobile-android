@@ -154,6 +154,71 @@ class CxExtractionsFilterTest {
 
     // endregion
 
+    // region filterForCxExtractions — partial crossBorderPayment
+
+    @Test
+    fun `crossBorderPayment with empty specificExtractionMaps is kept by filter (partial result)`() {
+        val emptyCbp = GiniCaptureCompoundExtraction(
+            CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY,
+            emptyList()
+        )
+        val input = successResult(
+            compound = mapOf(CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY to emptyCbp)
+        )
+
+        val filtered = CxExtractionsFilter.filterForCxExtractions(input)
+
+        assertTrue(
+            "Expected crossBorderPayment key to be preserved even when specificExtractionMaps is empty",
+            filtered.compoundExtractions.containsKey(CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY)
+        )
+        assertTrue(
+            "Expected specificExtractionMaps to remain empty",
+            filtered.compoundExtractions[CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY]!!
+                .specificExtractionMaps.isEmpty()
+        )
+    }
+
+    // endregion
+
+    // region hasCxExtractions
+
+    @Test
+    fun `hasCxExtractions returns false when crossBorderPayment key is absent`() {
+        val result = successResult(compound = emptyMap())
+
+        assertFalse(CxExtractionsFilter.hasCxExtractions(result))
+    }
+
+    @Test
+    fun `hasCxExtractions returns false when crossBorderPayment has empty specificExtractionMaps`() {
+        val emptyCbp = GiniCaptureCompoundExtraction(
+            CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY,
+            emptyList()
+        )
+        val result = successResult(
+            compound = mapOf(CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY to emptyCbp)
+        )
+
+        assertFalse(CxExtractionsFilter.hasCxExtractions(result))
+    }
+
+    @Test
+    fun `hasCxExtractions returns true when crossBorderPayment has non-empty specificExtractionMaps`() {
+        val cbpRow = mapOf("amount" to GiniCaptureSpecificExtraction("amount", "100", "100", null, emptyList()))
+        val cbp = GiniCaptureCompoundExtraction(
+            CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY,
+            listOf(cbpRow)
+        )
+        val result = successResult(
+            compound = mapOf(CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY to cbp)
+        )
+
+        assertTrue(CxExtractionsFilter.hasCxExtractions(result))
+    }
+
+    // endregion
+
     // region helpers
 
     private fun makeSpecific(name: String) =

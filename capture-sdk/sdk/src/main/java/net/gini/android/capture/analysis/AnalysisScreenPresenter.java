@@ -12,6 +12,7 @@ import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
+import net.gini.android.capture.ProductTag;
 import net.gini.android.capture.analysis.warning.WarningPaymentState;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.GiniCaptureDocument;
@@ -28,6 +29,7 @@ import net.gini.android.capture.internal.storage.ImageDiskStore;
 import net.gini.android.capture.internal.util.FileImportHelper;
 import net.gini.android.capture.logging.ErrorLog;
 import net.gini.android.capture.logging.ErrorLogger;
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction;
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction;
 import net.gini.android.capture.tracking.AnalysisScreenEvent;
 import net.gini.android.capture.tracking.AnalysisScreenEvent.ERROR_DETAILS_MAP_KEY;
@@ -339,7 +341,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
                                 }
 
-                                if (resultHolder.getExtractions().isEmpty()) {
+                                if (resultHolder.getExtractions().isEmpty() && !isCxMode()) {
+                                    proceedSuccessNoExtractions();
+                                } else if (isCxEmptyExtractions(resultHolder)) {
                                     proceedSuccessNoExtractions();
                                 } else if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)) {
                                     successResultHolder = resultHolder;
@@ -377,6 +381,20 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                         return null;
                     }
                 });
+    }
+
+    private boolean isCxMode() {
+        return GiniCapture.hasInstance() &&
+                GiniCapture.getInstance().getProductTag() instanceof ProductTag.CxExtractions;
+    }
+
+    private boolean isCxEmptyExtractions(AnalysisInteractor.ResultHolder resultHolder) {
+        if (!isCxMode()) {
+            return false;
+        }
+        GiniCaptureCompoundExtraction cbp =
+                resultHolder.getCompoundExtractions().get("crossBorderPayment");
+        return cbp == null || cbp.getSpecificExtractionMaps().isEmpty();
     }
 
     private void proceedSuccessNoExtractions() {
