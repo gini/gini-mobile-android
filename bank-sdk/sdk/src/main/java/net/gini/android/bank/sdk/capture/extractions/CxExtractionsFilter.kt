@@ -15,7 +15,7 @@ internal object CxExtractionsFilter {
 
     internal const val CROSS_BORDER_PAYMENT_KEY = "crossBorderPayment"
 
-    private val SEPA_SPECIFIC_EXTRACTION_KEYS = setOf(
+    private val sepaSpecificExtractionKeys = setOf(
         "iban",
         "bic",
         "amountToPay",
@@ -25,12 +25,12 @@ internal object CxExtractionsFilter {
         "instantPayment",
     )
 
-    private val PAYMENT_HINTS_EXTRACTION_KEYS = setOf(
+    private val paymentHintsExtractionKeys = setOf(
         "paymentDueDate",
         "creditNote",
     )
 
-    private val SEPA_COMPOUND_EXTRACTION_KEYS = setOf(
+    private val sepaCompoundExtractionKeys = setOf(
         "skontoDiscounts",
         "lineItems",
     )
@@ -43,12 +43,12 @@ internal object CxExtractionsFilter {
     fun filterForCxExtractions(result: CaptureSDKResult.Success): CaptureSDKResult.Success {
         val filteredSpecific: Map<String, GiniCaptureSpecificExtraction> =
             result.specificExtractions.filterKeys { key ->
-                key !in SEPA_SPECIFIC_EXTRACTION_KEYS && key !in PAYMENT_HINTS_EXTRACTION_KEYS
+                key !in sepaSpecificExtractionKeys && key !in paymentHintsExtractionKeys
             }
 
         val filteredCompound: Map<String, GiniCaptureCompoundExtraction> =
             result.compoundExtractions.filterKeys { key ->
-                key !in SEPA_COMPOUND_EXTRACTION_KEYS
+                key !in sepaCompoundExtractionKeys
             }
 
         return CaptureSDKResult.Success(
