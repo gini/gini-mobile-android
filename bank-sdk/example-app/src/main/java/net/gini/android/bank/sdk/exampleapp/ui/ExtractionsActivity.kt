@@ -28,7 +28,6 @@ import net.gini.android.bank.sdk.transactiondocs.ui.extractions.view.Transaction
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.ProductTag
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.util.protectViewFromInsets
@@ -49,7 +48,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
     private var mCompoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap()
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
-    private var mProductTag: ProductTag = ProductTag.SepaExtractions
+    private var isCxExtractions: Boolean = false
 
     @Inject
     internal lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
@@ -138,8 +137,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             mCompoundExtractions = tempMap
         }
         
-        // Read productTag
-        mProductTag = intent.getParcelableExtra(EXTRA_IN_PRODUCT_TAG) ?: ProductTag.SepaExtractions
+        // Read isCxExtractions
+        isCxExtractions = intent.getBooleanExtra(EXTRA_IN_IS_CX_EXTRACTIONS, false)
     }
 
     /**
@@ -172,9 +171,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@ExtractionsActivity)
 
-            // Check productTag to determine which extractions to show
-            val fieldsToDisplay = when (mProductTag) {
-                is ProductTag.CxExtractions -> {
+            // Check isCxExtractions to determine which extractions to show
+            val fieldsToDisplay = if (isCxExtractions) {
                     // For CX: Clear specific extractions and ONLY use compound extractions
                     mExtractions.clear()
                     
@@ -185,16 +183,15 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                     mExtractions.putAll(cxFields)
                     
                     cxExtractionFields // Use CX field mapping
-                }
-                else -> {
+                } else {
                     editableSpecificExtractions // Use SEPA field mapping (default)
                 }
-            }
             
-            // Determine editable fields based on productTag
-            val editableFields = when (mProductTag) {
-                is ProductTag.CxExtractions -> emptyList() // CX = all fields readonly
-                else -> editableSpecificExtractions.keys.toList() // SEPA = only these 7 editable (UNCHANGED)
+            // Determine editable fields based on isCxExtractions
+            val editableFields = if (isCxExtractions) {
+                emptyList() // CX = all fields readonly
+            } else {
+                editableSpecificExtractions.keys.toList() // SEPA = only these 7 editable (UNCHANGED)
             }
             
             // Ensure all expected fields exist (populate missing ones with empty values)
@@ -207,18 +204,14 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             }
             
             // For CX: filter out empty fields (only show fields with values)
-            val extractionsToShow = when (mProductTag) {
-                is ProductTag.CxExtractions -> {
-                    val nonEmptyExtractions = mExtractions.filter { (_, extraction) ->
+            val extractionsToShow = if (isCxExtractions) {
+                    mExtractions.filter { (_, extraction) ->
                         extraction.value.isNotBlank()
                     }
-                    nonEmptyExtractions
-                }
-                else -> {
+                } else {
                     // SEPA: show all fields (including empty ones) - UNCHANGED
                     mExtractions
                 }
-            }
 
             adapter = ExtractionsAdapter(
                 getSortedExtractions(extractionsToShow),
@@ -328,13 +321,13 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     companion object {
         const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
         const val EXTRA_IN_COMPOUND_EXTRACTIONS = "EXTRA_IN_COMPOUND_EXTRACTIONS"
-        const val EXTRA_IN_PRODUCT_TAG = "EXTRA_IN_PRODUCT_TAG"
+        const val EXTRA_IN_IS_CX_EXTRACTIONS = "EXTRA_IN_IS_CX_EXTRACTIONS"
         var isCaptureSDKExtractions : Boolean = false
         fun getStartIntent(
             context: Context, 
             extractionsBundle: Map<String, GiniCaptureSpecificExtraction>,
             compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
-            productTag: ProductTag = ProductTag.SepaExtractions,
+            isCxExtractions: Boolean = false,
             isCaptureSdkExtractions: Boolean = false
         ): Intent {
             isCaptureSDKExtractions = isCaptureSdkExtractions
@@ -345,7 +338,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 putExtra(EXTRA_IN_COMPOUND_EXTRACTIONS, Bundle().apply {
                     compoundExtractions.map { putParcelable(it.key, it.value) }
                 })
-                putExtra(EXTRA_IN_PRODUCT_TAG, productTag)
+                putExtra(EXTRA_IN_IS_CX_EXTRACTIONS, isCxExtractions)
             }
         }
     }
