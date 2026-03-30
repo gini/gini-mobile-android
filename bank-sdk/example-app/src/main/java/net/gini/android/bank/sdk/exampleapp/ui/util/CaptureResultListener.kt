@@ -7,6 +7,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.ExtractionsActivity
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureFragmentListener
+import net.gini.android.capture.ProductTag
 
 class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener {
     override fun onFinishedWithResult(result: CaptureSDKResult) {
@@ -49,7 +50,7 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
                         context,
                         result.specificExtractions,
                         result.compoundExtractions,
-                        GiniCapture.getInstance().productTag,
+                        GiniCapture.getInstance().productTag == ProductTag.CxExtractions,
                         true
                     )
                 )
