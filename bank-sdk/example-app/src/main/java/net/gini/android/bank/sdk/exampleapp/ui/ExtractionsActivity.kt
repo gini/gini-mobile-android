@@ -162,21 +162,17 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@ExtractionsActivity)
 
-            // Check isCxExtractions to determine which extractions to show
+            // For CX: replace mExtractions with flattened compound extractions
+            if (isCxExtractions) {
+                mExtractions.clear()
+                mExtractions.putAll(flattenCompoundExtractions())
+            }
+
             val fieldsToDisplay = if (isCxExtractions) {
-                    // For CX: Clear specific extractions and ONLY use compound extractions
-                    mExtractions.clear()
-                    
-                    // Flatten compound extractions into mExtractions
-                    val cxFields = flattenCompoundExtractions()
-                    
-                    // Replace with CX fields
-                    mExtractions.putAll(cxFields)
-                    
-                    emptyMap() // No schema needed for CX; fields come directly from compound extractions
-                } else {
-                    editableSpecificExtractions // Use SEPA field mapping (default)
-                }
+                emptyMap() // No schema needed for CX; fields come directly from compound extractions
+            } else {
+                editableSpecificExtractions // Use SEPA field mapping (default)
+            }
             
             // Determine editable fields based on isCxExtractions
             val editableFields = if (isCxExtractions) {
