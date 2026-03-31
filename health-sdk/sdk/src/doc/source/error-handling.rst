@@ -85,7 +85,7 @@ Mapped to Kotlin as:
     data class ErrorItem(
         val code: String,                        // Short error code (e.g., "2002")
         val message: String? = null,             // Per-item description
-        val documentIdList: List<String>? = null // Affected entity IDs (documents or payment requests)
+        val affectedIds: List<String>? = null // Affected entity IDs (documents or payment requests)
     )
 
 .. note::
@@ -142,7 +142,7 @@ All ``GiniHealth`` suspend functions throw ``GiniHealthException`` when an API c
             Log.e("GiniHealth", "HTTP ${e.statusCode}: ${e.parsedMessage}")
             Log.e("GiniHealth", "Request ID: ${e.requestId}")
             e.errorItems?.forEach { item ->
-                Log.e("GiniHealth", "  Code=${item.code} | Affected: ${item.documentIdList}")
+                Log.e("GiniHealth", "  Code=${item.code} | Affected: ${item.affectedIds}")
             }
         } catch (e: Exception) {
             // SDK request cancellation, validation error, or CancellationException from coroutine scope
@@ -223,7 +223,7 @@ New API — ``try/catch`` block:
         showError(e.parsedMessage)
         // Inspect which IDs caused the failure
         e.errorItems?.forEach { item ->
-            Log.e("GiniHealth", "Code=${item.code} | Affected: ${item.documentIdList}")
+            Log.e("GiniHealth", "Code=${item.code} | Affected: ${item.affectedIds}")
         }
     } catch (e: Exception) {
         // SDK request cancellation, validation error, or CancellationException from coroutine scope
