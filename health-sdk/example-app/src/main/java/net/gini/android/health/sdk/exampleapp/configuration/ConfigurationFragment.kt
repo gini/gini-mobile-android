@@ -59,6 +59,13 @@ class ConfigurationFragment: Fragment() {
                 copy(shouldShowReviewBottomDialog = isChecked)
             }
         }
+
+        ghsHandleErrorsInternally.isChecked = viewModel.getPaymentFlowConfiguration()?.shouldHandleErrorsInternally ?: true
+        ghsHandleErrorsInternally.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.updatePaymentFlowConfiguration {
+                copy(shouldHandleErrorsInternally = isChecked)
+            }
+        }
     }
 
     private fun FragmentConfigurationBinding.setupSliderListener() {

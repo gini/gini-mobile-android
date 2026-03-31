@@ -101,10 +101,10 @@ class InvoicesViewModel(
                 val paymentReviewFragment = invoicesRepository.giniHealth.getPaymentFragmentWithDocument(
                     documentWithExtractions.documentId,
                     PaymentFlowConfiguration(
-                        shouldHandleErrorsInternally = true,
+                        shouldHandleErrorsInternally = paymentFlowConfiguration?.shouldHandleErrorsInternally ?: true,
                         shouldShowReviewBottomDialog = false,
                         showCloseButtonOnReviewFragment = true,
-                        popupDurationPaymentReview = paymentFlowConfiguration?.popupDurationPaymentReview?: PaymentFlowConfiguration.DEFAULT_POPUP_DURATION
+                        popupDurationPaymentReview = paymentFlowConfiguration?.popupDurationPaymentReview ?: PaymentFlowConfiguration.DEFAULT_POPUP_DURATION
                     )
                 )
                 Result.success(paymentReviewFragment)
@@ -124,7 +124,7 @@ class InvoicesViewModel(
 
     fun getPaymentFragmentForPaymentDetails(paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration?): Result<PaymentFragment> {
         try {
-            val paymentFragment = invoicesRepository.giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewBottomDialog = paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false, shouldHandleErrorsInternally = true))
+            val paymentFragment = invoicesRepository.giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewBottomDialog = paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false, shouldHandleErrorsInternally = paymentFlowConfiguration?.shouldHandleErrorsInternally ?: true))
             return Result.success(paymentFragment)
         } catch (e: Exception) {
             LOG.error("Error getting payment fragment without document", e)
