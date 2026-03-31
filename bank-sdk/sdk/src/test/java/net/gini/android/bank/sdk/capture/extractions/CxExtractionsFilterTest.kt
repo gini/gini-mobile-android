@@ -154,10 +154,10 @@ class CxExtractionsFilterTest {
 
     // endregion
 
-    // region filterForCxExtractions — partial crossBorderPayment
+    // region filterForCxExtractions — crossBorderPayment with empty rows
 
     @Test
-    fun `crossBorderPayment with empty specificExtractionMaps is kept by filter (partial result)`() {
+    fun `crossBorderPayment with empty specificExtractionMaps is kept by filter`() {
         val emptyCbp = GiniCaptureCompoundExtraction(
             CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY,
             emptyList()
