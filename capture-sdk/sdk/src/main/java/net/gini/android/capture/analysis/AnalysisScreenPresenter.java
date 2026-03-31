@@ -69,6 +69,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     private static final String EXTRACTION_PAYMENT_STATE = "paymentState";
     private static final String EXTRACTION_PAYMENT_DUE_DATE = "paymentDueDate";
 
+    @VisibleForTesting
+    static final String CROSS_BORDER_PAYMENT_KEY = "crossBorderPayment";
+
     private static final Logger LOG = LoggerFactory.getLogger(AnalysisScreenPresenter.class);
 
     @VisibleForTesting
@@ -393,7 +396,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             return false;
         }
         GiniCaptureCompoundExtraction cbp =
-                resultHolder.getCompoundExtractions().get("crossBorderPayment");
+                resultHolder.getCompoundExtractions().get(CROSS_BORDER_PAYMENT_KEY);
         return cbp == null || cbp.getSpecificExtractionMaps().isEmpty();
     }
 

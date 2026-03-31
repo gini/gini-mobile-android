@@ -35,9 +35,10 @@ import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.BankSDKBridge
 import net.gini.android.capture.BankSDKProperties
 import net.gini.android.capture.Document
-import net.gini.android.capture.ProductTag
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
+import net.gini.android.capture.ProductTag
+import net.gini.android.capture.analysis.AnalysisScreenPresenter.CROSS_BORDER_PAYMENT_KEY
 import net.gini.android.capture.document.DocumentFactory
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.ImageDocument
@@ -997,13 +998,13 @@ class AnalysisScreenPresenterTest {
         // Given
         whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
-        val emptyCbp = GiniCaptureCompoundExtraction("crossBorderPayment", emptyList())
+        val emptyCbp = GiniCaptureCompoundExtraction(CROSS_BORDER_PAYMENT_KEY, emptyList())
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 emptyMap(),
-                mapOf("crossBorderPayment" to emptyCbp),
+                mapOf(CROSS_BORDER_PAYMENT_KEY to emptyCbp),
                 emptyList(),
                 "dummy_doc_id",
                 "dummy_doc_filename",
@@ -1032,13 +1033,13 @@ class AnalysisScreenPresenterTest {
         whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val cbpRow = mapOf("amount" to mock<GiniCaptureSpecificExtraction>())
-        val cbp = GiniCaptureCompoundExtraction("crossBorderPayment", listOf(cbpRow))
+        val cbp = GiniCaptureCompoundExtraction(CROSS_BORDER_PAYMENT_KEY, listOf(cbpRow))
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 emptyMap(),
-                mapOf("crossBorderPayment" to cbp),
+                mapOf(CROSS_BORDER_PAYMENT_KEY to cbp),
                 emptyList(),
                 "dummy_doc_id",
                 "dummy_doc_filename",
