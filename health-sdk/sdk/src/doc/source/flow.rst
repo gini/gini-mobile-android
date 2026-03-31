@@ -8,7 +8,8 @@ manages interaction with the Gini Health API and ``PaymentFragment`` controls th
 
     API call failures are surfaced as ``GiniHealthException``, which gives you the HTTP status code, a
     human-readable ``parsedMessage``, a ``requestId`` for support, and per-item error codes for bulk
-    operations. Cancellation and validation errors surface as different exception types.
+    operations. Cancellation and validation issues may surface either as specific exception types or as
+    non-exception results — for example, some methods return ``false`` on cancellation instead of throwing.
     See the `Error Handling <error-handling.html>`_ guide for the full reference.
 
 .. contents:: The recommended flow is:
@@ -110,7 +111,7 @@ Health API. You can then store the ``isPayable`` state in your own data model.
         } catch (e: GiniHealthException) {
             // Handle structured error — e.parsedMessage, e.statusCode, e.requestId
         } catch (e: Exception) {
-            // Handle unexpected error (cancellation returns false, not an exception)
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -132,7 +133,7 @@ multiple invoices, ``false`` if otherwise.
         } catch (e: GiniHealthException) {
             // Handle structured error — e.parsedMessage, e.statusCode, e.requestId
         } catch (e: Exception) {
-            // Handle unexpected error (cancellation returns false, not an exception)
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -187,7 +188,7 @@ If the request is cancelled, a plain ``Exception`` is thrown.
         } catch (e: GiniHealthException) {
             // Handle structured error — e.parsedMessage, e.statusCode, e.requestId
         } catch (e: Exception) {
-            // Handle cancellation
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -208,14 +209,14 @@ parsed error message, request ID, and the original cause. See `Error Handling <e
         } catch (e: GiniHealthException) {
             // Handle error — e.parsedMessage, e.statusCode, e.requestId
         } catch (e: Exception) {
-            // Handle cancellation
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
 Delete multiple payment requests
 ---------------------------------
 
-``GiniHealthSDK`` provides a  method to delete multiple payment request at once. You can do this by calling ``giniHealth.deletePaymentRequests(...)`` with a list of payment request IDs. The call will only succeed if all payment request were successfully deleted. If any payment request is invalid, unauthorized, or not found, the entire deletion request will fail, and no payment requests will be deleted.
+``GiniHealthSDK`` provides a method to delete multiple payment requests at once. You can do this by calling ``giniHealth.deletePaymentRequests(...)`` with a list of payment request IDs. The call will only succeed if all payment requests were successfully deleted. If any payment request is invalid, unauthorized, or not found, the entire deletion request will fail, and no payment requests will be deleted.
 
 On failure a ``GiniHealthException`` is thrown. Inspect ``e.errorItems`` to see which payment request IDs caused
 the failure and their error codes. See `Error Handling <error-handling.html>`_ for details.
@@ -234,7 +235,7 @@ the failure and their error codes. See `Error Handling <error-handling.html>`_ f
             // e.errorItems   — per-ID error codes and affected IDs
             // e.requestId    — provide to Gini support
         } catch (e: Exception) {
-            // Handle cancellation
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -262,7 +263,7 @@ failure and their error codes. See `Error Handling <error-handling.html>`_ for d
             // e.errorItems   — per-ID error codes and affected IDs
             // e.requestId    — provide to Gini support
         } catch (e: Exception) {
-            // Handle cancellation
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -346,5 +347,4 @@ Initialize Koin once at app startup so the ``GiniHealth`` instance is created an
 
 .. note::
    You can also initialize without a DI framework by creating the ``GiniHealth`` instance in your ``Application`` and calling the ``setInstance()`` method once at startup. The sample app includes Koin-based usage for reference.
-
 

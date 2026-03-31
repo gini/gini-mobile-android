@@ -3,7 +3,7 @@ Error Handling
 
 The Gini Health SDK provides structured, detailed error information for API failures. Errors carry the HTTP
 status code, a human-readable message, a support request ID, and — for bulk operations — the list of affected
-document IDs.
+entity IDs (documents or payment requests).
 
 The SDK error model is built around ``GiniHealthException``, ``ErrorResponse``, and ``ErrorItem``, each
 described in detail below.
@@ -20,14 +20,16 @@ as a timeout (``cause`` holds the underlying exception, ``statusCode`` and ``err
     ``GiniHealthException`` does **not** cover all exceptions that the SDK may throw. The following categories of
     exception are thrown directly as their native types and are **not** wrapped in ``GiniHealthException``:
 
-    * **Request cancellation** — cancelled coroutines surface as a plain ``Exception``.
+    * **Coroutine cancellation** — Kotlin's coroutine framework signals cancellation via ``CancellationException``
+      (a subclass of ``Exception``). It will be caught by a generic ``catch (e: Exception)`` block — if your
+      coroutine scope requires cooperative cancellation, rethrow it manually.
     * **Validation / precondition errors** — e.g. ``IllegalStateException`` when input validation fails
       (for example, calling ``getPaymentFragmentWithoutDocument()`` with incomplete payment details or
       an invalid IBAN).
     * **Programming errors** — e.g. ``NullPointerException`` or ``IllegalArgumentException`` caused by
       internal SDK misconfiguration.
 
-    Always include a general ``catch (e: Exception)`` block **after** your ``catch (e: GiniHealthException)`` block
+    Always place a general ``catch (e: Exception)`` block **after** your ``catch (e: GiniHealthException)`` block
     to handle these remaining cases.
 
 .. code-block:: kotlin
@@ -46,7 +48,7 @@ as a timeout (``cause`` holds the underlying exception, ``statusCode`` and ``err
         // Unique request ID from errorResponse — provide to Gini support when reporting issues
         val requestId: String?
 
-        // Individual error entries from errorResponse.items (code, message, affected document IDs)
+        // Individual error entries from errorResponse.items (code, message, affected entity IDs)
         val errorItems: List<ErrorItem>?
     }
 
@@ -83,7 +85,7 @@ Mapped to Kotlin as:
     data class ErrorItem(
         val code: String,                        // Short error code (e.g., "2002")
         val message: String? = null,             // Per-item description
-        val documentIdList: List<String>? = null // Affected document IDs (bulk operations)
+        val documentIdList: List<String>? = null // Affected entity IDs (documents or payment requests)
     )
 
 .. note::
@@ -143,7 +145,7 @@ All ``GiniHealth`` suspend functions throw ``GiniHealthException`` when an API c
                 Log.e("GiniHealth", "  Code=${item.code} | Affected: ${item.documentIdList}")
             }
         } catch (e: Exception) {
-            // Request cancelled or other non-API error
+            // SDK request cancellation, validation error, or CancellationException from coroutine scope
             Log.e("GiniHealth", "Unexpected: ${e.message}")
         }
     }
@@ -224,6 +226,5 @@ New API — ``try/catch`` block:
             Log.e("GiniHealth", "Code=${item.code} | Affected: ${item.documentIdList}")
         }
     } catch (e: Exception) {
-        // Request cancelled
+        // SDK request cancellation, validation error, or CancellationException from coroutine scope
     }
-
