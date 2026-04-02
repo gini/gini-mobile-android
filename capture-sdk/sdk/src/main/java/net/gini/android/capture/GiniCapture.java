@@ -341,7 +341,7 @@ public class GiniCapture {
                         entry.getKey(), entry.getValue(), entry.getKey(), null, emptyList()));
             }
             // Remove skonto so it isn't overridden when sending normal feedback.
-            sInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
+            oldInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
 
             if (oldInstance.mGiniCaptureNetworkService != null) {
                 oldInstance.mGiniCaptureNetworkService.sendFeedback(
