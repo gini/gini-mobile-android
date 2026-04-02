@@ -6,11 +6,19 @@ import androidx.activity.result.ActivityResultLauncher
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
+import net.gini.android.bank.sdk.GiniBank.cleanupCapture
+import net.gini.android.bank.sdk.GiniBank.digitalInvocieSkontoNavigationBarBottomAdapterInstance
+import net.gini.android.bank.sdk.GiniBank.digitalInvoiceHelpNavigationBarBottomAdapterInstance
+import net.gini.android.bank.sdk.GiniBank.digitalInvoiceNavigationBarBottomAdapterInstance
+import net.gini.android.bank.sdk.GiniBank.digitalInvoiceOnboardingNavigationBarBottomAdapterInstance
 import net.gini.android.bank.sdk.GiniBank.getPaymentRequest
 import net.gini.android.bank.sdk.GiniBank.resolvePaymentRequest
 import net.gini.android.bank.sdk.GiniBank.returnToPaymentInitiatorApp
+import net.gini.android.bank.sdk.GiniBank.sendTransferSummary
 import net.gini.android.bank.sdk.GiniBank.setCaptureConfiguration
 import net.gini.android.bank.sdk.GiniBank.setGiniApi
+import net.gini.android.bank.sdk.GiniBank.skontoHelpNavigationBarBottomAdapterInstance
+import net.gini.android.bank.sdk.GiniBank.skontoNavigationBarBottomAdapterInstance
 import net.gini.android.bank.sdk.GiniBank.startCaptureFlow
 import net.gini.android.bank.sdk.GiniBank.startCaptureFlowForIntent
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
@@ -44,7 +52,6 @@ import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ImportedFileValidationException
-import net.gini.android.capture.ProductTag
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
@@ -210,9 +217,9 @@ object GiniBank {
      * Sends the confirmed transfer summary to Gini for any payment type.
      *
      * The SDK routes the confirmed values to the correct backend structure based on the
-     * configured [ProductTag]:
+     * configured [net.gini.android.capture.ProductTag]:
      *
-     * **CX payments** ([ProductTag.CxExtractions]):
+     * **CX payments** ([net.gini.android.capture.ProductTag.CxExtractions]):
      * Pass the confirmed CX field names and values exactly as received in
      * [net.gini.android.capture.CaptureSDKResult.Success.crossBorderPayment].
      * The SDK automatically wraps them under `compoundExtractions["crossBorderPayment"]`.
@@ -224,7 +231,7 @@ object GiniBank {
      * GiniBank.sendTransferSummary(fields)
      * ```
      *
-     * **SEPA payments** (all other [ProductTag] values):
+     * **SEPA payments** (all other [net.gini.android.capture.ProductTag] values):
      * Pass the confirmed SEPA field names and their values as a map.
      * When providing `amountToPay`, use the `"value:currency"` format, e.g. `"950.00:EUR"`.
      * ```kotlin
