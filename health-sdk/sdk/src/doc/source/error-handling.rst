@@ -150,8 +150,11 @@ All ``GiniHealth`` suspend functions throw ``GiniHealthException`` when an API c
         }
     }
 
-The same pattern applies to ``deletePaymentRequest()``, ``deletePaymentRequests()``, ``deleteDocuments()``,
-``checkIfDocumentIsPayable()``, and ``checkIfDocumentContainsMultipleDocuments()``.
+The same pattern applies to ``deletePaymentRequest()``, ``deletePaymentRequests()``, and ``deleteDocuments()``.
+
+For ``checkIfDocumentIsPayable()`` and ``checkIfDocumentContainsMultipleDocuments()``, the same
+``GiniHealthException`` is thrown on API failure — however, **cancellation does not throw**: both
+functions return ``false`` when the underlying request is cancelled.
 
 ``documentManager`` functions (``Resource`` return type)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

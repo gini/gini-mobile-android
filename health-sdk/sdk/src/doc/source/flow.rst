@@ -122,6 +122,12 @@ Call ``giniHealth.checkIfDocumentContainsMultipleDocuments()`` with the composit
 We recommend performing this check after checking if the document is payable. The method will return ``true`` if the document contains
 multiple invoices, ``false`` if otherwise.
 
+.. note::
+
+    A ``false`` result may also indicate that the underlying request was cancelled. If you need to distinguish
+    between "single invoice" and "cancelled", check whether the coroutine was cancelled before relying on the
+    ``false`` return value.
+
 .. code-block:: kotlin
 
     // Assuming `compositeDocument` is `Document` returned by `createCompositeDocument(...)`
