@@ -28,7 +28,7 @@ object GiniHealthErrorHandler {
             val statusCode = exception.statusCode?.toString() ?: "N/A"
             val builder = StringBuilder(context.getString(R.string.error_full_message, errorMessage, statusCode))
 
-            // Append all error items (code, message, documentIdList)
+            // Append all error items (code, message, affectedIds)
             val items = exception.errorItems
             if (!items.isNullOrEmpty()) {
                 builder.append("\n").append(context.getString(R.string.error_items_header))
@@ -37,10 +37,10 @@ object GiniHealthErrorHandler {
                     builder.append("\n").append(
                         context.getString(R.string.error_item_detail, item.code, itemMessage)
                     )
-                    val docIds = item.documentIdList
-                    if (!docIds.isNullOrEmpty()) {
+                    val affectedIds = item.affectedIds
+                    if (!affectedIds.isNullOrEmpty()) {
                         builder.append("\n").append(
-                            context.getString(R.string.error_item_document_ids, docIds.joinToString(", "))
+                            context.getString(R.string.error_item_document_ids, affectedIds.joinToString(", "))
                         )
                     }
                 }

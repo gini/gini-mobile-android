@@ -232,11 +232,16 @@ open class InvoicesActivity : AppCompatActivity() {
                         when (result) {
                             is ResultWrapper.Error -> {
                                 LOG.debug("documentFlow error in InvoicesActivity: ${result.error.message}")
-                                // Show error dialog for document loading errors
-                                showGiniHealthErrorDialog(
-                                    exception = result.error,
-                                    onDismiss = { /* Error acknowledged */ }
-                                )
+                                // Only show error dialog when the payment review fragment is NOT active.
+                                // When the fragment is shown it already handles errors internally
+                                // (shouldHandleErrorsInternally = true), so showing a dialog here too
+                                // would result in a duplicate "Unknown hostname" message.
+                                if (!isReviewFragmentShown()) {
+                                    showGiniHealthErrorDialog(
+                                        exception = result.error,
+                                        onDismiss = { /* Error acknowledged */ }
+                                    )
+                                }
                             }
                             is ResultWrapper.Success -> {
                                 LOG.debug("Document loaded successfully in InvoicesActivity: ${result.value.id}")
@@ -251,10 +256,13 @@ open class InvoicesActivity : AppCompatActivity() {
                     viewModel.extractionErrorFlow.collect { error ->
                         error?.let {
                             LOG.debug("Extraction error in InvoicesActivity: ${it.message}")
-                            showGiniHealthErrorDialog(
-                                exception = it,
-                                onDismiss = { /* Error acknowledged */ }
-                            )
+                            // Only show error dialog when the payment review fragment is NOT active.
+                            if (!isReviewFragmentShown()) {
+                                showGiniHealthErrorDialog(
+                                    exception = it,
+                                    onDismiss = { /* Error acknowledged */ }
+                                )
+                            }
                         }
                     }
                 }
@@ -265,11 +273,16 @@ open class InvoicesActivity : AppCompatActivity() {
                         when (result) {
                             is ResultWrapper.Error -> {
                                 LOG.debug("paymentFlow error in InvoicesActivity: ${result.error.message}")
-                                // Show error dialog for extraction errors
-                                showGiniHealthErrorDialog(
-                                    exception = result.error,
-                                    onDismiss = { /* Error acknowledged */ }
-                                )
+                                // Only show error dialog when the payment review fragment is NOT active.
+                                // When the fragment is shown it already handles errors internally
+                                // (shouldHandleErrorsInternally = true), so showing a dialog here too
+                                // would result in a duplicate "Unknown hostname" message.
+                                if (!isReviewFragmentShown()) {
+                                    showGiniHealthErrorDialog(
+                                        exception = result.error,
+                                        onDismiss = { /* Error acknowledged */ }
+                                    )
+                                }
                             }
                             is ResultWrapper.Success -> {
                                 LOG.debug("Extractions loaded successfully in InvoicesActivity")
@@ -299,6 +312,16 @@ open class InvoicesActivity : AppCompatActivity() {
             }
             invalidateOptionsMenu()
         }
+    }
+
+    /**
+     * Returns true when the payment review fragment is currently added to the back stack.
+     * While it is shown, the SDK handles errors internally (shouldHandleErrorsInternally = true),
+     * so the activity must NOT show its own error dialogs for the same errors.
+     */
+    private fun isReviewFragmentShown(): Boolean {
+        val fragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
+        return fragment != null && fragment.isAdded
     }
 
     private fun setActivityTitle(screen: DisplayedScreen) {

@@ -401,7 +401,7 @@ class GiniHealthTest {
                 items = listOf(
                     ErrorItem(
                         code = "2013",
-                        documentIdList = listOf("8d5h7630-8f16-11ec-bd63-31f9d04e200e", "92de6fec-4a7f-4376-b5d5-5155adf8adca")
+                        affectedIds = listOf("8d5h7630-8f16-11ec-bd63-31f9d04e200e", "92de6fec-4a7f-4376-b5d5-5155adf8adca")
                     )
                 ),
                 requestId = "test-456"
@@ -415,7 +415,7 @@ class GiniHealthTest {
         Truth.assertThat(exception.statusCode).isEqualTo(400)
         Truth.assertThat(exception.errorItems).hasSize(1)
         Truth.assertThat(exception.errorItems?.first()?.code).isEqualTo("2013")
-        Truth.assertThat(exception.errorItems?.first()?.documentIdList).hasSize(2)
+        Truth.assertThat(exception.errorItems?.first()?.affectedIds).hasSize(2)
         Truth.assertThat(exception.requestId).isEqualTo("test-456")
     }
 
@@ -439,7 +439,7 @@ class GiniHealthTest {
                 items = listOf(
                     ErrorItem(
                         code = "2014",
-                        documentIdList = listOf("3db07630-8f16-11ec-bd63-31f9d04e200e")
+                        affectedIds = listOf("3db07630-8f16-11ec-bd63-31f9d04e200e")
                     )
                 ),
                 requestId = "test-789"
@@ -452,7 +452,7 @@ class GiniHealthTest {
 
         Truth.assertThat(exception.errorItems).hasSize(1)
         Truth.assertThat(exception.errorItems?.first()?.code).isEqualTo("2014")
-        Truth.assertThat(exception.errorItems?.first()?.documentIdList).hasSize(1)
+        Truth.assertThat(exception.errorItems?.first()?.affectedIds).hasSize(1)
     }
 
     @Test
@@ -475,7 +475,7 @@ class GiniHealthTest {
                 items = listOf(
                     ErrorItem(
                         code = "2015",
-                        documentIdList = listOf("0eb26fec-4a7f-4376-b5d5-5155adf8adca", "8f434c37-7167-4c42-ac10-02e0826bba98")
+                        affectedIds = listOf("0eb26fec-4a7f-4376-b5d5-5155adf8adca", "8f434c37-7167-4c42-ac10-02e0826bba98")
                     )
                 ),
                 requestId = "test-abc"
@@ -488,7 +488,7 @@ class GiniHealthTest {
 
         Truth.assertThat(exception.errorItems).hasSize(1)
         Truth.assertThat(exception.errorItems?.first()?.code).isEqualTo("2015")
-        Truth.assertThat(exception.errorItems?.first()?.documentIdList).hasSize(2)
+        Truth.assertThat(exception.errorItems?.first()?.affectedIds).hasSize(2)
     }
 
     @Test
@@ -515,11 +515,11 @@ class GiniHealthTest {
                 items = listOf(
                     ErrorItem(
                         code = "2013",
-                        documentIdList = listOf("8d5h7630-8f16-11ec-bd63-31f9d04e200e")
+                        affectedIds = listOf("8d5h7630-8f16-11ec-bd63-31f9d04e200e")
                     ),
                     ErrorItem(
                         code = "2014",
-                        documentIdList = listOf("3db07630-8f16-11ec-bd63-31f9d04e200e", "0db26fec-4a7f-4376-b5d5-5155adf8adca")
+                        affectedIds = listOf("3db07630-8f16-11ec-bd63-31f9d04e200e", "0db26fec-4a7f-4376-b5d5-5155adf8adca")
                     )
                 ),
                 requestId = "a497-01aa-b6f0-cc17-43d3-76a8"
@@ -703,7 +703,7 @@ class GiniHealthTest {
                 items = listOf(
                     ErrorItem(
                         code = "2016",
-                        documentIdList = listOf("0eb26fec-4a7f-4376-b5d5-5155adf8adca", "8f434c37-7167-4c42-ac10-02e0826bba98")
+                        affectedIds = listOf("0eb26fec-4a7f-4376-b5d5-5155adf8adca", "8f434c37-7167-4c42-ac10-02e0826bba98")
                     )
                 ),
                 requestId = "7cc7-229b-4b88-dd94-3aad-f072"
@@ -716,7 +716,7 @@ class GiniHealthTest {
 
         Truth.assertThat(exception.errorItems).hasSize(1)
         Truth.assertThat(exception.errorItems?.first()?.code).isEqualTo("2016")
-        Truth.assertThat(exception.errorItems?.first()?.documentIdList).hasSize(2)
+        Truth.assertThat(exception.errorItems?.first()?.affectedIds).hasSize(2)
     }
 
     @Test
@@ -739,7 +739,7 @@ class GiniHealthTest {
                 items = listOf(
                     ErrorItem(
                         code = "2017",
-                        documentIdList = listOf("0eb26fec-4a7f-4376-b5d5-5155adf8adca")
+                        affectedIds = listOf("0eb26fec-4a7f-4376-b5d5-5155adf8adca")
                     )
                 ),
                 requestId = "7cc7-229b-4b88-dd94-3aad-f072"
@@ -752,7 +752,7 @@ class GiniHealthTest {
 
         Truth.assertThat(exception.errorItems).hasSize(1)
         Truth.assertThat(exception.errorItems?.first()?.code).isEqualTo("2017")
-        Truth.assertThat(exception.errorItems?.first()?.documentIdList).hasSize(1)
+        Truth.assertThat(exception.errorItems?.first()?.affectedIds).hasSize(1)
     }
 
     @Test
@@ -779,11 +779,11 @@ class GiniHealthTest {
                 items = listOf(
                     ErrorItem(
                         code = "2016",
-                        documentIdList = listOf("0eb26fec-4a7f-4376-b5d5-5155adf8adca")
+                        affectedIds = listOf("0eb26fec-4a7f-4376-b5d5-5155adf8adca")
                     ),
                     ErrorItem(
                         code = "2017",
-                        documentIdList = listOf("8f434c37-7167-4c42-ac10-02e0826bba98")
+                        affectedIds = listOf("8f434c37-7167-4c42-ac10-02e0826bba98")
                     )
                 ),
                 requestId = "7cc7-229b-4b88-dd94-3aad-f072"
@@ -1088,11 +1088,11 @@ class GiniHealthTest {
     }
 
     @Test
-    fun `deletePaymentRequests bulk delete with documentIdList`() = runTest {
+    fun `deletePaymentRequests bulk delete with affectedIds`() = runTest {
         val errorResponse = ErrorResponse(
             items = listOf(
-                ErrorItem(code = "2016", documentIdList = listOf("pr-unauthorized-1", "pr-unauthorized-2")),
-                ErrorItem(code = "2017", documentIdList = listOf("pr-not-found-1", "pr-not-found-2"))
+                ErrorItem(code = "2016", affectedIds = listOf("pr-unauthorized-1", "pr-unauthorized-2")),
+                ErrorItem(code = "2017", affectedIds = listOf("pr-not-found-1", "pr-not-found-2"))
             ),
             requestId = "bulk-delete-error"
         )
@@ -1109,17 +1109,17 @@ class GiniHealthTest {
 
         Truth.assertThat(exception.errorItems).hasSize(2)
         Truth.assertThat(exception.errorItems?.get(0)?.code).isEqualTo("2016")
-        Truth.assertThat(exception.errorItems?.get(0)?.documentIdList).hasSize(2)
-        Truth.assertThat(exception.errorItems?.get(0)?.documentIdList).contains("pr-unauthorized-1")
-        Truth.assertThat(exception.errorItems?.get(1)?.documentIdList).hasSize(2)
+        Truth.assertThat(exception.errorItems?.get(0)?.affectedIds).hasSize(2)
+        Truth.assertThat(exception.errorItems?.get(0)?.affectedIds).contains("pr-unauthorized-1")
+        Truth.assertThat(exception.errorItems?.get(1)?.affectedIds).hasSize(2)
     }
 
     @Test
-    fun `deleteDocuments bulk delete with documentIdList`() = runTest {
+    fun `deleteDocuments bulk delete with affectedIds`() = runTest {
         val errorResponse = ErrorResponse(
             items = listOf(
-                ErrorItem(code = "2013", documentIdList = listOf("doc-unauthorized")),
-                ErrorItem(code = "2014", documentIdList = listOf("doc-not-found-1", "doc-not-found-2"))
+                ErrorItem(code = "2013", affectedIds = listOf("doc-unauthorized")),
+                ErrorItem(code = "2014", affectedIds = listOf("doc-not-found-1", "doc-not-found-2"))
             ),
             requestId = "bulk-delete-docs"
         )
@@ -1137,7 +1137,7 @@ class GiniHealthTest {
         Truth.assertThat(exception.errorItems).hasSize(2)
         Truth.assertThat(exception.errorItems?.get(0)?.code).isEqualTo("2013")
         Truth.assertThat(exception.errorItems?.get(1)?.code).isEqualTo("2014")
-        Truth.assertThat(exception.errorItems?.get(1)?.documentIdList).contains("doc-not-found-1")
+        Truth.assertThat(exception.errorItems?.get(1)?.affectedIds).contains("doc-not-found-1")
     }
 
     @Test

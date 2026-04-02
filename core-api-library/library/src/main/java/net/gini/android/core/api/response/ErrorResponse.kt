@@ -22,12 +22,12 @@ data class ErrorResponse(
  *
  * @property code A short error code identifying the error type
  * @property message Optional human consumable error description (not intended for end-users)
- * @property documentIdList Optional object related to the error (e.g., document IDs for bulk deletion)
+ * @property affectedIds Optional list of entity IDs related to the error (e.g., document IDs or payment request IDs for bulk operations)
  */
 @JsonClass(generateAdapter = true)
 data class ErrorItem(
     @Json(name = "code") val code: String,
     @Json(name = "message") val message: String? = null,
-    @Json(name = "object") val documentIdList: List<String>? = null
+    @Json(name = "object") val affectedIds: List<String>? = null
 )
 
