@@ -31,13 +31,13 @@ sealed class CaptureSDKResult : Parcelable {
          * extraction name mapped to its [GiniCaptureSpecificExtraction].
          *
          * Pass the confirmed field values from this property directly to
-         * [net.gini.android.bank.sdk.GiniBank.sendTransferSummary] for CX payments:
+         * [GiniCapture.sendTransferSummary] for CX payments:
          * ```kotlin
          * val fields = result.crossBorderPayment
          *     ?.firstOrNull()
          *     ?.mapValues { it.value.value }
          *     ?: emptyMap()
-         * GiniBank.sendTransferSummary(fields)
+         * GiniCapture.sendTransferSummary(fields)
          * ```
          */
         val crossBorderPayment: List<Map<String, GiniCaptureSpecificExtraction>>?
