@@ -92,6 +92,19 @@ public class GiniCapture {
     public static final int PAYMENT_DUE_HINT_THRESHOLD_DAYS = 5;
     private static final Logger LOG = LoggerFactory.getLogger(GiniCapture.class);
     private static GiniCapture sInstance;
+
+    // Maps known SEPA extraction names to their correct entity types, matching the typed overload.
+    private static final Map<String, String> SEPA_ENTITY_TYPES;
+    static {
+        SEPA_ENTITY_TYPES = new HashMap<>();
+        SEPA_ENTITY_TYPES.put("amountToPay", "amount");
+        SEPA_ENTITY_TYPES.put("paymentRecipient", "companyname");
+        SEPA_ENTITY_TYPES.put("paymentReference", "reference");
+        SEPA_ENTITY_TYPES.put("paymentPurpose", "reference");
+        SEPA_ENTITY_TYPES.put("iban", "iban");
+        SEPA_ENTITY_TYPES.put("bic", "bic");
+        SEPA_ENTITY_TYPES.put("instantPayment", "instantPayment");
+    }
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
     private final NetworkRequestsManager mNetworkRequestsManager;
     private final DocumentDataMemoryCache mDocumentDataMemoryCache;
@@ -337,8 +350,11 @@ public class GiniCapture {
         } else {
             final Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
             for (Map.Entry<String, String> entry : extractions.entrySet()) {
+                final String entity = SEPA_ENTITY_TYPES.containsKey(entry.getKey())
+                        ? SEPA_ENTITY_TYPES.get(entry.getKey())
+                        : entry.getKey();
                 extractionMap.put(entry.getKey(), new GiniCaptureSpecificExtraction(
-                        entry.getKey(), entry.getValue(), entry.getKey(), null, emptyList()));
+                        entry.getKey(), entry.getValue(), entity, null, emptyList()));
             }
             // Remove skonto so it isn't overridden when sending normal feedback.
             oldInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
