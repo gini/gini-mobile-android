@@ -76,7 +76,7 @@ class OrdersViewModel(
 
     fun getPaymentFragmentForPaymentDetails(paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration?): Result<PaymentFragment> {
         try {
-            val paymentFragment = giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewBottomDialog = (paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false), shouldHandleErrorsInternally = true))
+            val paymentFragment = giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewBottomDialog = (paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false), shouldHandleErrorsInternally = paymentFlowConfiguration?.shouldHandleErrorsInternally ?: true))
             return Result.success(paymentFragment)
         } catch (e: Exception) {
             return Result.failure(e)
