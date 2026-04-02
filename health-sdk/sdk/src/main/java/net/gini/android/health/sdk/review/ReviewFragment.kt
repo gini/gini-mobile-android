@@ -396,7 +396,11 @@ class ReviewFragment private constructor(
         close.setOnClickListener { view ->
             binding.root.findFocus()?.clearFocus()
             binding.ghsPaymentDetails.clearFocus()
-            if (isKeyboardShown) {
+            // Query actual IME state directly; isKeyboardShown may be stale if the animation
+            // callback did not fire (e.g. system-dismissed keyboard on older API levels).
+            val imeVisible = ViewCompat.getRootWindowInsets(binding.root)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: isKeyboardShown
+            if (imeVisible) {
                 view.hideKeyboard()
             } else {
                 viewModel.reviewFragmentListener.onCloseReview()
@@ -455,8 +459,12 @@ class ReviewFragment private constructor(
                         ghsPaymentDetails.translationY = 0f
                         paymentDetailsInfoBar.translationY = ghsPaymentDetails.translationY
                     }
-                    // Was it a closing animation?
-                    if (startBottom > endBottom) {
+                    // Use actual IME visibility instead of padding comparison, because
+                    // ghsPaymentDetails may not have IME-driven padding, making startBottom and
+                    // endBottom both 0 and causing the flag to always be set to true (keyboard shown).
+                    val imeVisible = ViewCompat.getRootWindowInsets(binding.root)
+                        ?.isVisible(WindowInsetsCompat.Type.ime()) ?: (startBottom < endBottom)
+                    if (!imeVisible) {
                         if (pager.isUserInputEnabled) {
                             indicator.isVisible = true
                         }
