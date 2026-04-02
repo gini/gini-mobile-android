@@ -408,7 +408,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
         if (GiniCapture.hasInstance() &&
             GiniCapture.getInstance().productTag is ProductTag.CxExtractions
         ) {
-            return if (result.compoundExtractions.containsKey(CxExtractionsFilter.CROSS_BORDER_PAYMENT_KEY)) {
+            return if (CxExtractionsFilter.hasCxExtractions(result)) {
                 result
             } else {
                 CaptureSDKResult.Empty
