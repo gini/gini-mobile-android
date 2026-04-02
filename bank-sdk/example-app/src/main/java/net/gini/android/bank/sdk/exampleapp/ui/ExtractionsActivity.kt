@@ -28,6 +28,7 @@ import net.gini.android.bank.sdk.transactiondocs.ui.extractions.view.Transaction
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.util.protectViewFromInsets
 import java.math.BigDecimal
@@ -45,7 +46,9 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private lateinit var binding: ActivityExtractionsBinding
 
     private var mExtractions: MutableMap<String, GiniCaptureSpecificExtraction> = hashMapOf()
+    private var mCompoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap()
     private lateinit var mExtractionsAdapter: ExtractionsAdapter
+    private var isCxExtractions: Boolean = false
 
     @Inject
     internal lateinit var defaultNetworkServicesProvider: DefaultNetworkServicesProvider
@@ -115,6 +118,43 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 getParcelable<GiniCaptureSpecificExtraction>(name)?.let { mExtractions[name] = it }
             }
         }
+        
+        // Read compound extractions
+        intent.extras?.getParcelable<Bundle>(EXTRA_IN_COMPOUND_EXTRACTIONS)?.run {
+            val tempMap = mutableMapOf<String, GiniCaptureCompoundExtraction>()
+            keySet().forEach { name ->
+                getParcelable<GiniCaptureCompoundExtraction>(name)?.let { tempMap[name] = it }
+            }
+            mCompoundExtractions = tempMap
+        }
+        
+        // Read isCxExtractions
+        isCxExtractions = intent.getBooleanExtra(EXTRA_IN_IS_CX_EXTRACTIONS, false)
+    }
+
+    /**
+     * Converts compound extractions to flat specific extractions for CX payments.
+     * Takes the first payment option from compound extraction and flattens it.
+     * ONLY processes crossBorderPayment compound extraction, ignores line items.
+     */
+    private fun flattenCompoundExtractions(): Map<String, GiniCaptureSpecificExtraction> {
+        val flattened = mutableMapOf<String, GiniCaptureSpecificExtraction>()
+        
+        // Filter to ONLY crossBorderPayment compound extraction (exclude line items)
+        mCompoundExtractions.entries
+            .filter { (compoundName, _) -> compoundName == "crossBorderPayment" }
+            .forEach { (_, compoundExtraction) ->
+                // Take first payment option (index 0)
+                if (compoundExtraction.specificExtractionMaps.isNotEmpty()) {
+                    val firstOption = compoundExtraction.specificExtractionMaps[0]
+                    
+                    firstOption.forEach { (fieldName, specificExtraction) ->
+                        flattened[fieldName] = specificExtraction
+                    }
+                }
+            }
+        
+        return flattened
     }
 
     private fun setUpRecyclerView(binding: ActivityExtractionsBinding) {
@@ -122,18 +162,48 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@ExtractionsActivity)
 
-            editableSpecificExtractions.forEach {
-                if (!mExtractions.containsKey(it.key)) {
-                    mExtractions[it.key] = GiniCaptureSpecificExtraction(
-                        it.key, "", it.value, null, emptyList()
+            // For CX: replace mExtractions with flattened compound extractions
+            if (isCxExtractions) {
+                mExtractions.clear()
+                mExtractions.putAll(flattenCompoundExtractions())
+            }
+
+            val fieldsToDisplay = if (isCxExtractions) {
+                emptyMap() // No schema needed for CX; fields come directly from compound extractions
+            } else {
+                editableSpecificExtractions // Use SEPA field mapping (default)
+            }
+            
+            // Determine editable fields based on isCxExtractions
+            val editableFields = if (isCxExtractions) {
+                emptyList() // CX = all fields readonly
+            } else {
+                editableSpecificExtractions.keys.toList() // SEPA = only these 7 editable (UNCHANGED)
+            }
+            
+            // Ensure all expected SEPA fields exist (populate missing ones with empty values)
+            fieldsToDisplay.forEach { (extractionName, entityName) ->
+                if (!mExtractions.containsKey(extractionName)) {
+                    mExtractions[extractionName] = GiniCaptureSpecificExtraction(
+                        extractionName, "", entityName, null, emptyList()
                     )
                 }
             }
+            
+            // For CX: filter out empty fields (only show fields with values)
+            val extractionsToShow = if (isCxExtractions) {
+                    mExtractions.filter { (_, extraction) ->
+                        extraction.value.isNotBlank()
+                    }
+                } else {
+                    // SEPA: show all fields (including empty ones) - UNCHANGED
+                    mExtractions
+                }
 
             adapter = ExtractionsAdapter(
-                getSortedExtractions(mExtractions),
+                getSortedExtractions(extractionsToShow),
                 this@ExtractionsActivity,
-                editableSpecificExtractions.keys.toList()
+                editableFields
             ).also {
                 mExtractionsAdapter = it
             }
@@ -237,9 +307,14 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     companion object {
         const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
+        const val EXTRA_IN_COMPOUND_EXTRACTIONS = "EXTRA_IN_COMPOUND_EXTRACTIONS"
+        const val EXTRA_IN_IS_CX_EXTRACTIONS = "EXTRA_IN_IS_CX_EXTRACTIONS"
         var isCaptureSDKExtractions : Boolean = false
         fun getStartIntent(
-            context: Context, extractionsBundle: Map<String, GiniCaptureSpecificExtraction>,
+            context: Context, 
+            extractionsBundle: Map<String, GiniCaptureSpecificExtraction>,
+            compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
+            isCxExtractions: Boolean = false,
             isCaptureSdkExtractions: Boolean = false
         ): Intent {
             isCaptureSDKExtractions = isCaptureSdkExtractions
@@ -247,6 +322,10 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                 putExtra(EXTRA_IN_EXTRACTIONS, Bundle().apply {
                     extractionsBundle.map { putParcelable(it.key, it.value) }
                 })
+                putExtra(EXTRA_IN_COMPOUND_EXTRACTIONS, Bundle().apply {
+                    compoundExtractions.map { putParcelable(it.key, it.value) }
+                })
+                putExtra(EXTRA_IN_IS_CX_EXTRACTIONS, isCxExtractions)
             }
         }
     }

@@ -151,4 +151,7 @@
 
     <string name="configuration_transaction_docs_enabled">Transaction Docs enabled</string>
     <string name="configuration_transaction_docs_always_attach_docs">Always attach invoices</string>
+
+    <string name="product_tag_cx_switch_label">Enable CX Extractions</string>
+    <string name="product_tag_cx_switch_description">Turn on for CX (compound) extractions. Turn off for SEPA (standard) extractions.</string>
 </resources>
