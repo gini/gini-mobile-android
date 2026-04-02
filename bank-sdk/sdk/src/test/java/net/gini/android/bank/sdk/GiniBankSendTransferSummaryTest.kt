@@ -118,20 +118,34 @@ class GiniBankSendTransferSummaryTest {
     // region SEPA path (via generic Map overload)
 
     @Test
-    fun `SEPA map - fields are sent as flat specificExtractions`() {
+    fun `SEPA map - fields are sent as flat specificExtractions with correct values and entity types`() {
         buildGiniBankWith(ProductTag.SepaExtractions)
         val specificSlot = slot<Map<String, GiniCaptureSpecificExtraction>>()
         every { mockNetworkService.sendFeedback(capture(specificSlot), any(), any()) } just Runs
 
         val fields = mapOf(
+            "amountToPay" to "950.00:EUR",
+            "paymentRecipient" to "Acme GmbH",
+            "paymentReference" to "REF-001",
+            "paymentPurpose" to "Invoice March",
             "iban" to "DE89370400440532013000",
             "bic" to "COBADEFFXXX",
-            "amountToPay" to "950.00:EUR"
+            "instantPayment" to "false",
         )
         GiniBank.sendTransferSummary(fields)
 
+        val expectedEntities = mapOf(
+            "amountToPay" to "amount",
+            "paymentRecipient" to "companyname",
+            "paymentReference" to "reference",
+            "paymentPurpose" to "reference",
+            "iban" to "iban",
+            "bic" to "bic",
+            "instantPayment" to "instantPayment",
+        )
         fields.forEach { (name, value) ->
             assertThat(specificSlot.captured[name]?.value).isEqualTo(value)
+            assertThat(specificSlot.captured[name]?.entity).isEqualTo(expectedEntities[name])
         }
     }
 
