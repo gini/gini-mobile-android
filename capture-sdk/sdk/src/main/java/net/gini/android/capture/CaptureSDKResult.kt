@@ -21,7 +21,28 @@ sealed class CaptureSDKResult : Parcelable {
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
         val returnReasons: List<GiniCaptureReturnReason>,
-    ) : CaptureSDKResult()
+    ) : CaptureSDKResult() {
+
+        /**
+         * The cross-border payment compound extractions returned by the backend when
+         * [ProductTag.CxExtractions] is active.
+         *
+         * Each entry in the outer list is a row of CX fields; each inner map contains the
+         * extraction name mapped to its [GiniCaptureSpecificExtraction].
+         *
+         * Pass the confirmed field values from this property directly to
+         * [GiniCapture.sendTransferSummary] for CX payments:
+         * ```kotlin
+         * val fields = result.crossBorderPayment
+         *     ?.firstOrNull()
+         *     ?.mapValues { it.value.value }
+         *     ?: emptyMap()
+         * GiniCapture.sendTransferSummary(fields)
+         * ```
+         */
+        val crossBorderPayment: List<Map<String, GiniCaptureSpecificExtraction>>?
+            get() = compoundExtractions["crossBorderPayment"]?.specificExtractionMaps
+    }
 
     /**
      * No extraction.
