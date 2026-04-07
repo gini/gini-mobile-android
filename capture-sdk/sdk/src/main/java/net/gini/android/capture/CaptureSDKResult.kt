@@ -21,9 +21,7 @@ sealed class CaptureSDKResult : Parcelable {
         val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
         val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
         val returnReasons: List<GiniCaptureReturnReason>,
-    ) : CaptureSDKResult() {
-
-    }
+    ) : CaptureSDKResult()
 
     /**
      * No extraction.
