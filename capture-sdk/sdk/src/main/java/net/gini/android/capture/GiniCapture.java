@@ -292,10 +292,11 @@ public class GiniCapture {
      * structure based on the configured {@link ProductTag}:
      *
      * <ul>
-     *   <li><b>CX payments</b> ({@link ProductTag.CxExtractions}): All fields are wrapped
-     *       under {@code compoundExtractions["crossBorderPayment"]}. Pass the field names and
-     *       values exactly as received in
-     *       {@link CaptureSDKResult.Success#getCrossBorderPayment()} .</li>
+     *   <li><b>CX payments</b> ({@link ProductTag.CxExtractions}): Pass the confirmed CX field
+     *       names and values as a flat map (e.g. the first row from
+     *       {@code result.compoundExtractions.get("crossBorderPayment").getSpecificExtractionMaps()}).
+     *       The SDK automatically wraps them under {@code compoundExtractions["crossBorderPayment"]}
+     *       when sending feedback.</li>
      *   <li><b>SEPA payments</b> (all other {@link ProductTag} values): Fields are sent as
      *       flat specific extractions. When providing {@code amountToPay}, use the
      *       {@code "value:currency"} format, e.g. {@code "950.00:EUR"}.</li>

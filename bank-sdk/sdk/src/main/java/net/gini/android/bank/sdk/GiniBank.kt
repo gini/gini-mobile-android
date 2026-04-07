@@ -205,11 +205,13 @@ object GiniBank {
      * configured [net.gini.android.capture.ProductTag]:
      *
      * **CX payments** ([net.gini.android.capture.ProductTag.CxExtractions]):
-     * Pass the confirmed CX field names and values exactly as received in
-     * [net.gini.android.capture.CaptureSDKResult.Success.crossBorderPayment].
-     * The SDK automatically wraps them under `compoundExtractions["crossBorderPayment"]`.
+     * Pass the confirmed CX field names and values as a flat map (e.g. the first row from
+     * `result.compoundExtractions["crossBorderPayment"]?.specificExtractionMaps`).
+     * The SDK automatically wraps them back under `compoundExtractions["crossBorderPayment"]`
+     * when sending feedback.
      * ```kotlin
-     * val fields = result.crossBorderPayment
+     * val fields = result.compoundExtractions["crossBorderPayment"]
+     *     ?.specificExtractionMaps
      *     ?.firstOrNull()
      *     ?.mapValues { it.value.value }
      *     ?: emptyMap()
