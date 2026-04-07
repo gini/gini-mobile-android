@@ -220,42 +220,67 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     private fun <T> getSortedExtractions(extractions: Map<String, T>): List<T> =
         extractions.toSortedMap().values.toList()
 
+    private fun extraction(key: String) = mExtractions[key]?.value ?: ""
+
+    private data class SepaFields(
+        val iban: String,
+        val bic: String,
+        val amount: String,
+        val paymentRecipient: String,
+        val paymentPurpose: String,
+        val paymentReference: String,
+        val instantPayment: String,
+    )
+
+    private fun readSepaFields(): SepaFields = SepaFields(
+        iban = extraction("iban"),
+        bic = extraction("bic"),
+        amount = extraction("amountToPay").ifEmpty { Amount.EMPTY.amountToPay() },
+        paymentRecipient = extraction("paymentRecipient"),
+        paymentPurpose = extraction("paymentPurpose"),
+        paymentReference = extraction("paymentReference"),
+        instantPayment = extraction("instantPayment"),
+    )
+
     private fun sendTransferSummaryAndClose(binding: ActivityExtractionsBinding) {
         // Transfer summary should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
 
-        var amount = mExtractions["amountToPay"]?.value ?: ""
-        val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
-        val paymentReference = mExtractions["paymentReference"]?.value ?: ""
-        val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
-        val iban = mExtractions["iban"]?.value ?: ""
-        val bic = mExtractions["bic"]?.value ?: ""
-        val instantPayment = mExtractions["instantPayment"]?.value ?: ""
+        if (!isCxExtractions) {
+            val sepa = readSepaFields()
 
-        if (amount.isEmpty()) {
-            amount = Amount.EMPTY.amountToPay()
+            viewModel.saveTransactionData(
+                sepa.iban,
+                sepa.bic,
+                sepa.amount,
+                sepa.paymentRecipient,
+                sepa.paymentPurpose,
+                sepa.paymentReference,
+            )
+
+            GiniBank.sendTransferSummary(
+                sepa.paymentRecipient,
+                sepa.paymentReference,
+                sepa.paymentPurpose,
+                sepa.iban,
+                sepa.bic,
+                Amount(BigDecimal(sepa.amount.removeSuffix(":EUR")), AmountCurrency.EUR),
+                sepa.instantPayment.toBooleanStrictOrNull()
+            )
+        } else {
+            viewModel.saveTransactionData(
+                iban = extraction("creditorAccountNumber"),
+                bic = extraction("creditorAgentBIC"),
+                amountToPay = extraction("instructedAmount"),
+                paymentRecipient = extraction("creditorName"),
+                paymentPurpose = "",
+                paymentReference = "",
+            )
+
+            GiniBank.sendTransferSummary(
+                mExtractions.mapValues { (_, extraction) -> extraction.value }
+            )
         }
-
-        viewModel.saveTransactionData(
-            iban,
-            bic,
-            amount,
-            paymentRecipient,
-            paymentPurpose,
-            paymentReference,
-        )
-
-        GiniBank.sendTransferSummary(
-            paymentRecipient,
-            paymentReference,
-            paymentPurpose,
-            iban,
-            bic,
-            Amount(
-                BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
-            ),
-            instantPayment.toBooleanStrictOrNull()
-        )
 
         GiniBank.cleanupCapture(applicationContext)
 
@@ -266,28 +291,16 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         // Transfer summary should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
 
-        var amount = mExtractions["amountToPay"]?.value ?: ""
-        val paymentRecipient = mExtractions["paymentRecipient"]?.value ?: ""
-        val paymentReference = mExtractions["paymentReference"]?.value ?: ""
-        val paymentPurpose = mExtractions["paymentPurpose"]?.value ?: ""
-        val iban = mExtractions["iban"]?.value ?: ""
-        val bic = mExtractions["bic"]?.value ?: ""
-        val instantPayment = mExtractions["instantPayment"]?.value ?: ""
-
-        if (amount.isEmpty()) {
-            amount = Amount.EMPTY.amountToPay()
-        }
+        val sepa = readSepaFields()
 
         GiniCapture.sendTransferSummary(
-            paymentRecipient,
-            paymentReference,
-            paymentPurpose,
-            iban,
-            bic,
-            Amount(
-                BigDecimal(amount.removeSuffix(":EUR")), AmountCurrency.EUR
-            ),
-            instantPayment.toBooleanStrictOrNull()
+            sepa.paymentRecipient,
+            sepa.paymentReference,
+            sepa.paymentPurpose,
+            sepa.iban,
+            sepa.bic,
+            Amount(BigDecimal(sepa.amount.removeSuffix(":EUR")), AmountCurrency.EUR),
+            sepa.instantPayment.toBooleanStrictOrNull()
         )
 
         GiniCapture.cleanup(applicationContext)
