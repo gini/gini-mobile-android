@@ -177,6 +177,36 @@ If the request fails or is canceled, an exception will be thrown with an error m
         }
     }
 
+Sending Feedback for Extractions
+---------------------------------
+
+The SDK sends feedback automatically when using the integrated flow (``PaymentFragment``). If you need to send it
+manually in a custom flow, use the ``sendFeedbackForExtractions`` method on the document manager.
+
+.. note::
+
+    As of version 5.x, the SDK sends feedback using **specific extractions only** (``payment_recipient``, ``iban``,
+    ``amount_to_pay``, ``payment_purpose``).
+
+.. code-block:: kotlin
+
+    coroutineScope.launch {
+        try {
+            val updatedExtractions = extractionsContainer.specificExtractions
+                .toMutableMap()
+                .withFeedback(updatedPaymentDetails)
+
+            giniHealth.giniHealthApi.documentManager
+                .sendFeedbackForExtractions(document, updatedExtractions)
+        } catch (e: Exception) {
+            // Handle exception
+        }
+    }
+
+.. important::
+
+    **Feedback is optional and non-blocking**: Feedback failures do not interrupt the payment flow.
+
 Delete payment request
 ---------------------------------
 
