@@ -185,8 +185,10 @@ manually in a custom flow, use the ``sendFeedbackForExtractions`` method on the 
 
 .. note::
 
-    As of version 5.x, the SDK sends feedback using **specific extractions only** (``payment_recipient``, ``iban``,
-    ``amount_to_pay``, ``payment_purpose``).
+    As of version 5.x, the SDK sends feedback using the **specific extractions** map. The four payment fields
+    (``payment_recipient``, ``iban``, ``amount_to_pay``, ``payment_purpose``) are updated with the user's input,
+    while any other specific extractions present in the map (e.g. ``medical_service_provider``) are preserved and
+    sent as-is.
 
 .. code-block:: kotlin
 

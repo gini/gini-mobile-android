@@ -211,8 +211,38 @@ class PaymentDetailsTest {
     }
 
     @Test
-    fun `Does not modify original specific extractions map`() {
-        // Given
+    fun `Preserves blank entity types for existing payment extractions`() {
+        // Given - extractions with blank entity (as returned by some backends)
+        // This is expected behaviour: blank entities are preserved as-is, not overwritten with defaults
+        val specificExtractions = mutableMapOf(
+            "payment_recipient" to SpecificExtraction("payment_recipient", "Old Recipient", "", null, emptyList()),
+            "iban" to SpecificExtraction("iban", "DE123456789", "", null, emptyList()),
+            "amount_to_pay" to SpecificExtraction("amount_to_pay", "1.23:EUR", "", null, emptyList()),
+            "payment_purpose" to SpecificExtraction("payment_purpose", "Old purpose", "", null, emptyList())
+        )
+
+        val paymentDetails = PaymentDetails(
+            recipient = "Jack Vance",
+            iban = "DE987654321",
+            amount = "9.99",
+            purpose = "Still testing"
+        )
+
+        // When
+        val updatedExtractions = specificExtractions.withFeedback(paymentDetails)
+
+        // Then - blank entities are preserved, values are updated
+        assertEquals("", updatedExtractions["payment_recipient"]?.entity)
+        assertEquals("", updatedExtractions["iban"]?.entity)
+        assertEquals("", updatedExtractions["amount_to_pay"]?.entity)
+        assertEquals("", updatedExtractions["payment_purpose"]?.entity)
+        assertEquals(paymentDetails.recipient, updatedExtractions["payment_recipient"]?.value)
+        assertEquals(paymentDetails.iban, updatedExtractions["iban"]?.value)
+        assertEquals(paymentDetails.purpose, updatedExtractions["payment_purpose"]?.value)
+    }
+
+    @Test
+    fun `Does not modify original specific extractions map`() {        // Given
         val specificExtractions = mutableMapOf(
             "iban" to SpecificExtraction(
                 "iban",

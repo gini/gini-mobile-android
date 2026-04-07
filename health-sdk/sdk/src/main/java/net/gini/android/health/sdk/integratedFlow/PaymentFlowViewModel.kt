@@ -211,12 +211,7 @@ class PaymentFlowViewModel(
                         )
                     }
 
-                    is ResultWrapper.Error -> {
-                        // no implemention is needed
-                    }
-                    is ResultWrapper.Loading -> {
-                        // no implemention is needed
-                    }
+                    is ResultWrapper.Error, is ResultWrapper.Loading -> Unit
                 }
             } catch (ignored: Throwable) {
                 // Ignored since we don't want to interrupt the flow because of feedback failure
