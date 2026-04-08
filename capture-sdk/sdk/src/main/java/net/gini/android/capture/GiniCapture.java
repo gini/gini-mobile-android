@@ -92,6 +92,19 @@ public class GiniCapture {
     public static final int PAYMENT_DUE_HINT_THRESHOLD_DAYS = 5;
     private static final Logger LOG = LoggerFactory.getLogger(GiniCapture.class);
     private static GiniCapture sInstance;
+
+    // Maps known SEPA extraction names to their correct entity types, matching the typed overload.
+    private static final Map<String, String> SEPA_ENTITY_TYPES;
+    static {
+        SEPA_ENTITY_TYPES = new HashMap<>();
+        SEPA_ENTITY_TYPES.put("amountToPay", "amount");
+        SEPA_ENTITY_TYPES.put("paymentRecipient", "companyname");
+        SEPA_ENTITY_TYPES.put("paymentReference", "reference");
+        SEPA_ENTITY_TYPES.put("paymentPurpose", "reference");
+        SEPA_ENTITY_TYPES.put("iban", "iban");
+        SEPA_ENTITY_TYPES.put("bic", "bic");
+        SEPA_ENTITY_TYPES.put("instantPayment", "instantPayment");
+    }
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
     private final NetworkRequestsManager mNetworkRequestsManager;
     private final DocumentDataMemoryCache mDocumentDataMemoryCache;
@@ -136,6 +149,7 @@ public class GiniCapture {
     private final boolean saveInvoicesLocallyEnabled;
 
     private final Map<String, String> mCustomUploadMetadata;
+    private final ProductTag mProductTag;
 
 
     /**
@@ -271,6 +285,111 @@ public class GiniCapture {
 
 
     /**
+     * Sends the confirmed transfer summary to Gini for any payment type.
+     *
+     * <p>Call this method after the user has approved the extracted values, before calling
+     * {@link #cleanup(Context)}. The SDK routes the confirmed values to the correct backend
+     * structure based on the configured {@link ProductTag}:
+     *
+     * <ul>
+     *   <li><b>CX payments</b> ({@link ProductTag.CxExtractions}): Pass the confirmed CX field
+     *       names and values as a flat map (e.g. the first row from
+     *       {@code result.compoundExtractions.get("crossBorderPayment").getSpecificExtractionMaps()}).
+     *       The SDK automatically wraps them under {@code compoundExtractions["crossBorderPayment"]}
+     *       when sending feedback.</li>
+     *   <li><b>SEPA payments</b> (all other {@link ProductTag} values): Fields are sent as
+     *       flat specific extractions. When providing {@code amountToPay}, use the
+     *       {@code "value:currency"} format, e.g. {@code "950.00:EUR"}.</li>
+     * </ul>
+     *
+     *
+     * @param extractions map of extraction field names to their confirmed values
+     */
+    public static synchronized void sendTransferSummary(@NonNull final Map<String, String> extractions) {
+        if (sInstance == null) {
+            return;
+        }
+
+        final GiniCapture oldInstance = sInstance;
+
+        if (oldInstance.mProductTag instanceof ProductTag.CxExtractions) {
+            final Map<String, GiniCaptureSpecificExtraction> cbpRow = new HashMap<>();
+            for (Map.Entry<String, String> entry : extractions.entrySet()) {
+                cbpRow.put(entry.getKey(), new GiniCaptureSpecificExtraction(
+                        entry.getKey(), entry.getValue(), entry.getKey(), null, emptyList()));
+            }
+            final Map<String, GiniCaptureCompoundExtraction> compoundExtractionMap = new HashMap<>();
+            compoundExtractionMap.put("crossBorderPayment",
+                    new GiniCaptureCompoundExtraction("crossBorderPayment", listOf(cbpRow)));
+
+            if (oldInstance.mGiniCaptureNetworkService != null) {
+                oldInstance.mGiniCaptureNetworkService.sendFeedback(
+                        new HashMap<>(), compoundExtractionMap,
+                        new GiniCaptureNetworkCallback<Void, Error>() {
+                            @Override
+                            public void failure(Error error) {
+                                if (oldInstance.mNetworkRequestsManager != null) {
+                                    oldInstance.mNetworkRequestsManager.cleanup();
+                                }
+                            }
+
+                            @Override
+                            public void success(Void result) {
+                                if (oldInstance.mNetworkRequestsManager != null) {
+                                    oldInstance.mNetworkRequestsManager.cleanup();
+                                }
+                            }
+
+                            @Override
+                            public void cancelled() {
+                                if (oldInstance.mNetworkRequestsManager != null) {
+                                    oldInstance.mNetworkRequestsManager.cleanup();
+                                }
+                            }
+                        });
+            }
+        } else {
+            final Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
+            for (Map.Entry<String, String> entry : extractions.entrySet()) {
+                final String entity = SEPA_ENTITY_TYPES.containsKey(entry.getKey())
+                        ? SEPA_ENTITY_TYPES.get(entry.getKey())
+                        : entry.getKey();
+                extractionMap.put(entry.getKey(), new GiniCaptureSpecificExtraction(
+                        entry.getKey(), entry.getValue(), entity, null, emptyList()));
+            }
+            // Remove skonto so it isn't overridden when sending normal feedback.
+            oldInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
+
+            if (oldInstance.mGiniCaptureNetworkService != null) {
+                oldInstance.mGiniCaptureNetworkService.sendFeedback(
+                        extractionMap, oldInstance.mInternal.getCompoundExtractions(),
+                        new GiniCaptureNetworkCallback<Void, Error>() {
+                            @Override
+                            public void failure(Error error) {
+                                if (oldInstance.mNetworkRequestsManager != null) {
+                                    oldInstance.mNetworkRequestsManager.cleanup();
+                                }
+                            }
+
+                            @Override
+                            public void success(Void result) {
+                                if (oldInstance.mNetworkRequestsManager != null) {
+                                    oldInstance.mNetworkRequestsManager.cleanup();
+                                }
+                            }
+
+                            @Override
+                            public void cancelled() {
+                                if (oldInstance.mNetworkRequestsManager != null) {
+                                    oldInstance.mNetworkRequestsManager.cleanup();
+                                }
+                            }
+                        });
+            }
+        }
+    }
+
+    /**
      * Internal use only.
      *
      * @suppress
@@ -402,6 +521,7 @@ public class GiniCapture {
         allowScreenshots = builder.getAllowScreenshots();
         saveInvoicesLocallyEnabled = builder.getSaveInvoicesLocallyEnabled();
         mCustomUploadMetadata = builder.getCustomUploadMetadata();
+        mProductTag = builder.getProductTag();
         mGiniComposableStyleProvider = builder.getGiniComposableStyleProvider();
     }
 
@@ -480,6 +600,16 @@ public class GiniCapture {
     @Nullable
     public ArrayList<OnboardingPage> getCustomOnboardingPages() { // NOPMD - ArrayList required (Bundle)
         return mCustomOnboardingPages;
+    }
+
+    /**
+     * Returns the configured product tag.
+     *
+     * @return the {@link ProductTag}
+     */
+    @NonNull
+    public ProductTag getProductTag() {
+        return mProductTag;
     }
 
     /**
@@ -918,6 +1048,8 @@ public class GiniCapture {
         private boolean allowScreenshots = true;
         private boolean savingInvoicesLocallyEnabled = true;
 
+        private ProductTag mProductTag = ProductTag.SepaExtractions.INSTANCE;
+
         private Map<String, String> customUploadMetadata;
         private GiniComposableStyleProvider giniComposableStyleProvider;
 
@@ -926,7 +1058,22 @@ public class GiniCapture {
          */
         public void build() {
             checkNetworkingImplementations();
+            // Override feature flags that are incompatible with ProductTag.CxExtractions
+            applyProductTagOverrides();
             createInstance(this);
+        }
+
+        /**
+         * Applies configuration overrides based on the selected ProductTag.
+         * ProductTag.CxExtractions does not support QR code scanning.
+         * Therefore, all QR code–related flags are automatically set to false,
+         * regardless of the values provided by the caller.
+         */
+        private void applyProductTagOverrides() {
+            if (mProductTag == ProductTag.CxExtractions.INSTANCE) {
+                mQRCodeScanningEnabled = false;
+                mOnlyQRCodeScanningEnabled = false;
+            }
         }
 
         private void checkNetworkingImplementations() {
@@ -1457,6 +1604,23 @@ public class GiniCapture {
 
         private GiniComposableStyleProvider getGiniComposableStyleProvider() {
             return giniComposableStyleProvider;
+        }
+
+        /**
+         * Set the product tag to identify which extraction type to use.
+         *
+         * Default is {@link ProductTag.SepaExtractions}.
+         *
+         * @param productTag the {@link ProductTag} to use
+         * @return the {@link Builder} instance
+         */
+        public Builder setProductTag(@NonNull final ProductTag productTag) {
+            mProductTag = productTag;
+            return this;
+        }
+
+        private ProductTag getProductTag() {
+            return mProductTag;
         }
     }
 

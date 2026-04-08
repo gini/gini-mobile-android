@@ -24,6 +24,7 @@ import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPres
 import net.gini.android.capture.util.SharedPreferenceHelper
 import net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY
 import javax.inject.Inject
+import net.gini.android.capture.ProductTag
 
 @AndroidEntryPoint
 class ConfigurationActivity : AppCompatActivity() {
@@ -235,6 +236,14 @@ class ConfigurationActivity : AppCompatActivity() {
 
         binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.hint =
             configuration.clientSecret
+
+        // Custom HTTP client toggle
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient.isChecked =
+            configuration.isCustomHttpClientEnabled
+
+        // Enable product tag CxExtractions toggle
+        binding.layoutFeatureToggle.switchProductTagCx.isChecked =
+            configuration.productTag == ProductTag.CxExtractions
     }
 
     @Suppress("CyclomaticComplexMethod", "LongMethod")
@@ -635,6 +644,23 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             }
 
+        // Custom HTTP client
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient
+            .setOnCheckedChangeListener { _, isChecked ->
+                val configurationFlow = configurationViewModel.configurationFlow.value
+                configurationViewModel.setConfiguration(
+                    configurationFlow.copy(
+                        isCustomHttpClientEnabled = isChecked
+                    )
+                )
+                // Reinitialize network services with the new flag
+                defaultNetworkServicesProvider.reinitNetworkServices(
+                    configurationFlow.clientId.ifEmpty { getString(R.string.gini_api_client_id) },
+                    configurationFlow.clientSecret.ifEmpty { getString(R.string.gini_api_client_secret) },
+                    isChecked
+                )
+            }
+
         // enable Skonto
         binding.layoutFeatureToggle.switchSkontoFeature.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
@@ -656,6 +682,16 @@ class ConfigurationActivity : AppCompatActivity() {
         // Transaction docs always attach checked
         binding.layoutTransactionDocsToggles.switchAlwaysAttachDocs.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setAlwaysAttachSetting(this, isChecked)
+        }
+
+        // Product Tag switch - OFF = SEPA, ON = CX
+        binding.layoutFeatureToggle.switchProductTagCx.setOnCheckedChangeListener { _, isChecked ->
+            val productTag = if (isChecked) ProductTag.CxExtractions else ProductTag.SepaExtractions
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    productTag = productTag
+                )
+            )
         }
     }
 

@@ -18,6 +18,7 @@ import net.gini.android.capture.ui.components.GiniComposableStyleProvider
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
+import net.gini.android.capture.ProductTag
 
 /**
  * Configuration class for Capture feature.
@@ -219,6 +220,18 @@ data class CaptureConfiguration(
      * Enable/disable the save invoices locally feature
      */
     val saveInvoicesLocallyEnabled: Boolean = true,
+
+    /**
+     * Product tag to identify which extraction type the app uses.
+     *
+     * - [ProductTag.SepaExtractions]: Show normal extractions
+     * - [ProductTag.CxExtractions]: Show compound extractions
+     * - [ProductTag.AutoDetectExtractions]: Auto-detect (not yet available)
+     *
+     * Default is [ProductTag.SepaExtractions] for backward compatibility.
+     *
+     */
+    val productTag: ProductTag = ProductTag.SepaExtractions,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -242,6 +255,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
         .setSaveInvoicesLocallyEnabled(configuration.saveInvoicesLocallyEnabled)
+        .setProductTag(configuration.productTag)
         .addCustomUploadMetadata(GiniBank.USER_COMMENT_GINI_BANK_VERSION, BuildConfig.VERSION_NAME)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }

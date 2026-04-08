@@ -82,7 +82,17 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
             }
         }
 
-    suspend fun createCompositeDocument(documents: List<Document>, documentType: DocumentManager.DocumentType?): Resource<Document> =
+    suspend fun createCompositeDocument(
+        documents: List<Document>,
+        documentType: DocumentManager.DocumentType?
+    ): Resource<Document> =
+        createCompositeDocument(documents, documentType, null)
+
+    suspend fun createCompositeDocument(
+        documents: List<Document>,
+        documentType: DocumentManager.DocumentType?,
+        documentMetadata: DocumentMetadata?
+    ): Resource<Document> =
         withAccessToken { accessToken ->
             wrapInResource {
                 val uri = documentRemoteSource.uploadDocument(
@@ -91,13 +101,23 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
                     giniApiType.giniCompositeJsonMediaType,
                     null,
                     documentType?.apiDoctypeHint,
-                    null
+                    documentMetadata?.metadata
                 )
                 getDocumentInternal(accessToken, uri)
             }
         }
 
-    suspend fun createCompositeDocument(documentRotationMap: LinkedHashMap<Document, Int>, documentType: DocumentManager.DocumentType?): Resource<Document> =
+    suspend fun createCompositeDocument(
+        documentRotationMap: LinkedHashMap<Document, Int>,
+        documentType: DocumentManager.DocumentType?
+    ): Resource<Document> =
+        createCompositeDocument(documentRotationMap, documentType, null)
+
+    suspend fun createCompositeDocument(
+        documentRotationMap: LinkedHashMap<Document, Int>,
+        documentType: DocumentManager.DocumentType?,
+        documentMetadata: DocumentMetadata?
+    ): Resource<Document> =
         withAccessToken { accessToken ->
             wrapInResource {
                 val uri = documentRemoteSource.uploadDocument(
@@ -106,7 +126,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
                     giniApiType.giniCompositeJsonMediaType,
                     null,
                     documentType?.apiDoctypeHint,
-                    null
+                    documentMetadata?.metadata
                 )
                 getDocumentInternal(accessToken, uri)
             }

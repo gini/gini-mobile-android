@@ -155,6 +155,21 @@
         android:layout_marginTop="@dimen/gc_medium_12"
         android:text="@string/save_invoices_feature_label" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_product_tag_cx"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/product_tag_cx_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_productTagDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/product_tag_cx_switch_description" />
+
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:id="@+id/btn_remove_saf_data"
