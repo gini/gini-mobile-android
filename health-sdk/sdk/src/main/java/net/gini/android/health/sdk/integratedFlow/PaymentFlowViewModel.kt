@@ -207,13 +207,11 @@ class PaymentFlowViewModel(
                     is ResultWrapper.Success -> paymentDetails?.extractions?.let { extractionsContainer ->
                         giniHealth.documentManager.sendFeedbackForExtractions(
                             documentResult.value,
-                            extractionsContainer.specificExtractions,
-                            extractionsContainer.compoundExtractions.withFeedback(paymentDetails!!)
+                            extractionsContainer.specificExtractions.toMutableMap().withFeedback(paymentDetails!!)
                         )
                     }
 
-                    is ResultWrapper.Error -> {}
-                    is ResultWrapper.Loading -> {}
+                    is ResultWrapper.Error, is ResultWrapper.Loading -> Unit
                 }
             } catch (ignored: Throwable) {
                 // Ignored since we don't want to interrupt the flow because of feedback failure
