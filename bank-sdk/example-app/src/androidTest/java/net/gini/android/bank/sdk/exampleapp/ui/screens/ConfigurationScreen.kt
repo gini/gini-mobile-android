@@ -36,9 +36,4 @@ class ConfigurationScreen {
         return this
     }
 
-    fun clickReturnReasonsDialogToEnable(): ConfigurationScreen {
-        onView(ViewMatchers.withId(R.id.switch_returnReasonsDialog)).perform(click()
-        )
-        return this
-    }
 }

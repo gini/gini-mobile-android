@@ -80,7 +80,6 @@ class DigitalInvoiceScreenTests {
     fun test3_returnReasonDisplaysWhenToggleSwitchIsDisabled() {
         mainScreen.clickSettingButton()
         configurationScreen.scrollToUICustomizationText()
-        configurationScreen.clickReturnReasonsDialogToEnable()
         pressBack()
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
