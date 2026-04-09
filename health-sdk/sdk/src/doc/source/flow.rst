@@ -181,7 +181,7 @@ Sending Feedback for Extractions
 ---------------------------------
 
 The SDK sends feedback automatically when using the integrated flow (``PaymentFragment``). If you need to send it
-manually in a custom flow, use the ``sendFeedbackForExtractions`` method on the document manager.
+manually in a custom flow, use the ``sendFeedbackWithSpecificExtractions`` method on the document manager.
 
 .. note::
 
@@ -199,7 +199,7 @@ manually in a custom flow, use the ``sendFeedbackForExtractions`` method on the 
                 .withFeedback(updatedPaymentDetails)
 
             giniHealth.giniHealthApi.documentManager
-                .sendFeedbackForExtractions(document, updatedExtractions)
+                .sendFeedbackWithSpecificExtractions(document, updatedExtractions)
         } catch (e: Exception) {
             // Handle exception
         }

@@ -221,6 +221,21 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         documentRepository.sendFeedbackForExtractions(document, specificExtractions)
 
     /**
+     * Sends approved and conceivably corrected specific extractions for the given document.
+     * Uses the "extractions" key in the request body (without compound extractions).
+     *
+     * @param document            The document for which the extractions should be updated.
+     * @param specificExtractions A Map where the key is the name of the specific extraction and the value is the
+     *                            SpecificExtraction object.
+     * @return Empty [Resource] or information about the error
+     */
+    suspend fun sendFeedbackWithSpecificExtractions(
+        document: Document,
+        specificExtractions: Map<String, SpecificExtraction>,
+    ): Resource<Unit> =
+        documentRepository.sendFeedbackWithSpecificExtractions(document, specificExtractions)
+
+    /**
      * @return Resource with [PaymentRequest] for the given id or information about the error
      */
     suspend fun getPaymentRequest(

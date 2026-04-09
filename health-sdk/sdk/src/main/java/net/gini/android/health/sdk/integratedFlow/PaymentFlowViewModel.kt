@@ -205,7 +205,7 @@ class PaymentFlowViewModel(
             try {
                 when (val documentResult = giniHealth.documentFlow.value) {
                     is ResultWrapper.Success -> paymentDetails?.extractions?.let { extractionsContainer ->
-                        giniHealth.documentManager.sendFeedbackForExtractions(
+                        giniHealth.documentManager.sendFeedbackWithSpecificExtractions(
                             documentResult.value,
                             extractionsContainer.specificExtractions.toMutableMap().withFeedback(paymentDetails!!)
                         )
