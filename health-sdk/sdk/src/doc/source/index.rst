@@ -22,6 +22,7 @@ Table of contents
     setup
     authentication
     flow
+    error-handling
     event-tracking
     testing
     customization
