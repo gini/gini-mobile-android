@@ -874,7 +874,7 @@ class GiniHealthTest {
             giniHealth.checkIfDocumentIsPayable(document.id)
             Truth.assertWithMessage("Expected exception to be thrown").fail()
         } catch (e: GiniHealthException) {
-            // Since GiniHealthException extends Throwable (not Exception), 
+            // Since GiniHealthException extends Exception (and therefore also Throwable),
             // this tests backward compatibility for Exception catch blocks
             Truth.assertThat(e.message).isNotNull()
             Truth.assertThat(e.message).contains("Network error")

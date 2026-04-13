@@ -368,10 +368,11 @@ class GiniHealth(
      * If an error occurs, it throws a [GiniHealthException] containing detailed error information
      * including status code, error response items (with error codes and affected document IDs),
      * request ID, and the original exception.
-     * If the request is cancelled, it throws a [GiniHealthException] with a cancellation message.
+     * If the request is cancelled, it throws a standard [Exception].
      *
      * @param documentIds The list of document IDs to be deleted.
-     * @throws GiniHealthException if the deletion fails with an API error or is cancelled
+     * @throws GiniHealthException if the deletion fails with an API error
+     * @throws Exception if the request is cancelled
      */
     suspend fun deleteDocuments(documentIds: List<String>) {
         val response =

@@ -46,12 +46,13 @@ class InvoicesRepository(
     suspend fun uploadHardcodedInvoices() = withContext(coroutineContext) {
         _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Loading
 
-        val documentsWithExtractions = mutableListOf<DocumentWithExtractions>()
         val hardcodedInvoices = hardcodedInvoicesLocalDataSource.getHardcodedInvoices()
 
-        val createdResources = hardcodedInvoices.map { invoiceBytes ->
+        // Each async returns Pair<DocumentWithExtractions?, Resource<*>> — no shared mutable state
+        val results = hardcodedInvoices.map { invoiceBytes ->
             async {
-                giniHealthAPI.documentManager.createPartialDocument(
+                var extractedDocument: DocumentWithExtractions? = null
+                val resource = giniHealthAPI.documentManager.createPartialDocument(
                     invoiceBytes,
                     MediaTypes.IMAGE_JPEG
                 ).mapSuccess { partialDocumentResource ->
@@ -63,15 +64,16 @@ class InvoicesRepository(
                 }.mapSuccess { compositeDocumentResource ->
                     val documentWithExtractions =
                         getDocumentWithExtraction(compositeDocumentResource.data)
-                    documentWithExtractions.first?.let { doc ->
-                        documentsWithExtractions.add(doc)
-                    }
+                    extractedDocument = documentWithExtractions.first
                     documentWithExtractions.second
                 }
+                Pair(extractedDocument, resource)
             }
-        }
+        }.awaitAll()
 
-        val errors = createdResources.awaitAll().mapNotNull { resource ->
+        val documentsWithExtractions = results.mapNotNull { it.first }
+
+        val errors = results.mapNotNull { (_, resource) ->
             if (resource is Resource.Error) {
                 // Error is already parsed by Resource!
                 val errorMessage = resource.errorResponse?.items?.firstOrNull()?.message
@@ -100,7 +102,8 @@ class InvoicesRepository(
 
     suspend fun refreshInvoices() = withContext(coroutineContext) {
         _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Loading
-        val documentsWithExtractions = mutableListOf<DocumentWithExtractions>()
+
+        // Each async returns DocumentWithExtractions? — results collected after awaitAll, no shared mutable state
         val jobs = invoicesFlow.value.map { document ->
             async {
                 val emptyDocument = createEmptyDocument(document.documentId)
@@ -109,25 +112,18 @@ class InvoicesRepository(
                     is Resource.Success -> {
                         try {
                             val isPayable = giniHealth.checkIfDocumentIsPayable(emptyDocument.id)
-                            val documentWithExtractions =
-                                DocumentWithExtractions.fromDocumentAndExtractions(
-                                    emptyDocument,
-                                    allExtraction.data,
-                                    isPayable
-                                )
-                            documentsWithExtractions.add(documentWithExtractions)
-                            allExtraction
-                        }catch (e: Exception) {
+                            DocumentWithExtractions.fromDocumentAndExtractions(
+                                emptyDocument,
+                                allExtraction.data,
+                                isPayable
+                            )
+                        } catch (e: Exception) {
                             _extractionErrorFlow.value = e
-
-                            val documentWithExtractions =
-                                DocumentWithExtractions.fromDocumentAndExtractions(
-                                    emptyDocument,
-                                    allExtraction.data,
-                                    false
-                                )
-                            documentsWithExtractions.add(documentWithExtractions)
-                            allExtraction
+                            DocumentWithExtractions.fromDocumentAndExtractions(
+                                emptyDocument,
+                                allExtraction.data,
+                                false
+                            )
                         }
                     }
 
@@ -141,17 +137,15 @@ class InvoicesRepository(
                             errorResponse = allExtraction.errorResponse
                         )
                         _extractionErrorFlow.value = exception
-
-                        allExtraction
+                        null
                     }
 
-                    else -> {
-                        allExtraction
-                    }
+                    else -> null
                 }
             }
         }
-        jobs.awaitAll()
+
+        val documentsWithExtractions = jobs.awaitAll().filterNotNull()
         invoicesLocalDataSource.refreshInvoices(documentsWithExtractions)
         _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Success
     }

@@ -19,7 +19,6 @@ import net.gini.android.health.api.models.PaymentProvider
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
-import net.gini.android.internal.payment.api.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentComponent
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState

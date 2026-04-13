@@ -73,7 +73,7 @@ class HealthApiDocumentRemoteSourceTest {
         }
     }
     @Test
-    fun `prefixes baseUrl to sourceDocumentLocation when it is not null`() = runTest {
+    fun `keeps absolute sourceDocumentLocation unchanged when it is not null`() = runTest {
         // Given
         val accessToken = UUID.randomUUID().toString()
         val documentServiceAuthInterceptor = DocumentServiceAuthInterceptor()

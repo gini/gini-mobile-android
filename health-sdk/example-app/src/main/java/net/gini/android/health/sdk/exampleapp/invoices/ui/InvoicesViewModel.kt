@@ -80,10 +80,8 @@ class InvoicesViewModel(
     fun batchDelete(documentIds: List<String>) {
         viewModelScope.launch {
             try {
-                val deleteDocumentsRequest = giniHealth.deleteDocuments(documentIds)
-                if (deleteDocumentsRequest == null) {
-                    invoicesRepository.deleteDocuments(documentIds)
-                }
+                giniHealth.deleteDocuments(documentIds)
+                invoicesRepository.deleteDocuments(documentIds)
                 _deleteDocumentsFlow.tryEmit(null)
             } catch (e: GiniHealthException) {
                 _deleteDocumentsFlow.tryEmit(e)
