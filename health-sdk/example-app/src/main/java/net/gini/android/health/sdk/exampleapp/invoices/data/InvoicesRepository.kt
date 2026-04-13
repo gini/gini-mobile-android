@@ -11,9 +11,12 @@ import net.gini.android.core.api.MediaTypes
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.response.ErrorResponse
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
+import net.gini.android.internal.payment.GiniHealthException
+import org.slf4j.LoggerFactory
 import java.util.Date
 import kotlin.coroutines.CoroutineContext
 
@@ -25,10 +28,14 @@ class InvoicesRepository(
     val coroutineContext: CoroutineContext = Dispatchers.IO
 ) {
 
-    private val _uploadHardcodedInvoicesStateFlow: MutableStateFlow<UploadHardcodedInvoicesState> = MutableStateFlow(
-        UploadHardcodedInvoicesState.Idle
-    )
+    private val _uploadHardcodedInvoicesStateFlow: MutableStateFlow<UploadHardcodedInvoicesState> =
+        MutableStateFlow(
+            UploadHardcodedInvoicesState.Idle
+        )
     val uploadHardcodedInvoicesStateFlow = _uploadHardcodedInvoicesStateFlow.asStateFlow()
+
+    private val _extractionErrorFlow = MutableStateFlow<Exception?>(null)
+    val extractionErrorFlow = _extractionErrorFlow.asStateFlow()
 
     val invoicesFlow = invoicesLocalDataSource.invoicesFlow
 
@@ -39,29 +46,46 @@ class InvoicesRepository(
     suspend fun uploadHardcodedInvoices() = withContext(coroutineContext) {
         _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Loading
 
-        val documentsWithExtractions = mutableListOf<DocumentWithExtractions>()
-
         val hardcodedInvoices = hardcodedInvoicesLocalDataSource.getHardcodedInvoices()
-        val createdResources = hardcodedInvoices.map { invoiceBytes ->
+
+        // Each async returns Pair<DocumentWithExtractions?, Resource<*>> — no shared mutable state
+        val results = hardcodedInvoices.map { invoiceBytes ->
             async {
-                giniHealthAPI.documentManager.createPartialDocument(
+                var extractedDocument: DocumentWithExtractions? = null
+                val resource = giniHealthAPI.documentManager.createPartialDocument(
                     invoiceBytes,
                     MediaTypes.IMAGE_JPEG
                 ).mapSuccess { partialDocumentResource ->
-                    giniHealthAPI.documentManager.createCompositeDocument(listOf(partialDocumentResource.data))
+                    giniHealthAPI.documentManager.createCompositeDocument(
+                        listOf(
+                            partialDocumentResource.data
+                        )
+                    )
                 }.mapSuccess { compositeDocumentResource ->
-                    val documentWithExtractions = getDocumentWithExtraction(compositeDocumentResource.data)
-                    documentWithExtractions.first?.let { doc ->
-                        documentsWithExtractions.add(doc)
-                    }
+                    val documentWithExtractions =
+                        getDocumentWithExtraction(compositeDocumentResource.data)
+                    extractedDocument = documentWithExtractions.first
                     documentWithExtractions.second
                 }
+                Pair(extractedDocument, resource)
             }
-        }
+        }.awaitAll()
 
-        val errors = createdResources.awaitAll().mapNotNull { resource ->
+        val documentsWithExtractions = results.mapNotNull { it.first }
+
+        val errors = results.mapNotNull { (_, resource) ->
             if (resource is Resource.Error) {
-                resource.message
+                // Error is already parsed by Resource!
+                val errorMessage = resource.errorResponse?.items?.firstOrNull()?.message
+                    ?: resource.exception?.message
+                    ?: resource.message
+                    ?: "Unknown error"
+
+                ErrorDetail(
+                    message = errorMessage,
+                    statusCode = resource.responseStatusCode,
+                    errorResponse = resource.errorResponse  // Already parsed!
+                )
             } else {
                 null
             }
@@ -74,30 +98,54 @@ class InvoicesRepository(
         } else {
             _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Failure(errors)
         }
-
-        _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Idle
     }
 
     suspend fun refreshInvoices() = withContext(coroutineContext) {
         _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Loading
-        val documentsWithExtractions = mutableListOf<DocumentWithExtractions>()
+
+        // Each async returns DocumentWithExtractions? — results collected after awaitAll, no shared mutable state
         val jobs = invoicesFlow.value.map { document ->
             async {
                 val emptyDocument = createEmptyDocument(document.documentId)
-                giniHealthAPI.documentManager.getAllExtractions(createEmptyDocument(documentId = document.documentId))
-                    .mapSuccess {
-                        val isPayable = giniHealth.checkIfDocumentIsPayable(emptyDocument.id)
-                        val documentWithExtractions = DocumentWithExtractions.fromDocumentAndExtractions(
-                            emptyDocument,
-                            it.data,
-                            isPayable
-                        )
-                        documentsWithExtractions.add(documentWithExtractions)
-                        it
+                when (val allExtraction =
+                    giniHealthAPI.documentManager.getAllExtractions(createEmptyDocument(documentId = document.documentId))) {
+                    is Resource.Success -> {
+                        try {
+                            val isPayable = giniHealth.checkIfDocumentIsPayable(emptyDocument.id)
+                            DocumentWithExtractions.fromDocumentAndExtractions(
+                                emptyDocument,
+                                allExtraction.data,
+                                isPayable
+                            )
+                        } catch (e: Exception) {
+                            _extractionErrorFlow.value = e
+                            DocumentWithExtractions.fromDocumentAndExtractions(
+                                emptyDocument,
+                                allExtraction.data,
+                                false
+                            )
+                        }
                     }
+
+                    is Resource.Error -> {
+                        // Emit error when extraction API fails
+                        val exception = GiniHealthException(
+                            message = allExtraction.exception?.message ?: allExtraction.message
+                            ?: "Failed to get extractions",
+                            cause = allExtraction.exception,
+                            statusCode = allExtraction.responseStatusCode,
+                            errorResponse = allExtraction.errorResponse
+                        )
+                        _extractionErrorFlow.value = exception
+                        null
+                    }
+
+                    else -> null
+                }
             }
         }
-        jobs.awaitAll()
+
+        val documentsWithExtractions = jobs.awaitAll().filterNotNull()
         invoicesLocalDataSource.refreshInvoices(documentsWithExtractions)
         _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Success
     }
@@ -110,20 +158,63 @@ class InvoicesRepository(
     }
 
     private fun createEmptyDocument(documentId: String) = Document(
-        documentId, Document.ProcessingState.COMPLETED, "", 0, Date(), null, Document.SourceClassification.UNKNOWN, Uri.EMPTY, emptyList(), emptyList()
+        documentId,
+        Document.ProcessingState.COMPLETED,
+        "",
+        0,
+        Date(),
+        null,
+        Document.SourceClassification.UNKNOWN,
+        Uri.EMPTY,
+        emptyList(),
+        emptyList()
     )
 
     private suspend fun getDocumentWithExtraction(document: Document): Pair<DocumentWithExtractions?, Resource<ExtractionsContainer>> {
-        return when (val extractionsResource = giniHealthAPI.documentManager.getAllExtractionsWithPolling(document)) {
+        return when (val extractionsResource =
+            giniHealthAPI.documentManager.getAllExtractionsWithPolling(document)) {
             is Resource.Success -> {
-                val isPayable = giniHealth.checkIfDocumentIsPayable(document.id)
-                val documentWithExtractions = DocumentWithExtractions.fromDocumentAndExtractions(
-                    document,
-                    extractionsResource.data,
-                    isPayable
-                )
-                Pair(documentWithExtractions, extractionsResource)
+                try {
+                    val isPayable = giniHealth.checkIfDocumentIsPayable(document.id)
+                    val documentWithExtractions =
+                        DocumentWithExtractions.fromDocumentAndExtractions(
+                            document,
+                            extractionsResource.data,
+                            isPayable
+                        )
+                    Pair(documentWithExtractions, extractionsResource)
+                } catch (e: Exception) {
+
+                    _extractionErrorFlow.value = e
+                    LOG.error(
+                        "Error checking if document ${document.id} is payable: ${e.message}",
+                        e
+                    )
+
+                    val documentWithExtractions =
+                        DocumentWithExtractions.fromDocumentAndExtractions(
+                            document,
+                            extractionsResource.data,
+                            false
+                        )
+                    Pair(documentWithExtractions, extractionsResource)
+                }
             }
+
+            is Resource.Error -> {
+                // Emit error when extraction API fails
+                val exception = GiniHealthException(
+                    message = extractionsResource.exception?.message
+                        ?: extractionsResource.message ?: "Failed to get extractions",
+                    cause = extractionsResource.exception,
+                    statusCode = extractionsResource.responseStatusCode,
+                    errorResponse = extractionsResource.errorResponse
+                )
+                _extractionErrorFlow.value = exception
+
+                Pair(null, extractionsResource)
+            }
+
             else -> Pair(null, extractionsResource)
         }
     }
@@ -131,11 +222,44 @@ class InvoicesRepository(
     suspend fun deleteDocuments(documentIds: List<String>) {
         invoicesLocalDataSource.deleteDocuments(documentIds)
     }
+
+    fun resetUploadState() {
+        _uploadHardcodedInvoicesStateFlow.value = UploadHardcodedInvoicesState.Idle
+    }
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(InvoicesRepository::class.java)
+    }
 }
 
 sealed class UploadHardcodedInvoicesState {
     object Idle : UploadHardcodedInvoicesState()
     object Loading : UploadHardcodedInvoicesState()
     object Success : UploadHardcodedInvoicesState()
-    data class Failure(val errors: List<String>) : UploadHardcodedInvoicesState()
+    data class Failure(
+        val errors: List<ErrorDetail>
+    ) : UploadHardcodedInvoicesState()
 }
+
+/**
+ * Represents error details for upload operations.
+ * Now uses parsed ErrorResponse instead of raw JSON.
+ */
+data class ErrorDetail(
+    val message: String,
+    val statusCode: Int? = null,
+    val errorResponse: ErrorResponse? = null,
+    val errorCode: String? = errorResponse?.items?.firstOrNull()?.code,
+    val requestId: String? = errorResponse?.requestId
+)
+
+/**
+ * Sealed class to represent the result of each refresh operation.
+ * Used to avoid thread-safety issues when collecting results from parallel async operations.
+ */
+private sealed class RefreshResult {
+    data class Success(val document: DocumentWithExtractions) : RefreshResult()
+    data class Error(val error: ErrorDetail) : RefreshResult()
+    object Cancelled : RefreshResult()
+}
+

@@ -4,6 +4,14 @@ Flow
 ``GiniHealth`` and ``PaymentFragment`` are the main classes for interacting with the Gini Health SDK. ``GiniHealth``
 manages interaction with the Gini Health API and ``PaymentFragment`` controls the payment flow and the displayed screens.
 
+.. note::
+
+    API call failures are surfaced as ``GiniHealthException``, which gives you the HTTP status code, a
+    human-readable ``parsedMessage``, a ``requestId`` for support, and per-item error codes for bulk
+    operations. Cancellation and validation issues may surface either as specific exception types or as
+    non-exception results — for example, some methods return ``false`` on cancellation instead of throwing.
+    See the `Error Handling <error-handling.html>`_ guide for the full reference.
+
 .. contents:: The recommended flow is:
    :local:
 
@@ -100,8 +108,10 @@ Health API. You can then store the ``isPayable`` state in your own data model.
         try {
             // Check whether the composite document is payable
             val isPayable = giniHealth.checkIfDocumentIsPayable(compositeDocument.id)
+        } catch (e: GiniHealthException) {
+            // Handle structured error — e.parsedMessage, e.statusCode, e.requestId
         } catch (e: Exception) {
-            // Handle error
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -112,6 +122,12 @@ Call ``giniHealth.checkIfDocumentContainsMultipleDocuments()`` with the composit
 We recommend performing this check after checking if the document is payable. The method will return ``true`` if the document contains
 multiple invoices, ``false`` if otherwise.
 
+.. note::
+
+    A ``false`` result may also indicate that the underlying request was cancelled. If you need to distinguish
+    between "single invoice" and "cancelled", check whether the coroutine was cancelled before relying on the
+    ``false`` return value.
+
 .. code-block:: kotlin
 
     // Assuming `compositeDocument` is `Document` returned by `createCompositeDocument(...)`
@@ -120,8 +136,10 @@ multiple invoices, ``false`` if otherwise.
         try {
             // Check whether the composite document contains multiple invoices
             val containsMultipleInvoices = giniHealth.checkIfDocumentContainsMultipleDocuments(compositeDocument.id)
+        } catch (e: GiniHealthException) {
+            // Handle structured error — e.parsedMessage, e.statusCode, e.requestId
         } catch (e: Exception) {
-            // Handle error
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -162,7 +180,8 @@ Get Payment Details
 Call ``giniHealth.getPayment()`` with the payment request ID to retrieve the details of a specific payment.
 The method returns a ``Payment`` object containing the relevant payment information.
 
-If the request fails or is canceled, an exception will be thrown with an error message.
+If the request fails it throws a ``GiniHealthException`` (with ``statusCode``, ``parsedMessage``, and ``requestId``).
+If the request is cancelled, a plain ``Exception`` is thrown.
 
 .. code-block:: kotlin
 
@@ -172,35 +191,73 @@ If the request fails or is canceled, an exception will be thrown with an error m
         try {
             // Retrieve payment details
             val paymentDetails = giniHealth.getPayment(paymentId)
+        } catch (e: GiniHealthException) {
+            // Handle structured error — e.parsedMessage, e.statusCode, e.requestId
         } catch (e: Exception) {
-            // Handle error
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
+
+Sending Feedback for Extractions
+---------------------------------
+
+The SDK sends feedback automatically when using the integrated flow (``PaymentFragment``). If you need to send it
+manually in a custom flow, use the ``sendFeedbackWithSpecificExtractions`` method on the document manager.
+
+.. note::
+
+    As of version 5.x, the SDK sends feedback using the **specific extractions** map. The four payment fields
+    (``payment_recipient``, ``iban``, ``amount_to_pay``, ``payment_purpose``) are updated with the user's input,
+    while any other specific extractions present in the map (e.g. ``medical_service_provider``) are preserved and
+    sent as-is.
+
+.. code-block:: kotlin
+
+    coroutineScope.launch {
+        try {
+            val updatedExtractions = extractionsContainer.specificExtractions
+                .toMutableMap()
+                .withFeedback(updatedPaymentDetails)
+
+            giniHealth.giniHealthApi.documentManager
+                .sendFeedbackWithSpecificExtractions(document, updatedExtractions)
+        } catch (e: Exception) {
+            // Handle exception
+        }
+    }
+
+.. important::
+
+    **Feedback is optional and non-blocking**: Feedback failures do not interrupt the payment flow.
 
 Delete payment request
 ---------------------------------
 
 ``GiniHealthSDK`` provides a method to delete a payment request. You can do this by calling ``giniHealth.deletePaymentRequest(...)`` with a payment request ID.
 
+On success the function completes normally. On failure it throws a ``GiniHealthException`` with the HTTP status code,
+parsed error message, request ID, and the original cause. See `Error Handling <error-handling.html>`_ for details.
+
 .. code-block:: kotlin
 
     coroutineScope.launch {
-        // Delete  payment requests
-        val deletePaymentRequest = giniHealth.deletePaymentRequest(paymentRequestId)
-
-        when (deletePaymentRequest) {
-            is Resource.Success -> {
-                // `null` will be returned here
-            }
-            is Resource.Error -> // Handle Error
-            is Resource.Cancelled -> //  Handle cancellation
+        try {
+            giniHealth.deletePaymentRequest(paymentRequestId)
+            // Success
+        } catch (e: GiniHealthException) {
+            // Handle error — e.parsedMessage, e.statusCode, e.requestId
+        } catch (e: Exception) {
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
 Delete multiple payment requests
 ---------------------------------
 
-``GiniHealthSDK`` provides a  method to delete multiple payment request at once. You can do this by calling ``giniHealth.deletePaymentRequests(...)`` with a list of payment request IDs. The call will only succeed if all payment request were successfully deleted. If any payment request is invalid, unauthorized, or not found, the entire deletion request will fail, and no payment requests will be deleted. In the case of failures, an error or type ``DeletePaymentRequestErrorResponse`` will be provided, with more insight into why the deletion failed.
+``GiniHealthSDK`` provides a method to delete multiple payment requests at once. You can do this by calling ``giniHealth.deletePaymentRequests(...)`` with a list of payment request IDs. The call will only succeed if all payment requests were successfully deleted. If any payment request is invalid, unauthorized, or not found, the entire deletion request will fail, and no payment requests will be deleted.
+
+On failure a ``GiniHealthException`` is thrown. Inspect ``e.errorItems`` to see which payment request IDs caused
+the failure and their error codes. See `Error Handling <error-handling.html>`_ for details.
 
 .. code-block:: kotlin
 
@@ -208,15 +265,15 @@ Delete multiple payment requests
     // representing the IDs of the payment requests to be deleted
 
     coroutineScope.launch {
-        // Delete multiple payment requests at once
-        val deletePaymentRequests = giniHealth.deletePaymentRequests(paymentRequestIds)
-
-        when (deletePaymentRequests) {
-            is Resource.Success -> {
-                // `null` will be returned here
-            }
-            is Resource.Error -> // Handle `DeletePaymentRequestErrorResponse`
-            is Resource.Cancelled -> // Handle `DeletePaymentRequestErrorResponse`
+        try {
+            giniHealth.deletePaymentRequests(paymentRequestIds)
+            // All payment requests deleted successfully
+        } catch (e: GiniHealthException) {
+            // e.parsedMessage — human-readable reason
+            // e.errorItems   — per-ID error codes and affected IDs
+            // e.requestId    — provide to Gini support
+        } catch (e: Exception) {
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -225,7 +282,10 @@ Delete multiple documents at once
 
 ``GiniHealthSDK`` provides an easy method to delete multiple documents at once. You can call ``giniHealth.deleteDocuments(...)`` with the list of document
 ids you want to delete. The call will only succeed if all documents were successfully deleted. If not all documents can be deleted, the whole call will fail
-and no documents will be deleted. In the case of failures, an error or type ``DeleteDocumentErrorResponse`` will be provided, with more insight into why the deletion failed.
+and no documents will be deleted.
+
+On failure a ``GiniHealthException`` is thrown. Inspect ``e.errorItems`` to see which document IDs caused the
+failure and their error codes. See `Error Handling <error-handling.html>`_ for details.
 
 .. code-block:: kotlin
 
@@ -233,15 +293,15 @@ and no documents will be deleted. In the case of failures, an error or type ``De
     // represent the ids of the documents to be deleted
 
     coroutineScope.launch {
-        // Delete multiple documents at once
-        val deleteDocuments = giniHealth.deleteDocuments(documentIds)
-
-        when (deleteDocuments) {
-            is Resource.Success -> {
-                // `null` will be returned here
-            }
-            is Resource.Error -> // Handle `DeleteDocumentErrorResponse`
-            is Resource.Cancelled -> // Handle `DeleteDocumentErrorResponse`
+        try {
+            giniHealth.deleteDocuments(documentIds)
+            // All documents deleted successfully
+        } catch (e: GiniHealthException) {
+            // e.parsedMessage — human-readable reason
+            // e.errorItems   — per-ID error codes and affected IDs
+            // e.requestId    — provide to Gini support
+        } catch (e: Exception) {
+            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -325,5 +385,4 @@ Initialize Koin once at app startup so the ``GiniHealth`` instance is created an
 
 .. note::
    You can also initialize without a DI framework by creating the ``GiniHealth`` instance in your ``Application`` and calling the ``setInstance()`` method once at startup. The sample app includes Koin-based usage for reference.
-
 

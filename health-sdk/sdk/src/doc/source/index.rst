@@ -22,9 +22,11 @@ Table of contents
     setup
     authentication
     flow
+    error-handling
     event-tracking
     testing
     customization
+    accessibility
     data-safety
     reference
     license

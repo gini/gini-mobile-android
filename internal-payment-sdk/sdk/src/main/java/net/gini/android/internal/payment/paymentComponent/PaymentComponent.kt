@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.models.PaymentProvider
+import net.gini.android.internal.payment.GiniHealthException
 import net.gini.android.internal.payment.GiniInternalPaymentModule
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.getPaymentProviderApps
@@ -83,15 +84,19 @@ class PaymentComponent(@get:VisibleForTesting internal val context: Context, val
 
                 is Resource.Error -> {
                     LOG.error("Error loading payment providers", paymentProvidersResource.exception)
-                    _initialStatePaymentProviderAppsFlow.value = PaymentProviderAppsState.Error((
-                            paymentProvidersResource.exception ?: Exception(
-                                paymentProvidersResource.message
-                            )))
-                    PaymentProviderAppsState.Error(
-                        paymentProvidersResource.exception ?: Exception(
-                            paymentProvidersResource.message
+
+                    val errorState = PaymentProviderAppsState.Error(
+                        throwable = GiniHealthException(
+                            message = paymentProvidersResource.exception?.message
+                                ?: paymentProvidersResource.message
+                                ?: "Failed to load payment providers",
+                            statusCode = paymentProvidersResource.responseStatusCode,
+                            errorResponse = paymentProvidersResource.errorResponse,
+                            cause = paymentProvidersResource.exception
                         )
                     )
+                    _initialStatePaymentProviderAppsFlow.value = errorState
+                    errorState
                 }
 
                 is Resource.Success -> {

@@ -76,6 +76,6 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
     }
 
     companion object {
-        const val API_VERSION = 4
+        const val API_VERSION = 5
     }
 }

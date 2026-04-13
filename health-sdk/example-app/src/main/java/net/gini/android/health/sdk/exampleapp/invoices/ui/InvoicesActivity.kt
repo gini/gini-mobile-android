@@ -28,9 +28,12 @@ import net.gini.android.health.sdk.exampleapp.MainActivity
 import net.gini.android.health.sdk.exampleapp.R
 import net.gini.android.health.sdk.exampleapp.databinding.ActivityInvoicesBinding
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Failure
+import net.gini.android.internal.payment.GiniHealthException
 import net.gini.android.health.sdk.exampleapp.invoices.data.UploadHardcodedInvoicesState.Loading
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
+import net.gini.android.health.sdk.exampleapp.util.ApiErrorParser
 import net.gini.android.health.sdk.exampleapp.util.SharedPreferencesUtil
+import net.gini.android.health.sdk.exampleapp.util.showGiniHealthErrorDialog
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsState
@@ -54,22 +57,11 @@ open class InvoicesActivity : AppCompatActivity() {
         val isFragmentInBackStack = fragment != null && fragment.isAdded
 
         setSiblingViewsEnabled(!isFragmentInBackStack)
-        if (isFragmentInBackStack) {
-            setActivityTitle(DisplayedScreen.ReviewScreen)
-        }
 
         supportFragmentManager.addOnBackStackChangedListener {
-
             val findFragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
             val isFragmentInBackStackChanged = findFragment != null && findFragment.isAdded
-
             setSiblingViewsEnabled(!isFragmentInBackStackChanged)
-
-            if (!isFragmentInBackStackChanged) {
-                title = resources.getString(R.string.title_activity_invoices)
-            }
-
-            invalidateOptionsMenu()
         }
 
 
@@ -98,10 +90,26 @@ open class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.uploadHardcodedInvoicesStateFlow.collect { uploadState ->
                         if (uploadState is Failure) {
+                            // Format detailed error message
+                            val errorMessage = buildString {
+                                append("Failed to upload invoices:\n\n")
+
+                                uploadState.errors.forEachIndexed { index, error ->
+                                    if (index > 0) append("\n---\n")
+                                    append(ApiErrorParser.formatErrorMessage(error))
+                                }
+                            }
+
+                            // Show error dialog
                             AlertDialog.Builder(this@InvoicesActivity)
                                 .setTitle(R.string.upload_failed)
-                                .setMessage(uploadState.errors.toSet().joinToString(", "))
-                                .setPositiveButton(android.R.string.ok, null)
+                                .setMessage(errorMessage)
+                                .setPositiveButton(android.R.string.ok) { _, _ ->
+                                    viewModel.resetUploadState()
+                                }
+                                .setOnDismissListener {
+                                    viewModel.resetUploadState()
+                                }
                                 .show()
                         }
 
@@ -110,11 +118,36 @@ open class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
                         if (paymentProviderAppsState is PaymentProviderAppsState.Error) {
+                            // Cast to GiniHealthException if available for detailed error info
+                            val giniException = paymentProviderAppsState.throwable as? GiniHealthException
+
+                            val errorMessage = buildString {
+                                append("Failed to load payment provider apps:\n\n")
+
+                                if (giniException != null) {
+                                    append(giniException.parsedMessage)
+
+                                    giniException.statusCode?.let { status ->
+                                        append("\n\nHTTP Status: $status")
+                                    }
+
+                                    giniException.requestId?.let { reqId ->
+                                        append("\nRequest ID: $reqId")
+                                    }
+                                } else {
+                                    // Simple exception - just show message
+                                    append(paymentProviderAppsState.throwable.message ?: "Unknown error")
+                                }
+                            }
+
                             AlertDialog.Builder(this@InvoicesActivity)
                                 .setTitle(R.string.failed_to_load_bank_apps)
-                                .setMessage(paymentProviderAppsState.throwable.message)
+                                .setMessage(errorMessage)
                                 .setPositiveButton(android.R.string.ok, null)
                                 .show()
+
+                            // OLD WAY (backward compatible - for reference):
+                            // .setMessage(paymentProviderAppsState.throwable.message)  // ← Would show raw JSON
                         }
 
                     }
@@ -135,6 +168,13 @@ open class InvoicesActivity : AppCompatActivity() {
                             }
                             is GiniHealth.PaymentState.Cancel -> {
                                 supportFragmentManager.popBackStack()
+                            }
+                            is GiniHealth.PaymentState.Error -> {
+                                // Show error dialog using extension function
+                                showGiniHealthErrorDialog(
+                                    exception = paymentState.throwable,
+                                    onDismiss = { supportFragmentManager.popBackStack() }
+                                )
                             }
                             else -> {}
                         }
@@ -175,32 +215,81 @@ open class InvoicesActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.deleteDocumentsFlow.collect { response ->
-                        response?.let { deleteDocumentErrorResponse ->
-                            if (deleteDocumentErrorResponse.message != null) {
-                                AlertDialog.Builder(this@InvoicesActivity)
-                                    .setTitle(getString(R.string.could_not_delete_documents))
-                                    .setMessage(deleteDocumentErrorResponse.message)
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .show()
-                                return@collect
-                            }
+                    viewModel.deleteDocumentsFlow.collect { exception ->
+                        exception?.let { e ->
+                            // Show error dialog using extension function
+                            showGiniHealthErrorDialog(
+                                exception = e,
+                                onDismiss = { /* Error acknowledged */ }
+                            )
+                        }
+                    }
+                }
 
-                            var errorMessage = ""
-                            deleteDocumentErrorResponse.unauthorizedDocuments?.let {
-                                errorMessage += "${getString(R.string.unauthorized_documents)} $it"
+                // Observe documentFlow for errors when loading documents
+                launch {
+                    viewModel.documentFlow.collect { result ->
+                        when (result) {
+                            is ResultWrapper.Error -> {
+                                LOG.debug("documentFlow error in InvoicesActivity: ${result.error.message}")
+                                // Only show error dialog when the payment review fragment is NOT active.
+                                // When the fragment is shown it already handles errors internally
+                                // (shouldHandleErrorsInternally = true), so showing a dialog here too
+                                // would result in a duplicate "Unknown hostname" message.
+                                if (!isReviewFragmentShown()) {
+                                    showGiniHealthErrorDialog(
+                                        exception = result.error,
+                                        onDismiss = { /* Error acknowledged */ }
+                                    )
+                                }
                             }
-                            deleteDocumentErrorResponse.notFoundDocuments?.let {
-                                errorMessage += "\n${getString(R.string.not_found_documents)} $it"
+                            is ResultWrapper.Success -> {
+                                LOG.debug("Document loaded successfully in InvoicesActivity: ${result.value.id}")
                             }
-                            deleteDocumentErrorResponse.missingCompositeDocuments?.let {
-                                errorMessage += "\n${getString(R.string.missing_composite_documents)} $it"
+                            is ResultWrapper.Loading -> {
+                                LOG.debug("Document loading in InvoicesActivity")
                             }
-                            AlertDialog.Builder(this@InvoicesActivity)
-                                .setTitle(getString(R.string.could_not_delete_documents))
-                                .setMessage(errorMessage)
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.extractionErrorFlow.collect { error ->
+                        error?.let {
+                            LOG.debug("Extraction error in InvoicesActivity: ${it.message}")
+                            // Only show error dialog when the payment review fragment is NOT active.
+                            if (!isReviewFragmentShown()) {
+                                showGiniHealthErrorDialog(
+                                    exception = it,
+                                    onDismiss = { /* Error acknowledged */ }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Observe paymentFlow for extraction errors
+                launch {
+                    viewModel.paymentFlow.collect { result ->
+                        when (result) {
+                            is ResultWrapper.Error -> {
+                                LOG.debug("paymentFlow error in InvoicesActivity: ${result.error.message}")
+                                // Only show error dialog when the payment review fragment is NOT active.
+                                // When the fragment is shown it already handles errors internally
+                                // (shouldHandleErrorsInternally = true), so showing a dialog here too
+                                // would result in a duplicate "Unknown hostname" message.
+                                if (!isReviewFragmentShown()) {
+                                    showGiniHealthErrorDialog(
+                                        exception = result.error,
+                                        onDismiss = { /* Error acknowledged */ }
+                                    )
+                                }
+                            }
+                            is ResultWrapper.Success -> {
+                                LOG.debug("Extractions loaded successfully in InvoicesActivity")
+                            }
+                            is ResultWrapper.Loading -> {
+                                LOG.debug("Extractions loading in InvoicesActivity")
+                            }
                         }
                     }
                 }
@@ -223,6 +312,16 @@ open class InvoicesActivity : AppCompatActivity() {
             }
             invalidateOptionsMenu()
         }
+    }
+
+    /**
+     * Returns true when the payment review fragment is currently added to the back stack.
+     * While it is shown, the SDK handles errors internally (shouldHandleErrorsInternally = true),
+     * so the activity must NOT show its own error dialogs for the same errors.
+     */
+    private fun isReviewFragmentShown(): Boolean {
+        val fragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
+        return fragment != null && fragment.isAdded
     }
 
     private fun setActivityTitle(screen: DisplayedScreen) {

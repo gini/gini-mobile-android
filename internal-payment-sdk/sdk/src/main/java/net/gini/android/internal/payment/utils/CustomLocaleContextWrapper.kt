@@ -13,6 +13,10 @@ class CustomLocaleContextWrapper(base: Context) : ContextWrapper(base) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 config.setLocale(locale)
             } else {
+                // API 23 (Android 6.0) requires direct field access as Configuration.setLocale()
+                // was introduced in API 24. This is the only way to set locale for API 23.
+                // Suppression is necessary since there's no alternative API for this version.
+                @Suppress("DEPRECATION")
                 config.locale = locale
             }
             config.setLayoutDirection(locale)
