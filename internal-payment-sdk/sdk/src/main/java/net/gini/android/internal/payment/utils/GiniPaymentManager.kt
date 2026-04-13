@@ -1,6 +1,5 @@
 package net.gini.android.internal.payment.utils
 
-import kotlinx.coroutines.CancellationException
 import net.gini.android.core.api.Resource
 import net.gini.android.health.api.GiniHealthAPI
 import net.gini.android.health.api.models.PaymentRequestInput
