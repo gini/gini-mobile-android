@@ -36,4 +36,28 @@ class ConfigurationScreen {
         return this
     }
 
+    fun scrollToProductTagSwitch(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_product_tag_cx))
+            .perform(scrollTo())
+        return this
+    }
+
+    fun assertProductTagSwitchIsChecked(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_product_tag_cx))
+            .check(matches(ViewMatchers.isChecked()))
+        return this
+    }
+
+    fun assertProductTagSwitchIsUnchecked(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_product_tag_cx))
+            .check(matches(ViewMatchers.isNotChecked()))
+        return this
+    }
+
+    fun clickProductTagCxSwitch(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_product_tag_cx))
+            .perform(closeSoftKeyboard(), scrollTo(), click())
+        return this
+    }
+
 }
