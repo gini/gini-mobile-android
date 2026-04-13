@@ -1,6 +1,10 @@
 package net.gini.android.bank.sdk.exampleapp.ui.screens
 
+import android.view.View
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -9,6 +13,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
+import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 
 class CaptureScreen {
@@ -72,11 +78,24 @@ class CaptureScreen {
     }
 
     fun clickFilesButton(): CaptureScreen {
-        onView(withId(net.gini.android.capture.R.id.gc_button_import_document)).perform(click())
+        // Use performClick() directly instead of a touch-based click to bypass the
+        // View.isEnabled() check. When isEnabled==false, onTouchEvent() silently consumes
+        // the touch without calling the OnClickListener. performClick() calls the listener
+        // directly regardless of enabled state.
+        onView(withId(net.gini.android.capture.R.id.gc_button_import))
+            .perform(object : ViewAction {
+                override fun getConstraints(): Matcher<View> = isDisplayed()
+                override fun getDescription() = "click files button via performClick"
+                override fun perform(uiController: UiController, view: View) {
+                    view.performClick()
+                    uiController.loopMainThreadUntilIdle()
+                }
+            })
         return this
     }
 
     fun clickPhotos(): CaptureScreen {
+        withIdlingResource()
         onView(
             allOf(withId(net.gini.android.capture.R.id.gc_app_label), withText("Photos")))
              .perform(click())
@@ -84,9 +103,16 @@ class CaptureScreen {
     }
 
     fun clickFiles(): CaptureScreen {
+        withIdlingResource()
         onView(
             allOf(withId(net.gini.android.capture.R.id.gc_app_label), withText("Files")))
             .perform(click())
         return this
+    }
+
+    fun withIdlingResource() {
+        val idlingResource = SimpleIdlingResource(500)
+        IdlingRegistry.getInstance().register(idlingResource)
+        idlingResource.waitForIdle()
     }
 }
