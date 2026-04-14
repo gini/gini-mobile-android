@@ -6,8 +6,9 @@ class SimpleIdlingResource(private val waitTime: Long) : IdlingResource {
     @Volatile
     private var isIdleNow = true
     private var callback: IdlingResource.ResourceCallback? = null
+    private val name = "${SimpleIdlingResource::class.java.name}_${System.nanoTime()}"
 
-    override fun getName() = SimpleIdlingResource::class.java.name
+    override fun getName() = name
 
     override fun isIdleNow() = isIdleNow
 
