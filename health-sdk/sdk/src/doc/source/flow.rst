@@ -7,8 +7,8 @@ manages interaction with the Gini Health API and ``PaymentFragment`` controls th
 .. note::
 
     API call failures are surfaced as ``GiniHealthException``, which gives you the HTTP status code, a
-    human-readable ``parsedMessage``, a ``requestId`` for support, and per-item error codes for bulk
-    operations. Cancellation and validation issues may surface either as specific exception types or as
+    ``parsedMessage``, a ``requestId`` for support, and per-item error codes.
+    Cancellation and validation issues may surface either as specific exception types or as
     non-exception results — for example, some methods return ``false`` on cancellation instead of throwing.
     See the `Error Handling <error-handling.html>`_ guide for the full reference.
 
@@ -64,8 +64,12 @@ document from a byte array containing a JPEG image:
                 // Use the partial document
                 val partialDocument = partialDocumentResource.data
             }
-            is Resource.Error -> // Handle error
-            is Resource.Cancelled -> // Handle cancellation
+            is Resource.Error ->{
+                // Handle error
+            }
+            is Resource.Cancelled -> {
+                // Handle cancellation
+            }
         }
     }
 
@@ -87,8 +91,12 @@ into one final document:
                 // Use the composite document
                 val compositeDocument = compositeDocumentResource.data
             }
-            is Resource.Error -> // Handle error
-            is Resource.Cancelled -> // Handle cancellation
+            is Resource.Error -> {
+            // Handle error
+            }
+            is Resource.Cancelled -> {
+             // Handle cancellation
+            }
         }
     }
 
@@ -100,6 +108,12 @@ Call ``giniHealth.checkIfDocumentIsPayable()`` with the composite document id fo
 payable. We recommend performing this check only once right after the invoice has been uploaded and processed by Gini's
 Health API. You can then store the ``isPayable`` state in your own data model.
 
+.. note::
+
+    A ``false`` result may also indicate that the underlying request was cancelled. If you need to distinguish
+    between "not payable" and "cancelled", check whether the coroutine was cancelled before relying on the
+    ``false`` return value.
+
 .. code-block:: kotlin
     
     // Assuming `compositeDocument` is `Document` returned by `createCompositeDocument(...)`
@@ -110,8 +124,6 @@ Health API. You can then store the ``isPayable`` state in your own data model.
             val isPayable = giniHealth.checkIfDocumentIsPayable(compositeDocument.id)
         } catch (e: GiniHealthException) {
             // Handle structured error — e.parsedMessage, e.statusCode, e.requestId
-        } catch (e: Exception) {
-            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -138,8 +150,6 @@ multiple invoices, ``false`` if otherwise.
             val containsMultipleInvoices = giniHealth.checkIfDocumentContainsMultipleDocuments(compositeDocument.id)
         } catch (e: GiniHealthException) {
             // Handle structured error — e.parsedMessage, e.statusCode, e.requestId
-        } catch (e: Exception) {
-            // SDK cancellation, validation error, or CancellationException from coroutine scope
         }
     }
 
@@ -206,7 +216,7 @@ manually in a custom flow, use the ``sendFeedbackWithSpecificExtractions`` metho
 
 .. note::
 
-    As of version 5.x, the SDK sends feedback using the **specific extractions** map. The four payment fields
+    the SDK sends feedback using the **specific extractions** map. The four payment fields
     (``payment_recipient``, ``iban``, ``amount_to_pay``, ``payment_purpose``) are updated with the user's input,
     while any other specific extractions present in the map (e.g. ``medical_service_provider``) are preserved and
     sent as-is.
@@ -225,10 +235,6 @@ manually in a custom flow, use the ``sendFeedbackWithSpecificExtractions`` metho
             // Handle exception
         }
     }
-
-.. important::
-
-    **Feedback is optional and non-blocking**: Feedback failures do not interrupt the payment flow.
 
 Delete payment request
 ---------------------------------
@@ -324,7 +330,6 @@ The ``PaymentFlowConfiguration`` class contains the following options:
    giniHealth.openBankState.collect { paymentState ->
         when (paymentState) {
             is GiniHealth.PaymentState.Success -> {
-               ...
                // Remove fragment from view hierarchy
             }
             is GiniHealth.PaymentState.Cancel -> {

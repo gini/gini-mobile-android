@@ -2,7 +2,7 @@ Error Handling
 ==============
 
 The Gini Health SDK provides structured, detailed error information for API failures. Errors carry the HTTP
-status code, a human-readable message, a support request ID, and — for bulk operations — the list of affected
+status code, a message, a support request ID, and — for bulk operations — the list of affected
 entity IDs (documents or payment requests).
 
 The SDK error model is built around ``GiniHealthException``, ``ErrorResponse``, and ``ErrorItem``, each
@@ -23,9 +23,7 @@ as a timeout (``cause`` holds the underlying exception, ``statusCode`` and ``err
     * **Coroutine cancellation** — Kotlin's coroutine framework signals cancellation via ``CancellationException``
       (a subclass of ``Exception``). It will be caught by a generic ``catch (e: Exception)`` block — if your
       coroutine scope requires cooperative cancellation, rethrow it manually.
-    * **Validation / precondition errors** — e.g. ``IllegalStateException`` when input validation fails
-      (for example, calling ``getPaymentFragmentWithoutDocument()`` with incomplete payment details or
-      an invalid IBAN).
+    * **Validation / precondition errors** — e.g. ``IllegalStateException`` when input validation fails.
     * **Programming errors** — e.g. ``NullPointerException`` or ``IllegalArgumentException`` caused by
       internal SDK misconfiguration.
 
@@ -35,13 +33,13 @@ as a timeout (``cause`` holds the underlying exception, ``statusCode`` and ``err
 .. code-block:: kotlin
 
     open class GiniHealthException(
-        message: String,             // Raw message (may be a JSON string — kept for backward compatibility)
+        message: String,             // Raw message (maybe a JSON string — kept for backward compatibility)
         cause: Throwable? = null,    // Underlying exception — e.g. SocketTimeoutException for network failures, ApiException for HTTP errors
         val statusCode: Int? = null, // HTTP status code (e.g., 404, 422, 500)
         val errorResponse: ErrorResponse? = null  // Fully parsed API error body
     ) : Exception(message, cause) {
 
-        // Human-readable message for display — resolves in priority order:
+        // message for display — resolves in priority order:
         // 1. errorResponse.message  2. raw message  3. "Unknown error"
         val parsedMessage: String
 
@@ -122,9 +120,6 @@ The ``error`` property is a ``GiniHealthException`` when an API call fails, or a
         }
     }
 
-The ``paymentFlow`` and ``trustMarkersFlow`` flows follow the same pattern. For ``openBankState``, errors
-are surfaced as ``GiniHealth.PaymentState.Error`` — check its ``throwable`` property with the same
-``is GiniHealthException`` cast.
 
 ``GiniHealth`` suspend functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,31 +176,26 @@ Functions on ``giniHealth.documentManager`` return ``Resource<T>`` directly inst
         }
     }
 
-The same pattern applies to ``createCompositeDocument()``, ``getDocument()``,
-``getAllExtractionsWithPolling()``, and all other ``documentManager`` calls.
-
 Breaking changes
 ----------------
 
 Return type changes
 ~~~~~~~~~~~~~~~~~~~~
 
-The three delete functions **do not return error information** — they return ``Unit`` and throw
-``GiniHealthException`` on failure. Any existing code that checked for a non-null return value must be
+The three delete methods return ``Unit`` and throw ``GiniHealthException`` on failure. Any existing code that checked for a non-null return value must be
 replaced with a ``try/catch`` block.
 
-+-------------------------------+------------------------------------------+------------------------------------------------------------+
-| Method                        | Old return type                          | New behaviour                                              |
-+===============================+==========================================+============================================================+
-| ``deletePaymentRequest``      | ``String?`` (error message or null)      | ``Unit`` — throws ``GiniHealthException`` (API error) or  |
-|                               |                                          | ``Exception`` (cancelled)                                  |
-+-------------------------------+------------------------------------------+------------------------------------------------------------+
-| ``deletePaymentRequests``     | ``DeletePaymentRequestErrorResponse?``   | ``Unit`` — throws ``GiniHealthException`` (API error) or  |
-|                               |                                          | ``Exception`` (cancelled)                                  |
-+-------------------------------+------------------------------------------+------------------------------------------------------------+
-| ``deleteDocuments``           | ``DeleteDocumentErrorResponse?``         | ``Unit`` — throws ``GiniHealthException`` (API error) or  |
-|                               |                                          | ``Exception`` (cancelled)                                  |
-+-------------------------------+------------------------------------------+------------------------------------------------------------+
+``deletePaymentRequest``
+    - **Old return type:** ``String?`` (error message or null)
+    - **New behaviour:** ``Unit`` — throws ``GiniHealthException`` (API error) or ``Exception``
+
+``deletePaymentRequests``
+    - **Old return type:** ``DeletePaymentRequestErrorResponse?``
+    - **New behaviour:** ``Unit`` — throws ``GiniHealthException`` (API error) or ``Exception``
+
+``deleteDocuments``
+    - **Old return type:** ``DeleteDocumentErrorResponse?``
+    - **New behaviour:** ``Unit`` — throws ``GiniHealthException`` (API error) or ``Exception``
 
 Old API — return value check:
 
