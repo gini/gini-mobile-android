@@ -16,6 +16,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.After
 import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
@@ -60,9 +61,14 @@ class DigitalInvoiceEditButtonTests {
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
+    @After
+    fun tearDown() {
+        IdlingRegistry.getInstance().unregister(idlingResource)
+    }
+
     private fun clickPhotoPaymentAndUploadFile() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")

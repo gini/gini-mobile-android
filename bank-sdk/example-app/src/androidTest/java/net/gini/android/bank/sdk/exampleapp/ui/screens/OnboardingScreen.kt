@@ -1,6 +1,7 @@
 package net.gini.android.bank.sdk.exampleapp.ui.screens
 
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -37,6 +38,15 @@ class OnboardingScreen {
 
     fun clickSkipButton(): OnboardingScreen {
         onView(withId(net.gini.android.capture.R.id.gc_skip)).perform(click())
+        return this
+    }
+
+    fun clickSkipButtonIfPresent(): OnboardingScreen {
+        try {
+            onView(withId(net.gini.android.capture.R.id.gc_skip)).perform(click())
+        } catch (e: NoMatchingViewException) {
+            // Onboarding already dismissed; camera screen is shown directly
+        }
         return this
     }
 
