@@ -33,6 +33,7 @@ TEST_APK="$APK_DIR/androidTest/$FLAVOR/$BUILD_TYPE/example-app-dev-exampleApp-de
 TEST_DOCUMENTS="$SCRIPT_DIR/../testDocuments"
 TEST_IMAGE="$TEST_DOCUMENTS/test_image.jpeg"
 TEST_PDF="$TEST_DOCUMENTS/Testrechnung-RA-1.pdf"
+SAMPLE_PDF="$TEST_DOCUMENTS/sample.pdf"
 
 DEVICE_1="Google Pixel 9-16.0"
 DEVICE_2="Google Pixel 10 Pro-16.0"
@@ -61,6 +62,12 @@ if [ ! -f "$TEST_PDF" ]; then
   exit 1
 fi
 echo "Using test PDF:   $TEST_PDF"
+
+if [ ! -f "$SAMPLE_PDF" ]; then
+  echo "Error: Sample PDF not found: $SAMPLE_PDF"
+  exit 1
+fi
+echo "Using sample PDF: $SAMPLE_PDF"
 
 # ── Step 1: Build APKs ───────────────────────────────────────────────────────────
 echo "[1/4] Building APKs..."
@@ -103,6 +110,15 @@ echo "  PDF response: $PDF_RESPONSE"
 PDF_URL=$(echo "$PDF_RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['media_url'])" 2>/dev/null || true)
 if [ -z "$PDF_URL" ]; then echo "Error: Failed to get PDF media_url — check response above"; exit 1; fi
 
+echo "  Uploading sample PDF..."
+SAMPLE_PDF_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
+  -X POST "https://api-cloud.browserstack.com/app-automate/upload-media" \
+  -F "file=@$SAMPLE_PDF" \
+  -F "custom_id=SamplePDF")
+echo "  Sample PDF response: $SAMPLE_PDF_RESPONSE"
+SAMPLE_PDF_URL=$(echo "$SAMPLE_PDF_RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['media_url'])" 2>/dev/null || true)
+if [ -z "$SAMPLE_PDF_URL" ]; then echo "Error: Failed to get sample PDF media_url — check response above"; exit 1; fi
+
 echo "  Uploading app APK..."
 APP_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
   -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/app" \
@@ -124,6 +140,7 @@ echo "  app_url:          $APP_URL"
 echo "  test_suite_url:   $TEST_URL"
 echo "  image media_url:  $IMAGE_URL"
 echo "  pdf media_url:    $PDF_URL"
+echo "  sample pdf url:   $SAMPLE_PDF_URL"
 
 # ── Step 4: Trigger test run ─────────────────────────────────────────────────────
 echo "[4/4] Triggering test build on BrowserStack..."
@@ -147,7 +164,7 @@ BUILD_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
     \"app\": \"$APP_URL\",
     \"testSuite\": \"$TEST_URL\",
     $FILTER_JSON
-    \"uploadMedia\": [\"$IMAGE_URL\", \"$PDF_URL\"]
+    \"uploadMedia\": [\"$IMAGE_URL\", \"$PDF_URL\", \"$SAMPLE_PDF_URL\"]
   }")
 echo "Build response: $BUILD_RESPONSE"
 echo ""
