@@ -26,7 +26,7 @@ class DigitalInvoiceScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
 
-    @get: Rule
+    @get:Rule
     val grantPermissionRule: GrantPermissionRule =
         GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
@@ -45,41 +45,50 @@ class DigitalInvoiceScreenTests {
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
-    @Test
-    fun test1_digitalInvoiceOnboardingScreenIsDisplayed() {
+    private fun clickPhotoPaymentAndUploadFile() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
         idlingResource.waitForIdle()
-        val isOnboardingScreenTextVisible = digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
+    }
+
+    @Test
+    fun test1_digitalInvoiceOnboardingScreenIsDisplayed() {
+        clickPhotoPaymentAndUploadFile()
+        val isOnboardingScreenTextVisible =
+            digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenTextVisible)
-        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        val isOnboardingScreenButtonVisible =
+            digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenButtonVisible)
     }
 
     @Test
     fun test2_disableToggleSwitchToRemoveItemFromList() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
-        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        clickPhotoPaymentAndUploadFile()
+        val isOnboardingScreenButtonVisible =
+            digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickArticleSwitch()
-        val isItemEnabled =  digitalInvoiceScreen.checkItemIsEnabledFromDigitalScreen()
+        val isItemEnabled = digitalInvoiceScreen.checkItemIsEnabledFromDigitalScreen()
         assertEquals(false, isItemEnabled)
     }
 
 
     @Test
     fun test3_enableToggleSwitchAndVerifyAnItemIsAddedBackToList() {
-        util_uploadAndClickArticleSwitch()
+        mainScreen.clickSettingButton()
+        configurationScreen.scrollToUICustomizationText()
+        pressBack()
+        clickPhotoPaymentAndUploadFile()
+        digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
+        idlingResource.waitForIdle()
+        digitalInvoiceScreen.clickArticleSwitch()
+        idlingResource.waitForIdle()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickArticleSwitch()
         val isItemEnabled = digitalInvoiceScreen.checkItemIsEnabledFromDigitalScreen()
@@ -88,7 +97,14 @@ class DigitalInvoiceScreenTests {
 
     @Test
     fun test4_differenceInTotalAmountWithSwitchEnabledOrDisabled() {
-        util_uploadAndClickArticleSwitch()
+        mainScreen.clickSettingButton()
+        configurationScreen.scrollToUICustomizationText()
+        pressBack()
+        clickPhotoPaymentAndUploadFile()
+        digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
+        idlingResource.waitForIdle()
+        digitalInvoiceScreen.clickArticleSwitch()
+        idlingResource.waitForIdle()
         idlingResource.waitForIdle()
 
         val isTotalTitleVisible = digitalInvoiceScreen.checkTotalTitleIsDisplayed()
@@ -115,13 +131,9 @@ class DigitalInvoiceScreenTests {
 
     @Test
     fun test5_verifyAdditionalChargesOnDigitalInvoice() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
-        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        clickPhotoPaymentAndUploadFile()
+        val isOnboardingScreenButtonVisible =
+            digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
@@ -135,30 +147,23 @@ class DigitalInvoiceScreenTests {
         mainScreen.clickSettingButton()
         configurationScreen.clickTransactionDocsSwitch()
         pressBack()
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
-        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        clickPhotoPaymentAndUploadFile()
+        val isOnboardingScreenButtonVisible =
+            digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickProceedButton()
-        val isTransferSummaryButtonVisible = extractionScreen.checkTransferSummaryButtonIsClickable()
+        val isTransferSummaryButtonVisible =
+            extractionScreen.checkTransferSummaryButtonIsClickable()
         assertEquals(true, isTransferSummaryButtonVisible)
     }
 
     @Test
     fun test7_clickHelpButtonAndVerifyContentOnHelpScreen() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
-        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        clickPhotoPaymentAndUploadFile()
+        val isOnboardingScreenButtonVisible =
+            digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
@@ -172,13 +177,9 @@ class DigitalInvoiceScreenTests {
 
     @Test
     fun test8_checkMainScreenTitleIsDisplayedAfterClickOnCancelButton() {
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
-        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
+        clickPhotoPaymentAndUploadFile()
+        val isOnboardingScreenButtonVisible =
+            digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
         assertEquals(true, isOnboardingScreenButtonVisible)
         digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
         idlingResource.waitForIdle()
@@ -187,19 +188,4 @@ class DigitalInvoiceScreenTests {
         assertEquals(true, isDescriptionTitleVisible)
     }
 
-    private fun util_uploadAndClickArticleSwitch() {
-        mainScreen.clickSettingButton()
-        configurationScreen.scrollToUICustomizationText()
-        pressBack()
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
-        digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
-        idlingResource.waitForIdle()
-        digitalInvoiceScreen.clickArticleSwitch()
-        idlingResource.waitForIdle()
-    }
 }
