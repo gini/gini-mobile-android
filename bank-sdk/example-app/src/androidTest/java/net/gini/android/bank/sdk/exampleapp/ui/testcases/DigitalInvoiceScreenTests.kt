@@ -76,49 +76,10 @@ class DigitalInvoiceScreenTests {
         assertEquals(false, isItemEnabled)
     }
 
-    @Test
-    fun test3_returnReasonDisplaysWhenToggleSwitchIsDisabled() {
-        mainScreen.clickSettingButton()
-        configurationScreen.scrollToUICustomizationText()
-        pressBack()
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
-        val isOnboardingScreenButtonVisible = digitalInvoiceScreen.checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed()
-        assertEquals(true, isOnboardingScreenButtonVisible)
-        idlingResource.waitForIdle()
-        digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
-        idlingResource.waitForIdle()
-        digitalInvoiceScreen.clickArticleSwitch()
-        idlingResource.waitForIdle()
-        val isDisplayed = digitalInvoiceScreen.checkForReturnReasonsList()
-        idlingResource.waitForIdle()
-        assertEquals(true, isDisplayed)
-    }
 
     @Test
-    fun test4_verifyCountOnReturnReasonsList() {
-        test3_returnReasonDisplaysWhenToggleSwitchIsDisabled()
-        val totalItemsOnReturnReason = 7
-        val itemSize =  digitalInvoiceScreen.returnItemCountOnReturnReasonsList()
-        assertEquals(totalItemsOnReturnReason, itemSize)
-    }
-
-    @Test
-    fun test5_checkItemOnListIsDisabledAfterClickItemOnReturnReasonsList() {
-        test3_returnReasonDisplaysWhenToggleSwitchIsDisabled()
-        digitalInvoiceScreen.clickItemOnReturnReasonsList()
-        idlingResource.waitForIdle()
-        val isItemDisabled = digitalInvoiceScreen.checkItemIsDisabledFromDigitalScreen()
-        assertEquals(true, isItemDisabled)
-    }
-
-    @Test
-    fun test6_enableToggleSwitchAndVerifyAnItemIsAddedBackToList() {
-        test5_checkItemOnListIsDisabledAfterClickItemOnReturnReasonsList()
+    fun test3_enableToggleSwitchAndVerifyAnItemIsAddedBackToList() {
+        util_uploadAndClickArticleSwitch()
         idlingResource.waitForIdle()
         digitalInvoiceScreen.clickArticleSwitch()
         val isItemEnabled = digitalInvoiceScreen.checkItemIsEnabledFromDigitalScreen()
@@ -126,8 +87,8 @@ class DigitalInvoiceScreenTests {
     }
 
     @Test
-    fun test7_differenceInTotalAmountWithSwitchEnabledOrDisabled() {
-        test5_checkItemOnListIsDisabledAfterClickItemOnReturnReasonsList()
+    fun test4_differenceInTotalAmountWithSwitchEnabledOrDisabled() {
+        util_uploadAndClickArticleSwitch()
         idlingResource.waitForIdle()
 
         val isTotalTitleVisible = digitalInvoiceScreen.checkTotalTitleIsDisplayed()
@@ -153,7 +114,7 @@ class DigitalInvoiceScreenTests {
     }
 
     @Test
-    fun test8_verifyAdditionalChargesOnDigitalInvoice() {
+    fun test5_verifyAdditionalChargesOnDigitalInvoice() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -170,7 +131,10 @@ class DigitalInvoiceScreenTests {
     }
 
     @Test
-    fun test9_checkTransferSummaryButtonIsClickableAfterClickOnProceedButton() {
+    fun test6_checkTransferSummaryButtonIsClickableAfterClickOnProceedButton() {
+        mainScreen.clickSettingButton()
+        configurationScreen.clickTransactionDocsSwitch()
+        pressBack()
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -187,7 +151,7 @@ class DigitalInvoiceScreenTests {
     }
 
     @Test
-    fun test10_clickHelpButtonAndVerifyContentOnHelpScreen() {
+    fun test7_clickHelpButtonAndVerifyContentOnHelpScreen() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -207,7 +171,7 @@ class DigitalInvoiceScreenTests {
     }
 
     @Test
-    fun test11_checkMainScreenTitleIsDisplayedAfterClickOnCancelButton() {
+    fun test8_checkMainScreenTitleIsDisplayedAfterClickOnCancelButton() {
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -221,5 +185,21 @@ class DigitalInvoiceScreenTests {
         digitalInvoiceScreen.clickCancelButton()
         val isDescriptionTitleVisible = mainScreen.assertDescriptionTitle()
         assertEquals(true, isDescriptionTitleVisible)
+    }
+
+    private fun util_uploadAndClickArticleSwitch() {
+        mainScreen.clickSettingButton()
+        configurationScreen.scrollToUICustomizationText()
+        pressBack()
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButton()
+        captureScreen.clickFilesButton()
+        captureScreen.clickFiles()
+        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
+        idlingResource.waitForIdle()
+        digitalInvoiceScreen.clickGetStartedButtonOnOnboardingScreen()
+        idlingResource.waitForIdle()
+        digitalInvoiceScreen.clickArticleSwitch()
+        idlingResource.waitForIdle()
     }
 }

@@ -30,6 +30,12 @@ class ConfigurationScreen {
         return this
     }
 
+    fun clickTransactionDocsSwitch(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_transactionDocsFeature))
+            .perform(closeSoftKeyboard(), scrollTo(), click())
+        return this
+    }
+
     fun scrollToUICustomizationText(): ConfigurationScreen {
         onView(withText("UI customization"))
             .perform(scrollTo())
