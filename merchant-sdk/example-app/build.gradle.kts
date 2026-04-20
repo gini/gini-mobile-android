@@ -68,6 +68,11 @@ android {
         create("qa") {
             dimension = "environment"
         }
+        create("qaUnique"){
+            dimension = "environment"
+            val v = project(":health-sdk:sdk").project.version.toString().replace(".", "_")
+            applicationIdSuffix = ".qa$v"
+        }
     }
     buildFeatures {
         viewBinding = true
