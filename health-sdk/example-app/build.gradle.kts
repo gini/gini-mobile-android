@@ -129,9 +129,33 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.contrib)
+    androidTestImplementation(libs.androidx.test.uiautomator)
 }
 
 apply<PropertiesPlugin>()
+
+/**
+ * Installs the bank-sdk example app (devPaymentProvider3Debug variant) on the connected
+ * device/emulator before any connectedAndroidTest task runs.
+ *
+ * The bank app package (net.gini.android.bank.insurance.mock) must be present on the device
+ * so the Health SDK can resolve the payment intent and launch the Bank app during UI tests.
+ *
+ * Run manually:  ./gradlew :health-sdk:example-app:installBankApp
+ * Runs automatically before: connectedDevDebugAndroidTest (and all other connected test variants)
+ */
+val installBankApp by tasks.registering {
+    group = "verification"
+    description = "Installs bank-sdk example app (devPaymentProvider3Debug) before UI tests"
+    dependsOn(":bank-sdk:example-app:installDevPaymentProvider3Debug")
+}
+
+tasks.configureEach {
+    if (name.startsWith("connected") && name.endsWith("AndroidTest")) {
+        dependsOn(installBankApp)
+    }
+}
 
 tasks.register<CreatePropertiesTask>("injectClientCredentials") {
     val propertiesMap = mutableMapOf<String, String>()
