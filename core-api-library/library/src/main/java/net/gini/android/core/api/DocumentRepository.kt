@@ -213,6 +213,27 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
     }
 
     @Throws(JSONException::class)
+    suspend fun sendFeedbackWithSpecificExtractions(document: Document, extractions: Map<String, SpecificExtraction>): Resource<Unit> {
+        val feedbackForExtractions = JSONObject()
+        for (entry in extractions.entries) {
+            val extraction = entry.value
+            val extractionData = JSONObject()
+            extractionData.put("value", extraction.value)
+            extractionData.put("entity", extraction.entity)
+            feedbackForExtractions.put(entry.key, extractionData)
+        }
+
+        val bodyJSON = JSONObject()
+        bodyJSON.put("extractions", feedbackForExtractions)
+        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        return withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.sendFeedback(accessToken, document.id, body)
+            }
+        }
+    }
+
+    @Throws(JSONException::class)
     suspend fun sendFeedbackForExtractions(document: Document, extractions: Map<String, SpecificExtraction>, compoundExtractions: Map<String, CompoundExtraction>): Resource<Unit> {
         val feedbackForExtractions = JSONObject()
         for (entry in extractions.entries) {

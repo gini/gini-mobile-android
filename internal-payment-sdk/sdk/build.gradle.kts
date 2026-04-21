@@ -92,6 +92,7 @@ dependencies {
     }
 
     api(libs.slf4j.api)
+    implementation(libs.moshi.core)
     implementation(libs.androidx.lifecycle.common.java8)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
