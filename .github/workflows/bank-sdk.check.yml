@@ -135,8 +135,16 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: >
+            adb push .github/test_pdfs/password-protected.pdf /sdcard/Download ;
+            adb push .github/test_pdfs/sample.pdf /sdcard/Download ;
+            adb push .github/test_pdfs/test_image.jpeg /sdcard/Download ;
+            adb push .github/test_pdfs/test-image-no-results.jpg /sdcard/Download ;
+            adb push .github/test_pdfs/test-pdf-no-results.pdf /sdcard/Download ;
+            adb push .github/test_pdfs/Testrechnung-RA-1.pdf /sdcard/Download ;
+            adb push .github/test_pdfs/too-many-pages.pdf /sdcard/Download ;
             adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
             ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest
+            -PignoreLocalTests="true"
             -PclientId="gini-mobile-ci"
             -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
