@@ -30,6 +30,8 @@ data class GiniColorScheme(
     val checkbox: Checkbox = Checkbox(),
     val contextMenu: ContextMenu = ContextMenu(),
     val logo: Logo = Logo(),
+    val skontoSection: SkontoSection = SkontoSection()
+
 ) {
 
     @Immutable
@@ -234,6 +236,10 @@ data class GiniColorScheme(
             val contentOutlined: Color = Color.Unspecified,
         )
     }
+    @Immutable
+    data class SkontoSection(
+        val skontoSectionTitleTextColor: Color = Color.Unspecified,
+    )
 
     @Immutable
     data class Logo(
@@ -245,7 +251,8 @@ data class GiniColorScheme(
  * Created a light color scheme based on primitives.
  */
 internal fun giniLightColorScheme(
-    giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives()
+    giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives(),
+    giniColorElementsPrimitives: GiniColorElementsPrimitives = GiniColorElementsPrimitives()
 ) = with(giniColorPrimitives) {
     GiniColorScheme(
         background = GiniColorScheme.Background(primary = light02),
@@ -373,6 +380,9 @@ internal fun giniLightColorScheme(
         ),
         logo = GiniColorScheme.Logo(
             tint = accent01
+        ),
+        skontoSection = GiniColorScheme.SkontoSection(
+            skontoSectionTitleTextColor = giniColorElementsPrimitives.skontoSectionTitleTextColor
         )
     )
 }
@@ -381,7 +391,8 @@ internal fun giniLightColorScheme(
  * Created a dark color scheme based on primitives.
  */
 internal fun giniDarkColorScheme(
-    giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives()
+    giniColorPrimitives: GiniColorPrimitives = GiniColorPrimitives(),
+    giniColorElementsPrimitives: GiniColorElementsPrimitives = GiniColorElementsPrimitives()
 ) = with(giniColorPrimitives) {
     GiniColorScheme(
         background = GiniColorScheme.Background(primary = dark01),
@@ -513,6 +524,9 @@ internal fun giniDarkColorScheme(
         ),
         logo = GiniColorScheme.Logo(
             tint = accent01
+        ),
+        skontoSection = GiniColorScheme.SkontoSection(
+            skontoSectionTitleTextColor = giniColorElementsPrimitives.skontoSectionTitleTextColor
         )
     )
 }

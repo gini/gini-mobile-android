@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import net.gini.android.capture.ui.theme.colors.GiniColorElementsPrimitives
 import net.gini.android.capture.ui.theme.colors.GiniColorPrimitives
 import net.gini.android.capture.ui.theme.colors.GiniColorScheme
 import net.gini.android.capture.ui.theme.colors.giniDarkColorScheme
@@ -31,11 +32,13 @@ fun GiniTheme(
     val context = LocalContext.current
     val giniPrimitives =
         remember { GiniColorPrimitives.buildColorPrimitivesBasedOnResources(context) }
+    val giniElementPrimitives =
+        remember { GiniColorElementsPrimitives.buildColorPrimitivesBasedOnResources(context) }
 
     val colors = if (darkMode) {
-        giniDarkColorScheme(giniPrimitives)
+        giniDarkColorScheme(giniPrimitives, giniElementPrimitives)
     } else {
-        giniLightColorScheme(giniPrimitives)
+        giniLightColorScheme(giniPrimitives, giniElementPrimitives)
     }
 
     val typography = extractGiniTypography()

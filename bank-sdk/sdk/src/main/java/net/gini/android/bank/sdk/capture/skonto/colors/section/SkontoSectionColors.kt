@@ -24,7 +24,7 @@ data class SkontoSectionColors(
 
         @Composable
         fun colors(
-            titleTextColor: Color = GiniTheme.colorScheme.text.primary,
+            titleTextColor: Color = GiniTheme.colorScheme.skontoSection.skontoSectionTitleTextColor,
             switchColors: GiniSwitchColors = GiniSwitchColors.colors(),
             cardBackgroundColor: Color = GiniTheme.colorScheme.card.container,
             enabledHintTextColor: Color = GiniTheme.colorScheme.text.success,
