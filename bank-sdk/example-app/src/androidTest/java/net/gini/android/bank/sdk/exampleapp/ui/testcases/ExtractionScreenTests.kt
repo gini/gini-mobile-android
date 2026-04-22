@@ -20,6 +20,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.After
 import org.junit.Assume
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.Properties
@@ -28,6 +29,7 @@ import java.util.Properties
 /**
  * Test class for Extraction screen.
  */
+@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class ExtractionScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()

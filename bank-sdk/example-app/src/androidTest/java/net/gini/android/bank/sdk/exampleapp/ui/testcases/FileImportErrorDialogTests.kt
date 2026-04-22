@@ -13,6 +13,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -20,6 +21,7 @@ import org.junit.Test
 /**
  * Test class for Error dialogs of different File Import.
  */
+@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class FileImportErrorDialogTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()

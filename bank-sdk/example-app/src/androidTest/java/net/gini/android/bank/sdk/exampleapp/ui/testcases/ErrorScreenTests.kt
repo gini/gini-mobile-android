@@ -23,6 +23,7 @@ import java.util.Properties
 /**
  * Test class for Error Screens.
  */
+@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class ErrorScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()

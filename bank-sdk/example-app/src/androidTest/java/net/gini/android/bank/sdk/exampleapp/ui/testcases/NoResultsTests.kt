@@ -15,11 +15,13 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 /**
  * Test class for No Result screen.
  */
+@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class NoResultsTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>() 

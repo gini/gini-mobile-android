@@ -17,12 +17,14 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import org.junit.Assume.assumeTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
 /**
  * Test class for flash on/off on CaptureScreen.
  */
+@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class CaptureScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()

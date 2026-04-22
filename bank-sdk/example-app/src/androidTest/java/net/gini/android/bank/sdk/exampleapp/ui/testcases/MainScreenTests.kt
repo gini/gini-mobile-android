@@ -15,9 +15,11 @@ import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import org.hamcrest.Matchers.allOf
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
+@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class MainScreenTests {
 
     @get: Rule
