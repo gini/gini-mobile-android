@@ -22,14 +22,12 @@ import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.SplashActivity
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
  * Tests for the "open with" (file import) feature.
  */
-@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 @RunWith(AndroidJUnit4::class)
 class OpenWithTest {
 
