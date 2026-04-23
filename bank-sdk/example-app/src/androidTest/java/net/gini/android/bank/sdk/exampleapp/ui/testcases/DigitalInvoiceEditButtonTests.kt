@@ -27,7 +27,6 @@ import java.util.Properties
 /**
  * Test class for Edit button on Digital Invoice Screen.
  */
-@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class DigitalInvoiceEditButtonTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()

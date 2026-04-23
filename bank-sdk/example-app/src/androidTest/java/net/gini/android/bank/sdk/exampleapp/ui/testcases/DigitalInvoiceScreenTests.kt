@@ -23,7 +23,6 @@ import org.junit.Test
 /**
  * Test class for Digital Invoice Screen.
  */
-@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class DigitalInvoiceScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
