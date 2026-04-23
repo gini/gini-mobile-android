@@ -13,7 +13,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -22,7 +21,6 @@ import org.junit.Test
  *
  * No automation for step 4 and 5, since it is not part of our SDK
  */
-@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class ImportPdfImageTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
