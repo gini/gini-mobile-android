@@ -13,6 +13,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
+import net.gini.android.bank.sdk.exampleapp.ui.screens.ConfigurationScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ExtractionScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
@@ -20,7 +21,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.After
 import org.junit.Assume
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.Properties
@@ -29,7 +29,6 @@ import java.util.Properties
 /**
  * Test class for Extraction screen.
  */
-@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class ExtractionScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
@@ -44,6 +43,7 @@ class ExtractionScreenTests {
     private val imageUploader = ImageUploader()
     private val reviewScreen = ReviewScreen()
     private val extractionScreen = ExtractionScreen()
+    private val configurationScreen = ConfigurationScreen()
     private lateinit var idlingResource: SimpleIdlingResource
 
     private fun grantStoragePermission() {
@@ -63,6 +63,9 @@ class ExtractionScreenTests {
         grantStoragePermission()
         idlingResource = SimpleIdlingResource(2000)
         IdlingRegistry.getInstance().register(idlingResource)
+        mainScreen.clickSettingButton()
+        configurationScreen.clickTransactionDocsSwitch()
+        pressBack()
     }
 
     @Test
@@ -130,6 +133,7 @@ class ExtractionScreenTests {
     }
 
     private fun chooseAndUploadImageFromPhotos() {
+        imageUploader.copyImageToDownloads(getApplicationContext(), "test_image.jpeg")
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
