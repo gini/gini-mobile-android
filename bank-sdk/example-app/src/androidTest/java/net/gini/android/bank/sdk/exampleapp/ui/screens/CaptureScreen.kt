@@ -31,7 +31,7 @@ class CaptureScreen {
     }
 
     fun assertCameraTitle(): CaptureScreen {
-        onView(withId(net.gini.android.capture.R.id.gc_camera_title)).check(matches(withText(net.gini.android.capture.R.string.gc_camera_info_label_only_invoice)))
+        onView(withId(net.gini.android.capture.R.id.gc_camera_title)).check(matches(withText(net.gini.android.capture.R.string.gc_camera_info_label_invoice_and_qr)))
         return this
     }
 
