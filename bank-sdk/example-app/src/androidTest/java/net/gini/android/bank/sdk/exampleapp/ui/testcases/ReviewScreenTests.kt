@@ -18,7 +18,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.After
 import org.junit.Assume
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.Properties
@@ -27,7 +26,6 @@ import java.util.Properties
 /**
  * Test class for Review screen.
  */
-@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class ReviewScreenTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
@@ -65,6 +63,7 @@ class ReviewScreenTests {
         grantStoragePermission()
         idlingResource = SimpleIdlingResource(2000)
         IdlingRegistry.getInstance().register(idlingResource)
+        imageUploader.copyImageToDownloads(getApplicationContext(), "test_image.jpeg")
     }
 
     @Test
