@@ -1,5 +1,11 @@
 package net.gini.android.bank.sdk.exampleapp.ui.resources
 
+import android.content.ContentValues
+import android.content.Context
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
@@ -57,6 +63,27 @@ class PdfUploader {
                 downloadsOption.click()
                 device.waitForIdle()
             }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun copyPdfToDownloads(context: Context, filename: String) {
+        context.contentResolver.delete(
+            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+            "${MediaStore.MediaColumns.DISPLAY_NAME} = ?",
+            arrayOf(filename)
+        )
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+            put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+        }
+        val uri = context.contentResolver.insert(
+            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+            contentValues
+        ) ?: return
+        context.contentResolver.openOutputStream(uri)?.use { output ->
+            context.assets.open(filename).use { input -> input.copyTo(output) }
         }
     }
 

@@ -1,8 +1,10 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
+import android.os.Build
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.PdfUploader
@@ -13,7 +15,6 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -21,7 +22,6 @@ import org.junit.Test
 /**
  * Test class for Error dialogs of different File Import.
  */
-@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class FileImportErrorDialogTests {
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
@@ -46,6 +46,10 @@ class FileImportErrorDialogTests {
 
     @Test
     fun test1_importPasswordProtectedFileAndVerifyErrorDialogIsDisplayed() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            pdfUploader.copyPdfToDownloads(context, "password-protected.pdf")
+        }
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
@@ -60,6 +64,10 @@ class FileImportErrorDialogTests {
 
     @Test
     fun test2_importTooManyPagesFileAndVerifyErrorDialogIsDisplayed() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            pdfUploader.copyPdfToDownloads(context, "too-many-pages.pdf")
+        }
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButton()
         captureScreen.clickFilesButton()
