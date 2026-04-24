@@ -580,6 +580,9 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
     private boolean shouldShowAlreadyPaidInvoiceWarning(
             @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        if (isCxMode()) {
+            return false;
+        }
         // Feature flags / config
         final boolean alreadyPaidHintClientFlagEnabled = extension.getAlreadyPaidHintEnabledUseCase().invoke();
 
@@ -602,6 +605,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
 
         final boolean paymentDueHintSDKFlag =
                 GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
+
+        if (isCxMode()) {
+            return false;
+        }
 
         if (extension.isRAOrSkontoIncludedInExtractions(resultHolder)) {
             return false;
