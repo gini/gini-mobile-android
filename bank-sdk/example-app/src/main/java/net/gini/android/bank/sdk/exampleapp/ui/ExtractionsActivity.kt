@@ -176,7 +176,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             
             // Determine editable fields based on isCxExtractions
             val editableFields = if (isCxExtractions) {
-                emptyList() // CX = all fields readonly
+                mExtractions.keys.toList() // CX = all fields editable
             } else {
                 editableSpecificExtractions.keys.toList() // SEPA = only these 7 editable (UNCHANGED)
             }
