@@ -2,6 +2,7 @@ package net.gini.android.capture.internal.qreducation
 
 import kotlinx.coroutines.flow.first
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.ProductTag
 import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
 import net.gini.android.capture.internal.qreducation.model.FlowType
 import net.gini.android.capture.internal.qreducation.model.InvoiceEducationType
@@ -12,7 +13,8 @@ internal class GetInvoiceEducationTypeUseCase(
     private val invoiceEducationStorage: InvoiceEducationStorage,
     private val flowTypeStorage: FlowTypeStorage,
     private val documentImportEnabledFileTypesProvider: () -> DocumentImportEnabledFileTypes?,
-    private val getEducationFeatureEnabledUseCase: GetEducationFeatureEnabledUseCase
+    private val getEducationFeatureEnabledUseCase: GetEducationFeatureEnabledUseCase,
+    private val productTagProvider: () -> ProductTag?,
 ) {
     @Suppress("ReturnCount")
     suspend fun execute(): InvoiceEducationType? {
@@ -23,9 +25,10 @@ internal class GetInvoiceEducationTypeUseCase(
         val documentImportDisabled =
             documentImportEnabledFileTypesProvider() == DocumentImportEnabledFileTypes.NONE
         val wrongFlowType = flowType == null || !ALLOWED_FLOW_TYPES.contains(flowType)
+        val isCxExtractions = productTagProvider() is ProductTag.CxExtractions
 
         val skipEducationConditions = listOf(
-            documentImportDisabled, wrongFlowType
+            documentImportDisabled, wrongFlowType, isCxExtractions
         )
 
         if (skipEducationConditions.any { it }) {
