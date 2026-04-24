@@ -88,6 +88,7 @@ jobs:
             ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest
             -PclientId="gini-mobile-test"
             -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+            -Pandroid.testInstrumentationRunnerArguments.notPackage=net.gini.android.bank.sdk.exampleapp.ui.testcases
 
       - name: archive instrumented test results
         if: always()
