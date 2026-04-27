@@ -9,7 +9,6 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.Payment
 import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
-import org.json.JSONObject
 
 /**
  * The [DocumentManager] is a high level API on top of the Gini API, via which the [DocumentRepository] is used. It
