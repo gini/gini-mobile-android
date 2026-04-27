@@ -9,7 +9,6 @@ import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.Payment
 import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
-import org.json.JSONObject
 
 /**
  * The [DocumentManager] is a high level API on top of the Gini API, via which the [DocumentRepository] is used. It
@@ -72,7 +71,23 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         documents: List<Document>,
         documentType: DocumentType? = null
     ): Resource<Document> =
-        documentRepository.createCompositeDocument(documents, documentType)
+        createCompositeDocument(documents, documentType, null)
+
+    /**
+     * Creates a new Gini composite document.
+     *
+     * @param documents         A list of partial documents which should be part of a multi-page document
+     * @param documentType      Optional a document type hint. See the documentation for the document type hints for
+     *                          possible values
+     * @param documentMetadata  Optional metadata to be sent as request headers with the submission
+     * @return [Resource] with the [Document] instance or information about the error
+     */
+    suspend fun createCompositeDocument(
+        documents: List<Document>,
+        documentType: DocumentType? = null,
+        documentMetadata: DocumentMetadata? = null
+    ): Resource<Document> =
+        documentRepository.createCompositeDocument(documents, documentType, documentMetadata)
 
     /**
      * Creates a new Gini composite document. The input Map must contain the partial documents as keys. These will be
@@ -88,7 +103,25 @@ abstract class DocumentManager<out DR: DocumentRepository<E>, E: ExtractionsCont
         documentRotationMap: LinkedHashMap<Document, Int>,
         documentType: DocumentType? = null
     ): Resource<Document> =
-        documentRepository.createCompositeDocument(documentRotationMap, documentType)
+        createCompositeDocument(documentRotationMap, documentType, null)
+
+    /**
+     * Creates a new Gini composite document. The input Map must contain the partial documents as keys. These will be
+     * part of the multi-page document. The value for each partial document key is the amount in degrees the document
+     * has been rotated by the user.
+     *
+     * @param documentRotationMap A map of partial documents and their rotation in degrees
+     * @param documentType        Optional a document type hint. See the documentation for the document type hints for
+     *                            possible values
+     * @param documentMetadata    Optional metadata to be sent as request headers with the submission
+     * @return [Resource] with the [Document] instance or information about the error
+     */
+    suspend fun createCompositeDocument(
+        documentRotationMap: LinkedHashMap<Document, Int>,
+        documentType: DocumentType? = null,
+        documentMetadata: DocumentMetadata? = null
+    ): Resource<Document> =
+        documentRepository.createCompositeDocument(documentRotationMap, documentType, documentMetadata)
 
     /**
      * Get the document with the given unique identifier.

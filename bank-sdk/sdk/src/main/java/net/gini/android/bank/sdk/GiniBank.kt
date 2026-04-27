@@ -6,13 +6,6 @@ import androidx.activity.result.ActivityResultLauncher
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
-import net.gini.android.bank.sdk.GiniBank.getPaymentRequest
-import net.gini.android.bank.sdk.GiniBank.resolvePaymentRequest
-import net.gini.android.bank.sdk.GiniBank.returnToPaymentInitiatorApp
-import net.gini.android.bank.sdk.GiniBank.setCaptureConfiguration
-import net.gini.android.bank.sdk.GiniBank.setGiniApi
-import net.gini.android.bank.sdk.GiniBank.startCaptureFlow
-import net.gini.android.bank.sdk.GiniBank.startCaptureFlowForIntent
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureImportInput
@@ -165,7 +158,7 @@ object GiniBank {
 
 
     /**
-     * Provides transfer summary to Gini.
+     * Sends the confirmed SEPA transfer summary to Gini.
      *
      * Please provide the required transfer summary to improve the future extraction accuracy.
      *
@@ -174,6 +167,8 @@ object GiniBank {
      * - Provide values for all necessary fields, including those that were not extracted.
      * - Provide the final data approved by the user (and not the initially extracted only).
      * - Send the transfer summary after TAN verification and provide the extraction values the user has used.
+     *
+     * For cross-border (CX) payments use [sendTransferSummary] with a `Map<String, String>` instead.
      *
      * @param paymentRecipient payment receiver
      * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
@@ -201,6 +196,48 @@ object GiniBank {
             amount,
             instantPayment
         )
+    }
+
+    /**
+     * Sends the confirmed transfer summary to Gini for any payment type.
+     *
+     * The SDK routes the confirmed values to the correct backend structure based on the
+     * configured [net.gini.android.capture.ProductTag]:
+     *
+     * **CX payments** ([net.gini.android.capture.ProductTag.CxExtractions]):
+     * Pass the confirmed CX field names and values as a flat map (e.g. the first row from
+     * `result.compoundExtractions["crossBorderPayment"]?.specificExtractionMaps`).
+     * The SDK automatically wraps them back under `compoundExtractions["crossBorderPayment"]`
+     * when sending feedback.
+     * ```kotlin
+     * val fields = result.compoundExtractions["crossBorderPayment"]
+     *     ?.specificExtractionMaps
+     *     ?.firstOrNull()
+     *     ?.mapValues { it.value.value }
+     *     ?: emptyMap()
+     * GiniBank.sendTransferSummary(fields)
+     * ```
+     *
+     * **SEPA payments** (all other [net.gini.android.capture.ProductTag] values):
+     * Pass the confirmed SEPA field names and their values as a map.
+     * When providing `amountToPay`, use the `"value:currency"` format, e.g. `"950.00:EUR"`.
+     * ```kotlin
+     * GiniBank.sendTransferSummary(
+     *     mapOf(
+     *         "iban"             to "DE89370400440532013000",
+     *         "bic"              to "COBADEFFXXX",
+     *         "amountToPay"      to "950.00:EUR",
+     *         "paymentRecipient" to "Acme GmbH",
+     *         "paymentReference" to "REF-2024-001",
+     *         "paymentPurpose"   to "Invoice March"
+     *     )
+     * )
+     * ```
+     *
+     * @param extractions map of extraction field names to their confirmed values
+     */
+    fun sendTransferSummary(extractions: Map<String, String>) {
+        GiniCapture.sendTransferSummary(extractions)
     }
 
     internal fun sendTransferSummaryForSkonto(

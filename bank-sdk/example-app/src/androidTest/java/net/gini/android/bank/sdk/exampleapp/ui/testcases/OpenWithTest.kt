@@ -1,4 +1,4 @@
-package net.gini.android.bank.sdk.exampleapp
+package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.app.Activity
 import android.content.Intent
@@ -14,6 +14,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
+import net.gini.android.bank.sdk.exampleapp.ExampleApp
+import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.test.getAssetFileStorageUri
 import net.gini.android.bank.sdk.exampleapp.ui.CaptureFlowHostActivity
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity

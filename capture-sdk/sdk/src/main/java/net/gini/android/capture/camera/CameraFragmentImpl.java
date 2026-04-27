@@ -43,6 +43,7 @@ import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.GiniCaptureError;
 import net.gini.android.capture.ImportImageFileUrisAsyncTask;
 import net.gini.android.capture.ImportedFileValidationException;
+import net.gini.android.capture.ProductTag;
 import net.gini.android.capture.R;
 import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter;
 import net.gini.android.capture.document.DocumentFactory;
@@ -604,6 +605,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     protected void initQRCodeReader() {
+
+        final GiniCapture giniCapture = GiniCapture.hasInstance() ? GiniCapture.getInstance() : null;
+
+        // Skip initialization for CxExtractions
+        if (giniCapture != null
+                && giniCapture.getProductTag() == ProductTag.CxExtractions.INSTANCE) {
+            return;
+        }
         if (mPaymentQRCodeReader != null) {
             return;
         }

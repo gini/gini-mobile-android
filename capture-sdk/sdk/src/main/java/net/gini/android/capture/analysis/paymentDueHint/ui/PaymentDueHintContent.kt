@@ -1,4 +1,4 @@
-package net.gini.android.capture.analysis.paymentDueHint.qrcode
+package net.gini.android.capture.analysis.paymentDueHint.ui
 
 
 import android.os.SystemClock
