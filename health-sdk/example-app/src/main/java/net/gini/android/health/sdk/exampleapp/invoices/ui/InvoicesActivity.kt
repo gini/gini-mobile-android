@@ -118,25 +118,31 @@ open class InvoicesActivity : AppCompatActivity() {
                 launch {
                     viewModel.paymentProviderAppsFlow.collect { paymentProviderAppsState ->
                         if (paymentProviderAppsState is PaymentProviderAppsState.Error) {
-                            // Cast to GiniHealthException if available for detailed error info
-                            val giniException = paymentProviderAppsState.throwable as? GiniHealthException
-
                             val errorMessage = buildString {
                                 append("Failed to load payment provider apps:\n\n")
 
-                                if (giniException != null) {
-                                    append(giniException.parsedMessage)
+                                when (val throwable = paymentProviderAppsState.throwable) {
+                                    is GiniHealthException -> {
+                                        append(throwable.parsedMessage)
 
-                                    giniException.statusCode?.let { status ->
-                                        append("\n\nHTTP Status: $status")
+                                        throwable.statusCode?.let { status ->
+                                            append("\n\nHTTP Status: $status")
+                                        }
+                                        throwable.errorResponse?.items?.let { items ->
+                                            for (error in items) {
+                                                append("\n\nError Code: ${error.code}")
+                                                error.message?.let { msg ->
+                                                    if (msg.isNotBlank() && msg != throwable.parsedMessage) {
+                                                        append("\nDetails: $msg")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        throwable.requestId?.let { reqId ->
+                                            append("\nRequest ID: $reqId")
+                                        }
                                     }
-
-                                    giniException.requestId?.let { reqId ->
-                                        append("\nRequest ID: $reqId")
-                                    }
-                                } else {
-                                    // Simple exception - just show message
-                                    append(paymentProviderAppsState.throwable.message ?: "Unknown error")
+                                    else -> append(throwable.message ?: "Unknown error")
                                 }
                             }
 
@@ -315,13 +321,22 @@ open class InvoicesActivity : AppCompatActivity() {
     }
 
     /**
-     * Returns true when the payment review fragment is currently added to the back stack.
-     * While it is shown, the SDK handles errors internally (shouldHandleErrorsInternally = true),
-     * so the activity must NOT show its own error dialogs for the same errors.
+     * Returns true when the payment review fragment is currently shown AND it is configured to
+     * handle errors internally (shouldHandleErrorsInternally = true).
+     *
+     * - Fragment shown + handleErrorsInternally ON  → true  (fragment handles errors; activity must NOT show a dialog)
+     * - Fragment shown + handleErrorsInternally OFF → false (fragment won't handle errors; activity SHOULD show a dialog)
+     * - Fragment not shown                          → false (activity SHOULD show a dialog)
      */
     private fun isReviewFragmentShown(): Boolean {
         val fragment = supportFragmentManager.findFragmentByTag(REVIEW_FRAGMENT_TAG)
-        return fragment != null && fragment.isAdded
+        if (fragment == null || !fragment.isAdded) return false
+        // Fragment is visible — only suppress the activity-level dialog when the fragment
+        // is configured to handle errors internally.
+        val paymentFlowConfig = IntentCompat.getParcelableExtra(
+            intent, MainActivity.PAYMENT_FLOW_CONFIGURATION, PaymentFlowConfiguration::class.java
+        )
+        return paymentFlowConfig?.shouldHandleErrorsInternally ?: true
     }
 
     private fun setActivityTitle(screen: DisplayedScreen) {

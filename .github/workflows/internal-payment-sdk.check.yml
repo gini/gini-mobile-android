@@ -23,6 +23,9 @@ on:
       - 'core-api-library/**'
       - 'gradle/**'
   workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
 
 jobs:
   test:

@@ -74,13 +74,11 @@ class OrderDetailsViewModel(
                         _orderFlow.value = newOrder.copy(id = it.id)
                     }
                 }.onFailure {
-                    _errorFlow.value = Error.ErrorMessage(it.message ?: "")
+                    _errorFlow.value = Error.ErrorMessage(it)
                 }
             }
             is PaymentProviderAppsState.Error -> {
-                _errorFlow.value = Error.ErrorMessage(
-                    paymentProvidersAppsState.throwable.message ?: "Failed to load payment providers"
-                )
+                _errorFlow.value = Error.ErrorMessage(paymentProvidersAppsState.throwable)
             }
             else -> {
                 _errorFlow.value = Error.GenericError
@@ -117,6 +115,6 @@ class OrderDetailsViewModel(
         data object InvalidIban: Error()
         data object PaymentDetailsIncomplete: Error()
         data object GenericError: Error()
-        data class ErrorMessage(val error: String): Error()
+        data class  ErrorMessage(val throwable: Throwable) : Error()
     }
 }

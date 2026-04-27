@@ -76,7 +76,7 @@ class InvoicesRepository(
         val errors = results.mapNotNull { (_, resource) ->
             if (resource is Resource.Error) {
                 // Error is already parsed by Resource!
-                val errorMessage = resource.errorResponse?.items?.firstOrNull()?.message
+                val errorMessage = resource.errorResponse?.message
                     ?: resource.exception?.message
                     ?: resource.message
                     ?: "Unknown error"
@@ -249,17 +249,5 @@ data class ErrorDetail(
     val message: String,
     val statusCode: Int? = null,
     val errorResponse: ErrorResponse? = null,
-    val errorCode: String? = errorResponse?.items?.firstOrNull()?.code,
-    val requestId: String? = errorResponse?.requestId
 )
-
-/**
- * Sealed class to represent the result of each refresh operation.
- * Used to avoid thread-safety issues when collecting results from parallel async operations.
- */
-private sealed class RefreshResult {
-    data class Success(val document: DocumentWithExtractions) : RefreshResult()
-    data class Error(val error: ErrorDetail) : RefreshResult()
-    object Cancelled : RefreshResult()
-}
 
