@@ -137,19 +137,31 @@ class ReviewActivity : AppCompatActivity() {
                             is PaymentProviderAppsState.Error -> {
                                 binding.progress.visibility = View.INVISIBLE
 
-                                // Cast to GiniHealthException if available for detailed error info
-                                val giniException = paymentProviderAppsState.throwable as? GiniHealthException
-
                                 val errorMessage = buildString {
                                     append("Failed to load payment provider apps:\n\n")
-                                    append(paymentProviderAppsState.throwable.message ?: "Unknown error")
 
-                                    giniException?.statusCode?.let { status ->
-                                        append("\n\nHTTP Status: $status")
-                                    }
+                                    when (val throwable = paymentProviderAppsState.throwable) {
+                                        is GiniHealthException -> {
+                                            append(throwable.parsedMessage)
 
-                                    giniException?.requestId?.let { reqId ->
-                                        append("\nRequest ID: $reqId")
+                                            throwable.statusCode?.let { status ->
+                                                append("\n\nHTTP Status: $status")
+                                            }
+                                            throwable.errorResponse?.items?.let { items ->
+                                                for (error in items) {
+                                                    append("\n\nError Code: ${error.code}")
+                                                    error.message?.let { msg ->
+                                                        if (msg.isNotBlank() && msg != throwable.parsedMessage) {
+                                                            append("\nDetails: $msg")
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            throwable.requestId?.let { reqId ->
+                                                append("\nRequest ID: $reqId")
+                                            }
+                                        }
+                                        else -> append(throwable.message ?: "Unknown error")
                                     }
                                 }
 

@@ -151,7 +151,12 @@ class OrderDetailsFragment : Fragment() {
     private suspend fun observeErrorFlow() {
         orderDetailsViewModel.errorFlow.collect { error ->
             when (error) {
-                is OrderDetailsViewModel.Error.ErrorMessage -> showError(error.error)
+                is OrderDetailsViewModel.Error.ErrorMessage -> {
+                    requireContext().showGiniHealthErrorDialog(
+                        exception = error.throwable,
+                        onDismiss = null
+                    )
+                }
                 OrderDetailsViewModel.Error.GenericError -> showError(getString(internalR.string.gps_generic_error_message))
                 OrderDetailsViewModel.Error.InvalidIban -> showError(getString(internalR.string.gps_error_input_invalid_iban))
                 OrderDetailsViewModel.Error.PaymentDetailsIncomplete -> showError(getString(R.string.payment_details_incomplete))
