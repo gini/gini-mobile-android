@@ -288,21 +288,20 @@ The [Feature Name] UI supports customization of strings, colors, and other appea
 When the user completes the [Feature Name] flow, the SDK delivers the updated extraction result via the `GiniBank` result callback:
 
 ```kotlin
-GiniBank.startCaptureFlow(
-    context,
-    captureResultLauncher,
-    // ...
-)
-
-// In your Activity/Fragment:
-private val captureResultLauncher = registerForActivityResult(GiniBank.createCaptureFlowContract()) { result ->
-    when (result) {
-        is CaptureResult.Success -> handleExtractions(result.specificExtractions)
-        is CaptureResult.Error -> handleError(result.value)
-        CaptureResult.Empty -> handleNoResults()
-        CaptureResult.Cancel -> handleCancellation()
+// In your Activity/Fragment, register the launcher before onCreate:
+private val captureLauncher =
+    registerForActivityResult(CaptureFlowContract()) { result ->
+        when (result) {
+            is CaptureResult.Success -> handleExtractions(result.specificExtractions)
+            is CaptureResult.Error -> handleError(result.value)
+            CaptureResult.Empty -> handleNoResults()
+            CaptureResult.Cancel -> handleCancellation()
+            CaptureResult.EnterManually -> handleEnterManually()
+        }
     }
-}
+
+// Launch the flow:
+GiniBank.startCaptureFlow(captureLauncher)
 ```
 
 The `AnalysisResult` includes:
