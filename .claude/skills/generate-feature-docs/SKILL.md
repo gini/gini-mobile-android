@@ -323,7 +323,7 @@ The `AnalysisResult` includes:
 
 ### [Feature Name] and [Other Feature]
 
-[Describe what changes — e.g. "Return Assistant is suppressed when `productTag` is set to `.cxExtractions`, regardless of whether `returnAssistantEnabled` is `true` or whether line items are present."]
+[Describe what changes — e.g. "Return Assistant is suppressed when `productTag` is set to `ProductTag.CxExtractions`, regardless of whether `returnAssistantEnabled` is `true` or whether line items are present."]
 
 ## Edge Cases
 
