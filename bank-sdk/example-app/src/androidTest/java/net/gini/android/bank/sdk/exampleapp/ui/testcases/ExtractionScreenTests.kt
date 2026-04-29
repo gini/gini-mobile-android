@@ -135,7 +135,7 @@ class ExtractionScreenTests {
     private fun chooseAndUploadImageFromPhotos() {
         imageUploader.copyImageToDownloads(getApplicationContext(), "test_image.jpeg")
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickPhotos()
         imageUploader.uploadImageFromPhotos()
