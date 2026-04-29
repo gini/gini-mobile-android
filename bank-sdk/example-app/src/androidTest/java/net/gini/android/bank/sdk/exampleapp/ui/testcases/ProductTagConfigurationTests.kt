@@ -46,7 +46,7 @@ class ProductTagConfigurationTests {
     @Test
     fun test1_defaultProductTagIsSepaExtractions() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
 
         assertEquals(ProductTag.SepaExtractions, GiniCapture.getInstance().productTag)
     }
@@ -64,7 +64,7 @@ class ProductTagConfigurationTests {
         pressBack()
 
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
 
         assertEquals(ProductTag.SepaExtractions, GiniCapture.getInstance().productTag)
     }
@@ -80,7 +80,7 @@ class ProductTagConfigurationTests {
         pressBack()
 
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
 
         assertEquals(ProductTag.CxExtractions, GiniCapture.getInstance().productTag)
     }
@@ -94,7 +94,7 @@ class ProductTagConfigurationTests {
         setProductTag(ProductTag.AutoDetectExtractions)
 
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
 
         val productTag = GiniCapture.getInstance().productTag
         assertEquals(ProductTag.AutoDetectExtractions, productTag)
@@ -111,7 +111,7 @@ class ProductTagConfigurationTests {
         setProductTag(ProductTag.OtherProductTag(customValue))
 
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
 
         val productTag = GiniCapture.getInstance().productTag
         assertEquals(ProductTag.OtherProductTag(customValue), productTag)

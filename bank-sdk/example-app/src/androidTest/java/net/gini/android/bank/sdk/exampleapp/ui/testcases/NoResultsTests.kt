@@ -51,7 +51,7 @@ class NoResultsTests {
     fun test1_uploadInvalidImageAndClickEnterManuallyButton_NavigatesToMainScreen() {
         imageUploader.copyImageToDownloads(getApplicationContext(), "image-no-result.png")
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickPhotos()
         imageUploader.uploadImageFromPhotos()
@@ -100,7 +100,7 @@ class NoResultsTests {
             pdfUploader.copyPdfToDownloads(context, "test-pdf-no-results.pdf")
         }
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("test-pdf-no-results.pdf")
