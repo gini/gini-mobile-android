@@ -56,7 +56,7 @@ public final class ActivityHelper {
     /**
      * Intercepts the back button pressed event once and then disables the {@link OnBackPressedCallback}.
      *
-     * Always calls {@link Activity#onBackPressed()} after disabling the {@link OnBackPressedCallback}.
+     * Always calls {@link androidx.activity.OnBackPressedDispatcher#onBackPressed()} after disabling the {@link OnBackPressedCallback}.
      *
      * @param activity
      * @param callback
@@ -71,7 +71,7 @@ public final class ActivityHelper {
                 callback.handleOnBackPressed();
                 callback.setEnabled(false);
                 setEnabled(false);
-                activity.onBackPressed();
+                activity.getOnBackPressedDispatcher().onBackPressed();
             }
         });
     }
