@@ -47,7 +47,7 @@ class ImportPdfImageTests {
     @Test
     fun test1_uploadPhoto() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickPhotos()
         imageUploader.uploadImageFromPhotos()
@@ -66,7 +66,7 @@ class ImportPdfImageTests {
     @Test
     fun test3_uploadPdf() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("sample.pdf")

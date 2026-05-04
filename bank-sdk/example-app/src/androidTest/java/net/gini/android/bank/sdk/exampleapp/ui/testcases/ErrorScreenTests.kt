@@ -57,7 +57,7 @@ class ErrorScreenTests {
 
     private fun clickPhotoPaymentButtonAndSkipOnboarding(){
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickCameraButton()
         idlingResource.waitForIdle()
     }
@@ -66,7 +66,7 @@ class ErrorScreenTests {
     fun test1_verifyUploadErrorScreen() {
         imageUploader.copyImageToDownloads(getApplicationContext(), "blank_test_image.png")
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickPhotos()
         imageUploader.uploadImageFromPhotos()

@@ -31,7 +31,7 @@ class HelpScreenTests {
     @Test
     fun test2_verifyHelpItemTipsForBestResult() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickHelpButton()
         helpScreen.assertTipsForBestResultsExists()
         helpScreen.clickTipsForBestResults()
@@ -41,7 +41,7 @@ class HelpScreenTests {
     @Test
     fun test3_verifyHelpItemSupportedFormats() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickHelpButton()
         helpScreen.assertSupportedFormatsExists()
         helpScreen.clickSupportedFormats()
@@ -51,7 +51,7 @@ class HelpScreenTests {
     @Test
     fun test4_verifyHelpItemImportDocuments() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickHelpButton()
         helpScreen.assertImportDocsExists()
         helpScreen.clickImportDocs()
