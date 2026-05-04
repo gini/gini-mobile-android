@@ -131,7 +131,6 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.viewpager2)
     implementation(libs.photoview)
-    implementation(libs.insetter)
     implementation(libs.datastore.preferences)
     ksp(libs.moshi.codegen)
     implementation(libs.moshi.core)
