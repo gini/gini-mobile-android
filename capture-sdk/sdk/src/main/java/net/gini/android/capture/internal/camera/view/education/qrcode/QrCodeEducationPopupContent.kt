@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,16 +71,15 @@ internal fun QrCodeEducationPopupContent(
 private fun QrCodeStatusBadge(
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     Text(
         modifier = modifier
             .background(
-                Color(context.getColor(R.color.gc_success_05)),
+                colorResource(R.color.gc_success_05),
                 shape = RoundedCornerShape(4.dp)
             )
             .padding(horizontal = 8.dp, vertical = 4.dp),
         text = stringResource(R.string.gc_qr_code_detected),
-        color = Color(context.getColor(R.color.gc_light_01)),
+        color = colorResource(R.color.gc_light_01),
         style = GiniTheme.typography.caption1
     )
 }
