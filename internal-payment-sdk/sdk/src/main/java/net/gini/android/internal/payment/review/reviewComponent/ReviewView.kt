@@ -26,7 +26,7 @@ import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.textfield.TextInputLayout
-import dev.chrisbanes.insetter.applyInsetter
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -174,10 +174,10 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
      *
      * - No need to handle the bottom sheet case, system insets are applied automatically.
      * - For standard fragments:
-     *   - On Android 15+ (API 35+), [applyInsetter] causes unwanted bottom padding when keyboard
+     *   - On Android 15+ (API 35+), applying insetter causes unwanted bottom padding when keyboard
      *   is visible.
      *     So we manually observe keyboard visibility and apply the correct height.
-     *   - On Android 14 and below, [applyInsetter] works as expected and is used.
+     *   - On Android 14 and below, WindowInsetsCompat listener is used.
      */
 
     private fun handleViewInsets() {
@@ -201,10 +201,13 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             }
 
             else -> {
-                binding.gpsPaymentDetails.applyInsetter {
-                    type(navigationBars = true, ime = true) {
-                        padding(bottom = true)
-                    }
+                ViewCompat.setOnApplyWindowInsetsListener(binding.gpsPaymentDetails) { v, insets ->
+                    val bottom = maxOf(
+                        insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom,
+                        insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                    )
+                    v.updatePadding(bottom = bottom)
+                    insets
                 }
             }
         }
