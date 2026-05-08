@@ -11,13 +11,15 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
+import androidx.core.view.updatePadding
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
-import dev.chrisbanes.insetter.applyInsetter
 import kotlinx.coroutines.launch
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.SpecificExtraction
@@ -59,16 +61,15 @@ class ReviewActivity : AppCompatActivity() {
 
         binding.toolbar.isGone = showCloseButton
 
-        binding.toolbar.applyInsetter {
-            type(statusBars = true) {
-                padding(top = true)
-            }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, insets ->
+            v.updatePadding(top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top)
+            insets
         }
 
-        binding.reviewFragment.applyInsetter {
-            type(statusBars = true, navigationBars = true) {
-                padding(top = true, bottom = true)
-            }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.reviewFragment) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(top = bars.top, bottom = bars.bottom)
+            insets
         }
 
         binding.payInvoiceButton.root.setOnClickListener {

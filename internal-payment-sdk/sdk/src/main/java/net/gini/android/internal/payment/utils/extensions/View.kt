@@ -9,10 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
-import dev.chrisbanes.insetter.applyInsetter
 import net.gini.android.internal.payment.utils.IntervalClickListener
 import java.util.Locale
 
@@ -89,15 +91,20 @@ fun View.applyWindowInsetsWithTopPadding(
     val list = booleanArrayOf(displayCutout, navigationBars, statusBars)
 
     if (list.atLeastOneIsTrue()) {
-        applyInsetter {
-            type(
-                displayCutout = displayCutout,
-                navigationBars = navigationBars,
-                statusBars = statusBars,
-            ) {
-                margin()
+        var typeMask = 0
+        if (displayCutout) typeMask = typeMask or WindowInsetsCompat.Type.displayCutout()
+        if (navigationBars) typeMask = typeMask or WindowInsetsCompat.Type.navigationBars()
+        if (statusBars) typeMask = typeMask or WindowInsetsCompat.Type.statusBars()
+        val finalTypeMask = typeMask
+        ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
+            val i = insets.getInsets(finalTypeMask)
+            (v.layoutParams as? ViewGroup.MarginLayoutParams)?.let { mlp ->
+                mlp.setMargins(i.left, i.top, i.right, i.bottom)
+                v.layoutParams = mlp
             }
+            insets
         }
+        ViewCompat.requestApplyInsets(this)
     }
 
     paddingTargetView?.let { view ->

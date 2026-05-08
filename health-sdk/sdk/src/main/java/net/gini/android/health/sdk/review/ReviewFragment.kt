@@ -34,7 +34,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
-import dev.chrisbanes.insetter.windowInsetTypesOf
+
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.gini.android.health.sdk.GiniHealth
@@ -439,7 +439,7 @@ class ReviewFragment private constructor(
                     runningAnimations: MutableList<WindowInsetsAnimationCompat>
                 ): WindowInsetsCompat {
                     if (Build.VERSION.SDK_INT >= 30) {
-                        runningAnimations.find { it.typeMask == windowInsetTypesOf(ime = true) }
+                        runningAnimations.find { it.typeMask == WindowInsetsCompat.Type.ime() }
                             ?.let { animation ->
                                 ghsPaymentDetails.translationY =
                                     com.google.android.material.math.MathUtils.lerp(

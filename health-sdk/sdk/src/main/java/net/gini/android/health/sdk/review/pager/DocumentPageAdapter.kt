@@ -126,9 +126,10 @@ class HorizontalViewHolder(
 
 object DiffUtilCallback : DiffUtil.ItemCallback<Page>() {
     override fun areItemsTheSame(oldItem: Page, newItem: Page) = oldItem.number == newItem.number
-
+    // Resource<ByteArray>: ByteArray has no value equality, so reference equality is correct here
+    @Suppress("DiffUtilEquals")
     override fun areContentsTheSame(oldItem: Page, newItem: Page) =
-        oldItem.pageImage == newItem.pageImage
+        oldItem.pageImage === newItem.pageImage
 }
 
 data class Page(val pageImage: Resource<ByteArray>, val number: Int)

@@ -104,8 +104,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
-
-    implementation(libs.insetter)
     implementation(libs.datastore.preferences)
     implementation(libs.moshi.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)

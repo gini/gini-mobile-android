@@ -100,7 +100,6 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.insetter)
     implementation(libs.datastore.preferences)
 
     debugImplementation(libs.androidx.test.core.ktx)
