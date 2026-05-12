@@ -181,6 +181,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private static final String GENERIC_ERROR_MESSAGE_KEY = "GENERIC_ERROR_MESSAGE_KEY";
     private static final String ERROR_TYPE_MULTI_PAGE = "ERROR_TYPE_MULTI_PAGE";
     private static final String ERROR_TYPE_INVALID_FILE = "ERROR_TYPE_INVALID_FILE";
+    private static final String UNSUPPORTED_QR_DIALOG_SHOWING_KEY = "UNSUPPORTED_QR_DIALOG_SHOWING_KEY";
 
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
@@ -205,6 +206,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     @Nullable
     private Boolean mOnlyQRCodeScanningRuntimeOverride = null;
     private boolean mQRCodeScanningDisabledByUser = false;
+    private boolean mIsUnsupportedQRDialogShowing = false;
 
     @VisibleForTesting
     UserAnalyticsEventTracker mUserAnalyticsEventTracker;
@@ -342,12 +344,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private void showUnsupportedQRCodePopup() {
         if (mIbanDetectedTextView.getVisibility() != View.VISIBLE) {
+            mIsUnsupportedQRDialogShowing = true;
             mUnsupportedQRCodePopup.show(null);
             sendQRCodeScannedEventToUserAnalytics(false);
         }
     }
 
     private void enableOnlyQRScanning() {
+        mIsUnsupportedQRDialogShowing = false;
         mQRCodeScanningDisabledByUser = false;
         mInterfaceHidden = false;
         mQRCodeContent = null;
@@ -356,6 +360,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void enableDocumentCapture() {
+        mIsUnsupportedQRDialogShowing = false;
         mQRCodeScanningDisabledByUser = true;
         mInterfaceHidden = false;
         mQRCodeContent = null;
@@ -417,6 +422,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mInMultiPageState = savedInstanceState.getBoolean(IN_MULTI_PAGE_STATE_KEY);
         mIsFlashEnabled = savedInstanceState.getBoolean(IS_FLASH_ENABLED_KEY);
         mIsDetectionErrorPopupShowed = savedInstanceState.getBoolean(IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY);
+        mIsUnsupportedQRDialogShowing = savedInstanceState.getBoolean(UNSUPPORTED_QR_DIALOG_SHOWING_KEY);
     }
 
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -447,6 +453,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     public void onViewCreated(View view, Bundle savedInstanceState) {
         handleOnBackPressed();
         showGenericErrorIfNeeded(savedInstanceState);
+        if (mIsUnsupportedQRDialogShowing) {
+            showUnsupportedQRCodePopup();
+        }
     }
 
     private void showGenericErrorIfNeeded(Bundle savedInstanceState) {
@@ -773,6 +782,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         outState.putString(GENERIC_ERROR_MESSAGE_KEY, currentGenericErrorMessage);
         outState.putBoolean(GENERIC_ERROR_SHOWING_STATE_KEY, isGenericErrorShowing);
         outState.putString(GENERIC_ERROR_TYPE_KEY, genericErrorType);
+        outState.putBoolean(UNSUPPORTED_QR_DIALOG_SHOWING_KEY, mIsUnsupportedQRDialogShowing);
     }
 
     void onStop() {

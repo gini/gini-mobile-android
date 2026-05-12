@@ -4,14 +4,16 @@ import android.content.res.ColorStateList
 import android.os.Handler
 import android.os.Looper
 import android.view.HapticFeedbackConstants
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
-import net.gini.android.capture.internal.util.disallowScreenshots
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.InjectedViewContainer
 
@@ -118,23 +120,22 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             qrImageFrame.imageTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(popupView.context, R.color.gc_error_02)
             )
-            val context = popupView.context
-            val dialog = MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.gc_unsupported_qr_code_dialog_title)
-                //.setMessage(R.string.gc_unsupported_qr_code_dialog_message)
+            val themedContext = ContextThemeWrapper(popupView.context, R.style.GiniCaptureTheme)
+            val dialogView = LayoutInflater.from(themedContext).inflate(R.layout.gc_dialog_unsupported_qr_code, null)
+            val dialog = MaterialAlertDialogBuilder(themedContext)
+                .setView(dialogView)
                 .setCancelable(false)
-                .setPositiveButton(R.string.gc_unsupported_qr_code_dialog_scan_qr_code) { d, _ ->
-                    d.dismiss()
-                    hide()
-                    onScanAnotherQRCode?.invoke()
-                }
-                .setNegativeButton(R.string.gc_unsupported_qr_code_dialog_capture_document) { d, _ ->
-                    d.dismiss()
-                    hide()
-                    onCaptureDocument?.invoke()
-                }
                 .create()
-            dialog.window?.disallowScreenshots()
+            dialogView.findViewById<Button>(R.id.gc_btn_scan_another_qr_code).setOnClickListener {
+                dialog.dismiss()
+                hide()
+                onScanAnotherQRCode?.invoke()
+            }
+            dialogView.findViewById<Button>(R.id.gc_btn_capture_document).setOnClickListener {
+                dialog.dismiss()
+                hide()
+                onCaptureDocument?.invoke()
+            }
             dialog.show()
         }
 
