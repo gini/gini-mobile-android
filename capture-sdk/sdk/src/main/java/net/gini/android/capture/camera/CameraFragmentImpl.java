@@ -103,7 +103,6 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.util.IntentHelper;
-import net.gini.android.capture.util.UriHelper;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -1287,44 +1286,50 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             final FileImportValidator fileImportValidator =
                     new FileImportValidator(appContext, fileSizeLimit);
             mImportExecutor.execute(() -> {
-                boolean streamAvailable = false;
+                boolean validationFailed = false;
                 boolean isImage = false;
                 boolean matches = false;
                 FileImportValidator.Error validationError = null;
                 GiniCaptureDocument preparedDocument = null;
                 try {
-                    streamAvailable = UriHelper.isUriInputStreamAvailable(uri, appContext);
-                    if (streamAvailable) {
-                        isImage = isImage(data, appContext);
-                        if (!isImage) {
-                            matches = fileImportValidator.matchesCriteria(data, uri);
-                            validationError = fileImportValidator.getError();
-                            if (matches) {
-                                // Build the document on the background thread because
-                                // DocumentFactory.newDocumentFromIntent performs additional
-                                // ContentResolver I/O (getType + query for filename), which
-                                // can also trigger NetworkOnMainThreadException for cloud
-                                // URIs. Only the listener callback is dispatched to the UI.
-                                preparedDocument = DocumentFactory.newDocumentFromIntent(
-                                        data,
-                                        appContext,
-                                        DeviceHelper.getDeviceOrientation(appContext),
-                                        DeviceHelper.getDeviceType(appContext),
-                                        ImportMethod.PICKER);
-                                LOG.info("Document imported: {}", preparedDocument);
-                            }
+                    // Skip the explicit isUriInputStreamAvailable() pre-check:
+                    //   - For images, AbstractImportImageUrisAsyncTask runs the same check
+                    //     internally on its background thread.
+                    //   - For PDFs, FileImportValidator.matchesCriteria() opens the file
+                    //     (via Pdf.getPageCount -> ContentResolver.openFileDescriptor)
+                    //     as part of validation.
+                    // Removing the pre-check avoids duplicate cross-process I/O.
+                    isImage = isImage(data, appContext);
+                    if (!isImage) {
+                        matches = fileImportValidator.matchesCriteria(data, uri);
+                        validationError = fileImportValidator.getError();
+                        if (matches) {
+                            // Build the document on the background thread because
+                            // DocumentFactory.newDocumentFromIntent performs additional
+                            // ContentResolver I/O (getType + query for filename), which
+                            // can also trigger NetworkOnMainThreadException for cloud
+                            // URIs. Only the listener callback is dispatched to the UI.
+                            preparedDocument = DocumentFactory.newDocumentFromIntent(
+                                    data,
+                                    appContext,
+                                    DeviceHelper.getDeviceOrientation(appContext),
+                                    DeviceHelper.getDeviceType(appContext),
+                                    ImportMethod.PICKER);
+                            LOG.info("Document imported: {}", preparedDocument);
                         }
                     }
                 } catch (final Exception e) {
-                    // openInputStream / ContentResolver calls can throw SecurityException
-                    // (revoked URI permission), IllegalArgumentException, or other runtime
-                    // exceptions from cross-process providers. Treat any failure as an
-                    // invalid file rather than letting the executor thread crash.
-                    LOG.error("Document import failed: unexpected error while validating Uri", e);
-                    streamAvailable = false;
+                    // ContentResolver calls (getType / query / openFileDescriptor) can throw
+                    // SecurityException (revoked URI permission), IllegalArgumentException,
+                    // or other runtime exceptions from cross-process providers. Mark the
+                    // whole validation as failed so the UI can show a generic import error
+                    // instead of crashing the executor thread or showing a misleading
+                    // "InputStream not available" message.
+                    LOG.error("Document import failed: unexpected error during validation", e);
+                    validationFailed = true;
                     preparedDocument = null;
                 }
-                final boolean finalStreamAvailable = streamAvailable;
+                final boolean finalValidationFailed = validationFailed;
                 final boolean finalIsImage = isImage;
                 final boolean finalMatches = matches;
                 final FileImportValidator.Error finalValidationError = validationError;
@@ -1340,8 +1345,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     if (currentActivity == null) {
                         return;
                     }
-                    if (!finalStreamAvailable) {
-                        LOG.error("Document import failed: InputStream not available for the Uri");
+                    if (finalValidationFailed) {
                         showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                         return;
                     }
