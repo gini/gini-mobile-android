@@ -1280,20 +1280,21 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             // when the URI comes from a cross-process content provider (e.g. cloud storage).
             // The image-vs-PDF check itself uses ContentResolver.getType() under the hood,
             // so the mime-type lookup must also run off the main thread.
+            final Context appContext = activity.getApplicationContext();
             final int fileSizeLimit = GiniCapture.hasInstance()
                     ? GiniCapture.getInstance().getImportedFileSizeBytesLimit()
                     : FILE_SIZE_LIMIT;
             final FileImportValidator fileImportValidator =
-                    new FileImportValidator(activity, fileSizeLimit);
+                    new FileImportValidator(appContext, fileSizeLimit);
             mImportExecutor.execute(() -> {
                 boolean streamAvailable = false;
                 boolean isImage = false;
                 boolean matches = false;
                 FileImportValidator.Error validationError = null;
                 try {
-                    streamAvailable = UriHelper.isUriInputStreamAvailable(uri, activity);
+                    streamAvailable = UriHelper.isUriInputStreamAvailable(uri, appContext);
                     if (streamAvailable) {
-                        isImage = isImage(data, activity);
+                        isImage = isImage(data, appContext);
                         if (!isImage) {
                             matches = fileImportValidator.matchesCriteria(data, uri);
                             validationError = fileImportValidator.getError();
@@ -1315,16 +1316,23 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     if (!isFragmentSafe()) {
                         return;
                     }
+                    // Re-fetch the current Activity: a configuration change may have
+                    // happened during the background work, making the originally captured
+                    // Activity stale.
+                    final Activity currentActivity = mFragment.getActivity();
+                    if (currentActivity == null) {
+                        return;
+                    }
                     if (!finalStreamAvailable) {
                         LOG.error("Document import failed: InputStream not available for the Uri");
                         showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                         return;
                     }
                     if (finalIsImage) {
-                        handleMultiPageDocumentAndCallListener(activity, data,
+                        handleMultiPageDocumentAndCallListener(currentActivity, data,
                                 Collections.singletonList(uri));
                     } else if (finalMatches) {
-                        createSinglePageDocumentAndCallListener(data, activity);
+                        createSinglePageDocumentAndCallListener(data, currentActivity);
                     } else if (finalValidationError != null) {
                         Error errorClass = new Error(finalValidationError);
                         ErrorType errorType = ErrorType.typeFromError(errorClass,
@@ -1353,8 +1361,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         handleMultiPageDocumentAndCallListener(mFragment.getActivity(), new Intent(Intent.ACTION_PICK), uriList);
     }
 
-    private boolean isImage(@NonNull final Intent data, @NonNull final Activity activity) {
-        return IntentHelper.hasMimeTypeWithPrefix(data, activity, MimeType.IMAGE_PREFIX.asString());
+    private boolean isImage(@NonNull final Intent data, @NonNull final Context context) {
+        return IntentHelper.hasMimeTypeWithPrefix(data, context, MimeType.IMAGE_PREFIX.asString());
     }
 
     private void createSinglePageDocumentAndCallListener(final Intent data,
@@ -1610,8 +1618,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (activity == null) {
             return;
         }
-        String errorMessage = activity.getResources()
-                .getString(errorType.getTitleTextResource());
+        final String errorMessage = activity.getString(errorType.getTitleTextResource());
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.ERROR_DIALOG_SHOWN,
@@ -1623,9 +1630,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     }
             );
         }
-        String message = activity.getString(errorType.getTitleTextResource());
-        LOG.error("Invalid document {}", message);
-        showInvalidFileAlert(message);
+        LOG.error("Invalid document {}", errorMessage);
+        showInvalidFileAlert(errorMessage);
     }
 
     private void showInvalidFileAlert(final String message) {
