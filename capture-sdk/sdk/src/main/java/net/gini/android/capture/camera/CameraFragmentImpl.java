@@ -201,6 +201,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private CameraInterface mCameraController;
     private ImageMultiPageDocument mMultiPageDocument;
     private PaymentQRCodeReader mPaymentQRCodeReader;
+    // null = use GiniCapture setting; true = only-QR mode; false = document capture mode
+    @Nullable
+    private Boolean mOnlyQRCodeScanningRuntimeOverride = null;
+    private boolean mQRCodeScanningDisabledByUser = false;
 
     @VisibleForTesting
     UserAnalyticsEventTracker mUserAnalyticsEventTracker;
@@ -257,11 +261,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     @Override
     public void onPaymentQRCodeDataAvailable(@NonNull final PaymentQRCodeData paymentQRCodeData) {
+        if (mQRCodeScanningDisabledByUser) return;
         handleQRCodeDetected(paymentQRCodeData, paymentQRCodeData.getUnparsedContent());
     }
 
     @Override
     public void onNonPaymentQRCodeDetected(@NonNull String qrCodeContent) {
+        if (mQRCodeScanningDisabledByUser) return;
         if (mIbanDetectedTextView.getVisibility() == View.VISIBLE) {
             return;
         }
@@ -288,7 +294,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return;
         }
 
-        if (isPaymentQRCodeDetectionInProgress() || mUnsupportedQRCodePopup.isShown()) {
+        if (isPaymentQRCodeDetectionInProgress()) {
             return;
         }
 
@@ -339,6 +345,40 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             mUnsupportedQRCodePopup.show(null);
             sendQRCodeScannedEventToUserAnalytics(false);
         }
+    }
+
+    private void enableOnlyQRScanning() {
+        mQRCodeScanningDisabledByUser = false;
+        mInterfaceHidden = false;
+        mQRCodeContent = null;
+        mOnlyQRCodeScanningRuntimeOverride = true;
+        updateCameraUIForCurrentMode();
+    }
+
+    private void enableDocumentCapture() {
+        mQRCodeScanningDisabledByUser = true;
+        mInterfaceHidden = false;
+        mQRCodeContent = null;
+        mOnlyQRCodeScanningRuntimeOverride = false;
+        updateCameraUIForCurrentMode();
+    }
+
+    private void updateCameraUIForCurrentMode() {
+        final Activity activity = mFragment.getActivity();
+        if (activity == null) return;
+
+        if (isOnlyQRCodeScanningEnabled()) {
+            initOnlyQRScanning();
+        } else {
+            mPaneWrapper.setVisibility(View.VISIBLE);
+            ConstraintLayout.LayoutParams params =
+                    (ConstraintLayout.LayoutParams) mImageFrame.getLayoutParams();
+            params.dimensionRatio = "1:1.414";
+            params.leftMargin = (int) activity.getResources().getDimension(R.dimen.gc_medium);
+            params.rightMargin = (int) activity.getResources().getDimension(R.dimen.gc_medium);
+            mImageFrame.setLayoutParams(params);
+        }
+        setTopBarInjectedViewContainer();
     }
 
     @VisibleForTesting
@@ -472,6 +512,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                         getHideQRCodeDetectedPopupDelayMs(), false, null, () -> {
                     mQRCodeContent = null;
                     return null;
+                }, () -> {
+                    enableOnlyQRScanning();
+                    return null;
+                }, () -> {
+                    enableDocumentCapture();
+                    return null;
                 });
         qrCodeEducationPopup = new QRCodeEducationPopup<>(view.findViewById(R.id.gc_qr_code_education_compose_view));
     }
@@ -482,6 +528,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
      * @suppress
      */
     public void onStart() {
+        mQRCodeScanningDisabledByUser = false;
         getUpdateFlowTypeUseCase().execute(null);
         checkGiniCaptureInstance();
         final Activity activity = mFragment.getActivity();
@@ -952,6 +999,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private boolean isOnlyQRCodeScanningEnabled() {
         if (!GiniCapture.hasInstance()) {
             return false;
+        }
+        if (mOnlyQRCodeScanningRuntimeOverride != null) {
+            return mOnlyQRCodeScanningRuntimeOverride && GiniCapture.getInstance().isQRCodeScanningEnabled();
         }
 
         return GiniCapture.getInstance().isOnlyQRCodeScanning() && GiniCapture.getInstance().isQRCodeScanningEnabled();

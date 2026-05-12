@@ -7,10 +7,11 @@ import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import net.gini.android.capture.R
 import net.gini.android.capture.internal.ui.FragmentImplCallback
+import net.gini.android.capture.internal.util.disallowScreenshots
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.InjectedViewContainer
 
@@ -27,16 +28,15 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private val hideDelayMs: Long,
     private val supported: Boolean,
     private var onClicked: ((T?) -> Unit)? = {},
-    private val onHide: (() -> Unit)? = null
+    private val onHide: (() -> Unit)? = null,
+    private val onScanAnotherQRCode: (() -> Unit)? = null,
+    private val onCaptureDocument: (() -> Unit)? = null
 ) {
 
     private var qrStatusTxt: TextView = popupView.findViewById(R.id.gc_qr_code_status)
     private var qrImageFrame: ImageView = popupView.findViewById(R.id.gc_camera_frame)
     private var qrCheckImage: ImageView = popupView.findViewById(R.id.gc_qr_code_check)
     private var mInvoiceTxt: TextView = popupView.findViewById(R.id.gc_retrieving_invoice)
-    private var mUnknownQRCodeWrapper: ConstraintLayout =
-        popupView.findViewById(R.id.gc_unknown_qr_wrapper);
-
     private val hideRunnable: Runnable = Runnable {
 
         if (qrCodeContent != null) {
@@ -71,6 +71,10 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     }
 
     private fun show() {
+        if (!supported) {
+            showViews()
+            return
+        }
         if (qrStatusTxt.visibility == View.VISIBLE) {
             fragmentImplCallback.view?.removeCallbacks(hideRunnable)
             fragmentImplCallback.view?.postDelayed(hideRunnable, hideDelayMs)
@@ -111,13 +115,27 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         } else {
             performHapticFeedback(HapticFeedbackConstants.REJECT)
-            mUnknownQRCodeWrapper.visibility = View.VISIBLE
             qrImageFrame.imageTintList = ColorStateList.valueOf(
-                ContextCompat.getColor(
-                    popupView.context,
-                    R.color.gc_warning_02
-                )
+                ContextCompat.getColor(popupView.context, R.color.gc_error_02)
             )
+            val context = popupView.context
+            val dialog = MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.gc_unsupported_qr_code_dialog_title)
+                //.setMessage(R.string.gc_unsupported_qr_code_dialog_message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.gc_unsupported_qr_code_dialog_scan_qr_code) { d, _ ->
+                    d.dismiss()
+                    hide()
+                    onScanAnotherQRCode?.invoke()
+                }
+                .setNegativeButton(R.string.gc_unsupported_qr_code_dialog_capture_document) { d, _ ->
+                    d.dismiss()
+                    hide()
+                    onCaptureDocument?.invoke()
+                }
+                .create()
+            dialog.window?.disallowScreenshots()
+            dialog.show()
         }
 
         isShown = true
@@ -140,7 +158,6 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         loadingIndicatorContainer?.modifyAdapterIfOwned { it.onHidden() }
         mInvoiceTxt.visibility = View.GONE
         supportedBackgroundView?.visibility = View.GONE
-        mUnknownQRCodeWrapper.visibility = View.GONE
         isShown = false
     }
 

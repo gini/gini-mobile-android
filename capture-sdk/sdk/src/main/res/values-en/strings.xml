@@ -144,7 +144,6 @@
     <string name="gc_camera_info_label_only_qr">Scan a QR code</string>
     <string name="gc_qr_scanner_error">Scanning QR codes is temporarily disabled. Please try again later.</string>
     <string name="gc_qr_code_detected">QR code detected</string>
-    <string name="gc_unknown_qr_code">Unknown QR code</string>
     <string name="gc_retrieving_invoice">Retrieving invoice</string>
     <string name="gc_payment_details_visible">Make sure the payment details are visible</string>
     <string name="gc_save_invoices_feature_title">Save to gallery</string>
@@ -154,7 +153,6 @@
     <string name="gc_pages">Pages</string>
     <string name="gc_process_documents">Process</string>
     <string name="gc_continue">Continue</string>
-    <string name="gc_unknown_qr_code_description">This code does not contain any payment details. Please use another QR-code or take an image of your invoice.</string>
     <string name="gc_camera_access">Camera access</string>
     <string name="gc_scan">Scan</string>
     <string name="gc_take_a_picture">Take a picture</string>
@@ -193,5 +191,10 @@
     <string name="gc_due_date_hint">\u0020Your invoice is due on %1$s. You could set it up as a scheduled transfer.</string>
     <string name="gc_due_date_hint_tip">Tip:</string>
     <!--   endregion -->
+    <!-- region Unsupported QR Code Dialog -->
+    <string name="gc_unsupported_qr_code_dialog_title">This is not a payment QR code</string>
+    <string name="gc_unsupported_qr_code_dialog_scan_qr_code">Scan another QR code</string>
+    <string name="gc_unsupported_qr_code_dialog_capture_document">Take photo of document</string>
+    <!-- endregion -->
 
 </resources>

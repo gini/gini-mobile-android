@@ -374,49 +374,6 @@
             app:layout_constraintStart_toStartOf="@+id/gc_camera_frame"
             app:layout_constraintTop_toTopOf="@+id/gc_camera_frame" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/gc_unknown_qr_wrapper"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/gc_large_20"
-            android:layout_marginTop="@dimen/gc_medium"
-            android:layout_marginEnd="@dimen/gc_large_20"
-            android:background="@drawable/gc_qr_code_warning_background"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/gc_camera_frame"
-            app:layout_constraintStart_toStartOf="@+id/gc_camera_frame"
-            app:layout_constraintTop_toTopOf="@+id/gc_camera_frame">
-
-            <TextView
-                android:id="@+id/gc_unknown_qr_txt"
-                style="@style/GiniCaptureTheme.Typography.Caption1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/gc_large"
-                android:layout_marginTop="@dimen/gc_large"
-                android:text="@string/gc_unknown_qr_code"
-                android:textColor="@color/gc_dark_01"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/gc_unknown_qr_txt_desc"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/gc_unknown_qr_txt_desc"
-                style="@style/GiniCaptureTheme.Typography.Caption1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/gc_large"
-                android:layout_marginTop="@dimen/gc_small"
-                android:layout_marginBottom="@dimen/gc_large"
-                android:text="@string/gc_unknown_qr_code_description"
-                android:textColor="@color/gc_dark_01"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gc_unknown_qr_txt" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
