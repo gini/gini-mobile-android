@@ -1287,46 +1287,47 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             final FileImportValidator fileImportValidator =
                     new FileImportValidator(appContext, fileSizeLimit);
             mImportExecutor.execute(() -> {
-                boolean streamAvailable = false;
                 boolean isImage = false;
                 boolean matches = false;
+                boolean validationFailed = false;
                 FileImportValidator.Error validationError = null;
                 GiniCaptureDocument preparedDocument = null;
                 try {
-                    streamAvailable = UriHelper.isUriInputStreamAvailable(uri, appContext);
-                    if (streamAvailable) {
-                        isImage = isImage(data, appContext);
-                        if (!isImage) {
-                            matches = fileImportValidator.matchesCriteria(data, uri);
-                            validationError = fileImportValidator.getError();
-                            if (matches) {
-                                // Build the document on the background thread because
-                                // DocumentFactory.newDocumentFromIntent performs additional
-                                // ContentResolver I/O (getType + query for filename), which
-                                // can also trigger NetworkOnMainThreadException for cloud
-                                // URIs. Only the listener callback is dispatched to the UI.
-                                preparedDocument = DocumentFactory.newDocumentFromIntent(
-                                        data,
-                                        appContext,
-                                        DeviceHelper.getDeviceOrientation(appContext),
-                                        DeviceHelper.getDeviceType(appContext),
-                                        ImportMethod.PICKER);
-                                LOG.info("Document imported: {}", preparedDocument);
-                            }
+                    // Determine if the URI is an image. This performs ContentResolver I/O
+                    // (getType) but is necessary to route images vs PDFs correctly.
+                    isImage = isImage(data, appContext);
+                    if (!isImage) {
+                        // For non-images (PDFs), validate file criteria. This internally
+                        // checks stream availability, so no separate pre-check is needed.
+                        matches = fileImportValidator.matchesCriteria(data, uri);
+                        validationError = fileImportValidator.getError();
+                        if (matches) {
+                            // Build the document on the background thread because
+                            // DocumentFactory.newDocumentFromIntent performs additional
+                            // ContentResolver I/O (getType + query for filename), which
+                            // can also trigger NetworkOnMainThreadException for cloud
+                            // URIs. Only the listener callback is dispatched to the UI.
+                            preparedDocument = DocumentFactory.newDocumentFromIntent(
+                                    data,
+                                    appContext,
+                                    DeviceHelper.getDeviceOrientation(appContext),
+                                    DeviceHelper.getDeviceType(appContext),
+                                    ImportMethod.PICKER);
+                            LOG.info("Document imported: {}", preparedDocument);
                         }
                     }
                 } catch (final Exception e) {
-                    // openInputStream / ContentResolver calls can throw SecurityException
-                    // (revoked URI permission), IllegalArgumentException, or other runtime
-                    // exceptions from cross-process providers. Treat any failure as an
-                    // invalid file rather than letting the executor thread crash.
+                    // ContentResolver calls can throw SecurityException (revoked URI
+                    // permission), IllegalArgumentException, or other runtime exceptions
+                    // from cross-process providers. Treat any failure as a generic
+                    // import error rather than letting the executor thread crash.
                     LOG.error("Document import failed: unexpected error while validating Uri", e);
-                    streamAvailable = false;
+                    validationFailed = true;
                     preparedDocument = null;
                 }
-                final boolean finalStreamAvailable = streamAvailable;
                 final boolean finalIsImage = isImage;
                 final boolean finalMatches = matches;
+                final boolean finalValidationFailed = validationFailed;
                 final FileImportValidator.Error finalValidationError = validationError;
                 final GiniCaptureDocument finalDocument = preparedDocument;
                 mMainHandler.post(() -> {
@@ -1340,8 +1341,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     if (currentActivity == null) {
                         return;
                     }
-                    if (!finalStreamAvailable) {
-                        LOG.error("Document import failed: InputStream not available for the Uri");
+                    if (finalValidationFailed) {
+                        LOG.error("Document import failed: validation error");
                         showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                         return;
                     }
