@@ -1276,41 +1276,62 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
-            // Run import I/O (stream check + PDF page count via ContentResolver) on a
-            // background thread to prevent NetworkOnMainThreadException when the URI
-            // comes from a cross-process content provider (e.g. Google Drive).
-            // Fix for: PP-2362 (crash reported by customer Mario, bank-sdk 4.1.0).
-            final boolean isImage = isImage(data, activity);
+            // Run import I/O on a background thread to prevent NetworkOnMainThreadException
+            // when the URI comes from a cross-process content provider (e.g. cloud storage).
+            // The image-vs-PDF check itself uses ContentResolver.getType() under the hood,
+            // so the mime-type lookup must also run off the main thread.
             final int fileSizeLimit = GiniCapture.hasInstance()
                     ? GiniCapture.getInstance().getImportedFileSizeBytesLimit()
                     : FILE_SIZE_LIMIT;
             final FileImportValidator fileImportValidator =
-                    isImage ? null : new FileImportValidator(activity, fileSizeLimit);
+                    new FileImportValidator(activity, fileSizeLimit);
             mImportExecutor.execute(() -> {
-                final boolean streamAvailable = UriHelper.isUriInputStreamAvailable(uri, activity);
-                final boolean matches = !isImage && streamAvailable
-                        && fileImportValidator.matchesCriteria(data, uri);
-                final FileImportValidator.Error validationError =
-                        fileImportValidator != null ? fileImportValidator.getError() : null;
+                boolean streamAvailable = false;
+                boolean isImage = false;
+                boolean matches = false;
+                FileImportValidator.Error validationError = null;
+                try {
+                    streamAvailable = UriHelper.isUriInputStreamAvailable(uri, activity);
+                    if (streamAvailable) {
+                        isImage = isImage(data, activity);
+                        if (!isImage) {
+                            matches = fileImportValidator.matchesCriteria(data, uri);
+                            validationError = fileImportValidator.getError();
+                        }
+                    }
+                } catch (final Exception e) {
+                    // openInputStream / ContentResolver calls can throw SecurityException
+                    // (revoked URI permission), IllegalArgumentException, or other runtime
+                    // exceptions from cross-process providers. Treat any failure as an
+                    // invalid file rather than letting the executor thread crash.
+                    LOG.error("Document import failed: unexpected error while validating Uri", e);
+                    streamAvailable = false;
+                }
+                final boolean finalStreamAvailable = streamAvailable;
+                final boolean finalIsImage = isImage;
+                final boolean finalMatches = matches;
+                final FileImportValidator.Error finalValidationError = validationError;
                 mMainHandler.post(() -> {
                     if (!isFragmentSafe()) {
                         return;
                     }
-                    if (!streamAvailable) {
+                    if (!finalStreamAvailable) {
                         LOG.error("Document import failed: InputStream not available for the Uri");
                         showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                         return;
                     }
-                    if (isImage) {
+                    if (finalIsImage) {
                         handleMultiPageDocumentAndCallListener(activity, data,
                                 Collections.singletonList(uri));
-                    } else if (matches) {
+                    } else if (finalMatches) {
                         createSinglePageDocumentAndCallListener(data, activity);
-                    } else if (validationError != null) {
-                        Error errorClass = new Error(validationError);
+                    } else if (finalValidationError != null) {
+                        Error errorClass = new Error(finalValidationError);
                         ErrorType errorType = ErrorType.typeFromError(errorClass,
                                 getGetEInvoiceFeatureEnabledUseCase().invoke());
                         showGenericInvalidFileError(errorType);
+                    } else {
+                        showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                     }
                 });
             });
