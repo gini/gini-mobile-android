@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import java.util.concurrent.Executors;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +118,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
@@ -199,6 +200,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private boolean mIsFlashEnabled = true;
 
     private final UIExecutor mUIExecutor = new UIExecutor();
+    // Shared single-thread executor for off-main-thread document import I/O.
+    // Reused across imports to avoid per-call thread leaks; shut down in onDestroy().
+    private final ExecutorService mImportExecutor = Executors.newSingleThreadExecutor();
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
     private CameraInterface mCameraController;
     private ImageMultiPageDocument mMultiPageDocument;
     private PaymentQRCodeReader mPaymentQRCodeReader;
@@ -743,6 +748,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mImportUrisAsyncTask != null) {
             mImportUrisAsyncTask.cancel(true);
         }
+        mMainHandler.removeCallbacksAndMessages(null);
+        mImportExecutor.shutdownNow();
     }
 
     private void closeCamera() {
@@ -1269,48 +1276,53 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
-            if (isImage(data, activity)) {
-                // For images: quick stream check then hand off to the existing AsyncTask
-                if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
-                    LOG.error("Document import failed: InputStream not available for the Uri");
-                    showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
-                    return;
-                }
-                handleMultiPageDocumentAndCallListener(activity, data,
-                        Collections.singletonList(uri));
-            } else {
-                // For PDFs: run ALL I/O (stream check + page count via ContentResolver)
-                // on a background thread to prevent NetworkOnMainThreadException when the
-                // URI comes from a cross-process content provider (e.g. Google Drive).
-                final int fileSizeLimit = GiniCapture.hasInstance()
-                        ? GiniCapture.getInstance().getImportedFileSizeBytesLimit()
-                        : FILE_SIZE_LIMIT;
-                final FileImportValidator fileImportValidator = new FileImportValidator(activity, fileSizeLimit);
-                final Handler mainHandler = new Handler(Looper.getMainLooper());
-                Executors.newSingleThreadExecutor().execute(() -> {
-                    if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
-                        mainHandler.post(() -> {
-                            LOG.error("Document import failed: InputStream not available for the Uri");
-                            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
-                        });
+            // Run import I/O (stream check + PDF page count via ContentResolver) on a
+            // background thread to prevent NetworkOnMainThreadException when the URI
+            // comes from a cross-process content provider (e.g. Google Drive).
+            // Fix for: PP-2362 (crash reported by customer Mario, bank-sdk 4.1.0).
+            final boolean isImage = isImage(data, activity);
+            final int fileSizeLimit = GiniCapture.hasInstance()
+                    ? GiniCapture.getInstance().getImportedFileSizeBytesLimit()
+                    : FILE_SIZE_LIMIT;
+            final FileImportValidator fileImportValidator =
+                    isImage ? null : new FileImportValidator(activity, fileSizeLimit);
+            mImportExecutor.execute(() -> {
+                final boolean streamAvailable = UriHelper.isUriInputStreamAvailable(uri, activity);
+                final boolean matches = !isImage && streamAvailable
+                        && fileImportValidator.matchesCriteria(data, uri);
+                final FileImportValidator.Error validationError =
+                        fileImportValidator != null ? fileImportValidator.getError() : null;
+                mMainHandler.post(() -> {
+                    if (!isFragmentSafe()) {
                         return;
                     }
-                    final boolean matches = fileImportValidator.matchesCriteria(data, uri);
-                    final FileImportValidator.Error validationError = fileImportValidator.getError();
-                    mainHandler.post(() -> {
-                        if (matches) {
-                            createSinglePageDocumentAndCallListener(data, activity);
-                        } else {
-                            if (validationError != null) {
-                                Error errorClass = new Error(validationError);
-                                ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
-                                showGenericInvalidFileError(errorType);
-                            }
-                        }
-                    });
+                    if (!streamAvailable) {
+                        LOG.error("Document import failed: InputStream not available for the Uri");
+                        showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
+                        return;
+                    }
+                    if (isImage) {
+                        handleMultiPageDocumentAndCallListener(activity, data,
+                                Collections.singletonList(uri));
+                    } else if (matches) {
+                        createSinglePageDocumentAndCallListener(data, activity);
+                    } else if (validationError != null) {
+                        Error errorClass = new Error(validationError);
+                        ErrorType errorType = ErrorType.typeFromError(errorClass,
+                                getGetEInvoiceFeatureEnabledUseCase().invoke());
+                        showGenericInvalidFileError(errorType);
+                    }
                 });
-            }
+            });
         }
+    }
+
+    private boolean isFragmentSafe() {
+        if (mFragment == null) {
+            return false;
+        }
+        final Activity activity = mFragment.getActivity();
+        return activity != null && !activity.isFinishing();
     }
 
     private void importDocumentFromUriList(List<Uri> uriList) {
@@ -1573,7 +1585,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void showGenericInvalidFileError(ErrorType errorType) {
-        String errorMessage = mFragment.getActivity().getResources()
+        final Activity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+        String errorMessage = activity.getResources()
                 .getString(errorType.getTitleTextResource());
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
@@ -1585,10 +1601,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                         }
                     }
             );
-        }
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
         }
         String message = activity.getString(errorType.getTitleTextResource());
         LOG.error("Invalid document {}", message);
