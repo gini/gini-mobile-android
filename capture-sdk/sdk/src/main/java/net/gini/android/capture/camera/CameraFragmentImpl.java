@@ -1291,6 +1291,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 boolean isImage = false;
                 boolean matches = false;
                 FileImportValidator.Error validationError = null;
+                GiniCaptureDocument preparedDocument = null;
                 try {
                     streamAvailable = UriHelper.isUriInputStreamAvailable(uri, appContext);
                     if (streamAvailable) {
@@ -1298,6 +1299,20 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                         if (!isImage) {
                             matches = fileImportValidator.matchesCriteria(data, uri);
                             validationError = fileImportValidator.getError();
+                            if (matches) {
+                                // Build the document on the background thread because
+                                // DocumentFactory.newDocumentFromIntent performs additional
+                                // ContentResolver I/O (getType + query for filename), which
+                                // can also trigger NetworkOnMainThreadException for cloud
+                                // URIs. Only the listener callback is dispatched to the UI.
+                                preparedDocument = DocumentFactory.newDocumentFromIntent(
+                                        data,
+                                        appContext,
+                                        DeviceHelper.getDeviceOrientation(appContext),
+                                        DeviceHelper.getDeviceType(appContext),
+                                        ImportMethod.PICKER);
+                                LOG.info("Document imported: {}", preparedDocument);
+                            }
                         }
                     }
                 } catch (final Exception e) {
@@ -1307,11 +1322,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     // invalid file rather than letting the executor thread crash.
                     LOG.error("Document import failed: unexpected error while validating Uri", e);
                     streamAvailable = false;
+                    preparedDocument = null;
                 }
                 final boolean finalStreamAvailable = streamAvailable;
                 final boolean finalIsImage = isImage;
                 final boolean finalMatches = matches;
                 final FileImportValidator.Error finalValidationError = validationError;
+                final GiniCaptureDocument finalDocument = preparedDocument;
                 mMainHandler.post(() -> {
                     if (!isFragmentSafe()) {
                         return;
@@ -1331,8 +1348,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     if (finalIsImage) {
                         handleMultiPageDocumentAndCallListener(currentActivity, data,
                                 Collections.singletonList(uri));
-                    } else if (finalMatches) {
-                        createSinglePageDocumentAndCallListener(data, currentActivity);
+                    } else if (finalMatches && finalDocument != null) {
+                        requestClientDocumentCheck(finalDocument);
                     } else if (finalValidationError != null) {
                         Error errorClass = new Error(finalValidationError);
                         ErrorType errorType = ErrorType.typeFromError(errorClass,
@@ -1351,7 +1368,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return false;
         }
         final Activity activity = mFragment.getActivity();
-        return activity != null && !activity.isFinishing();
+        return activity != null && !activity.isFinishing() && !activity.isDestroyed();
     }
 
     private void importDocumentFromUriList(List<Uri> uriList) {
