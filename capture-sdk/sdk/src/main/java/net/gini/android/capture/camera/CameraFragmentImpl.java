@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import java.util.concurrent.Executors;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1268,33 +1269,46 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
-            if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
-                LOG.error("Document import failed: InputStream not available for the Uri");
-                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
-                return;
-            }
-
             if (isImage(data, activity)) {
+                // For images: quick stream check then hand off to the existing AsyncTask
+                if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
+                    LOG.error("Document import failed: InputStream not available for the Uri");
+                    showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
+                    return;
+                }
                 handleMultiPageDocumentAndCallListener(activity, data,
                         Collections.singletonList(uri));
             } else {
-                final int fileSizeLimit;
-                if (GiniCapture.hasInstance()) {
-                    fileSizeLimit = GiniCapture.getInstance().getImportedFileSizeBytesLimit();
-                } else {
-                    fileSizeLimit = FILE_SIZE_LIMIT;
-                }
+                // For PDFs: run ALL I/O (stream check + page count via ContentResolver)
+                // on a background thread to prevent NetworkOnMainThreadException when the
+                // URI comes from a cross-process content provider (e.g. Google Drive).
+                final int fileSizeLimit = GiniCapture.hasInstance()
+                        ? GiniCapture.getInstance().getImportedFileSizeBytesLimit()
+                        : FILE_SIZE_LIMIT;
                 final FileImportValidator fileImportValidator = new FileImportValidator(activity, fileSizeLimit);
-                if (fileImportValidator.matchesCriteria(data, uri)) {
-                    createSinglePageDocumentAndCallListener(data, activity);
-                } else {
-                    final FileImportValidator.Error error = fileImportValidator.getError();
-                    if (error != null) {
-                        Error errorClass = new Error(error);
-                        ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
-                        showGenericInvalidFileError(errorType);
+                final Handler mainHandler = new Handler(Looper.getMainLooper());
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
+                        mainHandler.post(() -> {
+                            LOG.error("Document import failed: InputStream not available for the Uri");
+                            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
+                        });
+                        return;
                     }
-                }
+                    final boolean matches = fileImportValidator.matchesCriteria(data, uri);
+                    final FileImportValidator.Error validationError = fileImportValidator.getError();
+                    mainHandler.post(() -> {
+                        if (matches) {
+                            createSinglePageDocumentAndCallListener(data, activity);
+                        } else {
+                            if (validationError != null) {
+                                Error errorClass = new Error(validationError);
+                                ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
+                                showGenericInvalidFileError(errorType);
+                            }
+                        }
+                    });
+                });
             }
         }
     }
