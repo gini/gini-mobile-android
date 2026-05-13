@@ -1020,6 +1020,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             params.dimensionRatio = "1:1";
             params.leftMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.gc_large_32);
             params.rightMargin = (int) Objects.requireNonNull(mFragment.getActivity()).getResources().getDimension(R.dimen.gc_large_32);
+            mImageFrame.setLayoutParams(params);
         }
     }
 
