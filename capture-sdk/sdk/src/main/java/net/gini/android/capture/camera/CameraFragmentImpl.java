@@ -828,6 +828,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         }
         if (mUnsupportedQRCodePopup != null) {
             mUnsupportedQRCodePopup.hide();
+            mIsUnsupportedQRDialogShowing = false;
         }
     }
 
@@ -2120,6 +2121,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private void handleIBANsDetected(List<String> ibans) {
         if (!ibans.isEmpty() && !isPaymentQRCodeDetectionInProgress()) {
             mUnsupportedQRCodePopup.hide();
+            mIsUnsupportedQRDialogShowing = false;
             showIBANsDetectedOnScreen(ibans);
         } else {
             hideIBANsDetectedOnScreen();
