@@ -210,7 +210,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private Boolean mOnlyQRCodeScanningRuntimeOverride = null;
     private boolean mQRCodeScanningDisabledByUser = false;
     private boolean mIsUnsupportedQRDialogShowing = false;
-    private boolean mRestoredFromSavedState = false;
+
 
     @VisibleForTesting
     UserAnalyticsEventTracker mUserAnalyticsEventTracker;
@@ -433,7 +433,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         } else {
             mOnlyQRCodeScanningRuntimeOverride = null;
         }
-        mRestoredFromSavedState = true;
     }
 
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -551,10 +550,6 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
      * @suppress
      */
     public void onStart() {
-        if (!mRestoredFromSavedState) {
-            mQRCodeScanningDisabledByUser = false;
-        }
-        mRestoredFromSavedState = false;
         getUpdateFlowTypeUseCase().execute(null);
         checkGiniCaptureInstance();
         final Activity activity = mFragment.getActivity();
