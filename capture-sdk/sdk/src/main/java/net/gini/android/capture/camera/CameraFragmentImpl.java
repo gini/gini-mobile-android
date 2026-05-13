@@ -206,10 +206,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private ImageMultiPageDocument mMultiPageDocument;
     private PaymentQRCodeReader mPaymentQRCodeReader;
     // null = use GiniCapture setting; true = only-QR mode; false = document capture mode
+    @VisibleForTesting
     @Nullable
-    private Boolean mOnlyQRCodeScanningRuntimeOverride = null;
-    private boolean mQRCodeScanningDisabledByUser = false;
-    private boolean mIsUnsupportedQRDialogShowing = false;
+    Boolean mOnlyQRCodeScanningRuntimeOverride = null;
+    @VisibleForTesting
+    boolean mQRCodeScanningDisabledByUser = false;
+    @VisibleForTesting
+    boolean mIsUnsupportedQRDialogShowing = false;
 
 
     @VisibleForTesting
@@ -354,7 +357,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         }
     }
 
-    private void enableOnlyQRScanning() {
+    @VisibleForTesting
+    void enableOnlyQRScanning() {
         mIsUnsupportedQRDialogShowing = false;
         mQRCodeScanningDisabledByUser = false;
         mInterfaceHidden = false;
@@ -363,7 +367,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         updateCameraUIForCurrentMode();
     }
 
-    private void enableDocumentCapture() {
+    @VisibleForTesting
+    void enableDocumentCapture() {
         mIsUnsupportedQRDialogShowing = false;
         mQRCodeScanningDisabledByUser = true;
         mInterfaceHidden = false;
@@ -422,7 +427,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         }
     }
 
-    private void restoreSavedState(@NonNull final Bundle savedInstanceState) {
+    @VisibleForTesting
+    void restoreSavedState(@NonNull final Bundle savedInstanceState) {
         mInMultiPageState = savedInstanceState.getBoolean(IN_MULTI_PAGE_STATE_KEY);
         mIsFlashEnabled = savedInstanceState.getBoolean(IS_FLASH_ENABLED_KEY);
         mIsDetectionErrorPopupShowed = savedInstanceState.getBoolean(IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY);
