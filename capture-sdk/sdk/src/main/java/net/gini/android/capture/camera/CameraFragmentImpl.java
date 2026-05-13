@@ -383,6 +383,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
         if (isOnlyQRCodeScanningEnabled()) {
             initOnlyQRScanning();
+            mBottomInjectedContainer.setInjectedViewAdapterHolder(null);
+            mImportButtonGroup.setVisibility(View.GONE);
+            mImportDocumentButtonEnabled = false;
+            if (ibanRecognizerFilter != null) {
+                ibanRecognizerFilter.cleanup();
+                ibanRecognizerFilter = null;
+            }
         } else {
             mPaneWrapper.setVisibility(View.VISIBLE);
             ConstraintLayout.LayoutParams params =
@@ -391,6 +398,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             params.leftMargin = (int) activity.getResources().getDimension(R.dimen.gc_medium);
             params.rightMargin = (int) activity.getResources().getDimension(R.dimen.gc_medium);
             mImageFrame.setLayoutParams(params);
+            setBottomInjectedViewContainer();
+            initViews();
+            if (GiniCapture.hasInstance()
+                    && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD) {
+                initIBANRecognizerFilter();
+            }
         }
         setTopBarInjectedViewContainer();
     }
