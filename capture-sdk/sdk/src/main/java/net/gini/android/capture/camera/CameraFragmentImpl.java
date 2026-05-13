@@ -34,7 +34,6 @@ import androidx.core.os.BundleCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavDestination;
-
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
