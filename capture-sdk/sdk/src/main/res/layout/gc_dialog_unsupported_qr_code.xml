@@ -8,9 +8,9 @@
         android:id="@+id/gc_unsupported_qr_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginTop="@dimen/gc_large_24"
+        android:layout_marginStart="@dimen/gc_large_24"
+        android:layout_marginEnd="@dimen/gc_large_24"
         android:text="@string/gc_unsupported_qr_code_dialog_title"
         android:textAppearance="?attr/textAppearanceTitleLarge" />
 
@@ -20,8 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginTop="34dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginTop="@dimen/gc_large_24"
+        android:layout_marginEnd="@dimen/gc_large_24"
         android:text="@string/gc_unsupported_qr_code_dialog_scan_qr_code" />
 
     <Button
@@ -30,8 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="@dimen/gc_large_24"
+        android:layout_marginBottom="@dimen/gc_large_24"
         android:text="@string/gc_unsupported_qr_code_dialog_capture_document" />
 
 </LinearLayout>
