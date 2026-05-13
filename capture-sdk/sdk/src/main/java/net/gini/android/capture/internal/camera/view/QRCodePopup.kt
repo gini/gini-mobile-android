@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -34,6 +35,8 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private val onScanAnotherQRCode: (() -> Unit)? = null,
     private val onCaptureDocument: (() -> Unit)? = null
 ) {
+
+    private var unsupportedQrDialog: AlertDialog? = null
 
     private var qrStatusTxt: TextView = popupView.findViewById(R.id.gc_qr_code_status)
     private var qrImageFrame: ImageView = popupView.findViewById(R.id.gc_camera_frame)
@@ -122,21 +125,21 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             )
             val themedContext = ContextThemeWrapper(popupView.context, R.style.GiniCaptureTheme)
             val dialogView = LayoutInflater.from(themedContext).inflate(R.layout.gc_dialog_unsupported_qr_code, null)
-            val dialog = MaterialAlertDialogBuilder(themedContext)
+            unsupportedQrDialog = MaterialAlertDialogBuilder(themedContext)
                 .setView(dialogView)
                 .setCancelable(false)
                 .create()
             dialogView.findViewById<Button>(R.id.gc_btn_scan_another_qr_code).setOnClickListener {
-                dialog.dismiss()
+                unsupportedQrDialog?.dismiss()
                 hide()
                 onScanAnotherQRCode?.invoke()
             }
             dialogView.findViewById<Button>(R.id.gc_btn_capture_document).setOnClickListener {
-                dialog.dismiss()
+                unsupportedQrDialog?.dismiss()
                 hide()
                 onCaptureDocument?.invoke()
             }
-            dialog.show()
+            unsupportedQrDialog?.show()
         }
 
         isShown = true
@@ -151,6 +154,8 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     }
 
     private fun hideViews() {
+        unsupportedQrDialog?.dismiss()
+        unsupportedQrDialog = null
         qrStatusTxt.visibility = View.GONE
         qrCheckImage.visibility = View.GONE
         qrImageFrame.visibility = View.VISIBLE
