@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="gms_generic_error_message">Oh da ist was schief gelaufen. Probiere es bitte noch einmal.</string>
-    <string name="gms_snackbar_retry">Wiederholen</string>
-    <string name="gms_error_failed_to_load_image">Bild konnte nicht geladen werden</string>
-    <string name="gms_more_information_fragment_title">Mehr Informationen</string>
-</resources>
