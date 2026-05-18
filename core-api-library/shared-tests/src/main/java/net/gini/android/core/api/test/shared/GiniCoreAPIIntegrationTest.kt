@@ -382,8 +382,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
             @Throws(CertificateException::class)
             override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-                customTrustManagerWasCalled.set(true)
-                throw CertificateException()
+                checkClientTrusted(chain, authType)
             }
 
             override fun getAcceptedIssuers(): Array<X509Certificate> {
