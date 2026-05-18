@@ -110,7 +110,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     fun processDocumentByteArray() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open(TEST_DOCUMENT_FILENAME)
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
+        Assert.assertNotNull(TEST_DOCUMENT_LOAD_ERROR, testDocumentAsStream)
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         processDocument(testDocument, "image/jpeg", TEST_DOCUMENT_FILENAME, DocumentManager.DocumentType.INVOICE)
     }
@@ -127,7 +127,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open(TEST_DOCUMENT_FILENAME)
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
+        Assert.assertNotNull(TEST_DOCUMENT_LOAD_ERROR, testDocumentAsStream)
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         processDocument(testDocument, "image/jpeg", TEST_DOCUMENT_FILENAME, DocumentManager.DocumentType.INVOICE)
     }
@@ -150,7 +150,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open(TEST_DOCUMENT_FILENAME)
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
+        Assert.assertNotNull(TEST_DOCUMENT_LOAD_ERROR, testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         processDocument(testDocument, "image/jpeg", TEST_DOCUMENT_FILENAME, DocumentManager.DocumentType.INVOICE)
@@ -176,7 +176,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open(TEST_DOCUMENT_FILENAME)
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
+        Assert.assertNotNull(TEST_DOCUMENT_LOAD_ERROR, testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         processDocument(testDocument, "image/jpeg", TEST_DOCUMENT_FILENAME, DocumentManager.DocumentType.INVOICE)
@@ -216,7 +216,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open(TEST_DOCUMENT_FILENAME)
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
+        Assert.assertNotNull(TEST_DOCUMENT_LOAD_ERROR, testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         processDocument(testDocument, "image/jpeg", TEST_DOCUMENT_FILENAME, DocumentManager.DocumentType.INVOICE)
@@ -238,7 +238,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open(TEST_DOCUMENT_FILENAME)
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
+        Assert.assertNotNull(TEST_DOCUMENT_LOAD_ERROR, testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
         processDocument(testDocument, "image/jpeg", TEST_DOCUMENT_FILENAME, DocumentManager.DocumentType.INVOICE)
@@ -400,7 +400,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open(TEST_DOCUMENT_FILENAME)
-        Assert.assertNotNull("test image test.jpg could not be loaded", testDocumentAsStream)
+        Assert.assertNotNull(TEST_DOCUMENT_LOAD_ERROR, testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
 
@@ -471,6 +471,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     companion object {
         private const val TEST_EMAIL_DOMAIN = "example.com"
         private const val TEST_DOCUMENT_FILENAME = "test.jpg"
+        private const val TEST_DOCUMENT_LOAD_ERROR = "test image test.jpg could not be loaded"
     }
 
     protected val <T> Resource<T>.dataOrThrow: T
