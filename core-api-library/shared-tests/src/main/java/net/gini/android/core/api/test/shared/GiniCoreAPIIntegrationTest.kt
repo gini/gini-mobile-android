@@ -31,7 +31,8 @@ import java.io.File
 import java.io.IOException
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
-import java.util.*
+import java.util.Collections
+import java.util.Properties
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import javax.net.ssl.TrustManager
@@ -71,7 +72,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         credentialsStore = InMemoryCredentialsStore()
 
-        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
+        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
             .setConnectionTimeoutInMs(60000)
@@ -117,7 +118,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Test
     @Throws(IOException::class, InterruptedException::class, JSONException::class)
     fun processDocumentWithCustomCache() = runTest(timeout = 30.seconds) {
-        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
+        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
             .setConnectionTimeoutInMs(60000)
@@ -136,7 +137,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     fun documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() = runTest(timeout = 30.seconds) {
         val credentialsStore = EncryptedCredentialsStore(ApplicationProvider.getApplicationContext<Context>()
             .getSharedPreferences("GiniTests", Context.MODE_PRIVATE), ApplicationProvider.getApplicationContext())
-        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
+        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
             .setConnectionTimeoutInMs(60000)
@@ -165,7 +166,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         // Upload a document to make sure we have a valid user
         val credentialsStore = EncryptedCredentialsStore(ApplicationProvider.getApplicationContext<Context>()
             .getSharedPreferences("GiniTests", Context.MODE_PRIVATE), ApplicationProvider.getApplicationContext())
-        val oldEmailDomain = "example.com"
+        val oldEmailDomain = TEST_EMAIL_DOMAIN
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, oldEmailDomain)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
@@ -204,7 +205,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(Exception::class)
     fun publicKeyPinningWithMatchingPublicKey() = runTest(timeout = 30.seconds) {
         TrustKitHelper.resetTrustKit()
-        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").apply {
+        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN).apply {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
                 setNetworkSecurityConfigResId(getNetworkSecurityConfigResId())
             }
@@ -225,7 +226,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(Exception::class)
     fun publicKeyPinningWithCustomCache() = runTest(timeout = 30.seconds) {
         TrustKitHelper.resetTrustKit()
-        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com").apply {
+        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN).apply {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
                 setNetworkSecurityConfigResId(getNetworkSecurityConfigResId())
             }
@@ -391,7 +392,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
             }
         }
 
-        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, "example.com")
+        giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri).setConnectionTimeoutInMs(60000)
             .setTrustManager(blockingTrustManager)
@@ -465,6 +466,10 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
     protected interface ExtractionsCallback<E : ExtractionsContainer?> {
         fun onExtractionsAvailable(extractionsContainer: E)
+    }
+
+    companion object {
+        private const val TEST_EMAIL_DOMAIN = "example.com"
     }
 
     protected val <T> Resource<T>.dataOrThrow: T
