@@ -253,7 +253,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
 
-        val documentCall = giniCoreApi.documentManager.createPartialDocument(testDocument, "image/png", null, null)
+        val documentCall = giniCoreApi.documentManager.createPartialDocument(testDocument, IMAGE_PNG_CONTENT_TYPE, null, null)
         Assert.assertNotNull(documentCall.dataOrThrow)
     }
 
@@ -266,7 +266,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
 
-        val document = giniCoreApi.documentManager.createPartialDocument(testDocument, "image/png", null, null).dataOrThrow
+        val document = giniCoreApi.documentManager.createPartialDocument(testDocument, IMAGE_PNG_CONTENT_TYPE, null, null).dataOrThrow
         val deleteResult = giniCoreApi.documentManager.deleteDocument(document.id)
         Assert.assertNotNull(deleteResult.dataOrThrow)
     }
@@ -280,7 +280,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val page1 = TestUtils.createByteArray(page1Stream)
 
-        val partialDocument = giniCoreApi.documentManager.createPartialDocument(page1, "image/png", null, null).dataOrThrow
+        val partialDocument = giniCoreApi.documentManager.createPartialDocument(page1, IMAGE_PNG_CONTENT_TYPE, null, null).dataOrThrow
 
         val documentRotationDeltaMap = LinkedHashMap<Document, Int>()
         documentRotationDeltaMap[partialDocument] = 0
@@ -300,7 +300,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         val page1 = TestUtils.createByteArray(page1Stream)
         val partialDocument = AtomicReference<Document>()
 
-        val document = giniCoreApi.documentManager.createPartialDocument(page1, "image/png", null, null).dataOrThrow
+        val document = giniCoreApi.documentManager.createPartialDocument(page1, IMAGE_PNG_CONTENT_TYPE, null, null).dataOrThrow
         partialDocument.set(document)
         val documentRotationDeltaMap = LinkedHashMap<Document, Int>()
         documentRotationDeltaMap[document] = 0
@@ -324,8 +324,8 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         // Create the partial documents in parallel as this is how it's done in our SDKs
         val partialDocumentsAsync = listOf(
-            async { giniCoreApi.documentManager.createPartialDocument(page1, "image/png").dataOrThrow },
-            async { giniCoreApi.documentManager.createPartialDocument(page2, "image/png").dataOrThrow }
+            async { giniCoreApi.documentManager.createPartialDocument(page1, IMAGE_PNG_CONTENT_TYPE).dataOrThrow },
+            async { giniCoreApi.documentManager.createPartialDocument(page2, IMAGE_PNG_CONTENT_TYPE).dataOrThrow }
         )
         val partialDocuments = partialDocumentsAsync.map { it.await() }
 
@@ -358,7 +358,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val testDocument = TestUtils.createByteArray(page1Stream)
 
-        val partialDocument = giniCoreApi.documentManager.createPartialDocument(testDocument, "image/png").dataOrThrow
+        val partialDocument = giniCoreApi.documentManager.createPartialDocument(testDocument, IMAGE_PNG_CONTENT_TYPE).dataOrThrow
 
         val compositeDocument = giniCoreApi.documentManager.createCompositeDocument(linkedMapOf(partialDocument to 0)).dataOrThrow
 
@@ -404,7 +404,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
 
-        val partialDocument = giniCoreApi.documentManager.createPartialDocument(testDocument, "image/png")
+        val partialDocument = giniCoreApi.documentManager.createPartialDocument(testDocument, IMAGE_PNG_CONTENT_TYPE)
 
         Assert.assertTrue(customTrustManagerWasCalled.get())
         Assert.assertTrue("Partial document upload should have failed", partialDocument is Resource.Error)
@@ -475,6 +475,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         private const val TEST_DOCUMENT_CONTENT_TYPE = "image/jpeg"
         private const val MULTI_PAGE_DOCUMENT_PAGE1_FILENAME = "multi-page-p1.jpg"
         private const val MULTI_PAGE_DOCUMENT_PAGE1_LOAD_ERROR = "test image multi-page-p1.jpg could not be loaded"
+        private const val IMAGE_PNG_CONTENT_TYPE = "image/png"
     }
 
     protected val <T> Resource<T>.dataOrThrow: T
