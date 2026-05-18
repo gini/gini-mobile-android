@@ -492,7 +492,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
                     throw e
                 } ?: throw Exception(toString())
             }
-            is Resource.Success -> {}
+            is Resource.Success -> { /* no-op */ }
         }
     }
 }
