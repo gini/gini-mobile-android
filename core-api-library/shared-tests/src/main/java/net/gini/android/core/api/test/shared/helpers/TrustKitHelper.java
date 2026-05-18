@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 
 public final class TrustKitHelper {
 
+    @SuppressWarnings("java:S3011")
     public static void resetTrustKit() throws NoSuchFieldException, IllegalAccessException {
         final Field trustKitInstance = TrustKit.class.getDeclaredField("trustKitInstance");
         trustKitInstance.setAccessible(true);
