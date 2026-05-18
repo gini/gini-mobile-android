@@ -249,7 +249,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     fun createPartialDocument() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open(MULTI_PAGE_DOCUMENT_PAGE1_FILENAME)
-        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", testDocumentAsStream)
+        Assert.assertNotNull(MULTI_PAGE_DOCUMENT_PAGE1_LOAD_ERROR, testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
 
@@ -262,7 +262,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     fun deletePartialDocumentWithoutParents() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val testDocumentAsStream = assetManager.open(MULTI_PAGE_DOCUMENT_PAGE1_FILENAME)
-        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", testDocumentAsStream)
+        Assert.assertNotNull(MULTI_PAGE_DOCUMENT_PAGE1_LOAD_ERROR, testDocumentAsStream)
 
         val testDocument = TestUtils.createByteArray(testDocumentAsStream)
 
@@ -276,7 +276,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     fun deletePartialDocumentWithParents() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val page1Stream = assetManager.open(MULTI_PAGE_DOCUMENT_PAGE1_FILENAME)
-        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
+        Assert.assertNotNull(MULTI_PAGE_DOCUMENT_PAGE1_LOAD_ERROR, page1Stream)
 
         val page1 = TestUtils.createByteArray(page1Stream)
 
@@ -295,7 +295,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     fun deletePartialDocumentFailsWhenNotDeletingParents() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val page1Stream = assetManager.open(MULTI_PAGE_DOCUMENT_PAGE1_FILENAME)
-        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
+        Assert.assertNotNull(MULTI_PAGE_DOCUMENT_PAGE1_LOAD_ERROR, page1Stream)
 
         val page1 = TestUtils.createByteArray(page1Stream)
         val partialDocument = AtomicReference<Document>()
@@ -315,7 +315,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     fun processCompositeDocument() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val page1Stream = assetManager.open(MULTI_PAGE_DOCUMENT_PAGE1_FILENAME)
-        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
+        Assert.assertNotNull(MULTI_PAGE_DOCUMENT_PAGE1_LOAD_ERROR, page1Stream)
         val page2Stream = assetManager.open("multi-page-p2.jpg")
         Assert.assertNotNull("test image multi-page-p2.jpg could not be loaded", page2Stream)
 
@@ -354,7 +354,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     fun testDeleteCompositeDocument() = runTest(timeout = 30.seconds) {
         val assetManager = ApplicationProvider.getApplicationContext<Context>().resources.assets
         val page1Stream = assetManager.open(MULTI_PAGE_DOCUMENT_PAGE1_FILENAME)
-        Assert.assertNotNull("test image multi-page-p1.jpg could not be loaded", page1Stream)
+        Assert.assertNotNull(MULTI_PAGE_DOCUMENT_PAGE1_LOAD_ERROR, page1Stream)
 
         val testDocument = TestUtils.createByteArray(page1Stream)
 
@@ -474,6 +474,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         private const val TEST_DOCUMENT_LOAD_ERROR = "test image test.jpg could not be loaded"
         private const val TEST_DOCUMENT_CONTENT_TYPE = "image/jpeg"
         private const val MULTI_PAGE_DOCUMENT_PAGE1_FILENAME = "multi-page-p1.jpg"
+        private const val MULTI_PAGE_DOCUMENT_PAGE1_LOAD_ERROR = "test image multi-page-p1.jpg could not be loaded"
     }
 
     protected val <T> Resource<T>.dataOrThrow: T
