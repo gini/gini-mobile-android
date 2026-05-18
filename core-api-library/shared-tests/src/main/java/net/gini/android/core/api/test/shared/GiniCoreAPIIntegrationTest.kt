@@ -284,7 +284,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         val documentRotationDeltaMap = LinkedHashMap<Document, Int>()
         documentRotationDeltaMap[partialDocument] = 0
-        val compositeDocument = giniCoreApi.documentManager.createCompositeDocument(documentRotationDeltaMap, null).dataOrThrow
+        giniCoreApi.documentManager.createCompositeDocument(documentRotationDeltaMap, null).dataOrThrow
         val deleteResource = giniCoreApi.documentManager.deletePartialDocumentAndParents(partialDocument.id)
 
         Assert.assertNotNull(deleteResource.dataOrThrow)
