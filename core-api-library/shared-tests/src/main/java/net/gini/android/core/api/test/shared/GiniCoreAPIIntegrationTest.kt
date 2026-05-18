@@ -463,7 +463,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
         } else ""
     }
 
-    protected interface ExtractionsCallback<E : ExtractionsContainer?> {
+    protected fun interface ExtractionsCallback<E : ExtractionsContainer?> {
         fun onExtractionsAvailable(extractionsContainer: E)
     }
 
