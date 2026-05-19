@@ -99,6 +99,9 @@ internal constructor(
         private set
 
 
+    // Void is required to match the Java interface signature in the
+    // callback: GiniCaptureNetworkCallback<Void, Error>
+    @Suppress("kotlin:S6508")
     override fun sendEvents(
         amplitudeRootModel: AmplitudeRootModel,
         callback: GiniCaptureNetworkCallback<Void, Error>
@@ -528,7 +531,9 @@ internal constructor(
         }
     }
 
-    @Suppress("LongMethod")
+    // Void is required to match the Java interface signature in the
+    // callback: GiniCaptureNetworkCallback<Void, Error>
+    @Suppress("LongMethod", "kotlin:S6508")
     override fun sendFeedback(
         extractions: MutableMap<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: MutableMap<String, GiniCaptureCompoundExtraction>,
