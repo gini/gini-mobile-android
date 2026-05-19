@@ -620,6 +620,7 @@ internal constructor(
             giniApiDocuments.clear()
             coroutineScope.coroutineContext.cancelChildren()
         } catch (ignored: IllegalStateException) {
+            // Ignored: coroutine scope may already be in an invalid state during cleanup
         }
     }
 
