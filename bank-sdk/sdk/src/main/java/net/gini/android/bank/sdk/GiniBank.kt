@@ -62,6 +62,9 @@ import net.gini.android.core.api.models.PaymentRequest
  */
 object GiniBank {
 
+    private const val CAPTURE_NOT_CONFIGURED_MSG =
+        "Capture feature is not configured. Call setCaptureConfiguration before starting the flow."
+
     private var giniCapture: GiniCapture? = null
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
@@ -149,7 +152,7 @@ object GiniBank {
         GiniCapture.newInstance(context).applyConfiguration(captureConfiguration).build()
         giniCapture = GiniCapture.getInstance()
 
-        releaseTransactionDocsFeature(context)
+        releaseTransactionDocsFeature()
         BankSdkIsolatedKoinContext.init(context)
         getGiniCaptureKoin().loadModules(listOf(captureSdkDiBridge))
         this.giniBankTransactionDocs = GiniBankTransactionDocs()
@@ -270,7 +273,7 @@ object GiniBank {
             R.string.gbs_digital_invoice_onboarding_text_1
         )
 
-        releaseTransactionDocsFeature(context)
+        releaseTransactionDocsFeature()
         BankSdkIsolatedKoinContext.clean()
     }
 
@@ -281,7 +284,7 @@ object GiniBank {
      * @throws IllegalStateException if the capture feature was not configured.
      */
     fun startCaptureFlow(resultLauncher: ActivityResultLauncher<Unit>) {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_MSG }
         resultLauncher.launch(Unit)
     }
 
@@ -342,7 +345,7 @@ object GiniBank {
         resultLauncher: ActivityResultLauncher<CaptureImportInput>, context: Context, intent: Intent
     ): CancellationToken {
         giniCapture.let { capture ->
-            check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+            check(capture != null) { CAPTURE_NOT_CONFIGURED_MSG }
             return capture.createDocumentForImportedFiles(
                 intent,
                 context,
@@ -361,6 +364,7 @@ object GiniBank {
                     }
 
                     override fun onCancelled() {
+                        // Cancellation is handled by the result launcher - no further action needed
                     }
                 })
         }
@@ -512,7 +516,7 @@ object GiniBank {
      *  @param document The document with which the fragment will be created.
      */
     fun createCaptureFlowFragmentForDocument(document: Document): CaptureFlowFragment {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_MSG }
         return CaptureFlowFragment.createInstance(document)
     }
 
@@ -558,8 +562,7 @@ object GiniBank {
         )
     }
 
-    @Suppress("UnusedParameter")
-    private fun releaseTransactionDocsFeature(context: Context) {
+    private fun releaseTransactionDocsFeature() {
         giniBankTransactionDocs = null
         giniGankTransactions = null
     }

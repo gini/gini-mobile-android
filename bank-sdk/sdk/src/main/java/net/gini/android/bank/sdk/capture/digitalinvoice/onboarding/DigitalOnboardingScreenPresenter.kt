@@ -28,8 +28,10 @@ internal class DigitalOnboardingScreenPresenter(
     }
 
     override fun start() {
+        // No action needed on start for this presenter
     }
 
     override fun stop() {
+        // No action needed on stop for this presenter
     }
 }

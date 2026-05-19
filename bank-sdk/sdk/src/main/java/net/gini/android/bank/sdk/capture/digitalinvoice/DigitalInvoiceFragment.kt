@@ -521,7 +521,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     ) : LinearSmoothScroller(context) {
         private val totalScrollTime = 2400f
 
-        interface SmoothScrollerListener {
+        fun interface SmoothScrollerListener {
             fun didStop()
         }
 

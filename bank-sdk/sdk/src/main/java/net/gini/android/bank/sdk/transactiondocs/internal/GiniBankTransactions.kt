@@ -2,6 +2,8 @@ package net.gini.android.bank.sdk.transactiondocs.internal
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import net.gini.android.bank.sdk.transactiondocs.GiniTransactions
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.GiniTransaction
 import net.gini.android.bank.sdk.transactiondocs.model.extractions.GiniTransactionDoc
@@ -11,9 +13,12 @@ class GiniBankTransactions : GiniTransactions {
 
     private var transactions: List<GiniTransaction> = emptyList()
 
-    override val giniSelectedTransactionDocsFlow = MutableSharedFlow<List<GiniTransactionDoc>>(
+    private val _giniSelectedTransactionDocsFlow = MutableSharedFlow<List<GiniTransactionDoc>>(
         replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+
+    override val giniSelectedTransactionDocsFlow: SharedFlow<List<GiniTransactionDoc>> =
+        _giniSelectedTransactionDocsFlow.asSharedFlow()
 
     /**
      * Sets the list of transactions. Must be called before calling [setSelectedTransaction].
@@ -40,6 +45,6 @@ class GiniBankTransactions : GiniTransactions {
         require(selectedTransaction != null) {
             "Transaction with identifier $identifier not found."
         }
-        giniSelectedTransactionDocsFlow.tryEmit(selectedTransaction.attachments)
+        _giniSelectedTransactionDocsFlow.tryEmit(selectedTransaction.attachments)
     }
 }

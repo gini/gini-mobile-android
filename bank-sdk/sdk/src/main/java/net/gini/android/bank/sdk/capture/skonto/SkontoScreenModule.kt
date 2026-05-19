@@ -1,5 +1,6 @@
 package net.gini.android.bank.sdk.capture.skonto
 
+import kotlinx.coroutines.Dispatchers
 import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
 import net.gini.android.bank.sdk.capture.skonto.model.SkontoData
 import net.gini.android.bank.sdk.capture.skonto.validation.SkontoAmountValidator
@@ -115,7 +116,8 @@ val skontoScreenModule = module {
     factory {
         OpenExtractionsScreenSubIntent(
             skontoExtractionsHandler = get(),
-            lastExtractionsProvider = get()
+            lastExtractionsProvider = get(),
+            mainDispatcher = Dispatchers.Main,
         )
     }
     factory {
