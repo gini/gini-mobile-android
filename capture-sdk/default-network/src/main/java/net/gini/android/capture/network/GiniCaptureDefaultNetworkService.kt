@@ -20,7 +20,6 @@ import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.network.model.DocumentLayout
 import net.gini.android.capture.internal.network.model.DocumentPage
 import net.gini.android.capture.logging.ErrorLog
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkService.Companion.builder
 import net.gini.android.capture.network.logging.formattedErrorMessage
 import net.gini.android.capture.network.logging.toErrorEvent
 import net.gini.android.capture.network.model.CompoundExtractionsMapper
