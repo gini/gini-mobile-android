@@ -221,7 +221,7 @@ internal constructor(
         val documentData = document.data
         if (documentData == null) {
             val error = Error("Document has no data. Did you forget to load it?")
-            LOG.error("Document upload failed for {}: {}", document.id, error.message)
+            LOG.error(LOG_MSG_DOCUMENT_UPLOAD_FAILED, document.id, error.message)
             callback.failure(error)
             return@launchCancellable
         }
@@ -230,7 +230,7 @@ internal constructor(
                 "Multi-page document cannot be uploaded. You have to upload each of its page documents separately."
             )
             LOG.error(
-                "Document upload failed for {}: {}",
+                LOG_MSG_DOCUMENT_UPLOAD_FAILED,
                 document.getId(),
                 error.message
             )
@@ -270,7 +270,7 @@ internal constructor(
                     partialDocumentResource.responseHeaders, partialDocumentResource.exception
                 )
                 LOG.error(
-                    "Document upload failed for {}: {}", document.id,
+                    LOG_MSG_DOCUMENT_UPLOAD_FAILED, document.id,
                     error.message
                 )
                 callback.failure(error)
@@ -883,6 +883,7 @@ internal constructor(
     companion object {
         private val LOG: Logger =
             LoggerFactory.getLogger(GiniCaptureDefaultNetworkService::class.java)
+        private const val LOG_MSG_DOCUMENT_UPLOAD_FAILED = "Document upload failed for {}: {}"
 
         /**
          * Creates a new [GiniCaptureDefaultNetworkService.Builder] to configure and create a new
