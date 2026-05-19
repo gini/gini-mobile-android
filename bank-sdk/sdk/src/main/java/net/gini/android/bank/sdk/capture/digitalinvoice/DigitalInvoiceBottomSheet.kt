@@ -55,7 +55,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private var originalSelectableLineItem: SelectableLineItem? = null
     private val keyboardThresholdRatio = 0.15
     private var quantity: Int = 1
-    private val editorListener = TextView.OnEditorActionListener { v, actionId, event ->
+    private val editorListener = TextView.OnEditorActionListener { v, _, _ ->
         v.clearFocus()
         v.hideKeyboard()
         true
@@ -329,59 +329,46 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
     private fun setupInputHandlers() {
         binding.gbsCloseBottomSheet.setOnClickListener {
-            this.dismiss()
+            dismiss()
             trackCloseTappedEvent()
         }
-
-        binding.gbsAddQuantity.setOnClickListener {
-            if (quantity == QUANTITY_LIMIT) return@setOnClickListener
-
-            quantity += 1
-            binding.gbsQuantityEditTxt.setText("$quantity")
-        }
-
-        binding.gbsRemoveQuantity.setOnClickListener {
-            if (quantity <= 1)
-                return@setOnClickListener
-
-            quantity -= 1
-            binding.gbsQuantityEditTxt.setText("$quantity")
-        }
-
+        binding.gbsAddQuantity.setOnClickListener { handleAddQuantity() }
+        binding.gbsRemoveQuantity.setOnClickListener { handleRemoveQuantity() }
         binding.gbsCurrenciesDropDown.setOnItemClickListener { _, _, _, _ ->
             binding.gbsDropDownSelectionValue.text = binding.gbsCurrenciesDropDown.text
             selectedCurrency = binding.gbsDropDownSelectionValue.text.toString()
         }
+        binding.gbsDropDownSelectionValue.setOnClickListener { toggleCurrencyDropdown() }
+        binding.gbsDropDownArrow.setOnClickListener { toggleCurrencyDropdown() }
+        binding.gbsSave.setOnClickListener { handleSave() }
+    }
 
-        binding.gbsDropDownSelectionValue.setOnClickListener {
-            if (!MULTIPLE_CURRENCIES_ENABLED) return@setOnClickListener
+    private fun handleAddQuantity() {
+        if (quantity == QUANTITY_LIMIT) return
+        quantity += 1
+        binding.gbsQuantityEditTxt.setText("$quantity")
+    }
 
-            setUpDropDown()
-            if (binding.gbsCurrenciesDropDown.isPopupShowing)
-                binding.gbsCurrenciesDropDown.dismissDropDown()
-            else binding.gbsCurrenciesDropDown.showDropDown()
-        }
+    private fun handleRemoveQuantity() {
+        if (quantity <= 1) return
+        quantity -= 1
+        binding.gbsQuantityEditTxt.setText("$quantity")
+    }
 
-        binding.gbsDropDownArrow.setOnClickListener {
-            if (!MULTIPLE_CURRENCIES_ENABLED) return@setOnClickListener
+    private fun toggleCurrencyDropdown() {
+        if (!MULTIPLE_CURRENCIES_ENABLED) return
+        setUpDropDown()
+        if (binding.gbsCurrenciesDropDown.isPopupShowing)
+            binding.gbsCurrenciesDropDown.dismissDropDown()
+        else
+            binding.gbsCurrenciesDropDown.showDropDown()
+    }
 
-            setUpDropDown()
-            if (binding.gbsCurrenciesDropDown.isPopupShowing)
-                binding.gbsCurrenciesDropDown.dismissDropDown()
-            else binding.gbsCurrenciesDropDown.showDropDown()
-        }
-
-        binding.gbsSave.setOnClickListener {
-            if (selectableLineItem == null)
-                return@setOnClickListener
-
-            if (!validateLineItemValues()) {
-                return@setOnClickListener
-            }
-
-            presenter?.save()
-            this.dismiss()
-        }
+    private fun handleSave() {
+        if (selectableLineItem == null) return
+        if (!validateLineItemValues()) return
+        presenter?.save()
+        dismiss()
     }
 
     private fun validateLineItemValues(): Boolean {
@@ -479,28 +466,34 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     }
 
     override fun showCheckbox(selected: Boolean, quantity: Int, visible: Boolean) {
+        // Not applicable in bottom sheet - checkbox is not shown here
     }
 
     override fun showTotalGrossPrice(integralPart: String, fractionalPart: String) {
+        // Not applicable in bottom sheet - total price is not displayed here
     }
 
     override fun enableSaveButton() {
+        // Not applicable in bottom sheet - save button state is managed differently
     }
 
     override fun disableSaveButton() {
+        // Not applicable in bottom sheet - save button state is managed differently
     }
 
     override fun enableInput() {
+        // Not applicable in bottom sheet - input is always enabled
     }
 
     override fun disableInput() {
+        // Not applicable in bottom sheet - input disabling not needed here
     }
 
     override fun showReturnReasonDialog(
         reasons: List<GiniCaptureReturnReason>,
         resultCallback: ReturnReasonDialogResultCallback
     ) {
-
+        // Not applicable in bottom sheet - return reason dialog not shown here
     }
 
     override fun onSave(selectableLineItem: SelectableLineItem) {

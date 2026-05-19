@@ -554,7 +554,7 @@ private fun YourInvoiceScanSection(
 
     }
 }
-@Suppress("CyclomaticComplexMethod")
+
 @Composable
 private fun SkontoSection(
     isActive: Boolean,
@@ -571,16 +571,12 @@ private fun SkontoSection(
     colors: DigitalInvoiceSkontoSectionColors,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     modifier: Modifier = Modifier,
-    isLandScape : Boolean,
+    isLandScape: Boolean,
     shouldFieldShowKeyboard: Boolean = false
 ) {
-    val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-    val resources = LocalContext.current.resources
-    val focusManager = LocalFocusManager.current
-
-    var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     val isPhoneInLandscape =
         !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
+    var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
         modifier = modifier,
         shape = RectangleShape,
@@ -609,184 +605,34 @@ private fun SkontoSection(
                         )
                     }
                 }
-
             }
 
-            val animatedDiscountAmount by animateFloatAsState(
-                targetValue = infoDiscountValue.toFloat(),
-                label = "discountAmount"
+            SkontoInfoBannerSection(
+                edgeCase = edgeCase,
+                infoDiscountValue = infoDiscountValue,
+                infoPaymentInDays = infoPaymentInDays,
+                colors = colors,
+                onInfoBannerClicked = onInfoBannerClicked,
             )
 
-            val remainingDaysText =
-                if (infoPaymentInDays != 0) {
-                    pluralStringResource(
-                        id = R.plurals.days,
-                        count = infoPaymentInDays,
-                        infoPaymentInDays.toString()
-                    )
-                } else {
-                    stringResource(id = R.string.days_zero)
-                }
-
-            val infoBannerText = when (edgeCase) {
-                SkontoEdgeCase.PayByCashOnly ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_message,
-                        animatedDiscountAmount.formatAsDiscountPercentage(),
-                        remainingDaysText
-                    )
-
-                SkontoEdgeCase.SkontoExpired ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_date_expired_message,
-                        animatedDiscountAmount.formatAsDiscountPercentage()
-                    )
-
-                SkontoEdgeCase.SkontoLastDay ->
-                    stringResource(
-                        id = R.string.gbs_skonto_section_discount_info_banner_pay_today_message,
-                        animatedDiscountAmount.formatAsDiscountPercentage()
-                    )
-
-                SkontoEdgeCase.PayByCashToday -> stringResource(
-                    id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
-                    animatedDiscountAmount.formatAsDiscountPercentage()
-                )
-
-                else -> stringResource(
-                    id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
-                    remainingDaysText,
-                    animatedDiscountAmount.formatAsDiscountPercentage()
-                )
-            }
-
-            InfoBanner(
-                text = infoBannerText,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                colors = when (edgeCase) {
-                    SkontoEdgeCase.SkontoLastDay,
-                    SkontoEdgeCase.PayByCashToday,
-                    SkontoEdgeCase.PayByCashOnly -> colors.warningInfoBannerColors
-
-                    SkontoEdgeCase.SkontoExpired -> colors.errorInfoBannerColors
-                    else -> colors.successInfoBannerColors
-                },
-                onClicked = onInfoBannerClicked,
-                clickable = edgeCase != null,
-            )
-            GiniAmountTextInput(
-                amount = amount.value,
-                currencyCode = amount.currency.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-                    .onPreviewKeyEvent { keyEvent ->
-                        handleTabKeyEvent(
-                            keyEvent,
-                            focusManager
-                        )
-                    }
-                    .onFocusChanged {
-                        if (it.isFocused) {
-                            onSkontoAmountFieldFocused()
-                        }
-                    },
-                enabled = isActive,
-                colors = colors.amountFieldColors,
-                onValueChange = { onSkontoAmountChange(it) },
-                label = stringResource(id = R.string.gbs_skonto_section_discount_field_amount_hint),
-                trailingContent = {
-                    AnimatedVisibility(visible = isActive) {
-                        Text(
-                            text = amount.currency.name,
-                            style = GiniTheme.typography.subtitle1,
-                        )
-                    }
-                },
-                isError = skontoAmountValidationError != null,
-                supportingText = skontoAmountValidationError?.toErrorMessage(
-                    resources = resources,
-                ),
+            SkontoAmountInputField(
+                isActive = isActive,
+                amount = amount,
+                skontoAmountValidationError = skontoAmountValidationError,
+                colors = colors,
+                onSkontoAmountChange = onSkontoAmountChange,
+                onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
                 shouldFieldShowKeyboard = shouldFieldShowKeyboard,
-                isPhoneInLandscape = isPhoneInLandscape
+                isPhoneInLandscape = isPhoneInLandscape,
             )
 
-            val dueDateOnClickSource = remember { MutableInteractionSource() }
-            val pressed by dueDateOnClickSource.collectIsPressedAsState()
-            /**
-             * In landscape mode on phones, we don't need the dueDateOnClickSource
-             * because we have very less space, and we cannot pass null as interactionSource.
-             * So we use defaultInteractionSource is just a placeholder, and instead of using
-             * the whole area we will only use the trailing content to open the date picker in
-             * GiniTextInput, and we have isPhoneInLandscape check just to check if the current
-             * mode is landscape and phone or not. Tablet's and portrait mode will use the whole
-             * field of GiniTextInput to open the date picker.
-             * Also we have to change the textInputModifier of GiniTextInput to clickable only
-             * when it is not in landscape mode of phones.
-             * */
-            val defaultInteractionSource = remember { MutableInteractionSource() }
-
-            val activeInteractionSource =
-                if (isPhoneInLandscape) defaultInteractionSource else dueDateOnClickSource
-
-            val textInputModifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .focusable(false)
-                .then(
-                    if (!isPhoneInLandscape) Modifier.clickable(isActive) {
-                        if (isActive) {
-                            isDatePickerVisible = true
-                            onDueDateFieldFocused()
-                        }
-                    } else Modifier
-                )
-
-            LaunchedEffect(key1 = pressed) {
-                if (pressed) {
-                    isDatePickerVisible = true
-                    onDueDateFieldFocused()
-                }
-            }
-
-            val calendarIconContentDescription =
-                stringResource(id = R.string.gbs_skonto_calendar_icon_content_description)
-
-            GiniTextInput(
-                modifier = textInputModifier,
-                enabled = if (isPhoneInLandscape) false else isActive,
-                interactionSource = activeInteractionSource,
-                readOnly = true,
-                colors = colors.dueDateTextFieldColor,
-                onValueChange = { /* Ignored */ },
-                text = dueDate.format(dateFormatter),
-                label = stringResource(id = R.string.gbs_skonto_section_discount_field_due_date_hint),
-                trailingContent = {
-                    if (isPhoneInLandscape) {
-                        androidx.compose.animation.AnimatedVisibility(visible = isActive) {
-                            IconButton(
-                                onClick = {
-                                    isDatePickerVisible = true
-                                    onDueDateFieldFocused()
-                                },
-                                modifier = Modifier.semantics {
-                                    contentDescription = calendarIconContentDescription
-                                },
-                                interactionSource = dueDateOnClickSource
-                            ) {
-                                CalendarIcon()
-                            }
-                        }
-                    } else {
-                        androidx.compose.animation.AnimatedVisibility(visible = isActive) {
-                            CalendarIcon()
-                        }
-                    }
-                },
-                isDate = true,
-                isPhoneInLandscape = isPhoneInLandscape
+            SkontoDueDateInputField(
+                isActive = isActive,
+                dueDate = dueDate,
+                isPhoneInLandscape = isPhoneInLandscape,
+                colors = colors,
+                onDueDateFieldFocused = onDueDateFieldFocused,
+                onDatePickerVisibilityChanged = { isDatePickerVisible = it },
             )
         }
     }
@@ -804,6 +650,170 @@ private fun SkontoSection(
         )
     }
 }
+
+@Composable
+private fun SkontoInfoBannerSection(
+    edgeCase: SkontoEdgeCase?,
+    infoDiscountValue: BigDecimal,
+    infoPaymentInDays: Int,
+    colors: DigitalInvoiceSkontoSectionColors,
+    onInfoBannerClicked: () -> Unit,
+) {
+    val animatedDiscountAmount by animateFloatAsState(
+        targetValue = infoDiscountValue.toFloat(),
+        label = "discountAmount"
+    )
+    val remainingDaysText = if (infoPaymentInDays != 0) {
+        pluralStringResource(id = R.plurals.days, count = infoPaymentInDays, infoPaymentInDays.toString())
+    } else {
+        stringResource(id = R.string.days_zero)
+    }
+    val infoBannerText = when (edgeCase) {
+        SkontoEdgeCase.PayByCashOnly -> stringResource(
+            id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_message,
+            animatedDiscountAmount.formatAsDiscountPercentage(), remainingDaysText
+        )
+        SkontoEdgeCase.SkontoExpired -> stringResource(
+            id = R.string.gbs_skonto_section_discount_info_banner_date_expired_message,
+            animatedDiscountAmount.formatAsDiscountPercentage()
+        )
+        SkontoEdgeCase.SkontoLastDay -> stringResource(
+            id = R.string.gbs_skonto_section_discount_info_banner_pay_today_message,
+            animatedDiscountAmount.formatAsDiscountPercentage()
+        )
+        SkontoEdgeCase.PayByCashToday -> stringResource(
+            id = R.string.gbs_skonto_section_discount_info_banner_pay_cash_today_message,
+            animatedDiscountAmount.formatAsDiscountPercentage()
+        )
+        else -> stringResource(
+            id = R.string.gbs_skonto_section_discount_info_banner_normal_message,
+            remainingDaysText, animatedDiscountAmount.formatAsDiscountPercentage()
+        )
+    }
+    InfoBanner(
+        text = infoBannerText,
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+        colors = when (edgeCase) {
+            SkontoEdgeCase.SkontoLastDay,
+            SkontoEdgeCase.PayByCashToday,
+            SkontoEdgeCase.PayByCashOnly -> colors.warningInfoBannerColors
+            SkontoEdgeCase.SkontoExpired -> colors.errorInfoBannerColors
+            else -> colors.successInfoBannerColors
+        },
+        onClicked = onInfoBannerClicked,
+        clickable = edgeCase != null,
+    )
+}
+
+@Composable
+private fun SkontoAmountInputField(
+    isActive: Boolean,
+    amount: Amount,
+    skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
+    colors: DigitalInvoiceSkontoSectionColors,
+    onSkontoAmountChange: (BigDecimal) -> Unit,
+    onSkontoAmountFieldFocused: () -> Unit,
+    shouldFieldShowKeyboard: Boolean,
+    isPhoneInLandscape: Boolean,
+) {
+    val resources = LocalContext.current.resources
+    val focusManager = LocalFocusManager.current
+    GiniAmountTextInput(
+        amount = amount.value,
+        currencyCode = amount.currency.name,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp)
+            .onPreviewKeyEvent { keyEvent -> handleTabKeyEvent(keyEvent, focusManager) }
+            .onFocusChanged { if (it.isFocused) onSkontoAmountFieldFocused() },
+        enabled = isActive,
+        colors = colors.amountFieldColors,
+        onValueChange = { onSkontoAmountChange(it) },
+        label = stringResource(id = R.string.gbs_skonto_section_discount_field_amount_hint),
+        trailingContent = {
+            AnimatedVisibility(visible = isActive) {
+                Text(text = amount.currency.name, style = GiniTheme.typography.subtitle1)
+            }
+        },
+        isError = skontoAmountValidationError != null,
+        supportingText = skontoAmountValidationError?.toErrorMessage(resources = resources),
+        shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+        isPhoneInLandscape = isPhoneInLandscape
+    )
+}
+
+@Composable
+private fun SkontoDueDateInputField(
+    isActive: Boolean,
+    dueDate: LocalDate,
+    isPhoneInLandscape: Boolean,
+    colors: DigitalInvoiceSkontoSectionColors,
+    onDueDateFieldFocused: () -> Unit,
+    onDatePickerVisibilityChanged: (Boolean) -> Unit,
+) {
+    val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+    val dueDateOnClickSource = remember { MutableInteractionSource() }
+    val pressed by dueDateOnClickSource.collectIsPressedAsState()
+    /**
+     * In landscape mode on phones, we don't need the dueDateOnClickSource
+     * because we have very less space, and we cannot pass null as interactionSource.
+     * So we use defaultInteractionSource is just a placeholder, and instead of using
+     * the whole area we will only use the trailing content to open the date picker in
+     * GiniTextInput, and we have isPhoneInLandscape check just to check if the current
+     * mode is landscape and phone or not. Tablet's and portrait mode will use the whole
+     * field of GiniTextInput to open the date picker.
+     * Also we have to change the textInputModifier of GiniTextInput to clickable only
+     * when it is not in landscape mode of phones.
+     */
+    val defaultInteractionSource = remember { MutableInteractionSource() }
+    val activeInteractionSource = if (isPhoneInLandscape) defaultInteractionSource else dueDateOnClickSource
+    val textInputModifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 16.dp)
+        .focusable(false)
+        .then(
+            if (!isPhoneInLandscape) Modifier.clickable(isActive) {
+                if (isActive) {
+                    onDatePickerVisibilityChanged(true)
+                    onDueDateFieldFocused()
+                }
+            } else Modifier
+        )
+    LaunchedEffect(key1 = pressed) {
+        if (pressed) {
+            onDatePickerVisibilityChanged(true)
+            onDueDateFieldFocused()
+        }
+    }
+    val calendarIconContentDescription = stringResource(id = R.string.gbs_skonto_calendar_icon_content_description)
+    GiniTextInput(
+        modifier = textInputModifier,
+        enabled = !isPhoneInLandscape && isActive,
+        interactionSource = activeInteractionSource,
+        readOnly = true,
+        colors = colors.dueDateTextFieldColor,
+        onValueChange = { /* Ignored */ },
+        text = dueDate.format(dateFormatter),
+        label = stringResource(id = R.string.gbs_skonto_section_discount_field_due_date_hint),
+        trailingContent = {
+            if (isPhoneInLandscape) {
+                androidx.compose.animation.AnimatedVisibility(visible = isActive) {
+                    IconButton(
+                        onClick = { onDatePickerVisibilityChanged(true); onDueDateFieldFocused() },
+                        modifier = Modifier.semantics { contentDescription = calendarIconContentDescription },
+                        interactionSource = dueDateOnClickSource
+                    ) { CalendarIcon() }
+                }
+            } else {
+                androidx.compose.animation.AnimatedVisibility(visible = isActive) { CalendarIcon() }
+            }
+        },
+        isDate = true,
+        isPhoneInLandscape = isPhoneInLandscape
+    )
+}
+
+
 private fun handleTabKeyEvent(
     event: androidx.compose.ui.input.key.KeyEvent,
     focusManager: FocusManager

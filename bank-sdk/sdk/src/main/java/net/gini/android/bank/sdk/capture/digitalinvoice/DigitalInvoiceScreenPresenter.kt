@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice
 import android.app.Activity
 import android.os.Bundle
 import androidx.annotation.VisibleForTesting
+import androidx.core.os.BundleCompat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import net.gini.android.bank.sdk.GiniBank
@@ -84,13 +85,13 @@ internal class DigitalInvoiceScreenPresenter(
 
     init {
         view.setPresenter(this)
-        skontoData = savedInstanceBundle?.getParcelable(KEY_SKONTO_DATA) ?: skontoData
+        skontoData = savedInstanceBundle?.let { BundleCompat.getParcelable(it, KEY_SKONTO_DATA, SkontoData::class.java) } ?: skontoData
         digitalInvoice = DigitalInvoice(
             extractions = extractions,
             compoundExtractions = compoundExtractions,
-            savedSelectableItems = savedInstanceBundle?.getParcelableArray(
-                KEY_SELECTABLE_ITEMS
-            )?.filterIsInstance<SelectableLineItem>()?.toList(),
+            savedSelectableItems = savedInstanceBundle?.let {
+                BundleCompat.getParcelableArrayList(it, KEY_SELECTABLE_ITEMS, SelectableLineItem::class.java)
+            },
             skontoData = skontoData,
             getSkontoAmountUseCase = getSkontoAmountUseCase,
             getSkontoDefaultSelectionStateUseCase = getSkontoDefaultSelectionStateUseCase,
@@ -103,9 +104,9 @@ internal class DigitalInvoiceScreenPresenter(
     }
 
     override fun saveState(outState: Bundle) {
-        outState.putParcelableArray(
+        outState.putParcelableArrayList(
             KEY_SELECTABLE_ITEMS,
-            digitalInvoice.selectableLineItems.toTypedArray()
+            ArrayList(digitalInvoice.selectableLineItems)
         )
 
         outState.putParcelable(
@@ -267,6 +268,7 @@ internal class DigitalInvoiceScreenPresenter(
     }
 
     override fun stop() {
+        // No cleanup needed on stop for this presenter
     }
 
     @VisibleForTesting
