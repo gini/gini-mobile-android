@@ -209,6 +209,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @Override
     public void stop() {
         mStopped = true;
+        extension.cancel();
         stopScanAnimation();
         if (!mAnalysisCompleted) {
             deleteUploadedDocuments();

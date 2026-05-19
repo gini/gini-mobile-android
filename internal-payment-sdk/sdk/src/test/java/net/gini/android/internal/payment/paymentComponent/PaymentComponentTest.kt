@@ -30,7 +30,7 @@ import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColor
 import net.gini.android.internal.payment.paymentProvider.getInstalledPaymentProviderApps
 import net.gini.android.internal.payment.paymentProvider.getPaymentProviderApps
 import net.gini.android.internal.payment.utils.extensions.generateBitmapDrawableIcon
-import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
+import net.gini.android.internal.payment.test.ViewModelTestCoroutineRule
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
