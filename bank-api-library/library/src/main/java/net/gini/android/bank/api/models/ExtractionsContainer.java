@@ -27,6 +27,9 @@ import static net.gini.android.core.api.Utils.checkNotNull;
  * <a href="https://pay-api.gini.net/documentation/#document-extractions-for-payment">Gini Bank API documentation</a>
  * for a list of the names of the specific extractions and compound specific extractions.
  */
+
+// Cannot rename the class as it will be a breaking change for the clients!
+@SuppressWarnings("java:S2176")
 public class ExtractionsContainer extends net.gini.android.core.api.models.ExtractionsContainer {
 
     private final List<ReturnReason> mReturnReasons;
