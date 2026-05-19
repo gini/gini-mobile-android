@@ -7,7 +7,7 @@
 4. `core-api-library` and `capture-sdk:default-network` don't get their own release notes, but they still need to be released separately. 
    For `core-api-library`, we share release notes through `bank-api-library` and `healht-api-library`. 
    For `capture-sdk:default-network` we share the release notes through `capture-sdk`.
-5. `internal-payment-sdk` also doesn't get it's own release notes, but a release is needed in order for the Health SDK to function.
+5. `internal-payment-sdk` also doesn't get its own release notes, but a release is needed in order for the Health SDK to function.
    It's main purpose is to gather common classes for the mentioned libraries without exposing them, 
    but some parts of it should be accessible from libraries which are using it.
 
