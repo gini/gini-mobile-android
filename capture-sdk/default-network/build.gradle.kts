@@ -12,7 +12,7 @@ plugins {
 }
 sonar {
     properties {
-        property("sonar.projectKey", "android-capture-sdk")
+        property("sonar.projectKey", "android-capture-sdk-default-network")
         property("sonar.projectName", "Android Capture SDK Default Network")
         property("sonar.organization", "gini")
         property("sonar.sources", "src/main/java")
