@@ -253,8 +253,11 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Build health API Library
-        run: ./gradlew :health-api-library:library:assembleDebug
+      - name: Run unit tests
+        run: ./gradlew :health-api-library:library:testDebugUnitTest
+
+      - name: Generate coverage report
+        run: ./gradlew :health-api-library:library:jacocoTestReport
 
       - name: SonarQube Scan
         run: ./gradlew :health-api-library:library:sonar --info --stacktrace
