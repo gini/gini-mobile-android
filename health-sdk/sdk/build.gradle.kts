@@ -1,6 +1,7 @@
 
 import net.gini.gradle.CodeAnalysisPlugin
 import net.gini.gradle.DokkaPlugin
+import net.gini.gradle.JacocoCoveragePlugin
 import net.gini.gradle.PublishToMavenPlugin
 import net.gini.gradle.SBOMPlugin
 import net.gini.gradle.extensions.apiProjectDependencyForSBOM
@@ -10,6 +11,7 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("kotlin-parcelize")
+    id("jacoco")
     alias(libs.plugins.devtools.ksp)
     id ("org.sonarqube")
 }
@@ -19,6 +21,7 @@ sonar {
         property("sonar.projectKey", "android-health-sdk")
         property("sonar.projectName", "Android Health SDK")
         property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java,../example-app/src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")
     }
 }
@@ -63,7 +66,7 @@ android {
 
     buildTypes {
         getByName("debug") {
-            isTestCoverageEnabled = true
+            isTestCoverageEnabled = false
             // Needed for instrumented tests
             multiDexEnabled = true
         }
@@ -155,6 +158,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<SBOMPlugin>()
 
 tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
