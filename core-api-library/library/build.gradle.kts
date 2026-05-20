@@ -3,6 +3,7 @@ import net.gini.gradle.*
 plugins {
     id("com.android.library")
     kotlin("android")
+    id("jacoco")
     id ("org.sonarqube")
     alias(libs.plugins.devtools.ksp)
 }
@@ -12,7 +13,7 @@ sonar {
         property("sonar.projectKey", "android-core-api-library")
         property("sonar.projectName", "Android Core API Library")
         property("sonar.organization", "gini")
-        property("sonar.sources", "src/main/java")
+        property("sonar.sources", "src/main/java,../shared-tests/src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")
     }
 }
@@ -112,4 +113,5 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<SBOMPlugin>()

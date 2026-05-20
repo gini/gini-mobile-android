@@ -74,11 +74,15 @@ class JacocoCoveragePlugin : Plugin<Project> {
                 "sonar.coverage.jacoco.xmlReportPaths",
                 xmlReportFile.get().asFile.absolutePath
             )
-            val sourceDirs = listOf("src/main/java", "src/main/kotlin")
-                .filter { project.file(it).exists() }
-                .joinToString(",")
-            if (sourceDirs.isNotEmpty()) {
-                property("sonar.sources", sourceDirs)
+            // Append src/main/kotlin to whatever sources the module declared, if it exists.
+            // Avoids overwriting custom sonar.sources entries (e.g. extra sibling-module paths).
+            if (project.file("src/main/kotlin").exists()) {
+                val existing = getProperties()["sonar.sources"]?.toString()
+                if (existing == null) {
+                    property("sonar.sources", "src/main/java,src/main/kotlin")
+                } else if (!existing.contains("src/main/kotlin")) {
+                    property("sonar.sources", "$existing,src/main/kotlin")
+                }
             }
         }
     }

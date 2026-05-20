@@ -199,14 +199,13 @@ jobs:
           java-version: "17"
           cache: "gradle"
 
-      # Build both modules (example-app depends on sdk)
-      - name: Build modules for Sonar
-        run: |
-          ./gradlew core-api-library:library:assembleDebug \
-                    core-api-library:shared-tests:assembleDebug
+      - name: Run unit tests
+        run: ./gradlew :core-api-library:library:testDebugUnitTest
 
-      # Run Sonar on both modules
+      - name: Generate coverage report
+        run: ./gradlew :core-api-library:library:jacocoTestReport
+
       - name: SonarQube Scan
-        run: ./gradlew core-api-library:library:sonar core-api-library:shared-tests:sonar --info --stacktrace
+        run: ./gradlew :core-api-library:library:sonar --info --stacktrace
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
