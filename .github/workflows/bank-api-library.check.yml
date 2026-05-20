@@ -203,9 +203,13 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
+          cache: "gradle"
 
-      - name: Build Bank API Library
-        run: ./gradlew :bank-api-library:library:assembleDebug
+      - name: Run unit tests
+        run: ./gradlew :bank-api-library:library:testDebugUnitTest
+
+      - name: Generate coverage report
+        run: ./gradlew :bank-api-library:library:jacocoTestReport
 
       - name: SonarQube Scan
         run: ./gradlew :bank-api-library:library:sonar --info --stacktrace

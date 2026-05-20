@@ -5,6 +5,7 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
+    id("jacoco")
     id ("org.sonarqube")
     alias(libs.plugins.devtools.ksp)
 }
@@ -40,7 +41,6 @@ android {
     }
     buildTypes {
         getByName("debug") {
-            // Disabled due to a jacoco error when using kotlin 1.5 (java.lang.IllegalStateException: Unexpected SMAP line: *S KotlinDebug)
             isTestCoverageEnabled = false
             // Needed for instrumented tests
             multiDexEnabled = true
@@ -112,6 +112,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<PropertiesPlugin>()
 apply<SBOMPlugin>()
 
