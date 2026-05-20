@@ -47,7 +47,7 @@ android {
 
     buildTypes {
         debug {
-            isTestCoverageEnabled = true
+            isTestCoverageEnabled = false
         }
         release {
             isMinifyEnabled = false
@@ -119,6 +119,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<CodeAnalysisPlugin>()
 apply<DokkaPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<SBOMPlugin>()
 
 tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {
