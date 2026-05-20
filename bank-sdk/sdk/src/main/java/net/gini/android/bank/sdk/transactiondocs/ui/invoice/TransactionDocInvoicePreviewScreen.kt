@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.invoice.InvoiceScreenErrorContent
+import net.gini.android.bank.sdk.invoice.InvoiceScreenContentState
 import net.gini.android.bank.sdk.invoice.InvoiceScreenReadyContent
 import net.gini.android.bank.sdk.invoice.colors.InvoicePreviewScreenColors
 import net.gini.android.capture.ui.components.GiniComposableStyleProviderConfig
@@ -59,10 +60,12 @@ internal fun TransactionDocInvoicePreviewScreen(
                 colors = colors
             )
         },
-        infoTextLines = state.infoTextLines,
-        images = state.images,
-        screenTitle = state.screenTitle,
-        isLoading = state.isLoading,
+        contentState = InvoiceScreenContentState(
+            infoTextLines = state.infoTextLines,
+            images = state.images,
+            screenTitle = state.screenTitle,
+            isLoading = state.isLoading,
+        ),
         onUserZoomedScreenOnce = { /* No Action needed on TD */ },
         isLandScape = isLandScape
     )
@@ -126,10 +129,12 @@ private fun TransactionDocTopBarActions(
 private fun InvoiceScreenContentPreview() {
     GiniTheme {
         InvoiceScreenReadyContent(
-            screenTitle = "Screen Title",
-            isLoading = true,
-            images = emptyList(),
-            infoTextLines = listOf("Line 1", "Line 2"),
+            contentState = InvoiceScreenContentState(
+                screenTitle = "Screen Title",
+                isLoading = true,
+                images = emptyList<android.graphics.Bitmap>(),
+                infoTextLines = listOf("Line 1", "Line 2"),
+            ),
             onCloseClicked = {},
             onUserZoomedScreenOnce = {}
         )

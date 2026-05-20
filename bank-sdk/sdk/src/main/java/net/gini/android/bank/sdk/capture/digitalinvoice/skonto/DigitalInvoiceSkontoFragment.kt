@@ -162,34 +162,40 @@ class DigitalInvoiceSkontoFragment : Fragment() {
                 GiniTheme {
                     ScreenContent(
                         viewModel = viewModel,
-                        isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
                         customBottomNavBarAdapter = customBottomNavBarAdapter,
-                        navigateBack = {
-                            setFragmentResult(
-                                REQUEST_KEY,
-                                bundleOf(RESULT_KEY to it)
-                            )
-                            findNavController().popBackStack()
-                        },
-                        navigateToInvoiceScreen = { documentId, infoTextLines ->
-                            findNavController()
-                                .navigate(
-                                    DigitalInvoiceSkontoFragmentDirections.toInvoicePreviewFragment(
-                                        screenTitle = context.getString(R.string.gbs_skonto_invoice_preview_title),
-                                        documentId = documentId,
-                                        highlightBoxes = args.data.invoiceHighlights.flatMap { it.getExistBoxes() }
-                                            .toTypedArray(),
-                                        infoTextLines = infoTextLines.toTypedArray()
-                                    )
+                        displayConfig = DigitalInvoiceSkontoDisplayConfig(
+                            isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
+                            isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                            shouldFieldShowKeyboard = viewModel.isKeyboardVisible
+                        ),
+                        navigationCallbacks = DigitalInvoiceSkontoNavigationCallbacks(
+                            navigateBack = {
+                                setFragmentResult(
+                                    REQUEST_KEY,
+                                    bundleOf(RESULT_KEY to it)
                                 )
-                        },
-                        navigateToHelpScreen = {
-                            findNavController().navigate(
-                                DigitalInvoiceSkontoFragmentDirections.toSkontoHelpFragment()
-                            )
-                        },
-                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
-                        shouldFieldShowKeyboard = viewModel.isKeyboardVisible
+                                findNavController().popBackStack()
+                            },
+                            navigateToInvoiceScreen = { documentId, infoTextLines ->
+                                findNavController()
+                                    .navigate(
+                                        DigitalInvoiceSkontoFragmentDirections.toInvoicePreviewFragment(
+                                            screenTitle = context.getString(R.string.gbs_skonto_invoice_preview_title),
+                                            documentId = documentId,
+                                            highlightBoxes = args.data.invoiceHighlights.flatMap { it.getExistBoxes() }
+                                                .toTypedArray(),
+                                            infoTextLines = infoTextLines.toTypedArray()
+                                        )
+                                    )
+                            },
+                            navigateToHelpScreen = {
+                                findNavController().navigate(
+                                    DigitalInvoiceSkontoFragmentDirections.toSkontoHelpFragment()
+                                )
+                            },
+                        ),
+                        modifier = Modifier,
+                        screenColorScheme = DigitalInvoiceSkontoScreenColors.colors(),
                     )
                 }
             }
@@ -200,17 +206,24 @@ class DigitalInvoiceSkontoFragment : Fragment() {
 
 @Composable
 private fun ScreenContent(
-    isBottomNavigationBarEnabled: Boolean,
-    navigateBack: (DigitalInvoiceSkontoResultArgs) -> Unit,
-    navigateToHelpScreen: () -> Unit,
-    navigateToInvoiceScreen: (documentId: String, infoTextLines: List<String>) -> Unit,
     viewModel: DigitalInvoiceSkontoViewModel,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
+    displayConfig: DigitalInvoiceSkontoDisplayConfig,
+    navigationCallbacks: DigitalInvoiceSkontoNavigationCallbacks,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
-    isLandScape: Boolean,
-    shouldFieldShowKeyboard: Boolean = false
 ) {
+    val eventCallbacks = DigitalInvoiceSkontoCallbacks(
+        onSkontoAmountChange = viewModel::onSkontoAmountFieldChanged,
+        onDueDateChanged = viewModel::onSkontoDueDateChanged,
+        onBackClicked = viewModel::onBackClicked,
+        onInfoBannerClicked = viewModel::onInfoBannerClicked,
+        onInfoDialogDismissed = viewModel::onInfoDialogDismissed,
+        onInvoiceClicked = viewModel::onInvoiceClicked,
+        onHelpClicked = viewModel::onHelpClicked,
+        onSkontoAmountFieldFocused = viewModel::onSkontoAmountFieldFocused,
+        onDueDateFieldFocused = viewModel::onDueDateFieldFocused,
+    )
 
     BackHandler { viewModel.onBackClicked() }
 
@@ -224,13 +237,13 @@ private fun ScreenContent(
     viewModel.collectSideEffect {
         when (it) {
             is SkontoSideEffect.OpenInvoiceScreen ->
-                navigateToInvoiceScreen(it.documentId, it.infoTextLines)
+                navigationCallbacks.navigateToInvoiceScreen(it.documentId, it.infoTextLines)
 
             is SkontoSideEffect.NavigateBack ->
-                navigateBack(it.args)
+                navigationCallbacks.navigateBack(it.args)
 
             SkontoSideEffect.OpenHelpScreen ->
-                navigateToHelpScreen()
+                navigationCallbacks.navigateToHelpScreen()
         }
     }
 
@@ -238,86 +251,63 @@ private fun ScreenContent(
         modifier = modifier,
         state = state,
         screenColorScheme = screenColorScheme,
-        onSkontoAmountChange = viewModel::onSkontoAmountFieldChanged,
-        onDueDateChanged = viewModel::onSkontoDueDateChanged,
-        isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-        onBackClicked = viewModel::onBackClicked,
-        onInfoBannerClicked = viewModel::onInfoBannerClicked,
-        onInfoDialogDismissed = viewModel::onInfoDialogDismissed,
-        onInvoiceClicked = viewModel::onInvoiceClicked,
+        eventCallbacks = eventCallbacks,
         customBottomNavBarAdapter = customBottomNavBarAdapter,
-        onHelpClicked = viewModel::onHelpClicked,
-        isLandScape = isLandScape,
-        onSkontoAmountFieldFocused = viewModel::onSkontoAmountFieldFocused,
-        onDueDateFieldFocused = viewModel::onDueDateFieldFocused,
-        shouldFieldShowKeyboard = shouldFieldShowKeyboard
+        displayConfig = displayConfig,
     )
 }
 
 @Composable
 private fun ScreenStateContent(
     state: SkontoScreenState,
-    isBottomNavigationBarEnabled: Boolean,
-    onSkontoAmountChange: (BigDecimal) -> Unit,
-    onDueDateChanged: (LocalDate) -> Unit,
-    onBackClicked: () -> Unit,
-    onInfoBannerClicked: () -> Unit,
-    onInfoDialogDismissed: () -> Unit,
-    onInvoiceClicked: () -> Unit,
-    onHelpClicked: () -> Unit,
-    onSkontoAmountFieldFocused: () -> Unit,
-    onDueDateFieldFocused: () -> Unit,
+    eventCallbacks: DigitalInvoiceSkontoCallbacks,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
+    displayConfig: DigitalInvoiceSkontoDisplayConfig,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
-    isLandScape : Boolean,
-    shouldFieldShowKeyboard: Boolean = false
 ) {
     when (state) {
         is SkontoScreenState.Ready -> ScreenReadyState(
             modifier = modifier,
             state = state,
             screenColorScheme = screenColorScheme,
-            onDiscountAmountChange = onSkontoAmountChange,
-            onDueDateChanged = onDueDateChanged,
-            onBackClicked = onBackClicked,
-            isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-            onInfoBannerClicked = onInfoBannerClicked,
-            onInfoDialogDismissed = onInfoDialogDismissed,
-            onInvoiceClicked = onInvoiceClicked,
+            eventCallbacks = eventCallbacks,
             customBottomNavBarAdapter = customBottomNavBarAdapter,
-            onHelpClicked = onHelpClicked,
-            onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
-            onDueDateFieldFocused = onDueDateFieldFocused,
-            isLandScape = isLandScape,
-            shouldFieldShowKeyboard = shouldFieldShowKeyboard
+            displayConfig = displayConfig,
         )
     }
-
 }
 
 @Composable
 private fun ScreenReadyState(
     state: SkontoScreenState.Ready,
-    onBackClicked: () -> Unit,
-    onInvoiceClicked: () -> Unit,
-    onHelpClicked: () -> Unit,
-    onInfoBannerClicked: () -> Unit,
-    onInfoDialogDismissed: () -> Unit,
-    onDiscountAmountChange: (BigDecimal) -> Unit,
-    onDueDateChanged: (LocalDate) -> Unit,
-    onSkontoAmountFieldFocused: () -> Unit,
-    onDueDateFieldFocused: () -> Unit,
-    isBottomNavigationBarEnabled: Boolean,
+    eventCallbacks: DigitalInvoiceSkontoCallbacks,
     customBottomNavBarAdapter: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>?,
+    displayConfig: DigitalInvoiceSkontoDisplayConfig,
     modifier: Modifier = Modifier,
     screenColorScheme: DigitalInvoiceSkontoScreenColors = DigitalInvoiceSkontoScreenColors.colors(),
-    isLandScape : Boolean,
-    shouldFieldShowKeyboard: Boolean = false
 ) {
 
     val scrollState = rememberScrollState()
     val keyboardPadding by keyboardPadding(108.dp, scrollState)
+
+    val sectionState = DigitalInvoiceSkontoSectionState(
+        isActive = state.isSkontoSectionActive,
+        amount = state.skontoAmount,
+        dueDate = state.discountDueDate,
+        infoPaymentInDays = state.paymentInDays,
+        infoDiscountValue = state.skontoPercentage,
+        edgeCase = state.edgeCase,
+        skontoAmountValidationError = state.skontoAmountValidationError,
+    )
+
+    val sectionCallbacks = DigitalInvoiceSkontoSectionCallbacks(
+        onSkontoAmountChange = eventCallbacks.onSkontoAmountChange,
+        onDueDateChanged = eventCallbacks.onDueDateChanged,
+        onInfoBannerClicked = eventCallbacks.onInfoBannerClicked,
+        onSkontoAmountFieldFocused = eventCallbacks.onSkontoAmountFieldFocused,
+        onDueDateFieldFocused = eventCallbacks.onDueDateFieldFocused,
+    )
 
     Scaffold(
         modifier = modifier,
@@ -325,18 +315,18 @@ private fun ScreenReadyState(
         bottomBar = {
             FooterSection(
                 colors = screenColorScheme.footerSectionColors,
-                isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-                onBackClicked = onBackClicked,
+                isBottomNavigationBarEnabled = displayConfig.isBottomNavigationBarEnabled,
+                onBackClicked = eventCallbacks.onBackClicked,
                 customBottomNavBarAdapter = customBottomNavBarAdapter,
-                onHelpClicked = onHelpClicked
+                onHelpClicked = eventCallbacks.onHelpClicked,
             )
         },
         topBar = {
             TopAppBar(
-                isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
+                isBottomNavigationBarEnabled = displayConfig.isBottomNavigationBarEnabled,
                 colors = screenColorScheme.topAppBarColors,
-                onBackClicked = onBackClicked,
-                onHelpClicked = onHelpClicked,
+                onBackClicked = eventCallbacks.onBackClicked,
+                onHelpClicked = eventCallbacks.onHelpClicked,
             )
         },
     ) {
@@ -364,27 +354,16 @@ private fun ScreenReadyState(
                         .padding(top = invoicePreviewPaddingTop)
                         .tabletMaxWidth(),
                     colorScheme = screenColorScheme.invoiceScanSectionColors,
-                    onClick = onInvoiceClicked,
+                    onClick = eventCallbacks.onInvoiceClicked,
                 )
                 SkontoSection(
+                    sectionState = sectionState,
+                    sectionCallbacks = sectionCallbacks,
+                    colors = screenColorScheme.scontoSectionColors,
+                    displayConfig = displayConfig,
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .tabletMaxWidth(),
-                    colors = screenColorScheme.scontoSectionColors,
-                    amount = state.skontoAmount,
-                    dueDate = state.discountDueDate,
-                    infoPaymentInDays = state.paymentInDays,
-                    infoDiscountValue = state.skontoPercentage,
-                    isActive = state.isSkontoSectionActive,
-                    onSkontoAmountChange = onDiscountAmountChange,
-                    onDueDateChanged = onDueDateChanged,
-                    edgeCase = state.edgeCase,
-                    onInfoBannerClicked = onInfoBannerClicked,
-                    skontoAmountValidationError = state.skontoAmountValidationError,
-                    onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
-                    onDueDateFieldFocused = onDueDateFieldFocused,
-                    isLandScape = isLandScape,
-                    shouldFieldShowKeyboard = shouldFieldShowKeyboard
                 )
             }
         }
@@ -411,7 +390,7 @@ private fun ScreenReadyState(
             InfoDialog(
                 text = text,
                 colors = screenColorScheme.infoDialogColors,
-                onDismissRequest = onInfoDialogDismissed
+                onDismissRequest = eventCallbacks.onInfoDialogDismissed,
             )
         }
     }
@@ -557,25 +536,14 @@ private fun YourInvoiceScanSection(
 
 @Composable
 private fun SkontoSection(
-    isActive: Boolean,
-    amount: Amount,
-    dueDate: LocalDate,
-    infoPaymentInDays: Int,
-    infoDiscountValue: BigDecimal,
-    onSkontoAmountChange: (BigDecimal) -> Unit,
-    onDueDateChanged: (LocalDate) -> Unit,
-    onInfoBannerClicked: () -> Unit,
-    onSkontoAmountFieldFocused: () -> Unit,
-    onDueDateFieldFocused: () -> Unit,
-    edgeCase: SkontoEdgeCase?,
+    sectionState: DigitalInvoiceSkontoSectionState,
+    sectionCallbacks: DigitalInvoiceSkontoSectionCallbacks,
     colors: DigitalInvoiceSkontoSectionColors,
-    skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
+    displayConfig: DigitalInvoiceSkontoDisplayConfig,
     modifier: Modifier = Modifier,
-    isLandScape: Boolean,
-    shouldFieldShowKeyboard: Boolean = false
 ) {
     val isPhoneInLandscape =
-        !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && isLandScape
+        !booleanResource(id = net.gini.android.capture.R.bool.gc_is_tablet) && displayConfig.isLandScape
     var isDatePickerVisible by rememberSaveable { mutableStateOf(false) }
     Card(
         modifier = modifier,
@@ -597,7 +565,7 @@ private fun SkontoSection(
                     color = colors.titleTextColor,
                 )
                 Box {
-                    androidx.compose.animation.AnimatedVisibility(visible = isActive) {
+                    androidx.compose.animation.AnimatedVisibility(visible = sectionState.isActive) {
                         Text(
                             text = stringResource(id = R.string.gbs_skonto_section_discount_hint_label_enabled),
                             style = GiniTheme.typography.subtitle2,
@@ -608,30 +576,30 @@ private fun SkontoSection(
             }
 
             SkontoInfoBannerSection(
-                edgeCase = edgeCase,
-                infoDiscountValue = infoDiscountValue,
-                infoPaymentInDays = infoPaymentInDays,
+                edgeCase = sectionState.edgeCase,
+                infoDiscountValue = sectionState.infoDiscountValue,
+                infoPaymentInDays = sectionState.infoPaymentInDays,
                 colors = colors,
-                onInfoBannerClicked = onInfoBannerClicked,
+                onInfoBannerClicked = sectionCallbacks.onInfoBannerClicked,
             )
 
             SkontoAmountInputField(
-                isActive = isActive,
-                amount = amount,
-                skontoAmountValidationError = skontoAmountValidationError,
+                isActive = sectionState.isActive,
+                amount = sectionState.amount,
+                skontoAmountValidationError = sectionState.skontoAmountValidationError,
                 colors = colors,
-                onSkontoAmountChange = onSkontoAmountChange,
-                onSkontoAmountFieldFocused = onSkontoAmountFieldFocused,
-                shouldFieldShowKeyboard = shouldFieldShowKeyboard,
+                onSkontoAmountChange = sectionCallbacks.onSkontoAmountChange,
+                onSkontoAmountFieldFocused = sectionCallbacks.onSkontoAmountFieldFocused,
+                shouldFieldShowKeyboard = displayConfig.shouldFieldShowKeyboard,
                 isPhoneInLandscape = isPhoneInLandscape,
             )
 
             SkontoDueDateInputField(
-                isActive = isActive,
-                dueDate = dueDate,
+                isActive = sectionState.isActive,
+                dueDate = sectionState.dueDate,
                 isPhoneInLandscape = isPhoneInLandscape,
                 colors = colors,
-                onDueDateFieldFocused = onDueDateFieldFocused,
+                onDueDateFieldFocused = sectionCallbacks.onDueDateFieldFocused,
                 onDatePickerVisibilityChanged = { isDatePickerVisible = it },
             )
         }
@@ -642,11 +610,11 @@ private fun SkontoSection(
             onDismissRequest = { isDatePickerVisible = false },
             onSaved = {
                 isDatePickerVisible = false
-                onDueDateChanged(it)
+                sectionCallbacks.onDueDateChanged(it)
             },
-            date = dueDate,
+            date = sectionState.dueDate,
             selectableDates = getSkontoSelectableDates(),
-            isLandScape = isLandScape
+            isLandScape = displayConfig.isLandScape,
         )
     }
 }
@@ -1007,18 +975,22 @@ private fun ScreenReadyStatePreview() {
 
         ScreenReadyState(
             state = state,
-            onDiscountAmountChange = {},
-            onDueDateChanged = {},
-            onBackClicked = {},
-            isBottomNavigationBarEnabled = true,
-            onInfoDialogDismissed = {},
-            onInfoBannerClicked = {},
-            onInvoiceClicked = {},
-            onHelpClicked = {},
+            eventCallbacks = DigitalInvoiceSkontoCallbacks(
+                onSkontoAmountChange = {},
+                onDueDateChanged = {},
+                onBackClicked = {},
+                onInfoBannerClicked = {},
+                onInfoDialogDismissed = {},
+                onInvoiceClicked = {},
+                onHelpClicked = {},
+                onSkontoAmountFieldFocused = {},
+                onDueDateFieldFocused = {},
+            ),
             customBottomNavBarAdapter = null,
-            onSkontoAmountFieldFocused = {},
-            onDueDateFieldFocused = {},
-            isLandScape = false
+            displayConfig = DigitalInvoiceSkontoDisplayConfig(
+                isLandScape = false,
+                isBottomNavigationBarEnabled = true,
+            ),
         )
     }
 }
