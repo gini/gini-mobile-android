@@ -129,6 +129,12 @@ jobs:
       - name: Build Internal Payment SDK
         run: ./gradlew :internal-payment-sdk:sdk:assembleDebug
 
+      - name: Run unit tests
+        run: ./gradlew :internal-payment-sdk:sdk:testDebugUnitTest
+
+      - name: Generate coverage report
+        run: ./gradlew :internal-payment-sdk:sdk:jacocoTestReport
+
       - name: SonarQube Scan
         run: ./gradlew :internal-payment-sdk:sdk:sonar --info --stacktrace
         env:
