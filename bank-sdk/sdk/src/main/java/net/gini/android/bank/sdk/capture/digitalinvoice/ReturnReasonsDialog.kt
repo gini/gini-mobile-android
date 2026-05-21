@@ -73,7 +73,9 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
 
     private fun readArguments() {
         arguments?.run {
-            reasons = BundleCompat.getParcelableArrayList(this, ARG_RETURN_REASONS, GiniCaptureReturnReason::class.java) ?: emptyList()
+            reasons = BundleCompat.getParcelableArrayList(
+                this, ARG_RETURN_REASONS, GiniCaptureReturnReason::class.java
+            ) ?: emptyList()
         }
     }
 

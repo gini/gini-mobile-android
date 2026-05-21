@@ -85,7 +85,9 @@ internal class DigitalInvoiceScreenPresenter(
 
     init {
         view.setPresenter(this)
-        skontoData = savedInstanceBundle?.let { BundleCompat.getParcelable(it, KEY_SKONTO_DATA, SkontoData::class.java) } ?: skontoData
+        skontoData = savedInstanceBundle?.let {
+            BundleCompat.getParcelable(it, KEY_SKONTO_DATA, SkontoData::class.java)
+        } ?: skontoData
         digitalInvoice = DigitalInvoice(
             extractions = extractions,
             compoundExtractions = compoundExtractions,
