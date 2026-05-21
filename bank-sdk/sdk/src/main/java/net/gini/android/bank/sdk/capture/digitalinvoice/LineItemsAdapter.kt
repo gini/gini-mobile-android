@@ -252,7 +252,7 @@ internal sealed class ViewType {
             1 -> LineItem
             2 -> Addon
             3 -> SkontoInfo
-            else -> error("Unknow adapter view type id: $viewTypeId")
+            else -> error("Unknown adapter view type id: $viewTypeId")
         }
     }
 }

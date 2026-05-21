@@ -109,13 +109,19 @@ class ClientCaptureSDKFragment :
             ) { result ->
                 when (result) {
                     is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Success -> {
+                        // Opening the file(s) from the intent and creating the
+                        // GiniCaptureFragment finished
+
+                        // Set the listener to receive the Gini Capture SDK's results
                         result.fragment.setListener(listener)
+                        // Show the GiniCaptureFragment via the fragment manager:
                         context.supportFragmentManager.beginTransaction()
                             .replace(R.id.fragment_host, result.fragment, "GiniCaptureFragment")
                             .addToBackStack(null)
                             .commit()
                     }
                     is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Error -> {
+                        // Something went wrong when opening the file(s) from the intent
                         Toast.makeText(context, "Error, Exiting", Toast.LENGTH_SHORT).show()
                         context.finish()
                     }
