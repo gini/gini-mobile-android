@@ -69,7 +69,7 @@ class ClientCaptureSDKFragment :
             .setDocumentMetadata(documentMetadata)
             .build()
 
-        val capture = GiniCapture.Builder()
+        GiniCapture.Builder()
             .setGiniCaptureNetworkService(networkService)
             .setFileImportEnabled(true)
             .setDocumentImportEnabledFileTypes(DocumentImportEnabledFileTypes.PDF_AND_IMAGES)
@@ -105,53 +105,27 @@ class ClientCaptureSDKFragment :
         mFileImportCancellationToken = GiniCapture.getInstance()
             .createGiniCaptureFragmentForIntent(
                 context,
-                openWithIntent,
-                object : GiniCapture.CreateGiniCaptureFragmentForIntentCallback {
-                    override fun callback(
-                        result: GiniCapture.CreateGiniCaptureFragmentForIntentResult?
-                    ) {
-                        when (result) {
-                            is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Success -> {
-                                // Opening the file(s) from the intent and creating the
-                                // GiniCaptureFragment finished
-
-                                // Set the listener to receive the Gini Bank SDK's results
-                                result.fragment.setListener(listener)
-                                // Show the CaptureFlowFragment for example via
-                                // the fragment manager:
-                                context.supportFragmentManager.beginTransaction()
-                                    .replace(
-                                        R.id.fragment_host,
-                                        result.fragment,
-                                        "GiniCaptureFragment"
-                                    )
-                                    .addToBackStack(null)
-                                    .commit()
-                            }
-
-                            is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Error -> {
-                                // Something went wrong when opening the file(s) from the intent or
-                                // uploading the document
-                                Toast.makeText(
-                                    context,
-                                    "Error, Exiting",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                context.finish()
-                            }
-
-                            is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Cancelled -> {
-                                Toast.makeText(
-                                    context,
-                                    "Cancelled, Exiting",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                context.finish()
-                            }
-                        }
+                openWithIntent
+            ) { result ->
+                when (result) {
+                    is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Success -> {
+                        result.fragment.setListener(listener)
+                        context.supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_host, result.fragment, "GiniCaptureFragment")
+                            .addToBackStack(null)
+                            .commit()
                     }
+                    is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Error -> {
+                        Toast.makeText(context, "Error, Exiting", Toast.LENGTH_SHORT).show()
+                        context.finish()
+                    }
+                    is GiniCapture.CreateGiniCaptureFragmentForIntentResult.Cancelled -> {
+                        Toast.makeText(context, "Cancelled, Exiting", Toast.LENGTH_SHORT).show()
+                        context.finish()
+                    }
+                }
+            }
 
-                })
 
     }
 

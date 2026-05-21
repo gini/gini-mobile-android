@@ -5,8 +5,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.sdk.exampleapp.core.ResultWrapper
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityPayBinding
@@ -32,36 +35,42 @@ class PayActivity : AppCompatActivity() {
             Toast.makeText(this@PayActivity, throwable.message, Toast.LENGTH_LONG).show()
         }
 
-        lifecycleScope.launchWhenStarted {
-            payViewModel.paymentRequest.collect { result ->
-                binding.progress.isVisible = result is ResultWrapper.Loading
-                when (result) {
-                    is ResultWrapper.Success -> {
-                        binding.setPaymentDetails(result.value)
-                        binding.resolvePayment.isEnabled = true
-                    }
-                    is ResultWrapper.Error -> {
-                        Toast.makeText(this@PayActivity, result.error.message, Toast.LENGTH_LONG).show()
-                    }
-                    is ResultWrapper.Loading -> {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                payViewModel.paymentRequest.collect { result ->
+                    binding.progress.isVisible = result is ResultWrapper.Loading
+                    when (result) {
+                        is ResultWrapper.Success -> {
+                            binding.setPaymentDetails(result.value)
+                            binding.resolvePayment.isEnabled = true
+                        }
+                        is ResultWrapper.Error -> {
+                            Toast.makeText(this@PayActivity, result.error.message, Toast.LENGTH_LONG).show()
+                        }
+                        is ResultWrapper.Loading -> {
+                            // no-op: progress indicator visibility is set above
+                        }
                     }
                 }
             }
         }
 
-        lifecycleScope.launchWhenStarted {
-            payViewModel.paymentState.collect { result ->
-                binding.progress.isVisible = result is ResultWrapper.Loading
-                when (result) {
-                    is ResultWrapper.Success -> {
-                        binding.resolvePayment.isVisible = false
-                        binding.returnToPaymentInitiatorApp.isVisible = true
-                    }
-                    is ResultWrapper.Error -> {
-                        Toast.makeText(this@PayActivity, result.error.message, Toast.LENGTH_LONG).show()
-                        binding.enablePaymentDetails()
-                    }
-                    is ResultWrapper.Loading -> {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                payViewModel.paymentState.collect { result ->
+                    binding.progress.isVisible = result is ResultWrapper.Loading
+                    when (result) {
+                        is ResultWrapper.Success -> {
+                            binding.resolvePayment.isVisible = false
+                            binding.returnToPaymentInitiatorApp.isVisible = true
+                        }
+                        is ResultWrapper.Error -> {
+                            Toast.makeText(this@PayActivity, result.error.message, Toast.LENGTH_LONG).show()
+                            binding.enablePaymentDetails()
+                        }
+                        is ResultWrapper.Loading -> {
+                            // no-op: progress indicator visibility is set above
+                        }
                     }
                 }
             }

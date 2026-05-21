@@ -7,6 +7,7 @@ import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -42,10 +43,10 @@ class ConfigurationActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         configurationViewModel.setConfiguration(
-            intent.getParcelableExtra(CONFIGURATION_BUNDLE)!!
+            IntentCompat.getParcelableExtra(intent, CONFIGURATION_BUNDLE, ExampleAppBankConfiguration::class.java)!!
         )
         configurationViewModel.disableCameraPermission(
-            intent.getBooleanExtra(CAMERA_PERMISSION_BUNDLE, false) ?: false
+            intent.getBooleanExtra(CAMERA_PERMISSION_BUNDLE, false)
         )
 
         setupActionBar()
@@ -246,451 +247,335 @@ class ConfigurationActivity : AppCompatActivity() {
             configuration.productTag == ProductTag.CxExtractions
     }
 
-    @Suppress("CyclomaticComplexMethod", "LongMethod")
     private fun setConfigurationFeatures() {
+        setupFeatureToggleListeners()
+        setupCameraToggleListeners()
+        setupDocumentTypeToggleListener()
+        setupOnboardingToggleListeners()
+        setupUiCustomizationListeners()
+        setupPaymentToggleListeners()
+        setupDebugToggleListeners()
+    }
+
+    private fun setupFeatureToggleListeners() {
         // setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isDefaultSDKConfigurationsEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isDefaultSDKConfigurationsEnabled = isChecked)
             )
-            if (isChecked) {
-                configurationViewModel.setupSDKWithDefaultConfigurations()
-            }
+            if (isChecked) configurationViewModel.setupSDKWithDefaultConfigurations()
         }
-
         // file import
         binding.layoutFeatureToggle.switchOpenWith.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isFileImportEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isFileImportEnabled = isChecked)
             )
         }
-
         // Capture SDK testing
-        binding.layoutFeatureToggle.switchCaptureSdk.setOnCheckedChangeListener { _ , isChecked ->
+        binding.layoutFeatureToggle.switchCaptureSdk.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isCaptureSDK = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isCaptureSDK = isChecked)
             )
         }
-
         // QR code scanning
         binding.layoutFeatureToggle.switchQrCodeScanning.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isQrCodeEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isQrCodeEnabled = isChecked)
             )
             if (!isChecked) {
                 configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isOnlyQrCodeEnabled = false
-                    )
+                    configurationViewModel.configurationFlow.value.copy(isOnlyQrCodeEnabled = false)
                 )
             }
-
         }
         // only QR code scanning
         binding.layoutFeatureToggle.switchOnlyQRCodeScanning.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isOnlyQrCodeEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isOnlyQrCodeEnabled = isChecked)
             )
             if (isChecked) {
                 configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isQrCodeEnabled = true
-                    )
+                    configurationViewModel.configurationFlow.value.copy(isQrCodeEnabled = true)
                 )
             }
         }
         // enable multi page
         binding.layoutFeatureToggle.switchMultiPage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isMultiPageEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isMultiPageEnabled = isChecked)
             )
         }
+        // enable Skonto
+        binding.layoutFeatureToggle.switchSkontoFeature.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isSkontoEnabled = isChecked)
+            )
+        }
+        // enable transaction docs
+        binding.layoutFeatureToggle.switchTransactionDocsFeature.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isTransactionDocsEnabled = isChecked)
+            )
+        }
+        // Transaction docs always attach checked
+        binding.layoutTransactionDocsToggles.switchAlwaysAttachDocs.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setAlwaysAttachSetting(this, isChecked)
+        }
+        // For testing Save Invoices Locally SDK flag, this is how clients can enable/disable it
+        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(saveInvoicesLocallyEnabled = isChecked)
+            )
+        }
+        // for internal testing: To simulate the SAF first time experience
+        binding.layoutFeatureToggle.btnRemoveSafData.setOnClickListener {
+            SharedPreferenceHelper.saveString(SAF_STORAGE_URI_KEY, "", this)
+        }
+    }
+
+    private fun setupCameraToggleListeners() {
         // enable flash toggle
         binding.layoutCameraToggles.switchDisplayFlashButton.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isFlashButtonDisplayed = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isFlashButtonDisplayed = isChecked)
             )
             if (!isChecked) {
                 configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isFlashDefaultStateEnabled = false
-                    )
+                    configurationViewModel.configurationFlow.value.copy(isFlashDefaultStateEnabled = false)
                 )
             }
         }
         // enable flash on by default
         binding.layoutCameraToggles.switchFlashOnByDefault.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isFlashDefaultStateEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isFlashDefaultStateEnabled = isChecked)
             )
             if (isChecked) {
                 configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isFlashButtonDisplayed = true
-                    )
+                    configurationViewModel.configurationFlow.value.copy(isFlashButtonDisplayed = true)
                 )
             }
         }
+    }
+
+    private fun setupDocumentTypeToggleListener() {
         // set import document type support
-        binding.layoutFeatureToggle.toggleBtnFileImportSetup.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
+        binding.layoutFeatureToggle.toggleBtnFileImportSetup.addOnButtonCheckedListener { toggleButton, _, _ ->
             val checked = toggleButton.checkedButtonId
             configurationViewModel.setConfiguration(
                 when (checked) {
-                    R.id.btn_fileImportDisabled -> configurationViewModel.configurationFlow.value.copy(
-                        documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.NONE
-                    )
-
                     R.id.btn_fileImportOnlyPdf -> configurationViewModel.configurationFlow.value.copy(
                         documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF
                     )
-
                     R.id.btn_fileImportPdfAndImage -> configurationViewModel.configurationFlow.value.copy(
                         documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES
                     )
-
                     else -> configurationViewModel.configurationFlow.value.copy(
                         documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.NONE
                     )
                 }
             )
         }
+    }
 
+    private fun setupOnboardingToggleListeners() {
         // enable onboarding screens at first launch
         binding.layoutOnboardingToggles.switchOnboardingScreensAtFirstRun.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isOnboardingAtFirstRunEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isOnboardingAtFirstRunEnabled = isChecked)
             )
         }
-
         // enable onboarding at every launch
         binding.layoutOnboardingToggles.switchOnboardingScreensAtEveryLaunch.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isOnboardingAtEveryLaunchEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isOnboardingAtEveryLaunchEnabled = isChecked)
             )
         }
-
         // enable custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingPages.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isCustomOnboardingPagesEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isCustomOnboardingPagesEnabled = isChecked)
             )
         }
         // enable align corners onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingAlignCornersPage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isAlignCornersInCustomOnboardingEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isAlignCornersInCustomOnboardingEnabled = isChecked)
             )
         }
         // enable lighting in custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingLightingPage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isLightingInCustomOnboardingEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isLightingInCustomOnboardingEnabled = isChecked)
             )
         }
         // enable QR code in custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingQRCodePage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isQRCodeInCustomOnboardingEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isQRCodeInCustomOnboardingEnabled = isChecked)
             )
         }
-
         // enable multi page in custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingMultiPage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isMultiPageInCustomOnboardingEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isMultiPageInCustomOnboardingEnabled = isChecked)
             )
         }
+    }
 
+    private fun setupUiCustomizationListeners() {
         // enable button's custom loading indicator
         binding.layoutGeneralUiCustomizationToggles.switchButtonsCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isButtonsCustomLoadingIndicatorEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isButtonsCustomLoadingIndicatorEnabled = isChecked)
             )
         }
-
         // enable screen's custom loading indicator
         binding.layoutAnalysisToggles.switchScreenCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isScreenCustomLoadingIndicatorEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isScreenCustomLoadingIndicatorEnabled = isChecked)
             )
         }
-
-        //enable payment hints for showing warning
-        binding.layoutFeatureToggle.switchSetupAlreadyPaidHintEnabled.setOnCheckedChangeListener{ _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isAlreadyPaidHintEnabled = isChecked
-                )
-            )
-        }
-
-        //enable payment due hint for showing warning
-        binding.layoutFeatureToggle.switchPaymentDueHint.setOnCheckedChangeListener{ _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isPaymentDueHintEnabled = isChecked
-                )
-            )
-        }
-
-        // set payment due hint threshold days
-        binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays
-            .doAfterTextChanged {
-                if (it.toString().isNotEmpty()) {
-                    configurationViewModel.setConfiguration(
-                        configurationViewModel.configurationFlow.value.copy(
-                            paymentDueHintThresholdDays = it.toString().toInt()
-                        )
-                    )
-                }
-            }
-
-
         // enable supported format help screen
         binding.layoutHelpToggles.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isSupportedFormatsHelpScreenEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isSupportedFormatsHelpScreenEnabled = isChecked)
             )
         }
-
         // enable custom help items
         binding.layoutHelpToggles.switchCustomHelpMenuItems.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isCustomHelpItemsEnabled = isChecked
-                )
+                configurationViewModel.configurationFlow.value.copy(isCustomHelpItemsEnabled = isChecked)
             )
         }
-
         // enable custom navigation bar
-        binding.layoutGeneralUiCustomizationToggles.switchCustomNavigationController
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isCustomNavBarEnabled = isChecked
-                    )
-                )
-            }
-
-        // enable custom primary button in compose
-        binding.layoutGeneralUiCustomizationToggles.switchCustomPrimaryComposeButton
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isCustomPrimaryComposeButtonEnabled = isChecked
-                    )
-                )
-            }
-
-
-        // enable event tracker
-        binding.layoutFeatureToggle.switchEventTracker
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isEventTrackerEnabled = isChecked
-                    )
-                )
-            }
-
-        // for internal testing: To simulate the SAF first time experience, in which the picker
-        // will be shown
-        binding.layoutFeatureToggle.btnRemoveSafData.setOnClickListener {
-            SharedPreferenceHelper.saveString(SAF_STORAGE_URI_KEY, "", this)
+        binding.layoutGeneralUiCustomizationToggles.switchCustomNavigationController.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isCustomNavBarEnabled = isChecked)
+            )
         }
-        // For testing Save Invoices Locally SDK flag, this is how clients can enable/disable it
-        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature
-            .setOnCheckedChangeListener { _, isChecked ->
+        // enable custom primary button in compose
+        binding.layoutGeneralUiCustomizationToggles.switchCustomPrimaryComposeButton.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isCustomPrimaryComposeButtonEnabled = isChecked)
+            )
+        }
+        // enable event tracker
+        binding.layoutFeatureToggle.switchEventTracker.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isEventTrackerEnabled = isChecked)
+            )
+        }
+    }
+
+    private fun setupPaymentToggleListeners() {
+        // enable payment hints for showing warning
+        binding.layoutFeatureToggle.switchSetupAlreadyPaidHintEnabled.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isAlreadyPaidHintEnabled = isChecked)
+            )
+        }
+        // enable payment due hint for showing warning
+        binding.layoutFeatureToggle.switchPaymentDueHint.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isPaymentDueHintEnabled = isChecked)
+            )
+        }
+        // set payment due hint threshold days
+        binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays.doAfterTextChanged {
+            if (it.toString().isNotEmpty()) {
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
-                        saveInvoicesLocallyEnabled = isChecked
+                        paymentDueHintThresholdDays = it.toString().toInt()
                     )
                 )
             }
+        }
+        // enable return assistant
+        binding.layoutFeatureToggle.switchReturnAssistantFeature.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isReturnAssistantEnabled = isChecked)
+            )
+        }
+        // Digital invoice onboarding custom illustration
+        binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isDigitalInvoiceOnboardingCustomIllustrationEnabled = isChecked)
+            )
+        }
+        // Product Tag switch - OFF = SEPA, ON = CX
+        binding.layoutFeatureToggle.switchProductTagCx.setOnCheckedChangeListener { _, isChecked ->
+            val productTag = if (isChecked) ProductTag.CxExtractions else ProductTag.SepaExtractions
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(productTag = productTag)
+            )
+        }
+    }
 
+    private fun setupDebugToggleListeners() {
         // enable Gini error logger
-        binding.layoutDebugDevelopmentOptionsToggles.switchGiniErrorLogger
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isGiniErrorLoggerEnabled = isChecked
-                    )
-                )
-            }
-
+        binding.layoutDebugDevelopmentOptionsToggles.switchGiniErrorLogger.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isGiniErrorLoggerEnabled = isChecked)
+            )
+        }
         // enable custom error logger
-        binding.layoutDebugDevelopmentOptionsToggles.switchCustomErrorLogger
-            .setOnCheckedChangeListener { _, isChecked ->
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomErrorLogger.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isCustomErrorLoggerEnabled = isChecked)
+            )
+        }
+        // set imported file size bytes limit
+        binding.layoutDebugDevelopmentOptionsToggles.editTextImportedFileSizeBytesLimit.doAfterTextChanged {
+            if (it.toString().isNotEmpty()) {
                 configurationViewModel.setConfiguration(
                     configurationViewModel.configurationFlow.value.copy(
-                        isCustomErrorLoggerEnabled = isChecked
+                        importedFileSizeBytesLimit = it.toString().toInt()
                     )
                 )
             }
-
-        // set imported file size bytes limit
-        binding.layoutDebugDevelopmentOptionsToggles.editTextImportedFileSizeBytesLimit
-            .doAfterTextChanged {
-                if (it.toString().isNotEmpty()) {
-                    configurationViewModel.setConfiguration(
-                        configurationViewModel.configurationFlow.value.copy(
-                            importedFileSizeBytesLimit = it.toString().toInt()
-                        )
-                    )
-                }
-            }
-
+        }
         binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.doAfterTextChanged {
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    clientId = it.toString()
-                )
+                configurationViewModel.configurationFlow.value.copy(clientId = it.toString())
             )
-            if (
-                it.toString().isNotEmpty() &&
-                binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.toString()
-                    .isNotEmpty()
+            if (it.toString().isNotEmpty() &&
+                binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.toString().isNotEmpty()
             ) {
                 applyClientSecretAndClientId()
             }
         }
         binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.doAfterTextChanged {
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    clientSecret = it.toString()
-                )
+                configurationViewModel.configurationFlow.value.copy(clientSecret = it.toString())
             )
             if (it.toString().isNotEmpty() &&
-                binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.toString()
-                    .isNotEmpty()
+                binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.toString().isNotEmpty()
             ) {
                 applyClientSecretAndClientId()
             }
         }
-
-        // enable return assistant
-        binding.layoutFeatureToggle.switchReturnAssistantFeature
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isReturnAssistantEnabled = isChecked
-                    )
-                )
-            }
-
-        // Digital invoice onboarding custom illustration
-        binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isDigitalInvoiceOnboardingCustomIllustrationEnabled = isChecked
-                    )
-                )
-            }
-
         // Allow screenshots
-        binding.layoutDebugDevelopmentOptionsToggles.switchAllowScreenshots
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isAllowScreenshotsEnabled = isChecked
-                    )
-                )
-            }
-
+        binding.layoutDebugDevelopmentOptionsToggles.switchAllowScreenshots.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isAllowScreenshotsEnabled = isChecked)
+            )
+        }
         // Debug mode
-        binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode
-            .setOnCheckedChangeListener { _, isChecked ->
-                configurationViewModel.setConfiguration(
-                    configurationViewModel.configurationFlow.value.copy(
-                        isDebugModeEnabled = isChecked
-                    )
-                )
-            }
-
+        binding.layoutDebugDevelopmentOptionsToggles.switchDebugMode.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isDebugModeEnabled = isChecked)
+            )
+        }
         // Custom HTTP client
-        binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient
-            .setOnCheckedChangeListener { _, isChecked ->
-                val configurationFlow = configurationViewModel.configurationFlow.value
-                configurationViewModel.setConfiguration(
-                    configurationFlow.copy(
-                        isCustomHttpClientEnabled = isChecked
-                    )
-                )
-                // Reinitialize network services with the new flag
-                defaultNetworkServicesProvider.reinitNetworkServices(
-                    configurationFlow.clientId.ifEmpty { getString(R.string.gini_api_client_id) },
-                    configurationFlow.clientSecret.ifEmpty { getString(R.string.gini_api_client_secret) },
-                    isChecked
-                )
-            }
-
-        // enable Skonto
-        binding.layoutFeatureToggle.switchSkontoFeature.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isSkontoEnabled = isChecked
-                )
-            )
-        }
-
-        // enable transaction docs
-        binding.layoutFeatureToggle.switchTransactionDocsFeature.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    isTransactionDocsEnabled = isChecked
-                )
-            )
-        }
-
-        // Transaction docs always attach checked
-        binding.layoutTransactionDocsToggles.switchAlwaysAttachDocs.setOnCheckedChangeListener { _, isChecked ->
-            configurationViewModel.setAlwaysAttachSetting(this, isChecked)
-        }
-
-        // Product Tag switch - OFF = SEPA, ON = CX
-        binding.layoutFeatureToggle.switchProductTagCx.setOnCheckedChangeListener { _, isChecked ->
-            val productTag = if (isChecked) ProductTag.CxExtractions else ProductTag.SepaExtractions
-            configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(
-                    productTag = productTag
-                )
+        binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient.setOnCheckedChangeListener { _, isChecked ->
+            val configurationFlow = configurationViewModel.configurationFlow.value
+            configurationViewModel.setConfiguration(configurationFlow.copy(isCustomHttpClientEnabled = isChecked))
+            // Reinitialize network services with the new flag
+            defaultNetworkServicesProvider.reinitNetworkServices(
+                configurationFlow.clientId.ifEmpty { getString(R.string.gini_api_client_id) },
+                configurationFlow.clientSecret.ifEmpty { getString(R.string.gini_api_client_secret) },
+                isChecked
             )
         }
     }

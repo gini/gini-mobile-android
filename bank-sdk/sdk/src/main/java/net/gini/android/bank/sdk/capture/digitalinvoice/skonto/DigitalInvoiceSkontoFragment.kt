@@ -80,7 +80,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
-import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.args.DigitalInvoiceSkontoResultArgs
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.DigitalInvoiceSkontoScreenColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoFooterSectionColors
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.colors.section.DigitalInvoiceSkontoInfoDialogColors

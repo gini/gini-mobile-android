@@ -19,13 +19,11 @@ open class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        if (savedInstanceState == null && intent != null) {
-            if (isIntentActionViewOrSend(intent)) {
-                // For "open with" (file import) tests
-                (applicationContext as ExampleApp).incrementIdlingResourceForOpenWith()
+        if (savedInstanceState == null && isIntentActionViewOrSend(intent)) {
+            // For "open with" (file import) tests
+            (applicationContext as ExampleApp).incrementIdlingResourceForOpenWith()
 
-                startGiniBankSdk(intent)
-            }
+            startGiniBankSdk(intent)
         }
     }
 

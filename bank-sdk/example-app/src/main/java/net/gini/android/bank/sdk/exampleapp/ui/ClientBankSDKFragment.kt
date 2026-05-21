@@ -11,18 +11,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureFlowFragmentListener
 import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
-import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ProductTag
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
-import net.gini.android.core.api.DocumentMetadata
 
 class ClientBankSDKFragment :
     Fragment(R.layout.fragment_client),
@@ -46,8 +42,7 @@ class ClientBankSDKFragment :
         permissionHandler = PermissionHandler(requireActivity())
         lifecycleScope.launch {
             if (permissionHandler.grantPermission(Manifest.permission.CAMERA)) {
-                // Bank SDK is configured in the MainActivity, but you can
-                // call [overrideBankSDKConfiguration] here if you want to override the configuration
+                // Bank SDK is configured in the MainActivity
                 startBankSDK()
                 wasCameraPermissionGranted = true
                 hideNoCameraPermissionMessage()
@@ -75,34 +70,6 @@ class ClientBankSDKFragment :
         view?.findViewById<TextView>(R.id.no_camera_permission_message)?.visibility = View.GONE
     }
 
-    private fun overrideBankSDKConfiguration() {
-        val clientId = requireContext().getString(R.string.gini_api_client_id)
-        val clientSecret = requireContext().getString(R.string.gini_api_client_secret)
-        val documentMetadata = DocumentMetadata()
-        documentMetadata.setBranchId("GCSExampleAndroid")
-        documentMetadata.add("AppFlow", "ScreenAPI")
-
-        val networkService = GiniCaptureDefaultNetworkService
-            .builder(requireContext())
-            .setClientCredentials(
-                clientId,
-                clientSecret,
-                "example.com"
-            )
-            .setDocumentMetadata(documentMetadata)
-            .build()
-
-        val captureConfiguration = CaptureConfiguration(
-            networkService = networkService,
-            fileImportEnabled = true,
-            documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
-            qrCodeScanningEnabled = true,
-            flashButtonEnabled = true,
-            multiPageEnabled = true,
-        )
-        GiniBank.setCaptureConfiguration(requireContext(), captureConfiguration)
-    }
-
 
     private fun startBankSDK() {
         val captureFlowFragment = GiniBank.createCaptureFlowFragment()
@@ -114,8 +81,7 @@ class ClientBankSDKFragment :
     }
 
     fun startBankSdkForIntent(openWithIntent: Intent) {
-        // Bank SDK is configured in the MainActivity, but you can
-        // call [overrideBankSDKConfiguration] here if you want to override the configuration
+        // Bank SDK is configured in the MainActivity
         GiniBank.createCaptureFlowFragmentForIntent(requireContext(), openWithIntent) { result ->
             when (result) {
                 GiniBank.CreateCaptureFlowFragmentForIntentResult.Cancelled -> requireActivity().finish()
