@@ -129,8 +129,8 @@ class DigitalInvoiceSkontoFragment : Fragment() {
         parametersOf(args.data)
     }
 
-    private val isBottomNavigationBarEnabled =
-        GiniCapture.getInstance().isBottomNavigationBarEnabled
+    private val isBottomNavigationBarEnabled: Boolean
+        get() = GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled
 
     private val customBottomNavBarAdapter:
             InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
@@ -589,8 +589,10 @@ private fun SkontoSection(
                 colors = colors,
                 onSkontoAmountChange = sectionCallbacks.onSkontoAmountChange,
                 onSkontoAmountFieldFocused = sectionCallbacks.onSkontoAmountFieldFocused,
-                shouldFieldShowKeyboard = displayConfig.shouldFieldShowKeyboard,
-                isPhoneInLandscape = isPhoneInLandscape,
+                fieldConfig = SkontoAmountInputFieldConfig(
+                    shouldFieldShowKeyboard = displayConfig.shouldFieldShowKeyboard,
+                    isPhoneInLandscape = isPhoneInLandscape,
+                ),
             )
 
             SkontoDueDateInputField(
@@ -680,8 +682,7 @@ private fun SkontoAmountInputField(
     colors: DigitalInvoiceSkontoSectionColors,
     onSkontoAmountChange: (BigDecimal) -> Unit,
     onSkontoAmountFieldFocused: () -> Unit,
-    shouldFieldShowKeyboard: Boolean,
-    isPhoneInLandscape: Boolean,
+    fieldConfig: SkontoAmountInputFieldConfig,
 ) {
     val resources = LocalContext.current.resources
     val focusManager = LocalFocusManager.current
@@ -704,8 +705,8 @@ private fun SkontoAmountInputField(
         },
         isError = skontoAmountValidationError != null,
         supportingText = skontoAmountValidationError?.toErrorMessage(resources = resources),
-        shouldFieldShowKeyboard = shouldFieldShowKeyboard,
-        isPhoneInLandscape = isPhoneInLandscape
+        shouldFieldShowKeyboard = fieldConfig.shouldFieldShowKeyboard,
+        isPhoneInLandscape = fieldConfig.isPhoneInLandscape
     )
 }
 

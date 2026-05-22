@@ -463,12 +463,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     }
 
     private lateinit var smoothScroller: SmoothScroller
-    private val scrollListener = object : SmoothScroller.SmoothScrollerListener {
-        override fun didStop() {
-            scrollList(true)
-        }
-
-    }
+    private val scrollListener = SmoothScroller.SmoothScrollerListener { scrollList(true) }
 
     /**
      * header and footer are counted as aprox. 3 items

@@ -19,13 +19,13 @@ import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.SkontoDueDateCh
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.intent.TransactionDocDialogDecisionIntent
 import net.gini.android.bank.sdk.capture.skonto.viewmodel.subintent.OpenExtractionsScreenSubIntent
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val skontoScreenModule = module {
-    viewModel { (data: SkontoData) ->
+    viewModel { params ->
         SkontoFragmentViewModel(
-            data = data,
+            data = params.get<SkontoData>(),
             skontoScreenInitialStateFactory = get(),
             proceedClickedIntent = get(),
             skontoActiveChangeIntent = get(),

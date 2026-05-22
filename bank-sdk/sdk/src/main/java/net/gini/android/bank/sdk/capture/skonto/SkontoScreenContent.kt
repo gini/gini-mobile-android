@@ -78,7 +78,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.invisibleToUser
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -613,11 +613,13 @@ private fun SkontoSection(
                 amountFormatter = amountFormatter,
                 skontoAmountValidationError = sectionState.skontoAmountValidationError,
                 colors = colors,
-                onSkontoAmountChange = sectionCallbacks.onSkontoAmountChange,
-                onSkontoAmountFieldFocused = sectionCallbacks.onSkontoAmountFieldFocused,
-                shouldFieldShowKeyboard = displayConfig.shouldFieldShowKeyboard,
-                hideFieldsForTalkBack = sectionState.hideFieldsForTalkBack,
-                isLandScape = displayConfig.isLandScape,
+                inputConfig = SkontoAmountInputConfig(
+                    onSkontoAmountChange = sectionCallbacks.onSkontoAmountChange,
+                    onSkontoAmountFieldFocused = sectionCallbacks.onSkontoAmountFieldFocused,
+                    shouldFieldShowKeyboard = displayConfig.shouldFieldShowKeyboard,
+                    hideFieldsForTalkBack = sectionState.hideFieldsForTalkBack,
+                    isLandScape = displayConfig.isLandScape,
+                ),
             )
 
             SkontoDueDateInputSection(
@@ -732,11 +734,7 @@ private fun SkontoAmountInputSection(
     amountFormatter: AmountFormatter,
     skontoAmountValidationError: SkontoScreenState.Ready.SkontoAmountValidationError?,
     colors: SkontoSectionColors,
-    onSkontoAmountChange: (BigDecimal) -> Unit,
-    onSkontoAmountFieldFocused: () -> Unit,
-    shouldFieldShowKeyboard: Boolean,
-    hideFieldsForTalkBack: Boolean,
-    isLandScape: Boolean,
+    inputConfig: SkontoAmountInputConfig,
 ) {
     val resources = LocalContext.current.resources
     val focusManager = LocalFocusManager.current
@@ -745,17 +743,17 @@ private fun SkontoAmountInputSection(
         currencyCode = amount.currency.name,
         modifier = Modifier
             .then(
-                if (hideFieldsForTalkBack)
-                    Modifier.semantics(mergeDescendants = true) { invisibleToUser() }
+                if (inputConfig.hideFieldsForTalkBack)
+                    Modifier.semantics(mergeDescendants = true) { hideFromAccessibility() }
                 else Modifier.semantics { liveRegion = LiveRegionMode.Polite }
             )
             .fillMaxWidth()
             .onPreviewKeyEvent { keyEvent -> handleTabKeyEvent(keyEvent, focusManager) }
             .padding(top = 16.dp)
-            .onFocusChanged { if (it.isFocused) onSkontoAmountFieldFocused() },
+            .onFocusChanged { if (it.isFocused) inputConfig.onSkontoAmountFieldFocused() },
         enabled = isActive,
         colors = colors.amountFieldColors,
-        onValueChange = { onSkontoAmountChange(it) },
+        onValueChange = { inputConfig.onSkontoAmountChange(it) },
         label = stringResource(id = R.string.gbs_skonto_section_discount_field_amount_hint),
         trailingContent = {
             AnimatedVisibility(visible = isActive) {
@@ -767,8 +765,8 @@ private fun SkontoAmountInputSection(
             resources = resources,
             amountFormatter = amountFormatter
         ),
-        shouldFieldShowKeyboard = (shouldFieldShowKeyboard && isActive),
-        isPhoneInLandscape = isLandScape,
+        shouldFieldShowKeyboard = (inputConfig.shouldFieldShowKeyboard && isActive),
+        isPhoneInLandscape = inputConfig.isLandScape,
     )
 }
 
@@ -1012,7 +1010,6 @@ private fun WithoutSkontoSection(
 ) {
     val resources = LocalContext.current.resources
     val focusManager = LocalFocusManager.current
-    val view = LocalView.current
     val decimalFormatter = DecimalFormatter()
     var newAmount by remember { mutableStateOf("") }
     val newText = decimalFormatter.textToDigits(newAmount)
@@ -1021,9 +1018,6 @@ private fun WithoutSkontoSection(
         id = R.string.gbs_Skonto_section_without_full_amount_entered_accessibility,
         decimalFormatter.parseDigits(newText)
     )
-    LaunchedEffect(sectionState.amount.value) {
-        view.announceForAccessibility(accessibilityText)
-    }
 
     Card(
         modifier = modifier,
@@ -1080,9 +1074,12 @@ private fun WithoutSkontoSection(
                     .then(
                         if (sectionState.hideFieldsForTalkBack)
                             Modifier.semantics(mergeDescendants = true) {
-                                invisibleToUser()
+                                hideFromAccessibility()
                             }
-                        else Modifier
+                        else Modifier.semantics {
+                            liveRegion = LiveRegionMode.Polite
+                            contentDescription = accessibilityText
+                        }
                     )
                     .then(Modifier.bringIntoViewRequester(bringIntoViewRequester))
                     .fillMaxWidth()

@@ -93,6 +93,18 @@ internal data class WithoutSkontoSectionState(
 )
 
 /**
+ * Groups input config and callbacks for SkontoAmountInputSection
+ * to satisfy kotlin:S107 (too many parameters).
+ */
+internal data class SkontoAmountInputConfig(
+    val onSkontoAmountChange: (BigDecimal) -> Unit,
+    val onSkontoAmountFieldFocused: () -> Unit,
+    val shouldFieldShowKeyboard: Boolean,
+    val hideFieldsForTalkBack: Boolean,
+    val isLandScape: Boolean,
+)
+
+/**
  * Groups the raw data values needed to render the footer section
  * to satisfy kotlin:S107 (too many parameters).
  */

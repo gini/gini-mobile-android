@@ -13,6 +13,15 @@ internal data class DigitalInvoiceSkontoDisplayConfig(
     val shouldFieldShowKeyboard: Boolean = false,
 )
 
+/**
+ * Groups the display flags for SkontoAmountInputField
+ * to satisfy kotlin:S107 (too many parameters).
+ */
+internal data class SkontoAmountInputFieldConfig(
+    val shouldFieldShowKeyboard: Boolean,
+    val isPhoneInLandscape: Boolean,
+)
+
 /** Groups navigation callbacks for the DigitalInvoiceSkontoFragment. */
 internal data class DigitalInvoiceSkontoNavigationCallbacks(
     val navigateBack: (DigitalInvoiceSkontoResultArgs) -> Unit,
