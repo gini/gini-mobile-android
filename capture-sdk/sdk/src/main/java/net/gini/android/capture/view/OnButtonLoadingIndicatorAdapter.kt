@@ -49,5 +49,5 @@ class DefaultOnButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter {
         return progressBar
     }
 
-    override fun onDestroy() {}
+    override fun onDestroy() { /* No-op */ }
 }

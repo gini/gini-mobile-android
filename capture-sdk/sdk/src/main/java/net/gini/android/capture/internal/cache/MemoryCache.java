@@ -3,6 +3,8 @@ package net.gini.android.capture.internal.cache;
 import android.content.Context;
 import android.util.LruCache;
 
+import androidx.annotation.NonNull;
+
 import net.gini.android.capture.AsyncCallback;
 
 import org.slf4j.Logger;
@@ -16,8 +18,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by Alpar Szotyori on 21.03.2018.
@@ -33,6 +33,9 @@ import androidx.annotation.NonNull;
 public abstract class MemoryCache<K, V> {
 
     private static final boolean DEBUG = false;
+    private static final String LOG_REMOVE_CALLBACKS = "Remove callbacks for key {}";
+    private static final String LOG_INVOKE_CALLBACK = "Invoke callback {} for key {}";
+    private static final String LOG_REMOVE_SELF = "Remove self from running workers";
     private final Logger mLog; // NOPMD
     private final LruCache<K, V> mCache;
     private final Queue<Worker<K, V>> mWorkerQueue = new LinkedList<>();
@@ -71,7 +74,7 @@ public abstract class MemoryCache<K, V> {
                         mLog.debug("Worker finished with result {}", getNameForLog(result));
                         mCache.put(key, result);
                         callOnSuccessForWaitingCallbacks(key, result);
-                        mLog.debug("Remove callbacks for key {}", getNameForLog(key));
+                        mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
                         mWaitingCallbacks.remove(key);
                         executeNextWorker(context);
                     }
@@ -80,7 +83,7 @@ public abstract class MemoryCache<K, V> {
                     public void onError(final Exception exception) {
                         mLog.error("Worker finished with error", exception);
                         callOnErrorForWaitingCallbacks(key, exception);
-                        mLog.debug("Remove callbacks for key {}", getNameForLog(key));
+                        mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
                         mWaitingCallbacks.remove(key);
                         executeNextWorker(context);
                     }
@@ -89,7 +92,7 @@ public abstract class MemoryCache<K, V> {
                     public void onCancelled() {
                         mLog.error("Worker was cancelled");
                         callOnCancelledForWaitingCallbacks(key);
-                        mLog.debug("Remove callbacks for key {}", getNameForLog(key));
+                        mLog.debug(LOG_REMOVE_CALLBACKS, getNameForLog(key));
                         mWaitingCallbacks.remove(key);
                         executeNextWorker(context);
                     }
@@ -125,7 +128,7 @@ public abstract class MemoryCache<K, V> {
         final List<AsyncCallback<V, Exception>> callbacks = mWaitingCallbacks.get(key);
         if (callbacks != null) {
             for (final AsyncCallback<V, Exception> waitingCallback : callbacks) {
-                mLog.debug("Invoke callback {} for key {}",
+                mLog.debug(LOG_INVOKE_CALLBACK,
                         getNameForLog(waitingCallback), getNameForLog(key));
                 waitingCallback.onSuccess(result);
             }
@@ -136,7 +139,7 @@ public abstract class MemoryCache<K, V> {
         final List<AsyncCallback<V, Exception>> callbacks = mWaitingCallbacks.get(key);
         if (callbacks != null) {
             for (final AsyncCallback<V, Exception> waitingCallback : callbacks) {
-                mLog.debug("Invoke callback {} for key {}",
+                mLog.debug(LOG_INVOKE_CALLBACK,
                         getNameForLog(waitingCallback), getNameForLog(key));
                 waitingCallback.onError(exception);
             }
@@ -147,7 +150,7 @@ public abstract class MemoryCache<K, V> {
         final List<AsyncCallback<V, Exception>> callbacks = mWaitingCallbacks.get(key);
         if (callbacks != null) {
             for (final AsyncCallback<V, Exception> waitingCallback : callbacks) {
-                mLog.debug("Invoke callback {} for key {}",
+                mLog.debug(LOG_INVOKE_CALLBACK,
                         getNameForLog(waitingCallback), getNameForLog(key));
                 waitingCallback.onCancelled();
             }
@@ -257,7 +260,7 @@ public abstract class MemoryCache<K, V> {
                 @Override
                 public void onSuccess(final V result) {
                     mLog.debug("Succeded");
-                    mLog.debug("Remove self from running workers");
+                    mLog.debug(LOG_REMOVE_SELF);
                     mRunningWorkers.remove(Worker.this);
                     mCallback.onSuccess(result);
                 }
@@ -265,7 +268,7 @@ public abstract class MemoryCache<K, V> {
                 @Override
                 public void onError(final Exception exception) {
                     mLog.debug("Failed");
-                    mLog.debug("Remove self from running workers");
+                    mLog.debug(LOG_REMOVE_SELF);
                     mRunningWorkers.remove(Worker.this);
                     mCallback.onError(exception);
                 }
@@ -273,7 +276,7 @@ public abstract class MemoryCache<K, V> {
                 @Override
                 public void onCancelled() {
                     mLog.debug("Cancelled");
-                    mLog.debug("Remove self from running workers");
+                    mLog.debug(LOG_REMOVE_SELF);
                     mRunningWorkers.remove(Worker.this);
                     mCallback.onCancelled();
                 }

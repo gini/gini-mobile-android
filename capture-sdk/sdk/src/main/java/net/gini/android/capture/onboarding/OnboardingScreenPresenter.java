@@ -1,7 +1,5 @@
 package net.gini.android.capture.onboarding;
 
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackOnboardingScreenEvent;
-
 import android.app.Activity;
 
 import androidx.annotation.NonNull;
@@ -15,12 +13,14 @@ import net.gini.android.capture.tracking.OnboardingScreenEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackOnboardingScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 20.05.2019.
@@ -186,7 +186,7 @@ class OnboardingScreenPresenter extends OnboardingScreenContract.Presenter {
 
     @Override
     public void stop() {
-
+        // No-op
     }
 
     @VisibleForTesting

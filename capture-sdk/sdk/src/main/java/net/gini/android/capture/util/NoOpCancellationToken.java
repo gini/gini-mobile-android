@@ -15,5 +15,6 @@ public class NoOpCancellationToken implements CancellationToken {
 
     @Override
     public void cancel() {
+        // No-op
     }
 }

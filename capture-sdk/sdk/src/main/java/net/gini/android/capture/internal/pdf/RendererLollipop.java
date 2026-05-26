@@ -1,8 +1,5 @@
 package net.gini.android.capture.internal.pdf;
 
-import static net.gini.android.capture.internal.pdf.Pdf.DEFAULT_PREVIEW_HEIGHT;
-import static net.gini.android.capture.internal.pdf.Pdf.DEFAULT_PREVIEW_WIDTH;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,6 +11,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
+
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.internal.util.Size;
 
@@ -22,10 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.annotation.VisibleForTesting;
+import static net.gini.android.capture.internal.pdf.Pdf.DEFAULT_PREVIEW_HEIGHT;
+import static net.gini.android.capture.internal.pdf.Pdf.DEFAULT_PREVIEW_WIDTH;
 
 /**
  * Internal use only.
@@ -38,6 +38,7 @@ import androidx.annotation.VisibleForTesting;
 class RendererLollipop implements Renderer {
 
     private static final Logger LOG = LoggerFactory.getLogger(RendererLollipop.class);
+    private static final String LOG_COULD_NOT_READ_PDF = "Could not read pdf";
 
     private final Uri mUri;
     private final Context mContext;
@@ -142,9 +143,9 @@ class RendererLollipop implements Renderer {
             pdfRendererHelper.createPdfRenderer();
             return false;
         } catch (final IOException e) {
-            LOG.error("Could not read pdf", e);
+            LOG.error(LOG_COULD_NOT_READ_PDF, e);
         } catch (final SecurityException e) {
-            LOG.error("Could not read pdf", e);
+            LOG.error(LOG_COULD_NOT_READ_PDF, e);
             return true;
         } finally {
             pdfRendererHelper.closePdfRenderer();
