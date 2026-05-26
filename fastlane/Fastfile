@@ -154,7 +154,7 @@ platform :android do
     (project_id, module_id) = 
       check_and_get_options(options, [:project_id, :module_id], UI)
     # Optional options
-    if options[:links_to_projects]
+    if options[:links_to_projects] && !options[:links_to_projects].to_s.empty?
       links_to_projects = JSON.parse options[:links_to_projects]
     else
       links_to_projects = {}
@@ -220,18 +220,26 @@ platform :android do
       module_id             - the id of the project's module to be released (e.g., sdk, lib)
       git_tag               - the git tag name used to release the documentation
       ci                    - set to "true" if running on a CI machine
-      git_user              - the username to use for git authentication
-      git_password          - the password to use for git authentication
       documentation_title   - the title used on the root index page
+      git_token             - (optional) GitHub App token for authentication; if not provided, the GH_TOKEN env var is used as fallback
+      git_user              - (legacy) username for git authentication; used when git_token and GH_TOKEN are not available
+      git_password          - (legacy) password for git authentication; used when git_token and GH_TOKEN are not available
       links_to_projects     - (optional) a json array of projects that are linked to in the documentation, for example: [{"project_id": "capture-sdk", "module_id": "sdk"}]
       dry_run               - (optional) executes without permanent side effects
   DOC
   lane :release_documentation do |options|
     # Required options
-    (project_id, module_id, git_tag, ci, git_user, git_password, documentation_title) = 
-      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci, :git_user, :git_password, :documentation_title], UI)
+    (project_id, module_id, git_tag, ci, documentation_title) =
+      check_and_get_options(options, [:project_id, :module_id, :git_tag, :ci, :documentation_title], UI)
     # Optional options
     dry_run = options[:dry_run]
+
+    # Resolve authentication: prefer an explicit token, then fall back to GH_TOKEN env var,
+    # and finally fall back to legacy git_user / git_password credentials.
+    git_token = options[:git_token] || ENV['GH_TOKEN']
+    unless git_token
+      (git_user, git_password) = check_and_get_options(options, [:git_user, :git_password], UI)
+    end
 
     build_documentation(project_id: project_id, module_id: module_id, links_to_projects: options[:links_to_projects])
 
@@ -258,12 +266,16 @@ platform :android do
         * url                 : http://developer.gini.net/gini-mobile-android/#{project_id}/#{module_id}/html
     MESSAGE
 
-    if ci
+    if ci && !git_token
       configure_git_on_ci_machines("Team Mobile Schorsch", "team-mobile@gini.net")
     end
-    
+
     sh("rm -rf gh-pages")
-    sh("git clone -b gh-pages https://#{git_user}:#{git_password}@github.com/gini/gini-mobile-android.git gh-pages")
+    if git_token
+      sh("git clone -b gh-pages https://x-oauth-token:#{git_token}@github.com/gini/gini-mobile-android.git gh-pages")
+    else
+      sh("git clone -b gh-pages https://#{git_user}:#{git_password}@github.com/gini/gini-mobile-android.git gh-pages")
+    end
 
     project_root_path = "#{project_id}/#{module_id}"
     destination_path = "#{project_root_path}/#{project_version}"
