@@ -344,11 +344,6 @@ jobs:
           ./gradlew capture-sdk:sdk:assembleDebug \
                     capture-sdk:default-network:assembleDebug
 
-      - name: Run unit tests
-        run: |
-          ./gradlew :capture-sdk:sdk:testDebugUnitTest
-          ./gradlew :capture-sdk:default-network:testDebugUnitTest
-
       - name: Generate coverage reports
         run: |
           ./gradlew :capture-sdk:sdk:jacocoTestReport

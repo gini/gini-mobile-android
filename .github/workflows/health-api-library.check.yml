@@ -253,9 +253,6 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Run unit tests
-        run: ./gradlew :health-api-library:library:testDebugUnitTest
-
       - name: Generate coverage report
         run: ./gradlew :health-api-library:library:jacocoTestReport
 

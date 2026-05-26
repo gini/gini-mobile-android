@@ -22,6 +22,29 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: run unit tests
+        run: ./gradlew core-api-library:library:testDebugUnitTest
+
+      - name: archive unit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-api-library-unit-test-results
+          path: core-api-library/library/build/reports/tests
+
+  instrumented-test:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         api-level: [ 23, 26, 31 ]
@@ -198,9 +221,6 @@ jobs:
           distribution: "temurin"
           java-version: "17"
           cache: "gradle"
-
-      - name: Run unit tests
-        run: ./gradlew :core-api-library:library:testDebugUnitTest
 
       - name: Generate coverage report
         run: ./gradlew :core-api-library:library:jacocoTestReport

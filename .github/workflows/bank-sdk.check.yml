@@ -282,9 +282,6 @@ jobs:
           ./gradlew bank-sdk:sdk:assembleDebug \
                     bank-sdk:example-app:assembleDevExampleAppDebug
 
-      - name: Run unit tests
-        run: ./gradlew :bank-sdk:sdk:testDebugUnitTest
-
       - name: Generate coverage report
         run: ./gradlew :bank-sdk:sdk:jacocoTestReport
 

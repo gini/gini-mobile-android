@@ -190,9 +190,6 @@ jobs:
             -PclientId="gini-mobile-ci" \
             -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
-      - name: Run unit tests
-        run: ./gradlew :health-sdk:sdk:testDebugUnitTest
-
       - name: Generate coverage report
         run: ./gradlew :health-sdk:sdk:jacocoTestReport
 
