@@ -271,19 +271,17 @@ platform :android do
     end
 
     sh("rm -rf gh-pages")
+
+    # Write credentials via Ruby (not shell) so the token never appears in logged commands.
+    # The credentials file must stay alive until after all authenticated git operations
+    # (both clone and push) complete — it is cleaned up in the ensure block below.
+    credentials_file = nil
     if git_token
-      # Write credentials via Ruby (not shell) so the token never appears in logged commands.
-      # Git's credential store picks up the file automatically for the subsequent clone.
       credentials_file = "/tmp/.git-credentials-doc-release"
-      begin
-        File.write(credentials_file, "https://x-oauth-token:#{git_token}@github.com\n")
-        FileUtils.chmod(0600, credentials_file)
-        sh("git config --global credential.helper 'store --file #{credentials_file}'")
-        sh("git clone -b gh-pages https://github.com/gini/gini-mobile-android.git gh-pages")
-      ensure
-        sh("git config --global --unset credential.helper || true")
-        FileUtils.rm_f(credentials_file)
-      end
+      File.write(credentials_file, "https://x-oauth-token:#{git_token}@github.com\n")
+      FileUtils.chmod(0600, credentials_file)
+      sh("git config --global credential.helper 'store --file #{credentials_file}'")
+      sh("git clone -b gh-pages https://github.com/gini/gini-mobile-android.git gh-pages")
     else
       sh("git clone -b gh-pages https://#{git_user}:#{git_password}@github.com/gini/gini-mobile-android.git gh-pages")
     end
@@ -293,54 +291,63 @@ platform :android do
     html_destination_path = "#{destination_path}/html"
     dokka_destination_path = "#{destination_path}/dokka"
 
-    Dir.chdir("gh-pages") do
-      UI.message "Clear out the existing documentation"
-      sh("git rm -rf #{destination_path} --ignore-unmatch && git clean -fd")
+    begin
+      Dir.chdir("gh-pages") do
+        UI.message "Clear out the existing documentation"
+        sh("git rm -rf #{destination_path} --ignore-unmatch && git clean -fd")
 
-      UI.message "Copy over the current documentation"
-      sh("mkdir -p #{destination_path} && cp -R ../../#{project_id}/#{module_id}/build/docs/* #{destination_path}")
+        UI.message "Copy over the current documentation"
+        sh("mkdir -p #{destination_path} && cp -R ../../#{project_id}/#{module_id}/build/docs/* #{destination_path}")
 
-      UI.message "Disable jekyll"
-      sh("touch .nojekyll")
+        UI.message "Disable jekyll"
+        sh("touch .nojekyll")
 
-      if is_project_version_stable?(project_version, UI)
-        UI.message <<~MESSAGE
-          Update the project root index.html and the old documentation root index.html to redirect to this documentation version.
-        MESSAGE
+        if is_project_version_stable?(project_version, UI)
+          UI.message <<~MESSAGE
+            Update the project root index.html and the old documentation root index.html to redirect to this documentation version.
+          MESSAGE
 
-        index_html = get_redirecting_index_html(documentation_title, html_destination_path, UI)
+          index_html = get_redirecting_index_html(documentation_title, html_destination_path, UI)
 
-        File.open("#{project_root_path}/index.html", "w") { |f| 
-          f.write index_html
-        }
-        if File.file?("#{project_root_path}/html/index.html")
-          File.open("#{project_root_path}/html/index.html", "w") { |f| 
+          File.open("#{project_root_path}/index.html", "w") { |f|
             f.write index_html
           }
+          if File.file?("#{project_root_path}/html/index.html")
+            File.open("#{project_root_path}/html/index.html", "w") { |f|
+              f.write index_html
+            }
+          end
+
+          UI.message <<~MESSAGE
+            Update the old dokka index.html to redirect to this documentation version's dokka page.
+          MESSAGE
+
+          index_html = get_redirecting_index_html(documentation_title, dokka_destination_path, UI)
+
+          if File.file?("#{project_root_path}/dokka/index.html")
+            File.open("#{project_root_path}/dokka/index.html", "w") { |f|
+              f.write index_html
+            }
+          end
+        else
+          UI.message "Not changing the project root index.html, the old documentation root index.html or the old dokka index.html."
         end
 
-        UI.message <<~MESSAGE
-          Update the old dokka index.html to redirect to this documentation version's dokka page.
-        MESSAGE
-
-        index_html = get_redirecting_index_html(documentation_title, dokka_destination_path, UI)
-
-        if File.file?("#{project_root_path}/dokka/index.html")
-          File.open("#{project_root_path}/dokka/index.html", "w") { |f| 
-            f.write index_html
-          }
+        if !dry_run
+          UI.message "Commit and push the new documentation"
+          sh("git add --all")
+          sh("git diff --quiet --exit-code --cached || git commit -m 'Release #{project_id} documentation for tag #{git_tag}' --author='Team Mobile <team-mobile@gini.net>'")
+          git_push_with_retry("gh-pages", UI)
+        else
+          UI.message "Skipping commit and push (dry run)"
         end
-      else
-        UI.message "Not changing the project root index.html, the old documentation root index.html or the old dokka index.html."
       end
-
-      if !dry_run 
-        UI.message "Commit and push the new documentation"
-        sh("git add --all")
-        sh("git diff --quiet --exit-code --cached || git commit -m 'Release #{project_id} documentation for tag #{git_tag}' --author='Team Mobile <team-mobile@gini.net>'")
-        git_push_with_retry("gh-pages", UI)
-      else
-        UI.message "Skipping commit and push (dry run)"
+    ensure
+      # Clean up the credentials file and unset the helper after all git operations
+      # (clone + push) have completed, whether they succeeded or failed.
+      if credentials_file
+        sh("git config --global --unset credential.helper || true")
+        FileUtils.rm_f(credentials_file)
       end
     end
 
