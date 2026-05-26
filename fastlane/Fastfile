@@ -157,7 +157,7 @@ platform :android do
     if options[:links_to_projects] && !options[:links_to_projects].to_s.empty?
       links_to_projects = JSON.parse options[:links_to_projects]
     else
-      links_to_projects = {}
+      links_to_projects = []
     end
 
     project_version = get_project_version_from_gradle(project_id, module_id)
@@ -272,7 +272,13 @@ platform :android do
 
     sh("rm -rf gh-pages")
     if git_token
-      sh("git clone -b gh-pages https://x-oauth-token:#{git_token}@github.com/gini/gini-mobile-android.git gh-pages")
+      # Write credentials via Ruby (not shell) so the token never appears in logged commands.
+      # Git's credential store picks up the file automatically for the subsequent clone.
+      credentials_file = "/tmp/.git-credentials-doc-release"
+      File.write(credentials_file, "https://x-oauth-token:#{git_token}@github.com\n")
+      sh("git config --global credential.helper 'store --file #{credentials_file}'")
+      sh("git clone -b gh-pages https://github.com/gini/gini-mobile-android.git gh-pages")
+      FileUtils.rm_f(credentials_file)
     else
       sh("git clone -b gh-pages https://#{git_user}:#{git_password}@github.com/gini/gini-mobile-android.git gh-pages")
     end
