@@ -275,10 +275,15 @@ platform :android do
       # Write credentials via Ruby (not shell) so the token never appears in logged commands.
       # Git's credential store picks up the file automatically for the subsequent clone.
       credentials_file = "/tmp/.git-credentials-doc-release"
-      File.write(credentials_file, "https://x-oauth-token:#{git_token}@github.com\n")
-      sh("git config --global credential.helper 'store --file #{credentials_file}'")
-      sh("git clone -b gh-pages https://github.com/gini/gini-mobile-android.git gh-pages")
-      FileUtils.rm_f(credentials_file)
+      begin
+        File.write(credentials_file, "https://x-oauth-token:#{git_token}@github.com\n")
+        FileUtils.chmod(0600, credentials_file)
+        sh("git config --global credential.helper 'store --file #{credentials_file}'")
+        sh("git clone -b gh-pages https://github.com/gini/gini-mobile-android.git gh-pages")
+      ensure
+        sh("git config --global --unset credential.helper || true")
+        FileUtils.rm_f(credentials_file)
+      end
     else
       sh("git clone -b gh-pages https://#{git_user}:#{git_password}@github.com/gini/gini-mobile-android.git gh-pages")
     end
