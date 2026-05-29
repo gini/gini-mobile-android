@@ -67,9 +67,17 @@ jobs:
           path: sbom-jsons.zip
 
       # Step 2: Loop over each SBOM file and submit it
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@064492a9a1762067169d50c792a7dc02bc3d1254 # v2.0.0
+        with:
+          app-id: ${{ secrets.MOBILE_CI_APP_ID }}
+          private-key: ${{ secrets.MOBILE_CI_APP_PRIVATE_KEY }}
+          owner: gini
+
       - name: Submit SBOMs to GitHub Dependency Graph
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_PASSWORD }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           sha=$(git rev-parse HEAD)
           timestamp=$(date +%s)
