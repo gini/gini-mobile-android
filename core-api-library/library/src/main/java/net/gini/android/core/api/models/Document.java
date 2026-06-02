@@ -227,7 +227,7 @@ public class Document implements Parcelable {
         final List<Uri> partialDocuments = new ArrayList<>();
         in.readTypedList(partialDocuments, Uri.CREATOR);
         return new Document(documentId, processingState, fileName, pageCount, creationDate, expirationDate,
-                sourceClassification, uri, partialDocuments, partialDocuments);
+                sourceClassification, uri, compositeDocuments, partialDocuments);
     }
 
     @Override

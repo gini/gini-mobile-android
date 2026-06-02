@@ -33,13 +33,13 @@ public class BundleHelper {
         return bundle;
     }
 
-    public static <V extends Parcelable> Map<String, V> bundleToMap(Bundle bundle, ClassLoader classLoader) {
+    public static <V extends Parcelable> HashMap<String, V> bundleToMap(Bundle bundle, ClassLoader classLoader) { //NOSONAR java:S1319 — return type is part of the public binary API; widening to Map would break callers compiled against the old signature
         bundle.setClassLoader(classLoader);
         return bundleToMap(bundle);
     }
 
     @SuppressWarnings("deprecation") // Generic type V makes the typed getParcelable(key, Class) API impractical
-    public static <V extends Parcelable> Map<String, V> bundleToMap(Bundle bundle) {
+    public static <V extends Parcelable> HashMap<String, V> bundleToMap(Bundle bundle) { //NOSONAR java:S1319 — return type is part of the public binary API; widening to Map would break callers compiled against the old signature
         final HashMap<String, V> map = new HashMap<>(bundle.keySet().size());
         for (final String key : bundle.keySet()) {
             map.put(key, bundle.<V>getParcelable(key));

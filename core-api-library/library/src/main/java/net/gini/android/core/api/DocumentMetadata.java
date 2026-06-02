@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
-import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -40,13 +39,7 @@ public class DocumentMetadata {
      * Create a new instance.
      */
     public DocumentMetadata() {
-        try {
-            final Charset asciiCharset = StandardCharsets.US_ASCII;
-            mAsciiCharsetEncoder = asciiCharset.newEncoder();
-        } catch (IllegalArgumentException ignore) {
-            // Shouldn't happen
-            mAsciiCharsetEncoder = null;
-        }
+        mAsciiCharsetEncoder = StandardCharsets.US_ASCII.newEncoder();
     }
 
     @VisibleForTesting
