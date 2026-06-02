@@ -2,6 +2,7 @@ package net.gini.android.core.api.models;
 
 import static net.gini.android.core.api.Utils.checkNotNull;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.Nullable;
@@ -37,7 +38,11 @@ public class Extraction implements Parcelable {
     protected Extraction(final Parcel in) {
         mEntity = in.readString();
         mValue = in.readString();
-        mBox = in.readParcelable(Box.class.getClassLoader());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mBox = in.readParcelable(Box.class.getClassLoader(), Box.class);
+        } else {
+            mBox = in.readParcelable(Box.class.getClassLoader());
+        }
         mIsDirty = in.readInt() != 0;
     }
 

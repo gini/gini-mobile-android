@@ -6,10 +6,11 @@ import androidx.annotation.VisibleForTesting;
 
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
+/*
  * Created by Alpar Szotyori on 25.10.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -40,7 +41,7 @@ public class DocumentMetadata {
      */
     public DocumentMetadata() {
         try {
-            final Charset asciiCharset = Charset.forName("ASCII");
+            final Charset asciiCharset = StandardCharsets.US_ASCII;
             mAsciiCharsetEncoder = asciiCharset.newEncoder();
         } catch (IllegalArgumentException ignore) {
             // Shouldn't happen

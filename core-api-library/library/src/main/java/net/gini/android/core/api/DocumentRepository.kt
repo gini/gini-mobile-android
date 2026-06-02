@@ -175,7 +175,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         do {
             when (val apiDocumentResource = getDocument(document.id)) {
                 is Resource.Success -> {
-                    if (apiDocumentResource.data?.state != Document.ProcessingState.PENDING) {
+                    if (apiDocumentResource.data.state != Document.ProcessingState.PENDING) {
                         return apiDocumentResource
                     }
                 }
@@ -204,7 +204,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
 
         val bodyJSON = JSONObject()
         bodyJSON.put("feedback", feedbackForExtractions)
-        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        val body: RequestBody = bodyJSON.toString().toRequestBody(JSON_CONTENT_TYPE.toMediaTypeOrNull())
         return withAccessToken { accessToken ->
             wrapInResource {
                 documentRemoteSource.sendFeedback(accessToken, document.id, body)
@@ -225,7 +225,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
 
         val bodyJSON = JSONObject()
         bodyJSON.put("extractions", feedbackForExtractions)
-        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        val body: RequestBody = bodyJSON.toString().toRequestBody(JSON_CONTENT_TYPE.toMediaTypeOrNull())
         return withAccessToken { accessToken ->
             wrapInResource {
                 documentRemoteSource.sendFeedback(accessToken, document.id, body)
@@ -265,7 +265,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         val bodyJSON = JSONObject()
         bodyJSON.put("extractions", feedbackForExtractions)
         bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
-        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        val body: RequestBody = bodyJSON.toString().toRequestBody(JSON_CONTENT_TYPE.toMediaTypeOrNull())
         return withAccessToken { accessToken ->
             wrapInResource {
                 documentRemoteSource.sendFeedback(accessToken, document.id, body)
@@ -331,7 +331,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
             if (extractionData.has("candidates")) {
                 val candidatesName = extractionData.getString("candidates")
                 if (candidates.containsKey(candidatesName)) {
-                    candidatesForExtraction = candidates[candidatesName]!!
+                    candidatesForExtraction = candidates[candidatesName] ?: emptyList()
                 }
             }
             val specificExtraction = SpecificExtraction(
@@ -468,5 +468,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
          */
         const val DEFAULT_COMPRESSION = 50
 
+        private const val JSON_CONTENT_TYPE = "application/json; charset=utf-8"
     }
 }

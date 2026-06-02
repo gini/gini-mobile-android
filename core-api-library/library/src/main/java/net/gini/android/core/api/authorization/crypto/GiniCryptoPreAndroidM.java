@@ -30,7 +30,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.security.auth.x500.X500Principal;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.10.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -42,6 +42,7 @@ import javax.security.auth.x500.X500Principal;
 class GiniCryptoPreAndroidM extends GiniCrypto {
 
     private static final String AES_KEY = "GiniKey";
+    // PKCS1Padding is required for API < 23; OAEP is not reliably available via AndroidOpenSSL on pre-M devices
     private static final String RSA_MODE = "RSA/ECB/PKCS1Padding";
 
     private final SharedPreferences mSharedPreferences;
@@ -118,6 +119,7 @@ class GiniCryptoPreAndroidM extends GiniCrypto {
                 .apply();
     }
 
+    @SuppressWarnings("java:S5542") // PKCS1Padding is required for API < 23; no OAEP support via AndroidOpenSSL on pre-M
     private byte[] rsaEncrypt(byte[] secret)
             throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
@@ -129,6 +131,7 @@ class GiniCryptoPreAndroidM extends GiniCrypto {
         return cipher.doFinal(secret);
     }
 
+    @SuppressWarnings("java:S5542") // PKCS1Padding is required for API < 23; no OAEP support via AndroidOpenSSL on pre-M
     private byte[] rsaDecrypt(byte[] encrypted)
             throws CertificateException, NoSuchAlgorithmException, KeyStoreException,
             UnrecoverableEntryException, IOException, NoSuchProviderException,
@@ -155,6 +158,7 @@ class GiniCryptoPreAndroidM extends GiniCrypto {
         return getKeyStore().containsAlias(SECRET_KEY_ALIAS);
     }
 
+    @SuppressWarnings("deprecation") // KeyPairGeneratorSpec is required for API < 23 compatibility; no modern alternative available for pre-M
     private void generateKeyPair() throws NoSuchProviderException, NoSuchAlgorithmException,
             InvalidAlgorithmParameterException {
         Calendar start = Calendar.getInstance();

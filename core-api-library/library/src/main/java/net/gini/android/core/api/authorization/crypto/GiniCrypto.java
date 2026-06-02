@@ -19,7 +19,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.10.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -33,6 +33,8 @@ public abstract class GiniCrypto {
     static final String ANDROID_KEY_STORE = "AndroidKeyStore";
     static final String SECRET_KEY_ALIAS = "GiniCryptoKey";
     static final String AES_MODE = "AES/GCM/NoPadding";
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     public static GiniCrypto newInstance(@NonNull final SharedPreferences sharedPreferences,
             @NonNull final Context context) {
@@ -67,9 +69,8 @@ public abstract class GiniCrypto {
     }
 
     private byte[] generateIV() {
-        final SecureRandom secureRandom = new SecureRandom();
         final byte[] iv = new byte[12];
-        secureRandom.nextBytes(iv);
+        SECURE_RANDOM.nextBytes(iv);
         return iv;
     }
 

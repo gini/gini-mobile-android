@@ -42,7 +42,7 @@ public class SpecificExtraction extends Extraction {
     private SpecificExtraction(final Parcel in) {
         super(in);
         mName = in.readString();
-        final List<Extraction> candidates = new ArrayList<Extraction>();
+        final List<Extraction> candidates = new ArrayList<>();
         in.readTypedList(candidates, Extraction.CREATOR);
         mCandidates = candidates;
     }

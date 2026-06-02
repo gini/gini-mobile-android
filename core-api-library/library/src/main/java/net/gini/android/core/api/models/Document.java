@@ -4,6 +4,7 @@ package net.gini.android.core.api.models;
 import static net.gini.android.core.api.Utils.checkNotNull;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.Nullable;
@@ -70,6 +71,7 @@ public class Document implements Parcelable {
     private final List<Uri> mCompositeDocuments;
     private final List<Uri> mPartialDocuments;
 
+    @SuppressWarnings("java:S107") // Public API — Builder is available as the preferred alternative
     public Document(final String id, final ProcessingState state, final String filename,
                     final Integer pageCount,
                     final Date creationDate, final Date expirationDate,
@@ -203,18 +205,29 @@ public class Document implements Parcelable {
         final ProcessingState processingState = ProcessingState.valueOf(in.readString());
         final int pageCount = in.readInt();
         final String fileName = in.readString();
-        final Date creationDate = (Date) in.readSerializable();
-        final Date expirationDate = (Date) in.readSerializable();
+        final Date creationDate;
+        final Date expirationDate;
+        final Uri uri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            creationDate = in.readSerializable(null, Date.class);
+            expirationDate = in.readSerializable(null, Date.class);
+        } else {
+            creationDate = (Date) in.readSerializable();
+            expirationDate = (Date) in.readSerializable();
+        }
         final SourceClassification sourceClassification = SourceClassification.valueOf(
                 in.readString());
-        final Uri uri = in.readParcelable(Document.class.getClassLoader());
-        final List<Uri> parents = new ArrayList<>();
-        in.readTypedList(parents, Uri.CREATOR);
-        //noinspection unchecked
-        final List<Uri> subdocuments = new ArrayList<>();
-        in.readTypedList(subdocuments, Uri.CREATOR);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            uri = in.readParcelable(Document.class.getClassLoader(), Uri.class);
+        } else {
+            uri = in.readParcelable(Document.class.getClassLoader());
+        }
+        final List<Uri> compositeDocuments = new ArrayList<>();
+        in.readTypedList(compositeDocuments, Uri.CREATOR);
+        final List<Uri> partialDocuments = new ArrayList<>();
+        in.readTypedList(partialDocuments, Uri.CREATOR);
         return new Document(documentId, processingState, fileName, pageCount, creationDate, expirationDate,
-                sourceClassification, uri, subdocuments, subdocuments);
+                sourceClassification, uri, partialDocuments, partialDocuments);
     }
 
     @Override
@@ -235,6 +248,7 @@ public class Document implements Parcelable {
         dest.writeTypedList(getCompositeDocuments());
         dest.writeTypedList(getPartialDocuments());
     }
+
 
     public static final Parcelable.Creator<Document> CREATOR = new Parcelable.Creator<Document>() {
 
