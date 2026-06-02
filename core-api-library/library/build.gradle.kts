@@ -18,6 +18,10 @@ sonar {
     }
 }
 
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
+
 android {
     // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml)
     namespace = "net.gini.android.core.api"

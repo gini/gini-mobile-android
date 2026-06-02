@@ -345,9 +345,7 @@ jobs:
                     capture-sdk:default-network:assembleDebug
 
       - name: Generate coverage reports
-        run: |
-          ./gradlew :capture-sdk:sdk:jacocoTestReport
-          ./gradlew :capture-sdk:default-network:jacocoTestReport
+        run: ./gradlew :capture-sdk:sdk:jacocoTestReport :capture-sdk:default-network:jacocoTestReport
 
       - name: SonarQube Scan
         run: ./gradlew capture-sdk:sdk:sonar capture-sdk:default-network:sonar --info --stacktrace
