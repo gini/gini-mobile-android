@@ -20,4 +20,5 @@ dependencies {
     implementation(libs.cyclonedx.gradle)
     implementation(libs.cyclonedx.core.java)
     implementation(libs.jsonJava)
+    implementation(libs.sonarqube.gradle)
 }
