@@ -19,7 +19,7 @@ Each module in this repository is licensed individually. Find the applicable lic
 |--------|---------|
 | Bank API Library | [LICENSE.md](bank-api-library/LICENSE.md) |
 | Bank SDK | [LICENSE.md](bank-sdk/LICENSE.md) |
-| Capture API Library | [LICENSE.md](core-api-library/LICENSE.md) |
+| Core API Library | [LICENSE.md](core-api-library/LICENSE.md) |
 | Capture SDK | [LICENSE.md](capture-sdk/LICENSE.md) |
 | Health API Library | [LICENSE.md](health-api-library/LICENSE.md) |
 | Health SDK | [LICENSE.md](health-sdk/LICENSE.md) |
