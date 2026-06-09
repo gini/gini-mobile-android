@@ -23,14 +23,14 @@ internal class UserRemoteSource(
         val response = SafeApiRequest.apiRequest {
             userService.signIn(basicHeaderMap(), userRequestModel.email ?: "", userRequestModel.password ?: "")
         }
-        response.body() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun loginClient(): SessionToken = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             userService.loginClient(basicHeaderMap())
         }
-        response.body() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun createUser(userRequestModel: UserRequestModel, accessToken: String): Unit = withContext(coroutineContext) {
@@ -43,11 +43,11 @@ internal class UserRemoteSource(
         val response = SafeApiRequest.apiRequest {
             userService.getUserInfo(bearerHeaderMap(accessToken), uri)
         }
-        response.body() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun updateEmail(userId: String, userRequestModel: UserRequestModel, accessToken: String): Unit = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
+        SafeApiRequest.apiRequest {
             userService.updateEmail(bearerHeaderMap(accessToken), userId, userRequestModel)
         }
     }
@@ -61,5 +61,9 @@ internal class UserRemoteSource(
     private fun bearerHeaderMap(accessToken: String): Map<String, String> {
         return mapOf(JsonAcceptHeader().toPair(),
             BearerAuthorizatonHeader(accessToken).toPair())
+    }
+
+    companion object {
+        private const val EMPTY_RESPONSE_BODY = "Empty response body"
     }
 }
