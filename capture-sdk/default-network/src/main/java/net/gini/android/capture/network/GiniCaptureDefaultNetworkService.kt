@@ -315,7 +315,7 @@ internal constructor(
             }
 
             is Resource.Cancelled -> {
-                    LOG.debug("Document deletion cancelled for api id {}", LogSanitizer.sanitize(giniApiDocumentId))
+                LOG.debug("Document deletion cancelled for api id {}", LogSanitizer.sanitize(giniApiDocumentId))
                 callback.cancelled()
             }
         }
@@ -448,7 +448,7 @@ internal constructor(
                     LOG.debug(
                         "Getting layout for document {} success.\n{}",
                         LogSanitizer.sanitize(documentId),
-                        resource.data
+                        LogSanitizer.sanitize(resource.data)
                     )
                     callback.success(resource.data.toCaptureDocumentLayout())
                 }
@@ -485,7 +485,7 @@ internal constructor(
                     LOG.debug(
                         "Getting pages for document {} success. {}",
                         LogSanitizer.sanitize(documentId),
-                        resource.data.toString()
+                        LogSanitizer.sanitize(resource.data.toString())
                     )
                     callback.success(resource.data.map { it.toCaptureDocumentPages() })
                 }
