@@ -32,6 +32,7 @@ import net.gini.android.capture.network.model.toCaptureDocumentLayout
 import net.gini.android.capture.network.model.toCaptureDocumentPages
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty
+import net.gini.android.capture.internal.util.LogSanitizer
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.core.api.DocumentMetadata
 import net.gini.android.core.api.Resource
@@ -125,7 +126,7 @@ internal constructor(
                     val error = Error(configurationResource.formattedErrorMessage)
                     LOG.error(
                         "Send events failed for {}",
-                        error.message
+                        LogSanitizer.sanitize(error.message)
                     )
                     callback.failure(error)
                 }
@@ -181,7 +182,7 @@ internal constructor(
                     val error = Error(configurationResource.formattedErrorMessage)
                     LOG.error(
                         "Document deletion failed for api id {}",
-                        error.message
+                        LogSanitizer.sanitize(error.message)
                     )
                     callback.failure(error)
                 }
@@ -215,11 +216,11 @@ internal constructor(
         document: Document,
         callback: GiniCaptureNetworkCallback<Result, Error>
     ): CancellationToken = launchCancellable {
-        LOG.debug("Upload document {}", document.id)
+        LOG.debug("Upload document {}", LogSanitizer.sanitize(document.id))
         val documentData = document.data
         if (documentData == null) {
             val error = Error("Document has no data. Did you forget to load it?")
-            LOG.error("Document upload failed for {}: {}", document.id, error.message)
+            LOG.error("Document upload failed for {}: {}", LogSanitizer.sanitize(document.id), LogSanitizer.sanitize(error.message))
             callback.failure(error)
             return@launchCancellable
         }
@@ -229,8 +230,8 @@ internal constructor(
             )
             LOG.error(
                 "Document upload failed for {}: {}",
-                document.getId(),
-                error.message
+                LogSanitizer.sanitize(document.getId()),
+                LogSanitizer.sanitize(error.message)
             )
             callback.failure(error)
             return@launchCancellable
@@ -254,7 +255,7 @@ internal constructor(
             is Resource.Success -> {
                 val apiDocument = partialDocumentResource.data
                 LOG.debug(
-                    "Document upload success for {}: {}", document.id,
+                    "Document upload success for {}: {}", LogSanitizer.sanitize(document.id),
                     apiDocument
                 )
                 giniApiDocuments[apiDocument.id] = apiDocument
@@ -268,8 +269,8 @@ internal constructor(
                     partialDocumentResource.responseHeaders, partialDocumentResource.exception
                 )
                 LOG.error(
-                    "Document upload failed for {}: {}", document.id,
-                    error.message
+                    "Document upload failed for {}: {}", LogSanitizer.sanitize(document.id),
+                    LogSanitizer.sanitize(error.message)
                 )
                 callback.failure(error)
             }
@@ -295,12 +296,12 @@ internal constructor(
         giniApiDocumentId: String,
         callback: GiniCaptureNetworkCallback<Result, Error>
     ): CancellationToken = launchCancellable {
-        LOG.debug("Delete document with api id {}", giniApiDocumentId)
+        LOG.debug("Delete document with api id {}", LogSanitizer.sanitize(giniApiDocumentId))
         val deleteResource =
             giniBankApi.documentManager.deletePartialDocumentAndParents(giniApiDocumentId)
         when (deleteResource) {
             is Resource.Success -> {
-                LOG.debug("Document deletion success for api id {}", giniApiDocumentId)
+                LOG.debug("Document deletion success for api id {}", LogSanitizer.sanitize(giniApiDocumentId))
                 callback.success(Result(giniApiDocumentId, null))
             }
 
@@ -314,7 +315,7 @@ internal constructor(
             }
 
             is Resource.Cancelled -> {
-                LOG.debug("Document deletion cancelled for api id {}", giniApiDocumentId)
+                    LOG.debug("Document deletion cancelled for api id {}", LogSanitizer.sanitize(giniApiDocumentId))
                 callback.cancelled()
             }
         }
@@ -325,7 +326,7 @@ internal constructor(
         giniApiDocumentIdRotationMap: LinkedHashMap<String, Int>,
         callback: GiniCaptureNetworkCallback<AnalysisResult, Error>
     ): CancellationToken = launchCancellable {
-        LOG.debug("Analyze documents {}", giniApiDocumentIdRotationMap)
+        LOG.debug("Analyze documents {}", LogSanitizer.sanitize(giniApiDocumentIdRotationMap))
         val giniApiDocumentRotationMap = giniApiDocumentIdRotationMap.mapNotNull { entry ->
             giniApiDocuments[entry.key]?.let { it to entry.value }
         }.toMap(LinkedHashMap())
@@ -418,14 +419,14 @@ internal constructor(
         callback: GiniCaptureNetworkCallback<DocumentLayout, Error>
     ): CancellationToken {
 
-        LOG.debug("Getting layout for document {}", documentId)
+        LOG.debug("Getting layout for document {}", LogSanitizer.sanitize(documentId))
 
         return launchCancellable {
 
             when (val resource = giniBankApi.documentManager.getDocumentLayout(documentId)) {
 
                 is Resource.Cancelled -> {
-                    LOG.debug("Getting layout for document {} canceled", documentId)
+                    LOG.debug("Getting layout for document {} canceled", LogSanitizer.sanitize(documentId))
                 }
 
                 is Resource.Error -> {
@@ -436,8 +437,8 @@ internal constructor(
                     )
                     LOG.error(
                         "Getting layout for document {} failed. {}",
-                        documentId,
-                        error.message
+                        LogSanitizer.sanitize(documentId),
+                        LogSanitizer.sanitize(error.message)
                     )
 
                     callback.failure(error)
@@ -446,7 +447,7 @@ internal constructor(
                 is Resource.Success -> {
                     LOG.debug(
                         "Getting layout for document {} success.\n{}",
-                        documentId,
+                        LogSanitizer.sanitize(documentId),
                         resource.data
                     )
                     callback.success(resource.data.toCaptureDocumentLayout())
@@ -463,7 +464,7 @@ internal constructor(
         return launchCancellable {
             when (val resource = giniBankApi.documentManager.getDocumentPages(documentId)) {
                 is Resource.Cancelled -> {
-                    LOG.debug("Getting pages for document {} canceled", documentId)
+                    LOG.debug("Getting pages for document {} canceled", LogSanitizer.sanitize(documentId))
                 }
 
                 is Resource.Error -> {
@@ -474,8 +475,8 @@ internal constructor(
                     )
                     LOG.error(
                         "Getting pages for document {} failed. {}",
-                        documentId,
-                        error.message
+                        LogSanitizer.sanitize(documentId),
+                        LogSanitizer.sanitize(error.message)
                     )
                     callback.failure(error)
                 }
@@ -483,7 +484,7 @@ internal constructor(
                 is Resource.Success -> {
                     LOG.debug(
                         "Getting pages for document {} success. {}",
-                        documentId,
+                        LogSanitizer.sanitize(documentId),
                         resource.data.toString()
                     )
                     callback.success(resource.data.map { it.toCaptureDocumentPages() })
@@ -500,7 +501,7 @@ internal constructor(
         return launchCancellable {
             when (val resource = giniBankApi.documentManager.getFile(fileUrl)) {
                 is Resource.Cancelled -> {
-                    LOG.debug("Getting file for document {} canceled", fileUrl)
+                    LOG.debug("Getting file for document {} canceled", LogSanitizer.sanitize(fileUrl))
                 }
 
                 is Resource.Error -> {

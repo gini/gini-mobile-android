@@ -86,6 +86,7 @@ import net.gini.android.capture.internal.util.ApplicationHelper;
 import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.DeviceHelper;
+import net.gini.android.capture.internal.util.LogSanitizer;
 import net.gini.android.capture.internal.util.FileImportValidator;
 import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.internal.util.Size;
@@ -1084,7 +1085,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 break;
             default:
                 sendQRCodeScannedEventToUserAnalytics(false);
-                LOG.error("Unknown payment QR Code format: {}", paymentQRCodeData);
+                LOG.error("Unknown payment QR Code format: {}", LogSanitizer.sanitize(paymentQRCodeData));
                 break;
         }
     }
@@ -1318,7 +1319,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     DeviceHelper.getDeviceOrientation(activity),
                     DeviceHelper.getDeviceType(activity),
                     ImportMethod.PICKER);
-            LOG.info("Document imported: {}", document);
+            LOG.info("Document imported: {}", LogSanitizer.sanitize(document));
             requestClientDocumentCheck(document);
         } catch (final IllegalArgumentException e) {
             LOG.error("Failed to import selected document", e);
@@ -1358,7 +1359,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
                     @Override
                     public void documentRejected(@NonNull final String messageForUser) {
-                        LOG.debug("Client rejected the document: {}", messageForUser);
+                        LOG.debug("Client rejected the document: {}", LogSanitizer.sanitize(messageForUser));
 
                         hideActivityIndicatorAndEnableInteraction();
 
