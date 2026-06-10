@@ -471,6 +471,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, null,
                         getHideQRCodeDetectedPopupDelayMs(), false, null, () -> {
                     mQRCodeContent = null;
+                    mInterfaceHidden = false;
                     return null;
                 });
         qrCodeEducationPopup = new QRCodeEducationPopup<>(view.findViewById(R.id.gc_qr_code_education_compose_view));
