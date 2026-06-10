@@ -20,3 +20,11 @@ License
 
     For license related inquiries contact Gini via the email address
     technical-support@gini.net.
+
+In order to deliver its functionality, the Gini Bank SDK incorporates the following libraries, whose respective licenses and copyright notices are provided below:
+
+| Module | License |
+|--------|---------|
+| Bank API Library | [LICENSE.md](bank-api-library/LICENSE.md) |
+| Core API Library | [LICENSE.md](core-api-library/LICENSE.md) |
+| Capture SDK | [LICENSE.md](capture-sdk/LICENSE.md) |

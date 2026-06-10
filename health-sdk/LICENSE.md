@@ -20,3 +20,12 @@ License
 
     For license related inquiries contact Gini via the email address
     technical-support@gini.net.
+
+
+In order to deliver its functionality, the Gini Health SDK incorporates the following libraries, whose respective licenses and copyright notices are provided below:
+
+| Module | License |
+|--------|---------|
+| Core API Library | [LICENSE.md](core-api-library/LICENSE.md) |
+| Health API Library | [LICENSE.md](health-api-library/LICENSE.md) |
+| Internal Payment SDK | [LICENSE.md](internal-payment-sdk/LICENSE.md) |
