@@ -1,7 +1,3 @@
-=======
-License
-=======
-
 The Gini Bank API Library for Android is licensed under a Private License. Please
 make sure to ship all license notices and permissions with your application.
 
