@@ -1,1 +1,20 @@
-Moved to https://developer.gini.net/gini-mobile-android/bank-sdk/sdk/html/license.html
+Copyright (c) 2014, Gini GmbH
+All rights reserved.
+
+The Gini Bank SDK is licensed through Gini GmbH ("Gini") and may not be
+used, altered or copied in any way without explicit permission by Gini. The
+terms of usage are defined in a separate usage agreement between Gini and the
+licensee, where the licensee can gain access to a non-exclusive,
+non-transferable usage right which is restricted for the time of a contractual
+relationship between Gini and the licensee.
+
+For license related inquiries contact Gini via the email address
+technical-support@gini.net.
+
+The Gini Bank SDK uses code from the following libraries:
+
+| Module | License |
+|--------|---------|
+| Bank API Library | [LICENSE.md](../bank-api-library/LICENSE.md) |
+| Core API Library | [LICENSE.md](../core-api-library/LICENSE.md) |
+| Capture SDK | [LICENSE.md](../capture-sdk/LICENSE.md) |
