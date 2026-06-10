@@ -26,5 +26,5 @@ In order to deliver its functionality, the Gini Capture SDK incorporates the fol
 
 | Module | License |
 |--------|---------|
-| Bank API Library | [LICENSE.md](bank-api-library/LICENSE.md) |
-| Core API Library | [LICENSE.md](core-api-library/LICENSE.md) |
+| Bank API Library | [LICENSE.md](../bank-api-library/LICENSE.md) |
+| Core API Library | [LICENSE.md](../core-api-library/LICENSE.md) |

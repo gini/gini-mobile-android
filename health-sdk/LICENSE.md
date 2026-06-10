@@ -26,6 +26,6 @@ In order to deliver its functionality, the Gini Health SDK incorporates the foll
 
 | Module | License |
 |--------|---------|
-| Core API Library | [LICENSE.md](core-api-library/LICENSE.md) |
-| Health API Library | [LICENSE.md](health-api-library/LICENSE.md) |
-| Internal Payment SDK | [LICENSE.md](internal-payment-sdk/LICENSE.md) |
+| Core API Library | [LICENSE.md](../core-api-library/LICENSE.md) |
+| Health API Library | [LICENSE.md](../health-api-library/LICENSE.md) |
+| Internal Payment SDK | [LICENSE.md](../internal-payment-sdk/LICENSE.md) |

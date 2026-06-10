@@ -25,6 +25,6 @@ In order to deliver its functionality, the Gini Bank SDK incorporates the follow
 
 | Module | License |
 |--------|---------|
-| Bank API Library | [LICENSE.md](bank-api-library/LICENSE.md) |
-| Core API Library | [LICENSE.md](core-api-library/LICENSE.md) |
-| Capture SDK | [LICENSE.md](capture-sdk/LICENSE.md) |
+| Bank API Library | [LICENSE.md](../bank-api-library/LICENSE.md) |
+| Core API Library | [LICENSE.md](../core-api-library/LICENSE.md) |
+| Capture SDK | [LICENSE.md](../capture-sdk/LICENSE.md) |
