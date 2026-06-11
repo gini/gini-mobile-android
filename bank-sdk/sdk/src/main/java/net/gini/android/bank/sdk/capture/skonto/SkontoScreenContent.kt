@@ -1019,6 +1019,14 @@ private fun WithoutSkontoSection(
         decimalFormatter.parseDigits(newText)
     )
 
+    // Announce the committed (ViewModel-driven) amount to TalkBack instead of
+    // announcing on every keystroke. This mirrors the behaviour that existed before
+    // the liveRegion approach was introduced for this section.
+    val view = LocalView.current
+    LaunchedEffect(sectionState.amount.value) {
+        view.announceForAccessibility(accessibilityText)
+    }
+
     Card(
         modifier = modifier,
         shape = RectangleShape,
@@ -1076,10 +1084,7 @@ private fun WithoutSkontoSection(
                             Modifier.semantics(mergeDescendants = true) {
                                 hideFromAccessibility()
                             }
-                        else Modifier.semantics {
-                            liveRegion = LiveRegionMode.Polite
-                            contentDescription = accessibilityText
-                        }
+                        else Modifier  // announcements handled via LaunchedEffect + announceForAccessibility above
                     )
                     .then(Modifier.bringIntoViewRequester(bringIntoViewRequester))
                     .fillMaxWidth()

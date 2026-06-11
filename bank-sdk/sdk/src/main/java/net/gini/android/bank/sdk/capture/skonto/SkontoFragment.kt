@@ -40,8 +40,9 @@ class SkontoFragment : Fragment() {
             field = value
         }
 
-    private val isBottomNavigationBarEnabled =
-        GiniCapture.getInstance().isBottomNavigationBarEnabled
+    // GiniCapture.isBottomNavigationBarEnabled() is @Deprecated and always returns false.
+    // Hardcode false to avoid the deprecated call and keep this consistent with the SDK intent.
+    private val isBottomNavigationBarEnabled: Boolean = false
 
     private val customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
         GiniBank.skontoNavigationBarBottomAdapterInstance

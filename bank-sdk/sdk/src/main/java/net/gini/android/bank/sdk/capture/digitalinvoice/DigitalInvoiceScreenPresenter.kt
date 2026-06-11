@@ -92,7 +92,12 @@ internal class DigitalInvoiceScreenPresenter(
             extractions = extractions,
             compoundExtractions = compoundExtractions,
             savedSelectableItems = savedInstanceBundle?.let {
+                // Try the new ArrayList format first (written by putParcelableArrayList).
+                // Fall back to the legacy Array format (written by putParcelableArray in older
+                // versions) so that state saved before this format change is not silently lost.
                 BundleCompat.getParcelableArrayList(it, KEY_SELECTABLE_ITEMS, SelectableLineItem::class.java)
+                    ?: @Suppress("DEPRECATION") it.getParcelableArray(KEY_SELECTABLE_ITEMS)
+                        ?.filterIsInstance<SelectableLineItem>()
             },
             skontoData = skontoData,
             getSkontoAmountUseCase = getSkontoAmountUseCase,

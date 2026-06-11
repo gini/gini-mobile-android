@@ -129,8 +129,9 @@ class DigitalInvoiceSkontoFragment : Fragment() {
         parametersOf(args.data)
     }
 
-    private val isBottomNavigationBarEnabled: Boolean
-        get() = GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled
+    // GiniCapture.isBottomNavigationBarEnabled() is @Deprecated and always returns false.
+    // Hardcode false to avoid the deprecated call and keep this consistent with the SDK intent.
+    private val isBottomNavigationBarEnabled: Boolean = false
 
     private val customBottomNavBarAdapter:
             InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
