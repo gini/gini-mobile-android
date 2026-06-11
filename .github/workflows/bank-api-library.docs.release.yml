@@ -18,8 +18,8 @@ on:
 
 jobs:
   publish:
-    permissions:
-      contents: write
+    # Note: permissions: blocks on caller jobs have no effect when using reusable workflows (uses:).
+    # The reusable workflow (sdk.publish.docs.yml) declares its own permissions: contents: write.
     uses: ./.github/workflows/sdk.publish.docs.yml
     with:
       project_id: 'bank-api-library'
