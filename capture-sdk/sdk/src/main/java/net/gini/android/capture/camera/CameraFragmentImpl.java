@@ -193,7 +193,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private View mImageCorners;
     private PhotoThumbnail mPhotoThumbnail;
-    private boolean mInterfaceHidden;
+    @VisibleForTesting
+    boolean mInterfaceHidden;
     private boolean mInMultiPageState;
     private boolean mIsFlashEnabled = true;
 
@@ -235,7 +236,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private boolean mImportDocumentButtonEnabled;
     private ImportImageFileUrisAsyncTask mImportUrisAsyncTask;
     private Group mImportButtonGroup;
-    private String mQRCodeContent;
+    @VisibleForTesting
+    String mQRCodeContent;
     private boolean shouldSendUserAnalyticsTrackerForQrCodes = true;
     private boolean isIbanDetectedOnceForUserAnalytics = false;
 
@@ -339,6 +341,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             mUnsupportedQRCodePopup.show(null);
             sendQRCodeScannedEventToUserAnalytics(false);
         }
+    }
+
+    @VisibleForTesting
+    void onUnsupportedQRCodePopupHidden() {
+        mQRCodeContent = null;
+        mInterfaceHidden = false;
     }
 
     @VisibleForTesting
@@ -470,7 +478,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mUnsupportedQRCodePopup =
                 new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, null,
                         getHideQRCodeDetectedPopupDelayMs(), false, null, () -> {
-                    mQRCodeContent = null;
+                    onUnsupportedQRCodePopupHidden();
                     return null;
                 });
         qrCodeEducationPopup = new QRCodeEducationPopup<>(view.findViewById(R.id.gc_qr_code_education_compose_view));
