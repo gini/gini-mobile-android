@@ -34,7 +34,6 @@ import androidx.core.os.BundleCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavDestination;
-
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.DocumentImportEnabledFileTypes;
@@ -103,7 +102,6 @@ import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.util.IntentHelper;
-import net.gini.android.capture.util.UriHelper;
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -118,6 +116,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
@@ -198,6 +198,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private boolean mIsFlashEnabled = true;
 
     private final UIExecutor mUIExecutor = new UIExecutor();
+    // Shared single-thread executor for off-main-thread document import I/O.
+    // Reused across imports to avoid per-call thread leaks; shut down in onDestroy().
+    private final ExecutorService mImportExecutor = Executors.newSingleThreadExecutor();
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
     private CameraInterface mCameraController;
     private ImageMultiPageDocument mMultiPageDocument;
     private PaymentQRCodeReader mPaymentQRCodeReader;
@@ -742,6 +746,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (mImportUrisAsyncTask != null) {
             mImportUrisAsyncTask.cancel(true);
         }
+        mMainHandler.removeCallbacksAndMessages(null);
+        mImportExecutor.shutdownNow();
     }
 
     private void closeCamera() {
@@ -1268,35 +1274,104 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
                 return;
             }
-            if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
-                LOG.error("Document import failed: InputStream not available for the Uri");
-                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
-                return;
-            }
-
-            if (isImage(data, activity)) {
-                handleMultiPageDocumentAndCallListener(activity, data,
-                        Collections.singletonList(uri));
-            } else {
-                final int fileSizeLimit;
-                if (GiniCapture.hasInstance()) {
-                    fileSizeLimit = GiniCapture.getInstance().getImportedFileSizeBytesLimit();
-                } else {
-                    fileSizeLimit = FILE_SIZE_LIMIT;
-                }
-                final FileImportValidator fileImportValidator = new FileImportValidator(activity, fileSizeLimit);
-                if (fileImportValidator.matchesCriteria(data, uri)) {
-                    createSinglePageDocumentAndCallListener(data, activity);
-                } else {
-                    final FileImportValidator.Error error = fileImportValidator.getError();
-                    if (error != null) {
-                        Error errorClass = new Error(error);
-                        ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
-                        showGenericInvalidFileError(errorType);
+            // Run import I/O on a background thread to prevent NetworkOnMainThreadException
+            // when the URI comes from a cross-process content provider (e.g. cloud storage).
+            // The image-vs-PDF check itself uses ContentResolver.getType() under the hood,
+            // so the mime-type lookup must also run off the main thread.
+            final Context appContext = activity.getApplicationContext();
+            final int fileSizeLimit = GiniCapture.hasInstance()
+                    ? GiniCapture.getInstance().getImportedFileSizeBytesLimit()
+                    : FILE_SIZE_LIMIT;
+            final FileImportValidator fileImportValidator =
+                    new FileImportValidator(appContext, fileSizeLimit);
+            mImportExecutor.execute(() -> {
+                boolean validationFailed = false;
+                boolean isImage = false;
+                boolean matches = false;
+                FileImportValidator.Error validationError = null;
+                GiniCaptureDocument preparedDocument = null;
+                try {
+                    // Skip the explicit isUriInputStreamAvailable() pre-check:
+                    //   - For images, AbstractImportImageUrisAsyncTask runs the same check
+                    //     internally on its background thread.
+                    //   - For PDFs, FileImportValidator.matchesCriteria() opens the file
+                    //     (via Pdf.getPageCount -> ContentResolver.openFileDescriptor)
+                    //     as part of validation.
+                    // Removing the pre-check avoids duplicate cross-process I/O.
+                    isImage = isImage(data, appContext);
+                    if (!isImage) {
+                        matches = fileImportValidator.matchesCriteria(data, uri);
+                        validationError = fileImportValidator.getError();
+                        if (matches) {
+                            // Build the document on the background thread because
+                            // DocumentFactory.newDocumentFromIntent performs additional
+                            // ContentResolver I/O (getType + query for filename), which
+                            // can also trigger NetworkOnMainThreadException for cloud
+                            // URIs. Only the listener callback is dispatched to the UI.
+                            preparedDocument = DocumentFactory.newDocumentFromIntent(
+                                    data,
+                                    appContext,
+                                    DeviceHelper.getDeviceOrientation(appContext),
+                                    DeviceHelper.getDeviceType(appContext),
+                                    ImportMethod.PICKER);
+                            LOG.info("Document imported: {}", preparedDocument);
+                        }
                     }
+                } catch (final Exception e) {
+                    // ContentResolver calls (getType / query / openFileDescriptor) can throw
+                    // SecurityException (revoked URI permission), IllegalArgumentException,
+                    // or other runtime exceptions from cross-process providers. Mark the
+                    // whole validation as failed so the UI can show a generic import error
+                    // instead of crashing the executor thread or showing a misleading
+                    // "InputStream not available" message.
+                    LOG.error("Document import failed: unexpected error during validation", e);
+                    validationFailed = true;
+                    preparedDocument = null;
                 }
-            }
+                final boolean finalValidationFailed = validationFailed;
+                final boolean finalIsImage = isImage;
+                final boolean finalMatches = matches;
+                final FileImportValidator.Error finalValidationError = validationError;
+                final GiniCaptureDocument finalDocument = preparedDocument;
+                mMainHandler.post(() -> {
+                    if (!isFragmentSafe()) {
+                        return;
+                    }
+                    // Re-fetch the current Activity: a configuration change may have
+                    // happened during the background work, making the originally captured
+                    // Activity stale.
+                    final Activity currentActivity = mFragment.getActivity();
+                    if (currentActivity == null) {
+                        return;
+                    }
+                    if (finalValidationFailed) {
+                        showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
+                        return;
+                    }
+                    if (finalIsImage) {
+                        handleMultiPageDocumentAndCallListener(currentActivity, data,
+                                Collections.singletonList(uri));
+                    } else if (finalMatches && finalDocument != null) {
+                        requestClientDocumentCheck(finalDocument);
+                    } else if (finalValidationError != null) {
+                        Error errorClass = new Error(finalValidationError);
+                        ErrorType errorType = ErrorType.typeFromError(errorClass,
+                                getGetEInvoiceFeatureEnabledUseCase().invoke());
+                        showGenericInvalidFileError(errorType);
+                    } else {
+                        showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
+                    }
+                });
+            });
         }
+    }
+
+    private boolean isFragmentSafe() {
+        if (mFragment == null) {
+            return false;
+        }
+        final Activity activity = mFragment.getActivity();
+        return activity != null && !activity.isFinishing() && !activity.isDestroyed();
     }
 
     private void importDocumentFromUriList(List<Uri> uriList) {
@@ -1306,8 +1381,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         handleMultiPageDocumentAndCallListener(mFragment.getActivity(), new Intent(Intent.ACTION_PICK), uriList);
     }
 
-    private boolean isImage(@NonNull final Intent data, @NonNull final Activity activity) {
-        return IntentHelper.hasMimeTypeWithPrefix(data, activity, MimeType.IMAGE_PREFIX.asString());
+    private boolean isImage(@NonNull final Intent data, @NonNull final Context context) {
+        return IntentHelper.hasMimeTypeWithPrefix(data, context, MimeType.IMAGE_PREFIX.asString());
     }
 
     private void createSinglePageDocumentAndCallListener(final Intent data,
@@ -1559,8 +1634,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void showGenericInvalidFileError(ErrorType errorType) {
-        String errorMessage = mFragment.getActivity().getResources()
-                .getString(errorType.getTitleTextResource());
+        final Activity activity = mFragment.getActivity();
+        if (activity == null) {
+            return;
+        }
+        final String errorMessage = activity.getString(errorType.getTitleTextResource());
         if (mUserAnalyticsEventTracker != null) {
             mUserAnalyticsEventTracker.trackEvent(
                     UserAnalyticsEvent.ERROR_DIALOG_SHOWN,
@@ -1572,13 +1650,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     }
             );
         }
-        final Activity activity = mFragment.getActivity();
-        if (activity == null) {
-            return;
-        }
-        String message = activity.getString(errorType.getTitleTextResource());
-        LOG.error("Invalid document {}", message);
-        showInvalidFileAlert(message);
+        LOG.error("Invalid document {}", errorMessage);
+        showInvalidFileAlert(errorMessage);
     }
 
     private void showInvalidFileAlert(final String message) {
