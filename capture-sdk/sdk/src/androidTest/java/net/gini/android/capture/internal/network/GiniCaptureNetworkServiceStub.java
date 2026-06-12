@@ -1,5 +1,7 @@
 package net.gini.android.capture.internal.network;
 
+import androidx.annotation.NonNull;
+
 import net.gini.android.capture.Document;
 import net.gini.android.capture.network.AnalysisResult;
 import net.gini.android.capture.network.Error;
@@ -15,8 +17,6 @@ import net.gini.android.capture.util.CancellationToken;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
 
 /**
  * Created by Alpar Szotyori on 16.04.2018.
@@ -56,12 +56,12 @@ public class GiniCaptureNetworkServiceStub implements GiniCaptureNetworkService 
 
     @Override
     public void deleteGiniUserCredentials() {
-
+        // No-op
     }
 
     @Override
     public void cleanup() {
-
+        // No-op
     }
 
     @NonNull

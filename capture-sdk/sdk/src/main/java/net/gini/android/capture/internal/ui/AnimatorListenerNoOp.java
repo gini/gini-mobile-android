@@ -14,21 +14,21 @@ public class AnimatorListenerNoOp implements Animator.AnimatorListener {
 
     @Override
     public void onAnimationStart(final Animator animation) {
-
+        // No-op
     }
 
     @Override
     public void onAnimationEnd(final Animator animation) {
-
+        // No-op
     }
 
     @Override
     public void onAnimationCancel(final Animator animation) {
-
+        // No-op
     }
 
     @Override
     public void onAnimationRepeat(final Animator animation) {
-
+        // No-op
     }
 }

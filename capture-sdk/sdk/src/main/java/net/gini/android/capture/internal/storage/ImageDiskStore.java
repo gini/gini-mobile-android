@@ -1,9 +1,11 @@
 package net.gini.android.capture.internal.storage;
 
-import static net.gini.android.capture.util.UriHelper.getFileExtension;
-
 import android.content.Context;
 import android.net.Uri;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
+import static net.gini.android.capture.util.UriHelper.getFileExtension;
 
 /**
  * Created by Alpar Szotyori on 20.03.2018.

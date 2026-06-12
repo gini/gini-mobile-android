@@ -20,7 +20,6 @@ import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.network.model.DocumentLayout
 import net.gini.android.capture.internal.network.model.DocumentPage
 import net.gini.android.capture.logging.ErrorLog
-import net.gini.android.capture.network.GiniCaptureDefaultNetworkService.Companion.builder
 import net.gini.android.capture.network.logging.formattedErrorMessage
 import net.gini.android.capture.network.logging.toErrorEvent
 import net.gini.android.capture.network.model.CompoundExtractionsMapper
@@ -100,6 +99,9 @@ internal constructor(
         private set
 
 
+    // Void is required to match the Java interface signature in the
+    // callback: GiniCaptureNetworkCallback<Void, Error>
+    @Suppress("kotlin:S6508")
     override fun sendEvents(
         amplitudeRootModel: AmplitudeRootModel,
         callback: GiniCaptureNetworkCallback<Void, Error>
@@ -219,7 +221,7 @@ internal constructor(
         val documentData = document.data
         if (documentData == null) {
             val error = Error("Document has no data. Did you forget to load it?")
-            LOG.error("Document upload failed for {}: {}", document.id, error.message)
+            LOG.error(LOG_MSG_DOCUMENT_UPLOAD_FAILED, document.id, error.message)
             callback.failure(error)
             return@launchCancellable
         }
@@ -228,7 +230,7 @@ internal constructor(
                 "Multi-page document cannot be uploaded. You have to upload each of its page documents separately."
             )
             LOG.error(
-                "Document upload failed for {}: {}",
+                LOG_MSG_DOCUMENT_UPLOAD_FAILED,
                 document.getId(),
                 error.message
             )
@@ -268,7 +270,7 @@ internal constructor(
                     partialDocumentResource.responseHeaders, partialDocumentResource.exception
                 )
                 LOG.error(
-                    "Document upload failed for {}: {}", document.id,
+                    LOG_MSG_DOCUMENT_UPLOAD_FAILED, document.id,
                     error.message
                 )
                 callback.failure(error)
@@ -529,7 +531,9 @@ internal constructor(
         }
     }
 
-    @Suppress("LongMethod")
+    // Void is required to match the Java interface signature in the
+    // callback: GiniCaptureNetworkCallback<Void, Error>
+    @Suppress("LongMethod", "kotlin:S6508")
     override fun sendFeedback(
         extractions: MutableMap<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: MutableMap<String, GiniCaptureCompoundExtraction>,
@@ -616,6 +620,7 @@ internal constructor(
             giniApiDocuments.clear()
             coroutineScope.coroutineContext.cancelChildren()
         } catch (ignored: IllegalStateException) {
+            // Ignored: coroutine scope may already be in an invalid state during cleanup
         }
     }
 
@@ -879,6 +884,7 @@ internal constructor(
     companion object {
         private val LOG: Logger =
             LoggerFactory.getLogger(GiniCaptureDefaultNetworkService::class.java)
+        private const val LOG_MSG_DOCUMENT_UPLOAD_FAILED = "Document upload failed for {}: {}"
 
         /**
          * Creates a new [GiniCaptureDefaultNetworkService.Builder] to configure and create a new

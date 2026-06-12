@@ -49,7 +49,7 @@ class OnboardingPagePresenter extends OnboardingPageContract.Presenter {
 
     @Override
     public void stop() {
-
+        // No-op
     }
 
     private void showImage() {

@@ -1,13 +1,10 @@
 package net.gini.android.capture.internal.camera.photo;
 
-import static com.google.common.truth.Truth.assertAbout;
-import static com.google.common.truth.Truth.assertThat;
-
-import static net.gini.android.capture.test.Helpers.getTestJpeg;
-import static net.gini.android.capture.test.PhotoSubject.photo;
-
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.annotation.NonNull;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import net.gini.android.capture.document.ImageDocument;
 
@@ -18,8 +15,10 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import static com.google.common.truth.Truth.assertAbout;
+import static com.google.common.truth.Truth.assertThat;
+import static net.gini.android.capture.test.Helpers.getTestJpeg;
+import static net.gini.android.capture.test.PhotoSubject.photo;
 
 @RunWith(AndroidJUnit4.class)
 public class PhotoEditTest {
@@ -44,6 +43,7 @@ public class PhotoEditTest {
 
             @Override
             public void onFailed() {
+                // No-op
             }
         });
         // Add rotations until the async apply completes
