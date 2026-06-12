@@ -259,7 +259,7 @@ internal constructor(
                 val apiDocument = partialDocumentResource.data
                 LOG.debug(
                     "Document upload success for {}: {}", LogSanitizer.sanitize(document.id),
-                    apiDocument
+                    LogSanitizer.sanitize(apiDocument)
                 )
                 giniApiDocuments[apiDocument.id] = apiDocument
                 callback.success(Result(apiDocument.id, apiDocument.filename))
