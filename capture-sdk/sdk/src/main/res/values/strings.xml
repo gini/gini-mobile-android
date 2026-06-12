@@ -161,7 +161,6 @@
     <string name="gc_camera_info_label_only_qr">QR-Code scannen</string>
     <string name="gc_qr_scanner_error">Das Scannen von QR-Codes ist vorübergehend deaktiviert. Bitte versuchen Sie es später erneut.</string>
     <string name="gc_qr_code_detected">QR-Code erkannt</string>
-    <string name="gc_unknown_qr_code">QR-Code ohne Zahlinformationen</string>
     <string name="gc_retrieving_invoice">Rechnung wird übermittelt</string>
     <string name="gc_payment_details_visible">Sind alle Zahlungsinformationen gut lesbar?</string>
     <string name="gc_save_invoices_feature_title">In Galerie speichern</string>
@@ -172,7 +171,6 @@
     <string name="gc_process_documents">Verarbeiten</string>
     <string name="gc_continue">Verarbeiten</string>
     <string name="gc_camera_access">Kamerazugriff</string>
-    <string name="gc_unknown_qr_code_description">Dieser Code enthält keine Zahlungsinformationen. Bitte anderen QR-Code oder Rechnung abfotografieren.</string>
     <string name="gc_scan">Aufnahme</string>
     <string name="gc_take_a_picture">Foto schießen</string>
     <string name="gc_flash_button">Blitz</string>
@@ -213,5 +211,10 @@
     <string name="gc_due_date_hint">\u0020Deine Rechnung ist am %1$s fällig. Du könntest sie als Terminüberweisung anlegen.</string>
     <string name="gc_due_date_hint_tip">Tipp:</string>
     <!--   endregion -->
+    <!-- region Unsupported QR Code Dialog -->
+    <string name="gc_unsupported_qr_code_dialog_title">Dieser QR-Code ist kein Zahlungs-QR-Code</string>
+    <string name="gc_unsupported_qr_code_dialog_scan_qr_code">Anderen QR-Code scannen</string>
+    <string name="gc_unsupported_qr_code_dialog_capture_document">Dokument fotografieren</string>
+    <!-- endregion -->
 
 </resources>

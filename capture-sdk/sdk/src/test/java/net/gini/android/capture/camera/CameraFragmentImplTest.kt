@@ -1,6 +1,7 @@
 package net.gini.android.capture.camera
 
 import android.app.Activity
+import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -17,6 +18,9 @@ import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -107,6 +111,99 @@ class CameraFragmentImplTest {
 
         // Then
         verify(eventTracker).onCameraScreenEvent(Event(CameraScreenEvent.HELP))
+    }
+
+    @Test
+    fun `enableOnlyQRScanning sets QR-only override and clears disabled flag`() {
+        // Given
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+
+        // When
+        fragmentImpl.enableOnlyQRScanning()
+
+        // Then
+        assertFalse(fragmentImpl.mQRCodeScanningDisabledByUser)
+        assertTrue(fragmentImpl.mOnlyQRCodeScanningRuntimeOverride == true)
+        assertFalse(fragmentImpl.mIsUnsupportedQRDialogShowing)
+    }
+
+    @Test
+    fun `enableDocumentCapture sets document override and enables disabled flag`() {
+        // Given
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+
+        // When
+        fragmentImpl.enableDocumentCapture()
+
+        // Then
+        assertTrue(fragmentImpl.mQRCodeScanningDisabledByUser)
+        assertTrue(fragmentImpl.mOnlyQRCodeScanningRuntimeOverride == false)
+        assertFalse(fragmentImpl.mIsUnsupportedQRDialogShowing)
+    }
+
+    @Test
+    fun `document capture mode flags are preserved across save and restore`() {
+        // Given
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+        fragmentImpl.enableDocumentCapture()
+        val bundle = Bundle()
+        fragmentImpl.onSaveInstanceState(bundle)
+
+        // When
+        val restoredImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+        restoredImpl.restoreSavedState(bundle)
+
+        // Then
+        assertTrue(restoredImpl.mQRCodeScanningDisabledByUser)
+        assertTrue(restoredImpl.mOnlyQRCodeScanningRuntimeOverride == false)
+    }
+
+    @Test
+    fun `QR scanning mode flags are preserved across save and restore`() {
+        // Given
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+        fragmentImpl.enableOnlyQRScanning()
+        val bundle = Bundle()
+        fragmentImpl.onSaveInstanceState(bundle)
+
+        // When
+        val restoredImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+        restoredImpl.restoreSavedState(bundle)
+
+        // Then
+        assertFalse(restoredImpl.mQRCodeScanningDisabledByUser)
+        assertTrue(restoredImpl.mOnlyQRCodeScanningRuntimeOverride == true)
+    }
+
+    @Test
+    fun `null QR scanning override is preserved across save and restore`() {
+        // Given
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+        val bundle = Bundle()
+        fragmentImpl.onSaveInstanceState(bundle)
+
+        // When
+        val restoredImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+        restoredImpl.restoreSavedState(bundle)
+
+        // Then
+        assertNull(restoredImpl.mOnlyQRCodeScanningRuntimeOverride)
+    }
+
+    @Test
+    fun `unsupported QR dialog showing flag is preserved across save and restore`() {
+        // Given
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+        fragmentImpl.mIsUnsupportedQRDialogShowing = true
+        val bundle = Bundle()
+        fragmentImpl.onSaveInstanceState(bundle)
+
+        // When
+        val restoredImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock(), false)
+        restoredImpl.restoreSavedState(bundle)
+
+        // Then
+        assertTrue(restoredImpl.mIsUnsupportedQRDialogShowing)
     }
 
     private open class CameraFragmentImplWithoutQRCodeReader(fragment: FragmentImplCallback,
