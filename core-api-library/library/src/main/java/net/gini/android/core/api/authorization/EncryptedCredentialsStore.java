@@ -28,7 +28,7 @@ public class EncryptedCredentialsStore implements CredentialsStore {
     private final GiniCrypto mCrypto;
 
     public EncryptedCredentialsStore(@NonNull final SharedPreferences sharedPreferences,
-            @NonNull final Context context) {
+            @SuppressWarnings("unused") @NonNull final Context context) {
         mSharedPreferences = sharedPreferences;
         mSharedPreferencesCredentialsStore = new SharedPreferencesCredentialsStore(
                 sharedPreferences);
