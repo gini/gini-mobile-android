@@ -31,7 +31,7 @@ internal class GiniBankTransactionDocs internal constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val giniTransactionDocsFlow: Flow<List<GiniTransactionDoc>>
-        get() = flowOf(attachTransactionDocDialogDecisionRepository.getAttachDocToTransaction())
+        get() = flowOf(attachTransactionDocDialogDecisionRepository.attachDocToTransaction)
             .flatMapLatest { docShouldBeAttached ->
                 if ((docShouldBeAttached || transactionDocsSettings.getAlwaysAttachSetting()
                         .first()) && getTransactionDocsFeatureEnabledUseCase()

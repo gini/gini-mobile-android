@@ -16,6 +16,7 @@ class CustomNavigationBarTopAdapter : NavigationBarTopAdapter {
 
     var viewBinding: CustomNavigationBarTopBinding? = null
 
+    @Suppress("DEPRECATION")
     override fun setOnNavButtonClickListener(listener: View.OnClickListener?) {
         if (GiniCapture.hasInstance()
             && GiniCapture.getInstance().isBottomNavigationBarEnabled
@@ -48,6 +49,7 @@ class CustomNavigationBarTopAdapter : NavigationBarTopAdapter {
                 }
             }
             NavButtonType.CLOSE -> {
+                @Suppress("DEPRECATION")
                 if (GiniCapture.hasInstance()
                     && GiniCapture.getInstance().isBottomNavigationBarEnabled
                 ) {

@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent != null && isIntentActionViewOrSend(intent)) {
+        if (isIntentActionViewOrSend(intent)) {
             startGiniBankSdkForOpenWith(intent)
         }
     }
@@ -104,11 +104,17 @@ class MainActivity : AppCompatActivity() {
         configurationActivityLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 when (result.resultCode) {
-                    RESULT_CANCELED -> {}
+                    RESULT_CANCELED -> {
+                        // no-op: when cancelled, no configuration update is needed
+                    }
                     RESULT_OK -> {
-                        val configurationResult: ExampleAppBankConfiguration? = result.data?.getParcelableExtra(
-                            CONFIGURATION_BUNDLE
-                        )
+                        val configurationResult = result.data?.let { data ->
+                            IntentCompat.getParcelableExtra(
+                                data,
+                                CONFIGURATION_BUNDLE,
+                                ExampleAppBankConfiguration::class.java
+                            )
+                        }
                         if (configurationResult != null) {
                             configurationViewModel.setConfiguration(configurationResult)
                         }
@@ -193,7 +199,7 @@ class MainActivity : AppCompatActivity() {
             startGiniBankSdk(openWithIntent)
         } else {
             MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
-                .setPositiveButton("OK") { dialogInterface, i -> {} }.show()
+                .setPositiveButton("OK") { _, _ -> }.show()
         }
     }
 
@@ -241,12 +247,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            CaptureResult.Empty -> {
-                if (isIntentActionViewOrSend(intent)) {
-                    finish()
-                }
-            }
-
+            CaptureResult.Empty,
             CaptureResult.Cancel -> {
                 if (isIntentActionViewOrSend(intent)) {
                     finish()

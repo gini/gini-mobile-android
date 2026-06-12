@@ -29,9 +29,13 @@ internal class TransactionDocsStorage(context: Context) {
         }
     }
 
-    suspend fun delete() = suspendCoroutine {
-        file.delete()
-        it.resume(Unit)
+    suspend fun delete() = suspendCoroutine<Unit> { continuation ->
+        val deleted = file.delete()
+        if (!deleted && file.exists()) {
+            continuation.resumeWithException(IllegalStateException("Failed to delete storage file: ${file.name}"))
+        } else {
+            continuation.resume(Unit)
+        }
     }
 
     suspend inline fun get(): List<Transaction>? = suspendCoroutine {
