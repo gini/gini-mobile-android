@@ -162,6 +162,9 @@
     <string name="gc_qr_scanner_error">Das Scannen von QR-Codes ist vorübergehend deaktiviert. Bitte versuchen Sie es später erneut.</string>
     <string name="gc_qr_code_detected">QR-Code erkannt</string>
     <string name="gc_unknown_qr_code">QR-Code ohne Zahlinformationen</string>
+    <string name="gc_unsupported_qr_code_dialog_title">Dieser QR-Code ist kein Zahlungs-QR-Code</string>
+    <string name="gc_unsupported_qr_code_dialog_scan_qr_code">Anderen QR-Code scannen</string>
+    <string name="gc_unsupported_qr_code_dialog_capture_document">Dokument fotografieren</string>
     <string name="gc_retrieving_invoice">Rechnung wird übermittelt</string>
     <string name="gc_payment_details_visible">Sind alle Zahlungsinformationen gut lesbar?</string>
     <string name="gc_save_invoices_feature_title">In Galerie speichern</string>

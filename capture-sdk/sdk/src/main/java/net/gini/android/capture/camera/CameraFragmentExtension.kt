@@ -18,6 +18,7 @@ import net.gini.android.capture.internal.qreducation.UpdateFlowTypeUseCase
 import net.gini.android.capture.internal.qreducation.model.FlowType
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 
 internal abstract class CameraFragmentExtension {
 
@@ -35,7 +36,12 @@ internal abstract class CameraFragmentExtension {
             GetEInvoiceFeatureEnabledUseCase by getGiniCaptureKoin().inject()
     private val getEducationFeatureEnabledUseCase:
             GetEducationFeatureEnabledUseCase by getGiniCaptureKoin().inject()
+    private val giniBankConfigurationProvider:
+            GiniBankConfigurationProvider by getGiniCaptureKoin().inject()
     private val educationMutex = Mutex()
+
+    fun isUnsupportedQRCodeWarningEnabled(): Boolean =
+        giniBankConfigurationProvider.provide().isUnsupportedQRCodeWarningEnabled
 
     fun showQrCodePopup(data: PaymentQRCodeData, onEducationFlowTriggered: () -> Unit) =
         runBlocking {

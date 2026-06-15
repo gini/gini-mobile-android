@@ -145,6 +145,9 @@
     <string name="gc_qr_scanner_error">Scanning QR codes is temporarily disabled. Please try again later.</string>
     <string name="gc_qr_code_detected">QR code detected</string>
     <string name="gc_unknown_qr_code">Unknown QR code</string>
+    <string name="gc_unsupported_qr_code_dialog_title">This is not a payment QR code</string>
+    <string name="gc_unsupported_qr_code_dialog_scan_qr_code">Scan another QR code</string>
+    <string name="gc_unsupported_qr_code_dialog_capture_document">Take photo of document</string>
     <string name="gc_retrieving_invoice">Retrieving invoice</string>
     <string name="gc_payment_details_visible">Make sure the payment details are visible</string>
     <string name="gc_save_invoices_feature_title">Save to gallery</string>
