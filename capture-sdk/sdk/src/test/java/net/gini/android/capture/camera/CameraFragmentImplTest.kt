@@ -17,6 +17,8 @@ import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -107,6 +109,21 @@ class CameraFragmentImplTest {
 
         // Then
         verify(eventTracker).onCameraScreenEvent(Event(CameraScreenEvent.HELP))
+    }
+
+    @Test
+    fun `resets QR code state when unsupported popup hides so scanning resumes`() {
+        // Given: state is set as if an unsupported QR code was shown and blocked further scans
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
+        fragmentImpl.mQRCodeContent = "unsupported-qr-content"
+        fragmentImpl.mInterfaceHidden = true
+
+        // When: the unsupported QR popup hides
+        fragmentImpl.onUnsupportedQRCodePopupHidden()
+
+        // Then: state is reset so subsequent QR codes can be detected
+        assertNull(fragmentImpl.mQRCodeContent)
+        assertFalse(fragmentImpl.mInterfaceHidden)
     }
 
     private open class CameraFragmentImplWithoutQRCodeReader(fragment: FragmentImplCallback,
