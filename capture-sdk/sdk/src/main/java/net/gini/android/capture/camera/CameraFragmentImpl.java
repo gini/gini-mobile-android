@@ -185,6 +185,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private static final String ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY = "ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY";
     private static final String ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY = "ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY";
     private static final String QR_SCANNING_DISABLED_BY_USER_KEY = "QR_SCANNING_DISABLED_BY_USER_KEY";
+    private static final String UNSUPPORTED_QR_DIALOG_SHOWING_KEY = "UNSUPPORTED_QR_DIALOG_SHOWING_KEY";
 
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
@@ -201,6 +202,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     Boolean mOnlyQRCodeScanningRuntimeOverride = null;
     @VisibleForTesting
     boolean mQRCodeScanningDisabledByUser = false;
+    @VisibleForTesting
+    boolean mIsUnsupportedQRDialogShowing = false;
 
     private View mImageCorners;
     private PhotoThumbnail mPhotoThumbnail;
@@ -351,6 +354,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private void showUnsupportedQRCodePopup() {
         if (mIbanDetectedTextView.getVisibility() != View.VISIBLE) {
+            if (isUnsupportedQRCodeWarningEnabled()) {
+                mIsUnsupportedQRDialogShowing = true;
+            }
             mUnsupportedQRCodePopup.show(null);
             sendQRCodeScannedEventToUserAnalytics(false);
         }
@@ -358,12 +364,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     @VisibleForTesting
     void onUnsupportedQRCodePopupHidden() {
+        mIsUnsupportedQRDialogShowing = false;
         mQRCodeContent = null;
         mInterfaceHidden = false;
     }
 
     @VisibleForTesting
     void enableOnlyQRScanning() {
+        mIsUnsupportedQRDialogShowing = false;
         mQRCodeScanningDisabledByUser = false;
         mInterfaceHidden = false;
         mQRCodeContent = null;
@@ -373,6 +381,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     @VisibleForTesting
     void enableDocumentCapture() {
+        mIsUnsupportedQRDialogShowing = false;
         mQRCodeScanningDisabledByUser = true;
         mInterfaceHidden = false;
         mQRCodeContent = null;
@@ -448,6 +457,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mIsFlashEnabled = savedInstanceState.getBoolean(IS_FLASH_ENABLED_KEY);
         mIsDetectionErrorPopupShowed = savedInstanceState.getBoolean(IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY);
         mQRCodeScanningDisabledByUser = savedInstanceState.getBoolean(QR_SCANNING_DISABLED_BY_USER_KEY);
+        mIsUnsupportedQRDialogShowing = savedInstanceState.getBoolean(UNSUPPORTED_QR_DIALOG_SHOWING_KEY);
         if (savedInstanceState.getBoolean(ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY, false)) {
             mOnlyQRCodeScanningRuntimeOverride = savedInstanceState.getBoolean(ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY);
         } else {
@@ -485,6 +495,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         showGenericErrorIfNeeded(savedInstanceState);
         if (mOnlyQRCodeScanningRuntimeOverride != null) {
             updateCameraUIForCurrentMode();
+        }
+        if (mIsUnsupportedQRDialogShowing) {
+            showUnsupportedQRCodePopup();
         }
     }
 
@@ -812,6 +825,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         outState.putBoolean(GENERIC_ERROR_SHOWING_STATE_KEY, isGenericErrorShowing);
         outState.putString(GENERIC_ERROR_TYPE_KEY, genericErrorType);
         outState.putBoolean(QR_SCANNING_DISABLED_BY_USER_KEY, mQRCodeScanningDisabledByUser);
+        outState.putBoolean(UNSUPPORTED_QR_DIALOG_SHOWING_KEY, mIsUnsupportedQRDialogShowing);
         outState.putBoolean(ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY, mOnlyQRCodeScanningRuntimeOverride != null);
         if (mOnlyQRCodeScanningRuntimeOverride != null) {
             outState.putBoolean(ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY, mOnlyQRCodeScanningRuntimeOverride);
