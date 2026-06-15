@@ -398,9 +398,12 @@ internal constructor(
                     ReturnReasonsMapper.mapToGiniCapture(allExtractions.returnReasons)
 
                 LOG.debug(
-                    "Document analysis success for documents {}: extraction count = {}",
+                    "Document analysis success for documents {}: " +
+                            "extractions = {}; compoundExtractions = {}; returnReasons = {}",
                     LogSanitizer.sanitize(giniApiDocumentIdRotationMap),
-                    extractions.size
+                    LogSanitizer.sanitize(extractions),
+                    LogSanitizer.sanitize(compoundExtractions),
+                    LogSanitizer.sanitize(returnReasons)
                 )
 
                 callback.success(
