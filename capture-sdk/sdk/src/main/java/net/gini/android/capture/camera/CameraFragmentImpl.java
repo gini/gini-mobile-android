@@ -535,8 +535,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             importDocumentFromUriList(((FileChooserResult.FilesSelectedUri) result).getList());
         } else if (result instanceof FileChooserResult.Error) {
             final GiniCaptureError error = ((FileChooserResult.Error) result).getError();
-            final String message = "Document import failed: " + error.getMessage();
-            LOG.error(message);
+            LOG.error("Document import failed: {}", LogSanitizer.sanitize(error.getMessage()));
             showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
         }
     }
@@ -1439,7 +1438,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                             mInMultiPageState = false;
                             return;
                         }
-                        LOG.info("Document imported: {}", mMultiPageDocument);
+                        LOG.info("Document imported: {}", LogSanitizer.sanitize(mMultiPageDocument));
                         updatePhotoThumbnail();
                         requestClientDocumentCheck(mMultiPageDocument);
                     }
