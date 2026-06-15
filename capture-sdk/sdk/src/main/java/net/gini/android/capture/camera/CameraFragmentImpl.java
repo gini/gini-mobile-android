@@ -1585,7 +1585,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return;
         }
         String message = activity.getString(errorType.getTitleTextResource());
-        LOG.error("Invalid document {}", message);
+        LOG.error("Invalid document {}", LogSanitizer.sanitize(message));
         showInvalidFileAlert(message);
     }
 
@@ -2077,11 +2077,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         ErrorLogger.log(new ErrorLog(errorCode.toString() + ": " + message, throwable));
         String errorMessage = message;
         if (throwable != null) {
-            LOG.error(message, throwable);
+            LOG.error("{}", LogSanitizer.sanitize(message), throwable);
             // Add error info to the message to help clients, if they don't have logging enabled
             errorMessage = errorMessage + ": " + throwable.getMessage();
         } else {
-            LOG.error(message);
+            LOG.error("{}", LogSanitizer.sanitize(message));
         }
         fragmentListener.onError(new GiniCaptureError(errorCode, errorMessage));
     }

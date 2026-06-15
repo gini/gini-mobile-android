@@ -527,7 +527,7 @@ internal constructor(
                     LOG.debug(
                         "Getting file for document {} success. ByteArray size: {}",
                         LogSanitizer.sanitize(fileUrl),
-                        resource.data.size
+                        LogSanitizer.sanitize(resource.data.size)
                     )
                     callback.success(resource.data.toTypedArray())
                 }
