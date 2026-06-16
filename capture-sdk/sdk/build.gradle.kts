@@ -146,6 +146,7 @@ dependencies {
     implementation(libs.mlkit.barcodescanning)
     implementation(libs.mlkit.textrecognition)
     implementation(libs.apachecommons.imaging)
+    implementation(libs.apachecommons.compress)
     implementation(libs.completableFuture)
 
     implementation(libs.androidx.camera.camera2)
