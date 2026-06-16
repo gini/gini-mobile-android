@@ -3,7 +3,6 @@ package net.gini.android.capture.internal.qrcode;
 import android.media.Image;
 
 import androidx.annotation.NonNull;
-import kotlin.jvm.Throws;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -16,11 +15,9 @@ import com.google.mlkit.vision.common.InputImage;
 import net.gini.android.capture.internal.util.Size;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.NOPLogger;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -47,7 +44,7 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
 
     public QRCodeDetectorTaskMLKit() {
         BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_PDF417)
                 .build();
         mBarcodeScanner = BarcodeScanning.getClient(options);
     }
