@@ -4,8 +4,8 @@ import static android.content.Context.MODE_PRIVATE;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import android.content.SharedPreferences;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -29,7 +29,7 @@ public class EncryptedCredentialsStoreTest {
     private EncryptedCredentialsStore mCredentialsStore;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mSharedPreferences = getApplicationContext().getSharedPreferences("GiniTests", MODE_PRIVATE);
         mSharedPreferences.edit().clear().commit();
 
@@ -37,7 +37,7 @@ public class EncryptedCredentialsStoreTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         mSharedPreferences.edit().clear().commit();
     }
 
@@ -52,8 +52,8 @@ public class EncryptedCredentialsStoreTest {
         // Then
         final UserCredentials encryptedUserCredentials =
                 mCredentialsStore.getEncryptedUserCredentials();
-        assertTrue(!userCredentials.getUsername().equals(encryptedUserCredentials.getUsername()));
-        assertTrue(!userCredentials.getPassword().equals(encryptedUserCredentials.getPassword()));
+        assertNotEquals(userCredentials.getUsername(), encryptedUserCredentials.getUsername());
+        assertNotEquals(userCredentials.getPassword(), encryptedUserCredentials.getPassword());
     }
 
     @Test
@@ -98,8 +98,8 @@ public class EncryptedCredentialsStoreTest {
         // Then
         final UserCredentials encryptedUserCredentials =
                 mCredentialsStore.getEncryptedUserCredentials();
-        assertTrue(!userCredentials.getUsername().equals(encryptedUserCredentials.getUsername()));
-        assertTrue(!userCredentials.getPassword().equals(encryptedUserCredentials.getPassword()));
+        assertNotEquals(userCredentials.getUsername(), encryptedUserCredentials.getUsername());
+        assertNotEquals(userCredentials.getPassword(), encryptedUserCredentials.getPassword());
     }
 
     @Test
@@ -135,7 +135,7 @@ public class EncryptedCredentialsStoreTest {
         mCredentialsStore.storeUserCredentials(userCredentials);
         // Then
         final int encryptionVersion = mCredentialsStore.getEncryptionVersion();
-        assertEquals(encryptionVersion, EncryptedCredentialsStore.ENCRYPTION_VERSION);
+        assertEquals(EncryptedCredentialsStore.ENCRYPTION_VERSION, encryptionVersion);
     }
 
     @Test
@@ -149,8 +149,8 @@ public class EncryptedCredentialsStoreTest {
         mCredentialsStore.storeUserCredentials(userCredentials);
         final UserCredentials encryptedCredentials2 = mCredentialsStore.getEncryptedUserCredentials();
         // Then
-        assertTrue(!encryptedCredentials1.getUsername().equals(encryptedCredentials2.getUsername()));
-        assertTrue(!encryptedCredentials1.getPassword().equals(encryptedCredentials2.getPassword()));
+        assertNotEquals(encryptedCredentials1.getUsername(), encryptedCredentials2.getUsername());
+        assertNotEquals(encryptedCredentials1.getPassword(), encryptedCredentials2.getPassword());
     }
 
     @Test

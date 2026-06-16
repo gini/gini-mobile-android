@@ -86,6 +86,7 @@ import net.gini.android.capture.internal.util.ApplicationHelper;
 import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.DeviceHelper;
+import net.gini.android.capture.internal.util.LogSanitizer;
 import net.gini.android.capture.internal.util.FileImportValidator;
 import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.internal.util.Size;
@@ -195,7 +196,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     private View mImageCorners;
     private PhotoThumbnail mPhotoThumbnail;
-    private boolean mInterfaceHidden;
+    @VisibleForTesting
+    boolean mInterfaceHidden;
     private boolean mInMultiPageState;
     private boolean mIsFlashEnabled = true;
 
@@ -237,7 +239,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private boolean mImportDocumentButtonEnabled;
     private ImportImageFileUrisAsyncTask mImportUrisAsyncTask;
     private Group mImportButtonGroup;
-    private String mQRCodeContent;
+    @VisibleForTesting
+    String mQRCodeContent;
     private boolean shouldSendUserAnalyticsTrackerForQrCodes = true;
     private boolean isIbanDetectedOnceForUserAnalytics = false;
 
@@ -341,6 +344,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             mUnsupportedQRCodePopup.show(null);
             sendQRCodeScannedEventToUserAnalytics(false);
         }
+    }
+
+    @VisibleForTesting
+    void onUnsupportedQRCodePopupHidden() {
+        mQRCodeContent = null;
+        mInterfaceHidden = false;
     }
 
     @VisibleForTesting
@@ -472,7 +481,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mUnsupportedQRCodePopup =
                 new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, null,
                         getHideQRCodeDetectedPopupDelayMs(), false, null, () -> {
-                    mQRCodeContent = null;
+                    onUnsupportedQRCodePopupHidden();
                     return null;
                 });
         qrCodeEducationPopup = new QRCodeEducationPopup<>(view.findViewById(R.id.gc_qr_code_education_compose_view));
@@ -1086,7 +1095,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 break;
             default:
                 sendQRCodeScannedEventToUserAnalytics(false);
-                LOG.error("Unknown payment QR Code format: {}", paymentQRCodeData);
+                LOG.error("Unknown payment QR Code format: {}", LogSanitizer.sanitize(paymentQRCodeData));
                 break;
         }
     }
@@ -1320,7 +1329,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     DeviceHelper.getDeviceOrientation(activity),
                     DeviceHelper.getDeviceType(activity),
                     ImportMethod.PICKER);
-            LOG.info("Document imported: {}", document);
+            LOG.info("Document imported: {}", LogSanitizer.sanitize(document));
             requestClientDocumentCheck(document);
         } catch (final IllegalArgumentException e) {
             LOG.error("Failed to import selected document", e);
@@ -1360,7 +1369,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
                     @Override
                     public void documentRejected(@NonNull final String messageForUser) {
-                        LOG.debug("Client rejected the document: {}", messageForUser);
+                        LOG.debug("Client rejected the document: {}", LogSanitizer.sanitize(messageForUser));
 
                         hideActivityIndicatorAndEnableInteraction();
 

@@ -8,7 +8,7 @@ import androidx.annotation.VisibleForTesting;
 import net.gini.android.core.api.authorization.crypto.GiniCrypto;
 import net.gini.android.core.api.authorization.crypto.GiniCryptoException;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.10.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -32,7 +32,7 @@ public class EncryptedCredentialsStore implements CredentialsStore {
         mSharedPreferences = sharedPreferences;
         mSharedPreferencesCredentialsStore = new SharedPreferencesCredentialsStore(
                 sharedPreferences);
-        mCrypto = GiniCrypto.newInstance(sharedPreferences, context);
+        mCrypto = GiniCrypto.newInstance();
     }
 
     public void encryptExistingPlaintextCredentials() {
@@ -65,6 +65,7 @@ public class EncryptedCredentialsStore implements CredentialsStore {
             }
             return stored;
         } catch (GiniCryptoException ignored) {
+            // Encryption failed — return false to indicate credentials were not stored
         }
         return false;
     }
@@ -84,6 +85,7 @@ public class EncryptedCredentialsStore implements CredentialsStore {
                 return new UserCredentials(mCrypto.decrypt(encryptedUserCredentials.getUsername()),
                         mCrypto.decrypt(encryptedUserCredentials.getPassword()));
             } catch (GiniCryptoException ignored) {
+                // Decryption failed — return null to indicate credentials are unavailable
             }
         }
         return null;

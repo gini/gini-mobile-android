@@ -11,7 +11,7 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 
-/**
+/*
  * Created by Alpar Szotyori on 13.02.2020.
  *
  * Copyright (c) 2020 Gini GmbH.

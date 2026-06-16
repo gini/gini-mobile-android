@@ -41,6 +41,7 @@ public class SharedPreferencesCredentialsStoreTest {
             new SharedPreferencesCredentialsStore(null);
             fail("NullPointerException not raised");
         } catch (NullPointerException ignored) {
+            // Expected: NullPointerException should be thrown for null argument
         }
     }
 
