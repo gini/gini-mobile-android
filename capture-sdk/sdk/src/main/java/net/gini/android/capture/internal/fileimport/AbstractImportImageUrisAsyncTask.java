@@ -19,6 +19,7 @@ import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoFactory;
 import net.gini.android.capture.internal.util.DeviceHelper;
 import net.gini.android.capture.internal.util.FileImportValidator;
+import net.gini.android.capture.internal.util.LogSanitizer;
 import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.util.IntentHelper;
 import net.gini.android.capture.util.UriHelper;
@@ -82,16 +83,16 @@ public abstract class AbstractImportImageUrisAsyncTask extends
             return null;
         }
         for (final Uri uri : uris) {
-            LOG.debug("Importing from uri {}", uri);
+            LOG.debug("Importing from uri {}", LogSanitizer.sanitize(uri));
             if (isCancelled()) {
-                LOG.debug("Import cancelled for uri {}", uri);
+                LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
                 return null;
             }
             if (!UriHelper.isUriInputStreamAvailable(uri, mContext)) {
-                LOG.error("Uri input stream not available for uri {}", uri);
+                LOG.error("Uri input stream not available for uri {}", LogSanitizer.sanitize(uri));
                 if (shouldHaltOnError(multiPageDocument, new ImportedFileValidationException( // NOPMD
                         "InputStream not available for one of the Intent's data Uris"))) {
-                    LOG.debug("Halt on error for uri {}", uri);
+                    LOG.debug("Halt on error for uri {}", LogSanitizer.sanitize(uri));
                     return null;
                 }
                 continue;
@@ -99,7 +100,7 @@ public abstract class AbstractImportImageUrisAsyncTask extends
             fileImportValidator = new FileImportValidator(mContext, mGiniCapture.getImportedFileSizeBytesLimit()); // NOPMD
             if (fileImportValidator.matchesCriteria(uri)) {
                 if (isCancelled()) {
-                    LOG.debug("Import cancelled for uri {}", uri);
+                    LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
                     return null;
                 }
                 if (isImage(uri)) {
@@ -111,11 +112,11 @@ public abstract class AbstractImportImageUrisAsyncTask extends
                     }
                 }
             } else {
-                LOG.error("File validation failed for uri {} with error {}", uri,
-                        fileImportValidator.getError());
+                LOG.error("File validation failed for uri {} with error {}", LogSanitizer.sanitize(uri),
+                        LogSanitizer.sanitize(fileImportValidator.getError()));
                 if (shouldHaltOnError(multiPageDocument,
                         new ImportedFileValidationException(fileImportValidator.getError()))) { // NOPMD
-                    LOG.debug("Halt on error for uri {}", uri);
+                    LOG.debug("Halt on error for uri {}", LogSanitizer.sanitize(uri));
                     return null;
                 }
             }
@@ -137,62 +138,62 @@ public abstract class AbstractImportImageUrisAsyncTask extends
     private ImageDocument processImageUri(@NonNull final Uri uri,
             @NonNull final ImageMultiPageDocument multiPageDocument) {
         final ImageDocument document = createDocument(uri);
-        LOG.debug("ImageDocument created from uri {}", uri);
+        LOG.debug("ImageDocument created from uri {}", LogSanitizer.sanitize(uri));
         // Load uri into memory
         try {
-            LOG.debug("Read uri into memory {}", uri);
+            LOG.debug("Read uri into memory {}", LogSanitizer.sanitize(uri));
             final byte[] bytesFromUri = UriHelper.getBytesFromUri(uri, mContext);
             document.setData(bytesFromUri);
         } catch (final IOException e) {
-            LOG.error("Failed to read uri into memory {}", uri);
+            LOG.error("Failed to read uri into memory {}", LogSanitizer.sanitize(uri));
             if (shouldHaltOnError(multiPageDocument,
                     new ImportedFileValidationException(
                             "Failed to read file into memory"))) {
-                LOG.debug("Halt on error for uri {}", uri);
+                LOG.debug("Halt on error for uri {}", LogSanitizer.sanitize(uri));
                 return null;
             }
             return document;
         }
         if (isCancelled()) {
-            LOG.debug("Import cancelled for uri {}", uri);
+            LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
             return null;
         }
         // Create Photo
-        LOG.debug("Create Photo from uri {}", uri);
+        LOG.debug("Create Photo from uri {}", LogSanitizer.sanitize(uri));
         final Photo photo = PhotoFactory.newPhotoFromDocument(document);
         if (isCancelled()) {
-            LOG.debug("Import cancelled for uri {}", uri);
+            LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
             return null;
         }
         // Compress Photo
-        LOG.debug("Compress Photo created from uri {}", uri);
+        LOG.debug("Compress Photo created from uri {}", LogSanitizer.sanitize(uri));
         photo.edit().compressByDefault().apply();
         if (isCancelled()) {
-            LOG.debug("Import cancelled for uri {}", uri);
+            LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
             return null;
         }
         // Save to local storage
-        LOG.debug("Save compressed Photo to local storage created from uri {}", uri);
+        LOG.debug("Save compressed Photo to local storage created from uri {}", LogSanitizer.sanitize(uri));
         final Uri localUri = mGiniCapture.internal().getImageDiskStore()
                 .save(mContext, photo.getData());
         if (localUri == null) {
-            LOG.error("Failed to copy to app storage uri {}", uri);
+            LOG.error("Failed to copy to app storage uri {}", LogSanitizer.sanitize(uri));
             if (shouldHaltOnError(multiPageDocument,
                     new ImportedFileValidationException(
                             "Failed to copy to app storage"))) {
-                LOG.debug("Halt on error for uri {}", uri);
+                LOG.debug("Halt on error for uri {}", LogSanitizer.sanitize(uri));
                 return null;
             }
             return document;
         }
         if (isCancelled()) {
-            LOG.debug("Import cancelled for uri {}", uri);
+            LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
             return null;
         }
         // Create compressed Document
         final ImageDocument compressedDocument =
                 DocumentFactory.newImageDocumentFromPhoto(photo, localUri);
-        LOG.debug("Compressed ImageDocument created from uri {}", uri);
+        LOG.debug("Compressed ImageDocument created from uri {}", LogSanitizer.sanitize(uri));
         multiPageDocument.addDocument(compressedDocument);
         return compressedDocument;
     }

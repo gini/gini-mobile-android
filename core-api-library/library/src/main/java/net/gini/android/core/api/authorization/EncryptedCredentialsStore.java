@@ -32,7 +32,7 @@ public class EncryptedCredentialsStore implements CredentialsStore {
         mSharedPreferences = sharedPreferences;
         mSharedPreferencesCredentialsStore = new SharedPreferencesCredentialsStore(
                 sharedPreferences);
-        mCrypto = GiniCrypto.newInstance(sharedPreferences, context);
+        mCrypto = GiniCrypto.newInstance();
     }
 
     public void encryptExistingPlaintextCredentials() {

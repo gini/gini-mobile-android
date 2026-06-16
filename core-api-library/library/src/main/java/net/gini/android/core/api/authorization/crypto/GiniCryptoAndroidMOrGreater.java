@@ -85,6 +85,9 @@ class GiniCryptoAndroidMOrGreater extends GiniCrypto {
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(256) // CWE-327: explicitly use 256-bit AES key instead of the 128-bit default
+                // IVs are externally generated and prepended to the ciphertext (see GiniCrypto#encrypt),
+                // so randomized encryption must be disabled to allow supplying the IV.
                 .setRandomizedEncryptionRequired(false)
                 .setUserAuthenticationRequired(false) // Intentional: key is used for app credential storage, not user-facing data //NOSONAR java:S6288
                 .build();
