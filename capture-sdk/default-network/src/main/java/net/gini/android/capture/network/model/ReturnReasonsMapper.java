@@ -11,7 +11,7 @@ import java.util.List;
  * Helper class to map the {@link net.gini.android.bank.api.models.ReturnReason} from the Gini API SDK to the Gini Capture
  * Library's {@link GiniCaptureReturnReason} and vice versa.
  */
-public class ReturnReasonsMapper {
+public final class ReturnReasonsMapper {
 
     private ReturnReasonsMapper() {
         // Utility class - do not instantiate
