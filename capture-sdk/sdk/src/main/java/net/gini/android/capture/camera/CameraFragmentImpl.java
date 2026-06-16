@@ -1179,6 +1179,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             case EPC069_12:
             case BEZAHL_CODE:
             case GINI_PAYMENT:
+            case SPC:
+            case SPD:
+            case PAY_BY_SQUARE:
+            case UPNQR:
+            case HUB3:
                 QRCodeDocument mQRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(
                         paymentQRCodeData);
                 sendQRCodeScannedEventToUserAnalytics(true);
