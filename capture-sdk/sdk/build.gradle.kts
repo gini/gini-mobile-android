@@ -147,6 +147,7 @@ dependencies {
     implementation(libs.mlkit.textrecognition)
     implementation(libs.apachecommons.imaging)
     implementation(libs.apachecommons.compress)
+    implementation(libs.tukaani.xz)
     implementation(libs.completableFuture)
 
     implementation(libs.androidx.camera.camera2)

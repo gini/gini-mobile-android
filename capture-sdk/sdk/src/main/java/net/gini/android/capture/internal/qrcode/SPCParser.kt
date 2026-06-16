@@ -15,7 +15,7 @@ internal class SPCParser : QRCodeParser<PaymentQRCodeData> {
     private val ibanValidator = IBANValidator()
 
     override fun parse(qrCodeContent: String): PaymentQRCodeData {
-        val lines = qrCodeContent.replace(Regex("\r\r?\n"), "\n").split(Regex("\n|\r"), -1)
+        val lines = qrCodeContent.replace(Regex("\r\r?\n"), "\n").split(Regex("\n|\r"), 0)
 
         if (lines.isEmpty() || lines[0] != HEADER) {
             throw IllegalArgumentException("QR code content does not conform to the SPC format.")
@@ -55,10 +55,12 @@ internal class SPCParser : QRCodeParser<PaymentQRCodeData> {
 
         const val IDX_IBAN = 3
         const val IDX_CREDITOR_NAME = 5
-        const val IDX_AMOUNT = 17
-        const val IDX_CURRENCY = 18
-        const val IDX_REFERENCE_TYPE = 25
-        const val IDX_REFERENCE = 26
-        const val IDX_MESSAGE = 27
+        // Lines 4-10: Creditor (7 fields), lines 11-17: Ultimate Creditor (7 fields, usually empty)
+        const val IDX_AMOUNT = 18
+        const val IDX_CURRENCY = 19
+        // Lines 20-26: Ultimate Debtor (7 fields, usually empty)
+        const val IDX_REFERENCE_TYPE = 27
+        const val IDX_REFERENCE = 28
+        const val IDX_MESSAGE = 29
     }
 }

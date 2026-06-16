@@ -15,7 +15,7 @@ internal class HUB3Parser : QRCodeParser<PaymentQRCodeData> {
     private val ibanValidator = IBANValidator()
 
     override fun parse(qrCodeContent: String): PaymentQRCodeData {
-        val lines = qrCodeContent.replace(Regex("\r\r?\n"), "\n").split(Regex("\n|\r"), -1)
+        val lines = qrCodeContent.replace(Regex("\r\r?\n"), "\n").split(Regex("\n|\r"), 0)
 
         if (lines.size < MINIMUM_LINE_COUNT || lines[0] != HEADER) {
             throw IllegalArgumentException(

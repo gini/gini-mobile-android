@@ -82,7 +82,7 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
     }
 
     private fun parseFields(rawContent: String, decompressed: String): PaymentQRCodeData {
-        val fields = decompressed.split("\t", limit = -1)
+        val fields = decompressed.split("\t")
 
         if (fields.size <= IDX_BANKS_COUNT) {
             throw IllegalArgumentException(
