@@ -150,6 +150,7 @@ truth = { module = "com.google.truth:truth", version.ref = "google-truth" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robo" }
 logback-android = { module = "com.github.tony19:logback-android", version.ref = "logback-android" }
 jacocoAndroid = { module = "com.hiya:jacoco-android", version.ref = "hiya-android" }
+sonarqube-gradle = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version.ref = "sonarqube" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 benManesVersions-gradle = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "ben-manes-gradle-versions" }
 trustkit = { module = "com.datatheorem.android.trustkit:trustkit", version.ref = "android-trustkit" }

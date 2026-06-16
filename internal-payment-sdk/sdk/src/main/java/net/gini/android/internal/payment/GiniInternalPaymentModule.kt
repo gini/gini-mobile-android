@@ -27,7 +27,7 @@ import net.gini.android.internal.payment.utils.PaymentEventListener
 import org.slf4j.LoggerFactory
 
 /**
- * Entrypoint to common functionality for HealthSDK and MerchantSDK.
+ * Entrypoint to common functionality for HealthSDK
  */
 class GiniInternalPaymentModule(
     private val context: Context,

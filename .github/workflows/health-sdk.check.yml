@@ -190,8 +190,10 @@ jobs:
             -PclientId="gini-mobile-ci" \
             -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
 
-      # Run Sonar on both modules
+      - name: Generate coverage report
+        run: ./gradlew :health-sdk:sdk:jacocoTestReport
+
       - name: SonarQube Scan
-        run: ./gradlew health-sdk:sdk:sonar health-sdk:example-app:sonar --info --stacktrace
+        run: ./gradlew :health-sdk:sdk:sonar --info --stacktrace
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

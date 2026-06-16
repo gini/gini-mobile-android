@@ -71,7 +71,7 @@ android {
     buildTypes {
         val credentials = readLocalPropertiesToMapSilent(project, listOf("amplitudeApiKey"))
         debug {
-            isTestCoverageEnabled = true
+            isTestCoverageEnabled = false
             resValue("string", "amplitude_api_key", credentials["amplitudeApiKey"] ?: "")
         }
         release {
@@ -210,6 +210,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<SBOMPlugin>()
 
 tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {

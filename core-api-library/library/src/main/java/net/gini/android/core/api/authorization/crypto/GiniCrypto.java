@@ -1,5 +1,7 @@
 package net.gini.android.core.api.authorization.crypto;
 
+import static java.security.CryptoPrimitive.SECURE_RANDOM;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
@@ -18,7 +20,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.10.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
