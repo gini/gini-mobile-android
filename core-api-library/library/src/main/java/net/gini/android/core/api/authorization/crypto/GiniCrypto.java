@@ -1,5 +1,7 @@
 package net.gini.android.core.api.authorization.crypto;
 
+import static java.security.CryptoPrimitive.SECURE_RANDOM;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
@@ -63,8 +65,9 @@ public abstract class GiniCrypto {
     }
 
     private byte[] generateIV() {
+        final SecureRandom secureRandom = new SecureRandom();
         final byte[] iv = new byte[12];
-        SECURE_RANDOM.nextBytes(iv);
+        secureRandom.nextBytes(iv);
         return iv;
     }
 
