@@ -11,8 +11,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import net.gini.android.core.api.authorization.Session;
 import net.gini.android.core.api.authorization.apimodels.SessionToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,14 +32,14 @@ public class SessionTest {
     }
 
     @Test
-    public void testFactoryReturnsSession() throws JSONException {
+    public void testFactoryReturnsSession() {
         SessionToken responseData = createTestResponse();
 
         assertNotNull(Session.fromAPIResponse(responseData));
     }
 
     @Test
-    public void testFactorySetsCorrectAccessToken() throws JSONException {
+    public void testFactorySetsCorrectAccessToken() {
         SessionToken responseData = createTestResponse();
 
         Session session = Session.fromAPIResponse(responseData);
@@ -50,7 +48,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testFactorySetsCorrectExpirationDate() throws JSONException {
+    public void testFactorySetsCorrectExpirationDate() {
         SessionToken responseData = createTestResponse();
 
         Session session = Session.fromAPIResponse(responseData);

@@ -58,21 +58,21 @@ abstract class DocumentRemoteSource(
         val response = SafeApiRequest.apiRequest {
             documentService.getDocument(bearerHeaderMap(accessToken), documentId)
         }
-        response.body()?.string() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body()?.string() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun getDocumentFromUri(accessToken: String, uri: Uri): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getDocumentFromUri(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), uriRelativeToBaseUri(uri).toString())
         }
-        response.body()?.string() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body()?.string() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun getExtractions(accessToken: String, documentId: String): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getExtractions(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId)
         }
-        response.body()?.string() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body()?.string() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun getDocumentLayout(accessToken: String, documentId: String): DocumentLayout =
@@ -82,7 +82,7 @@ abstract class DocumentRemoteSource(
                     bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId
                 )
         }
-        response.body()?.toDocumentLayout() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body()?.toDocumentLayout() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun getDocumentPages(accessToken: String, documentId: String): List<DocumentPage> = withContext(coroutineContext) {
@@ -91,7 +91,7 @@ abstract class DocumentRemoteSource(
                 bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId
             )
         }
-        response.body()?.map { it.toDocumentPage() } ?: throw ApiException.forResponse("Empty response body", response)
+        response.body()?.map { it.toDocumentPage() } ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun sendFeedback(accessToken: String, documentId: String, requestBody: RequestBody): Unit = withContext(coroutineContext) {
@@ -104,28 +104,28 @@ abstract class DocumentRemoteSource(
         val response = SafeApiRequest.apiRequest {
             documentService.getFile(bearerHeaderMap(accessToken, accept = null, contentType = giniApiType.giniJsonMediaType), location)
         }
-        response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body()?.bytes() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun getPaymentRequest(accessToken: String, id: String): PaymentRequestResponse = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequest(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), id)
         }
-        response.body() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun getPaymentRequests(accessToken: String): List<PaymentRequestResponse> = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequests(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType))
         }
-        response.body() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     suspend fun getPayment(accessToken: String, id: String): Payment = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPayment(bearerHeaderMap(accessToken, giniApiType.giniJsonMediaType), id)
         }
-        response.body()?.toPayment() ?: throw ApiException.forResponse("Empty response body", response)
+        response.body()?.toPayment() ?: throw ApiException.forResponse(EMPTY_RESPONSE_BODY, response)
     }
 
     protected fun bearerHeaderMap(
@@ -142,8 +142,8 @@ abstract class DocumentRemoteSource(
         }
     }
 
-    private fun uriRelativeToBaseUri(uri: Uri): Uri? {
-        return baseUri?.buildUpon()?.path(uri.path)?.query(uri.query)?.build()
+    private fun uriRelativeToBaseUri(uri: Uri): Uri {
+        return baseUri.buildUpon().path(uri.path).query(uri.query).build()
     }
 
     private fun getBaseUri(baseUriString: String?, giniApiType: GiniApiType): Uri {
@@ -156,6 +156,7 @@ abstract class DocumentRemoteSource(
 
     companion object {
         const val HEADER_LOCATION_KEY = "location"
+        private const val EMPTY_RESPONSE_BODY = "Empty response body"
     }
 
 }

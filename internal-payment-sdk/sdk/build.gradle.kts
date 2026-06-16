@@ -1,5 +1,6 @@
 import net.gini.gradle.CodeAnalysisPlugin
 import net.gini.gradle.DokkaPlugin
+import net.gini.gradle.JacocoCoveragePlugin
 import net.gini.gradle.PublishToMavenPlugin
 import net.gini.gradle.SBOMPlugin
 import net.gini.gradle.extensions.apiProjectDependencyForSBOM
@@ -8,6 +9,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+    id("jacoco")
     id ("org.sonarqube")
 }
 
@@ -16,8 +18,13 @@ sonar {
         property("sonar.projectKey", "android-internal-payment-sdk")
         property("sonar.projectName", "Android Internal Payment SDK")
         property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")
     }
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
 }
 
 android {
@@ -46,6 +53,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            isTestCoverageEnabled = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -122,4 +132,5 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<SBOMPlugin>()

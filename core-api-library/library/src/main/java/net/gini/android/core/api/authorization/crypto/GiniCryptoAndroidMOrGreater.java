@@ -22,7 +22,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.10.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -89,6 +89,7 @@ class GiniCryptoAndroidMOrGreater extends GiniCrypto {
                 // IVs are externally generated and prepended to the ciphertext (see GiniCrypto#encrypt),
                 // so randomized encryption must be disabled to allow supplying the IV.
                 .setRandomizedEncryptionRequired(false)
+                .setUserAuthenticationRequired(false) // Intentional: key is used for app credential storage, not user-facing data //NOSONAR java:S6288
                 .build();
         keyGenerator.init(spec);
         keyGenerator.generateKey();
