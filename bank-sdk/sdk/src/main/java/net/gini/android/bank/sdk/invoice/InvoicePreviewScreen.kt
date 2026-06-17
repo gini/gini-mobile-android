@@ -78,12 +78,14 @@ internal fun InvoicePreviewScreen(
                 viewModel.onUserNavigatesBack()
             },
             colors = colors,
-            isLoading = state.isLoading,
-            screenTitle = state.screenTitle,
-            infoTextLines = state.infoTextLines,
-            images = state.images,
+            contentState = InvoiceScreenContentState(
+                isLoading = state.isLoading,
+                screenTitle = state.screenTitle,
+                infoTextLines = state.infoTextLines,
+                images = state.images,
+            ),
             onUserZoomedScreenOnce = viewModel::onUserZoomedImage,
-            isLandScape = isLandScape
+            isLandScape = isLandScape,
         )
     }
 }
@@ -175,10 +177,7 @@ private const val DEFAULT_ZOOM = 1f
 
 @Composable
 internal fun InvoiceScreenReadyContent(
-    isLoading: Boolean,
-    screenTitle: String,
-    infoTextLines: List<String>,
-    images: List<Bitmap>,
+    contentState: InvoiceScreenContentState,
     onCloseClicked: () -> Unit,
     onUserZoomedScreenOnce: () -> Unit,
     modifier: Modifier = Modifier,
@@ -199,7 +198,7 @@ internal fun InvoiceScreenReadyContent(
         ) {
 
             AnimatedVisibility(
-                modifier = Modifier.align(Alignment.Center), visible = isLoading
+                modifier = Modifier.align(Alignment.Center), visible = contentState.isLoading
             ) {
                 CircularProgressIndicator()
             }
@@ -208,11 +207,11 @@ internal fun InvoiceScreenReadyContent(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(top = 64.dp),
-                visible = !isLoading
+                visible = !contentState.isLoading
             ) {
                 ImagesList(
                     modifier = Modifier,
-                    pages = images,
+                    pages = contentState.images,
                     onScaleChanged = {
                         if (it != DEFAULT_ZOOM && !isUserZoomedOnce) {
                             onUserZoomedScreenOnce()
@@ -224,7 +223,7 @@ internal fun InvoiceScreenReadyContent(
             }
 
             GiniTopBar(
-                title = screenTitle,
+                title = contentState.screenTitle,
                 colors = colors.topBarColors,
                 navigationIcon = {
                     NavigationActionBack(
@@ -239,7 +238,7 @@ internal fun InvoiceScreenReadyContent(
 
             Footer(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                infoTextLines = infoTextLines,
+                infoTextLines = contentState.infoTextLines,
                 colors = colors.footerColors,
             )
         }
@@ -340,10 +339,12 @@ private fun InvoiceScreenContentPreviewLandscape() {
     GiniTheme {
         InvoiceScreenReadyContent(
             onCloseClicked = {},
-            screenTitle = "Screen Title",
-            isLoading = true,
-            images = emptyList(),
-            infoTextLines = listOf("Line 1", "Line 2"),
+            contentState = InvoiceScreenContentState(
+                screenTitle = "Screen Title",
+                isLoading = true,
+                images = emptyList<Bitmap>(),
+                infoTextLines = listOf("Line 1", "Line 2"),
+            ),
             onUserZoomedScreenOnce = {}
         )
     }
@@ -355,10 +356,12 @@ private fun InvoiceScreenContentPreview() {
     GiniTheme {
         InvoiceScreenReadyContent(
             onCloseClicked = {},
-            screenTitle = "Screen Title",
-            isLoading = true,
-            images = emptyList(),
-            infoTextLines = listOf("Line 1", "Line 2"),
+            contentState = InvoiceScreenContentState(
+                screenTitle = "Screen Title",
+                isLoading = true,
+                images = emptyList<Bitmap>(),
+                infoTextLines = listOf("Line 1", "Line 2"),
+            ),
             onUserZoomedScreenOnce = {}
         )
     }

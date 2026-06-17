@@ -40,8 +40,9 @@ class SkontoFragment : Fragment() {
             field = value
         }
 
-    private val isBottomNavigationBarEnabled =
-        GiniCapture.getInstance().isBottomNavigationBarEnabled
+    // GiniCapture.isBottomNavigationBarEnabled() is @Deprecated and always returns false.
+    // Hardcode false to avoid the deprecated call and keep this consistent with the SDK intent.
+    private val isBottomNavigationBarEnabled: Boolean = false
 
     private val customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
         GiniBank.skontoNavigationBarBottomAdapterInstance
@@ -73,34 +74,37 @@ class SkontoFragment : Fragment() {
                 GiniTheme {
                     SkontoScreenContent(
                         viewModel = viewModel,
-                        isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-                        customBottomNavBarAdapter = customBottomNavBarAdapter,
-                        navigateBack = {
-                            findNavController()
-                                .navigate(SkontoFragmentDirections.toCaptureFragment())
-                        },
-                        navigateToInvoiceScreen = { documentId, infoTextLines ->
-                            findNavController()
-                                .navigate(
-                                    SkontoFragmentDirections.toInvoicePreviewFragment(
-                                        screenTitle = context.getString(R.string.gbs_skonto_invoice_preview_title),
-                                        documentId = documentId,
-                                        highlightBoxes = args.invoiceHighlights.flatMap { it.getExistBoxes() }
-                                            .toTypedArray(),
-                                        infoTextLines = infoTextLines.toTypedArray()
-                                    )
-                                )
-                        },
-                        navigateToHelp = {
-                            findNavController().navigate(SkontoFragmentDirections.toSkontoHelpFragment())
-                        },
                         amountFormatter = amountFormatter,
-                        isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
-                        composableProviderConfig =
-                            GiniCapture.getInstance()
+                        customBottomNavBarAdapter = customBottomNavBarAdapter,
+                        displayConfig = SkontoDisplayConfig(
+                            isLandScape = !ContextHelper.isPortraitOrientation(requireContext()),
+                            isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
+                            composableProviderConfig = GiniCapture.getInstance()
                                 .giniComposableStyleProvider?.setGiniComposableStyleProviderConfig(),
-                        shouldFieldShowKeyboard = viewModel.isKeyboardVisible,
-                        isTablet = ContextHelper.isTablet(requireContext())
+                            shouldFieldShowKeyboard = viewModel.isKeyboardVisible,
+                            isTablet = ContextHelper.isTablet(requireContext()),
+                        ),
+                        navigationHandlers = SkontoNavigationHandlers(
+                            navigateBack = {
+                                findNavController()
+                                    .navigate(SkontoFragmentDirections.toCaptureFragment())
+                            },
+                            navigateToHelp = {
+                                findNavController().navigate(SkontoFragmentDirections.toSkontoHelpFragment())
+                            },
+                            navigateToInvoiceScreen = { documentId, infoTextLines ->
+                                findNavController()
+                                    .navigate(
+                                        SkontoFragmentDirections.toInvoicePreviewFragment(
+                                            screenTitle = context.getString(R.string.gbs_skonto_invoice_preview_title),
+                                            documentId = documentId,
+                                            highlightBoxes = args.invoiceHighlights.flatMap { it.getExistBoxes() }
+                                                .toTypedArray(),
+                                            infoTextLines = infoTextLines.toTypedArray()
+                                        )
+                                    )
+                            },
+                        ),
                     )
                 }
             }

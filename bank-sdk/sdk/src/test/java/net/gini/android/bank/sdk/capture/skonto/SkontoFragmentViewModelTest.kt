@@ -6,6 +6,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import net.gini.android.bank.sdk.MainDispatcherRule
 import net.gini.android.bank.sdk.capture.skonto.factory.lines.SkontoInvoicePreviewTextLinesFactory
@@ -554,6 +555,7 @@ class SkontoFragmentViewModelTest {
             val openExtractionsScreenSubIntent = OpenExtractionsScreenSubIntent(
                 skontoExtractionsHandler = mockk(relaxed = true),
                 lastExtractionsProvider = mockk(relaxed = true),
+                mainDispatcher = Dispatchers.Main,
             )
 
             val proceedClickedIntent = ProceedClickedIntent(

@@ -252,7 +252,7 @@ internal sealed class ViewType {
             1 -> LineItem
             2 -> Addon
             3 -> SkontoInfo
-            else -> throw IllegalStateException("Unknow adapter view type id: $viewTypeId")
+            else -> error("Unknown adapter view type id: $viewTypeId")
         }
     }
 }
@@ -445,6 +445,7 @@ internal sealed class ViewHolder<in T>(itemView: View, val viewType: ViewType) :
         }
 
         override fun unbind() {
+            // No unbinding needed for this view holder
         }
     }
 

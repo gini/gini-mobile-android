@@ -2,7 +2,7 @@
 
 package net.gini.android.bank.sdk.capture.skonto.viewmodel.subintent
 
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import net.gini.android.bank.sdk.capture.extractions.skonto.SkontoExtractionsHandler
 import net.gini.android.bank.sdk.capture.skonto.SkontoFragmentListener
@@ -14,6 +14,7 @@ import org.orbitmvi.orbit.annotation.OrbitExperimental
 internal class OpenExtractionsScreenSubIntent(
     private val skontoExtractionsHandler: SkontoExtractionsHandler,
     private val lastExtractionsProvider: LastExtractionsProvider,
+    private val mainDispatcher: CoroutineDispatcher,
 ) {
 
     suspend fun SkontoScreenContainerHost.run(listener: SkontoFragmentListener?) = subIntent {
@@ -26,7 +27,7 @@ internal class OpenExtractionsScreenSubIntent(
             discountDueDate = state.discountDueDate.toString(),
         )
         lastExtractionsProvider.update(skontoExtractionsHandler.getExtractions().toMutableMap())
-        withContext(Dispatchers.Main) {
+        withContext(mainDispatcher) {
             listener?.onPayInvoiceWithSkonto(
                 skontoExtractionsHandler.getExtractions(),
                 skontoExtractionsHandler.getCompoundExtractions()

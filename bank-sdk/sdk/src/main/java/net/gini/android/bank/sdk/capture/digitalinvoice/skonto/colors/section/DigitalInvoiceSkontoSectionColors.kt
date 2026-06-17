@@ -23,6 +23,7 @@ data class DigitalInvoiceSkontoSectionColors(
     companion object {
 
         @Composable
+        @Suppress("kotlin:S107") // Color factory functions intentionally have many optional parameters
         fun colors(
             titleTextColor: Color = GiniTheme.colorScheme.text.primary,
             switchColors: GiniSwitchColors = GiniSwitchColors.colors(),

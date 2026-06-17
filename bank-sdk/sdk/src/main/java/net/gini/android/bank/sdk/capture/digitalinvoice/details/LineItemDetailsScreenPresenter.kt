@@ -150,11 +150,9 @@ internal class LineItemDetailsScreenPresenter(
             selectableLineItem.lineItem.id.isBlank() -> {
                 val lineItem = selectableLineItem.lineItem.copy(UUID.randomUUID().toString())
                 view.onSave(selectableLineItem.copy(lineItem = lineItem))
-//                listener?.onSave(selectableLineItem.copy(lineItem = lineItem))
             }
             else -> {
                 view.onSave(selectableLineItem)
-//                listener?.onSave(selectableLineItem)
             }
         }
     }
@@ -195,6 +193,7 @@ internal class LineItemDetailsScreenPresenter(
     }
 
     override fun stop() {
+        // No cleanup needed on stop for this presenter
     }
 }
 

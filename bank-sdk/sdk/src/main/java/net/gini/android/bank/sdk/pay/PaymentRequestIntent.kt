@@ -12,7 +12,7 @@ fun getRequestId(intent: Intent): String {
     val uri = intent.data
     check(uri != null) { "Intent has wrong action" }
     check(uri.scheme == Scheme) { "Intent has wrong scheme" }
-    val path = uri.pathSegments
+    val path: List<String>? = uri.pathSegments
     check(path != null && path.size == 1 && uri.authority == PaymentPath) { "Intent has wrong path" }
     return path[0]
 }
