@@ -11,27 +11,46 @@ import java.io.IOException
 /**
  * QR Code parser for the Pay by Square format used in Slovakia and Czech Republic.
  *
- * The QR code carries an alphanumeric string encoded with the bysquare custom base32 alphabet
- * (characters `0–9` and `A–V`, each representing 5 bits). Decoding the string yields raw bytes
- * whose first 2 bytes are a bysquare header (upper nibble of byte 0 = document type, PAY = 0),
- * followed by an LZMA-compressed, TAB-separated payload.
+ * The QR code carries an alphanumeric string encoded with the bysquare custom base32hex alphabet
+ * (characters `0–9` and `A–V`, each representing 5 bits). After decoding the string to bytes the
+ * binary layout is:
  *
- * Payload field layout (0-indexed, TAB-separated after decompression):
  * ```
- *  0  – PaymentOptions
- *  1  – Amount
- *  2  – CurrencyCode
- *  3  – PaymentDueDate
- *  4  – VariableSymbol
- *  5  – ConstantSymbol
- *  6  – SpecificSymbol
- *  7  – OriginatorReferenceInfo
- *  8  – PaymentNote
- *  9  – BankAccountsCount
- *  10 – IBAN (first bank)
- *  11 – BIC  (first bank)
- *  12 + N*2 – BeneficiaryName  (N = BankAccountsCount)
+ * Bytes 0-1: bysquare header  (nibbles: BySquareType | Version | DocType | Reserved)
+ * Bytes 2-3: payload length   (little-endian uint16 = uncompressed size of CRC32 + tab-data)
+ * Bytes 4+:  raw LZMA body    (standard 13-byte LZMA "alone" header is stripped by the encoder)
  * ```
+ *
+ * To decompress, the 13-byte LZMA "alone" header is reconstructed with the fixed properties
+ * that bysquare encoders always use:
+ *   - Properties byte 0x5D  (lc=3, lp=0, pb=2)
+ *   - Dictionary size       131 072 bytes (= 2^17, little-endian: 00 00 02 00)
+ *   - Uncompressed size     taken from the payload-length field (bytes 2-3)
+ *
+ * After decompression the first 4 bytes are the CRC32 checksum (little-endian). The remainder
+ * is a TAB-separated payload whose fields (0-indexed) for a single-payment QR code are:
+ *
+ * ```
+ *  0  – invoiceId            (usually empty)
+ *  1  – paymentsCount        (usually "1")
+ *  2  – PaymentType
+ *  3  – Amount
+ *  4  – CurrencyCode
+ *  5  – PaymentDueDate
+ *  6  – VariableSymbol
+ *  7  – ConstantSymbol
+ *  8  – SpecificSymbol
+ *  9  – OriginatorReferenceInfo
+ *  10 – PaymentNote
+ *  11 – BankAccountsCount
+ *  12 – IBAN (first bank)
+ *  13 – BIC  (first bank)
+ *  …  additional banks (2 fields each)
+ *  12 + N*2     – StandingOrderExtension ("0" or "1")
+ *  12 + N*2 + 1 – DirectDebitExtension  ("0" or "1")
+ *  12 + N*2 + 2 – BeneficiaryName
+ * ```
+ * where N = BankAccountsCount.
  */
 internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
 
@@ -40,7 +59,6 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
     override fun parse(qrCodeContent: String): PaymentQRCodeData {
         val upper = qrCodeContent.uppercase()
 
-        // Reject anything that contains characters outside the bysquare alphabet
         if (upper.any { it !in ALPHABET_SET }) {
             throw IllegalArgumentException(
                 "QR code content contains characters outside the Pay by Square alphabet."
@@ -55,22 +73,27 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
             )
         }
 
-        // Upper nibble of byte 0 is the document type; PAY = 0
-        val documentType = (rawBytes[0].toInt() and 0xFF) shr 4
-        if (documentType != DOCUMENT_TYPE_PAY) {
+        // Upper nibble of byte 0 = bysquare type; PAY = 0
+        val bysquareType = (rawBytes[0].toInt() and 0xFF) shr 4
+        if (bysquareType != BYSQUARE_TYPE_PAY) {
             throw IllegalArgumentException(
                 "QR code content is not a PayBySquare PAY document."
             )
         }
 
-        val lzmaData = rawBytes.copyOfRange(HEADER_SIZE, rawBytes.size)
-        val decompressed = decompress(lzmaData)
-        return parseFields(qrCodeContent, decompressed)
+        // Bytes 2-3: payload length (little-endian uint16) used as the LZMA uncompressed size
+        val payloadLength = (rawBytes[2].toInt() and 0xFF) or
+                ((rawBytes[3].toInt() and 0xFF) shl 8)
+
+        // Bytes 4+: raw LZMA body (no standard LZMA "alone" header)
+        val lzmaBody = rawBytes.copyOfRange(HEADER_SIZE, rawBytes.size)
+        val tabPayload = decompress(lzmaBody, payloadLength)
+        return parseFields(qrCodeContent, tabPayload)
     }
 
     /**
-     * Decodes a bysquare base32 string into raw bytes.
-     * Each character encodes 5 bits (MSB first); the bits are packed into bytes MSB first.
+     * Decodes a bysquare base32hex string into raw bytes.
+     * Each character encodes 5 bits (MSB first); bits are packed into bytes MSB first.
      */
     private fun decodeBase32(encoded: String): ByteArray {
         val totalBits = encoded.length * 5
@@ -93,17 +116,40 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
         return bytes
     }
 
-    private fun decompress(lzmaData: ByteArray): String {
+    /**
+     * Prepends the fixed 13-byte LZMA "alone" header to [lzmaBody] and decompresses.
+     * Skips the 4-byte CRC32 checksum at the start of the decompressed output.
+     */
+    private fun decompress(lzmaBody: ByteArray, uncompressedSize: Int): String {
+        // Reconstruct the 13-byte LZMA "alone" header:
+        //   1 byte  properties   (0x5D = lc=3, lp=0, pb=2)
+        //   4 bytes dictionary   (little-endian 131072 = 0x00020000)
+        //   8 bytes uncompressed size (little-endian)
+        val lzmaHeader = byteArrayOf(LZMA_PROPERTIES) +
+                LZMA_DICT_SIZE +
+                byteArrayOf(
+                    (uncompressedSize and 0xFF).toByte(),
+                    ((uncompressedSize shr 8) and 0xFF).toByte(),
+                    0, 0, 0, 0, 0, 0,
+                )
+
         try {
-            ByteArrayInputStream(lzmaData).use { bis ->
-                LZMACompressorInputStream(bis).use { lzmaStream ->
+            ByteArrayInputStream(lzmaHeader + lzmaBody).use { bis ->
+                LZMACompressorInputStream(bis).use { lzmaIn ->
                     ByteArrayOutputStream().use { bos ->
                         val buffer = ByteArray(512)
                         var read: Int
-                        while (lzmaStream.read(buffer).also { read = it } != -1) {
+                        while (lzmaIn.read(buffer).also { read = it } != -1) {
                             bos.write(buffer, 0, read)
                         }
-                        return bos.toString("UTF-8")
+                        val decompressed = bos.toByteArray()
+                        if (decompressed.size < CRC_SIZE) {
+                            throw IllegalArgumentException(
+                                "Decompressed PayBySquare payload is too short to contain a CRC32."
+                            )
+                        }
+                        // Skip 4-byte CRC32; return the tab-separated payload
+                        return String(decompressed, CRC_SIZE, decompressed.size - CRC_SIZE, Charsets.UTF_8)
                     }
                 }
             }
@@ -114,10 +160,10 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
         }
     }
 
-    private fun parseFields(rawContent: String, decompressed: String): PaymentQRCodeData {
-        val fields = decompressed.split("\t")
+    private fun parseFields(rawContent: String, payload: String): PaymentQRCodeData {
+        val fields = payload.split("\t")
 
-        if (fields.size <= IDX_BANKS_COUNT) {
+        if (fields.size <= IDX_FIRST_IBAN) {
             throw IllegalArgumentException(
                 "Decompressed PayBySquare payload has too few fields."
             )
@@ -135,8 +181,10 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
             )
         }
 
-        // Beneficiary name follows all bank account pairs (IBAN + BIC per bank)
-        val beneficiaryName = fields.getOrEmpty(IDX_FIRST_IBAN + banksCount * FIELDS_PER_BANK)
+        // After all bank account pairs: 2 extension-flag fields (standing order, direct debit)
+        // then beneficiary name
+        val beneficiaryIdx = IDX_FIRST_IBAN + banksCount * FIELDS_PER_BANK + EXTENSION_FIELDS
+        val beneficiaryName = fields.getOrEmpty(beneficiaryIdx)
 
         val reference = buildReference(
             variableSymbol = fields.getOrEmpty(IDX_VARIABLE_SYMBOL),
@@ -161,15 +209,25 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
         const val ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUV"
         val ALPHABET_SET = ALPHABET.toSet()
 
-        const val DOCUMENT_TYPE_PAY = 0
-        const val HEADER_SIZE = 2
+        const val BYSQUARE_TYPE_PAY = 0
+        // 2-byte bysquare header + 2-byte payload length; raw LZMA body starts at byte 4
+        const val HEADER_SIZE = 4
+        // CRC32 prepended to decompressed data by the bysquare encoder
+        const val CRC_SIZE = 4
         const val FIELDS_PER_BANK = 2
+        // Two extension flags between bank accounts and beneficiary block
+        const val EXTENSION_FIELDS = 2
 
-        const val IDX_AMOUNT = 1
-        const val IDX_CURRENCY = 2
-        const val IDX_VARIABLE_SYMBOL = 4
-        const val IDX_PAYMENT_NOTE = 8
-        const val IDX_BANKS_COUNT = 9
-        const val IDX_FIRST_IBAN = 10
+        // Fixed LZMA compression parameters used by all bysquare encoders
+        const val LZMA_PROPERTIES = 0x5D.toByte() // lc=3, lp=0, pb=2
+        val LZMA_DICT_SIZE = byteArrayOf(0x00, 0x00, 0x02, 0x00) // 131072 bytes little-endian
+
+        // Field indices in the TAB-separated payload (after skipping the 4-byte CRC32)
+        const val IDX_AMOUNT = 3
+        const val IDX_CURRENCY = 4
+        const val IDX_VARIABLE_SYMBOL = 6
+        const val IDX_PAYMENT_NOTE = 10
+        const val IDX_BANKS_COUNT = 11
+        const val IDX_FIRST_IBAN = 12
     }
 }

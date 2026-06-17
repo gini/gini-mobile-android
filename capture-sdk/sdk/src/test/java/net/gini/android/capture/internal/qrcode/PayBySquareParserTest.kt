@@ -2,10 +2,11 @@ package net.gini.android.capture.internal.qrcode
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
-import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.tukaani.xz.LZMA2Options
+import org.tukaani.xz.LZMAOutputStream
 import java.io.ByteArrayOutputStream
 
 @RunWith(AndroidJUnit4::class)
@@ -19,13 +20,20 @@ class PayBySquareParserTest {
     }
 
     /**
-     * Builds a bysquare PAY QR code string for testing.
+     * Builds a real bysquare-compatible QR code string for testing.
      *
-     * Payload field order (TAB-separated):
-     *   0:paymentOptions, 1:amount, 2:currency, 3:dueDate,
-     *   4:variableSymbol, 5:constantSymbol, 6:specificSymbol,
-     *   7:originatorRef, 8:paymentNote, 9:banksCount,
-     *   10:IBAN, 11:BIC, (12+N*2):beneficiaryName
+     * Binary structure produced (per the bysquare spec):
+     *   [2-byte bysquare header] [2-byte payload length] [raw LZMA body (header stripped)]
+     *
+     * Uncompressed content (before LZMA):
+     *   [4-byte CRC32 placeholder] [TAB-separated fields]
+     *
+     * TAB-separated field layout for a single payment with one bank account:
+     *   0:invoiceId, 1:paymentsCount, 2:paymentType, 3:amount, 4:currency,
+     *   5:dueDate, 6:variableSymbol, 7:constantSymbol, 8:specificSymbol,
+     *   9:originatorRef, 10:paymentNote, 11:bankAccountsCount,
+     *   12:IBAN, 13:BIC, 14:standingOrderExt, 15:directDebitExt,
+     *   16:beneficiaryName, 17:beneficiaryStreet, 18:beneficiaryCity
      */
     private fun buildPayload(
         amount: String = "100.00",
@@ -37,37 +45,56 @@ class PayBySquareParserTest {
         paymentNote: String = "Invoice",
     ): String {
         val fields = listOf(
-            "0",            // paymentOptions
-            amount,
-            currency,
-            "",             // dueDate
-            variableSymbol,
-            "",             // constantSymbol
-            "",             // specificSymbol
-            "",             // originatorRef
-            paymentNote,
-            "1",            // banksCount
-            iban,
-            bic,
-            beneficiaryName,
-            "",             // address line 1
-            "",             // address line 2
+            "",             // 0: invoiceId
+            "1",            // 1: paymentsCount
+            "1",            // 2: payment type (1 = regular payment)
+            amount,         // 3: amount
+            currency,       // 4: currencyCode
+            "",             // 5: paymentDueDate
+            variableSymbol, // 6: variableSymbol
+            "",             // 7: constantSymbol
+            "",             // 8: specificSymbol
+            "",             // 9: originatorsReferenceInformation
+            paymentNote,    // 10: paymentNote
+            "1",            // 11: bankAccountsCount
+            iban,           // 12: IBAN
+            bic,            // 13: BIC
+            "0",            // 14: standingOrderExt
+            "0",            // 15: directDebitExt
+            beneficiaryName, // 16: beneficiaryName
+            "",             // 17: beneficiaryStreet
+            "",             // 18: beneficiaryCity
         )
         val tabSeparated = fields.joinToString("\t")
-        val compressed = lzmaCompress(tabSeparated.toByteArray(Charsets.UTF_8))
-        // 2-byte bysquare header: byte 0 upper nibble = 0 (PAY type)
-        val raw = byteArrayOf(0x00, 0x00) + compressed
+
+        // Prepend 4-byte CRC32 placeholder (zeros) then LZMA-compress the whole thing
+        val uncompressed = ByteArray(4) + tabSeparated.toByteArray(Charsets.UTF_8)
+        val compressed = lzmaCompress(uncompressed)
+
+        // Strip the 13-byte LZMA "alone" header (the bysquare encoder always strips it)
+        val lzmaBody = compressed.copyOfRange(13, compressed.size)
+        val payloadLength = uncompressed.size
+
+        // Build the bysquare binary: [header] [payload length] [lzma body]
+        val raw = byteArrayOf(0x00, 0x00) +
+                byteArrayOf(
+                    (payloadLength and 0xFF).toByte(),
+                    ((payloadLength shr 8) and 0xFF).toByte(),
+                ) +
+                lzmaBody
+
         return encodeBase32(raw)
     }
 
     private fun lzmaCompress(data: ByteArray): ByteArray {
         val bos = ByteArrayOutputStream()
-        LZMACompressorOutputStream(bos).use { it.write(data) }
+        val options = LZMA2Options().apply { dictSize = 131072 }
+        LZMAOutputStream(bos, options, data.size.toLong()).use { it.write(data) }
         return bos.toByteArray()
     }
 
     /**
-     * Encodes raw bytes into a bysquare base32 string.
+     * Encodes raw bytes into a bysquare base32hex string.
      * Each output character encodes 5 bits (MSB first), using the alphabet 0–9A–V.
      */
     private fun encodeBase32(bytes: ByteArray): String {
@@ -123,21 +150,32 @@ class PayBySquareParserTest {
 
     @Test(expected = IllegalArgumentException::class)
     fun `throws for content that is too short`() {
-        // "00" decodes to 2 bytes which equals HEADER_SIZE — triggers "too short" check
-        parser.parse("00")
+        // 5 chars × 5 bits = 25 bits → 4 bytes = exactly HEADER_SIZE, triggers "too short"
+        parser.parse("00000")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `throws for non-PAY document type in header`() {
-        // Upper nibble of byte 0 = 1 (non-PAY type)
-        val raw = byteArrayOf(0x10.toByte(), 0x00) + lzmaCompress("dummy".toByteArray())
+        // Upper nibble of byte 0 = 1 (non-PAY type); rest is arbitrary valid structure
+        val tabPayload = "\t1\t1\t100.00\tEUR\t\t\t\t\t\t\t1\tSK6807200002891987426353\t\t0\t0\tTest\t\t"
+        val uncompressed = ByteArray(4) + tabPayload.toByteArray(Charsets.UTF_8)
+        val compressed = lzmaCompress(uncompressed)
+        val lzmaBody = compressed.copyOfRange(13, compressed.size)
+        val payloadLength = uncompressed.size
+        val raw = byteArrayOf(0x10.toByte(), 0x00) +  // type = 1 (non-PAY)
+                byteArrayOf(
+                    (payloadLength and 0xFF).toByte(),
+                    ((payloadLength shr 8) and 0xFF).toByte(),
+                ) +
+                lzmaBody
         parser.parse(encodeBase32(raw))
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `throws when LZMA decompression fails`() {
-        // Valid header byte but garbage LZMA payload
-        val raw = byteArrayOf(0x00, 0x00) + byteArrayOf(0x01, 0x02, 0x03, 0x04)
+        // Valid bysquare header + payload length, but garbage LZMA body
+        val raw = byteArrayOf(0x00, 0x00, 0x10, 0x00) +
+                ByteArray(30) { (it + 1).toByte() }
         parser.parse(encodeBase32(raw))
     }
 
