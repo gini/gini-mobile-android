@@ -14,10 +14,15 @@ import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.error.ErrorFragment
 import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
+import net.gini.android.capture.internal.storage.ClientConfigurationStorage
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
@@ -74,6 +79,7 @@ class GiniCaptureFragment(
     private val lastExtractionsProvider: LastExtractionsProvider by getGiniCaptureKoin().inject()
     private val giniBankConfigurationProvider: GiniBankConfigurationProvider by
     getGiniCaptureKoin().inject()
+    private val clientConfigurationStorage: ClientConfigurationStorage by getGiniCaptureKoin().inject()
 
 
     fun setListener(listener: GiniCaptureFragmentListener) {
@@ -112,12 +118,28 @@ class GiniCaptureFragment(
         if (GiniCapture.hasInstance()) {
             UserAnalytics.initialize(requireActivity())
             setCaptureVersionProperty()
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                val cachedEnabled =
+                    clientConfigurationStorage.getIsUnsupportedQRCodeWarningEnabled().first()
+                giniBankConfigurationProvider.update(
+                    giniBankConfigurationProvider.provide()
+                        .copy(isUnsupportedQRCodeWarningEnabled = cachedEnabled)
+                )
+            }
+
             val networkRequestsManager =
                 GiniCapture.getInstance().internal().networkRequestsManager
             val response = networkRequestsManager
                 ?.getConfigurations(UUID.randomUUID())
             response?.thenAcceptAsync { res ->
                 giniBankConfigurationProvider.update(res.configuration)
+
+                lifecycleScope.launch(Dispatchers.IO) {
+                    clientConfigurationStorage.setIsUnsupportedQRCodeWarningEnabled(
+                        res.configuration.isUnsupportedQRCodeWarningEnabled
+                    )
+                }
 
                 UserAnalytics.setPlatformTokens(
                     AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(
