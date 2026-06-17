@@ -69,7 +69,7 @@ class ReviewScreenTests {
     @Test
     fun test1_reviewUploadedInvoice() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickPhotos()
         imageUploader.uploadImageFromPhotos()
