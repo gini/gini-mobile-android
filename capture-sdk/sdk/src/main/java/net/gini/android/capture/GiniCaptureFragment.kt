@@ -16,7 +16,7 @@ import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.error.ErrorFragment
@@ -119,11 +119,21 @@ class GiniCaptureFragment(
             UserAnalytics.initialize(requireActivity())
             setCaptureVersionProperty()
 
-            lifecycleScope.launch(Dispatchers.IO) {
-                val cachedConfiguration = clientConfigurationStorage.getConfiguration().first()
-                if (cachedConfiguration != null) {
-                    giniBankConfigurationProvider.update(cachedConfiguration)
-                }
+            // DataStore is the single source of truth for boolean flags. The observer seeds the
+            // provider from cache on startup and re-fires when the API response is saved.
+            // clientID and amplitudeApiKey are not persisted, so they are preserved from whatever
+            // the provider already holds (empty on first launch, real values after API responds).
+            lifecycleScope.launch {
+                clientConfigurationStorage.getConfiguration()
+                    .filterNotNull()
+                    .collect { config ->
+                        giniBankConfigurationProvider.update(
+                            config.copy(
+                                clientID = giniBankConfigurationProvider.provide().clientID,
+                                amplitudeApiKey = giniBankConfigurationProvider.provide().amplitudeApiKey
+                            )
+                        )
+                    }
             }
 
             val networkRequestsManager =
@@ -131,8 +141,14 @@ class GiniCaptureFragment(
             val response = networkRequestsManager
                 ?.getConfigurations(UUID.randomUUID())
             response?.thenAcceptAsync { res ->
-                giniBankConfigurationProvider.update(res.configuration)
-
+                // clientID and amplitudeApiKey are not stored in DataStore, so update them directly.
+                // Boolean flags flow through DataStore → observer, keeping DataStore as single source.
+                giniBankConfigurationProvider.update(
+                    giniBankConfigurationProvider.provide().copy(
+                        clientID = res.configuration.clientID,
+                        amplitudeApiKey = res.configuration.amplitudeApiKey
+                    )
+                )
                 lifecycleScope.launch(Dispatchers.IO) {
                     clientConfigurationStorage.saveConfiguration(res.configuration)
                 }
