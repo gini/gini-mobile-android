@@ -1,0 +1,113 @@
+name: Publish SDK Docs (Reusable)
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      project_id:
+        description: 'The project id (e.g., health-api-library)'
+        required: true
+        type: string
+      module_id:
+        description: 'The module id (e.g., library)'
+        required: true
+        type: string
+      documentation_title:
+        description: 'The title for the documentation'
+        required: true
+        type: string
+      git_tag:
+        description: 'The Git tag for the release'
+        required: true
+        type: string
+      artifact_name:
+        description: 'The name for the uploaded documentation artifact'
+        required: true
+        type: string
+      artifact_path:
+        description: 'The path to the built documentation'
+        required: true
+        type: string
+      links_to_projects:
+        description: 'JSON array of projects linked in the documentation, e.g. [{"project_id":"capture-sdk","module_id":"sdk"}]'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      MOBILE_CI_APP_ID:
+        required: true
+      MOBILE_CI_APP_PRIVATE_KEY:
+        required: true
+
+jobs:
+  release-docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 'pypy2.7'
+
+      - name: setup ruby
+        uses: ruby/setup-ruby@44511735964dcb71245e7e55f72539531f7bc0eb # v1.257.0
+        with:
+          ruby-version: '3.2.0'
+          bundler-cache: true
+
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@064492a9a1762067169d50c792a7dc02bc3d1254 # v2.0.0
+        with:
+          app-id: ${{ secrets.MOBILE_CI_APP_ID }}
+          private-key: ${{ secrets.MOBILE_CI_APP_PRIVATE_KEY }}
+          owner: gini
+
+      - name: Configure the git client
+        run: |
+          git config --global user.name '${{ steps.generate-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+
+      - name: release documentation
+        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        with:
+          lane: 'release_documentation'
+          # Note on links_to_projects encoding: inputs.links_to_projects is a string that already
+          # contains a JSON array (e.g. '[{"project_id":"capture-sdk","module_id":"sdk"}]').
+          # toJson() is required to safely embed that string as a JSON value — without it the
+          # inner double-quotes would break the outer JSON object.  The value Fastlane receives is
+          # therefore the original JSON-array string, and Fastfile calls JSON.parse once to decode
+          # it into a Ruby array.  If that JSON.parse call is ever removed, this will silently break.
+          options: >
+            {
+              "project_id": "${{ inputs.project_id }}",
+              "module_id": "${{ inputs.module_id }}",
+              "documentation_title": "${{ inputs.documentation_title }}",
+              "git_tag": "${{ inputs.git_tag }}",
+              "ci": "true",
+              "links_to_projects": ${{ toJson(inputs.links_to_projects) }}
+            }
+
+      - name: archive documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ${{ inputs.artifact_path }}
+
