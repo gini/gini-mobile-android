@@ -7,14 +7,14 @@ import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.nio.charset.StandardCharsets
 
 /**
  * QR Code parser for the Pay by Square format used in Slovakia and Czech Republic.
  *
- * The QR code carries binary data: a 2-byte bysquare header followed by an LZMA-compressed,
- * TAB-separated payload. ML Kit returns the raw bytes decoded as a Latin-1 string, so we
- * recover the bytes via ISO-8859-1 before decompressing.
+ * The QR code carries an alphanumeric string encoded with the bysquare custom base32 alphabet
+ * (characters `0–9` and `A–V`, each representing 5 bits). Decoding the string yields raw bytes
+ * whose first 2 bytes are a bysquare header (upper nibble of byte 0 = document type, PAY = 0),
+ * followed by an LZMA-compressed, TAB-separated payload.
  *
  * Payload field layout (0-indexed, TAB-separated after decompression):
  * ```
@@ -38,8 +38,16 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
     private val ibanValidator = IBANValidator()
 
     override fun parse(qrCodeContent: String): PaymentQRCodeData {
-        // ML Kit returns binary QR data as a Latin-1 string; convert back to raw bytes
-        val rawBytes = qrCodeContent.toByteArray(StandardCharsets.ISO_8859_1)
+        val upper = qrCodeContent.uppercase()
+
+        // Reject anything that contains characters outside the bysquare alphabet
+        if (upper.any { it !in ALPHABET_SET }) {
+            throw IllegalArgumentException(
+                "QR code content contains characters outside the Pay by Square alphabet."
+            )
+        }
+
+        val rawBytes = decodeBase32(upper)
 
         if (rawBytes.size <= HEADER_SIZE) {
             throw IllegalArgumentException(
@@ -58,6 +66,31 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
         val lzmaData = rawBytes.copyOfRange(HEADER_SIZE, rawBytes.size)
         val decompressed = decompress(lzmaData)
         return parseFields(qrCodeContent, decompressed)
+    }
+
+    /**
+     * Decodes a bysquare base32 string into raw bytes.
+     * Each character encodes 5 bits (MSB first); the bits are packed into bytes MSB first.
+     */
+    private fun decodeBase32(encoded: String): ByteArray {
+        val totalBits = encoded.length * 5
+        val bytes = ByteArray((totalBits + 7) / 8)
+        var bitIndex = 0
+        for (ch in encoded) {
+            val value = ALPHABET.indexOf(ch)
+            if (value < 0) throw IllegalArgumentException(
+                "Invalid character in Pay by Square code: '$ch'"
+            )
+            for (bit in 4 downTo 0) {
+                val byteIdx = bitIndex / 8
+                val bitInByte = 7 - (bitIndex % 8)
+                if ((value shr bit) and 1 == 1) {
+                    bytes[byteIdx] = (bytes[byteIdx].toInt() or (1 shl bitInByte)).toByte()
+                }
+                bitIndex++
+            }
+        }
+        return bytes
     }
 
     private fun decompress(lzmaData: ByteArray): String {
@@ -125,6 +158,9 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
     private fun List<String>.getOrEmpty(index: Int) = getOrElse(index) { "" }
 
     private companion object {
+        const val ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUV"
+        val ALPHABET_SET = ALPHABET.toSet()
+
         const val DOCUMENT_TYPE_PAY = 0
         const val HEADER_SIZE = 2
         const val FIELDS_PER_BANK = 2

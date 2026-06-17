@@ -19,8 +19,9 @@ class UPNQRParserTest {
     // Field order:
     // 0:UPNQR, 1:payerIBAN, 2:deposit, 3:withdrawal, 4:payerRef,
     // 5:payerName, 6:payerStreet, 7:payerCity, 8:amount(cents),
-    // 9:date, 10:urgent, 11:purposeCode, 12:paymentRef, 13:recipientIBAN,
-    // 14:(reserved), 15:recipientName, 16:recipientStreet, 17:recipientCity, 18:checksum
+    // 9:date, 10:urgent, 11:purposeCode, 12:paymentRef, 13:swift/BIC,
+    // 14:recipientIBAN, 15:recipientRef, 16:recipientName,
+    // 17:recipientStreet, 18:recipientCity, 19:checksum
     private fun upnqrPayload(
         recipientIban: String = "SI56020170014356205",
         recipientName: String = "Janez Novak",
@@ -34,9 +35,10 @@ class UPNQRParserTest {
         "Marko Kranjc", "Slovenčeva 22", "1000 Ljubljana",
         amountCents, "01012024", "", "GDSV",
         paymentRef,
-        recipientIban,
-        "",
-        recipientName,
+        "",             // 13: SWIFT/BIC of recipient bank
+        recipientIban,  // 14
+        "",             // 15: recipient reference
+        recipientName,  // 16
         "Rožna dolina 5", "1000 Ljubljana",
         "474",
     ).joinToString("\n")

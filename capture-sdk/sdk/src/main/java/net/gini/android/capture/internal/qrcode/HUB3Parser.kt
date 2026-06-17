@@ -51,7 +51,7 @@ internal class HUB3Parser : QRCodeParser<PaymentQRCodeData> {
     private fun List<String>.getOrEmpty(index: Int) = getOrElse(index) { "" }
 
     private companion object {
-        const val HEADER = "HRVHUB3"
+        const val HEADER = "HRVHUB30"
         const val MINIMUM_LINE_COUNT = 12
 
         const val IDX_CURRENCY = 1

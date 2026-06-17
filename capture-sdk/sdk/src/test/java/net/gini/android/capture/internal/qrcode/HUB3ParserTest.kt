@@ -17,7 +17,7 @@ class HUB3ParserTest {
     }
 
     // Field order:
-    // 0:HRVHUB3, 1:currency, 2:amount(cents), 3:payerName, 4:payerStreet,
+    // 0:HRVHUB30, 1:currency, 2:amount(cents), 3:payerName, 4:payerStreet,
     // 5:payerCity, 6:recipientName, 7:recipientStreet, 8:recipientCity,
     // 9:recipientIBAN, 10:model, 11:callNumber, 12:intentCode, 13:description
     private fun hub3Payload(
@@ -27,7 +27,7 @@ class HUB3ParserTest {
         recipientIban: String = "HR1723600001101234565",
         callNumber: String = "HR99 123-456",
     ) = listOf(
-        "HRVHUB3",
+        "HRVHUB30",
         currency,
         amountCents,
         "Platitelj Marko", "Ilica 1", "10000 Zagreb",
@@ -82,13 +82,13 @@ class HUB3ParserTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun `throws for content without HRVHUB3 header`() {
+    fun `throws for content without HRVHUB30 header`() {
         parser.parse("UPNQR\n\nEUR\n")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `throws when line count is below minimum`() {
-        parser.parse("HRVHUB3\nEUR\n")
+        parser.parse("HRVHUB30\nEUR\n")
     }
 
     @Test(expected = IllegalArgumentException::class)

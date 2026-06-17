@@ -57,7 +57,7 @@ internal class UPNQRParser : QRCodeParser<PaymentQRCodeData> {
         const val IDX_PAYER_REFERENCE = 4
         const val IDX_AMOUNT = 8
         const val IDX_PAYMENT_REFERENCE = 12
-        const val IDX_RECIPIENT_IBAN = 13
-        const val IDX_RECIPIENT_NAME = 15
+        const val IDX_RECIPIENT_IBAN = 14
+        const val IDX_RECIPIENT_NAME = 16
     }
 }
