@@ -13,6 +13,7 @@ public class AnalysisFragmentCompatFake extends AnalysisFragment {
             sFragmentImplFactory;
 
     public AnalysisFragmentCompatFake() {
+        // Required empty public constructor
     }
 
     @Override

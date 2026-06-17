@@ -166,11 +166,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
         @Override
         public void onError(@NonNull final GiniCaptureError error) {
+            // No-op
         }
 
         @Override
         public void onExtractionsAvailable(
                 @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
+            // No-op
         }
     };
 
@@ -1458,7 +1460,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
                     @Override
                     public void onCancelled() {
-
+                        // No-op
                     }
                 });
         mImportUrisAsyncTask.execute(uris.toArray(new Uri[uris.size()]));

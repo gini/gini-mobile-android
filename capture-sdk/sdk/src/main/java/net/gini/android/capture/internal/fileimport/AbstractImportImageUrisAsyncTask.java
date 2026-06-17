@@ -1,12 +1,12 @@
 package net.gini.android.capture.internal.fileimport;
 
-import static net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+
+import androidx.annotation.NonNull;
 
 import net.gini.android.capture.AsyncCallback;
 import net.gini.android.capture.Document;
@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import androidx.annotation.NonNull;
-
 /**
  * Created by Alpar Szotyori on 25.05.2018.
  *
@@ -47,6 +45,8 @@ public abstract class AbstractImportImageUrisAsyncTask extends
 
     private static final Logger LOG = LoggerFactory.getLogger(
             AbstractImportImageUrisAsyncTask.class);
+    private static final String LOG_IMPORT_CANCELLED = "Import cancelled for uri {}";
+    private static final String LOG_HALT_ON_ERROR = "Halt on error for uri {}";
 
     @SuppressLint("StaticFieldLeak")
     private final Context mContext;
@@ -85,14 +85,14 @@ public abstract class AbstractImportImageUrisAsyncTask extends
         for (final Uri uri : uris) {
             LOG.debug("Importing from uri {}", LogSanitizer.sanitize(uri));
             if (isCancelled()) {
-                LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
+                LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
                 return null;
             }
             if (!UriHelper.isUriInputStreamAvailable(uri, mContext)) {
                 LOG.error("Uri input stream not available for uri {}", LogSanitizer.sanitize(uri));
                 if (shouldHaltOnError(multiPageDocument, new ImportedFileValidationException( // NOPMD
                         "InputStream not available for one of the Intent's data Uris"))) {
-                    LOG.debug("Halt on error for uri {}", LogSanitizer.sanitize(uri));
+                    LOG.debug(LOG_HALT_ON_ERROR, LogSanitizer.sanitize(uri));
                     return null;
                 }
                 continue;
@@ -100,7 +100,7 @@ public abstract class AbstractImportImageUrisAsyncTask extends
             fileImportValidator = new FileImportValidator(mContext, mGiniCapture.getImportedFileSizeBytesLimit()); // NOPMD
             if (fileImportValidator.matchesCriteria(uri)) {
                 if (isCancelled()) {
-                    LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
+                    LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
                     return null;
                 }
                 if (isImage(uri)) {
@@ -116,7 +116,7 @@ public abstract class AbstractImportImageUrisAsyncTask extends
                         LogSanitizer.sanitize(fileImportValidator.getError()));
                 if (shouldHaltOnError(multiPageDocument,
                         new ImportedFileValidationException(fileImportValidator.getError()))) { // NOPMD
-                    LOG.debug("Halt on error for uri {}", LogSanitizer.sanitize(uri));
+                    LOG.debug(LOG_HALT_ON_ERROR, LogSanitizer.sanitize(uri));
                     return null;
                 }
             }
@@ -149,27 +149,27 @@ public abstract class AbstractImportImageUrisAsyncTask extends
             if (shouldHaltOnError(multiPageDocument,
                     new ImportedFileValidationException(
                             "Failed to read file into memory"))) {
-                LOG.debug("Halt on error for uri {}", LogSanitizer.sanitize(uri));
+                LOG.debug(LOG_HALT_ON_ERROR, LogSanitizer.sanitize(uri));
                 return null;
             }
             return document;
         }
         if (isCancelled()) {
-            LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
+            LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
             return null;
         }
         // Create Photo
         LOG.debug("Create Photo from uri {}", LogSanitizer.sanitize(uri));
         final Photo photo = PhotoFactory.newPhotoFromDocument(document);
         if (isCancelled()) {
-            LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
+            LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
             return null;
         }
         // Compress Photo
         LOG.debug("Compress Photo created from uri {}", LogSanitizer.sanitize(uri));
         photo.edit().compressByDefault().apply();
         if (isCancelled()) {
-            LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
+            LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
             return null;
         }
         // Save to local storage
@@ -181,13 +181,13 @@ public abstract class AbstractImportImageUrisAsyncTask extends
             if (shouldHaltOnError(multiPageDocument,
                     new ImportedFileValidationException(
                             "Failed to copy to app storage"))) {
-                LOG.debug("Halt on error for uri {}", LogSanitizer.sanitize(uri));
+                LOG.debug(LOG_HALT_ON_ERROR, LogSanitizer.sanitize(uri));
                 return null;
             }
             return document;
         }
         if (isCancelled()) {
-            LOG.debug("Import cancelled for uri {}", LogSanitizer.sanitize(uri));
+            LOG.debug(LOG_IMPORT_CANCELLED, LogSanitizer.sanitize(uri));
             return null;
         }
         // Create compressed Document

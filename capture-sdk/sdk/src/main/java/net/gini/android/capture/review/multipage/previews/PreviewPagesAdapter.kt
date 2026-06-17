@@ -75,6 +75,7 @@ class PreviewPagesAdapter(
                 }
 
                 override fun onError(exception: Exception?) {
+                    // No-op
                 }
             }]
         }

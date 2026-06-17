@@ -1,17 +1,21 @@
 package net.gini.android.capture.network.model;
 
+import androidx.annotation.NonNull;
+
 import net.gini.android.bank.api.models.ReturnReason;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-
 /**
  * Helper class to map the {@link net.gini.android.bank.api.models.ReturnReason} from the Gini API SDK to the Gini Capture
  * Library's {@link GiniCaptureReturnReason} and vice versa.
  */
-public class ReturnReasonsMapper {
+public final class ReturnReasonsMapper {
+
+    private ReturnReasonsMapper() {
+        // Utility class - do not instantiate
+    }
 
     public static List<ReturnReason> mapToApiSdk(@NonNull final List<GiniCaptureReturnReason> sourceList) {
         final List<ReturnReason> targetList = new ArrayList<>(sourceList.size());

@@ -1,10 +1,5 @@
 package net.gini.android.capture.onboarding;
 
-import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
-import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.GET_STARTED;
-import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.NEXT;
-import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.SKIP;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -47,6 +42,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kotlin.Unit;
+
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.GET_STARTED;
+import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.NEXT;
+import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomButton.SKIP;
 
 /**
  * Internal use only.
@@ -391,7 +391,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         @Override
         public void onPageScrolled(final int position, final float positionOffset,
                                    final int positionOffsetPixels) {
-
+            // No-op
         }
 
         @Override
@@ -402,6 +402,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
         @Override
         public void onPageScrollStateChanged(final int state) {
+            // No-op
         }
     }
 }

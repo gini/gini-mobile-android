@@ -41,9 +41,9 @@ class ImageOnboardingIllustrationAdapter(
     @StringRes private val contentDescriptionRes: Int
 ) : OnboardingIllustrationAdapter {
 
-    override fun onVisible() {}
+    override fun onVisible() { /* No-op */ }
 
-    override fun onHidden() {}
+    override fun onHidden() { /* No-op */ }
 
     override fun onCreateView(container: ViewGroup): View {
         return ImageView(container.context).apply {
@@ -54,5 +54,5 @@ class ImageOnboardingIllustrationAdapter(
         }
     }
 
-    override fun onDestroy() {}
+    override fun onDestroy() { /* No-op */ }
 }

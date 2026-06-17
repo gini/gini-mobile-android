@@ -5,6 +5,10 @@ import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
 import net.gini.android.capture.Document;
 import net.gini.android.capture.document.ImageDocument;
 
@@ -16,10 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 
 /**
  * Internal use only.
@@ -93,17 +93,17 @@ class ImmutablePhoto implements Photo {
 
     @Override
     public void updateBitmapPreview() {
-
+        // No-op
     }
 
     @Override
     public void updateExif() {
-
+        // No-op
     }
 
     @Override
     public void updateRotationDeltaBy(final int i) {
-
+        // No-op
     }
 
     @Override
@@ -119,7 +119,7 @@ class ImmutablePhoto implements Photo {
 
     @Override
     public void setData(final byte[] data) {
-
+        // No-op
     }
 
     @Override
