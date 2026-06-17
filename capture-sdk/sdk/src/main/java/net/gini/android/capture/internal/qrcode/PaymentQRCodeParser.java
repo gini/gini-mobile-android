@@ -16,11 +16,20 @@ import net.gini.android.capture.internal.util.FeatureConfiguration;
 /**
  * Parser of QRCode content strings for payment data.
  * <p>
- * Currently supports the
- * <a href="http://www.bezahlcode.de/wp-content/uploads/BezahlCode_TechDok.pdf">BezahlCode</a>
- * and <a href="https://www.europeanpaymentscouncil.eu/document-library/guidance-documents/quick-response-code-guidelines-enable-data-capture-initiation">EPC069-12</a>
- * (<a href="https://www.stuzza.at/de/zahlungsverkehr/qr-code.html">Stuzza (AT)</a> and <a href="https://www.girocode.de/rechnungsempfaenger/">GiroCode (DE)</a>)
- * QRCode formats.
+ * Currently supports the following QRCode formats:
+ * <ul>
+ *   <li><a href="http://www.bezahlcode.de/wp-content/uploads/BezahlCode_TechDok.pdf">BezahlCode</a></li>
+ *   <li><a href="https://www.europeanpaymentscouncil.eu/document-library/guidance-documents/quick-response-code-guidelines-enable-data-capture-initiation">EPC069-12</a>
+ *       (<a href="https://www.stuzza.at/de/zahlungsverkehr/qr-code.html">Stuzza (AT)</a> and
+ *       <a href="https://www.girocode.de/rechnungsempfaenger/">GiroCode (DE)</a>)</li>
+ *   <li>EPS (Austrian payment standard)</li>
+ *   <li><a href="https://www.paymentstandards.ch/dam/downloads/ig-qr-bill-en.pdf">SPC (Swiss QR Bill)</a></li>
+ *   <li><a href="https://qr-platba.cz/pro-vyvojare/specifikace-formatu/">SPD (Czech QR Payment)</a></li>
+ *   <li><a href="https://upn-qr.si/uploads/files/NavodilaZaUporabnike.pdf">UPNQR (Slovenian payment)</a></li>
+ *   <li><a href="https://hub.si/hub3/">HUB3 (Croatian payment)</a></li>
+ *   <li><a href="https://bysquare.com/">Pay by Square (Slovak/Czech payment)</a></li>
+ *   <li>Gini Payment</li>
+ * </ul>
  */
 class PaymentQRCodeParser implements QRCodeParser<PaymentQRCodeData> {
 

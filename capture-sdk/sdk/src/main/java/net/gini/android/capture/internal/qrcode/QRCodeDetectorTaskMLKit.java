@@ -106,7 +106,10 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
     private List<String> barcodesToStrings(final List<Barcode> barcodes) {
         final List<String> qrCodes = new ArrayList<>(barcodes.size());
         for (Barcode barcode : barcodes) {
-            qrCodes.add(barcode.getDisplayValue());
+            final String value = barcode.getRawValue() != null ? barcode.getRawValue() : barcode.getDisplayValue();
+            if (value != null) {
+                qrCodes.add(value);
+            }
         }
         return qrCodes;
     }

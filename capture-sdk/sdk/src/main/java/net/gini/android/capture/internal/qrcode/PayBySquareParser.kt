@@ -184,6 +184,11 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
         // After all bank account pairs: 2 extension-flag fields (standing order, direct debit)
         // then beneficiary name
         val beneficiaryIdx = IDX_FIRST_IBAN + banksCount * FIELDS_PER_BANK + EXTENSION_FIELDS
+        if (beneficiaryIdx >= fields.size) {
+            throw IllegalArgumentException(
+                "Malformed PayBySquare payload: declared bank account count ($banksCount) exceeds actual fields."
+            )
+        }
         val beneficiaryName = fields.getOrEmpty(beneficiaryIdx)
 
         val reference = buildReference(
