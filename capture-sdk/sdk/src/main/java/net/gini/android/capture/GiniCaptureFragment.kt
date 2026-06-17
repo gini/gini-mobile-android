@@ -120,12 +120,10 @@ class GiniCaptureFragment(
             setCaptureVersionProperty()
 
             lifecycleScope.launch(Dispatchers.IO) {
-                val cachedEnabled =
-                    clientConfigurationStorage.getIsUnsupportedQRCodeWarningEnabled().first()
-                giniBankConfigurationProvider.update(
-                    giniBankConfigurationProvider.provide()
-                        .copy(isUnsupportedQRCodeWarningEnabled = cachedEnabled)
-                )
+                val cachedConfiguration = clientConfigurationStorage.getConfiguration().first()
+                if (cachedConfiguration != null) {
+                    giniBankConfigurationProvider.update(cachedConfiguration)
+                }
             }
 
             val networkRequestsManager =
@@ -136,9 +134,7 @@ class GiniCaptureFragment(
                 giniBankConfigurationProvider.update(res.configuration)
 
                 lifecycleScope.launch(Dispatchers.IO) {
-                    clientConfigurationStorage.setIsUnsupportedQRCodeWarningEnabled(
-                        res.configuration.isUnsupportedQRCodeWarningEnabled
-                    )
+                    clientConfigurationStorage.saveConfiguration(res.configuration)
                 }
 
                 UserAnalytics.setPlatformTokens(

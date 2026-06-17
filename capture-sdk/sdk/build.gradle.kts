@@ -202,6 +202,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.androidx.multidex)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito.kotlin2)
     androidTestImplementation(libs.mockito.kotlin2)
     androidTestUtil(libs.androidx.test.orchestrator)
