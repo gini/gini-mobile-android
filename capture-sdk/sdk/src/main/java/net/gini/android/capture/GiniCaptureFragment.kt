@@ -14,10 +14,11 @@ import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.error.ErrorFragment
@@ -82,6 +83,17 @@ class GiniCaptureFragment(
     getGiniCaptureKoin().inject()
     private val clientConfigurationStorage: ClientConfigurationStorage by getGiniCaptureKoin().inject()
 
+    private val viewModel: GiniCaptureViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                GiniCaptureViewModel(
+                    getGiniCaptureKoin().get(),
+                    getGiniCaptureKoin().get(),
+                ) as T
+        }
+    }
+
 
     fun setListener(listener: GiniCaptureFragmentListener) {
         this.giniCaptureFragmentListener = listener
@@ -104,6 +116,7 @@ class GiniCaptureFragment(
             requireActivity().window.disallowScreenshots()
         }
         onBoardingShown = savedInstanceState?.getBoolean(onBoardingShownKey, false) ?: false
+        viewModel // trigger creation so the DataStore observer starts immediately
         setupUserAnalytics()
     }
 
@@ -119,33 +132,6 @@ class GiniCaptureFragment(
         if (GiniCapture.hasInstance()) {
             UserAnalytics.initialize(requireActivity())
             setCaptureVersionProperty()
-
-            // Snapshot isUnsupportedQRCodeWarningEnabled at session start so the QR warning style
-            // stays consistent within a session. The API response may update this flag in DataStore
-            // for the next session, but the current session always uses the value from startup.
-            // On first install DataStore is empty, so the default (false) is used.
-            lifecycleScope.launch {
-                val sessionQrCodeWarningEnabled = clientConfigurationStorage.getConfiguration()
-                    .first()
-                    ?.isUnsupportedQRCodeWarningEnabled ?: false
-
-                // DataStore is the single source of truth for all other boolean flags.
-                // clientID and amplitudeApiKey are not persisted, so they are preserved from
-                // whatever the provider already holds (empty on first launch, real after API responds).
-                // The isUnsupportedQRCodeWarningEnabled will always return the sessionQrCodeWarningEnabled
-                // during each SDK session.
-                clientConfigurationStorage.getConfiguration()
-                    .filterNotNull()
-                    .collect { config ->
-                        giniBankConfigurationProvider.update(
-                            config.copy(
-                                clientID = giniBankConfigurationProvider.provide().clientID,
-                                amplitudeApiKey = giniBankConfigurationProvider.provide().amplitudeApiKey,
-                                isUnsupportedQRCodeWarningEnabled = sessionQrCodeWarningEnabled
-                            )
-                        )
-                    }
-            }
 
             val networkRequestsManager =
                 GiniCapture.getInstance().internal().networkRequestsManager

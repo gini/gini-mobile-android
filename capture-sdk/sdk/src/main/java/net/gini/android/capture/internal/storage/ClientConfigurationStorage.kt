@@ -4,13 +4,36 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import net.gini.android.capture.internal.network.Configuration
 
 internal class ClientConfigurationStorage(private val context: Context) {
 
     private val Context.dataStore by preferencesDataStore(name = DATA_STORE_NAME)
+
+    // Warm in-memory cache so getSessionQrCodeWarningEnabled() is synchronous.
+    // Updated by a long-lived background coroutine tied to the Koin singleton's lifetime.
+    @Volatile
+    private var cachedQrCodeWarningEnabled: Boolean = false
+
+    private val storageScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    init {
+        storageScope.launch {
+            getConfiguration().collect { config ->
+                cachedQrCodeWarningEnabled = config?.isUnsupportedQRCodeWarningEnabled ?: false
+            }
+        }
+    }
+
+    // Returns the last-known value synchronously. Safe to call on the main thread.
+    // On first install the cache is cold (returns false), but DataStore is also empty so false is correct.
+    fun getSessionQrCodeWarningEnabled(): Boolean = cachedQrCodeWarningEnabled
 
     private val keyIsCached = booleanPreferencesKey("is_cached")
     private val keyIsUserJourneyAnalyticsEnabled = booleanPreferencesKey("is_user_journey_analytics_enabled")
