@@ -17,6 +17,7 @@ import net.gini.android.capture.camera.CameraFragmentListener
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.error.ErrorFragment
@@ -119,18 +120,28 @@ class GiniCaptureFragment(
             UserAnalytics.initialize(requireActivity())
             setCaptureVersionProperty()
 
-            // DataStore is the single source of truth for boolean flags. The observer seeds the
-            // provider from cache on startup and re-fires when the API response is saved.
-            // clientID and amplitudeApiKey are not persisted, so they are preserved from whatever
-            // the provider already holds (empty on first launch, real values after API responds).
+            // Snapshot isUnsupportedQRCodeWarningEnabled at session start so the QR warning style
+            // stays consistent within a session. The API response may update this flag in DataStore
+            // for the next session, but the current session always uses the value from startup.
+            // On first install DataStore is empty, so the default (false) is used.
             lifecycleScope.launch {
+                val sessionQrCodeWarningEnabled = clientConfigurationStorage.getConfiguration()
+                    .first()
+                    ?.isUnsupportedQRCodeWarningEnabled ?: false
+
+                // DataStore is the single source of truth for all other boolean flags.
+                // clientID and amplitudeApiKey are not persisted, so they are preserved from
+                // whatever the provider already holds (empty on first launch, real after API responds).
+                // The isUnsupportedQRCodeWarningEnabled will always return the sessionQrCodeWarningEnabled
+                // during each SDK session.
                 clientConfigurationStorage.getConfiguration()
                     .filterNotNull()
                     .collect { config ->
                         giniBankConfigurationProvider.update(
                             config.copy(
                                 clientID = giniBankConfigurationProvider.provide().clientID,
-                                amplitudeApiKey = giniBankConfigurationProvider.provide().amplitudeApiKey
+                                amplitudeApiKey = giniBankConfigurationProvider.provide().amplitudeApiKey,
+                                isUnsupportedQRCodeWarningEnabled = sessionQrCodeWarningEnabled
                             )
                         )
                     }
