@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Root.AppTheme">
-        <item name="android:windowLightStatusBar">false</item>
-    </style>
-
+    <!-- Force SDK to use the light theme variant even in dark mode, matching the DB client's
+         behaviour where forceDarkAllowed=false (on certain OEMs) also prevents DayNight switching. -->
+    <style name="GiniCaptureTheme" parent="Root.GiniCaptureTheme"/>
 </resources>
