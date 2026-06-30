@@ -52,6 +52,7 @@ import java.io.IOException
  * ```
  * where N = BankAccountsCount.
  */
+@Suppress("MagicNumber", "UseRequire", "NestedBlockDepth")
 internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
 
     private val ibanValidator = IBANValidator()

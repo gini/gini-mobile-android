@@ -10,6 +10,7 @@ import net.gini.android.capture.internal.qrcode.AmountAndCurrencyNormalizer.norm
  * See the [Swiss Payment Standards specification](https://www.paymentstandards.ch/dam/downloads/ig-qr-bill-en.pdf)
  * for details.
  */
+@Suppress("UseRequire")
 internal class SPCParser : QRCodeParser<PaymentQRCodeData> {
 
     private val ibanValidator = IBANValidator()

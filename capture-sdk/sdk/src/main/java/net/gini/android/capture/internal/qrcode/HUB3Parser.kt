@@ -10,6 +10,7 @@ import net.gini.android.capture.internal.qrcode.AmountAndCurrencyNormalizer.norm
  * The payload is newline-delimited with fixed field positions. The amount field encodes the value
  * in currency-cents as a zero-padded string (e.g. "000000010000" = 100.00).
  */
+@Suppress("MagicNumber", "UseRequire")
 internal class HUB3Parser : QRCodeParser<PaymentQRCodeData> {
 
     private val ibanValidator = IBANValidator()

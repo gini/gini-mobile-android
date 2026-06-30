@@ -13,6 +13,7 @@ import net.gini.android.capture.internal.qrcode.AmountAndCurrencyNormalizer.norm
  * The `ACC` field holds the IBAN, optionally followed by the bank's BIC separated by a `+`
  * (e.g. `ACC:SK68...+TATRSKBX`); only the IBAN part is validated and the BIC is kept separately.
  */
+@Suppress("UseRequire")
 internal class SPDParser : QRCodeParser<PaymentQRCodeData> {
 
     private val ibanValidator = IBANValidator()
