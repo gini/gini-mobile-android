@@ -43,6 +43,25 @@ class SPDParserTest {
     }
 
     @Test
+    fun `accepts ACC field with IBAN and BIC and extracts the BIC`() {
+        val content = "SPD*1.0*ACC:SK6807200002891987426353+TATRSKBX*AM:100.00*CC:EUR*RN:Jan Novak*"
+        val result = parser.parse(content)
+
+        assertThat(result.getIBAN()).isEqualTo("SK6807200002891987426353")
+        assertThat(result.getBIC()).isEqualTo("TATRSKBX")
+        assertThat(result.getAmount()).isEqualTo("100.00:EUR")
+    }
+
+    @Test
+    fun `leaves BIC empty when ACC field contains only the IBAN`() {
+        val content = "SPD*1.0*ACC:SK6807200002891987426353*AM:100.00*CC:EUR*"
+        val result = parser.parse(content)
+
+        assertThat(result.getIBAN()).isEqualTo("SK6807200002891987426353")
+        assertThat(result.getBIC()).isEmpty()
+    }
+
+    @Test
     fun `uses only variable symbol as reference when message is absent`() {
         val content = "SPD*1.0*ACC:SK6807200002891987426353*AM:50.00*CC:EUR*VS:9876*"
         val result = parser.parse(content)

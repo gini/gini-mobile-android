@@ -9,6 +9,9 @@ import net.gini.android.capture.internal.qrcode.AmountAndCurrencyNormalizer.norm
  *
  * The payload uses asterisk-delimited key:value pairs, e.g.:
  * `SPD*1.0*ACC:SK6807200002891987426353*AM:100.00*CC:EUR*RN:Recipient Name*`
+ *
+ * The `ACC` field holds the IBAN, optionally followed by the bank's BIC separated by a `+`
+ * (e.g. `ACC:SK68...+TATRSKBX`); only the IBAN part is validated and the BIC is kept separately.
  */
 internal class SPDParser : QRCodeParser<PaymentQRCodeData> {
 
@@ -21,7 +24,10 @@ internal class SPDParser : QRCodeParser<PaymentQRCodeData> {
             throw IllegalArgumentException("QR code content does not conform to the SPD format.")
         }
 
-        val iban = parts.extractValue(KEY_ACCOUNT)
+        // The SPD `ACC` field is formatted as `IBAN+BIC`, where the `+BIC` part is optional.
+        val accountValue = parts.extractValue(KEY_ACCOUNT)
+        val iban = accountValue.substringBefore(ACCOUNT_SEPARATOR)
+        val bic = accountValue.substringAfter(ACCOUNT_SEPARATOR, "").ifEmpty { null }
         runCatching { ibanValidator.validate(iban) }.getOrElse {
             throw IllegalArgumentException("Invalid IBAN in SPD QR code. ${it.message}", it)
         }
@@ -37,7 +43,7 @@ internal class SPDParser : QRCodeParser<PaymentQRCodeData> {
 
         return PaymentQRCodeData(
             PaymentQRCodeData.Format.SPD, qrCodeContent,
-            recipientName, reference, iban, null, amount,
+            recipientName, reference, iban, bic, amount,
         )
     }
 
@@ -54,6 +60,8 @@ internal class SPDParser : QRCodeParser<PaymentQRCodeData> {
 
     private companion object {
         const val HEADER = "SPD"
+        // Separates the IBAN from the optional BIC inside the `ACC` field (e.g. `IBAN+BIC`).
+        const val ACCOUNT_SEPARATOR = "+"
         const val KEY_ACCOUNT = "ACC"
         const val KEY_AMOUNT = "AM"
         const val KEY_CURRENCY = "CC"
