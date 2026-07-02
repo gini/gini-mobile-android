@@ -13,32 +13,29 @@ internal class GiniCaptureViewModel(
 ) : ViewModel() {
 
     init {
-        // Read the session snapshot synchronously from the in-memory cache — no IO hop, no race.
-        // The cache is kept warm by a background coroutine in ClientConfigurationStorage that lives
-        // for the singleton's lifetime. On first install the cache is cold but DataStore is also
-        // empty, so false is the correct default in both cases.
-        val sessionQrCodeWarningEnabled = clientConfigurationStorage.getSessionQrCodeWarningEnabled()
-
-        // Apply immediately so the provider is correct before any QR scan can happen.
-        giniBankConfigurationProvider.update(
-            giniBankConfigurationProvider.provide().copy(
-                isUnsupportedQRCodeWarningEnabled = sessionQrCodeWarningEnabled
-            )
-        )
-
-        // DataStore is the single source of truth for all other boolean flags.
-        // clientID and amplitudeApiKey are not persisted, so they are preserved from
-        // whatever the provider already holds (empty on first launch, real after API responds).
-        // isUnsupportedQRCodeWarningEnabled is pinned to the session snapshot for the entire session.
+        // DataStore is the single source of truth for the configuration flags.
+        //
+        // isUnsupportedQRCodeWarningEnabled must stay constant for the whole session. It is pinned
+        // to the FIRST persisted value observed from DataStore, not to a synchronous in-memory
+        // default: on a relaunch a persisted `true` may not have been loaded yet, and pinning to
+        // the cold default would incorrectly disable the warning for the entire run. Deriving the
+        // snapshot from the first non-null emission guarantees it reflects the persisted state.
+        //
+        // clientID and amplitudeApiKey are not persisted, so they are preserved from whatever the
+        // provider already holds (empty on first launch, real after the API responds).
         viewModelScope.launch {
+            var sessionQrCodeWarningEnabled: Boolean? = null
             clientConfigurationStorage.getConfiguration()
                 .filterNotNull()
                 .collect { config ->
+                    val pinnedQrCodeWarningEnabled = sessionQrCodeWarningEnabled
+                        ?: config.isUnsupportedQRCodeWarningEnabled
+                            .also { sessionQrCodeWarningEnabled = it }
                     giniBankConfigurationProvider.update(
                         config.copy(
                             clientID = giniBankConfigurationProvider.provide().clientID,
                             amplitudeApiKey = giniBankConfigurationProvider.provide().amplitudeApiKey,
-                            isUnsupportedQRCodeWarningEnabled = sessionQrCodeWarningEnabled
+                            isUnsupportedQRCodeWarningEnabled = pinnedQrCodeWarningEnabled
                         )
                     )
                 }

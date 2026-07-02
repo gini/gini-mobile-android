@@ -139,7 +139,8 @@ class GiniCaptureFragmentTest {
 
         launchGiniCaptureFragment().use { scenario ->
             scenario.moveToState(Lifecycle.State.RESUMED)
-            val giniBankConfigurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+            val giniBankConfigurationProvider =
+                getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
             val configuration = giniBankConfigurationProvider.provide()
 
             assertThat(configuration.isSavePhotosLocallyEnabled).isFalse()
@@ -159,7 +160,8 @@ class GiniCaptureFragmentTest {
 
         launchGiniCaptureFragment().use { scenario ->
             scenario.moveToState(Lifecycle.State.RESUMED)
-            val giniBankConfigurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+            val giniBankConfigurationProvider =
+                getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
             val configuration = giniBankConfigurationProvider.provide()
 
             assertThat(configuration.isSavePhotosLocallyEnabled).isTrue()
@@ -186,34 +188,37 @@ class GiniCaptureFragmentTest {
 
 
     @Test
-    fun configuration_shouldBeSeededFromCache_whenApiHasNotRespondedYet() = runTest {
-        // Use the Koin singleton — creating a second instance for the same file causes a DataStore conflict
-        val storage = getGiniCaptureKoin().get<ClientConfigurationStorage>()
-        storage.saveConfiguration(
-            getMockedConfiguration(
-                userJourneyEnabled = false,
-                isUnsupportedQRCodeWarningEnabled = true
-            ).configuration
-        )
+    fun configuration_shouldBeSeededFromPersistedConfiguration_whenApiHasNotRespondedYet() =
+        runTest {
+            // Use the Koin singleton so the fragment's ViewModel reads from the same DataStore we write to.
+            val storage = getGiniCaptureKoin().get<ClientConfigurationStorage>()
+            storage.saveConfiguration(
+                getMockedConfiguration(
+                    userJourneyEnabled = false,
+                    isUnsupportedQRCodeWarningEnabled = true
+                ).configuration
+            )
 
-        // Never-completing future ensures any value in the provider came from the cache, not the API
-        val neverCompletingFuture = CompletableFuture<ConfigurationNetworkResult>()
-        whenever(networkRequestsManager.getConfigurations(any())).thenReturn(neverCompletingFuture)
+            // Never-completing future ensures any value in the provider came from persisted DataStore, not the API
+            val neverCompletingFuture = CompletableFuture<ConfigurationNetworkResult>()
+            whenever(networkRequestsManager.getConfigurations(any())).thenReturn(
+                neverCompletingFuture
+            )
 
-        val latch = CountDownLatch(1)
-        launchGiniCaptureFragment().use { scenario ->
-            scenario.moveToState(Lifecycle.State.RESUMED)
+            val latch = CountDownLatch(1)
+            launchGiniCaptureFragment().use { scenario ->
+                scenario.moveToState(Lifecycle.State.RESUMED)
 
-            // Give the Dispatchers.IO coroutine time to read from DataStore
-            latch.await(2, TimeUnit.SECONDS)
+                // Give the configuration flow time to emit the persisted value from DataStore
+                latch.await(2, TimeUnit.SECONDS)
 
-            val provider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
-            assertThat(provider.provide().isUnsupportedQRCodeWarningEnabled).isTrue()
+                val provider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+                assertThat(provider.provide().isUnsupportedQRCodeWarningEnabled).isTrue()
+            }
+
+            // Clean up storage for other tests
+            storage.saveConfiguration(getMockedConfiguration(userJourneyEnabled = false).configuration)
         }
-
-        // Clean up storage for other tests
-        storage.saveConfiguration(getMockedConfiguration(userJourneyEnabled = false).configuration)
-    }
 
     private fun getMockedConfiguration(
         userJourneyEnabled: Boolean,

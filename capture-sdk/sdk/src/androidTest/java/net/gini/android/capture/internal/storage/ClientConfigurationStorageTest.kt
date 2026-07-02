@@ -18,6 +18,8 @@ class ClientConfigurationStorageTest {
 
     @Before
     fun setUp() = runTest {
+        // The DataStore delegate is a process-level singleton, so instantiating here alongside
+        // any other ClientConfigurationStorage no longer conflicts on the same file.
         storage = ClientConfigurationStorage(ApplicationProvider.getApplicationContext())
         storage.clearConfiguration()
     }
