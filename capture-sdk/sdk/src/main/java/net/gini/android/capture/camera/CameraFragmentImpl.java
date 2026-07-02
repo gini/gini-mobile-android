@@ -353,12 +353,23 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void showUnsupportedQRCodePopup() {
+        showUnsupportedQRCodePopup(true);
+    }
+
+    /**
+     * @param trackScanEvent whether to report the scan to analytics. Pass {@code false} when the
+     *                       popup is merely being re-shown after a configuration change (restore),
+     *                       so the same unsupported scan is not tracked more than once.
+     */
+    private void showUnsupportedQRCodePopup(boolean trackScanEvent) {
         if (mIbanDetectedTextView.getVisibility() != View.VISIBLE) {
             if (isUnsupportedQRCodeWarningEnabled()) {
                 mIsUnsupportedQRDialogShowing = true;
             }
             mUnsupportedQRCodePopup.show(null);
-            sendQRCodeScannedEventToUserAnalytics(false);
+            if (trackScanEvent) {
+                sendQRCodeScannedEventToUserAnalytics(false);
+            }
         }
     }
 
@@ -497,7 +508,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             updateCameraUIForCurrentMode();
         }
         if (mIsUnsupportedQRDialogShowing) {
-            showUnsupportedQRCodePopup();
+            // Re-showing after a configuration change: do not re-track the scan event.
+            showUnsupportedQRCodePopup(false);
         }
     }
 
