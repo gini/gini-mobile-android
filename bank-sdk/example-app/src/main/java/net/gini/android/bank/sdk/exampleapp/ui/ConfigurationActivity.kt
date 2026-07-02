@@ -578,6 +578,45 @@ class ConfigurationActivity : AppCompatActivity() {
                 isChecked
             )
         }
+        setupForceSdkThemeToggles()
+    }
+
+    /**
+     * QA-only: two mutually-exclusive switches that force the SDK into dark or light theme,
+     * simulating a client that pins the SDK's appearance. The preference is read by
+     * [CaptureFlowHostActivity], which applies it as a *local* night mode so only the SDK flow is
+     * affected — the example app itself keeps following the system setting. Both switches off
+     * restores the normal, system-driven behaviour.
+     */
+    private fun setupForceSdkThemeToggles() {
+        val toggles = binding.layoutDebugDevelopmentOptionsToggles
+        // Reflect the persisted setting when (re)opening the screen.
+        when (SharedPreferenceHelper.getString(CaptureFlowHostActivity.FORCE_SDK_THEME_KEY, this)) {
+            CaptureFlowHostActivity.FORCE_SDK_THEME_DARK -> toggles.switchForceDarkTheme.isChecked = true
+            CaptureFlowHostActivity.FORCE_SDK_THEME_LIGHT -> toggles.switchForceLightTheme.isChecked = true
+        }
+
+        toggles.switchForceDarkTheme.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked && toggles.switchForceLightTheme.isChecked) {
+                toggles.switchForceLightTheme.isChecked = false
+            }
+            persistForcedSdkTheme(toggles.switchForceDarkTheme.isChecked, toggles.switchForceLightTheme.isChecked)
+        }
+        toggles.switchForceLightTheme.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked && toggles.switchForceDarkTheme.isChecked) {
+                toggles.switchForceDarkTheme.isChecked = false
+            }
+            persistForcedSdkTheme(toggles.switchForceDarkTheme.isChecked, toggles.switchForceLightTheme.isChecked)
+        }
+    }
+
+    private fun persistForcedSdkTheme(forceDark: Boolean, forceLight: Boolean) {
+        val value = when {
+            forceDark -> CaptureFlowHostActivity.FORCE_SDK_THEME_DARK
+            forceLight -> CaptureFlowHostActivity.FORCE_SDK_THEME_LIGHT
+            else -> ""
+        }
+        SharedPreferenceHelper.saveString(CaptureFlowHostActivity.FORCE_SDK_THEME_KEY, value, this)
     }
 
     private fun applyClientSecretAndClientId() {
