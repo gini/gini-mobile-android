@@ -36,7 +36,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
 import java.util.UUID
-import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 /**
@@ -205,14 +204,21 @@ class GiniCaptureFragmentTest {
                 neverCompletingFuture
             )
 
-            val latch = CountDownLatch(1)
             launchGiniCaptureFragment().use { scenario ->
                 scenario.moveToState(Lifecycle.State.RESUMED)
 
-                // Give the configuration flow time to emit the persisted value from DataStore
-                latch.await(2, TimeUnit.SECONDS)
-
                 val provider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+
+                // Poll (with a deadline) until the configuration flow propagates the persisted
+                // value to the provider, so the test exits as soon as the condition holds instead
+                // of always sleeping for the full timeout.
+                val deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2)
+                while (!provider.provide().isUnsupportedQRCodeWarningEnabled &&
+                    System.currentTimeMillis() < deadline
+                ) {
+                    Thread.sleep(POLL_INTERVAL_MS)
+                }
+
                 assertThat(provider.provide().isUnsupportedQRCodeWarningEnabled).isTrue()
             }
 
@@ -272,5 +278,6 @@ class GiniCaptureFragmentTest {
     companion object {
         private const val TEST_CLIENT_ID = "test-client-id"
         private const val TEST_API_KEY = "test-api-key"
+        private const val POLL_INTERVAL_MS = 20L
     }
 }
