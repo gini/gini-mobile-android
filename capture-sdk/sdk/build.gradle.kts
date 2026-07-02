@@ -146,6 +146,8 @@ dependencies {
     implementation(libs.mlkit.barcodescanning)
     implementation(libs.mlkit.textrecognition)
     implementation(libs.apachecommons.imaging)
+    implementation(libs.apachecommons.compress)
+    implementation(libs.tukaani.xz)
     implementation(libs.completableFuture)
 
     implementation(libs.androidx.camera.camera2)
@@ -202,6 +204,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.androidx.multidex)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito.kotlin2)
     androidTestImplementation(libs.mockito.kotlin2)
     androidTestUtil(libs.androidx.test.orchestrator)

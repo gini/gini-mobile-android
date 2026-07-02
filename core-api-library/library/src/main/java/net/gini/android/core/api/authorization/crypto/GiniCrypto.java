@@ -1,12 +1,9 @@
 package net.gini.android.core.api.authorization.crypto;
 
-import static java.security.CryptoPrimitive.SECURE_RANDOM;
+import android.util.Base64;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import android.util.Base64;
 
 import java.io.IOException;
 import java.security.Key;
