@@ -18,6 +18,7 @@ import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityConfigurationBinding
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CAMERA_PERMISSION_BUNDLE
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity.Companion.CONFIGURATION_BUNDLE
+import net.gini.android.bank.sdk.exampleapp.ui.color.SdkColorOverridePreference
 import net.gini.android.bank.sdk.exampleapp.ui.data.ExampleAppBankConfiguration
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.internal.util.ActivityHelper.interceptOnBackPressed
@@ -181,6 +182,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable custom primary button in compose
         binding.layoutGeneralUiCustomizationToggles.switchCustomPrimaryComposeButton.isChecked =
             configuration.isCustomPrimaryComposeButtonEnabled
+        // override SDK colors (preference-backed, read early in the capture host's attachBaseContext)
+        binding.layoutGeneralUiCustomizationToggles.switchOverrideSdkColors.isChecked =
+            SdkColorOverridePreference.isEnabled(this)
         // enable event tracker
         binding.layoutFeatureToggle.switchEventTracker.isChecked =
             configuration.isEventTrackerEnabled
@@ -516,6 +520,12 @@ class ConfigurationActivity : AppCompatActivity() {
                         isCustomPrimaryComposeButtonEnabled = isChecked
                     )
                 )
+            }
+
+        // override SDK colors with a distinct test palette
+        binding.layoutGeneralUiCustomizationToggles.switchOverrideSdkColors
+            .setOnCheckedChangeListener { _, isChecked ->
+                SdkColorOverridePreference.setEnabled(this, isChecked)
             }
 
 

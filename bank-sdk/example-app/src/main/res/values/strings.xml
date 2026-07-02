@@ -112,6 +112,8 @@
     <string name="help_custom_menu_items_switch_label">Help custom menu items</string>
     <string name="custom_navigation_controller_switch_label">Custom navigation controller</string>
     <string name="custom_primary_compose_button_switch_label">Custom primary button in Skonto</string>
+    <string name="override_sdk_colors_switch_label">Override SDK colors</string>
+    <string name="override_sdk_colors_switch_description">Replace all SDK colors with a distinct test palette (different in light and dark mode) to verify color customization coverage</string>
     <string name="return_assistant_feature_switch_label">Return assistant feature</string>
     <string name="return_assistant_feature_switch_description">Present a digital representation of the invoice</string>
     <string name="skonto_feature_switch_label">Skonto feature</string>

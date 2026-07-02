@@ -44,4 +44,19 @@
         android:layout_marginTop="@dimen/gc_medium_12"
         android:text="@string/custom_primary_compose_button_switch_label" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_overrideSdkColors"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/gc_medium_12"
+        android:text="@string/override_sdk_colors_switch_label" />
+
+    <TextView
+        android:id="@+id/tv_overrideSdkColorsDescription"
+        style="@style/TextAppearance.MaterialComponents.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/override_sdk_colors_switch_description" />
+
 </LinearLayout>
