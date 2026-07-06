@@ -52,7 +52,7 @@ import java.io.IOException
  * ```
  * where N = BankAccountsCount.
  */
-@Suppress("MagicNumber", "UseRequire", "NestedBlockDepth")
+@Suppress("MagicNumber", "NestedBlockDepth")
 internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
 
     private val ibanValidator = IBANValidator()
@@ -60,26 +60,20 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
     override fun parse(qrCodeContent: String): PaymentQRCodeData {
         val upper = qrCodeContent.uppercase()
 
-        if (upper.any { it !in ALPHABET_SET }) {
-            throw IllegalArgumentException(
-                "QR code content contains characters outside the Pay by Square alphabet."
-            )
+        require(upper.all { it in ALPHABET_SET }) {
+            "QR code content contains characters outside the Pay by Square alphabet."
         }
 
         val rawBytes = decodeBase32(upper)
 
-        if (rawBytes.size <= HEADER_SIZE) {
-            throw IllegalArgumentException(
-                "QR code content is too short to be a PayBySquare code."
-            )
+        require(rawBytes.size > HEADER_SIZE) {
+            "QR code content is too short to be a PayBySquare code."
         }
 
         // Upper nibble of byte 0 = bysquare type; PAY = 0
         val bysquareType = (rawBytes[0].toInt() and 0xFF) shr 4
-        if (bysquareType != BYSQUARE_TYPE_PAY) {
-            throw IllegalArgumentException(
-                "QR code content is not a PayBySquare PAY document."
-            )
+        require(bysquareType == BYSQUARE_TYPE_PAY) {
+            "QR code content is not a PayBySquare PAY document."
         }
 
         // Bytes 2-3: payload length (little-endian uint16) used as the LZMA uncompressed size
@@ -102,9 +96,7 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
         var bitIndex = 0
         for (ch in encoded) {
             val value = ALPHABET.indexOf(ch)
-            if (value < 0) throw IllegalArgumentException(
-                "Invalid character in Pay by Square code: '$ch'"
-            )
+            require(value >= 0) { "Invalid character in Pay by Square code: '$ch'" }
             for (bit in 4 downTo 0) {
                 val byteIdx = bitIndex / 8
                 val bitInByte = 7 - (bitIndex % 8)
@@ -144,10 +136,8 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
                             bos.write(buffer, 0, read)
                         }
                         val decompressed = bos.toByteArray()
-                        if (decompressed.size < CRC_SIZE) {
-                            throw IllegalArgumentException(
-                                "Decompressed PayBySquare payload is too short to contain a CRC32."
-                            )
+                        require(decompressed.size >= CRC_SIZE) {
+                            "Decompressed PayBySquare payload is too short to contain a CRC32."
                         }
                         // Skip 4-byte CRC32; return the tab-separated payload
                         return String(decompressed, CRC_SIZE, decompressed.size - CRC_SIZE, Charsets.UTF_8)
@@ -164,10 +154,8 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
     private fun parseFields(rawContent: String, payload: String): PaymentQRCodeData {
         val fields = payload.split("\t")
 
-        if (fields.size <= IDX_FIRST_IBAN) {
-            throw IllegalArgumentException(
-                "Decompressed PayBySquare payload has too few fields."
-            )
+        require(fields.size > IDX_FIRST_IBAN) {
+            "Decompressed PayBySquare payload has too few fields."
         }
 
         val rawAmount = fields.getOrEmpty(IDX_AMOUNT)
@@ -185,10 +173,8 @@ internal class PayBySquareParser : QRCodeParser<PaymentQRCodeData> {
         // After all bank account pairs: 2 extension-flag fields (standing order, direct debit)
         // then beneficiary name
         val beneficiaryIdx = IDX_FIRST_IBAN + banksCount * FIELDS_PER_BANK + EXTENSION_FIELDS
-        if (beneficiaryIdx >= fields.size) {
-            throw IllegalArgumentException(
-                "Malformed PayBySquare payload: declared bank account count ($banksCount) exceeds actual fields."
-            )
+        require(beneficiaryIdx < fields.size) {
+            "Malformed PayBySquare payload: declared bank account count ($banksCount) exceeds actual fields."
         }
         val beneficiaryName = fields.getOrEmpty(beneficiaryIdx)
 

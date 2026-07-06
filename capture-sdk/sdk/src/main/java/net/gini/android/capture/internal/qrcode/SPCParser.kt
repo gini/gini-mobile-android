@@ -10,7 +10,6 @@ import net.gini.android.capture.internal.qrcode.AmountAndCurrencyNormalizer.norm
  * See the [Swiss Payment Standards specification](https://www.paymentstandards.ch/dam/downloads/ig-qr-bill-en.pdf)
  * for details.
  */
-@Suppress("UseRequire")
 internal class SPCParser : QRCodeParser<PaymentQRCodeData> {
 
     private val ibanValidator = IBANValidator()
@@ -18,8 +17,8 @@ internal class SPCParser : QRCodeParser<PaymentQRCodeData> {
     override fun parse(qrCodeContent: String): PaymentQRCodeData {
         val lines = qrCodeContent.replace(Regex("\r\r?\n"), "\n").split(Regex("\n|\r"), 0)
 
-        if (lines.isEmpty() || lines[0] != HEADER) {
-            throw IllegalArgumentException("QR code content does not conform to the SPC format.")
+        require(lines.isNotEmpty() && lines[0] == HEADER) {
+            "QR code content does not conform to the SPC format."
         }
 
         val iban = lines.getOrEmpty(IDX_IBAN)

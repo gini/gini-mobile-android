@@ -18,7 +18,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.error.ErrorFragment
@@ -147,7 +146,9 @@ class GiniCaptureFragment(
                         amplitudeApiKey = res.configuration.amplitudeApiKey
                     )
                 }
-                lifecycleScope.launch(Dispatchers.IO) {
+                // No dispatcher needed: saveConfiguration is a suspend function and DataStore is
+                // main-safe (it moves disk IO off the caller's thread internally).
+                lifecycleScope.launch {
                     clientConfigurationStorage.saveConfiguration(res.configuration)
                 }
 

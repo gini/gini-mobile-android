@@ -33,7 +33,7 @@ public class EncryptedCredentialsStoreTest {
         mSharedPreferences = getApplicationContext().getSharedPreferences("GiniTests", MODE_PRIVATE);
         mSharedPreferences.edit().clear().commit();
 
-        mCredentialsStore = new EncryptedCredentialsStore(mSharedPreferences, getApplicationContext());
+        mCredentialsStore = new EncryptedCredentialsStore(mSharedPreferences);
     }
 
     @After

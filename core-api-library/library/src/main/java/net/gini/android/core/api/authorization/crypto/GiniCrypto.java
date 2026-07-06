@@ -32,6 +32,9 @@ public abstract class GiniCrypto {
     static final String SECRET_KEY_ALIAS = "GiniCryptoKey";
     static final String AES_MODE = "AES/GCM/NoPadding";
 
+    // SecureRandom is thread-safe and expensive to seed; create it once and reuse it for all IVs.
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     public static GiniCrypto newInstance() {
         // minSdk = 23 (Android M), so we always use the M-or-greater implementation.
         // GiniCryptoPreAndroidM has been removed as it was dead code (CWE-780, CWE-327).
@@ -62,9 +65,8 @@ public abstract class GiniCrypto {
     }
 
     private byte[] generateIV() {
-        final SecureRandom secureRandom = new SecureRandom();
         final byte[] iv = new byte[12];
-        secureRandom.nextBytes(iv);
+        SECURE_RANDOM.nextBytes(iv);
         return iv;
     }
 

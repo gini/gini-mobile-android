@@ -10,7 +10,7 @@ import net.gini.android.capture.internal.qrcode.AmountAndCurrencyNormalizer.norm
  * The payload is newline-delimited with fixed field positions. The amount field encodes the value
  * in currency-cents as a zero-padded string (e.g. "000000010000" = 100.00).
  */
-@Suppress("MagicNumber", "UseRequire")
+@Suppress("MagicNumber")
 internal class HUB3Parser : QRCodeParser<PaymentQRCodeData> {
 
     private val ibanValidator = IBANValidator()
@@ -18,10 +18,8 @@ internal class HUB3Parser : QRCodeParser<PaymentQRCodeData> {
     override fun parse(qrCodeContent: String): PaymentQRCodeData {
         val lines = qrCodeContent.replace(Regex("\r\r?\n"), "\n").split(Regex("\n|\r"), 0)
 
-        if (lines.size < MINIMUM_LINE_COUNT || lines[0] != HEADER) {
-            throw IllegalArgumentException(
-                "Barcode content does not conform to the HUB3 format."
-            )
+        require(lines.size >= MINIMUM_LINE_COUNT && lines[0] == HEADER) {
+            "Barcode content does not conform to the HUB3 format."
         }
 
         val iban = lines.getOrEmpty(IDX_RECIPIENT_IBAN)

@@ -9,7 +9,7 @@ import net.gini.android.capture.internal.qrcode.AmountAndCurrencyNormalizer.norm
  * The payload is newline-delimited with fixed field positions. The amount field encodes
  * the value in euro-cents as a zero-padded 10-digit string (e.g. "0000010000" = €100.00).
  */
-@Suppress("MagicNumber", "UseRequire")
+@Suppress("MagicNumber")
 internal class UPNQRParser : QRCodeParser<PaymentQRCodeData> {
 
     private val ibanValidator = IBANValidator()
@@ -17,10 +17,8 @@ internal class UPNQRParser : QRCodeParser<PaymentQRCodeData> {
     override fun parse(qrCodeContent: String): PaymentQRCodeData {
         val lines = qrCodeContent.replace(Regex("\r\r?\n"), "\n").split(Regex("\n|\r"), 0)
 
-        if (lines.size < MINIMUM_LINE_COUNT || lines[0] != HEADER) {
-            throw IllegalArgumentException(
-                "QR code content does not conform to the UPNQR format."
-            )
+        require(lines.size >= MINIMUM_LINE_COUNT && lines[0] == HEADER) {
+            "QR code content does not conform to the UPNQR format."
         }
 
         val iban = lines.getOrEmpty(IDX_RECIPIENT_IBAN)
