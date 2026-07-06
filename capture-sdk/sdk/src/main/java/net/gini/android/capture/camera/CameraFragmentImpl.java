@@ -363,9 +363,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
      */
     private void showUnsupportedQRCodePopup(boolean trackScanEvent) {
         if (mIbanDetectedTextView.getVisibility() != View.VISIBLE) {
-            if (isUnsupportedQRCodeWarningEnabled()) {
-                mIsUnsupportedQRDialogShowing = true;
-            }
+            // Session-pinned value; the popup resolves the same pin when showing, so this flag
+            // always matches the warning type that is actually rendered.
+            mIsUnsupportedQRDialogShowing = isUnsupportedQRCodeWarningEnabled();
             mUnsupportedQRCodePopup.show(null);
             if (trackScanEvent) {
                 sendQRCodeScannedEventToUserAnalytics(false);
@@ -582,7 +582,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 }, () -> {
                     enableDocumentCapture();
                     return null;
-                }, isUnsupportedQRCodeWarningEnabled());
+                },
+                        // Deliberately a supplier, not a captured value: the configuration may not
+                        // be loaded yet at view creation, so the warning type is resolved (and
+                        // pinned for the session) when the popup is first shown.
+                        this::isUnsupportedQRCodeWarningEnabled);
         qrCodeEducationPopup = new QRCodeEducationPopup<>(view.findViewById(R.id.gc_qr_code_education_compose_view));
     }
 

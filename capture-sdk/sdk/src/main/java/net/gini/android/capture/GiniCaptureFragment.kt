@@ -90,6 +90,7 @@ class GiniCaptureFragment(
                 GiniCaptureViewModel(
                     getGiniCaptureKoin().get(),
                     getGiniCaptureKoin().get(),
+                    getGiniCaptureKoin().get(),
                 ) as T
         }
     }
@@ -140,12 +141,12 @@ class GiniCaptureFragment(
             response?.thenAcceptAsync { res ->
                 // clientID and amplitudeApiKey are not stored in DataStore, so update them directly.
                 // Boolean flags flow through DataStore → observer, keeping DataStore as single source.
-                giniBankConfigurationProvider.update(
-                    giniBankConfigurationProvider.provide().copy(
+                giniBankConfigurationProvider.update { current ->
+                    current.copy(
                         clientID = res.configuration.clientID,
                         amplitudeApiKey = res.configuration.amplitudeApiKey
                     )
-                )
+                }
                 lifecycleScope.launch(Dispatchers.IO) {
                     clientConfigurationStorage.saveConfiguration(res.configuration)
                 }

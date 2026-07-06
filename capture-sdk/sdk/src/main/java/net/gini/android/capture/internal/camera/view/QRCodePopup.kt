@@ -35,7 +35,10 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private val onHide: (() -> Unit)? = null,
     private val onScanAnotherQRCode: (() -> Unit)? = null,
     private val onCaptureDocument: (() -> Unit)? = null,
-    private val isNewWarningEnabled: Boolean = false
+    // Supplier instead of a captured Boolean: the warning type may not be known yet when the
+    // popup is created (the persisted configuration loads asynchronously), so it is resolved
+    // when the popup is actually shown.
+    private val isNewWarningEnabled: () -> Boolean = { false }
 ) {
 
     private var unsupportedQrDialog: AlertDialog? = null
@@ -81,9 +84,11 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     }
 
     private fun show() {
-        if (!supported && isNewWarningEnabled) {
+        // Resolve once per show so all decisions within this show cycle agree.
+        val newWarningEnabled = isNewWarningEnabled()
+        if (!supported && newWarningEnabled) {
             // New dialog requires explicit user interaction — no auto-dismiss timer
-            showViews()
+            showViews(newWarningEnabled)
             return
         }
         if (qrStatusTxt.visibility == View.VISIBLE) {
@@ -91,7 +96,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             fragmentImplCallback.view?.postDelayed(hideRunnable, hideDelayMs)
             return
         }
-        showViews()
+        showViews(newWarningEnabled)
         fragmentImplCallback.view?.removeCallbacks(hideRunnable)
         fragmentImplCallback.view?.postDelayed(hideRunnable, hideDelayMs)
     }
@@ -103,7 +108,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     }
 
 
-    private fun showViews() {
+    private fun showViews(newWarningEnabled: Boolean) {
 
         supportedBackgroundView?.visibility = if (supported) View.VISIBLE else View.GONE
 
@@ -126,7 +131,7 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
             performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         } else {
             performHapticFeedback(HapticFeedbackConstants.REJECT)
-            if (isNewWarningEnabled) {
+            if (newWarningEnabled) {
                 qrImageFrame.imageTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(popupView.context, R.color.gc_error_02)
                 )
