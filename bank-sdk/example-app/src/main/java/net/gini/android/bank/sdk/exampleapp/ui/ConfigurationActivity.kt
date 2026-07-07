@@ -589,7 +589,7 @@ class ConfigurationActivity : AppCompatActivity() {
      * restores the normal, system-driven behaviour.
      */
     private fun setupForceSdkThemeToggles() {
-        val toggles = binding.layoutDebugDevelopmentOptionsToggles
+        val toggles = binding.layoutGeneralUiCustomizationToggles
         // Reflect the persisted setting when (re)opening the screen.
         when (SharedPreferenceHelper.getString(CaptureFlowHostActivity.FORCE_SDK_THEME_KEY, this)) {
             CaptureFlowHostActivity.FORCE_SDK_THEME_DARK -> toggles.switchForceDarkTheme.isChecked = true
