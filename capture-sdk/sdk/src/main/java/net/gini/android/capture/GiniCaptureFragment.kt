@@ -14,10 +14,16 @@ import net.gini.android.capture.analysis.AnalysisFragmentListener
 import net.gini.android.capture.camera.CameraFragment
 import net.gini.android.capture.camera.CameraFragmentDirections
 import net.gini.android.capture.camera.CameraFragmentListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.error.ErrorFragment
 import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
+import net.gini.android.capture.internal.storage.ClientConfigurationStorage
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboarding
 import net.gini.android.capture.internal.util.FeatureConfiguration.shouldShowOnboardingAtFirstRun
@@ -74,6 +80,19 @@ class GiniCaptureFragment(
     private val lastExtractionsProvider: LastExtractionsProvider by getGiniCaptureKoin().inject()
     private val giniBankConfigurationProvider: GiniBankConfigurationProvider by
     getGiniCaptureKoin().inject()
+    private val clientConfigurationStorage: ClientConfigurationStorage by getGiniCaptureKoin().inject()
+
+    private val viewModel: GiniCaptureViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                GiniCaptureViewModel(
+                    getGiniCaptureKoin().get(),
+                    getGiniCaptureKoin().get(),
+                    getGiniCaptureKoin().get(),
+                ) as T
+        }
+    }
 
 
     fun setListener(listener: GiniCaptureFragmentListener) {
@@ -97,6 +116,7 @@ class GiniCaptureFragment(
             requireActivity().window.disallowScreenshots()
         }
         onBoardingShown = savedInstanceState?.getBoolean(onBoardingShownKey, false) ?: false
+        viewModel // trigger creation so the DataStore observer starts immediately
         setupUserAnalytics()
     }
 
@@ -112,12 +132,25 @@ class GiniCaptureFragment(
         if (GiniCapture.hasInstance()) {
             UserAnalytics.initialize(requireActivity())
             setCaptureVersionProperty()
+
             val networkRequestsManager =
                 GiniCapture.getInstance().internal().networkRequestsManager
             val response = networkRequestsManager
                 ?.getConfigurations(UUID.randomUUID())
             response?.thenAcceptAsync { res ->
-                giniBankConfigurationProvider.update(res.configuration)
+                // clientID and amplitudeApiKey are not stored in DataStore, so update them directly.
+                // Boolean flags flow through DataStore → observer, keeping DataStore as single source.
+                giniBankConfigurationProvider.update { current ->
+                    current.copy(
+                        clientID = res.configuration.clientID,
+                        amplitudeApiKey = res.configuration.amplitudeApiKey
+                    )
+                }
+                // No dispatcher needed: saveConfiguration is a suspend function and DataStore is
+                // main-safe (it moves disk IO off the caller's thread internally).
+                lifecycleScope.launch {
+                    clientConfigurationStorage.saveConfiguration(res.configuration)
+                }
 
                 UserAnalytics.setPlatformTokens(
                     AmplitudeUserAnalyticsEventTracker.AmplitudeAnalyticsApiKey(

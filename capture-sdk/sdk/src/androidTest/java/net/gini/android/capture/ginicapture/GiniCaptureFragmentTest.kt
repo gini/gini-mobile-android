@@ -4,20 +4,27 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import jersey.repackaged.jsr166e.CompletableFuture
+import kotlinx.coroutines.test.runTest
 import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureHelperForInstrumentationTests
 import net.gini.android.capture.di.CaptureSdkIsolatedKoinContext
+import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
 import net.gini.android.capture.internal.network.Configuration
 import net.gini.android.capture.internal.network.ConfigurationNetworkResult
 import net.gini.android.capture.internal.network.NetworkRequestsManager
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
+import net.gini.android.capture.internal.storage.ClientConfigurationStorage
 import net.gini.android.capture.tracking.useranalytics.BufferedUserAnalyticsEventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter
@@ -28,11 +35,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
-import net.gini.android.capture.di.getGiniCaptureKoin
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 /**
  * Integration test to verify the correct behavior of Analytics.
@@ -52,6 +56,7 @@ class GiniCaptureFragmentTest {
     private lateinit var memoryStore: ImageMultiPageDocumentMemoryStore
     private val koinTestModule = module {
         single { GiniBankConfigurationProvider() }
+        single<android.content.Context> { ApplicationProvider.getApplicationContext() }
     }
 
     /**
@@ -133,7 +138,8 @@ class GiniCaptureFragmentTest {
 
         launchGiniCaptureFragment().use { scenario ->
             scenario.moveToState(Lifecycle.State.RESUMED)
-            val giniBankConfigurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+            val giniBankConfigurationProvider =
+                getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
             val configuration = giniBankConfigurationProvider.provide()
 
             assertThat(configuration.isSavePhotosLocallyEnabled).isFalse()
@@ -153,7 +159,8 @@ class GiniCaptureFragmentTest {
 
         launchGiniCaptureFragment().use { scenario ->
             scenario.moveToState(Lifecycle.State.RESUMED)
-            val giniBankConfigurationProvider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+            val giniBankConfigurationProvider =
+                getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
             val configuration = giniBankConfigurationProvider.provide()
 
             assertThat(configuration.isSavePhotosLocallyEnabled).isTrue()
@@ -179,9 +186,50 @@ class GiniCaptureFragmentTest {
     }
 
 
+    @Test
+    fun configuration_shouldBeSeededFromPersistedConfiguration_whenApiHasNotRespondedYet() =
+        runTest {
+            // Use the Koin singleton so the fragment's ViewModel reads from the same DataStore we write to.
+            val storage = getGiniCaptureKoin().get<ClientConfigurationStorage>()
+            storage.saveConfiguration(
+                getMockedConfiguration(
+                    userJourneyEnabled = false,
+                    isUnsupportedQRCodeWarningEnabled = true
+                ).configuration
+            )
+
+            // Never-completing future ensures any value in the provider came from persisted DataStore, not the API
+            val neverCompletingFuture = CompletableFuture<ConfigurationNetworkResult>()
+            whenever(networkRequestsManager.getConfigurations(any())).thenReturn(
+                neverCompletingFuture
+            )
+
+            launchGiniCaptureFragment().use { scenario ->
+                scenario.moveToState(Lifecycle.State.RESUMED)
+
+                val provider = getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
+
+                // Poll (with a deadline) until the configuration flow propagates the persisted
+                // value to the provider, so the test exits as soon as the condition holds instead
+                // of always sleeping for the full timeout.
+                val deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2)
+                while (!provider.provide().isUnsupportedQRCodeWarningEnabled &&
+                    System.currentTimeMillis() < deadline
+                ) {
+                    Thread.sleep(POLL_INTERVAL_MS)
+                }
+
+                assertThat(provider.provide().isUnsupportedQRCodeWarningEnabled).isTrue()
+            }
+
+            // Clean up storage for other tests
+            storage.saveConfiguration(getMockedConfiguration(userJourneyEnabled = false).configuration)
+        }
+
     private fun getMockedConfiguration(
         userJourneyEnabled: Boolean,
-        savePhotosLocallyEnabled: Boolean = false
+        savePhotosLocallyEnabled: Boolean = false,
+        isUnsupportedQRCodeWarningEnabled: Boolean = false,
     ): ConfigurationNetworkResult {
         val testConfig = Configuration(
             id = UUID.randomUUID(),
@@ -196,7 +244,8 @@ class GiniCaptureFragmentTest {
             amplitudeApiKey = TEST_API_KEY,
             isSavePhotosLocallyEnabled = savePhotosLocallyEnabled,
             isPaymentDueHintEnabled = false,
-            isAlreadyPaidHintEnabled = false
+            isAlreadyPaidHintEnabled = false,
+            isUnsupportedQRCodeWarningEnabled = isUnsupportedQRCodeWarningEnabled,
         )
 
         return ConfigurationNetworkResult(testConfig, UUID.randomUUID())
@@ -229,5 +278,6 @@ class GiniCaptureFragmentTest {
     companion object {
         private const val TEST_CLIENT_ID = "test-client-id"
         private const val TEST_API_KEY = "test-api-key"
+        private const val POLL_INTERVAL_MS = 20L
     }
 }

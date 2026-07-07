@@ -266,7 +266,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         if (mCredentialsStore == null) {
             val sharedPreferences: SharedPreferences =
                 context.getSharedPreferences("Gini", Context.MODE_PRIVATE)
-            val encryptedCredentialsStore = EncryptedCredentialsStore(sharedPreferences, context)
+            val encryptedCredentialsStore = EncryptedCredentialsStore(sharedPreferences)
             encryptedCredentialsStore.encryptExistingPlaintextCredentials()
             mCredentialsStore = encryptedCredentialsStore
         }

@@ -54,6 +54,11 @@ public class SupportedFormatsAdapter extends
             items.add(SupportedFormat.QR_STUZZA);
             items.add(SupportedFormat.QR_GIROCODE);
             items.add(SupportedFormat.QR_GINI_PAYMENT);
+            items.add(SupportedFormat.QR_SPC);
+            items.add(SupportedFormat.QR_SPD);
+            items.add(SupportedFormat.QR_PAY_BY_SQUARE);
+            items.add(SupportedFormat.QR_UPNQR);
+            items.add(SupportedFormat.QR_HUB3);
             return items;
         }
 
@@ -184,6 +189,11 @@ public class SupportedFormatsAdapter extends
         QR_STUZZA(R.string.gc_supported_format_qr_type_stuzza),
         QR_GIROCODE(R.string.gc_supported_format_qr_type_girocode),
         QR_GINI_PAYMENT(R.string.gc_supported_format_qr_type_gini_payment),
+        QR_SPC(R.string.gc_supported_format_qr_type_spc),
+        QR_SPD(R.string.gc_supported_format_qr_type_spd),
+        QR_PAY_BY_SQUARE(R.string.gc_supported_format_qr_type_pay_by_square),
+        QR_UPNQR(R.string.gc_supported_format_qr_type_upnqr),
+        QR_HUB3(R.string.gc_supported_format_qr_type_hub3),
         E_INVOICES(R.string.gc_supported_format_e_invoices);
 
         @DrawableRes

@@ -136,7 +136,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
     @Throws(IOException::class, InterruptedException::class, JSONException::class)
     fun documentUploadWorksAfterNewUserWasCreatedIfUserWasInvalid() = runTest(timeout = 30.seconds) {
         val credentialsStore = EncryptedCredentialsStore(ApplicationProvider.getApplicationContext<Context>()
-            .getSharedPreferences("GiniTests", Context.MODE_PRIVATE), ApplicationProvider.getApplicationContext())
+            .getSharedPreferences("GiniTests", Context.MODE_PRIVATE))
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, TEST_EMAIL_DOMAIN)
             .setApiBaseUrl(apiUri)
             .setUserCenterApiBaseUrl(userCenterUri)
@@ -165,7 +165,7 @@ abstract class GiniCoreAPIIntegrationTest<DM: DocumentManager<DR, E>, DR: Docume
 
         // Upload a document to make sure we have a valid user
         val credentialsStore = EncryptedCredentialsStore(ApplicationProvider.getApplicationContext<Context>()
-            .getSharedPreferences("GiniTests", Context.MODE_PRIVATE), ApplicationProvider.getApplicationContext())
+            .getSharedPreferences("GiniTests", Context.MODE_PRIVATE))
         val oldEmailDomain = TEST_EMAIL_DOMAIN
         giniCoreApi = createGiniCoreAPIBuilder(clientId, clientSecret, oldEmailDomain)
             .setApiBaseUrl(apiUri)
