@@ -148,6 +148,9 @@
     <string name="gini_client_id_label">Client Id</string>
     <string name="client_secret_label">Client Secret</string>
     <string name="custom_http_client_switch_label">Enable Custom HTTP Client</string>
+    <string name="force_theme_label">Force SDK theme</string>
+    <string name="force_dark_theme_switch_label">Force dark theme</string>
+    <string name="force_light_theme_switch_label">Force light theme</string>
 
     <string name="configuration_transaction_docs_enabled">Transaction Docs enabled</string>
     <string name="configuration_transaction_docs_always_attach_docs">Always attach invoices</string>
