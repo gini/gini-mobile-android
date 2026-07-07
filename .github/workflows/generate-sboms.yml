@@ -69,7 +69,7 @@ jobs:
       # Step 2: Loop over each SBOM file and submit it
       - name: Submit SBOMs to GitHub Dependency Graph
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           sha=$(git rev-parse HEAD)
           timestamp=$(date +%s)
