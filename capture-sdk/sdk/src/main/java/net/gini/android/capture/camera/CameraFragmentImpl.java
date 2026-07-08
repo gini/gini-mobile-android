@@ -642,8 +642,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             importDocumentFromUriList(((FileChooserResult.FilesSelectedUri) result).getList());
         } else if (result instanceof FileChooserResult.Error) {
             final GiniCaptureError error = ((FileChooserResult.Error) result).getError();
-            final String message = "Document import failed: " + error.getMessage();
-            LOG.error(message);
+            LOG.error("Document import failed: {}", LogSanitizer.sanitize(error.getMessage()));
             showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
         }
     }
@@ -1559,7 +1558,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                             mInMultiPageState = false;
                             return;
                         }
-                        LOG.info("Document imported: {}", mMultiPageDocument);
+                        LOG.info("Document imported: {}", LogSanitizer.sanitize(mMultiPageDocument));
                         updatePhotoThumbnail();
                         requestClientDocumentCheck(mMultiPageDocument);
                     }
@@ -1706,7 +1705,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return;
         }
         String message = activity.getString(errorType.getTitleTextResource());
-        LOG.error("Invalid document {}", message);
+        LOG.error("Invalid document {}", LogSanitizer.sanitize(message));
         showInvalidFileAlert(message);
     }
 
@@ -2198,11 +2197,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         ErrorLogger.log(new ErrorLog(errorCode.toString() + ": " + message, throwable));
         String errorMessage = message;
         if (throwable != null) {
-            LOG.error(message, throwable);
+            LOG.error("{}", LogSanitizer.sanitize(message), throwable);
             // Add error info to the message to help clients, if they don't have logging enabled
             errorMessage = errorMessage + ": " + throwable.getMessage();
         } else {
-            LOG.error(message);
+            LOG.error("{}", LogSanitizer.sanitize(message));
         }
         fragmentListener.onError(new GiniCaptureError(errorCode, errorMessage));
     }

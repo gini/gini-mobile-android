@@ -73,8 +73,8 @@ public abstract class AbstractImportImageUrisAsyncTask extends
 
     @Override
     protected ImageMultiPageDocument doInBackground(final Uri... uris) {
-        LOG.debug("Importing uris from source {} and with import method {}", mSource,
-                mImportMethod);
+        LOG.debug("Importing uris from source {} and with import method {}", LogSanitizer.sanitize(mSource),
+                LogSanitizer.sanitize(mImportMethod));
         final ImageMultiPageDocument multiPageDocument = new ImageMultiPageDocument(mSource,
                 mImportMethod);
         FileImportValidator fileImportValidator = new FileImportValidator(mContext, mGiniCapture.getImportedFileSizeBytesLimit());
@@ -130,8 +130,8 @@ public abstract class AbstractImportImageUrisAsyncTask extends
             onError(multiPageDocument,
                     new ImportedFileValidationException("Intent did not contain images"));
         }
-        LOG.debug("Finished importing uris from source {} and with import method {}", mSource,
-                mImportMethod);
+        LOG.debug("Finished importing uris from source {} and with import method {}", LogSanitizer.sanitize(mSource),
+                LogSanitizer.sanitize(mImportMethod));
         return multiPageDocument;
     }
 

@@ -259,7 +259,7 @@ internal constructor(
                 val apiDocument = partialDocumentResource.data
                 LOG.debug(
                     "Document upload success for {}: {}", LogSanitizer.sanitize(document.id),
-                    apiDocument
+                    LogSanitizer.sanitize(apiDocument)
                 )
                 giniApiDocuments[apiDocument.id] = apiDocument
                 callback.success(Result(apiDocument.id, apiDocument.filename))
@@ -281,7 +281,7 @@ internal constructor(
             is Resource.Cancelled -> {
                 LOG.debug(
                     "Document upload cancelled for {}",
-                    document.id
+                    LogSanitizer.sanitize(document.id)
                 )
                 callback.cancelled()
             }
@@ -311,8 +311,9 @@ internal constructor(
             is Resource.Error -> {
                 val error = Error(deleteResource.formattedErrorMessage)
                 LOG.error(
-                    "Document deletion failed for api id {}: {}", giniApiDocumentId,
-                    error.message
+                    "Document deletion failed for api id {}: {}",
+                    LogSanitizer.sanitize(giniApiDocumentId),
+                    LogSanitizer.sanitize(error.message)
                 )
                 callback.failure(error)
             }
@@ -338,8 +339,8 @@ internal constructor(
             val error = Error("Missing partial document.")
             LOG.error(
                 "Document analysis failed for documents {}: {}",
-                giniApiDocumentIdRotationMap,
-                error.message
+                LogSanitizer.sanitize(giniApiDocumentIdRotationMap),
+                LogSanitizer.sanitize(error.message)
             )
             callback.failure(error)
             return@launchCancellable
@@ -372,7 +373,7 @@ internal constructor(
             is Resource.Cancelled -> {
                 LOG.debug(
                     "Document analysis cancelled for documents {}",
-                    giniApiDocumentIdRotationMap
+                    LogSanitizer.sanitize(giniApiDocumentIdRotationMap)
                 )
             }
 
@@ -380,7 +381,8 @@ internal constructor(
                 val error = Error(compositeDocumentAndExtractionsResource.formattedErrorMessage)
                 LOG.error(
                     "Document analysis failed for documents {}: {}",
-                    giniApiDocumentIdRotationMap, error.message
+                    LogSanitizer.sanitize(giniApiDocumentIdRotationMap),
+                    LogSanitizer.sanitize(error.message)
                 )
                 callback.failure(error)
             }
@@ -401,7 +403,10 @@ internal constructor(
                 LOG.debug(
                     "Document analysis success for documents {}: " +
                             "extractions = {}; compoundExtractions = {}; returnReasons = {}",
-                    giniApiDocumentIdRotationMap, extractions, compoundExtractions, returnReasons
+                    LogSanitizer.sanitize(giniApiDocumentIdRotationMap),
+                    LogSanitizer.sanitize(extractions),
+                    LogSanitizer.sanitize(compoundExtractions),
+                    LogSanitizer.sanitize(returnReasons)
                 )
 
                 callback.success(
@@ -514,8 +519,8 @@ internal constructor(
                     )
                     LOG.error(
                         "Getting file for document {} failed. {}",
-                        fileUrl,
-                        error.message
+                        LogSanitizer.sanitize(fileUrl),
+                        LogSanitizer.sanitize(error.message)
                     )
 
                     callback.failure(error)
@@ -524,8 +529,8 @@ internal constructor(
                 is Resource.Success -> {
                     LOG.debug(
                         "Getting file for document {} success. ByteArray size: {}",
-                        fileUrl,
-                        resource.data.size
+                        LogSanitizer.sanitize(fileUrl),
+                        LogSanitizer.sanitize(resource.data.size)
                     )
                     callback.success(resource.data.toTypedArray())
                 }
@@ -562,7 +567,7 @@ internal constructor(
                     is Resource.Success -> {
                         LOG.debug(
                             "Send feedback success for api document {}",
-                            document.id
+                            LogSanitizer.sanitize(document.id)
                         )
                         callback.success(null)
                     }
@@ -571,12 +576,12 @@ internal constructor(
                         val error = Error(feedbackResource.formattedErrorMessage)
                         LOG.error(
                             "Send feedback failed for api document {}: {}",
-                            document.id,
-                            error.message
+                            LogSanitizer.sanitize(document.id),
+                            LogSanitizer.sanitize(error.message)
                         )
                         handleErrorLog(
                             ErrorLog(
-                                description = "Failed to send feedback for document ${document.id}",
+                                description = "Failed to send feedback for document ${LogSanitizer.sanitize(document.id)}",
                                 exception = feedbackResource.exception
                             )
                         )
@@ -586,7 +591,7 @@ internal constructor(
                     is Resource.Cancelled -> {
                         LOG.debug(
                             "Send feedback cancelled for api document {}",
-                            document.id
+                            LogSanitizer.sanitize(document.id)
                         )
                         callback.cancelled()
                     }
@@ -611,7 +616,7 @@ internal constructor(
 
     override fun handleErrorLog(errorLog: ErrorLog) {
         coroutineScope.launch {
-            LOG.error(errorLog.toString(), errorLog.exception)
+            LOG.error("Error: {}", LogSanitizer.sanitize(errorLog.description), errorLog.exception)
             giniBankApi.documentManager.logErrorEvent(errorLog.toErrorEvent())
         }
     }
