@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -21,6 +22,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 
 /**
  * Created by Alpar Szotyori on 02.03.2020.
@@ -109,6 +111,43 @@ class CameraFragmentImplTest {
 
         // Then
         verify(eventTracker).onCameraScreenEvent(Event(CameraScreenEvent.HELP))
+    }
+
+    @Test
+    fun `does not reset camera frame color when no IBANs are detected while unsupported QR popup is shown`() {
+        // Given: the unsupported QR code popup is shown (e.g. restored after a rotation)
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
+        fragmentImpl.mUnsupportedQRCodePopup = mock { on { isShown } doReturn true }
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.mIbanDetectedTextView = mock()
+
+        // When: a camera frame without IBANs is processed
+        fragmentImpl.handleIBANsDetected(emptyList())
+
+        // Then: the frame color set by the popup is left untouched, but the IBAN label is hidden
+        verify(fragmentImpl.mImageFrame, never()).setImageTintList(any())
+        verify(fragmentImpl.mIbanDetectedTextView).visibility = View.GONE
+    }
+
+    @Test
+    fun `resets camera frame color when no IBANs are detected and no QR popup is shown`() {
+        // Given: no QR code popup is shown
+        val activityController = Robolectric.buildActivity(FragmentActivity::class.java)
+        val fragmentCallback = mock<FragmentImplCallback> {
+            on { activity } doReturn activityController.get()
+        }
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(fragmentCallback, mock<CancelListener>(), false)
+        fragmentImpl.mUnsupportedQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mPaymentQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.mIbanDetectedTextView = mock()
+
+        // When: a camera frame without IBANs is processed
+        fragmentImpl.handleIBANsDetected(emptyList())
+
+        // Then: the frame color is reset to the default and the IBAN label is hidden
+        verify(fragmentImpl.mImageFrame).setImageTintList(any())
+        verify(fragmentImpl.mIbanDetectedTextView).visibility = View.GONE
     }
 
     @Test

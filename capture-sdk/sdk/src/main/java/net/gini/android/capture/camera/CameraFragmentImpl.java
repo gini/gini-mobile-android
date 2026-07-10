@@ -196,7 +196,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private String currentGenericErrorMessage = "";
     private String genericErrorType = "";
 
-    private QRCodePopup<String> mUnsupportedQRCodePopup;
+    @VisibleForTesting
+    QRCodePopup<String> mUnsupportedQRCodePopup;
 
     // null = use GiniCapture setting; true = only-QR mode; false = document capture mode
     @VisibleForTesting
@@ -240,12 +241,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private Button mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
-    private ImageView mImageFrame;
+    @VisibleForTesting
+    ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
     private ConstraintLayout mPaneWrapper;
     private ConstraintLayout mDetectionErrorLayout;
     private TextView mScanTextView;
-    private TextView mIbanDetectedTextView;
+    @VisibleForTesting
+    TextView mIbanDetectedTextView;
     private boolean mIsTakingPicture;
     private boolean mIsDetectionErrorPopupShowed;
 
@@ -2148,7 +2151,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         });
     }
 
-    private void handleIBANsDetected(List<String> ibans) {
+    @VisibleForTesting
+    void handleIBANsDetected(List<String> ibans) {
         if (!ibans.isEmpty() && !isPaymentQRCodeDetectionInProgress()) {
             mUnsupportedQRCodePopup.hide();
             showIBANsDetectedOnScreen(ibans);
@@ -2175,13 +2179,18 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void hideIBANsDetectedOnScreen() {
-        mImageFrame.setImageTintList(ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                                mFragment.getActivity(),
-                                R.color.gc_light_01
-                        )
-                )
-        );
+        // Don't reset the frame color while a QR code popup owns it (e.g. the red frame of the
+        // unsupported QR code warning restored after a configuration change), otherwise the first
+        // no-IBAN camera frame would overwrite it with the default color.
+        if (!mUnsupportedQRCodePopup.isShown() && !isPaymentQRCodeDetectionInProgress()) {
+            mImageFrame.setImageTintList(ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                    mFragment.getActivity(),
+                                    R.color.gc_light_01
+                            )
+                    )
+            );
+        }
         mIbanDetectedTextView.setVisibility(View.GONE);
         mIbanDetectedTextView.setText("");
     }
