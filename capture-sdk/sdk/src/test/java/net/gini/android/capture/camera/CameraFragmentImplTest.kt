@@ -151,6 +151,47 @@ class CameraFragmentImplTest {
     }
 
     @Test
+    fun `does not dismiss unsupported QR dialog when IBANs are detected while it is shown`() {
+        // Given: the unsupported QR code dialog (new warning) is visible
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
+        fragmentImpl.mIsUnsupportedQRDialogShowing = true
+        fragmentImpl.mUnsupportedQRCodePopup = mock { on { isShown } doReturn true }
+        fragmentImpl.mPaymentQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.mIbanDetectedTextView = mock()
+
+        // When: an in-flight recognition result with IBANs arrives
+        fragmentImpl.handleIBANsDetected(listOf("DE75 5121 0800 1245 1261 99"))
+
+        // Then: the dialog stays visible and the IBAN overlay is not drawn over it
+        verify(fragmentImpl.mUnsupportedQRCodePopup, never()).hide()
+        verify(fragmentImpl.mIbanDetectedTextView, never()).visibility = View.VISIBLE
+        verify(fragmentImpl.mImageFrame, never()).setImageTintList(any())
+    }
+
+    @Test
+    fun `dismisses unsupported QR popup when IBANs are detected while legacy warning is shown`() {
+        // Given: the legacy unsupported QR banner is visible (no dialog)
+        val activityController = Robolectric.buildActivity(FragmentActivity::class.java)
+        val fragmentCallback = mock<FragmentImplCallback> {
+            on { activity } doReturn activityController.get()
+        }
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(fragmentCallback, mock<CancelListener>(), false)
+        fragmentImpl.mIsUnsupportedQRDialogShowing = false
+        fragmentImpl.mUnsupportedQRCodePopup = mock { on { isShown } doReturn true }
+        fragmentImpl.mPaymentQRCodePopup = mock { on { isShown } doReturn false }
+        fragmentImpl.mImageFrame = mock()
+        fragmentImpl.mIbanDetectedTextView = mock()
+
+        // When: IBANs are detected
+        fragmentImpl.handleIBANsDetected(listOf("DE75 5121 0800 1245 1261 99"))
+
+        // Then: the banner is hidden and the IBAN overlay is shown (pre-existing behavior)
+        verify(fragmentImpl.mUnsupportedQRCodePopup).hide()
+        verify(fragmentImpl.mIbanDetectedTextView).visibility = View.VISIBLE
+    }
+
+    @Test
     fun `resets QR code state when unsupported popup hides so scanning resumes`() {
         // Given: state is set as if an unsupported QR code was shown and blocked further scans
         val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
