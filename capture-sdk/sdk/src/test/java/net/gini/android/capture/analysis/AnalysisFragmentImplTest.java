@@ -36,6 +36,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+import kotlinx.coroutines.channels.BufferOverflow;
+import kotlinx.coroutines.flow.SharedFlowKt;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+import net.gini.android.capture.BankSDKBridge;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -50,6 +55,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Alpar Szotyori on 15.05.2019.
@@ -68,41 +74,57 @@ public class AnalysisFragmentImplTest {
     @After
     public void tearDown() throws Exception {
         AnalysisFragmentCompatFake.sFragmentImplFactory = null;
+        AnalysisFragmentCompatFake.sViewModel = null;
         DialogShadow.cleanup();
         AnalysisHintsAnimatorShadow.cleanup();
         DefaultLoadingIndicatorAdapterShadow.cleanup();
     }
 
     @Test
-    public void should_forwardAnalysisFragmentInterfaceMethods_toPresenter() throws Exception {
+    public void should_forwardBankSDKBridge_toViewModel_andKeepListener() throws Exception {
         // Given
-        final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
+        final AnalysisViewModel viewModel = mockViewModel();
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
         try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                presenter, analysisFragmentImplRef)) {
+                viewModel, analysisFragmentImplRef)) {
 
             // When
+            final AnalysisFragmentListener listener = mock(AnalysisFragmentListener.class);
+            final BankSDKBridge bankSDKBridge = mock(BankSDKBridge.class);
             scenario.onActivity(
                     new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
                         @Override
                         public void perform(final AnalysisFragmentHostActivity activity) {
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.setListener(mock(AnalysisFragmentListener.class));
+                            analysisFragment.setListener(listener);
+                            analysisFragment.setBankSDKBridge(bankSDKBridge);
                         }
                     });
 
             // Then
-            verify(presenter).setListener(any(AnalysisFragmentListener.class));
+            assertThat(analysisFragmentImplRef.get().getListener()).isEqualTo(listener);
+            verify(viewModel).setBankSDKBridge(bankSDKBridge);
         }
     }
 
     @NonNull
+    private static AnalysisViewModel mockViewModel() {
+        final AnalysisViewModel viewModel = mock(AnalysisViewModel.class);
+        when(viewModel.getUiState()).thenReturn(
+                StateFlowKt.MutableStateFlow(AnalysisViewModel.initialUiState(false)));
+        when(viewModel.getEvents()).thenReturn(
+                SharedFlowKt.MutableSharedFlow(0, 64, BufferOverflow.SUSPEND));
+        return viewModel;
+    }
+
+    @NonNull
     private ActivityScenario<AnalysisFragmentHostActivity> launchHostActivity(
-            @NonNull final AnalysisScreenPresenter presenter,
+            @NonNull final AnalysisViewModel viewModel,
             @NonNull final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef) {
+        AnalysisFragmentCompatFake.sViewModel = viewModel;
         AnalysisFragmentCompatFake.sFragmentImplFactory =
                 new FragmentImplFactory<AnalysisFragmentImpl, AnalysisFragment>() {
                     @NonNull
@@ -119,17 +141,7 @@ public class AnalysisFragmentImplTest {
                                         // No-op
                                     }
                                 },
-                                document, null, false) {
-
-                            @Override
-                            void createPresenter(@NonNull final Activity activity,
-                                                 @NonNull final Document document,
-                                                 final String documentAnalysisErrorMessage,
-                                                 final Boolean saveInvoicesLocally) {
-                                setPresenter(presenter);
-                            }
-
-                        };
+                                viewModel, document);
                         analysisFragmentImplRef.set(analysisFragmentImpl);
                         return analysisFragmentImpl;
                     }
@@ -158,8 +170,8 @@ public class AnalysisFragmentImplTest {
 
     private ActivityScenario<AnalysisFragmentHostActivity> launchHostActivity(
             @NonNull final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef) {
-        final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
-        return launchHostActivity(presenter, analysisFragmentImplRef);
+        final AnalysisViewModel viewModel = mockViewModel();
+        return launchHostActivity(viewModel, analysisFragmentImplRef);
     }
 
     @Test
@@ -435,17 +447,17 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_startPresenter_onStart() throws Exception {
+    public void should_startViewModel_onResume() throws Exception {
         // Given
-        final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
+        final AnalysisViewModel viewModel = mockViewModel();
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
         try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                presenter, analysisFragmentImplRef)) {
+                viewModel, analysisFragmentImplRef)) {
 
             // Then
-            verify(presenter).start();
+            verify(viewModel).start();
         }
     }
 
@@ -467,56 +479,56 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void shold_stopPresenter_onDestroy() throws Exception {
+    public void shold_stopViewModel_onDestroy() throws Exception {
         // Given
-        final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
+        final AnalysisViewModel viewModel = mockViewModel();
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
         try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                presenter, analysisFragmentImplRef)) {
+                viewModel, analysisFragmentImplRef)) {
 
             // When
             scenario.moveToState(Lifecycle.State.DESTROYED);
 
             // Then
-            verify(presenter).stop();
+            verify(viewModel).stop();
         }
     }
 
     @Test
-    public void should_finishPresenter_onDestroy_whenActivity_isFinishing() throws Exception {
+    public void should_finishViewModel_onDestroy_whenActivity_isFinishing() throws Exception {
         // Given
-        final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
+        final AnalysisViewModel viewModel = mockViewModel();
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
         try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                presenter, analysisFragmentImplRef)) {
+                viewModel, analysisFragmentImplRef)) {
 
             // When
             scenario.moveToState(Lifecycle.State.DESTROYED);
 
             // Then
-            verify(presenter).finish();
+            verify(viewModel).finish();
         }
     }
 
     @Test
-    public void should_notFinishPresenter_onDestroy_whenActivity_isNotFinishing() throws Exception {
+    public void should_notFinishViewModel_onDestroy_whenActivity_isNotFinishing() throws Exception {
         // Given
-        final AnalysisScreenPresenter presenter = mock(AnalysisScreenPresenter.class);
+        final AnalysisViewModel viewModel = mockViewModel();
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
 
         try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
-                presenter, analysisFragmentImplRef)) {
+                viewModel, analysisFragmentImplRef)) {
 
             // When
             scenario.recreate();
 
             // Then
-            verify(presenter, never()).finish();
+            verify(viewModel, never()).finish();
         }
     }
 

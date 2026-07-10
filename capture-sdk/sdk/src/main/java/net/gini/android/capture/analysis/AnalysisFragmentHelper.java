@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 
 import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
@@ -33,14 +34,28 @@ final class AnalysisFragmentHelper {
         return arguments;
     }
 
-    static AnalysisFragmentImpl createFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull CancelListener cancelListener,
-                                                   @NonNull final Bundle arguments) {
+    static AnalysisViewModel createViewModel(@NonNull final AnalysisFragment fragment,
+                                             @NonNull final Bundle arguments) {
         final Document document = arguments.getParcelable(ARGS_DOCUMENT);
         final Boolean isInvoiceSavingEnabled = arguments.getBoolean(GC_ARGS_SAVE_INVOICES, false);
+        if (document == null) {
+            throw new IllegalStateException(
+                    "AnalysisFragmentCompat requires a Document. Use the createInstance() method of these classes for instantiating.");
+        }
+        final String analysisErrorMessage = arguments.getString(
+                ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE);
+        return new ViewModelProvider(fragment,
+                new AnalysisViewModel.Factory(fragment.requireActivity().getApplication(),
+                        document, analysisErrorMessage, isInvoiceSavingEnabled))
+                .get(AnalysisViewModel.class);
+    }
+
+    static AnalysisFragmentImpl createFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull CancelListener cancelListener,
+                                                   @NonNull final Bundle arguments,
+                                                   @NonNull final AnalysisViewModel viewModel) {
+        final Document document = arguments.getParcelable(ARGS_DOCUMENT);
         if (document != null) {
-            final String analysisErrorMessage = arguments.getString(
-                    ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE);
-            return new AnalysisFragmentImpl(fragment, cancelListener, document, analysisErrorMessage, isInvoiceSavingEnabled);
+            return new AnalysisFragmentImpl(fragment, cancelListener, viewModel, document);
         } else {
             throw new IllegalStateException(
                     "AnalysisFragmentCompat requires a Document. Use the createInstance() method of these classes for instantiating.");

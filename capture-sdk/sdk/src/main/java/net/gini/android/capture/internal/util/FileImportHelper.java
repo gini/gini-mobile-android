@@ -34,22 +34,36 @@ public final class FileImportHelper {
             @NonNull final Activity activity,
             @NonNull final GiniCaptureDocument document,
             @NonNull final ShowAlertCallback showAlertCallback) {
+        return showAlertIfOpenWithDocumentAndAppIsDefault(activity.getApplication(), document,
+                showAlertCallback, new Runnable() {
+                    @Override
+                    public void run() {
+                        startApplicationDetailsSettings(activity);
+                    }
+                });
+    }
+
+    public static CompletableFuture<Void> showAlertIfOpenWithDocumentAndAppIsDefault(
+            @NonNull final Application app,
+            @NonNull final GiniCaptureDocument document,
+            @NonNull final ShowAlertCallback showAlertCallback,
+            @NonNull final Runnable applicationDetailsSettingsLauncher) {
         final CompletableFuture<Void> alertCompletion = new CompletableFuture<>();
         if (document.getImportMethod() == Document.ImportMethod.OPEN_WITH
-                && isDefaultForMimeType(activity.getApplication(), document.getMimeType())) {
-            final String fileType = fileTypeForMimeType(activity.getApplication(),
+                && isDefaultForMimeType(app, document.getMimeType())) {
+            final String fileType = fileTypeForMimeType(app,
                     document.getMimeType());
             showAlertCallback.showAlertDialog(
-                    activity.getString(R.string.gc_file_import_default_app_dialog_message,
+                    app.getString(R.string.gc_file_import_default_app_dialog_message,
                             fileType),
-                    activity.getString(R.string.gc_file_import_default_app_dialog_positive_button),
+                    app.getString(R.string.gc_file_import_default_app_dialog_positive_button),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {
-                            startApplicationDetailsSettings(activity);
+                            applicationDetailsSettingsLauncher.run();
                         }
                     },
-                    activity.getString(R.string.gc_file_import_default_app_dialog_negative_button),
+                    app.getString(R.string.gc_file_import_default_app_dialog_negative_button),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialog, final int which) {

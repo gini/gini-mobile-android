@@ -24,7 +24,6 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
@@ -67,17 +66,19 @@ import java.util.Objects;
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-
 /**
- * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
+ * View layer of the analysis UI presented by {@link AnalysisFragment}. Renders the
+ * {@link AnalysisViewModel}'s state and events which are forwarded to it by the
+ * {@link AnalysisFragmentViewModelBinder}.
  */
-class AnalysisFragmentImpl extends AnalysisScreenContract.View {
+class AnalysisFragmentImpl {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AnalysisFragmentImpl.class);
     protected static final String INVOICE_SAVING_IN_PROGRESS_KEY = "invoiceSavingInProgress";
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
+    private final AnalysisViewModel mViewModel;
+    private AnalysisFragmentListener mListener;
     private TextView mAnalysisMessageTextView;
     private ImageView mImageDocumentView;
     private ConstraintLayout mLayoutRoot;
@@ -94,28 +95,15 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
-                         @NonNull final Document document,
-                         final String documentAnalysisErrorMessage,
-                         final Boolean mIsInvoiceSavingEnabled) {
+                         @NonNull final AnalysisViewModel viewModel,
+                         @NonNull final Document document) {
         mFragment = fragment;
         if (mFragment.getActivity() == null) {
             throw new IllegalStateException("Missing activity for fragment.");
         }
         mCancelListener = cancelListener;
-        createPresenter(mFragment.getActivity(), document,
-                documentAnalysisErrorMessage,
-                mIsInvoiceSavingEnabled
-        ); // NOPMD - overridable for testing
-    }
-
-    @VisibleForTesting
-    void createPresenter(@NonNull final Activity activity, @NonNull final Document document,
-                         final String documentAnalysisErrorMessage,
-                         final Boolean mIsInvoiceSavingEnabled) {
-
+        mViewModel = viewModel;
         addUserAnalyticEvents(document);
-        new AnalysisScreenPresenter(activity, this, document,
-                documentAnalysisErrorMessage, mIsInvoiceSavingEnabled);
     }
 
     private void addUserAnalyticEvents(@NonNull Document document) {
@@ -137,17 +125,19 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         }
     }
 
-    @Override
     public void setListener(@NonNull final AnalysisFragmentListener listener) {
-        getPresenter().setListener(listener);
+        mListener = listener;
     }
 
-    @Override
+    @Nullable
+    AnalysisFragmentListener getListener() {
+        return mListener;
+    }
+
     public void setBankSDKBridge(BankSDKBridge bankSDKBridge) {
-        getPresenter().setBankSDKBridge(bankSDKBridge);
+        mViewModel.setBankSDKBridge(bankSDKBridge);
     }
 
-    @Override
     void showScanAnimation(Boolean isSavingInvoicesLocallyEnabled) {
         mAnalysisMessageTextView.setVisibility(View.VISIBLE);
         isScanAnimationActive = true;
@@ -167,7 +157,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mAnalysisMessageTextView.setText(context.getString(messageResId));
     }
 
-    @Override
     void hideScanAnimation() {
         isScanAnimationActive = false;
         if (injectedLoadingIndicatorContainer != null)
@@ -179,7 +168,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
             mAnalysisMessageTextView.setVisibility(View.GONE);
     }
 
-    @Override
     void showEducation(EducationCompleteListener listener) {
         fragmentExtension.showEducation(() -> {
             hideEducation();
@@ -212,7 +200,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
         int result = SAFHelper.INSTANCE.saveFilesToFolder(
                 context , folderUri,
-                getPresenter().assembleMultiPageDocumentUris()
+                mViewModel.assembleMultiPageDocumentUris()
         );
 
         notifyUserAboutSafResult(result, context);
@@ -246,19 +234,18 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         int result = SAFHelper.INSTANCE.saveFilesToFolder(
                 context,
                 treeUri,
-                getPresenter().assembleMultiPageDocumentUris());
+                mViewModel.assembleMultiPageDocumentUris());
 
         notifyUserAboutSafResult(result, context);
 
-        getPresenter().resumeInterruptedFlow();
+        mViewModel.resumeInterruptedFlow();
         isInvoiceSavingInProgress = false;
     }
 
-    @Override
     void processInvoiceSaving() {
         if (mFragment.getActivity() == null) return;
         isInvoiceSavingInProgress = true;
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress);
+        mViewModel.updateInvoiceSavingState(isInvoiceSavingInProgress);
 
         String folderUri = SharedPreferenceHelper.INSTANCE.getString(
                 SAF_STORAGE_URI_KEY,
@@ -280,7 +267,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         fragmentExtension.hideEducation();
     }
 
-    @Override
     CompletableFuture<Void> waitForViewLayout() {
         final View view = mFragment.getView();
         if (view == null) {
@@ -301,28 +287,23 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         return future;
     }
 
-    @Override
     void showPdfInfoPanel() {
         mAnalysisOverlay.setBackgroundColor(Color.TRANSPARENT);
     }
 
-    @Override
     void showPdfTitle(@NonNull final String title) {
         mAnalysisMessageTextView.setText(mFragment.getActivity().getString(R.string.gc_pdf_analysis_activity_indicator_message, title));
     }
 
-    @Override
     Size getPdfPreviewSize() {
         return new Size(mImageDocumentView.getWidth(), mImageDocumentView.getHeight());
     }
 
-    @Override
     void showBitmap(@Nullable final Bitmap bitmap, final int rotationForDisplay) {
         rotateDocumentImageView(rotationForDisplay);
         mImageDocumentView.setImageBitmap(bitmap);
     }
 
-    @Override
     void showAlertDialog(@NonNull final String message, @NonNull final String positiveButtonTitle,
                          @NonNull final DialogInterface.OnClickListener positiveButtonClickListener,
                          @Nullable final String negativeButtonTitle,
@@ -332,14 +313,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 negativeButtonTitle, negativeButtonClickListener, cancelListener);
     }
 
-    @Override
     void showHints(final List<AnalysisHint> hints) {
         mHintsAnimator.stop();
         mHintsAnimator.setHints(hints);
         mHintsAnimator.start();
     }
 
-    @Override
     void showError(String error, Document document) {
         ErrorFragment.Companion.navigateToErrorFragment(
                 mFragment.findNavController(),
@@ -347,12 +326,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         );
     }
 
-    @Override
     void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
         mFragment.showWarning(warningType, onProceed);
     }
 
-    @Override
     void showPaymentDueHint(PaymentDueHintDismissListener listener, String dueDate) {
         fragmentExtension.showPaymentDueHint(() -> {
                     listener.onDismiss();
@@ -361,7 +338,6 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
                 dueDate);
     }
 
-    @Override
     void showError(ErrorType errorType, Document document) {
         ErrorFragment.Companion.navigateToErrorFragment(
                 mFragment.findNavController(),
@@ -491,15 +467,15 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onResume() {
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress);
-        getPresenter().start();
+        mViewModel.updateInvoiceSavingState(isInvoiceSavingInProgress);
+        mViewModel.start();
     }
 
     public void onDestroy() {
         final Activity activity = mFragment.getActivity();
         if (activity != null) {
-            if (!activity.isChangingConfigurations()) getPresenter().stop();
-            if (activity.isFinishing()) getPresenter().finish();
+            if (!activity.isChangingConfigurations()) mViewModel.stop();
+            if (activity.isFinishing()) mViewModel.finish();
         }
     }
 

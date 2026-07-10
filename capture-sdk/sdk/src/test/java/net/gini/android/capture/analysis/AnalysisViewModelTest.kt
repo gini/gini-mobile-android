@@ -1,36 +1,29 @@
 package net.gini.android.capture.analysis
 
-import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.DialogInterface
-import android.content.res.Resources
 import android.graphics.Bitmap
+import android.os.Looper
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
-import com.nhaarman.mockitokotlin2.atLeast
-import com.nhaarman.mockitokotlin2.atLeastOnce
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import io.mockk.Runs
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
 import jersey.repackaged.jsr166e.CompletableFuture
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.runTest
 import net.gini.android.capture.AsyncCallback
 import net.gini.android.capture.BankSDKBridge
 import net.gini.android.capture.BankSDKProperties
@@ -38,15 +31,17 @@ import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.ProductTag
-import net.gini.android.capture.analysis.AnalysisScreenPresenter.CROSS_BORDER_PAYMENT_KEY
+import net.gini.android.capture.analysis.AnalysisViewModel.Companion.CROSS_BORDER_PAYMENT_KEY
 import net.gini.android.capture.document.DocumentFactory
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.ImageDocument
 import net.gini.android.capture.document.ImageDocumentFake
 import net.gini.android.capture.document.PdfDocument
 import net.gini.android.capture.document.PdfDocumentFake
+import net.gini.android.capture.di.CaptureSdkIsolatedKoinContext
 import net.gini.android.capture.internal.document.DocumentRenderer
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.util.FileImportHelper.ShowAlertCallback
 import net.gini.android.capture.internal.util.Size
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
@@ -55,76 +50,59 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
+import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
+import org.koin.dsl.module
+import org.robolectric.Shadows.shadowOf
 import java.util.Collections
 import java.util.concurrent.CancellationException
-import kotlinx.coroutines.Job
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * Created by Alpar Szotyori on 10.05.2019.
+ * Unit tests for [AnalysisViewModel].
  *
- * Copyright (c) 2019 Gini GmbH.
+ * Ported from the former Analysis screen MVP presenter tests. View interactions are asserted
+ * through the [AnalysisViewModel.uiState] StateFlow and the [AnalysisViewModel.events]
+ * SharedFlow instead of a mocked contract view.
  */
 @RunWith(AndroidJUnit4::class)
-class AnalysisScreenPresenterTest {
-    @Mock
-    private lateinit var mActivity: Activity
+class AnalysisViewModelTest {
 
-    @Mock
-    private lateinit var mView: AnalysisScreenContract.View
+    private lateinit var app: Application
+
+    private val koinTestModule = module {
+        single { GiniBankConfigurationProvider() }
+    }
 
     @Before
-    @Throws(Exception::class)
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
+        app = ApplicationProvider.getApplicationContext()
+        UserAnalytics.initialize(InstrumentationRegistry.getInstrumentation().context)
+        CaptureSdkIsolatedKoinContext.koin.loadModules(listOf(koinTestModule))
     }
 
     @After
-    @Throws(Exception::class)
     fun tearDown() {
         GiniCaptureHelper.setGiniCaptureInstance(null)
+        CaptureSdkIsolatedKoinContext.koin.unloadModules(listOf(koinTestModule))
     }
 
-    // TODO: test navigation to Error screen instead of the snackbbar (when it is implemented)
+    // region helpers
 
-    @Test
-    @Throws(Exception::class)
-    fun should_convertSinglePageDocument_intoMultiPage() {
-        // Given
-        val document: GiniCaptureDocument = DocumentFactory.newEmptyImageDocument(
-            Document.Source.newCameraSource(), Document.ImportMethod.NONE
-        )
-
-        // When
-        val presenter = createPresenter(document, null)
-
-        // Then
-        val documentInMultiPage = presenter.multiPageDocument.documents[0]
-        Truth.assertThat(documentInMultiPage).isEqualTo(document)
-    }
-
-    private fun createPresenter(
+    private fun createViewModel(
         document: Document,
         giniCapture: GiniCapture? = createGiniCaptureInstance(),
         bitmap: Bitmap? = null,
         rotationForDisplay: Int = 0,
-        pdfPageCount: Int = 0,
-        pdfPageCountError: Exception? = null,
         documentAnalysisErrorMessage: String? = null,
         analysisInteractor: AnalysisInteractor? = null
-    ): AnalysisScreenPresenter {
+    ): AnalysisViewModel {
         if (giniCapture != null) {
             GiniCaptureHelper.setGiniCaptureInstance(giniCapture)
         }
-        whenever(mView.waitForViewLayout())
-            .thenReturn(CompletableFuture.completedFuture(null))
-        whenever(mView.pdfPreviewSize).thenReturn(Size(0, 0))
         val documentRenderer = object : DocumentRenderer {
             override fun toBitmap(
                 context: Context,
@@ -138,40 +116,19 @@ class AnalysisScreenPresenterTest {
                 context: Context,
                 asyncCallback: AsyncCallback<Int, Exception>
             ) {
-                if (pdfPageCountError == null) {
-                    asyncCallback.onSuccess(pdfPageCount)
-                } else {
-                    asyncCallback.onError(pdfPageCountError)
-                }
+                asyncCallback.onSuccess(0)
             }
         }
-        val listener = mock<AnalysisFragmentListener>()
-        val presenter: AnalysisScreenPresenter
-        if (analysisInteractor == null) {
-            presenter = object : AnalysisScreenPresenter(
-                mActivity, mView,
-                document, documentAnalysisErrorMessage, false
-            ) {
-                public override fun createDocumentRenderer() {
-                    mDocumentRenderer = documentRenderer
-                }
-            }
-        } else {
-            presenter = object : AnalysisScreenPresenter(
-                mActivity, mView, document,
-                documentAnalysisErrorMessage,
-                analysisInteractor, false
-            ) {
-                public override fun createDocumentRenderer() {
-                    mDocumentRenderer = documentRenderer
-                }
+        val interactor = analysisInteractor ?: AnalysisInteractor(app)
+        val viewModel = object : AnalysisViewModel(
+            app, document, documentAnalysisErrorMessage, false, interactor
+        ) {
+            public override fun createDocumentRenderer() {
+                mDocumentRenderer = documentRenderer
             }
         }
-        presenter.setListener(listener)
-
-        val bankSDKBridge = mock<BankSDKBridge>()
-        presenter.setBankSDKBridge(bankSDKBridge)
-        return presenter
+        viewModel.bankSDKBridge = mock()
+        return viewModel
     }
 
     private fun createGiniCaptureInstance(): GiniCapture {
@@ -179,6 +136,119 @@ class AnalysisScreenPresenterTest {
             .setGiniCaptureNetworkService(mock())
             .build()
         return GiniCapture.getInstance()
+    }
+
+    private fun createGiniCaptureInstanceWithProductTag(productTag: ProductTag): GiniCapture {
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
+            .setGiniCaptureNetworkService(mock())
+            .setProductTag(productTag)
+            .build()
+        return GiniCapture.getInstance()
+    }
+
+    private fun createViewModelWithEmptyImageDocument(): AnalysisViewModel {
+        val document: GiniCaptureDocument = DocumentFactory.newEmptyImageDocument(
+            Document.Source.newCameraSource(), Document.ImportMethod.NONE
+        )
+        document.data = ByteArray(42)
+        return createViewModel(document)
+    }
+
+    private fun createViewModelWithAnalysisFuture(
+        document: Document,
+        giniCapture: GiniCapture? = createGiniCaptureInstance(),
+        analysisFuture: CompletableFuture<AnalysisInteractor.ResultHolder>
+    ): AnalysisViewModel {
+        val analysisInteractor = mock<AnalysisInteractor> {
+            on { analyzeMultiPageDocument(any()) } doReturn analysisFuture
+        }
+        return createViewModel(
+            document,
+            giniCapture = giniCapture,
+            analysisInteractor = analysisInteractor
+        )
+    }
+
+    /**
+     * Collects the view model's one-shot events synchronously into a list. When [autoLayout] is
+     * true, [AnalysisEvent.WaitForViewLayout] is answered with
+     * [AnalysisViewModel.onViewLayoutFinished] like the view layer's binder would do.
+     */
+    private fun collectEvents(
+        viewModel: AnalysisViewModel,
+        autoLayout: Boolean = true,
+        previewSize: Size = Size(0, 0)
+    ): MutableList<AnalysisEvent> {
+        val events = CopyOnWriteArrayList<AnalysisEvent>()
+        CoroutineScope(Dispatchers.Unconfined).launch {
+            viewModel.events.collect { event ->
+                events.add(event)
+                if (autoLayout && event is AnalysisEvent.WaitForViewLayout) {
+                    viewModel.onViewLayoutFinished(previewSize)
+                }
+                if (event is AnalysisEvent.ShowEducation) {
+                    // Complete the education UI right away like the view layer would do
+                    viewModel.onEducationCompleted()
+                }
+            }
+        }
+        return events
+    }
+
+    /**
+     * Records every [AnalysisUiState] emitted by the view model, so tests can assert
+     * intermediate states (e.g. the scan animation was visible during analysis).
+     */
+    private fun collectUiStates(viewModel: AnalysisViewModel): MutableList<AnalysisUiState> {
+        val states = CopyOnWriteArrayList<AnalysisUiState>()
+        CoroutineScope(Dispatchers.Unconfined).launch {
+            viewModel.uiState.collect { states.add(it) }
+        }
+        return states
+    }
+
+    private inline fun <reified T : AnalysisEvent> awaitEvent(
+        events: List<AnalysisEvent>,
+        timeoutMs: Long = 3000
+    ): T = awaitEvent(events, T::class.java, timeoutMs)
+
+    private fun <T : AnalysisEvent> awaitEvent(
+        events: List<AnalysisEvent>,
+        eventClass: Class<T>,
+        timeoutMs: Long
+    ): T {
+        val start = System.currentTimeMillis()
+        while (System.currentTimeMillis() - start < timeoutMs) {
+            events.firstOrNull { eventClass.isInstance(it) }?.let {
+                return eventClass.cast(it)
+            }
+            shadowOf(Looper.getMainLooper()).idle()
+            Thread.sleep(10)
+        }
+        error("Event ${eventClass.simpleName} not received within $timeoutMs ms")
+    }
+
+    private inline fun <reified T : AnalysisEvent> assertNoEvent(events: List<AnalysisEvent>) {
+        shadowOf(Looper.getMainLooper()).idle()
+        Truth.assertThat(events.filterIsInstance<T>()).isEmpty()
+    }
+
+    // endregion
+
+    @Test
+    @Throws(Exception::class)
+    fun should_convertSinglePageDocument_intoMultiPage() {
+        // Given
+        val document: GiniCaptureDocument = DocumentFactory.newEmptyImageDocument(
+            Document.Source.newCameraSource(), Document.ImportMethod.NONE
+        )
+
+        // When
+        val viewModel = createViewModel(document, null)
+
+        // Then
+        val documentInMultiPage = viewModel.multiPageDocument.documents[0]
+        Truth.assertThat(documentInMultiPage).isEqualTo(document)
     }
 
     @Test
@@ -190,52 +260,44 @@ class AnalysisScreenPresenterTest {
         )
 
         // When
-        val presenter = createPresenter(document, null)
+        val viewModel = createViewModel(document, null)
 
         // Then
         Truth.assertThat(document.parcelableMemoryCacheTag)
-            .isEqualTo(AnalysisScreenPresenter.PARCELABLE_MEMORY_CACHE_TAG)
-        Truth.assertThat(presenter.multiPageDocument.parcelableMemoryCacheTag)
-            .isEqualTo(AnalysisScreenPresenter.PARCELABLE_MEMORY_CACHE_TAG)
+            .isEqualTo(AnalysisViewModel.PARCELABLE_MEMORY_CACHE_TAG)
+        Truth.assertThat(viewModel.multiPageDocument.parcelableMemoryCacheTag)
+            .isEqualTo(AnalysisViewModel.PARCELABLE_MEMORY_CACHE_TAG)
     }
 
     @Test
     @Throws(Exception::class)
     fun should_generateHintsList_withRandomOrder() {
         // Given
-        val presenters: MutableList<AnalysisScreenPresenter> = ArrayList()
-        val nrOfPresenters = 5
-        for (i in 0 until nrOfPresenters) {
-            presenters.add(createPresenterWithEmptyImageDocument())
+        val viewModels: MutableList<AnalysisViewModel> = ArrayList()
+        val nrOfViewModels = 5
+        for (i in 0 until nrOfViewModels) {
+            viewModels.add(createViewModelWithEmptyImageDocument())
         }
 
         // Then
-        assertHaveDifferentHintOrders(presenters)
+        assertHaveDifferentHintOrders(viewModels)
     }
 
-    private fun createPresenterWithEmptyImageDocument(): AnalysisScreenPresenter {
-        val document: GiniCaptureDocument = DocumentFactory.newEmptyImageDocument(
-            Document.Source.newCameraSource(), Document.ImportMethod.NONE
-        )
-        document.data = ByteArray(42)
-        return createPresenter(document)
-    }
-
-    private fun assertHaveDifferentHintOrders(presenters: List<AnalysisScreenPresenter>) {
-        val hints1 = presenters[0].hints
+    private fun assertHaveDifferentHintOrders(viewModels: List<AnalysisViewModel>) {
+        val hints1 = viewModels[0].hints
         var countSamePosition = 0
         for (i in hints1.indices) {
-            for (j in presenters.indices) {
-                val lhs = presenters[j]
-                for (k in j + 1 until presenters.size) {
-                    val rhs = presenters[k]
+            for (j in viewModels.indices) {
+                val lhs = viewModels[j]
+                for (k in j + 1 until viewModels.size) {
+                    val rhs = viewModels[k]
                     if (lhs.hints[i] == rhs.hints[i]) {
                         countSamePosition++
                     }
                 }
             }
         }
-        val nrOfComparisons = presenters.size - 1
+        val nrOfComparisons = viewModels.size - 1
         val nrOfPairwiseComparisons = (nrOfComparisons / 2.0 * (nrOfComparisons + 1)).toInt()
         val samePositionCountIfSameOrder = nrOfPairwiseComparisons * hints1.size
         Truth.assertThat(countSamePosition).isLessThan(samePositionCountIfSameOrder)
@@ -245,26 +307,26 @@ class AnalysisScreenPresenterTest {
     @Throws(Exception::class)
     fun should_clearParcelableMemoryCache_whenStarted() {
         // Given
-        val presenter = spy(createPresenterWithEmptyImageDocument())
+        val viewModel = spy(createViewModelWithEmptyImageDocument())
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(presenter).clearParcelableMemoryCache()
+        verify(viewModel).clearParcelableMemoryCache()
     }
 
     @Test
     @Throws(Exception::class)
     fun should_startScanAnimation_whenStarted() {
         // Given
-        val presenter = createPresenterWithEmptyImageDocument()
+        val viewModel = createViewModelWithEmptyImageDocument()
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(mView, atLeastOnce()).showScanAnimation(false)
+        Truth.assertThat(viewModel.uiState.value.scanAnimationVisible).isTrue()
     }
 
     @Test
@@ -276,26 +338,26 @@ class AnalysisScreenPresenterTest {
                 Document.Source.newCameraSource(), Document.ImportMethod.NONE
             )
         )
-        val presenter = createPresenter(document, null)
+        val viewModel = createViewModel(document, null)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(document).loadData(eq(mActivity), any())
+        verify(document).loadData(eq(app), any())
     }
 
     @Test
     @Throws(Exception::class)
     fun should_showHints_forImageDocument() {
         // Given
-        val presenter = createPresenterWithEmptyImageDocument()
+        val viewModel = createViewModelWithEmptyImageDocument()
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(mView).showHints(presenter.hints)
+        Truth.assertThat(viewModel.uiState.value.hints).isEqualTo(viewModel.hints)
     }
 
     @Test
@@ -304,30 +366,29 @@ class AnalysisScreenPresenterTest {
         // Given
         val pdfDocument = mock<PdfDocument>()
         whenever(pdfDocument.type).thenReturn(Document.Type.PDF)
-        val presenter = createPresenter(pdfDocument, null)
+        val viewModel = createViewModel(pdfDocument, null)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(mView, never()).showHints(presenter.hints)
+        Truth.assertThat(viewModel.uiState.value.hints).isNull()
     }
 
     @Test
     @Throws(Exception::class)
-    fun should_returnError_throughAnalysisFragmentListener_whenDocumentLoadingFailed() {
+    fun should_returnError_throughEvents_whenDocumentLoadingFailed() {
         // Given
         val imageDocument = ImageDocumentFake()
         imageDocument.failWithException = RuntimeException("Whoopsie")
-        val presenter = createPresenter(imageDocument)
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
+        val viewModel = createViewModel(imageDocument)
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(listener).onError(any())
+        awaitEvent<AnalysisEvent.NotifyError>(events)
     }
 
     @Test
@@ -335,60 +396,17 @@ class AnalysisScreenPresenterTest {
     fun should_showPdfInfo_forPdfDocument_afterDocumentWasLoaded() {
         // Given
         val pdfDocument: PdfDocument = PdfDocumentFake()
-        val pdfPageCount = 3
-        val pdfPageCountString = "$pdfPageCount pages"
-        val resources = mock<Resources>()
-        whenever(
-            resources.getQuantityString(anyInt(), anyInt(), any())
-        ).thenReturn(pdfPageCountString)
-        whenever(mActivity.resources).thenReturn(resources)
-        val presenter = spy(
-            createPresenter(pdfDocument, pdfPageCount = pdfPageCount)
-        )
+        val viewModel = spy(createViewModel(pdfDocument))
         val pdfFilename = "Invoice.pdf"
-        doReturn(pdfFilename).whenever(presenter).getPdfFilename(pdfDocument)
+        doReturn(pdfFilename).whenever(viewModel).getPdfFilename(pdfDocument)
+        collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(mView).showPdfTitle(pdfFilename)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_showPdfInfo_withoutPageCount_whenNotAvailable_afterDocumentWasLoaded() {
-        // Given
-        val pdfDocument: PdfDocument = PdfDocumentFake()
-        val presenter = spy(
-            createPresenter(pdfDocument, pdfPageCount = 0)
-        )
-        val pdfFilename = "Invoice.pdf"
-        doReturn(pdfFilename).whenever(presenter).getPdfFilename(pdfDocument)
-
-        // When
-        presenter.start()
-
-        // Then
-        verify(mView).showPdfTitle(pdfFilename)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun should_showPdfInfo_withoutPageCount_whenErrorGettingIt_afterDocumentWasLoaded() {
-        // Given
-        val pdfDocument: PdfDocument = PdfDocumentFake()
-        val presenter = spy(
-            createPresenter(pdfDocument, pdfPageCount = 0, pdfPageCountError = RuntimeException())
-        )
-        val pdfFilename = "Invoice.pdf"
-        doReturn(pdfFilename).whenever(presenter).getPdfFilename(pdfDocument)
-
-        // When
-        presenter.start()
-
-        // Then
-        verify(mView).showPdfTitle(pdfFilename)
+        Truth.assertThat(viewModel.uiState.value.pdfInfoPanelVisible).isTrue()
+        Truth.assertThat(viewModel.uiState.value.pdfTitle).isEqualTo(pdfFilename)
     }
 
     @Test
@@ -396,13 +414,14 @@ class AnalysisScreenPresenterTest {
     fun should_analyzeDocument_afterDocumentWasLoaded() {
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
-        val presenter = spy(createPresenter(imageDocument, null))
+        val viewModel = spy(createViewModel(imageDocument, null))
+        collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(presenter).analyzeDocument()
+        verify(viewModel).analyzeDocument()
     }
 
     @Test
@@ -410,21 +429,21 @@ class AnalysisScreenPresenterTest {
     fun should_startScanAnimation_whenAnalyzingDocument() {
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
-        val presenter = createPresenter(imageDocument, null)
+        val viewModel = createViewModel(imageDocument, null)
+        collectEvents(viewModel)
+        val uiStates = collectUiStates(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        // Two times, because scan animation is also started when starting the presenter
-        verify(mView, atLeast(2)).showScanAnimation(false)
+        Truth.assertThat(uiStates.any { it.scanAnimationVisible }).isTrue()
     }
 
     @Test
     @Throws(Exception::class)
     fun should_stopScanAnimation_whenAnalysisFinished() {
         // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
@@ -434,36 +453,21 @@ class AnalysisScreenPresenterTest {
                 "dummy_doc_filename",
             )
         )
-        val presenter =
-            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val viewModel =
+            createViewModelWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(mView).hideScanAnimation()
-    }
-
-    private fun createPresenterWithAnalysisFuture(
-        document: Document,
-        giniCapture: GiniCapture? = createGiniCaptureInstance(),
-        analysisFuture: CompletableFuture<AnalysisInteractor.ResultHolder>
-    ): AnalysisScreenPresenter {
-        val analysisInteractor = mock<AnalysisInteractor> {
-            on { analyzeMultiPageDocument(any()) } doReturn analysisFuture
-        }
-        return createPresenter(
-            document,
-            giniCapture = giniCapture,
-            analysisInteractor = analysisInteractor
-        )
+        Truth.assertThat(viewModel.uiState.value.scanAnimationVisible).isFalse()
     }
 
     @Test
     @Throws(Exception::class)
     fun should_requestProceedingToNoExtractionsScreen_whenAnalysisSucceeded_withoutExtractions() {
         // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
@@ -473,28 +477,26 @@ class AnalysisScreenPresenterTest {
                 "dummy_doc_filename",
             )
         )
-        val presenter =
-            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
+        val viewModel =
+            createViewModelWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+        awaitEvent<AnalysisEvent.NotifyNoExtractions>(events)
     }
 
     @Test
     @Throws(Exception::class)
     fun should_returnExtractions_whenAnalysisSucceeded_withExtractions() {
         // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val extractions = Collections.singletonMap(
             "extraction", mock<GiniCaptureSpecificExtraction>()
         )
-        val compoundExtraction = Collections.singletonMap(
+        val compoundExtractions = Collections.singletonMap(
             "compoundExtraction", mock<GiniCaptureCompoundExtraction>()
         )
         val returnReasons = listOf(
@@ -505,34 +507,30 @@ class AnalysisScreenPresenterTest {
             AnalysisInteractor.ResultHolder(
                 AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
                 extractions,
-                compoundExtraction,
+                compoundExtractions,
                 returnReasons,
                 "dummy_doc_id",
                 "dummy_doc_filename",
             )
         )
-        val presenter =
-            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
-        val listener = mock<AnalysisFragmentListener>()
-
-        presenter.setListener(listener)
+        val viewModel =
+            createViewModelWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        TestScope().launch {
-            verify(listener)
-                .onExtractionsAvailable(extractions, compoundExtraction, returnReasons)
-        }
-
+        val event = awaitEvent<AnalysisEvent.NotifyExtractionsAvailable>(events)
+        Truth.assertThat(event.extractions).isEqualTo(extractions)
+        Truth.assertThat(event.compoundExtractions).isEqualTo(compoundExtractions)
+        Truth.assertThat(event.returnReasons).isEqualTo(returnReasons)
     }
 
     @Test
     @Throws(Exception::class)
     fun should_clearSavedImages_afterAnalysis_whenNetworkService_wasSet() {
         // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
@@ -542,17 +540,16 @@ class AnalysisScreenPresenterTest {
                 "dummy_doc_filename",
             )
         )
-        val presenter = spy(
-            createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val viewModel = spy(
+            createViewModelWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
         )
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
+        collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        TestScope().launch { verify(presenter).clearSavedImages() }
+        verify(viewModel).clearSavedImages()
     }
 
     @Test
@@ -561,14 +558,15 @@ class AnalysisScreenPresenterTest {
         // Given
         val pdfDocument: PdfDocument = spy(PdfDocumentFake())
         doReturn(Document.ImportMethod.OPEN_WITH).whenever(pdfDocument).importMethod
-        val presenter = spy(createPresenter(pdfDocument, null))
+        val viewModel = spy(createViewModel(pdfDocument, null))
         val pdfFilename = "Invoice.pdf"
-        doReturn(pdfFilename).whenever(presenter).getPdfFilename(pdfDocument)
+        doReturn(pdfFilename).whenever(viewModel).getPdfFilename(pdfDocument)
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
         val callbackCaptor = argumentCaptor<ShowAlertCallback>()
-        verify(presenter).showAlertIfOpenWithDocumentAndAppIsDefault(
+        verify(viewModel).showAlertIfOpenWithDocumentAndAppIsDefault(
             any(),
             callbackCaptor.capture()
         )
@@ -582,10 +580,11 @@ class AnalysisScreenPresenterTest {
         )
 
         // Then
-        verify(mView).showAlertDialog(
-            message, positiveButton,
-            onClickListener, negativeButton, null, null
-        )
+        val event = awaitEvent<AnalysisEvent.ShowAlertDialog>(events)
+        Truth.assertThat(event.message).isEqualTo(message)
+        Truth.assertThat(event.positiveButtonTitle).isEqualTo(positiveButton)
+        Truth.assertThat(event.positiveButtonClickListener).isEqualTo(onClickListener)
+        Truth.assertThat(event.negativeButtonTitle).isEqualTo(negativeButton)
     }
 
     @Test
@@ -594,74 +593,71 @@ class AnalysisScreenPresenterTest {
         // Given
         val pdfDocument: PdfDocument = spy(PdfDocumentFake())
         doReturn(Document.ImportMethod.OPEN_WITH).whenever(pdfDocument).importMethod
-        val presenter = spy(createPresenter(pdfDocument, null))
+        val viewModel = spy(createViewModel(pdfDocument, null))
         val pdfFilename = "Invoice.pdf"
-        doReturn(pdfFilename).whenever(presenter).getPdfFilename(pdfDocument)
-        doReturn(CompletableFuture.completedFuture<Any?>(null))
-            .whenever(presenter)
+        doReturn(pdfFilename).whenever(viewModel).getPdfFilename(pdfDocument)
+        doReturn(CompletableFuture.completedFuture<Void>(null))
+            .whenever(viewModel)
             .showAlertIfOpenWithDocumentAndAppIsDefault(any(), any())
+        collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(presenter).doAnalyzeDocument()
+        verify(viewModel).doAnalyzeDocument()
     }
 
     @Test
     @Throws(Exception::class)
-    fun should_notifiyListener_whenAlertDialog_wasCancelled_forOpenWithPdfDocument_ifAppIsDefaultForPdfs() {
+    fun should_notifyListener_whenAlertDialog_wasCancelled_forOpenWithPdfDocument_ifAppIsDefaultForPdfs() {
         // Given
         val pdfDocument: PdfDocument = spy(PdfDocumentFake())
         doReturn(Document.ImportMethod.OPEN_WITH).whenever(pdfDocument).importMethod
-        val presenter = spy(createPresenter(pdfDocument, null))
+        val viewModel = spy(createViewModel(pdfDocument, null))
         val pdfFilename = "Invoice.pdf"
-        doReturn(pdfFilename).whenever(presenter).getPdfFilename(pdfDocument)
+        doReturn(pdfFilename).whenever(viewModel).getPdfFilename(pdfDocument)
         val future = CompletableFuture<Void>()
         future.completeExceptionally(CancellationException())
         doReturn(future)
-            .whenever(presenter)
-            .showAlertIfOpenWithDocumentAndAppIsDefault(
-                any(), any()
-            )
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
+            .whenever(viewModel)
+            .showAlertIfOpenWithDocumentAndAppIsDefault(any(), any())
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(listener).onDefaultPDFAppAlertDialogCancelled()
+        awaitEvent<AnalysisEvent.NotifyPdfAlertDialogCancelled>(events)
     }
 
-    // ── PP-2278 regression test (Fix 3) ───────────────────────────────────────
-
     /**
-     * [AnalysisScreenPresenter.stop] must call [AnalysisScreenPresenterExtension.cancel] so that
-     * all coroutines managing post-analysis navigation are cancelled when the fragment is destroyed.
-     *
-     * Without this call, the coroutine scope inside the extension is never cancelled and a
-     * pending navigation can still fire on a dead NavController, causing an NPE crash.
-     *
-     * **Fails when reverted**: Removing `extension.cancel()` from [AnalysisScreenPresenter.stop]
-     * leaves the extension job active after stop() and this assertion fails.
+     * Regression test (PP-2278): [AnalysisViewModel.stop] must cancel the coroutine job which
+     * manages post-analysis navigation, so no pending navigation can fire on a dead
+     * NavController after the fragment is destroyed.
      */
     @Test
     @Throws(Exception::class)
-    fun should_cancel_extensionScope_whenStopped() {
+    fun should_cancel_coroutineJob_whenStopped() {
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
-        val presenter = createPresenter(imageDocument, null)
-        val jobField = AnalysisScreenPresenterExtension::class.java.getDeclaredField("job")
-        jobField.isAccessible = true
-        val job = jobField.get(presenter.extension) as Job
+        val viewModel = createViewModel(imageDocument, null)
+        val job = getJobViaReflection(viewModel)
         Truth.assertThat(job.isActive).isTrue()
 
         // When: user presses Back (fragment destroyed -> stop() is called)
-        presenter.stop()
+        viewModel.stop()
 
-        // Then: extension scope must be cancelled so no pending navigation fires on dead NavController
+        // Then: the job must be cancelled so no pending navigation fires on dead NavController
         Truth.assertThat(job.isCancelled).isTrue()
+    }
+
+    private fun getJobViaReflection(viewModel: AnalysisViewModel): Job {
+        // The view model is subclassed in createViewModel(), so look the field up on the
+        // declaring class
+        val field = AnalysisViewModel::class.java.getDeclaredField("job")
+        field.isAccessible = true
+        return field.get(viewModel) as Job
     }
 
     @Test
@@ -669,13 +665,13 @@ class AnalysisScreenPresenterTest {
     fun should_stopScanAnimation_whenStopped() {
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
-        val presenter = createPresenter(imageDocument, null)
+        val viewModel = createViewModel(imageDocument, null)
 
         // When
-        presenter.stop()
+        viewModel.stop()
 
         // Then
-        verify(mView).hideScanAnimation()
+        Truth.assertThat(viewModel.uiState.value.scanAnimationVisible).isFalse()
     }
 
     @Test
@@ -684,10 +680,10 @@ class AnalysisScreenPresenterTest {
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
         val analysisInteractor = mock<AnalysisInteractor>()
-        val presenter = createPresenter(imageDocument, analysisInteractor = analysisInteractor)
+        val viewModel = createViewModel(imageDocument, analysisInteractor = analysisInteractor)
 
         // When
-        presenter.stop()
+        viewModel.stop()
 
         // Then
         verify(analysisInteractor).deleteDocument(any())
@@ -699,10 +695,10 @@ class AnalysisScreenPresenterTest {
         // Given
         val pdfDocument: PdfDocument = PdfDocumentFake()
         val analysisInteractor = mock<AnalysisInteractor>()
-        val presenter = createPresenter(pdfDocument, analysisInteractor = analysisInteractor)
+        val viewModel = createViewModel(pdfDocument, analysisInteractor = analysisInteractor)
 
         // When
-        presenter.stop()
+        viewModel.stop()
 
         // Then
         verify(analysisInteractor).deleteMultiPageDocument(any())
@@ -726,14 +722,15 @@ class AnalysisScreenPresenterTest {
         whenever(internal.imageMultiPageDocumentMemoryStore).thenReturn(memoryStore)
         val giniCapture = mock<GiniCapture>()
         whenever(giniCapture.internal()).thenReturn(internal)
-        val presenter = createPresenterWithAnalysisFuture(
+        val viewModel = createViewModelWithAnalysisFuture(
             imageDocument,
             giniCapture = giniCapture, analysisFuture = analysisFuture
         )
+        collectEvents(viewModel)
 
         // When
-        presenter.start()
-        presenter.stop()
+        viewModel.start()
+        viewModel.stop()
 
         // Then
         verify(memoryStore).clear()
@@ -744,13 +741,13 @@ class AnalysisScreenPresenterTest {
     fun should_clearParcelableMemoryCache_whenFinished() {
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
-        val presenter = spy(createPresenter(imageDocument, null))
+        val viewModel = spy(createViewModel(imageDocument, null))
 
         // When
-        presenter.finish()
+        viewModel.finish()
 
         // Then
-        verify(presenter).clearParcelableMemoryCache()
+        verify(viewModel).clearParcelableMemoryCache()
     }
 
     @Test
@@ -758,14 +755,15 @@ class AnalysisScreenPresenterTest {
     fun should_notWaitForViewLayout_ifStopped_beforeLoadingDocumentDataFinishes() {
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
-        val presenter = spy(createPresenter(imageDocument, null))
-        doReturn(true).whenever(presenter).isStopped
+        val viewModel = spy(createViewModel(imageDocument, null))
+        doReturn(true).whenever(viewModel).isStopped
+        val events = collectEvents(viewModel, autoLayout = false)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(mView, never()).waitForViewLayout()
+        assertNoEvent<AnalysisEvent.WaitForViewLayout>(events)
     }
 
     @Test
@@ -774,16 +772,15 @@ class AnalysisScreenPresenterTest {
         // Given
         val imageDocument = ImageDocumentFake()
         imageDocument.failWithException = RuntimeException()
-        val presenter = spy(createPresenter(imageDocument))
-        doReturn(true).whenever(presenter).isStopped
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
+        val viewModel = spy(createViewModel(imageDocument))
+        doReturn(true).whenever(viewModel).isStopped
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(listener, never()).onError(any())
+        assertNoEvent<AnalysisEvent.NotifyError>(events)
     }
 
     @Test
@@ -791,19 +788,19 @@ class AnalysisScreenPresenterTest {
     fun should_notShowDocument_ifStopped_beforeDocumentRendererFinishes() {
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
-        whenever(mView.pdfPreviewSize).thenReturn(Size(1024, 768))
         val bitmap = mock<Bitmap>()
         val rotationForDisplay = 90
-        val presenter = spy(
-            createPresenter(imageDocument, null, bitmap, rotationForDisplay)
+        val viewModel = spy(
+            createViewModel(imageDocument, null, bitmap, rotationForDisplay)
         )
-        doReturn(true).whenever(presenter).isStopped
+        doReturn(true).whenever(viewModel).isStopped
+        collectEvents(viewModel, previewSize = Size(1024, 768))
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        verify(mView, never()).showBitmap(bitmap, rotationForDisplay)
+        Truth.assertThat(viewModel.uiState.value.documentRender).isNull()
     }
 
     @Test
@@ -816,14 +813,15 @@ class AnalysisScreenPresenterTest {
         val exception = Exception("Something is not working")
         GiniCapture.getInstance().internal().reviewScreenAnalysisError = exception
         val errorMessage = "Something went wrong"
-        val presenter = createPresenter(
+        val viewModel = createViewModel(
             imageDocument,
             giniCapture = GiniCapture.getInstance(),
             documentAnalysisErrorMessage = errorMessage
         )
+        collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
         val errorDetails: MutableMap<String, Any> = HashMap()
@@ -836,7 +834,6 @@ class AnalysisScreenPresenterTest {
     @Test
     @Throws(Exception::class)
     fun should_triggerErrorEvent_forAnalysisError() {
-
         // Given
         val imageDocument: ImageDocument = ImageDocumentFake()
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
@@ -844,13 +841,14 @@ class AnalysisScreenPresenterTest {
         analysisFuture.completeExceptionally(exception)
         val eventTracker = spy<EventTracker>()
         GiniCapture.Builder().setEventTracker(eventTracker).build()
-        val presenter = createPresenterWithAnalysisFuture(
+        val viewModel = createViewModelWithAnalysisFuture(
             imageDocument,
             giniCapture = GiniCapture.getInstance(), analysisFuture = analysisFuture
         )
+        collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
         val errorDetails: MutableMap<String, Any?> = HashMap()
@@ -863,7 +861,7 @@ class AnalysisScreenPresenterTest {
     // Test for isRAOrSkontoIncludedInExtractions
     @Test
     fun `isRAOrSkontoIncludedInExtractions returns true when Skonto or RA is enabled and valid`() {
-        val presenter = AnalysisScreenPresenterExtension(mock())
+        val viewModel = createViewModelWithEmptyImageDocument()
         val resultHolder = AnalysisInteractor.ResultHolder(
             AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
             emptyMap(),
@@ -876,26 +874,26 @@ class AnalysisScreenPresenterTest {
         val bankSDKProperties = mock<BankSDKProperties>()
 
         whenever(bankSDKBridge.getBankSDKProperties(any())).thenReturn(bankSDKProperties)
-        presenter.bankSDKBridge = bankSDKBridge
+        viewModel.bankSDKBridge = bankSDKBridge
 
         whenever(bankSDKProperties.isSkontoSDKFlagEnabled).thenReturn(true)
         whenever(bankSDKProperties.isSkontoExtractionsValid).thenReturn(true)
         whenever(bankSDKProperties.isReturnAssistantSDKFlagEnabled).thenReturn(false)
         whenever(bankSDKProperties.isReturnAssistantExtractionsValid).thenReturn(false)
 
-        assertTrue(presenter.isRAOrSkontoIncludedInExtractions(resultHolder))
+        assertTrue(viewModel.isRAOrSkontoIncludedInExtractions(resultHolder))
 
         whenever(bankSDKProperties.isSkontoSDKFlagEnabled).thenReturn(false)
         whenever(bankSDKProperties.isSkontoExtractionsValid).thenReturn(false)
         whenever(bankSDKProperties.isReturnAssistantSDKFlagEnabled).thenReturn(true)
         whenever(bankSDKProperties.isReturnAssistantExtractionsValid).thenReturn(true)
 
-        assertTrue(presenter.isRAOrSkontoIncludedInExtractions(resultHolder))
+        assertTrue(viewModel.isRAOrSkontoIncludedInExtractions(resultHolder))
     }
 
     @Test
     fun `isRAOrSkontoIncludedInExtractions returns false when neither Skonto nor RA is enabled and valid`() {
-        val presenter = AnalysisScreenPresenterExtension(mock())
+        val viewModel = createViewModelWithEmptyImageDocument()
         val resultHolder = AnalysisInteractor.ResultHolder(
             AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
             emptyMap(),
@@ -908,19 +906,19 @@ class AnalysisScreenPresenterTest {
         val bankSDKProperties = mock<BankSDKProperties>()
 
         whenever(bankSDKBridge.getBankSDKProperties(any())).thenReturn(bankSDKProperties)
-        presenter.bankSDKBridge = bankSDKBridge
+        viewModel.bankSDKBridge = bankSDKBridge
 
         whenever(bankSDKProperties.isSkontoSDKFlagEnabled).thenReturn(false)
         whenever(bankSDKProperties.isSkontoExtractionsValid).thenReturn(false)
         whenever(bankSDKProperties.isReturnAssistantSDKFlagEnabled).thenReturn(false)
         whenever(bankSDKProperties.isReturnAssistantExtractionsValid).thenReturn(false)
 
-        assertFalse(presenter.isRAOrSkontoIncludedInExtractions(resultHolder))
+        assertFalse(viewModel.isRAOrSkontoIncludedInExtractions(resultHolder))
     }
 
     @Test
     fun `isRAOrSkontoIncludedInExtractions returns false when bankSDKBridge is null`() {
-        val presenter = AnalysisScreenPresenterExtension(mock())
+        val viewModel = createViewModelWithEmptyImageDocument()
         val resultHolder = AnalysisInteractor.ResultHolder(
             AnalysisInteractor.Result.SUCCESS_NO_EXTRACTIONS,
             emptyMap(),
@@ -930,41 +928,16 @@ class AnalysisScreenPresenterTest {
             "dummy"
         )
 
-        presenter.bankSDKBridge = null
+        viewModel.bankSDKBridge = null
 
-        assertFalse(presenter.isRAOrSkontoIncludedInExtractions(resultHolder))
+        assertFalse(viewModel.isRAOrSkontoIncludedInExtractions(resultHolder))
     }
 
     @Test
-    fun `proceedWithExtractionsWhenEducationFinished calls proceedWithExtractions after education finished`() =
-        runTest {
-
-            val mockView = mockk<AnalysisScreenContract.View>(relaxed = true)
-            val presenter: AnalysisScreenPresenterExtension =
-                spyk(AnalysisScreenPresenterExtension(mockView))
-            val mockResultHolder = mockk<AnalysisInteractor.ResultHolder>(relaxed = true)
-            every { presenter["doWhenEducationFinished"](any<() -> Unit>()) } answers {
-                firstArg<() -> Unit>().invoke()
-            }
-            every { presenter.proceedWithExtractions(any()) } just Runs
-
-            presenter.proceedWithExtractionsWhenEducationFinished(
-                mockResultHolder,
-                mIsInvoiceSavingEnabled = false,
-                isSavingInvoicesInProgress = false,
-                mActivity
-            )
-
-            verify { presenter.proceedWithExtractions(mockResultHolder) }
-        }
-
-    @Test
-    fun `proceedWithExtractions calls onExtractionsAvailable with correct arguments`() {
+    fun `proceedWithExtractions emits NotifyExtractionsAvailable with correct arguments`() {
         // Arrange
-        val view = mock<AnalysisScreenContract.View>()
-        val listener = mock<AnalysisFragmentListener>()
-        val presenter = AnalysisScreenPresenterExtension(view)
-        presenter.listener = listener
+        val viewModel = createViewModelWithEmptyImageDocument()
+        val events = collectEvents(viewModel)
 
         val extractions = mapOf("key1" to mock<GiniCaptureSpecificExtraction>())
         val compoundExtractions = mapOf("key2" to mock<GiniCaptureCompoundExtraction>())
@@ -977,16 +950,14 @@ class AnalysisScreenPresenterTest {
         }
 
         // Act
-        presenter.proceedWithExtractions(resultHolder)
+        viewModel.proceedWithExtractions(resultHolder)
 
         // Assert
-        verify(listener).onExtractionsAvailable(
-            extractions,
-            compoundExtractions,
-            returnReasons
-        )
+        val event = awaitEvent<AnalysisEvent.NotifyExtractionsAvailable>(events)
+        Truth.assertThat(event.extractions).isEqualTo(extractions)
+        Truth.assertThat(event.compoundExtractions).isEqualTo(compoundExtractions)
+        Truth.assertThat(event.returnReasons).isEqualTo(returnReasons)
     }
-
 
     // region CX extractions — no-results routing
 
@@ -994,7 +965,6 @@ class AnalysisScreenPresenterTest {
     @Throws(Exception::class)
     fun `CX mode - crossBorderPayment absent - should proceed to no-extractions screen`() {
         // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
@@ -1008,26 +978,24 @@ class AnalysisScreenPresenterTest {
             )
         )
         val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
-        val presenter = createPresenterWithAnalysisFuture(
+        val viewModel = createViewModelWithAnalysisFuture(
             imageDocument,
             giniCapture = giniCapture,
             analysisFuture = analysisFuture
         )
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+        awaitEvent<AnalysisEvent.NotifyNoExtractions>(events)
     }
 
     @Test
     @Throws(Exception::class)
     fun `CX mode - crossBorderPayment present but empty specificExtractionMaps - should proceed to no-extractions screen`() {
         // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val emptyCbp = GiniCaptureCompoundExtraction(CROSS_BORDER_PAYMENT_KEY, emptyList())
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
@@ -1042,26 +1010,24 @@ class AnalysisScreenPresenterTest {
             )
         )
         val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
-        val presenter = createPresenterWithAnalysisFuture(
+        val viewModel = createViewModelWithAnalysisFuture(
             imageDocument,
             giniCapture = giniCapture,
             analysisFuture = analysisFuture
         )
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+        awaitEvent<AnalysisEvent.NotifyNoExtractions>(events)
     }
 
     @Test
     @Throws(Exception::class)
     fun `CX mode - crossBorderPayment has fields - should forward extractions`() {
         // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val cbpRow = mapOf("amount" to mock<GiniCaptureSpecificExtraction>())
         val cbp = GiniCaptureCompoundExtraction(CROSS_BORDER_PAYMENT_KEY, listOf(cbpRow))
@@ -1077,29 +1043,25 @@ class AnalysisScreenPresenterTest {
             )
         )
         val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
-        val presenter = createPresenterWithAnalysisFuture(
+        val viewModel = createViewModelWithAnalysisFuture(
             imageDocument,
             giniCapture = giniCapture,
             analysisFuture = analysisFuture
         )
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        TestScope().launch {
-            verify(listener).onExtractionsAvailable(any(), any(), any())
-            verify(listener, never()).onProceedToNoExtractionsScreen(any())
-        }
+        awaitEvent<AnalysisEvent.NotifyExtractionsAvailable>(events)
+        assertNoEvent<AnalysisEvent.NotifyNoExtractions>(events)
     }
 
     @Test
     @Throws(Exception::class)
     fun `SEPA mode - empty specific extractions - should proceed to no-extractions screen (regression)`() {
         // Given
-        whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val imageDocument: ImageDocument = ImageDocumentFake()
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
@@ -1113,25 +1075,16 @@ class AnalysisScreenPresenterTest {
             )
         )
         // Default SEPA product tag
-        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
-        val listener = mock<AnalysisFragmentListener>()
-        presenter.setListener(listener)
+        val viewModel =
+            createViewModelWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val events = collectEvents(viewModel)
 
         // When
-        presenter.start()
+        viewModel.start()
 
         // Then
-        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+        awaitEvent<AnalysisEvent.NotifyNoExtractions>(events)
     }
 
     // endregion
-
-    private fun createGiniCaptureInstanceWithProductTag(productTag: ProductTag): GiniCapture {
-        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
-            .setGiniCaptureNetworkService(mock())
-            .setProductTag(productTag)
-            .build()
-        return GiniCapture.getInstance()
-    }
-
 }

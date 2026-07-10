@@ -40,6 +40,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
 
     private static final String WARNING_TAG = "WarningBottomSheet";
     private AnalysisFragmentImpl mFragmentImpl;
+    private AnalysisViewModel mViewModel;
     private AnalysisFragmentListener mListener;
     private BankSDKBridge bankSDKBridge;
     private FragmentManager fragmentManager;
@@ -57,6 +58,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         super.onCreate(savedInstanceState);
         registerSafFolderSelectionHandler();
         fragmentManager = requireActivity().getSupportFragmentManager();
+        mViewModel = createViewModel();
         mFragmentImpl = createFragmentImpl();
         mFragmentImpl.onCreate(savedInstanceState);
     }
@@ -94,9 +96,14 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     }
 
     @VisibleForTesting
+    AnalysisViewModel createViewModel() {
+        return AnalysisFragmentHelper.createViewModel(this, getArguments());
+    }
+
+    @VisibleForTesting
     AnalysisFragmentImpl createFragmentImpl() {
         final AnalysisFragmentImpl fragmentImpl = AnalysisFragmentHelper.createFragmentImpl(this, mCancelListener,
-                getArguments());
+                getArguments(), mViewModel);
         AnalysisFragmentHelper.setListener(fragmentImpl, getActivity(), mListener);
         if (bankSDKBridge != null) {
             AnalysisFragmentHelper.setBankSDKBridge(fragmentImpl, getActivity(), bankSDKBridge);
@@ -127,6 +134,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mFragmentImpl.onViewCreated(view, savedInstanceState);
+        new AnalysisFragmentViewModelBinder(this).bind(mViewModel, mFragmentImpl);
     }
 
     /**

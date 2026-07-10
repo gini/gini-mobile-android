@@ -124,48 +124,8 @@ class MultipageReviewFragmentTest {
             }
     }
 
-    @Test
-    fun `triggers Upload Error event`() {
-        // Given
-        // Note: Use FragmentScenario in the future
-        val fragment = mock<MultiPageReviewFragment>()
-
-        // TODO: use FragmentScenario to fix the error
-        `when`(fragment.activity).thenReturn(mock())
-        fragment.mMultiPageDocument = mock()
-        fragment.mDocumentUploadResults = mock()
-
-        `when`(fragment.uploadDocument(any())).thenCallRealMethod()
-
-        val exception = RuntimeException("error message")
-
-        val future = CompletableFuture<NetworkRequestResult<GiniCaptureDocument>>()
-        future.completeExceptionally(exception)
-
-        val networkRequestsManager = mock<NetworkRequestsManager>()
-        `when`(networkRequestsManager.upload(any(), any())).thenReturn(future)
-
-        val internal = mock<GiniCapture.Internal>()
-        `when`(internal.networkRequestsManager).thenReturn(networkRequestsManager)
-
-        val giniCapture = mock<GiniCapture>()
-        GiniCaptureHelper.setGiniCaptureInstance(giniCapture)
-
-        `when`(giniCapture.internal()).thenReturn(internal)
-
-        val eventTracker = spy<EventTracker>()
-        `when`(giniCapture.internal().eventTracker).thenReturn(eventTracker)
-
-        // When
-        fragment.uploadDocument(ImageDocumentFake())
-
-        // Then
-        val errorDetails = mapOf(
-                MESSAGE to exception.message,
-                ERROR_OBJECT to exception
-        )
-        Mockito.verify(eventTracker).onReviewScreenEvent(Event(ReviewScreenEvent.UPLOAD_ERROR, errorDetails))
-    }
+    // Note: the upload error tracking test was moved to [ReviewViewModelTest] because the upload
+    // logic now lives in [ReviewViewModel].
 
     @Test
     fun `process document view is shown`() {

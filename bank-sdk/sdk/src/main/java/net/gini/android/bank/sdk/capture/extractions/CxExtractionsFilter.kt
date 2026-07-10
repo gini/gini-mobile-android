@@ -15,7 +15,7 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
  * contains only a subset of the expected CX fields is treated as a valid partial result and is
  * passed through unchanged. Only the complete absence of any rows in `specificExtractionMaps`
  * (or the absence of the key itself) is treated as "no extractions" and triggers the no-results
- * screen — see [net.gini.android.capture.analysis.AnalysisScreenPresenter].
+ * screen — see net.gini.android.capture.analysis.AnalysisViewModel.
  */
 internal object CxExtractionsFilter {
 
