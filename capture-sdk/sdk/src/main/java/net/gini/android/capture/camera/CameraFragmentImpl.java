@@ -435,6 +435,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD) {
                 initIBANRecognizerFilter();
             }
+            if (!isQRCodeScanningAvailable()) {
+                setQRDisabledTexts();
+            }
         }
         setTopBarInjectedViewContainer();
     }
@@ -502,7 +505,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         createPopups(view);
         initOnlyQRScanning();
 
-        if (!GiniCapture.getInstance().isQRCodeScanningEnabled()) {
+        if (!isQRCodeScanningAvailable()) {
             setQRDisabledTexts();
         }
 
@@ -977,7 +980,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_qr));
                 } else {
                     if (ContextHelper.isTablet(mFragment.getActivity())) {
-                        if (GiniCapture.getInstance().isQRCodeScanningEnabled()) {
+                        if (isQRCodeScanningAvailable()) {
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_invoice_and_qr));
                         } else {
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
@@ -985,8 +988,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     } else {
                         if (ContextHelper.isPortraitOrientation(mFragment.getActivity()))
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_title_camera));
-                        else
+                        else if (isQRCodeScanningAvailable())
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_top_bar_title_landscape));
+                        else
+                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
                     }
                 }
 
@@ -1091,6 +1096,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return false;
         }
         return GiniCapture.getInstance().isOnlyQRCodeScanning() && GiniCapture.getInstance().isQRCodeScanningEnabled();
+    }
+
+    private boolean isQRCodeScanningAvailable() {
+        return GiniCapture.hasInstance()
+                && GiniCapture.getInstance().isQRCodeScanningEnabled()
+                && !mQRCodeScanningDisabledByUser;
     }
 
     private void initViews() {
@@ -2090,6 +2101,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         } else {
             if (!isOnlyQRCodeScanningEnabled()) {
                 mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_camera_info_label_only_invoice));
+                // In landscape the below-frame hint is hidden and the scan hint lives in the top bar,
+                // so update it live (a new holder alone only reconfigures on the next bind/rotation).
+                if (!ContextHelper.isPortraitOrientation(activity)) {
+                    topAdapterInjectedViewContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
+                        injectedViewAdapter.setTitle(activity.getString(R.string.gc_camera_info_label_only_invoice));
+                        return Unit.INSTANCE;
+                    });
+                }
             }
         }
     }
