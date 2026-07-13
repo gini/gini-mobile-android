@@ -196,7 +196,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private String currentGenericErrorMessage = "";
     private String genericErrorType = "";
 
-    private QRCodePopup<String> mUnsupportedQRCodePopup;
+    @VisibleForTesting
+    QRCodePopup<String> mUnsupportedQRCodePopup;
 
     // null = use GiniCapture setting; true = only-QR mode; false = document capture mode
     @VisibleForTesting
@@ -240,12 +241,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private Button mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
-    private ImageView mImageFrame;
+    @VisibleForTesting
+    ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
     private ConstraintLayout mPaneWrapper;
     private ConstraintLayout mDetectionErrorLayout;
     private TextView mScanTextView;
-    private TextView mIbanDetectedTextView;
+    @VisibleForTesting
+    TextView mIbanDetectedTextView;
     private boolean mIsTakingPicture;
     private boolean mIsDetectionErrorPopupShowed;
 
@@ -368,6 +371,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             // Session-pinned value; the popup resolves the same pin when showing, so this flag
             // always matches the warning type that is actually rendered.
             mIsUnsupportedQRDialogShowing = isUnsupportedQRCodeWarningEnabled();
+            if (mIsUnsupportedQRDialogShowing) {
+                // The dialog requires an explicit user choice; IBAN detection must not run while
+                // it is visible, otherwise a detected IBAN would dismiss it. The dialog's button
+                // handlers re-create the filter through updateCameraUIForCurrentMode().
+                releaseIBANRecognizerFilter();
+            }
             mUnsupportedQRCodePopup.show(null);
             if (trackScanEvent) {
                 sendQRCodeScannedEventToUserAnalytics(false);
@@ -411,10 +420,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             mBottomInjectedContainer.setInjectedViewAdapterHolder(null);
             mImportButtonGroup.setVisibility(View.GONE);
             mImportDocumentButtonEnabled = false;
-            if (ibanRecognizerFilter != null) {
-                ibanRecognizerFilter.cleanup();
-                ibanRecognizerFilter = null;
-            }
+            releaseIBANRecognizerFilter();
         } else {
             mPaneWrapper.setVisibility(View.VISIBLE);
             ConstraintLayout.LayoutParams params =
@@ -610,7 +616,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         initQRCodeReader();
         if (GiniCapture.hasInstance()
                 && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD
-                && !isOnlyQRCodeScanningEnabled()) {
+                && !isOnlyQRCodeScanningEnabled()
+                // Keep IBAN detection deactivated while the unsupported QR code dialog is
+                // visible (e.g. restored after a configuration change).
+                && !mIsUnsupportedQRDialogShowing) {
             initIBANRecognizerFilter();
         }
 
@@ -761,6 +770,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         ibanRecognizerFilter = new IBANRecognizerFilter(new IBANRecognizerImpl(cropToCameraFrameTextRecognizer), this::handleIBANsDetected);
     }
 
+    private void releaseIBANRecognizerFilter() {
+        if (ibanRecognizerFilter != null) {
+            ibanRecognizerFilter.cleanup();
+            ibanRecognizerFilter = null; // NOPMD
+        }
+    }
+
     private void enableTapToFocus() {
         mCameraController.enableTapToFocus(new CameraInterface.TapToFocusListener() {
             @Override
@@ -871,10 +887,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             mPaymentQRCodeReader.release();
             mPaymentQRCodeReader = null; // NOPMD
         }
-        if (ibanRecognizerFilter != null) {
-            ibanRecognizerFilter.cleanup();
-            ibanRecognizerFilter = null; // NOPMD
-        }
+        releaseIBANRecognizerFilter();
         mCameraController.disableTapToFocus();
         mCameraController.setPreviewCallback(null);
         mCameraController.stopPreview();
@@ -2148,8 +2161,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         });
     }
 
-    private void handleIBANsDetected(List<String> ibans) {
-        if (!ibans.isEmpty() && !isPaymentQRCodeDetectionInProgress()) {
+    @VisibleForTesting
+    void handleIBANsDetected(List<String> ibans) {
+        // mIsUnsupportedQRDialogShowing: the filter is released while the unsupported QR code
+        // dialog is visible, but an in-flight recognition result may still arrive after the
+        // dialog is shown — it must not dismiss a dialog that awaits an explicit user choice.
+        if (!ibans.isEmpty() && !isPaymentQRCodeDetectionInProgress() && !mIsUnsupportedQRDialogShowing) {
             mUnsupportedQRCodePopup.hide();
             showIBANsDetectedOnScreen(ibans);
         } else {
@@ -2175,13 +2192,18 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void hideIBANsDetectedOnScreen() {
-        mImageFrame.setImageTintList(ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                                mFragment.getActivity(),
-                                R.color.gc_light_01
-                        )
-                )
-        );
+        // Don't reset the frame color while a QR code popup owns it (e.g. the red frame of the
+        // unsupported QR code warning restored after a configuration change), otherwise the first
+        // no-IBAN camera frame would overwrite it with the default color.
+        if (!mUnsupportedQRCodePopup.isShown() && !isPaymentQRCodeDetectionInProgress()) {
+            mImageFrame.setImageTintList(ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                    mFragment.getActivity(),
+                                    R.color.gc_light_01
+                            )
+                    )
+            );
+        }
         mIbanDetectedTextView.setVisibility(View.GONE);
         mIbanDetectedTextView.setText("");
     }
