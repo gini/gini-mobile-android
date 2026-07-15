@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.http.GiniSessionInterceptor
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.response.CommunicationTone
 import okhttp3.OkHttpClient
@@ -43,10 +44,19 @@ class HealthApiWireTest {
         server = MockWebServer()
         server.start()
         val apiType = GiniHealthApiType(apiVersion = 3)
+        val sessionManager = SessionManager {
+            Resource.Success(Session(ACCESS_TOKEN, Date(Date().time + 60_000)))
+        }
         val retrofit = Retrofit.Builder()
             .baseUrl(server.url("/"))
             .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build()))
-            .client(OkHttpClient())
+            // Mirrors the production client composition (GiniCoreAPIBuilder): the session
+            // interceptor authenticates the requests with the session manager's access token
+            .client(
+                OkHttpClient.Builder()
+                    .addInterceptor(GiniSessionInterceptor { sessionManager })
+                    .build()
+            )
             .build()
         val remoteSource = HealthApiDocumentRemoteSource(
             Dispatchers.Unconfined,
@@ -54,9 +64,6 @@ class HealthApiWireTest {
             apiType,
             server.url("/").toString()
         )
-        val sessionManager = SessionManager {
-            Resource.Success(Session(ACCESS_TOKEN, Date(Date().time + 60_000)))
-        }
         repository = HealthApiDocumentRepository(remoteSource, sessionManager, apiType)
     }
 

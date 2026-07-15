@@ -7,9 +7,12 @@ public final class net/gini/android/bank/api/BankApiDocumentManager : net/gini/a
 
 public final class net/gini/android/bank/api/BankApiDocumentRemoteSource : net/gini/android/core/api/DocumentRemoteSource {
 	public final fun getConfigurations (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getConfigurations (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
 	public final fun logErrorEvent (Ljava/lang/String;Lnet/gini/android/bank/api/requests/ErrorEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun logErrorEvent (Lnet/gini/android/bank/api/requests/ErrorEvent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun resolvePaymentRequests (Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/bank/api/models/ResolvePaymentInput;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun resolvePaymentRequests (Ljava/lang/String;Lnet/gini/android/bank/api/models/ResolvePaymentInput;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setCoroutineContext (Lkotlin/coroutines/CoroutineContext;)V
 }
 
@@ -69,6 +72,7 @@ public final class net/gini/android/bank/api/GiniBankApiType : net/gini/android/
 
 public final class net/gini/android/bank/api/TrackingAnalysisRemoteSource {
 	public final fun sendEvents (Ljava/lang/String;Lnet/gini/android/bank/api/models/AmplitudeRoot;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendEvents (Lnet/gini/android/bank/api/models/AmplitudeRoot;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class net/gini/android/bank/api/models/AmplitudeEvent {

@@ -9,6 +9,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.http.GiniSessionInterceptor
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.ExtractionsContainer
@@ -58,7 +59,13 @@ class DocumentRepositoryTest {
         val retrofit = Retrofit.Builder()
             .baseUrl(server.url("/"))
             .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build()))
-            .client(OkHttpClient())
+            // Mirrors the production client composition (GiniCoreAPIBuilder): the session
+            // interceptor authenticates the requests with the session manager's access token
+            .client(
+                OkHttpClient.Builder()
+                    .addInterceptor(GiniSessionInterceptor { sessionManager })
+                    .build()
+            )
             .build()
         val remoteSource = DocumentRemoteSourceForTests(
             Dispatchers.Unconfined,

@@ -74,22 +74,37 @@ public abstract class net/gini/android/core/api/DocumentRemoteSource {
 	public fun <init> (Lkotlin/coroutines/CoroutineContext;Lnet/gini/android/core/api/DocumentService;Lnet/gini/android/core/api/GiniApiType;Ljava/lang/String;)V
 	protected final fun bearerHeaderMap (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Ljava/util/Map;
 	public static synthetic fun bearerHeaderMap$default (Lnet/gini/android/core/api/DocumentRemoteSource;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Ljava/util/Map;
+	public final fun deleteDocument (Landroid/net/Uri;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun deleteDocument (Ljava/lang/String;Landroid/net/Uri;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun deleteDocument (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deleteDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getBaseUri ()Landroid/net/Uri;
 	public fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
 	public final fun getDocument (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentFromUri (Landroid/net/Uri;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getDocumentFromUri (Ljava/lang/String;Landroid/net/Uri;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getDocumentLayout (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentLayout (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getDocumentPages (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentPages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getExtractions (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getExtractions (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getFile (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getFile (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getPayment (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPayment (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getPaymentRequest (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getPaymentRequests (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequests (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected final fun headerMap (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Ljava/util/Map;
+	public static synthetic fun headerMap$default (Lnet/gini/android/core/api/DocumentRemoteSource;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Ljava/util/Map;
 	public final fun sendFeedback (Ljava/lang/String;Ljava/lang/String;Lokhttp3/RequestBody;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendFeedback (Ljava/lang/String;Lokhttp3/RequestBody;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun setBaseUri (Landroid/net/Uri;)V
 	public final fun uploadDocument (Ljava/lang/String;[BLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun uploadDocument ([BLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class net/gini/android/core/api/DocumentRemoteSource$Companion {
@@ -425,6 +440,15 @@ public final class net/gini/android/core/api/http/DefaultGiniHttpClientProvider$
 
 public abstract interface class net/gini/android/core/api/http/GiniHttpClientProvider {
 	public abstract fun provideOkHttpClient ()Lokhttp3/OkHttpClient;
+}
+
+public final class net/gini/android/core/api/http/GiniSessionInterceptor : okhttp3/Interceptor {
+	public static final field Companion Lnet/gini/android/core/api/http/GiniSessionInterceptor$Companion;
+	public fun <init> (Lkotlin/jvm/functions/Function0;)V
+	public fun intercept (Lokhttp3/Interceptor$Chain;)Lokhttp3/Response;
+}
+
+public final class net/gini/android/core/api/http/GiniSessionInterceptor$Companion {
 }
 
 public class net/gini/android/core/api/internal/BundleHelper {

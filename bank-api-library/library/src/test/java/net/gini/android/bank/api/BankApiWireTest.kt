@@ -13,6 +13,7 @@ import net.gini.android.bank.api.requests.ErrorEvent
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
+import net.gini.android.core.api.http.GiniSessionInterceptor
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.SpecificExtraction
 import okhttp3.OkHttpClient
@@ -45,10 +46,19 @@ class BankApiWireTest {
         server = MockWebServer()
         server.start()
         val apiType = GiniBankApiType(apiVersion = 1)
+        val sessionManager = SessionManager {
+            Resource.Success(Session(ACCESS_TOKEN, Date(Date().time + 60_000)))
+        }
         val retrofit = Retrofit.Builder()
             .baseUrl(server.url("/"))
             .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build()))
-            .client(OkHttpClient())
+            // Mirrors the production client composition (GiniCoreAPIBuilder): the session
+            // interceptor authenticates the requests with the session manager's access token
+            .client(
+                OkHttpClient.Builder()
+                    .addInterceptor(GiniSessionInterceptor { sessionManager })
+                    .build()
+            )
             .build()
         val remoteSource = BankApiDocumentRemoteSource(
             Dispatchers.Unconfined,
@@ -60,9 +70,6 @@ class BankApiWireTest {
             Dispatchers.Unconfined,
             retrofit.create(TrackingAnalysisService::class.java)
         )
-        val sessionManager = SessionManager {
-            Resource.Success(Session(ACCESS_TOKEN, Date(Date().time + 60_000)))
-        }
         repository = BankApiDocumentRepository(remoteSource, sessionManager, apiType, trackingAnalysisRemoteSource)
     }
 

@@ -74,13 +74,20 @@ public final class net/gini/android/health/api/HealthApiDocumentManager : net/gi
 
 public final class net/gini/android/health/api/HealthApiDocumentRemoteSource : net/gini/android/core/api/DocumentRemoteSource {
 	public final fun createPaymentRequest (Ljava/lang/String;Lnet/gini/android/health/api/models/PaymentRequestInput;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createPaymentRequest (Lnet/gini/android/health/api/models/PaymentRequestInput;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun deleteDocuments (Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deleteDocuments (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun deletePaymentRequest (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun deletePaymentRequests (Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequests (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getConfigurations (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getConfigurations (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
 	public final fun getPaymentRequestDocument (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequestDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun getPaymentRequestImage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequestImage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setCoroutineContext (Lkotlin/coroutines/CoroutineContext;)V
 }
 

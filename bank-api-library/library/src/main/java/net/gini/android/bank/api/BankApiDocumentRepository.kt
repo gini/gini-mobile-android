@@ -42,35 +42,26 @@ class BankApiDocumentRepository(
         requestId: String,
         resolvePaymentInput: ResolvePaymentInput
     ): Resource<ResolvedPayment> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.resolvePaymentRequests(
-                    accessToken,
-                    requestId,
-                    resolvePaymentInput
-                )
-            }
+        wrapInResource {
+            documentRemoteSource.resolvePaymentRequests(
+                requestId,
+                resolvePaymentInput
+            )
         }
 
     suspend fun logErrorEvent(errorEvent: ErrorEvent): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.logErrorEvent(accessToken, errorEvent)
-            }
+        wrapInResource {
+            documentRemoteSource.logErrorEvent(errorEvent)
         }
 
     suspend fun getConfigurations(): Resource<Configuration> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getConfigurations(accessToken)
-            }
+        wrapInResource {
+            documentRemoteSource.getConfigurations()
         }
 
     suspend fun sendEvents(amplitudeRoot: AmplitudeRoot): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                trackingAnalysisRemoteSource.sendEvents(accessToken, amplitudeRoot)
-            }
+        wrapInResource {
+            trackingAnalysisRemoteSource.sendEvents(amplitudeRoot)
         }
 
 
