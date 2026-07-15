@@ -111,6 +111,9 @@ sealed class Resource<T>(
         /**
          * Internal use only.
          */
+        // SwallowedException: the cancellation exceptions carry no error details - they are
+        // signals which are fully represented by the returned Resource.Cancelled.
+        @Suppress("SwallowedException")
         suspend inline fun <T> wrapInResource(crossinline request: suspend () -> T) =
             try {
                 Success(request())

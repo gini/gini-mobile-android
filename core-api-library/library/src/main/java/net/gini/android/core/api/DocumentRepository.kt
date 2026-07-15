@@ -38,7 +38,10 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
     creates multiple users (equal to number of documents) and we will get a server error (the document does not belong to the user)!
     We are using a Mutex to prevent coroutines from retrieving access tokens in parallel. This way even when multiple uploads are started only one user is created.
      */
-    @Deprecated("Only used by the deprecated withAccessToken. The SDK's session interceptor serializes session requests with its own mutex.")
+    @Deprecated(
+        "Only used by the deprecated withAccessToken. " +
+                "The SDK's session interceptor serializes session requests with its own mutex."
+    )
     val accessTokenMutex = Mutex()
 
     suspend fun deletePartialDocumentAndParents(documentId: String): Resource<Unit> =
@@ -413,7 +416,10 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * [Resource.Cancelled] by [wrapInResource], so wrapping API calls in [withAccessToken] is
      * no longer needed.
      */
-    @Deprecated("The Authorization header is added by the SDK's session interceptor in the OkHttp layer. Wrap the request in Resource.wrapInResource instead.")
+    @Deprecated(
+        "The Authorization header is added by the SDK's session interceptor in the OkHttp layer. " +
+                "Wrap the request in Resource.wrapInResource instead."
+    )
     @Suppress("DEPRECATION")
     protected suspend inline fun <T> withAccessToken(crossinline block: suspend (String) -> Resource<T>): Resource<T> {
         return accessTokenMutex.withLock {

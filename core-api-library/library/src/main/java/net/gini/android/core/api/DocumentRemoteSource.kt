@@ -20,6 +20,9 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Internal use only.
  */
+// TooManyFunctions: every API method temporarily exists twice - the deprecated accessToken
+// overloads are kept for compatibility until the next major version (PP-2363).
+@Suppress("TooManyFunctions")
 abstract class DocumentRemoteSource(
     open val coroutineContext: CoroutineContext,
     private val documentService: DocumentService,
@@ -33,14 +36,22 @@ abstract class DocumentRemoteSource(
         baseUri = getBaseUri(baseUriString, giniApiType)
     }
 
-    suspend fun uploadDocument(data: ByteArray, contentType: String, filename: String?, docType: String?, metadata: Map<String, String>?): Uri =
+    suspend fun uploadDocument(
+        data: ByteArray, contentType: String, filename: String?, docType: String?,
+        metadata: Map<String, String>?
+    ): Uri =
         uploadDocument(headerMap(contentType = contentType, metadata = metadata), data, filename, docType)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
-    suspend fun uploadDocument(accessToken: String, data: ByteArray, contentType: String ,filename: String?, docType: String?, metadata: Map<String, String>?): Uri =
+    suspend fun uploadDocument(
+        accessToken: String, data: ByteArray, contentType: String, filename: String?,
+        docType: String?, metadata: Map<String, String>?
+    ): Uri =
         uploadDocument(bearerHeaderMap(accessToken, contentType, metadata = metadata), data, filename, docType)
 
-    private suspend fun uploadDocument(headers: Map<String, String>, data: ByteArray, filename: String?, docType: String?): Uri = withContext(coroutineContext) {
+    private suspend fun uploadDocument(
+        headers: Map<String, String>, data: ByteArray, filename: String?, docType: String?
+    ): Uri = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             val body: RequestBody = data.toRequestBody("application/octet-stream".toMediaTypeOrNull(), 0, data.size)
             documentService.uploadDocument(headers, body, filename, docType)
@@ -58,7 +69,10 @@ abstract class DocumentRemoteSource(
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
     suspend fun deleteDocument(accessToken: String, documentUri: Uri): Unit = withContext(coroutineContext) {
         SafeApiRequest.apiRequest {
-            documentService.deleteDocumentFromUri(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentUri)
+            documentService.deleteDocumentFromUri(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
+                documentUri
+            )
         }
     }
 
@@ -71,7 +85,10 @@ abstract class DocumentRemoteSource(
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
     suspend fun deleteDocument(accessToken: String, documentId: String): Unit = withContext(coroutineContext) {
         SafeApiRequest.apiRequest {
-            documentService.deleteDocument(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId)
+            documentService.deleteDocument(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
+                documentId
+            )
         }
     }
 
@@ -82,7 +99,8 @@ abstract class DocumentRemoteSource(
     suspend fun getDocument(accessToken: String, documentId: String): String =
         getDocument(bearerHeaderMap(accessToken), documentId)
 
-    private suspend fun getDocument(headers: Map<String, String>, documentId: String): String = withContext(coroutineContext) {
+    private suspend fun getDocument(headers: Map<String, String>, documentId: String): String =
+        withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getDocument(headers, documentId)
         }
@@ -96,7 +114,8 @@ abstract class DocumentRemoteSource(
     suspend fun getDocumentFromUri(accessToken: String, uri: Uri): String =
         getDocumentFromUri(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), uri)
 
-    private suspend fun getDocumentFromUri(headers: Map<String, String>, uri: Uri): String = withContext(coroutineContext) {
+    private suspend fun getDocumentFromUri(headers: Map<String, String>, uri: Uri): String =
+        withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getDocumentFromUri(headers, uriRelativeToBaseUri(uri).toString())
         }
@@ -110,7 +129,8 @@ abstract class DocumentRemoteSource(
     suspend fun getExtractions(accessToken: String, documentId: String): String =
         getExtractions(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId)
 
-    private suspend fun getExtractions(headers: Map<String, String>, documentId: String): String = withContext(coroutineContext) {
+    private suspend fun getExtractions(headers: Map<String, String>, documentId: String): String =
+        withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getExtractions(headers, documentId)
         }
@@ -139,7 +159,9 @@ abstract class DocumentRemoteSource(
     suspend fun getDocumentPages(accessToken: String, documentId: String): List<DocumentPage> =
         getDocumentPages(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId)
 
-    private suspend fun getDocumentPages(headers: Map<String, String>, documentId: String): List<DocumentPage> = withContext(coroutineContext) {
+    private suspend fun getDocumentPages(
+        headers: Map<String, String>, documentId: String
+    ): List<DocumentPage> = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getDocumentPages(headers, documentId)
         }
@@ -148,14 +170,24 @@ abstract class DocumentRemoteSource(
 
     suspend fun sendFeedback(documentId: String, requestBody: RequestBody): Unit = withContext(coroutineContext) {
         SafeApiRequest.apiRequest {
-            documentService.sendFeedback(headerMap(contentType = giniApiType.giniJsonMediaType), documentId, requestBody)
+            documentService.sendFeedback(
+                headerMap(contentType = giniApiType.giniJsonMediaType),
+                documentId,
+                requestBody
+            )
         }
     }
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
-    suspend fun sendFeedback(accessToken: String, documentId: String, requestBody: RequestBody): Unit = withContext(coroutineContext) {
+    suspend fun sendFeedback(
+        accessToken: String, documentId: String, requestBody: RequestBody
+    ): Unit = withContext(coroutineContext) {
         SafeApiRequest.apiRequest {
-            documentService.sendFeedback(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId, requestBody)
+            documentService.sendFeedback(
+                bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
+                documentId,
+                requestBody
+            )
         }
     }
 
@@ -166,7 +198,8 @@ abstract class DocumentRemoteSource(
     suspend fun getFile(accessToken: String, location: String): ByteArray =
         getFile(bearerHeaderMap(accessToken, accept = null, contentType = giniApiType.giniJsonMediaType), location)
 
-    private suspend fun getFile(headers: Map<String, String>, location: String): ByteArray = withContext(coroutineContext) {
+    private suspend fun getFile(headers: Map<String, String>, location: String): ByteArray =
+        withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getFile(headers, location)
         }
@@ -180,7 +213,9 @@ abstract class DocumentRemoteSource(
     suspend fun getPaymentRequest(accessToken: String, id: String): PaymentRequestResponse =
         getPaymentRequest(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), id)
 
-    private suspend fun getPaymentRequest(headers: Map<String, String>, id: String): PaymentRequestResponse = withContext(coroutineContext) {
+    private suspend fun getPaymentRequest(
+        headers: Map<String, String>, id: String
+    ): PaymentRequestResponse = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequest(headers, id)
         }
@@ -194,7 +229,9 @@ abstract class DocumentRemoteSource(
     suspend fun getPaymentRequests(accessToken: String): List<PaymentRequestResponse> =
         getPaymentRequests(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType))
 
-    private suspend fun getPaymentRequests(headers: Map<String, String>): List<PaymentRequestResponse> = withContext(coroutineContext) {
+    private suspend fun getPaymentRequests(
+        headers: Map<String, String>
+    ): List<PaymentRequestResponse> = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
             documentService.getPaymentRequests(headers)
         }
@@ -232,7 +269,10 @@ abstract class DocumentRemoteSource(
         }
     }
 
-    @Deprecated("The Authorization header is added by the SDK's session interceptor in the OkHttp layer. Use headerMap() instead.")
+    @Deprecated(
+        "The Authorization header is added by the SDK's session interceptor in the OkHttp layer. " +
+                "Use headerMap() instead."
+    )
     protected fun bearerHeaderMap(
         accessToken: String,
         contentType: String? = null,
