@@ -8,6 +8,7 @@ plugins {
     id("jacoco")
     id ("org.sonarqube")
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.binary.compatibility.validator)
 }
 
 sonar {
@@ -112,6 +113,8 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.junit.ktx)
+    testImplementation(libs.okhttp3.mockwebserver)
+    testImplementation(libs.retrofit.moshi.converter)
 }
 
 apply<PublishToMavenPlugin>()

@@ -1,0 +1,1184 @@
+public final class net/gini/android/core/api/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public static final field VERSION_CODE Ljava/lang/String;
+	public static final field VERSION_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public abstract class net/gini/android/core/api/DocumentManager {
+	public fun <init> (Lnet/gini/android/core/api/DocumentRepository;)V
+	public final fun createCompositeDocument (Ljava/util/LinkedHashMap;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createCompositeDocument (Ljava/util/LinkedHashMap;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createCompositeDocument (Ljava/util/List;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createCompositeDocument (Ljava/util/List;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun createCompositeDocument$default (Lnet/gini/android/core/api/DocumentManager;Ljava/util/LinkedHashMap;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun createCompositeDocument$default (Lnet/gini/android/core/api/DocumentManager;Ljava/util/LinkedHashMap;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun createCompositeDocument$default (Lnet/gini/android/core/api/DocumentManager;Ljava/util/List;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun createCompositeDocument$default (Lnet/gini/android/core/api/DocumentManager;Ljava/util/List;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun createPartialDocument ([BLjava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun createPartialDocument$default (Lnet/gini/android/core/api/DocumentManager;[BLjava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun deleteDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePartialDocumentAndParents (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getAllExtractions (Lnet/gini/android/core/api/models/Document;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getAllExtractionsWithPolling (Lnet/gini/android/core/api/models/Document;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocument (Landroid/net/Uri;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentLayout (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentPages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getFile (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPayment (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequests (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun pollDocument (Lnet/gini/android/core/api/models/Document;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendFeedbackForExtractions (Lnet/gini/android/core/api/models/Document;Ljava/util/Map;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendFeedbackForExtractions (Lnet/gini/android/core/api/models/Document;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendFeedbackWithSpecificExtractions (Lnet/gini/android/core/api/models/Document;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/core/api/DocumentManager$DocumentType : java/lang/Enum {
+	public static final field BANK_STATEMENT Lnet/gini/android/core/api/DocumentManager$DocumentType;
+	public static final field CONTRACT Lnet/gini/android/core/api/DocumentManager$DocumentType;
+	public static final field INVOICE Lnet/gini/android/core/api/DocumentManager$DocumentType;
+	public static final field OTHER Lnet/gini/android/core/api/DocumentManager$DocumentType;
+	public static final field RECEIPT Lnet/gini/android/core/api/DocumentManager$DocumentType;
+	public static final field REMINDER Lnet/gini/android/core/api/DocumentManager$DocumentType;
+	public static final field REMITTANCE_SLIP Lnet/gini/android/core/api/DocumentManager$DocumentType;
+	public static final field TRAVEL_EXPENSE_REPORT Lnet/gini/android/core/api/DocumentManager$DocumentType;
+	public final fun getApiDoctypeHint ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/core/api/DocumentManager$DocumentType;
+	public static fun values ()[Lnet/gini/android/core/api/DocumentManager$DocumentType;
+}
+
+public class net/gini/android/core/api/DocumentMetadata {
+	public static final field BRANCH_ID_HEADER_FIELD_NAME Ljava/lang/String;
+	public static final field HEADER_FIELD_NAME_PREFIX Ljava/lang/String;
+	public static final field PRODUCT_TAG_HEADER_FIELD_NAME Ljava/lang/String;
+	public static final field UPLOAD_METADATA_HEADER_FIELD_NAME Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (Ljava/nio/charset/CharsetEncoder;)V
+	public fun add (Ljava/lang/String;Ljava/lang/String;)V
+	public fun copy ()Lnet/gini/android/core/api/DocumentMetadata;
+	public fun getMetadata ()Ljava/util/Map;
+	public fun isASCIIEncodable (Ljava/lang/String;)Z
+	public fun setBranchId (Ljava/lang/String;)V
+	public fun setProductTag (Ljava/lang/String;)V
+	public fun setUploadMetadata (Ljava/lang/String;)V
+}
+
+public abstract class net/gini/android/core/api/DocumentRemoteSource {
+	public static final field Companion Lnet/gini/android/core/api/DocumentRemoteSource$Companion;
+	public static final field HEADER_LOCATION_KEY Ljava/lang/String;
+	public fun <init> (Lkotlin/coroutines/CoroutineContext;Lnet/gini/android/core/api/DocumentService;Lnet/gini/android/core/api/GiniApiType;Ljava/lang/String;)V
+	protected final fun bearerHeaderMap (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Ljava/util/Map;
+	public static synthetic fun bearerHeaderMap$default (Lnet/gini/android/core/api/DocumentRemoteSource;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Ljava/util/Map;
+	public final fun deleteDocument (Ljava/lang/String;Landroid/net/Uri;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deleteDocument (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getBaseUri ()Landroid/net/Uri;
+	public fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
+	public final fun getDocument (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentFromUri (Ljava/lang/String;Landroid/net/Uri;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentLayout (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentPages (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getExtractions (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getFile (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPayment (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequest (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequests (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendFeedback (Ljava/lang/String;Ljava/lang/String;Lokhttp3/RequestBody;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun setBaseUri (Landroid/net/Uri;)V
+	public final fun uploadDocument (Ljava/lang/String;[BLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/core/api/DocumentRemoteSource$Companion {
+}
+
+public abstract class net/gini/android/core/api/DocumentRepository {
+	public static final field Companion Lnet/gini/android/core/api/DocumentRepository$Companion;
+	public static final field DEFAULT_COMPRESSION I
+	public static final field POLLING_INTERVAL J
+	public static final field POLLING_TIMEOUT J
+	public fun <init> (Lnet/gini/android/core/api/DocumentRemoteSource;Lnet/gini/android/core/api/authorization/SessionManager;Lnet/gini/android/core/api/GiniApiType;)V
+	public final fun createCompositeDocument (Ljava/util/LinkedHashMap;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createCompositeDocument (Ljava/util/LinkedHashMap;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createCompositeDocument (Ljava/util/List;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createCompositeDocument (Ljava/util/List;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun createExtractionsContainer (Ljava/util/Map;Ljava/util/Map;Lorg/json/JSONObject;)Lnet/gini/android/core/api/models/ExtractionsContainer;
+	public fun createPartialDocument ([BLjava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun createPartialDocument$default (Lnet/gini/android/core/api/DocumentRepository;[BLjava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun deleteDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePartialDocumentAndParents (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected final fun extractionCandidatesFromApiResponse (Lorg/json/JSONObject;)Ljava/util/HashMap;
+	protected fun extractionFromApiResponse (Lorg/json/JSONObject;)Lnet/gini/android/core/api/models/Extraction;
+	public final fun getAccessTokenMutex ()Lkotlinx/coroutines/sync/Mutex;
+	public final fun getAllExtractions (Lnet/gini/android/core/api/models/Document;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocument (Landroid/net/Uri;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentLayout (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDocumentPages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getFile (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPayment (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequests (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected final fun getSessionManager ()Lnet/gini/android/core/api/authorization/SessionManager;
+	protected final fun parseCompoundExtractions (Lorg/json/JSONObject;Ljava/util/Map;)Ljava/util/Map;
+	public final fun parseSpecificExtractions (Lorg/json/JSONObject;Ljava/util/Map;)Ljava/util/Map;
+	public final fun pollDocument (Lnet/gini/android/core/api/models/Document;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendFeedbackForExtractions (Lnet/gini/android/core/api/models/Document;Ljava/util/Map;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendFeedbackForExtractions (Lnet/gini/android/core/api/models/Document;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun sendFeedbackWithSpecificExtractions (Lnet/gini/android/core/api/models/Document;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	protected final fun withAccessToken (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/core/api/DocumentRepository$Companion {
+}
+
+public abstract interface class net/gini/android/core/api/DocumentService {
+	public abstract fun deleteDocument (Ljava/util/Map;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteDocumentFromUri (Ljava/util/Map;Landroid/net/Uri;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getDocument (Ljava/util/Map;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getDocumentFromUri (Ljava/util/Map;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getDocumentLayout (Ljava/util/Map;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getDocumentPages (Ljava/util/Map;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getExtractions (Ljava/util/Map;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getFile (Ljava/util/Map;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getPayment (Ljava/util/Map;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getPaymentRequest (Ljava/util/Map;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getPaymentRequests (Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun sendFeedback (Ljava/util/Map;Ljava/lang/String;Lokhttp3/RequestBody;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun uploadDocument (Ljava/util/Map;Lokhttp3/RequestBody;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/core/api/DocumentService$DefaultImpls {
+	public static fun sendFeedback (Lnet/gini/android/core/api/DocumentService;Ljava/util/Map;Ljava/lang/String;Lokhttp3/RequestBody;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class net/gini/android/core/api/GiniApiType {
+	public abstract fun getBaseUrl ()Ljava/lang/String;
+	public abstract fun getGiniCompositeJsonMediaType ()Ljava/lang/String;
+	public abstract fun getGiniJsonMediaType ()Ljava/lang/String;
+	public abstract fun getGiniPartialMediaType ()Ljava/lang/String;
+}
+
+public class net/gini/android/core/api/MediaTypes {
+	public static final field APPLICATION_FORM_URLENCODED Ljava/lang/String;
+	public static final field APPLICATION_JSON Ljava/lang/String;
+	public static final field GINI_JSON_INCUBATOR Ljava/lang/String;
+	public static final field IMAGE_JPEG Ljava/lang/String;
+	public static fun forPartialDocument (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+}
+
+public abstract class net/gini/android/core/api/Resource {
+	public static final field Companion Lnet/gini/android/core/api/Resource$Companion;
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getData ()Ljava/lang/Object;
+	public fun getResponseBody ()Ljava/lang/String;
+	public fun getResponseHeaders ()Ljava/util/Map;
+	public fun getResponseStatusCode ()Ljava/lang/Integer;
+	public final fun mapSuccess (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/core/api/Resource$Cancelled : net/gini/android/core/api/Resource {
+	public fun <init> ()V
+}
+
+public final class net/gini/android/core/api/Resource$Companion {
+	public final fun wrapInResource (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/core/api/Resource$Error : net/gini/android/core/api/Resource {
+	public static final field Companion Lnet/gini/android/core/api/Resource$Error$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Exception;Lnet/gini/android/core/api/response/ErrorResponse;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Exception;Lnet/gini/android/core/api/response/ErrorResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lnet/gini/android/core/api/Resource$Error;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/Exception;
+	public final fun component6 ()Lnet/gini/android/core/api/response/ErrorResponse;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Exception;Lnet/gini/android/core/api/response/ErrorResponse;)Lnet/gini/android/core/api/Resource$Error;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/Resource$Error;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Exception;Lnet/gini/android/core/api/response/ErrorResponse;ILjava/lang/Object;)Lnet/gini/android/core/api/Resource$Error;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getErrorResponse ()Lnet/gini/android/core/api/response/ErrorResponse;
+	public final fun getException ()Ljava/lang/Exception;
+	public final fun getMessage ()Ljava/lang/String;
+	public fun getResponseBody ()Ljava/lang/String;
+	public fun getResponseHeaders ()Ljava/util/Map;
+	public fun getResponseStatusCode ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/Resource$Error$Companion {
+	public final fun fromApiException (Lnet/gini/android/core/api/requests/ApiException;)Lnet/gini/android/core/api/Resource$Error;
+}
+
+public final class net/gini/android/core/api/Resource$Success : net/gini/android/core/api/Resource {
+	public fun <init> (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;)Lnet/gini/android/core/api/Resource$Success;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/Resource$Success;Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/Map;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/Resource$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getData ()Ljava/lang/Object;
+	public fun getResponseBody ()Ljava/lang/String;
+	public fun getResponseHeaders ()Ljava/util/Map;
+	public fun getResponseStatusCode ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public class net/gini/android/core/api/Utils {
+	public static final field CHARSET_UTF8 Ljava/nio/charset/Charset;
+	public static fun checkNotNull (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract interface class net/gini/android/core/api/authorization/CredentialsStore {
+	public abstract fun deleteUserCredentials ()Z
+	public abstract fun getUserCredentials ()Lnet/gini/android/core/api/authorization/UserCredentials;
+	public abstract fun storeUserCredentials (Lnet/gini/android/core/api/authorization/UserCredentials;)Z
+}
+
+public class net/gini/android/core/api/authorization/EncryptedCredentialsStore : net/gini/android/core/api/authorization/CredentialsStore {
+	public fun <init> (Landroid/content/SharedPreferences;)V
+	public fun deleteUserCredentials ()Z
+	public fun encryptExistingPlaintextCredentials ()V
+	public fun getUserCredentials ()Lnet/gini/android/core/api/authorization/UserCredentials;
+	public fun storeUserCredentials (Lnet/gini/android/core/api/authorization/UserCredentials;)Z
+}
+
+public final class net/gini/android/core/api/authorization/PubKeyManager : javax/net/ssl/X509TrustManager {
+	public static fun builder (Landroid/content/Context;)Lnet/gini/android/core/api/authorization/PubKeyManager$Builder;
+	public fun checkClientTrusted ([Ljava/security/cert/X509Certificate;Ljava/lang/String;)V
+	public fun checkServerTrusted ([Ljava/security/cert/X509Certificate;Ljava/lang/String;)V
+	public fun getAcceptedIssuers ()[Ljava/security/cert/X509Certificate;
+}
+
+public class net/gini/android/core/api/authorization/PubKeyManager$Builder {
+	public fun build ()Lnet/gini/android/core/api/authorization/PubKeyManager;
+	public fun canBuild ()Z
+	public fun setHostnames (Ljava/util/List;)Lnet/gini/android/core/api/authorization/PubKeyManager$Builder;
+	public fun setNetworkSecurityConfigResId (I)Lnet/gini/android/core/api/authorization/PubKeyManager$Builder;
+}
+
+public class net/gini/android/core/api/authorization/Session {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;)V
+	public static fun fromAPIResponse (Lnet/gini/android/core/api/authorization/apimodels/SessionToken;)Lnet/gini/android/core/api/authorization/Session;
+	public fun getAccessToken ()Ljava/lang/String;
+	public fun getExpirationDate ()Ljava/util/Date;
+	public fun hasExpired ()Z
+}
+
+public abstract interface class net/gini/android/core/api/authorization/SessionManager {
+	public abstract fun getSession (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public class net/gini/android/core/api/authorization/SharedPreferencesCredentialsStore : net/gini/android/core/api/authorization/CredentialsStore {
+	public fun <init> (Landroid/content/SharedPreferences;)V
+	public fun deleteUserCredentials ()Z
+	public fun getUserCredentials ()Lnet/gini/android/core/api/authorization/UserCredentials;
+	public fun storeUserCredentials (Lnet/gini/android/core/api/authorization/UserCredentials;)Z
+}
+
+public class net/gini/android/core/api/authorization/UserCredentials {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun getPassword ()Ljava/lang/String;
+	public fun getUsername ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/authorization/apimodels/SessionToken {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()J
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;)Lnet/gini/android/core/api/authorization/apimodels/SessionToken;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/authorization/apimodels/SessionToken;Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/authorization/apimodels/SessionToken;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAccessToken ()Ljava/lang/String;
+	public final fun getExpiresIn ()J
+	public final fun getScope ()Ljava/lang/String;
+	public final fun getTokenType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/authorization/apimodels/SessionTokenInfo {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lnet/gini/android/core/api/authorization/apimodels/SessionTokenInfo;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/authorization/apimodels/SessionTokenInfo;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/authorization/apimodels/SessionTokenInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUserName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/authorization/apimodels/SessionTokenInfoJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/authorization/apimodels/SessionTokenInfo;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/authorization/apimodels/SessionTokenInfo;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/authorization/apimodels/SessionTokenJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/authorization/apimodels/SessionToken;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/authorization/apimodels/SessionToken;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/authorization/apimodels/UserRequestModel {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/core/api/authorization/apimodels/UserRequestModel;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/authorization/apimodels/UserRequestModel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/authorization/apimodels/UserRequestModel;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEmail ()Ljava/lang/String;
+	public final fun getOldEmail ()Ljava/lang/String;
+	public final fun getPassword ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/authorization/apimodels/UserRequestModelJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/authorization/apimodels/UserRequestModel;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/authorization/apimodels/UserRequestModel;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/authorization/apimodels/UserResponseModel {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/core/api/authorization/apimodels/UserResponseModel;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/authorization/apimodels/UserResponseModel;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/authorization/apimodels/UserResponseModel;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEmail ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/authorization/apimodels/UserResponseModelJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/authorization/apimodels/UserResponseModel;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/authorization/apimodels/UserResponseModel;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class net/gini/android/core/api/authorization/crypto/GiniCrypto {
+	public fun <init> ()V
+	public fun decrypt (Ljava/lang/String;)Ljava/lang/String;
+	public fun encrypt (Ljava/lang/String;)Ljava/lang/String;
+	public static fun newInstance ()Lnet/gini/android/core/api/authorization/crypto/GiniCrypto;
+}
+
+public class net/gini/android/core/api/authorization/crypto/GiniCryptoException : java/lang/Exception {
+}
+
+public final class net/gini/android/core/api/http/DefaultGiniHttpClientProvider : net/gini/android/core/api/http/GiniHttpClientProvider {
+	public static final field Companion Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Companion;
+	public synthetic fun <init> (Landroid/content/Context;Ljava/util/List;ILokhttp3/Cache;Ljavax/net/ssl/TrustManager;IZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun builder (Landroid/content/Context;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+	public fun provideOkHttpClient ()Lokhttp3/OkHttpClient;
+}
+
+public final class net/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder {
+	public fun <init> (Landroid/content/Context;)V
+	public final fun build ()Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider;
+	public final fun setCache (Lokhttp3/Cache;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+	public final fun setConnectionTimeoutInMs (I)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+	public final fun setDebuggingEnabled (Z)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+	public final fun setHostnames (Ljava/util/List;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+	public final fun setNetworkSecurityConfigResId (I)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+	public final fun setTrustManager (Ljavax/net/ssl/TrustManager;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+}
+
+public final class net/gini/android/core/api/http/DefaultGiniHttpClientProvider$Companion {
+	public final fun builder (Landroid/content/Context;)Lnet/gini/android/core/api/http/DefaultGiniHttpClientProvider$Builder;
+}
+
+public abstract interface class net/gini/android/core/api/http/GiniHttpClientProvider {
+	public abstract fun provideOkHttpClient ()Lokhttp3/OkHttpClient;
+}
+
+public class net/gini/android/core/api/internal/BundleHelper {
+	public static fun bundleListToMapList (Ljava/util/List;Ljava/lang/ClassLoader;)Ljava/util/List;
+	public static fun bundleToMap (Landroid/os/Bundle;)Ljava/util/HashMap;
+	public static fun bundleToMap (Landroid/os/Bundle;Ljava/lang/ClassLoader;)Ljava/util/HashMap;
+	public static fun mapListToBundleList (Ljava/util/List;)Ljava/util/List;
+	public static fun mapToBundle (Ljava/util/Map;)Landroid/os/Bundle;
+}
+
+public abstract class net/gini/android/core/api/internal/GiniCoreAPI {
+	public fun <init> (Lnet/gini/android/core/api/DocumentManager;Lnet/gini/android/core/api/authorization/CredentialsStore;)V
+	public final fun getCredentialsStore ()Lnet/gini/android/core/api/authorization/CredentialsStore;
+	public final fun getDocumentManager ()Lnet/gini/android/core/api/DocumentManager;
+}
+
+public abstract class net/gini/android/core/api/internal/GiniCoreAPIBuilder {
+	public static final field Companion Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder$Companion;
+	public static final field LOG_TAG Ljava/lang/String;
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/authorization/SessionManager;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/authorization/SessionManager;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public abstract fun build ()Lnet/gini/android/core/api/internal/GiniCoreAPI;
+	protected abstract fun createDocumentManager ()Lnet/gini/android/core/api/DocumentManager;
+	protected abstract fun createDocumentRepository ()Lnet/gini/android/core/api/DocumentRepository;
+	protected final fun getApiBaseUrl ()Ljava/lang/String;
+	protected final fun getApiRetrofit ()Lretrofit2/Retrofit;
+	protected final fun getCredentialsStore ()Lnet/gini/android/core/api/authorization/CredentialsStore;
+	protected final fun getDocumentManager ()Lnet/gini/android/core/api/DocumentManager;
+	protected final fun getDocumentRepository ()Lnet/gini/android/core/api/DocumentRepository;
+	public abstract fun getGiniApiType ()Lnet/gini/android/core/api/GiniApiType;
+	protected final fun getMoshi ()Lcom/squareup/moshi/Moshi;
+	public fun getSessionManager ()Lnet/gini/android/core/api/authorization/SessionManager;
+	protected final fun getTrackingAnalyticsApiRetrofit ()Lretrofit2/Retrofit;
+	public fun setApiBaseUrl (Ljava/lang/String;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setCache (Lokhttp3/Cache;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setConnectionTimeoutInMs (I)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setCredentialsStore (Lnet/gini/android/core/api/authorization/CredentialsStore;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public final fun setDebuggingEnabled (Z)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setNetworkSecurityConfigResId (I)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setTrustManager (Ljavax/net/ssl/TrustManager;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setUserCenterApiBaseUrl (Ljava/lang/String;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+}
+
+public final class net/gini/android/core/api/internal/GiniCoreAPIBuilder$Companion {
+}
+
+public final class net/gini/android/core/api/mapper/DocumentLayoutMapperKt {
+	public static final fun toDocumentLayout (Lnet/gini/android/core/api/response/DocumentLayoutResponse;)Lnet/gini/android/core/api/models/DocumentLayout;
+	public static final fun toLine (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line;
+	public static final fun toPage (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse;)Lnet/gini/android/core/api/models/DocumentLayout$Page;
+	public static final fun toParagraph (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph;
+	public static final fun toRegion (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$RegionResponse;)Lnet/gini/android/core/api/models/DocumentLayout$Page$Region;
+	public static final fun toTextZone (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone;
+	public static final fun toWord (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse$WordResponse;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line$Word;
+}
+
+public final class net/gini/android/core/api/mapper/DocumentPagesMapperKt {
+	public static final fun toDocumentPage (Lnet/gini/android/core/api/response/DocumentPageResponse;)Lnet/gini/android/core/api/models/DocumentPage;
+	public static final fun toImages (Lnet/gini/android/core/api/response/DocumentPageResponse$Images;)Lnet/gini/android/core/api/models/DocumentPage$Images;
+}
+
+public class net/gini/android/core/api/models/Box : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (IDDDD)V
+	public fun describeContents ()I
+	public static fun fromApiResponse (Lorg/json/JSONObject;)Lnet/gini/android/core/api/models/Box;
+	public fun getHeight ()D
+	public fun getLeft ()D
+	public fun getPageNumber ()I
+	public fun getTop ()D
+	public fun getWidth ()D
+	public fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public class net/gini/android/core/api/models/CompoundExtraction : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	protected fun <init> (Landroid/os/Parcel;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun describeContents ()I
+	public fun getName ()Ljava/lang/String;
+	public fun getSpecificExtractionMaps ()Ljava/util/List;
+	public fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public class net/gini/android/core/api/models/Document : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Ljava/lang/String;Lnet/gini/android/core/api/models/Document$ProcessingState;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Lnet/gini/android/core/api/models/Document$SourceClassification;Landroid/net/Uri;Ljava/util/List;Ljava/util/List;)V
+	public fun describeContents ()I
+	public static fun fromApiResponse (Lorg/json/JSONObject;)Lnet/gini/android/core/api/models/Document;
+	public fun getCompositeDocuments ()Ljava/util/List;
+	public fun getCreationDate ()Ljava/util/Date;
+	public fun getExpirationDate ()Ljava/util/Date;
+	public fun getFilename ()Ljava/lang/String;
+	public fun getId ()Ljava/lang/String;
+	public fun getPageCount ()I
+	public fun getPartialDocuments ()Ljava/util/List;
+	public fun getSourceClassification ()Lnet/gini/android/core/api/models/Document$SourceClassification;
+	public fun getState ()Lnet/gini/android/core/api/models/Document$ProcessingState;
+	public fun getUri ()Landroid/net/Uri;
+	public fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class net/gini/android/core/api/models/Document$ProcessingState : java/lang/Enum {
+	public static final field COMPLETED Lnet/gini/android/core/api/models/Document$ProcessingState;
+	public static final field ERROR Lnet/gini/android/core/api/models/Document$ProcessingState;
+	public static final field PENDING Lnet/gini/android/core/api/models/Document$ProcessingState;
+	public static final field UNKNOWN Lnet/gini/android/core/api/models/Document$ProcessingState;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/core/api/models/Document$ProcessingState;
+	public static fun values ()[Lnet/gini/android/core/api/models/Document$ProcessingState;
+}
+
+public final class net/gini/android/core/api/models/Document$SourceClassification : java/lang/Enum {
+	public static final field COMPOSITE Lnet/gini/android/core/api/models/Document$SourceClassification;
+	public static final field NATIVE Lnet/gini/android/core/api/models/Document$SourceClassification;
+	public static final field SANDWICH Lnet/gini/android/core/api/models/Document$SourceClassification;
+	public static final field SCANNED Lnet/gini/android/core/api/models/Document$SourceClassification;
+	public static final field TEXT Lnet/gini/android/core/api/models/Document$SourceClassification;
+	public static final field UNKNOWN Lnet/gini/android/core/api/models/Document$SourceClassification;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/core/api/models/Document$SourceClassification;
+	public static fun values ()[Lnet/gini/android/core/api/models/Document$SourceClassification;
+}
+
+public final class net/gini/android/core/api/models/DocumentLayout {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lnet/gini/android/core/api/models/DocumentLayout;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/DocumentLayout;Ljava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/models/DocumentLayout;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPages ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/DocumentLayout$Page {
+	public fun <init> (IFFLjava/util/List;Ljava/util/List;)V
+	public final fun component1 ()I
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (IFFLjava/util/List;Ljava/util/List;)Lnet/gini/android/core/api/models/DocumentLayout$Page;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/DocumentLayout$Page;IFFLjava/util/List;Ljava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/models/DocumentLayout$Page;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNumber ()I
+	public final fun getRegions ()Ljava/util/List;
+	public final fun getSizeX ()F
+	public final fun getSizeY ()F
+	public final fun getTextZones ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/DocumentLayout$Page$Region {
+	public fun <init> (FFFFLjava/lang/String;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (FFFFLjava/lang/String;)Lnet/gini/android/core/api/models/DocumentLayout$Page$Region;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/DocumentLayout$Page$Region;FFFFLjava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/models/DocumentLayout$Page$Region;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()F
+	public final fun getLeft ()F
+	public final fun getTop ()F
+	public final fun getType ()Ljava/lang/String;
+	public final fun getWidth ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/DocumentLayout$Page$TextZone {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone;Ljava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getParagraphs ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph {
+	public fun <init> (FFFFLjava/util/List;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (FFFFLjava/util/List;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph;FFFFLjava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()F
+	public final fun getLeft ()F
+	public final fun getLines ()Ljava/util/List;
+	public final fun getTop ()F
+	public final fun getWidth ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line {
+	public fun <init> (FFFFLjava/util/List;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (FFFFLjava/util/List;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line;FFFFLjava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()F
+	public final fun getLeft ()F
+	public final fun getTop ()F
+	public final fun getWidth ()F
+	public final fun getWords ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line$Word {
+	public fun <init> (FFFFFLjava/lang/String;ZLjava/lang/String;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()F
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Z
+	public final fun component8 ()Ljava/lang/String;
+	public final fun copy (FFFFFLjava/lang/String;ZLjava/lang/String;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line$Word;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line$Word;FFFFFLjava/lang/String;ZLjava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line$Word;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBold ()Z
+	public final fun getFontFamily ()Ljava/lang/String;
+	public final fun getFontSize ()F
+	public final fun getHeight ()F
+	public final fun getLeft ()F
+	public final fun getText ()Ljava/lang/String;
+	public final fun getTop ()F
+	public final fun getWidth ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/DocumentPage {
+	public fun <init> (ILnet/gini/android/core/api/models/DocumentPage$Images;)V
+	public final fun component1 ()I
+	public final fun component2 ()Lnet/gini/android/core/api/models/DocumentPage$Images;
+	public final fun copy (ILnet/gini/android/core/api/models/DocumentPage$Images;)Lnet/gini/android/core/api/models/DocumentPage;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/DocumentPage;ILnet/gini/android/core/api/models/DocumentPage$Images;ILjava/lang/Object;)Lnet/gini/android/core/api/models/DocumentPage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImages ()Lnet/gini/android/core/api/models/DocumentPage$Images;
+	public final fun getPageNumber ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/DocumentPage$Images {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/core/api/models/DocumentPage$Images;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/DocumentPage$Images;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/models/DocumentPage$Images;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLarge ()Ljava/lang/String;
+	public final fun getMedium ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public class net/gini/android/core/api/models/Extraction : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	protected fun <init> (Landroid/os/Parcel;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/models/Box;)V
+	public fun describeContents ()I
+	public fun getBox ()Lnet/gini/android/core/api/models/Box;
+	public fun getEntity ()Ljava/lang/String;
+	public fun getValue ()Ljava/lang/String;
+	public fun isDirty ()Z
+	public fun setBox (Lnet/gini/android/core/api/models/Box;)V
+	public fun setIsDirty (Z)V
+	public fun setValue (Ljava/lang/String;)V
+	public fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public class net/gini/android/core/api/models/ExtractionsContainer : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	protected fun <init> (Landroid/os/Parcel;)V
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;)V
+	public fun describeContents ()I
+	public fun getCompoundExtractions ()Ljava/util/Map;
+	public fun getSpecificExtractions ()Ljava/util/Map;
+	public fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class net/gini/android/core/api/models/Payment {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/core/api/models/Payment;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/Payment;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/models/Payment;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()Ljava/lang/String;
+	public final fun getBic ()Ljava/lang/String;
+	public final fun getIban ()Ljava/lang/String;
+	public final fun getPaidAt ()Ljava/lang/String;
+	public final fun getPurpose ()Ljava/lang/String;
+	public final fun getRecipient ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/PaymentRequest {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/models/PaymentRequest$Status;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Lnet/gini/android/core/api/models/PaymentRequest$Status;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/models/PaymentRequest$Status;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/core/api/models/PaymentRequest;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/models/PaymentRequest;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/models/PaymentRequest$Status;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/models/PaymentRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()Ljava/lang/String;
+	public final fun getBic ()Ljava/lang/String;
+	public final fun getCreatedAt ()Ljava/lang/String;
+	public final fun getExpirationDate ()Ljava/lang/String;
+	public final fun getIban ()Ljava/lang/String;
+	public final fun getPaymentProviderId ()Ljava/lang/String;
+	public final fun getPurpose ()Ljava/lang/String;
+	public final fun getRecipient ()Ljava/lang/String;
+	public final fun getRequesterUri ()Ljava/lang/String;
+	public final fun getStatus ()Lnet/gini/android/core/api/models/PaymentRequest$Status;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/models/PaymentRequest$Status : java/lang/Enum {
+	public static final field OPEN Lnet/gini/android/core/api/models/PaymentRequest$Status;
+	public static final field PAID Lnet/gini/android/core/api/models/PaymentRequest$Status;
+	public static final field PAID_ADJUSTED Lnet/gini/android/core/api/models/PaymentRequest$Status;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/core/api/models/PaymentRequest$Status;
+	public static fun values ()[Lnet/gini/android/core/api/models/PaymentRequest$Status;
+}
+
+public class net/gini/android/core/api/models/SpecificExtraction : net/gini/android/core/api/models/Extraction {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/models/Box;Ljava/util/List;)V
+	public fun describeContents ()I
+	public fun getCandidate ()Ljava/util/List;
+	public fun getName ()Ljava/lang/String;
+	public fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class net/gini/android/core/api/requests/ApiException : java/io/IOException {
+	public static final field Companion Lnet/gini/android/core/api/requests/ApiException$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getResponseBody ()Ljava/lang/String;
+	public final fun getResponseHeaders ()Ljava/util/Map;
+	public final fun getResponseStatusCode ()Ljava/lang/Integer;
+}
+
+public final class net/gini/android/core/api/requests/ApiException$Companion {
+	public final fun forResponse (Ljava/lang/String;Lretrofit2/Response;)Lnet/gini/android/core/api/requests/ApiException;
+	public static synthetic fun forResponse$default (Lnet/gini/android/core/api/requests/ApiException$Companion;Ljava/lang/String;Lretrofit2/Response;ILjava/lang/Object;)Lnet/gini/android/core/api/requests/ApiException;
+}
+
+public final class net/gini/android/core/api/requests/BasicAuthorizatonHeader : net/gini/android/core/api/requests/HttpHeader {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class net/gini/android/core/api/requests/BearerAuthorizatonHeader : net/gini/android/core/api/requests/HttpHeader {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public abstract class net/gini/android/core/api/requests/HttpHeader {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun addToMap (Ljava/util/Map;)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public final fun toPair ()Lkotlin/Pair;
+}
+
+public final class net/gini/android/core/api/requests/JsonAcceptHeader : net/gini/android/core/api/requests/HttpHeader {
+	public fun <init> ()V
+}
+
+public final class net/gini/android/core/api/requests/SafeApiRequest {
+	public static final field INSTANCE Lnet/gini/android/core/api/requests/SafeApiRequest;
+	public final fun apiRequest (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lnet/gini/android/core/api/response/DocumentLayoutResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/DocumentLayoutResponse;Ljava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/response/DocumentLayoutResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPages ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse$PageResponse {
+	public fun <init> (IFFLjava/util/List;Ljava/util/List;)V
+	public final fun component1 ()I
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (IFFLjava/util/List;Ljava/util/List;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse;IFFLjava/util/List;Ljava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNumber ()I
+	public final fun getRegions ()Ljava/util/List;
+	public final fun getSizeX ()F
+	public final fun getSizeY ()F
+	public final fun getTextZones ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$RegionResponse {
+	public fun <init> (FFFFLjava/lang/String;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (FFFFLjava/lang/String;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$RegionResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$RegionResponse;FFFFLjava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$RegionResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()F
+	public final fun getLeft ()F
+	public final fun getTop ()F
+	public final fun getType ()Ljava/lang/String;
+	public final fun getWidth ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse;Ljava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getParagraphs ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse {
+	public fun <init> (FFFFLjava/util/List;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (FFFFLjava/util/List;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse;FFFFLjava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()F
+	public final fun getLeft ()F
+	public final fun getLines ()Ljava/util/List;
+	public final fun getTop ()F
+	public final fun getWidth ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse {
+	public fun <init> (FFFFLjava/util/List;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (FFFFLjava/util/List;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse;FFFFLjava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight ()F
+	public final fun getLeft ()F
+	public final fun getTop ()F
+	public final fun getWidth ()F
+	public final fun getWords ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse$WordResponse {
+	public fun <init> (FFFFFLjava/lang/String;ZLjava/lang/String;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()F
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Z
+	public final fun component8 ()Ljava/lang/String;
+	public final fun copy (FFFFFLjava/lang/String;ZLjava/lang/String;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse$WordResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse$WordResponse;FFFFFLjava/lang/String;ZLjava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse$WordResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBold ()Z
+	public final fun getFontFamily ()Ljava/lang/String;
+	public final fun getFontSize ()F
+	public final fun getHeight ()F
+	public final fun getLeft ()F
+	public final fun getText ()Ljava/lang/String;
+	public final fun getTop ()F
+	public final fun getWidth ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/DocumentLayoutResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/DocumentLayoutResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse_PageResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse_PageResponse_RegionResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$RegionResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$RegionResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse_PageResponse_TextZoneResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse_PageResponse_TextZoneResponse_ParagraphResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse_PageResponse_TextZoneResponse_ParagraphResponse_LineResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentLayoutResponse_PageResponse_TextZoneResponse_ParagraphResponse_LineResponse_WordResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse$WordResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse$WordResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentPageResponse {
+	public fun <init> (ILnet/gini/android/core/api/response/DocumentPageResponse$Images;)V
+	public final fun component1 ()I
+	public final fun component2 ()Lnet/gini/android/core/api/response/DocumentPageResponse$Images;
+	public final fun copy (ILnet/gini/android/core/api/response/DocumentPageResponse$Images;)Lnet/gini/android/core/api/response/DocumentPageResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/DocumentPageResponse;ILnet/gini/android/core/api/response/DocumentPageResponse$Images;ILjava/lang/Object;)Lnet/gini/android/core/api/response/DocumentPageResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImages ()Lnet/gini/android/core/api/response/DocumentPageResponse$Images;
+	public final fun getPageNumber ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentPageResponse$Images {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/core/api/response/DocumentPageResponse$Images;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/DocumentPageResponse$Images;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/response/DocumentPageResponse$Images;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLarge ()Ljava/lang/String;
+	public final fun getMedium ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentPageResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/DocumentPageResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/DocumentPageResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/DocumentPageResponse_ImagesJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/DocumentPageResponse$Images;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/DocumentPageResponse$Images;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/ErrorItem {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lnet/gini/android/core/api/response/ErrorItem;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/ErrorItem;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lnet/gini/android/core/api/response/ErrorItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAffectedIds ()Ljava/util/List;
+	public final fun getCode ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/ErrorItemJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/ErrorItem;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/ErrorItem;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/ErrorResponse {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/core/api/response/ErrorResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/ErrorResponse;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/response/ErrorResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getItems ()Ljava/util/List;
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getRequestId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/ErrorResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/ErrorResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/ErrorResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/PaymentRequestResponse {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/core/api/response/PaymentRequestResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/PaymentRequestResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/response/PaymentRequestResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()Ljava/lang/String;
+	public final fun getBic ()Ljava/lang/String;
+	public final fun getCreatedAt ()Ljava/lang/String;
+	public final fun getExpirationDate ()Ljava/lang/String;
+	public final fun getIban ()Ljava/lang/String;
+	public final fun getPaymentProvider ()Ljava/lang/String;
+	public final fun getPurpose ()Ljava/lang/String;
+	public final fun getRecipient ()Ljava/lang/String;
+	public final fun getRequesterUri ()Ljava/lang/String;
+	public final fun getStatus ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/PaymentRequestResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/PaymentRequestResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/PaymentRequestResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/PaymentResponse {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/core/api/response/PaymentResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/core/api/response/PaymentResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/core/api/response/PaymentResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()Ljava/lang/String;
+	public final fun getBic ()Ljava/lang/String;
+	public final fun getIban ()Ljava/lang/String;
+	public final fun getPaidAt ()Ljava/lang/String;
+	public final fun getPurpose ()Ljava/lang/String;
+	public final fun getRecipient ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/core/api/response/PaymentResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/core/api/response/PaymentResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/core/api/response/PaymentResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
