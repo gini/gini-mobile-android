@@ -20,6 +20,7 @@ import net.gini.android.core.api.authorization.UserRepository
 import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.http.DefaultGiniHttpClientProvider
 import net.gini.android.core.api.http.GiniHttpClientProvider
+import net.gini.android.core.api.http.GiniSessionInterceptor
 import net.gini.android.core.api.models.ExtractionsContainer
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -66,6 +67,20 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mDocumentRepository: DR? = null
     private var mHttpClientProvider: GiniHttpClientProvider? = null
     private var isDebuggingEnabled = false
+
+    /**
+     * Authenticates document and tracking API requests which don't carry an `Authorization`
+     * header yet. Currently dormant: the repositories still set the header via header maps, so
+     * the interceptor passes all requests through. It becomes the authentication mechanism when
+     * the token handling is removed from the repositories (PP-2363).
+     *
+     * Shared between the document and tracking API clients so their session requests are
+     * serialized by the same mutex. It must NOT be added to the User Center API client because
+     * the session manager itself uses that client to fetch tokens (circular dependency).
+     */
+    private val mSessionInterceptor: GiniSessionInterceptor by lazy {
+        GiniSessionInterceptor { getSessionManager() }
+    }
 
     /**
      * Set the resource id for the network security configuration xml to enable public key pinning.
@@ -324,7 +339,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val retrofit = Retrofit.Builder()
             .baseUrl(mUserCenterApiBaseUrl)
             .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
-            .client(createOkHttpClient())
+            .client(createOkHttpClient(addSessionInterceptor = false))
             .build()
         mUserApiRetrofit = retrofit
         return retrofit
@@ -336,17 +351,23 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val retrofit = Retrofit.Builder()
             .baseUrl(getApiBaseUrl()!!)
             .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
-            .client(createOkHttpClient())
+            .client(createOkHttpClient(addSessionInterceptor = true))
             .build()
         mTrackingAnalysisApiRetrofit = retrofit
         return retrofit
     }
 
-    private fun createOkHttpClient(): OkHttpClient {
+    /**
+     * @param addSessionInterceptor pass `true` for clients of APIs which are authenticated with
+     * a session access token (document and tracking APIs) and `false` for the User Center API
+     * client which the session manager itself uses to fetch tokens (adding the interceptor
+     * there would cause a circular dependency).
+     */
+    private fun createOkHttpClient(addSessionInterceptor: Boolean): OkHttpClient {
         // If a custom provider is set, use it as a base and add SDK's required configuration on top
         if (mHttpClientProvider != null) {
             val baseClient = mHttpClientProvider!!.provideOkHttpClient()
-            
+
             // Clone the consumer's client and add SDK's required interceptors
             return baseClient.newBuilder()
                 .apply {
@@ -369,6 +390,11 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
                             )
                         }
                     }
+                    if (addSessionInterceptor) {
+                        // Placed after the consumer's interceptors: an Authorization header set
+                        // by the consumer wins and the session interceptor passes through
+                        addInterceptor(mSessionInterceptor)
+                    }
                 }
                 .build()
         }
@@ -387,7 +413,13 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             }
             .build()
 
-        return defaultProvider.provideOkHttpClient()
+        return defaultProvider.provideOkHttpClient().let { client ->
+            if (addSessionInterceptor) {
+                client.newBuilder().addInterceptor(mSessionInterceptor).build()
+            } else {
+                client
+            }
+        }
     }
 
     @Synchronized
@@ -395,7 +427,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val retrofit = Retrofit.Builder()
             .baseUrl(getApiBaseUrl()!!)
             .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
-            .client(createOkHttpClient())
+            .client(createOkHttpClient(addSessionInterceptor = true))
             .build()
         mPayApiRetrofit = retrofit
         return retrofit

@@ -2,6 +2,7 @@ package net.gini.android.core.api
 
 import com.squareup.moshi.Moshi
 import net.gini.android.core.api.requests.ApiException
+import net.gini.android.core.api.requests.SessionCancellationException
 import net.gini.android.core.api.response.ErrorResponse
 import java.util.concurrent.CancellationException
 
@@ -115,6 +116,8 @@ sealed class Resource<T>(
                 Success(request())
             } catch (e: ApiException) {
                 Error.fromApiException(e)
+            } catch (e: SessionCancellationException) {
+                Cancelled()
             } catch (e: CancellationException) {
                 Cancelled()
             } catch (e: Exception) {
