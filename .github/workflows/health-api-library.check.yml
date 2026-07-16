@@ -48,6 +48,9 @@ jobs:
       - name: run unit tests
         run: ./gradlew health-api-library:library:testDebugUnitTest
 
+      - name: check binary compatibility of the public api
+        run: ./gradlew health-api-library:library:apiCheck
+
       - name: archive unit test results
         if: always()
         uses: actions/upload-artifact@v4
