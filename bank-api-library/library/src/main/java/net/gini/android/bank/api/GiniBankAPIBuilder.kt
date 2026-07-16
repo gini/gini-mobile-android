@@ -92,8 +92,9 @@ class GiniBankAPIBuilder @JvmOverloads constructor(
      * [SessionManager] (or client credentials) are required.
      *
      * When enabled, your [GiniHttpClientProvider]'s OkHttpClient is responsible for adding the
-     * `Authorization` header to API requests (for example with your own interceptor). Your
-     * access token is never passed through the SDK.
+     * `Authorization` header to API requests (for example with your own application or network
+     * interceptor - either works, because the SDK installs no authentication of its own in this
+     * mode). Your access token is never passed through the SDK.
      *
      * A custom [GiniHttpClientProvider] must be set via [setHttpClientProvider], otherwise
      * building will throw an [IllegalStateException]. Disabled by default.

@@ -25,7 +25,14 @@ import okhttp3.Response
  * - requests authenticated by the repositories via header maps (during the migration of the
  *   token handling into this interceptor),
  * - requests authenticated by a consumer's own interceptor when the consumer manages
- *   authentication themselves (a consumer's interceptors run before this one).
+ *   authentication themselves (a consumer's *application* interceptors run before this one).
+ *
+ * Note: auth added by a consumer via a *network* interceptor
+ * (`OkHttpClient.Builder.addNetworkInterceptor`) runs after this interceptor, so the SDK would
+ * still request a session (and create an anonymous Gini user) before the consumer's header
+ * overwrites the SDK's one. Consumers who authenticate API requests themselves should enable
+ * self-managed authentication (`GiniCoreAPIBuilder.setSelfManagedAuthentication`) instead of
+ * relying on the pass-through: it prevents this interceptor from being installed at all.
  *
  * The session request is guarded by a [Mutex] so that parallel API calls trigger only one
  * session request at a time. This prevents creating multiple anonymous Gini users when multiple

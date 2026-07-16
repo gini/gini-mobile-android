@@ -237,8 +237,9 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      * [SessionManager] (or client credentials) are required.
      *
      * When enabled, your [GiniHttpClientProvider]'s OkHttpClient is responsible for adding the
-     * `Authorization` header to API requests (for example with your own interceptor). Your
-     * access token is never passed through the SDK.
+     * `Authorization` header to API requests (for example with your own application or network
+     * interceptor - either works, because the SDK installs no authentication of its own in this
+     * mode). Your access token is never passed through the SDK.
      *
      * Requirements:
      * - A custom [GiniHttpClientProvider] must be set via [setHttpClientProvider]. Building
@@ -447,8 +448,11 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
                         }
                     }
                     if (installSessionInterceptor) {
-                        // Placed after the consumer's interceptors: an Authorization header set
-                        // by the consumer wins and the session interceptor passes through
+                        // Placed after the consumer's application interceptors: an Authorization
+                        // header set by those wins and the session interceptor passes through.
+                        // (Consumer network interceptors run after this one instead - consumers
+                        // authenticating requests themselves should use self-managed
+                        // authentication, which skips installing this interceptor entirely.)
                         addInterceptor(mSessionInterceptor)
                     }
                 }
