@@ -61,6 +61,9 @@ class GiniSessionInterceptor(
         if (request.header(AUTHORIZATION_HEADER) != null) {
             return chain.proceed(request)
         }
+        // Deliberately blocking: OkHttp interceptors are synchronous (cf. okhttp3.Authenticator).
+        // If the caller cancels mid-fetch, this completes anyway - the result lands in the
+        // session manager's cache, so the work is not wasted.
         val sessionResource = runBlocking {
             sessionMutex.withLock {
                 sessionManager.getSession()
