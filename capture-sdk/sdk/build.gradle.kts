@@ -10,6 +10,7 @@ plugins {
     id ("org.sonarqube")
     id("androidx.navigation.safeargs")
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.binary.compatibility.validator)
 }
 
 sonar {

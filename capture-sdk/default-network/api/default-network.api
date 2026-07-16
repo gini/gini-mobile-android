@@ -1,0 +1,97 @@
+public final class net/gini/android/capture/network/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public static final field VERSION_CODE Ljava/lang/String;
+	public static final field VERSION_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class net/gini/android/capture/network/GiniCaptureDefaultNetworkService : net/gini/android/capture/network/GiniCaptureNetworkService {
+	public static final field Companion Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Companion;
+	public fun analyze (Ljava/util/LinkedHashMap;Lnet/gini/android/capture/network/GiniCaptureNetworkCallback;)Lnet/gini/android/capture/util/CancellationToken;
+	public static final fun builder (Landroid/content/Context;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public fun cleanup ()V
+	public fun delete (Ljava/lang/String;Lnet/gini/android/capture/network/GiniCaptureNetworkCallback;)Lnet/gini/android/capture/util/CancellationToken;
+	public fun deleteGiniUserCredentials ()V
+	public final fun getAnalyzedGiniApiDocument ()Lnet/gini/android/core/api/models/Document;
+	public fun getConfiguration (Lnet/gini/android/capture/network/GiniCaptureNetworkCallback;)Lnet/gini/android/capture/util/CancellationToken;
+	public fun getDocumentLayout (Ljava/lang/String;Lnet/gini/android/capture/network/GiniCaptureNetworkCallback;)Lnet/gini/android/capture/util/CancellationToken;
+	public fun getDocumentPages (Ljava/lang/String;Lnet/gini/android/capture/network/GiniCaptureNetworkCallback;)Lnet/gini/android/capture/util/CancellationToken;
+	public fun getFile (Ljava/lang/String;Lnet/gini/android/capture/network/GiniCaptureNetworkCallback;)Lnet/gini/android/capture/util/CancellationToken;
+	public fun handleErrorLog (Lnet/gini/android/capture/logging/ErrorLog;)V
+	public fun sendEvents (Lnet/gini/android/capture/internal/network/AmplitudeRootModel;Lnet/gini/android/capture/network/GiniCaptureNetworkCallback;)Lnet/gini/android/capture/util/CancellationToken;
+	public fun sendFeedback (Ljava/util/Map;Ljava/util/Map;Lnet/gini/android/capture/network/GiniCaptureNetworkCallback;)V
+	public fun upload (Lnet/gini/android/capture/Document;Lnet/gini/android/capture/network/GiniCaptureNetworkCallback;)Lnet/gini/android/capture/util/CancellationToken;
+}
+
+public final class net/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder {
+	public final fun build ()Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService;
+	public final fun setBaseUrl (Ljava/lang/String;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setCache (Lokhttp3/Cache;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setClientCredentials (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setConnectionTimeout (J)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setConnectionTimeoutUnit (Ljava/util/concurrent/TimeUnit;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setCredentialsStore (Lnet/gini/android/core/api/authorization/CredentialsStore;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setDebuggingEnabled (Z)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setDocumentMetadata (Lnet/gini/android/core/api/DocumentMetadata;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setNetworkSecurityConfigResId (I)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setSelfManagedAuthentication (Z)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setSessionManager (Lnet/gini/android/core/api/authorization/SessionManager;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setTrustManager (Ljavax/net/ssl/TrustManager;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+	public final fun setUserCenterBaseUrl (Ljava/lang/String;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+}
+
+public final class net/gini/android/capture/network/GiniCaptureDefaultNetworkService$Companion {
+	public final fun builder (Landroid/content/Context;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
+}
+
+public final class net/gini/android/capture/network/model/AnalysisResultMapper {
+	public static final field INSTANCE Lnet/gini/android/capture/network/model/AnalysisResultMapper;
+	public static final fun fromExtractionsJson (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/capture/network/AnalysisResult;
+}
+
+public final class net/gini/android/capture/network/model/BoxMapper {
+	public static fun map (Lnet/gini/android/capture/network/model/GiniCaptureBox;)Lnet/gini/android/core/api/models/Box;
+	public static fun map (Lnet/gini/android/core/api/models/Box;)Lnet/gini/android/capture/network/model/GiniCaptureBox;
+}
+
+public final class net/gini/android/capture/network/model/CompoundExtractionsMapper {
+	public static fun mapToApiSdk (Ljava/util/Map;)Ljava/util/Map;
+	public static fun mapToGiniCapture (Ljava/util/Map;)Ljava/util/Map;
+}
+
+public final class net/gini/android/capture/network/model/DocumentLayoutMapperKt {
+	public static final fun toCaptureDocumentLayout (Lnet/gini/android/core/api/models/DocumentLayout;)Lnet/gini/android/capture/internal/network/model/DocumentLayout;
+	public static final fun toLine (Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line;)Lnet/gini/android/capture/internal/network/model/DocumentLayout$Page$TextZone$Paragraph$Line;
+	public static final fun toPage (Lnet/gini/android/core/api/models/DocumentLayout$Page;)Lnet/gini/android/capture/internal/network/model/DocumentLayout$Page;
+	public static final fun toParagraph (Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph;)Lnet/gini/android/capture/internal/network/model/DocumentLayout$Page$TextZone$Paragraph;
+	public static final fun toRegion (Lnet/gini/android/core/api/models/DocumentLayout$Page$Region;)Lnet/gini/android/capture/internal/network/model/DocumentLayout$Page$Region;
+	public static final fun toTextZone (Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone;)Lnet/gini/android/capture/internal/network/model/DocumentLayout$Page$TextZone;
+	public static final fun toWord (Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line$Word;)Lnet/gini/android/capture/internal/network/model/DocumentLayout$Page$TextZone$Paragraph$Line$Word;
+}
+
+public final class net/gini/android/capture/network/model/DocumentPagesMapperKt {
+	public static final fun toCaptureDocumentPages (Lnet/gini/android/core/api/models/DocumentPage;)Lnet/gini/android/capture/internal/network/model/DocumentPage;
+	public static final fun toCaptureImage (Lnet/gini/android/core/api/models/DocumentPage$Images;)Lnet/gini/android/capture/internal/network/model/DocumentPage$Images;
+}
+
+public final class net/gini/android/capture/network/model/ExtractionMapper {
+	public static fun map (Lnet/gini/android/capture/network/model/GiniCaptureExtraction;)Lnet/gini/android/core/api/models/Extraction;
+	public static fun map (Lnet/gini/android/core/api/models/Extraction;)Lnet/gini/android/capture/network/model/GiniCaptureExtraction;
+	public static fun mapListToApiSdk (Ljava/util/List;)Ljava/util/List;
+	public static fun mapListToGiniCapture (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class net/gini/android/capture/network/model/ReturnReasonsMapper {
+	public static fun mapToApiSdk (Ljava/util/List;)Ljava/util/List;
+	public static fun mapToGiniCapture (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class net/gini/android/capture/network/model/SpecificExtractionMapper {
+	public static fun map (Lnet/gini/android/capture/network/model/GiniCaptureSpecificExtraction;)Lnet/gini/android/core/api/models/SpecificExtraction;
+	public static fun mapToApiSdk (Ljava/util/Map;)Ljava/util/Map;
+	public static fun mapToGiniCapture (Ljava/util/Map;)Ljava/util/Map;
+}
+

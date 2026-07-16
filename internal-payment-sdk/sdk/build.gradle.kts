@@ -11,6 +11,7 @@ plugins {
     id("kotlin-parcelize")
     id("jacoco")
     id ("org.sonarqube")
+    alias(libs.plugins.binary.compatibility.validator)
 }
 
 sonar {
