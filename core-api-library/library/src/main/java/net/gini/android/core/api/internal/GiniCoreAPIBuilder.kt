@@ -72,14 +72,15 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var isSelfManagedAuthentication = false
 
     /**
-     * Authenticates document and tracking API requests which don't carry an `Authorization`
-     * header yet. Currently dormant: the repositories still set the header via header maps, so
-     * the interceptor passes all requests through. It becomes the authentication mechanism when
-     * the token handling is removed from the repositories (PP-2363).
+     * The authentication mechanism for API requests (PP-2363): adds the `Authorization` header
+     * to requests which don't carry one yet. Requests made through the deprecated
+     * accessToken-taking methods still set the header themselves and are passed through.
      *
-     * Shared between the document and tracking API clients so their session requests are
-     * serialized by the same mutex. It must NOT be added to the User Center API client because
-     * the session manager itself uses that client to fetch tokens (circular dependency).
+     * Shared between the main API client (documents and payment requests, [mPayApiRetrofit])
+     * and the tracking analytics client so their session requests are serialized by the same
+     * mutex. It must NOT be added to the User Center API client because the session manager
+     * itself uses that client to fetch tokens (circular dependency). Not installed at all when
+     * the consumer manages authentication themselves (see [setSelfManagedAuthentication]).
      */
     private val mSessionInterceptor: GiniSessionInterceptor by lazy {
         GiniSessionInterceptor { getSessionManager() }
