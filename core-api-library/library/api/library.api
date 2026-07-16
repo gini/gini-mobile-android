@@ -489,6 +489,7 @@ public abstract class net/gini/android/core/api/internal/GiniCoreAPIBuilder {
 	public final fun setDebuggingEnabled (Z)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setNetworkSecurityConfigResId (I)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setSelfManagedAuthentication (Z)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setTrustManager (Ljavax/net/ssl/TrustManager;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setUserCenterApiBaseUrl (Ljava/lang/String;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 }

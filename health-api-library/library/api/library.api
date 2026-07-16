@@ -28,6 +28,8 @@ public final class net/gini/android/health/api/GiniHealthAPIBuilder : net/gini/a
 	public fun getGiniApiType ()Lnet/gini/android/core/api/GiniApiType;
 	public synthetic fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 	public fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/health/api/GiniHealthAPIBuilder;
+	public synthetic fun setSelfManagedAuthentication (Z)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setSelfManagedAuthentication (Z)Lnet/gini/android/health/api/GiniHealthAPIBuilder;
 }
 
 public final class net/gini/android/health/api/GiniHealthAPIBuilder$Companion {

@@ -53,6 +53,8 @@ public final class net/gini/android/bank/api/GiniBankAPIBuilder : net/gini/andro
 	public fun getGiniApiType ()Lnet/gini/android/core/api/GiniApiType;
 	public fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/bank/api/GiniBankAPIBuilder;
 	public synthetic fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setSelfManagedAuthentication (Z)Lnet/gini/android/bank/api/GiniBankAPIBuilder;
+	public synthetic fun setSelfManagedAuthentication (Z)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
 }
 
 public final class net/gini/android/bank/api/GiniBankApiType : net/gini/android/core/api/GiniApiType {

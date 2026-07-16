@@ -10,10 +10,12 @@ import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.GiniApiType
+import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Utils
 import net.gini.android.core.api.authorization.AnonymousSessionManager
 import net.gini.android.core.api.authorization.CredentialsStore
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore
+import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.authorization.UserRemoteSource
 import net.gini.android.core.api.authorization.UserRepository
@@ -67,6 +69,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mDocumentRepository: DR? = null
     private var mHttpClientProvider: GiniHttpClientProvider? = null
     private var isDebuggingEnabled = false
+    private var isSelfManagedAuthentication = false
 
     /**
      * Authenticates document and tracking API requests which don't carry an `Authorization`
@@ -230,6 +233,30 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     }
 
     /**
+     * Enable self-managed authentication: the SDK will not authenticate API requests and no
+     * [SessionManager] (or client credentials) are required.
+     *
+     * When enabled, your [GiniHttpClientProvider]'s OkHttpClient is responsible for adding the
+     * `Authorization` header to API requests (for example with your own interceptor). Your
+     * access token is never passed through the SDK.
+     *
+     * Requirements:
+     * - A custom [GiniHttpClientProvider] must be set via [setHttpClientProvider]. Building
+     *   without one will throw an [IllegalStateException].
+     * - Any [SessionManager] or client credentials passed to the builder are ignored: the SDK
+     *   will not request sessions and will not create anonymous Gini users.
+     *
+     * Disabled by default.
+     *
+     * @param enabled pass `true` to authenticate API requests yourself
+     * @return The builder instance to enable chaining.
+     */
+    open fun setSelfManagedAuthentication(enabled: Boolean): GiniCoreAPIBuilder<DM, G, DR, E> {
+        isSelfManagedAuthentication = enabled
+        return this
+    }
+
+    /**
      * Builds an instance with the configuration settings of the builder instance.
      *
      * @return The fully configured instance.
@@ -320,18 +347,37 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     protected abstract fun createDocumentRepository(): DR
 
     /**
-     * Return the [SessionManager] set via #setSessionManager. If no SessionManager has been set, default to
-     * [AnonymousSessionManager].
+     * Return the [SessionManager] set via the builder constructor. If no SessionManager has
+     * been set, default to [AnonymousSessionManager].
+     *
+     * When self-managed authentication is enabled (see [setSelfManagedAuthentication]) a
+     * [SessionManager] which always returns an error is used: the SDK never requests sessions
+     * in that mode because the consumer's OkHttpClient authenticates the API requests.
      *
      * @return The SessionManager instance.
      */
     @Synchronized
     open fun getSessionManager(): SessionManager {
         if (sessionManager == null) {
-            sessionManager =
+            sessionManager = if (isSelfManagedAuthentication) {
+                SelfManagedAuthenticationSessionManager()
+            } else {
                 AnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
+            }
         }
         return sessionManager as SessionManager
+    }
+
+    /**
+     * Used when authentication is self-managed by the consumer's OkHttpClient. The SDK never
+     * requests sessions in that mode, so this only returns an error in case something still
+     * asks for a session (e.g. the deprecated DocumentRepository.withAccessToken).
+     */
+    private class SelfManagedAuthenticationSessionManager : SessionManager {
+        override suspend fun getSession(): Resource<Session> = Resource.Error(
+            message = "No session available: authentication is self-managed. " +
+                    "API requests are authenticated by the custom OkHttpClient (GiniHttpClientProvider)."
+        )
     }
 
     @Synchronized
@@ -364,6 +410,16 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      * there would cause a circular dependency).
      */
     private fun createOkHttpClient(addSessionInterceptor: Boolean): OkHttpClient {
+        check(!(isSelfManagedAuthentication && mHttpClientProvider == null)) {
+            "Self-managed authentication requires a custom GiniHttpClientProvider. " +
+                    "Set one via setHttpClientProvider() with an OkHttpClient which adds the " +
+                    "Authorization header to API requests, or disable self-managed authentication."
+        }
+
+        // In self-managed authentication mode the consumer's OkHttpClient authenticates the
+        // API requests, so the SDK's session interceptor is not installed
+        val installSessionInterceptor = addSessionInterceptor && !isSelfManagedAuthentication
+
         // If a custom provider is set, use it as a base and add SDK's required configuration on top
         if (mHttpClientProvider != null) {
             val baseClient = mHttpClientProvider!!.provideOkHttpClient()
@@ -390,7 +446,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
                             )
                         }
                     }
-                    if (addSessionInterceptor) {
+                    if (installSessionInterceptor) {
                         // Placed after the consumer's interceptors: an Authorization header set
                         // by the consumer wins and the session interceptor passes through
                         addInterceptor(mSessionInterceptor)
@@ -414,7 +470,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             .build()
 
         return defaultProvider.provideOkHttpClient().let { client ->
-            if (addSessionInterceptor) {
+            if (installSessionInterceptor) {
                 client.newBuilder().addInterceptor(mSessionInterceptor).build()
             } else {
                 client
