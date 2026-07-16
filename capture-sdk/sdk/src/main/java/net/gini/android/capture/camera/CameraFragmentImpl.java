@@ -187,6 +187,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private static final String ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY = "ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY";
     private static final String ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY = "ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY";
     private static final String QR_SCANNING_DISABLED_BY_USER_KEY = "QR_SCANNING_DISABLED_BY_USER_KEY";
+    private static final String QR_CODE_READER_FAILED_KEY = "QR_CODE_READER_FAILED_KEY";
     private static final String UNSUPPORTED_QR_DIALOG_SHOWING_KEY = "UNSUPPORTED_QR_DIALOG_SHOWING_KEY";
 
     private final FragmentImplCallback mFragment;
@@ -205,6 +206,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     Boolean mOnlyQRCodeScanningRuntimeOverride = null;
     @VisibleForTesting
     boolean mQRCodeScanningDisabledByUser = false;
+    @VisibleForTesting
+    boolean mQRCodeReaderFailed = false;
     @VisibleForTesting
     boolean mIsUnsupportedQRDialogShowing = false;
 
@@ -298,6 +301,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         LOG.warn(
                 "QRCode detector dependencies are not yet available. QRCode detection is disabled.");
 
+        mQRCodeReaderFailed = true;
         setQRDisabledTexts();
         if (!mIsDetectionErrorPopupShowed) {
             mIsDetectionErrorPopupShowed = true;
@@ -435,6 +439,9 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD) {
                 initIBANRecognizerFilter();
             }
+            if (!isQRCodeScanningAvailable()) {
+                setQRDisabledTexts();
+            }
         }
         setTopBarInjectedViewContainer();
     }
@@ -476,6 +483,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mIsFlashEnabled = savedInstanceState.getBoolean(IS_FLASH_ENABLED_KEY);
         mIsDetectionErrorPopupShowed = savedInstanceState.getBoolean(IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY);
         mQRCodeScanningDisabledByUser = savedInstanceState.getBoolean(QR_SCANNING_DISABLED_BY_USER_KEY);
+        mQRCodeReaderFailed = savedInstanceState.getBoolean(QR_CODE_READER_FAILED_KEY);
         mIsUnsupportedQRDialogShowing = savedInstanceState.getBoolean(UNSUPPORTED_QR_DIALOG_SHOWING_KEY);
         if (savedInstanceState.getBoolean(ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY, false)) {
             mOnlyQRCodeScanningRuntimeOverride = savedInstanceState.getBoolean(ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY);
@@ -502,7 +510,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         createPopups(view);
         initOnlyQRScanning();
 
-        if (!GiniCapture.getInstance().isQRCodeScanningEnabled()) {
+        if (!isQRCodeScanningAvailable()) {
             setQRDisabledTexts();
         }
 
@@ -858,6 +866,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         outState.putBoolean(GENERIC_ERROR_SHOWING_STATE_KEY, isGenericErrorShowing);
         outState.putString(GENERIC_ERROR_TYPE_KEY, genericErrorType);
         outState.putBoolean(QR_SCANNING_DISABLED_BY_USER_KEY, mQRCodeScanningDisabledByUser);
+        outState.putBoolean(QR_CODE_READER_FAILED_KEY, mQRCodeReaderFailed);
         outState.putBoolean(UNSUPPORTED_QR_DIALOG_SHOWING_KEY, mIsUnsupportedQRDialogShowing);
         outState.putBoolean(ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY, mOnlyQRCodeScanningRuntimeOverride != null);
         if (mOnlyQRCodeScanningRuntimeOverride != null) {
@@ -977,7 +986,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_qr));
                 } else {
                     if (ContextHelper.isTablet(mFragment.getActivity())) {
-                        if (GiniCapture.getInstance().isQRCodeScanningEnabled()) {
+                        if (isQRCodeScanningAvailable()) {
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_invoice_and_qr));
                         } else {
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
@@ -985,8 +994,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     } else {
                         if (ContextHelper.isPortraitOrientation(mFragment.getActivity()))
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_title_camera));
-                        else
+                        else if (isQRCodeScanningAvailable())
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_top_bar_title_landscape));
+                        else
+                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
                     }
                 }
 
@@ -1091,6 +1102,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return false;
         }
         return GiniCapture.getInstance().isOnlyQRCodeScanning() && GiniCapture.getInstance().isQRCodeScanningEnabled();
+    }
+
+    private boolean isQRCodeScanningAvailable() {
+        return isQRCodeScanningEnabled()
+                && !mQRCodeScanningDisabledByUser
+                && !mQRCodeReaderFailed;
     }
 
     private void initViews() {
@@ -2090,6 +2107,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         } else {
             if (!isOnlyQRCodeScanningEnabled()) {
                 mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_camera_info_label_only_invoice));
+                // In landscape the below-frame hint is hidden and the scan hint lives in the top bar,
+                // so update it live (a new holder alone only reconfigures on the next bind/rotation).
+                if (!ContextHelper.isPortraitOrientation(activity)) {
+                    topAdapterInjectedViewContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
+                        injectedViewAdapter.setTitle(activity.getString(R.string.gc_camera_info_label_only_invoice));
+                        return Unit.INSTANCE;
+                    });
+                }
             }
         }
     }
