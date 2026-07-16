@@ -77,6 +77,12 @@ public final class net/gini/android/bank/api/TrackingAnalysisRemoteSource {
 	public final fun sendEvents (Lnet/gini/android/bank/api/models/AmplitudeRoot;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class net/gini/android/bank/api/mapper/BankExtractionsParser {
+	public static final field INSTANCE Lnet/gini/android/bank/api/mapper/BankExtractionsParser;
+	public static final fun parseExtractionsContainer (Lorg/json/JSONObject;)Lnet/gini/android/bank/api/models/ExtractionsContainer;
+	public static final fun parseReturnReasons (Lorg/json/JSONArray;)Ljava/util/List;
+}
+
 public final class net/gini/android/bank/api/models/AmplitudeEvent {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -395,6 +401,10 @@ public final class net/gini/android/bank/api/response/ConfigurationResponseJsonA
 	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
 	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/bank/api/response/ConfigurationResponse;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/bank/api/response/ConfigurationResponseKt {
+	public static final fun toConfiguration (Lnet/gini/android/bank/api/response/ConfigurationResponse;)Lnet/gini/android/bank/api/models/Configuration;
 }
 
 public final class net/gini/android/bank/api/response/ResolvePaymentResponse {

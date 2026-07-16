@@ -6,7 +6,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.gini.android.core.api.Resource.Companion.wrapInResource
 import net.gini.android.core.api.authorization.SessionManager
-import net.gini.android.core.api.models.Box
+import net.gini.android.core.api.mapper.CompositeDocumentJson
+import net.gini.android.core.api.mapper.ExtractionsParser
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.DocumentLayout
@@ -287,50 +288,12 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         }
 
     @Throws(JSONException::class)
-    fun parseSpecificExtractions(specificExtractionsJson: JSONObject, candidates: Map<String, List<Extraction>>): Map<String, SpecificExtraction> {
-        val specificExtractions = mutableMapOf<String, SpecificExtraction>()
-        val extractionsNameIterator = specificExtractionsJson.keys()
-        while (extractionsNameIterator.hasNext()) {
-            val extractionName = extractionsNameIterator.next()
-            val extractionData = specificExtractionsJson.getJSONObject(extractionName)
-            val extraction: Extraction = extractionFromApiResponse(extractionData)
-            var candidatesForExtraction = listOf<Extraction?>()
-            if (extractionData.has("candidates")) {
-                val candidatesName = extractionData.getString("candidates")
-                if (candidates.containsKey(candidatesName)) {
-                    candidatesForExtraction = candidates[candidatesName] ?: emptyList()
-                }
-            }
-            val specificExtraction = SpecificExtraction(
-                extractionName, extraction.value,
-                extraction.entity, extraction.box,
-                candidatesForExtraction
-            )
-            specificExtractions[extractionName] = specificExtraction
-        }
-
-        return specificExtractions
-    }
+    fun parseSpecificExtractions(specificExtractionsJson: JSONObject, candidates: Map<String, List<Extraction>>): Map<String, SpecificExtraction> =
+        ExtractionsParser.parseSpecificExtractions(specificExtractionsJson, candidates, ::extractionFromApiResponse)
 
     @Throws(JSONException::class)
-    protected fun parseCompoundExtractions(compoundExtractionsJson: JSONObject?, candidates: Map<String, List<Extraction>>): Map<String, CompoundExtraction> {
-        if (compoundExtractionsJson == null) {
-            return emptyMap()
-        }
-        val compoundExtractions = HashMap<String, CompoundExtraction>()
-        val extractionsNameIterator = compoundExtractionsJson.keys()
-        while (extractionsNameIterator.hasNext()) {
-            val extractionName = extractionsNameIterator.next()
-            val specificExtractionMaps: MutableList<Map<String, SpecificExtraction>> = ArrayList()
-            val compoundExtractionData = compoundExtractionsJson.getJSONArray(extractionName)
-            for (i in 0 until compoundExtractionData.length()) {
-                val specificExtractionsData = compoundExtractionData.getJSONObject(i)
-                specificExtractionMaps.add(parseSpecificExtractions(specificExtractionsData, candidates))
-            }
-            compoundExtractions[extractionName] = CompoundExtraction(extractionName, specificExtractionMaps)
-        }
-        return compoundExtractions
-    }
+    protected fun parseCompoundExtractions(compoundExtractionsJson: JSONObject?, candidates: Map<String, List<Extraction>>): Map<String, CompoundExtraction> =
+        ExtractionsParser.parseCompoundExtractions(compoundExtractionsJson, candidates, ::extractionFromApiResponse)
 
     /**
      * Helper method which takes the JSON response of the Gini API as input and returns a mapping where the key is the
@@ -341,24 +304,8 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @throws JSONException If the JSON data does not have the expected structure or if there is invalid data.
      */
     @Throws(JSONException::class)
-    protected fun extractionCandidatesFromApiResponse(responseData: JSONObject): HashMap<String, List<Extraction>> {
-        val candidatesByEntity = java.util.HashMap<String, List<Extraction>>()
-        val entityNameIterator = responseData.keys()
-        while (entityNameIterator.hasNext()) {
-            val entityName = entityNameIterator.next()
-            val candidatesListData = responseData.getJSONArray(entityName)
-            val candidates = java.util.ArrayList<Extraction>()
-            var i = 0
-            val length = candidatesListData.length()
-            while (i < length) {
-                val extractionData = candidatesListData.getJSONObject(i)
-                candidates.add(extractionFromApiResponse(extractionData))
-                i += 1
-            }
-            candidatesByEntity[entityName] = candidates
-        }
-        return candidatesByEntity
-    }
+    protected fun extractionCandidatesFromApiResponse(responseData: JSONObject): HashMap<String, List<Extraction>> =
+        HashMap(ExtractionsParser.parseCandidates(responseData, ::extractionFromApiResponse))
 
     /**
      * Helper method which creates an Extraction instance from the JSON data which is returned by the Gini API.
@@ -368,47 +315,16 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @throws JSONException If the JSON data does not have the expected structure or if there is invalid data.
      */
     @Throws(JSONException::class)
-    protected open fun extractionFromApiResponse(responseData: JSONObject): Extraction {
-        val entity = responseData.getString("entity")
-        val value = responseData.getString("value")
-        // The box is optional for some extractions.
-        var box: Box? = null
-        if (responseData.has("box")) {
-            box = Box.fromApiResponse(responseData.getJSONObject("box"))
-        }
-        return Extraction(value, entity, box)
-    }
+    protected open fun extractionFromApiResponse(responseData: JSONObject): Extraction =
+        ExtractionsParser.parseExtraction(responseData)
 
     @Throws(JSONException::class)
-    private fun createCompositeJson(documents: List<Document>): ByteArray {
-        val documentRotationMap = linkedMapOf<Document, Int>()
-        for (document in documents) {
-            documentRotationMap[document] = 0
-        }
-
-        return createCompositeJson(documentRotationMap)
-    }
+    private fun createCompositeJson(documents: List<Document>): ByteArray =
+        CompositeDocumentJson.create(documents)
 
     @Throws(JSONException::class)
-    private fun createCompositeJson(documentRotationMap: LinkedHashMap<Document, Int>): ByteArray {
-        val jsonObject = JSONObject()
-        val partialDocuments = JSONArray()
-
-        for (entry in documentRotationMap.entries) {
-            val document = entry.key
-            var rotation = entry.value
-
-            rotation = ((rotation % 360) + 360) % 360
-            val partialDoc = JSONObject()
-            partialDoc.put("document", document.uri)
-            partialDoc.put("rotationDelta", rotation)
-            partialDocuments.put(partialDoc)
-        }
-
-        jsonObject.put("partialDocuments", partialDocuments)
-
-        return jsonObject.toString().toByteArray(Utils.CHARSET_UTF8)
-    }
+    private fun createCompositeJson(documentRotationMap: LinkedHashMap<Document, Int>): ByteArray =
+        CompositeDocumentJson.create(documentRotationMap)
 
     /**
      * The Authorization header is added by the SDK's session interceptor in the OkHttp layer.

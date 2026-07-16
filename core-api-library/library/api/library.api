@@ -497,6 +497,12 @@ public abstract class net/gini/android/core/api/internal/GiniCoreAPIBuilder {
 public final class net/gini/android/core/api/internal/GiniCoreAPIBuilder$Companion {
 }
 
+public final class net/gini/android/core/api/mapper/CompositeDocumentJson {
+	public static final field INSTANCE Lnet/gini/android/core/api/mapper/CompositeDocumentJson;
+	public static final fun create (Ljava/util/LinkedHashMap;)[B
+	public static final fun create (Ljava/util/List;)[B
+}
+
 public final class net/gini/android/core/api/mapper/DocumentLayoutMapperKt {
 	public static final fun toDocumentLayout (Lnet/gini/android/core/api/response/DocumentLayoutResponse;)Lnet/gini/android/core/api/models/DocumentLayout;
 	public static final fun toLine (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line;
@@ -510,6 +516,21 @@ public final class net/gini/android/core/api/mapper/DocumentLayoutMapperKt {
 public final class net/gini/android/core/api/mapper/DocumentPagesMapperKt {
 	public static final fun toDocumentPage (Lnet/gini/android/core/api/response/DocumentPageResponse;)Lnet/gini/android/core/api/models/DocumentPage;
 	public static final fun toImages (Lnet/gini/android/core/api/response/DocumentPageResponse$Images;)Lnet/gini/android/core/api/models/DocumentPage$Images;
+}
+
+public final class net/gini/android/core/api/mapper/ExtractionsParser {
+	public static final field INSTANCE Lnet/gini/android/core/api/mapper/ExtractionsParser;
+	public static final fun parseCandidates (Lorg/json/JSONObject;)Ljava/util/Map;
+	public static final fun parseCandidates (Lorg/json/JSONObject;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static synthetic fun parseCandidates$default (Lorg/json/JSONObject;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/util/Map;
+	public static final fun parseCompoundExtractions (Lorg/json/JSONObject;Ljava/util/Map;)Ljava/util/Map;
+	public static final fun parseCompoundExtractions (Lorg/json/JSONObject;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static synthetic fun parseCompoundExtractions$default (Lorg/json/JSONObject;Ljava/util/Map;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/util/Map;
+	public static final fun parseExtraction (Lorg/json/JSONObject;)Lnet/gini/android/core/api/models/Extraction;
+	public static final fun parseExtractionsContainer (Lorg/json/JSONObject;)Lnet/gini/android/core/api/models/ExtractionsContainer;
+	public static final fun parseSpecificExtractions (Lorg/json/JSONObject;Ljava/util/Map;)Ljava/util/Map;
+	public static final fun parseSpecificExtractions (Lorg/json/JSONObject;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static synthetic fun parseSpecificExtractions$default (Lorg/json/JSONObject;Ljava/util/Map;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/util/Map;
 }
 
 public class net/gini/android/core/api/models/Box : android/os/Parcelable {
