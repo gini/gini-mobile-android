@@ -43,7 +43,11 @@ class HealthApiWireTest {
     fun setUp() {
         server = MockWebServer()
         server.start()
-        val apiType = GiniHealthApiType(apiVersion = 3)
+        // The production API version (GiniHealthAPIBuilder.API_VERSION) so that the pinned
+        // headers characterize what production builds send. The header assertions use the
+        // literal media type constants from the companion object on purpose: an API version
+        // bump must fail these tests and be re-pinned consciously.
+        val apiType = GiniHealthApiType(apiVersion = GiniHealthAPIBuilder.API_VERSION)
         val sessionManager = SessionManager {
             Resource.Success(Session(ACCESS_TOKEN, Date(Date().time + 60_000)))
         }
@@ -96,8 +100,8 @@ class HealthApiWireTest {
         assertThat(request.method).isEqualTo("POST")
         assertThat(request.path).isEqualTo("/paymentRequests")
         assertThat(request.getHeader("Authorization")).isEqualTo("Bearer $ACCESS_TOKEN")
-        assertThat(request.getHeader("Accept")).isEqualTo("application/vnd.gini.v3+json")
-        assertThat(request.getHeader("Content-Type")).isEqualTo("application/vnd.gini.v3+json")
+        assertThat(request.getHeader("Accept")).isEqualTo(JSON_MEDIA_TYPE)
+        assertThat(request.getHeader("Content-Type")).isEqualTo(JSON_MEDIA_TYPE)
 
         val body = JSONObject(request.body.readUtf8())
         assertThat(body.getString("paymentProvider")).isEqualTo("payment-provider-id-1")
@@ -210,7 +214,7 @@ class HealthApiWireTest {
         assertThat(request.method).isEqualTo("GET")
         assertThat(request.path).isEqualTo("/configurations")
         assertThat(request.getHeader("Authorization")).isEqualTo("Bearer $ACCESS_TOKEN")
-        assertThat(request.getHeader("Accept")).isEqualTo("application/vnd.gini.v3+json")
+        assertThat(request.getHeader("Accept")).isEqualTo(JSON_MEDIA_TYPE)
 
         val configuration = (resource as Resource.Success).data
         assertThat(configuration.clientId).isEqualTo("client-id-1")
@@ -242,7 +246,7 @@ class HealthApiWireTest {
         assertThat(request.method).isEqualTo("DELETE")
         assertThat(request.path).isEqualTo("/documents")
         assertThat(request.getHeader("Authorization")).isEqualTo("Bearer $ACCESS_TOKEN")
-        assertThat(request.getHeader("Content-Type")).isEqualTo("application/vnd.gini.v3+json")
+        assertThat(request.getHeader("Content-Type")).isEqualTo(JSON_MEDIA_TYPE)
 
         val body = JSONArray(request.body.readUtf8())
         assertThat(body.length()).isEqualTo(2)
@@ -273,8 +277,8 @@ class HealthApiWireTest {
         val request = server.takeRequest()
         assertThat(request.method).isEqualTo("GET")
         assertThat(request.path).isEqualTo("/paymentRequests/payment-request-id-77")
-        assertThat(request.getHeader("Accept")).isEqualTo("application/vnd.gini.v3+qr+pdf")
-        assertThat(request.getHeader("Content-Type")).isEqualTo("application/vnd.gini.v3+qr+pdf")
+        assertThat(request.getHeader("Accept")).isEqualTo(QR_PDF_MEDIA_TYPE)
+        assertThat(request.getHeader("Content-Type")).isEqualTo(QR_PDF_MEDIA_TYPE)
 
         assertThat((resource as Resource.Success).data).isEqualTo(ICON_BYTES)
     }
@@ -288,7 +292,7 @@ class HealthApiWireTest {
         val request = server.takeRequest()
         assertThat(request.method).isEqualTo("GET")
         assertThat(request.path).isEqualTo("/paymentRequests/payment-request-id-77")
-        assertThat(request.getHeader("Accept")).isEqualTo("application/vnd.gini.v3+qr+png")
+        assertThat(request.getHeader("Accept")).isEqualTo(QR_PNG_MEDIA_TYPE)
 
         assertThat((resource as Resource.Success).data).isEqualTo(ICON_BYTES)
     }
@@ -315,6 +319,13 @@ class HealthApiWireTest {
 
     companion object {
         private const val ACCESS_TOKEN = "test-access-token-1234"
+
+        // The media types production builds send (GiniHealthAPIBuilder.API_VERSION = 5).
+        // Deliberately literal instead of derived from API_VERSION: an API version bump must
+        // fail these tests and be re-pinned consciously.
+        private const val JSON_MEDIA_TYPE = "application/vnd.gini.v5+json"
+        private const val QR_PDF_MEDIA_TYPE = "application/vnd.gini.v5+qr+pdf"
+        private const val QR_PNG_MEDIA_TYPE = "application/vnd.gini.v5+qr+png"
 
         private val ICON_BYTES = byteArrayOf(9, 8, 7, 6)
 
