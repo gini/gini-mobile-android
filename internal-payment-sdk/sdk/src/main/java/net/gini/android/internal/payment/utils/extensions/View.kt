@@ -2,6 +2,7 @@ package net.gini.android.internal.payment.utils.extensions
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Rect
 import android.os.Build
 import android.util.TypedValue
 import android.view.KeyEvent
@@ -96,10 +97,20 @@ fun View.applyWindowInsetsWithTopPadding(
         if (navigationBars) typeMask = typeMask or WindowInsetsCompat.Type.navigationBars()
         if (statusBars) typeMask = typeMask or WindowInsetsCompat.Type.statusBars()
         val finalTypeMask = typeMask
+        // Capture the margins defined in XML/code once, so applying insets adds to them
+        // instead of overwriting them (which would collapse any intended spacing).
+        val initialMargins = (layoutParams as? ViewGroup.MarginLayoutParams)?.let {
+            Rect(it.leftMargin, it.topMargin, it.rightMargin, it.bottomMargin)
+        } ?: Rect()
         ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
             val i = insets.getInsets(finalTypeMask)
             (v.layoutParams as? ViewGroup.MarginLayoutParams)?.let { mlp ->
-                mlp.setMargins(i.left, i.top, i.right, i.bottom)
+                mlp.setMargins(
+                    initialMargins.left + i.left,
+                    initialMargins.top + i.top,
+                    initialMargins.right + i.right,
+                    initialMargins.bottom + i.bottom
+                )
                 v.layoutParams = mlp
             }
             insets
