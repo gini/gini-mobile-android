@@ -442,15 +442,6 @@ public abstract interface class net/gini/android/core/api/http/GiniHttpClientPro
 	public abstract fun provideOkHttpClient ()Lokhttp3/OkHttpClient;
 }
 
-public final class net/gini/android/core/api/http/GiniSessionInterceptor : okhttp3/Interceptor {
-	public static final field Companion Lnet/gini/android/core/api/http/GiniSessionInterceptor$Companion;
-	public fun <init> (Lkotlin/jvm/functions/Function0;)V
-	public fun intercept (Lokhttp3/Interceptor$Chain;)Lokhttp3/Response;
-}
-
-public final class net/gini/android/core/api/http/GiniSessionInterceptor$Companion {
-}
-
 public class net/gini/android/core/api/internal/BundleHelper {
 	public static fun bundleListToMapList (Ljava/util/List;Ljava/lang/ClassLoader;)Ljava/util/List;
 	public static fun bundleToMap (Landroid/os/Bundle;)Ljava/util/HashMap;

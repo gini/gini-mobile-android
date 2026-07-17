@@ -12,9 +12,6 @@ import okhttp3.Interceptor
 import okhttp3.Response
 
 /**
- * Internal use only. (Public visibility is required so that the bank and health api library
- * test suites can install the interceptor in their test HTTP clients.)
- *
  * OkHttp interceptor which authenticates API requests with an access token from the
  * [SessionManager].
  *
@@ -48,7 +45,7 @@ import okhttp3.Response
  * avoid initialization order issues between the HTTP client and the session manager (which
  * needs its own HTTP client for the User Center API).
  */
-class GiniSessionInterceptor(
+internal class GiniSessionInterceptor(
     private val sessionManagerProvider: () -> SessionManager
 ) : Interceptor {
 

@@ -8,7 +8,6 @@ import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
-import net.gini.android.core.api.http.GiniSessionInterceptor
 import net.gini.android.health.api.models.PaymentRequestInput
 import net.gini.android.health.api.response.CommunicationTone
 import okhttp3.OkHttpClient
@@ -54,11 +53,18 @@ class HealthApiWireTest {
         val retrofit = Retrofit.Builder()
             .baseUrl(server.url("/"))
             .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build()))
-            // Mirrors the production client composition (GiniCoreAPIBuilder): the session
-            // interceptor authenticates the requests with the session manager's access token
+            // Stands in for the production session interceptor (GiniSessionInterceptor,
+            // internal to core and tested there): authenticates the requests with the
+            // access token, which is all these wire tests need from the client composition.
             .client(
                 OkHttpClient.Builder()
-                    .addInterceptor(GiniSessionInterceptor { sessionManager })
+                    .addInterceptor { chain ->
+                        chain.proceed(
+                            chain.request().newBuilder()
+                                .header("Authorization", "Bearer $ACCESS_TOKEN")
+                                .build()
+                        )
+                    }
                     .build()
             )
             .build()
