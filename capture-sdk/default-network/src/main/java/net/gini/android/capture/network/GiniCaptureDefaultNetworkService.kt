@@ -660,6 +660,12 @@ internal constructor(
          * @return new [GiniCaptureDefaultNetworkService] instance
          */
         fun build(): GiniCaptureDefaultNetworkService {
+            if (isSelfManagedAuthentication && sessionManager != null) {
+                LOG.warn(
+                    "Self-managed authentication is enabled - the SessionManager set on " +
+                            "this builder is ignored."
+                )
+            }
             val giniApiBuilder = when {
                 isSelfManagedAuthentication ->
                     GiniBankAPIBuilder(mContext).setSelfManagedAuthentication(true)
