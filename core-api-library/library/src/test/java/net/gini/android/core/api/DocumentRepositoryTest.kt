@@ -142,6 +142,27 @@ class DocumentRepositoryTest {
     }
 
     @Test
+    fun `deprecated withAccessToken surfaces the session error and never runs the block`() = runTest {
+        // Safety net for subclasses still calling the deprecated withAccessToken in
+        // self-managed mode: they must receive the session manager's explanatory error
+        // instead of a token. (That the builder's sentinel produces this error shape is
+        // pinned in the bank api library's SelfManagedAuthenticationTest.)
+        val repository = createRepository(CountingSessionManager {
+            Resource.Error(message = "No session available: authentication is self-managed.")
+        })
+
+        var blockRan = false
+        val resource = repository.callWithAccessToken {
+            blockRan = true
+            Resource.Success(Unit)
+        }
+
+        val error = resource as Resource.Error
+        assertThat(error.message).isEqualTo("No session available: authentication is self-managed.")
+        assertThat(blockRan).isFalse()
+    }
+
+    @Test
     fun `http error response is returned as an error resource with status code, body, parsed error and ApiException`() = runTest {
         server.enqueue(
             MockResponse()
@@ -339,6 +360,11 @@ class DocumentRepositoryTest {
             compoundExtractions: Map<String, CompoundExtraction>,
             responseJSON: JSONObject
         ): ExtractionsContainer = ExtractionsContainer(specificExtractions, compoundExtractions)
+
+        // Exposes the protected deprecated withAccessToken for pinning its error contract
+        @Suppress("DEPRECATION")
+        suspend fun callWithAccessToken(block: suspend (String) -> Resource<Unit>): Resource<Unit> =
+            withAccessToken { accessToken -> block(accessToken) }
     }
 
     private fun document(id: String = "document-id-13") =
