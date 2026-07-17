@@ -66,6 +66,8 @@ class GiniSessionInterceptorTest {
 
         val requestWithAuth = Request.Builder()
             .url(server.url("/oauth/token"))
+            // Dummy credential, not a real secret: base64 of "client:secret". Any non-empty
+            // value works here; the test only checks that an existing header is preserved.
             .header("Authorization", "Basic Y2xpZW50OnNlY3JldA==")
             .build()
         clientWith(sessionManager).newCall(requestWithAuth).execute().close()
