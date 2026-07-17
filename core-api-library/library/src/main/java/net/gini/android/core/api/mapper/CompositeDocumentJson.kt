@@ -9,11 +9,8 @@ import org.json.JSONObject
 /**
  * Creates the request body JSON for creating composite documents from partial documents
  * (`POST /documents/` with the `application/vnd.gini.vX.composite+json` content type).
- *
- * Use this when you do the API calls yourself (with your own network implementation) and need
- * to build the same composite document request body the SDK sends.
  */
-object CompositeDocumentJson {
+internal object CompositeDocumentJson {
 
     /**
      * Creates the composite document request body for the given partial documents with a

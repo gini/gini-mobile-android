@@ -403,10 +403,6 @@ public final class net/gini/android/bank/api/response/ConfigurationResponseJsonA
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class net/gini/android/bank/api/response/ConfigurationResponseKt {
-	public static final fun toConfiguration (Lnet/gini/android/bank/api/response/ConfigurationResponse;)Lnet/gini/android/bank/api/models/Configuration;
-}
-
 public final class net/gini/android/bank/api/response/ResolvePaymentResponse {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

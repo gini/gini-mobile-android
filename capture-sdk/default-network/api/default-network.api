@@ -47,11 +47,6 @@ public final class net/gini/android/capture/network/GiniCaptureDefaultNetworkSer
 	public final fun builder (Landroid/content/Context;)Lnet/gini/android/capture/network/GiniCaptureDefaultNetworkService$Builder;
 }
 
-public final class net/gini/android/capture/network/model/AnalysisResultMapper {
-	public static final field INSTANCE Lnet/gini/android/capture/network/model/AnalysisResultMapper;
-	public static final fun fromExtractionsJson (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/capture/network/AnalysisResult;
-}
-
 public final class net/gini/android/capture/network/model/BoxMapper {
 	public static fun map (Lnet/gini/android/capture/network/model/GiniCaptureBox;)Lnet/gini/android/core/api/models/Box;
 	public static fun map (Lnet/gini/android/core/api/models/Box;)Lnet/gini/android/capture/network/model/GiniCaptureBox;

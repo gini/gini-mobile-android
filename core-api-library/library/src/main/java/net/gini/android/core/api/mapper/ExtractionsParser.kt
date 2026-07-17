@@ -9,10 +9,10 @@ import org.json.JSONException
 import org.json.JSONObject
 
 /**
- * Parses the Gini API extractions response JSON into the SDK's extraction models.
+ * Internal use only. (Public visibility is required because the bank api library and the
+ * capture sdk consume this parser from their own modules.)
  *
- * Use this when you do the API calls yourself (with your own network implementation) and want
- * to map the extractions response body to the same models the SDK produces.
+ * Parses the Gini API extractions response JSON into the SDK's extraction models.
  */
 object ExtractionsParser {
 

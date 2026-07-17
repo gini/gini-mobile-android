@@ -488,12 +488,6 @@ public abstract class net/gini/android/core/api/internal/GiniCoreAPIBuilder {
 public final class net/gini/android/core/api/internal/GiniCoreAPIBuilder$Companion {
 }
 
-public final class net/gini/android/core/api/mapper/CompositeDocumentJson {
-	public static final field INSTANCE Lnet/gini/android/core/api/mapper/CompositeDocumentJson;
-	public static final fun create (Ljava/util/LinkedHashMap;)[B
-	public static final fun create (Ljava/util/List;)[B
-}
-
 public final class net/gini/android/core/api/mapper/DocumentLayoutMapperKt {
 	public static final fun toDocumentLayout (Lnet/gini/android/core/api/response/DocumentLayoutResponse;)Lnet/gini/android/core/api/models/DocumentLayout;
 	public static final fun toLine (Lnet/gini/android/core/api/response/DocumentLayoutResponse$PageResponse$TextZoneResponse$ParagraphResponse$LineResponse;)Lnet/gini/android/core/api/models/DocumentLayout$Page$TextZone$Paragraph$Line;
