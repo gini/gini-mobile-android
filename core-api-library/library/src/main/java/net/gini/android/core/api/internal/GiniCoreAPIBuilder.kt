@@ -353,19 +353,19 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      * been set, default to [AnonymousSessionManager].
      *
      * When self-managed authentication is enabled (see [setSelfManagedAuthentication]) a
-     * [SessionManager] which always returns an error is used: the SDK never requests sessions
-     * in that mode because the consumer's OkHttpClient authenticates the API requests.
+     * [SessionManager] which always returns an error is used — even if a SessionManager was
+     * passed to the builder constructor: the SDK never requests sessions in that mode because
+     * the consumer's OkHttpClient authenticates the API requests.
      *
      * @return The SessionManager instance.
      */
     @Synchronized
     open fun getSessionManager(): SessionManager {
+        if (isSelfManagedAuthentication) {
+            return SelfManagedAuthenticationSessionManager
+        }
         if (sessionManager == null) {
-            sessionManager = if (isSelfManagedAuthentication) {
-                SelfManagedAuthenticationSessionManager()
-            } else {
-                AnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
-            }
+            sessionManager = AnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
         }
         return sessionManager as SessionManager
     }
@@ -375,7 +375,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      * requests sessions in that mode, so this only returns an error in case something still
      * asks for a session (e.g. the deprecated DocumentRepository.withAccessToken).
      */
-    private class SelfManagedAuthenticationSessionManager : SessionManager {
+    private object SelfManagedAuthenticationSessionManager : SessionManager {
         override suspend fun getSession(): Resource<Session> = Resource.Error(
             message = "No session available: authentication is self-managed. " +
                     "API requests are authenticated by the custom OkHttpClient (GiniHttpClientProvider)."

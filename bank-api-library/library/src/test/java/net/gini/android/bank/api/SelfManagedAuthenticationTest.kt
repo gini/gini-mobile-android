@@ -7,6 +7,8 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.authorization.CredentialsStore
+import net.gini.android.core.api.authorization.Session
+import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.authorization.UserCredentials
 import net.gini.android.core.api.http.GiniHttpClientProvider
 import okhttp3.OkHttpClient
@@ -17,6 +19,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Date
 
 /**
  * Tests for self-managed authentication (PP-2363): the consumer's OkHttpClient authenticates
@@ -90,6 +93,26 @@ class SelfManagedAuthenticationTest {
         assertThat(request.getHeader("Authorization")).isNull()
         val error = resource as Resource.Error
         assertThat(error.responseStatusCode).isEqualTo(401)
+    }
+
+    @Test
+    fun `a SessionManager passed to the builder is ignored when authentication is self-managed`() = runTest {
+        val passedSessionManager = SessionManager {
+            Resource.Success(Session("must-never-be-used", Date(Date().time + 60_000)))
+        }
+        val builder = GiniBankAPIBuilder(context, sessionManager = passedSessionManager)
+            .setApiBaseUrl(server.url("/").toString())
+            .setHttpClientProvider(GiniHttpClientProvider { OkHttpClient() })
+            .setSelfManagedAuthentication(true)
+            .setCredentialsStore(InMemoryCredentialsStore()) as GiniBankAPIBuilder
+
+        // The sentinel takes precedence over the passed SessionManager: anything still asking
+        // for a session (e.g. the deprecated withAccessToken) must get an error instead of
+        // silently routing the consumer's token through the SDK.
+        val sessionResource = builder.getSessionManager().getSession()
+
+        val error = sessionResource as Resource.Error
+        assertThat(error.message).contains("self-managed")
     }
 
     @Test
