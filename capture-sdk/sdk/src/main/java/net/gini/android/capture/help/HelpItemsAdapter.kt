@@ -5,35 +5,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.help.HelpItemsAdapter.HelpItemsViewHolder
-import net.gini.android.capture.internal.util.FeatureConfiguration
 
 /**
  * Internal use only.
  *
  * @suppress
  */
-internal class HelpItemsAdapter(val onItemSelected: (HelpItem) -> Unit) :
-    RecyclerView.Adapter<HelpItemsViewHolder>() {
-
-    val items: List<HelpItem> = mutableListOf<HelpItem>().apply {
-        add(HelpItem.PhotoTips)
-
-        if (GiniCapture.hasInstance()
-            && GiniCapture.getInstance().isSupportedFormatsHelpScreenEnabled
-        ) {
-            add(HelpItem.SupportedFormats)
-        }
-
-        if (FeatureConfiguration.isFileImportEnabled()) {
-            add(HelpItem.FileImport)
-        }
-        if (GiniCapture.hasInstance()) {
-            addAll(GiniCapture.getInstance().customHelpItems)
-        }
-    }
+internal class HelpItemsAdapter(
+    val items: List<HelpItem>,
+    val onItemSelected: (HelpItem) -> Unit
+) : RecyclerView.Adapter<HelpItemsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelpItemsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(

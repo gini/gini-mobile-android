@@ -14,9 +14,10 @@ import net.gini.android.bank.sdk.R
  * Internal use only.
  *
  */
-class HelpItemAdapter(private val context: Context): RecyclerView.Adapter<HelpItemAdapter.HelpViewHolder>() {
-
-    private var tipList: MutableList<HelpItem> = mutableListOf(HelpItem.DIGITAL_INVOICE, HelpItem.EDIT, HelpItem.SHOP)
+class HelpItemAdapter @JvmOverloads constructor(
+    private val context: Context,
+    private val tipList: List<HelpItem> = listOf(HelpItem.DIGITAL_INVOICE, HelpItem.EDIT, HelpItem.SHOP)
+): RecyclerView.Adapter<HelpItemAdapter.HelpViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelpViewHolder =
         HelpViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.gbs_item_help, parent, false))

@@ -1,26 +1,31 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice.details
 
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import io.mockk.confirmVerified
-import io.mockk.every
-import io.mockk.excludeRecords
-import io.mockk.mockk
-import io.mockk.verify
 import junitparams.JUnitParamsRunner
 import junitparams.NamedParameters
 import junitparams.Parameters
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.digitalinvoice.LineItem
 import net.gini.android.bank.sdk.capture.digitalinvoice.SelectableLineItem
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.text.DecimalFormat
-import java.util.*
+import java.util.Locale
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(JUnitParamsRunner::class)
-class LineResponseItemDetailsScreenPresenterTest {
+class LineItemDetailsViewModelTest {
 
     private val returnReasonsFixture = listOf(
         GiniCaptureReturnReason("1", mapOf("de" to "Foo", "en" to "Foo")),
@@ -29,34 +34,54 @@ class LineResponseItemDetailsScreenPresenterTest {
 
     private val defaultLocale: Locale = Locale.getDefault()
 
+    private fun selectableLineItemFixture() = SelectableLineItem(
+        selected = true,
+        reason = null,
+        addedByUser = false,
+        lineItem = LineItem(
+            id = "id1",
+            description = "Foo",
+            quantity = 1,
+            rawGrossPrice = "12.00:EUR",
+            origQuantity = 1,
+            origRawGrossPrice = "12.00:EUR"
+        )
+    )
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+    }
+
+    @After
     fun teardown() {
         Locale.setDefault(defaultLocale)
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `shows return reasons dialog when enabled and has a return reasons list`() {
+    fun `shows return reasons dialog when enabled and has a return reasons list`() = runTest {
         // Given
         GiniBank.enableReturnReasons = true
 
-        val view: LineItemDetailsScreenContract.View = mockk(relaxed = true)
-
-        val presenter = LineItemDetailsScreenPresenter(
-            activity = mockk(),
-            view = view,
-            selectableLineItem = mockk<SelectableLineItem>().apply {
-                every { selected } returns true
-                every { copy() } returns this
-            },
+        val viewModel = LineItemDetailsViewModel(
+            selectableLineItem = selectableLineItemFixture(),
             returnReasons = returnReasonsFixture
         )
 
-        // When
-        presenter.deselectLineItem()
+        viewModel.sideEffects.test {
+            // When
+            viewModel.deselectLineItem()
 
-        // Then
-        excludeRecords { view.setPresenter(any()) }
-        verify { view.showReturnReasonDialog(any(), any()) }
-        confirmVerified(view)
+            // Then
+            val sideEffect = awaitItem()
+            assertThat(sideEffect)
+                .isInstanceOf(LineItemDetailsSideEffect.ShowReturnReasonDialog::class.java)
+            assertThat(
+                (sideEffect as LineItemDetailsSideEffect.ShowReturnReasonDialog).reasons
+            ).isEqualTo(returnReasonsFixture)
+            expectNoEvents()
+        }
     }
 
     @Test
@@ -64,34 +89,25 @@ class LineResponseItemDetailsScreenPresenterTest {
     fun `skips return reasons dialog - (isReturnReasonsEnabled, listOfReturnReasons)`(
         isReturnReasonsEnabled: Boolean,
         listOfReturnReasons: List<GiniCaptureReturnReason>
-    ) {
+    ) = runTest {
         // Given
         GiniBank.enableReturnReasons = isReturnReasonsEnabled
 
-        val view: LineItemDetailsScreenContract.View = mockk(relaxed = true)
-
-        val presenter = LineItemDetailsScreenPresenter(
-            activity = mockk(),
-            view = view,
-            selectableLineItem = mockk<SelectableLineItem>(relaxed = true).apply {
-                every { selected } returns true
-                every { copy() } returns this
-            },
+        val viewModel = LineItemDetailsViewModel(
+            selectableLineItem = selectableLineItemFixture(),
             returnReasons = listOfReturnReasons
         )
 
-        // When
-        presenter.deselectLineItem()
+        viewModel.sideEffects.test {
+            // When
+            viewModel.deselectLineItem()
 
-        // Then
-        excludeRecords {
-            view.setPresenter(any())
-            view.disableInput()
-            view.showCheckbox(true, 0, true)
-            view.disableSaveButton()
+            // Then
+            expectNoEvents()
         }
-        verify(exactly = 0) { view.showReturnReasonDialog(any(), any()) }
-        confirmVerified(view)
+        assertThat(viewModel.selectableLineItem.selected).isFalse()
+        assertThat(viewModel.uiState.value.inputEnabled).isFalse()
+        assertThat(viewModel.uiState.value.checkboxSelected).isFalse()
     }
 
     private fun skipsReturnReasonDialogValues(): Array<Any> = arrayOf(
@@ -110,93 +126,59 @@ class LineResponseItemDetailsScreenPresenterTest {
         "99998, 99998",
         "1000000, 99999"
     )
-    fun `limits quantity to be between MIN_QUANTITY and MAX_QUANTITY - (quantity, validatedQuantity)`(quantity: Int, validatedQuantity: Int) {
+    fun `limits quantity to be between MIN_QUANTITY and MAX_QUANTITY - (quantity, validatedQuantity)`(
+        quantity: Int,
+        validatedQuantity: Int
+    ) {
         // Given
-        val view: LineItemDetailsScreenContract.View = mockk(relaxed = true)
-
-        val selectableLineItem = SelectableLineItem(
-            selected = true,
-            reason = null,
-            addedByUser = false,
-            lineItem = LineItem(
-                id = "id1",
-                description = "Foo",
-                quantity = 1,
-                rawGrossPrice = "12.00:EUR",
-                origQuantity = 1,
-                origRawGrossPrice = "12.00:EUR"
-            )
-        )
-
-        val presenter = LineItemDetailsScreenPresenter(
-            activity = mockk(),
-            view = view,
-            selectableLineItem = selectableLineItem
+        val viewModel = LineItemDetailsViewModel(
+            selectableLineItem = selectableLineItemFixture()
         )
 
         // When
-        presenter.setQuantity(quantity)
+        viewModel.setQuantity(quantity)
 
         // Then
-        assertThat(presenter.selectableLineItem.lineItem.quantity).isEqualTo(validatedQuantity)
+        assertThat(viewModel.selectableLineItem.lineItem.quantity).isEqualTo(validatedQuantity)
+        assertThat(viewModel.uiState.value.quantity).isEqualTo(validatedQuantity)
     }
 
     @Test
     @Parameters("0, 1", "100000, 99999")
-    fun `updates view if validated quantity is different from entered quantity - (quantity, validatedQuantity)`(quantity: Int, validatedQuantity: Int) {
+    fun `updates view if validated quantity is different from entered quantity - (quantity, validatedQuantity)`(
+        quantity: Int,
+        validatedQuantity: Int
+    ) = runTest {
         // Given
-        val view: LineItemDetailsScreenContract.View = mockk(relaxed = true)
-
-        val selectableLineItem = SelectableLineItem(
-            selected = true,
-            reason = null,
-            addedByUser = false,
-            lineItem = LineItem(
-                id = "id1",
-                description = "Foo",
-                quantity = 1,
-                rawGrossPrice = "12.00:EUR",
-                origQuantity = 1,
-                origRawGrossPrice = "12.00:EUR"
-            )
+        val viewModel = LineItemDetailsViewModel(
+            selectableLineItem = selectableLineItemFixture()
         )
 
-        val presenter = LineItemDetailsScreenPresenter(
-            activity = mockk(),
-            view = view,
-            selectableLineItem = selectableLineItem
-        )
+        viewModel.sideEffects.test {
+            // When
+            viewModel.setQuantity(quantity)
 
-        // When
-        presenter.setQuantity(quantity)
-
-        // Then
-        excludeRecords {
-            view.setPresenter(any())
-            view.disableInput()
-            view.showCheckbox(any(), any(), any())
-            view.showTotalGrossPrice(any(), any())
-            view.disableSaveButton()
-            view.enableSaveButton()
+            // Then
+            val sideEffect = awaitItem()
+            assertThat(sideEffect)
+                .isInstanceOf(LineItemDetailsSideEffect.UpdateQuantityField::class.java)
+            assertThat(
+                (sideEffect as LineItemDetailsSideEffect.UpdateQuantityField).quantity
+            ).isEqualTo(validatedQuantity)
+            expectNoEvents()
         }
-        verify(exactly = 1) { view.showQuantity(eq(validatedQuantity)) }
-        confirmVerified(view)
     }
 
     @Test
     @Parameters(named = "paramsForLineItemNameValidation")
     fun `validates the line item name`(name: String, expectedValidationResult: String) {
         // Given
-        val view: LineItemDetailsScreenContract.View = mockk(relaxed = true)
-
-        val presenter = LineItemDetailsScreenPresenter(
-            activity = mockk(),
-            view = view,
-            selectableLineItem = mockk(relaxed = true)
+        val viewModel = LineItemDetailsViewModel(
+            selectableLineItem = selectableLineItemFixture()
         )
 
         // When
-        val validationResult = presenter.validateLineItemName(name)
+        val validationResult = viewModel.validateLineItemName(name)
 
         // Then
         assertThat(validationResult).isEqualTo(expectedValidationResult.toBoolean())
@@ -214,21 +196,23 @@ class LineResponseItemDetailsScreenPresenterTest {
 
     @Test
     @Parameters(named = "paramsForLineItemGrossPriceValidation")
-    fun `validates the line item price`(languageTag: String, grossPrice: String, expectedValidationResult: String) {
+    fun `validates the line item price`(
+        languageTag: String,
+        grossPrice: String,
+        expectedValidationResult: String
+    ) {
         // Given
         Locale.setDefault(Locale.forLanguageTag(languageTag))
 
-        val view: LineItemDetailsScreenContract.View = mockk(relaxed = true)
-
-        val presenter = LineItemDetailsScreenPresenter(
-            activity = mockk(),
-            view = view,
-            selectableLineItem = mockk(relaxed = true),
-            grossPriceFormat = DecimalFormat(GROSS_PRICE_FORMAT_PATTERN).apply { isParseBigDecimal = true }
+        val viewModel = LineItemDetailsViewModel(
+            selectableLineItem = selectableLineItemFixture(),
+            grossPriceFormat = DecimalFormat(GROSS_PRICE_FORMAT_PATTERN).apply {
+                isParseBigDecimal = true
+            }
         )
 
         // When
-        val validationResult = presenter.validateLineItemGrossPrice(grossPrice)
+        val validationResult = viewModel.validateLineItemGrossPrice(grossPrice)
 
         // Then
         assertThat(validationResult).isEqualTo(expectedValidationResult.toBoolean())

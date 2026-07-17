@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.snackbar.Snackbar
 import net.gini.android.capture.GiniCapture
@@ -31,6 +32,8 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
 class FileImportHelpFragment : Fragment() {
     private var binding: GcFragmentFileImportHelpBinding by autoCleared()
     private var snackbar: Snackbar? = null
+
+    private val viewModel: FileImportHelpViewModel by viewModels()
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -65,9 +68,8 @@ class FileImportHelpFragment : Fragment() {
                 GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
             ) { injectedViewAdapter: NavigationBarTopAdapter ->
                 injectedViewAdapter.setNavButtonType(
-                    if (GiniCapture.getInstance()
-                            .isBottomNavigationBarEnabled
-                    ) NavButtonType.NONE else NavButtonType.BACK
+                    if (viewModel.uiState.value.isBottomNavigationBarEnabled)
+                        NavButtonType.NONE else NavButtonType.BACK
                 )
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_file_import))
                 injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
@@ -115,7 +117,7 @@ class FileImportHelpFragment : Fragment() {
             setActionTextColor(color) // snackbar action text color
 
             val bottomPadding =
-                if (GiniCapture.getInstance().isBottomNavigationBarEnabled) resources.getDimension(R.dimen.gc_large_96)
+                if (viewModel.uiState.value.isBottomNavigationBarEnabled) resources.getDimension(R.dimen.gc_large_96)
                     .toInt() else resources.getDimension(R.dimen.gc_large).toInt()
             val params = view.layoutParams as FrameLayout.LayoutParams
             params.setMargins(resources.getDimension(R.dimen.gc_large).toInt(), 0, resources.getDimension(R.dimen.gc_large).toInt(), bottomPadding)

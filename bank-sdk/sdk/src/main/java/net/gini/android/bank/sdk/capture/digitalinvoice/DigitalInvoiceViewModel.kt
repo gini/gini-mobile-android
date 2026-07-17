@@ -1,11 +1,20 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.annotation.VisibleForTesting
 import androidx.core.os.BundleCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.skonto.factory.text.SkontoInfoBannerTextFactory
 import net.gini.android.bank.sdk.capture.skonto.mapper.toAnalyticsModel
@@ -19,7 +28,6 @@ import net.gini.android.bank.sdk.capture.util.BusEvent
 import net.gini.android.bank.sdk.capture.util.OncePerInstallEvent
 import net.gini.android.bank.sdk.capture.util.OncePerInstallEventStore
 import net.gini.android.bank.sdk.capture.util.SimpleBusEventStore
-import net.gini.android.bank.sdk.di.getGiniBankKoin
 import net.gini.android.capture.Amount
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
@@ -42,25 +50,31 @@ private const val KEY_SELECTABLE_ITEMS = "SELECTABLE_ITEMS"
 private const val KEY_SKONTO_STATE = "SKONTO_STATE"
 private const val KEY_SKONTO_DATA = "SKONTO_DATA"
 
-internal class DigitalInvoiceScreenPresenter(
-    activity: Activity,
-    view: DigitalInvoiceScreenContract.View,
+/**
+ * Internal use only.
+ *
+ * @suppress
+ */
+@Suppress("TooManyFunctions", "LongParameterList")
+internal class DigitalInvoiceViewModel(
     val extractions: Map<String, GiniCaptureSpecificExtraction> = emptyMap(),
     val compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
     val returnReasons: List<GiniCaptureReturnReason> = emptyList(),
     private var skontoData: SkontoData? = null,
     private val isInaccurateExtraction: Boolean = false,
-    savedInstanceBundle: Bundle?,
-    private val oncePerInstallEventStore: OncePerInstallEventStore = OncePerInstallEventStore(
-        activity
-    ),
-    private val simpleBusEventStore: SimpleBusEventStore = SimpleBusEventStore(activity)
-) : DigitalInvoiceScreenContract.Presenter(activity, view) {
+    savedInstanceBundle: Bundle? = null,
+    private val oncePerInstallEventStore: OncePerInstallEventStore,
+    private val simpleBusEventStore: SimpleBusEventStore,
+    getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase,
+    private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase,
+    getSkontoAmountUseCase: GetSkontoAmountUseCase,
+    getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase,
+    private val skontoInfoBannerTextFactory: SkontoInfoBannerTextFactory,
+) : ViewModel() {
 
     private var onboardingDisplayed: Boolean = savedInstanceBundle != null
 
-    private var footerDetails =
-        DigitalInvoiceScreenContract.FooterDetails(inaccurateExtraction = isInaccurateExtraction)
+    private var footerDetails = FooterDetails(inaccurateExtraction = isInaccurateExtraction)
 
     private fun shouldDisplayOnboarding(): Boolean = !onboardingDisplayed &&
             !oncePerInstallEventStore
@@ -70,21 +84,17 @@ internal class DigitalInvoiceScreenPresenter(
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private val screenName: UserAnalyticsScreen = UserAnalyticsScreen.ReturnAssistant
 
-    private val getSkontoDefaultSelectionStateUseCase: GetSkontoDefaultSelectionStateUseCase
-            by getGiniBankKoin().inject()
-    private val getSkontoEdgeCaseUseCase: GetSkontoEdgeCaseUseCase
-            by getGiniBankKoin().inject()
-    private val getSkontoAmountUseCase: GetSkontoAmountUseCase
-            by getGiniBankKoin().inject()
-    private val getSkontoSavedAmountUseCase: GetSkontoSavedAmountUseCase
-            by getGiniBankKoin().inject()
-
-    private val skontoInfoBannerTextFactory: SkontoInfoBannerTextFactory
-            by getGiniBankKoin().inject()
     private var skontoEdgeCase: SkontoEdgeCase? = null
 
+    private val _uiState = MutableStateFlow(
+        DigitalInvoiceUiState(isInaccurateExtraction = isInaccurateExtraction)
+    )
+    val uiState: StateFlow<DigitalInvoiceUiState> = _uiState.asStateFlow()
+
+    private val _sideEffects = Channel<DigitalInvoiceSideEffect>(Channel.BUFFERED)
+    val sideEffects: Flow<DigitalInvoiceSideEffect> = _sideEffects.receiveAsFlow()
+
     init {
-        view.setPresenter(this)
         skontoData = savedInstanceBundle?.let {
             BundleCompat.getParcelable(it, KEY_SKONTO_DATA, SkontoData::class.java)
         } ?: skontoData
@@ -108,9 +118,16 @@ internal class DigitalInvoiceScreenPresenter(
         savedInstanceBundle?.let {
             digitalInvoice.updateSkontoEnabled(it.getBoolean(KEY_SKONTO_STATE, false))
         }
+        simpleBusEventStore.observeChange(BusEvent.DISMISS_ONBOARDING_FRAGMENT)
+            .onEach {
+                if (it) {
+                    updateView()
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
-    override fun saveState(outState: Bundle) {
+    fun saveState(outState: Bundle) {
         outState.putParcelableArrayList(
             KEY_SELECTABLE_ITEMS,
             ArrayList(digitalInvoice.selectableLineItems)
@@ -127,49 +144,58 @@ internal class DigitalInvoiceScreenPresenter(
         )
     }
 
-    override fun selectLineItem(lineItem: SelectableLineItem) {
+    fun selectLineItem(lineItem: SelectableLineItem) {
         digitalInvoice.selectLineItem(lineItem)
         updateView()
     }
 
-    override fun editSkontoDataListItem(skontoListItem: DigitalInvoiceSkontoListItem) {
+    fun editSkontoDataListItem(skontoListItem: DigitalInvoiceSkontoListItem) {
         digitalInvoice.skontoData?.let { data ->
-            view.showSkontoEditScreen(
-                data = data,
-                isSkontoSectionActive = skontoListItem.enabled
+            sendSideEffect(
+                DigitalInvoiceSideEffect.ShowSkontoEditScreen(
+                    data = data,
+                    isSkontoSectionActive = skontoListItem.enabled
+                )
             )
         }
     }
 
-    override fun enableSkonto() {
+    fun enableSkonto() {
         digitalInvoice.updateSkontoEnabled(true)
         updateView()
     }
 
-    override fun disableSkonto() {
+    fun disableSkonto() {
         digitalInvoice.updateSkontoEnabled(false)
         updateView()
     }
 
-    override fun updateSkontoData(skontoData: SkontoData?) {
+    fun updateSkontoData(skontoData: SkontoData?) {
         digitalInvoice.updateSkontoData(skontoData)
         updateView()
     }
 
-    override fun deselectLineItem(lineItem: SelectableLineItem) {
+    fun deselectLineItem(lineItem: SelectableLineItem) {
         if (canShowReturnReasonsDialog()) {
-            view.showReturnReasonDialog(returnReasons) { selectedReason ->
-                if (selectedReason != null) {
-                    digitalInvoice.deselectLineItem(lineItem, selectedReason)
-                } else {
-                    digitalInvoice.selectLineItem(lineItem)
-                }
-                updateView()
-            }
+            sendSideEffect(
+                DigitalInvoiceSideEffect.ShowReturnReasonDialog(returnReasons, lineItem)
+            )
         } else {
             digitalInvoice.deselectLineItem(lineItem, null)
             updateView()
         }
+    }
+
+    fun onReturnReasonSelected(
+        lineItem: SelectableLineItem,
+        selectedReason: GiniCaptureReturnReason?
+    ) {
+        if (selectedReason != null) {
+            digitalInvoice.deselectLineItem(lineItem, selectedReason)
+        } else {
+            digitalInvoice.selectLineItem(lineItem)
+        }
+        updateView()
     }
 
     internal fun deselectLineItem(index: Int) {
@@ -185,11 +211,11 @@ internal class DigitalInvoiceScreenPresenter(
     private fun canShowReturnReasonsDialog() =
         GiniBank.enableReturnReasons && returnReasons.isNotEmpty()
 
-    override fun editLineItem(lineItem: SelectableLineItem) {
-        view.onEditLineItem(lineItem)
+    fun editLineItem(lineItem: SelectableLineItem) {
+        sendSideEffect(DigitalInvoiceSideEffect.EditLineItem(lineItem))
     }
 
-    override fun pay() {
+    fun pay() {
         skipOrPay()
     }
 
@@ -207,7 +233,12 @@ internal class DigitalInvoiceScreenPresenter(
         if (digitalInvoice.skontoData != null && digitalInvoice.skontoEnabled) {
             sendTransferSummary()
         }
-        listener?.onPayInvoice(digitalInvoice.extractions, digitalInvoice.compoundExtractions)
+        sendSideEffect(
+            DigitalInvoiceSideEffect.PayInvoice(
+                digitalInvoice.extractions,
+                digitalInvoice.compoundExtractions
+            )
+        )
     }
 
 
@@ -248,34 +279,20 @@ internal class DigitalInvoiceScreenPresenter(
     ) = keys.firstNotNullOfOrNull { this[it]?.value }
 
 
-    override fun updateLineItem(selectableLineItem: SelectableLineItem) {
+    fun updateLineItem(selectableLineItem: SelectableLineItem) {
         digitalInvoice.updateLineItem(selectableLineItem)
         updateView()
     }
 
-    override fun onViewCreated() {
-        simpleBusEventStore.observeChange(BusEvent.DISMISS_ONBOARDING_FRAGMENT)
-            .onEach {
-                if (it) {
-                    updateView()
-                }
-            }
-            .launchIn(view.viewLifecycleScope)
-    }
-
-    override fun start() {
+    fun start() {
         updateView()
         if (shouldDisplayOnboarding()) {
             simpleBusEventStore.saveEvent(BusEvent.DISMISS_ONBOARDING_FRAGMENT, false)
             onboardingDisplayed = true
-            view.showOnboarding()
+            sendSideEffect(DigitalInvoiceSideEffect.ShowOnboarding)
         } else {
             trackScreenShownEvent()
         }
-    }
-
-    override fun stop() {
-        // No cleanup needed on stop for this presenter
     }
 
     @VisibleForTesting
@@ -287,51 +304,57 @@ internal class DigitalInvoiceScreenPresenter(
                 skontoData.skontoPaymentMethod
             )
         }
-        view.apply {
-            showLineItems(digitalInvoice.selectableLineItems, isInaccurateExtraction)
-            showAddons(digitalInvoice.addons)
-
-            digitalInvoice.skontoData?.let { skontoData ->
-                showSkonto(
-                    DigitalInvoiceSkontoListItem(
-                        isEdgeCase = skontoEdgeCase != null,
-                        savedAmount = skontoSavedAmount!!,
-                        message = skontoInfoBannerTextFactory.create(
-                            edgeCase = skontoEdgeCase,
-                            discountAmount = skontoData.skontoPercentageDiscounted,
-                            remainingDays = skontoData.skontoRemainingDays
-                        ),
-                        enabled = digitalInvoice.skontoEnabled,
-                    )
-                )
-            }
-            digitalInvoice.selectedAndTotalLineItemsCount().let { (selected, total) ->
-                footerDetails = footerDetails
-                    .copy(
-                        totalGrossPriceIntegralAndFractionalParts =
-                        digitalInvoice.totalPriceIntegralAndFractionalParts(),
-                        buttonEnabled = digitalInvoice.getAmountToPay() > BigDecimal.ZERO,
-                        count = selected,
-                        total = total,
-                        skontoSavedAmount = skontoSavedAmount
-                            .takeIf { digitalInvoice.skontoEnabled },
-                        skontoDiscountPercentage =
-                        digitalInvoice
-                            .skontoData
-                            ?.skontoPercentageDiscounted
-                            .takeIf { digitalInvoice.skontoEnabled }
-                    )
-                updateFooterDetails(footerDetails)
-            }
-
-            val animateList = !shouldDisplayOnboarding() && !oncePerInstallEventStore.containsEvent(
-                OncePerInstallEvent.SCROLL_DIGITAL_INVOICE
+        val skontoListItem = digitalInvoice.skontoData?.let { skontoData ->
+            DigitalInvoiceSkontoListItem(
+                isEdgeCase = skontoEdgeCase != null,
+                savedAmount = skontoSavedAmount!!,
+                message = skontoInfoBannerTextFactory.create(
+                    edgeCase = skontoEdgeCase,
+                    discountAmount = skontoData.skontoPercentageDiscounted,
+                    remainingDays = skontoData.skontoRemainingDays
+                ),
+                enabled = digitalInvoice.skontoEnabled,
             )
-            if (animateList) {
-                oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SCROLL_DIGITAL_INVOICE)
-                animateListScroll()
-            }
         }
+        digitalInvoice.selectedAndTotalLineItemsCount().let { (selected, total) ->
+            footerDetails = footerDetails
+                .copy(
+                    totalGrossPriceIntegralAndFractionalParts =
+                    digitalInvoice.totalPriceIntegralAndFractionalParts(),
+                    buttonEnabled = digitalInvoice.getAmountToPay() > BigDecimal.ZERO,
+                    count = selected,
+                    total = total,
+                    skontoSavedAmount = skontoSavedAmount
+                        .takeIf { digitalInvoice.skontoEnabled },
+                    skontoDiscountPercentage =
+                    digitalInvoice
+                        .skontoData
+                        ?.skontoPercentageDiscounted
+                        .takeIf { digitalInvoice.skontoEnabled }
+                )
+        }
+        _uiState.update { state ->
+            state.copy(
+                lineItems = digitalInvoice.selectableLineItems,
+                isInaccurateExtraction = isInaccurateExtraction,
+                addons = digitalInvoice.addons,
+                skontoListItem = skontoListItem,
+                footerDetails = footerDetails,
+                revision = state.revision + 1,
+            )
+        }
+
+        val animateList = !shouldDisplayOnboarding() && !oncePerInstallEventStore.containsEvent(
+            OncePerInstallEvent.SCROLL_DIGITAL_INVOICE
+        )
+        if (animateList) {
+            oncePerInstallEventStore.saveEvent(OncePerInstallEvent.SCROLL_DIGITAL_INVOICE)
+            sendSideEffect(DigitalInvoiceSideEffect.AnimateListScroll)
+        }
+    }
+
+    private fun sendSideEffect(sideEffect: DigitalInvoiceSideEffect) {
+        viewModelScope.launch { _sideEffects.send(sideEffect) }
     }
 
     private fun trackScreenShownEvent() = runCatching {
@@ -362,3 +385,81 @@ internal class DigitalInvoiceScreenPresenter(
         )
     }
 }
+
+/**
+ * Internal use only.
+ *
+ * @suppress
+ */
+internal data class DigitalInvoiceUiState(
+    val lineItems: List<SelectableLineItem> = emptyList(),
+    val isInaccurateExtraction: Boolean = false,
+    val addons: List<DigitalInvoiceAddon> = emptyList(),
+    val skontoListItem: DigitalInvoiceSkontoListItem? = null,
+    val footerDetails: FooterDetails? = null,
+    /**
+     * Increased on every view update. [SelectableLineItem]s are mutated in place by
+     * [DigitalInvoice], so consecutive states can be structurally equal even though the view
+     * must be re-rendered (e.g. re-selecting a line item after the return reason dialog was
+     * cancelled). The revision makes every update distinct for the [StateFlow].
+     */
+    val revision: Int = 0,
+)
+
+/**
+ * Internal use only.
+ *
+ * @suppress
+ */
+internal data class FooterDetails(
+    val inaccurateExtraction: Boolean,
+    val buttonEnabled: Boolean = true,
+    val count: Int = 0,
+    val total: Int = 0,
+    val skontoSavedAmount: Amount? = null,
+    val skontoDiscountPercentage: BigDecimal? = null,
+    val totalGrossPriceIntegralAndFractionalParts: Pair<String, String> = Pair("", ""),
+)
+
+/**
+ * Internal use only.
+ *
+ * @suppress
+ */
+internal sealed interface DigitalInvoiceSideEffect {
+
+    data class ShowReturnReasonDialog(
+        val reasons: List<GiniCaptureReturnReason>,
+        val lineItem: SelectableLineItem,
+    ) : DigitalInvoiceSideEffect
+
+    data class EditLineItem(val lineItem: SelectableLineItem) : DigitalInvoiceSideEffect
+
+    object ShowOnboarding : DigitalInvoiceSideEffect
+
+    data class ShowSkontoEditScreen(
+        val data: SkontoData,
+        val isSkontoSectionActive: Boolean,
+    ) : DigitalInvoiceSideEffect
+
+    object AnimateListScroll : DigitalInvoiceSideEffect
+
+    data class PayInvoice(
+        val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
+        val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
+    ) : DigitalInvoiceSideEffect
+}
+
+/**
+ * Internal use only.
+ *
+ * @suppress
+ */
+internal data class DigitalInvoiceViewModelArgs(
+    val extractions: Map<String, GiniCaptureSpecificExtraction>,
+    val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
+    val returnReasons: List<GiniCaptureReturnReason>,
+    val skontoData: SkontoData?,
+    val isInaccurateExtraction: Boolean,
+    val savedInstanceBundle: Bundle?,
+)

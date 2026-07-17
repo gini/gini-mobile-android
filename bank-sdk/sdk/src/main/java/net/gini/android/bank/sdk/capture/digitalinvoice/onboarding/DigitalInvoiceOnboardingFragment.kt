@@ -1,18 +1,22 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice.onboarding
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.transition.TransitionInflater
+import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceOnboardingBinding
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.IntervalClickListener
@@ -46,11 +50,11 @@ import net.gini.android.capture.view.InjectedViewAdapterHolder
  *
  * TODO: PPL-14: Customization guide for return assistant - Android
  */
-class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenContract.View {
+class DigitalInvoiceOnboardingFragment : Fragment() {
 
     private var binding by autoCleared<GbsFragmentDigitalInvoiceOnboardingBinding>()
 
-    private var presenter: DigitalOnboardingScreenContract.Presenter? = null
+    private val viewModel: DigitalInvoiceOnboardingViewModel by giniBankViewModel()
 
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
 
@@ -77,29 +81,13 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createPresenter(requireActivity())
         enterTransition =
             TransitionInflater.from(requireContext()).inflateTransition(R.transition.fade)
         exitTransition = enterTransition
     }
 
-    private fun createPresenter(activity: Activity) =
-        DigitalOnboardingScreenPresenter(
-            activity,
-            this,
-        )
-
-    override fun close() {
+    private fun close() {
         NavHostFragment.findNavController(this).popBackStack()
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun setPresenter(presenter: DigitalOnboardingScreenContract.Presenter) {
-        this.presenter = presenter
     }
 
     /**
@@ -110,7 +98,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onStart() {
         super.onStart()
         binding.digitalInvoiceImageContainer.modifyAdapterIfOwned { (it as OnboardingIllustrationAdapter).onVisible() }
-        presenter?.start()
     }
 
     /**
@@ -121,7 +108,6 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
     override fun onStop() {
         super.onStop()
         binding.digitalInvoiceImageContainer.modifyAdapterIfOwned { (it as OnboardingIllustrationAdapter).onHidden() }
-        presenter?.stop()
     }
 
 
@@ -135,9 +121,21 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
         setInputHandlers()
         setupImageIllustrationAdapter()
         setupOnboardingBottomNavigationBar()
+        observeSideEffects()
         trackAnalyticsScreenShownEvent()
     }
 
+    private fun observeSideEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sideEffects.collect { sideEffect ->
+                    when (sideEffect) {
+                        DigitalInvoiceOnboardingViewModel.SideEffect.Close -> close()
+                    }
+                }
+            }
+        }
+    }
 
     private fun setupImageIllustrationAdapter() {
         if (GiniCapture.hasInstance()) {
@@ -158,7 +156,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
                 ) { injectedViewAdapter ->
                     injectedViewAdapter.setGetStartedButtonClickListener(
                         IntervalClickListener {
-                            presenter?.dismisOnboarding(false)
+                            viewModel.dismissOnboarding(false)
                             trackAnalyticsGetStartedTappedEvent()
                         }
                     )
@@ -168,7 +166,7 @@ class DigitalInvoiceOnboardingFragment : Fragment(), DigitalOnboardingScreenCont
 
     private fun setInputHandlers() {
         binding.doneButton.setOnClickListener {
-            presenter?.dismisOnboarding(false)
+            viewModel.dismissOnboarding(false)
             trackAnalyticsGetStartedTappedEvent()
         }
         handleOnBackPressed()

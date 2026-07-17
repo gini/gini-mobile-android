@@ -1,6 +1,5 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -14,12 +13,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.BundleCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
@@ -37,6 +37,7 @@ import net.gini.android.bank.sdk.capture.util.parentFragmentManagerOrNull
 import net.gini.android.bank.sdk.capture.util.safeNavigate
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceBinding
 import net.gini.android.bank.sdk.di.getGiniBankKoin
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocShouldBeAutoAttachedUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.GetTransactionDocsFeatureEnabledUseCase
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogCancelAttachUseCase
@@ -57,6 +58,7 @@ import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsE
 import net.gini.android.capture.ui.theme.GiniTheme
 import net.gini.android.capture.view.InjectedViewAdapterHolder
 import net.gini.android.capture.view.NavButtonType
+import org.koin.core.parameter.parametersOf
 
 
 /**
@@ -71,8 +73,7 @@ private const val TAG_RETURN_REASON_DIALOG = "TAG_RETURN_REASON_DIALOG"
 /**
  * Internal use only.
  */
-internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenContract.View,
-    LineItemsAdapterListener {
+internal open class DigitalInvoiceFragment : Fragment(), LineItemsAdapterListener {
 
     private val args: DigitalInvoiceFragmentArgs by navArgs<DigitalInvoiceFragmentArgs>()
 
@@ -83,19 +84,29 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     private val attachToTransactionDialogStateKey = "attach_to_transaction_Dialog_state"
 
     var listener: DigitalInvoiceFragmentListener? = null
-        set(value) {
-            field = value
-            this.presenter?.listener = value
-        }
 
     lateinit var cancelListener: CancelListener
 
-    override val viewLifecycleScope: CoroutineScope
-        get() = viewLifecycleOwner.lifecycleScope
+    private var savedInstanceBundle: Bundle? = null
 
-    private var presenter: DigitalInvoiceScreenContract.Presenter? = null
+    private val viewModel: DigitalInvoiceViewModel by giniBankViewModel(
+        parameters = {
+            parametersOf(
+                DigitalInvoiceViewModelArgs(
+                    extractions = args.extractionsResult.specificExtractions,
+                    compoundExtractions = args.extractionsResult.compoundExtractions,
+                    returnReasons = args.extractionsResult.returnReasons,
+                    skontoData = args.skontoData,
+                    isInaccurateExtraction = getAmountsAreConsistentExtraction(
+                        args.extractionsResult.specificExtractions
+                    ),
+                    savedInstanceBundle = savedInstanceBundle,
+                )
+            )
+        }
+    )
 
-    private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
+    private var footerDetails: FooterDetails? = null
     private val userAnalyticsEventTracker by lazy { UserAnalytics.getAnalyticsEventTracker() }
     private var onBackPressedCallback: OnBackPressedCallback? = null
 
@@ -114,19 +125,19 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
     private val skontoAdapterListener = object : SkontoListItemAdapterListener {
 
         override fun onSkontoEditClicked(listItem: DigitalInvoiceSkontoListItem) {
-            presenter?.editSkontoDataListItem(listItem)
+            viewModel.editSkontoDataListItem(listItem)
         }
 
         override fun onSkontoEnabled(listItem: DigitalInvoiceSkontoListItem) {
-            presenter?.enableSkonto()
+            viewModel.enableSkonto()
         }
 
         override fun onSkontoDisabled(listItem: DigitalInvoiceSkontoListItem) {
-            presenter?.disableSkonto()
+            viewModel.disableSkonto()
         }
     }
 
-    override fun showSkontoEditScreen(
+    private fun showSkontoEditScreen(
         data: SkontoData,
         isSkontoSectionActive: Boolean,
     ) {
@@ -155,8 +166,8 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
+        savedInstanceBundle = savedInstanceState
         initListener()
-        createPresenter(activity, savedInstanceState)
 
         if (resources.getBoolean(net.gini.android.capture.R.bool.gc_is_tablet)) {
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -182,22 +193,8 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         }
     }
 
-    private fun createPresenter(activity: Activity, savedInstanceState: Bundle?) =
-        DigitalInvoiceScreenPresenter(
-            activity,
-            this,
-            args.extractionsResult.specificExtractions,
-            args.extractionsResult.compoundExtractions,
-            args.extractionsResult.returnReasons,
-            args.skontoData,
-            getAmountsAreConsistentExtraction(args.extractionsResult.specificExtractions),
-            savedInstanceState,
-        ).apply {
-            listener = this@DigitalInvoiceFragment.listener
-        }
-
     override fun onSaveInstanceState(outState: Bundle) {
-        presenter?.saveState(outState)
+        viewModel.saveState(outState)
         outState.putBoolean(attachToTransactionDialogStateKey , isAttachToTransactionDialogWasShowing)
         super.onSaveInstanceState(outState)
     }
@@ -233,9 +230,59 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         initTopNavigationBar()
         initBottomBar()
         changeMarginAccordingToFontOversize()
-        presenter?.onViewCreated()
+        observeUiState()
+        observeSideEffects()
         handleIfShowAttachDialogWasShowing(savedInstanceState)
         handleSkontoSavedAmountColour()
+    }
+
+    private fun observeUiState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    showLineItems(uiState.lineItems, uiState.isInaccurateExtraction)
+                    showAddons(uiState.addons)
+                    uiState.skontoListItem?.let { showSkonto(it) }
+                    uiState.footerDetails?.let { updateFooterDetails(it) }
+                }
+            }
+        }
+    }
+
+    private fun observeSideEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sideEffects.collect { sideEffect ->
+                    when (sideEffect) {
+                        is DigitalInvoiceSideEffect.ShowReturnReasonDialog ->
+                            showReturnReasonDialog(sideEffect.reasons) { selectedReason ->
+                                viewModel.onReturnReasonSelected(sideEffect.lineItem, selectedReason)
+                            }
+
+                        is DigitalInvoiceSideEffect.EditLineItem ->
+                            onEditLineItem(sideEffect.lineItem)
+
+                        is DigitalInvoiceSideEffect.ShowOnboarding ->
+                            showOnboarding()
+
+                        is DigitalInvoiceSideEffect.ShowSkontoEditScreen ->
+                            showSkontoEditScreen(
+                                sideEffect.data,
+                                sideEffect.isSkontoSectionActive
+                            )
+
+                        is DigitalInvoiceSideEffect.AnimateListScroll ->
+                            animateListScroll()
+
+                        is DigitalInvoiceSideEffect.PayInvoice ->
+                            listener?.onPayInvoice(
+                                sideEffect.specificExtractions,
+                                sideEffect.compoundExtractions
+                            )
+                    }
+                }
+            }
+        }
     }
 
     private fun handleSkontoSavedAmountColour() {
@@ -260,7 +307,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         savedInstanceState?.let {
             if (it.getBoolean(attachToTransactionDialogStateKey, false)) {
                 tryShowAttachDocToTransactionDialog {
-                    presenter?.pay()
+                    viewModel.pay()
                 }
             }
         }
@@ -413,7 +460,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
     override fun payButtonClicked() {
         tryShowAttachDocToTransactionDialog {
-            presenter?.pay()
+            viewModel.pay()
         }
     }
 
@@ -452,7 +499,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      *
      * @suppress
      */
-    override fun showLineItems(
+    private fun showLineItems(
         lineItems: List<SelectableLineItem>,
         isInaccurateExtraction: Boolean
     ) {
@@ -469,7 +516,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      * header and footer are counted as aprox. 3 items
      * in order to have same time spent on scrolling different size views
      */
-    override fun animateListScroll() {
+    private fun animateListScroll() {
         val itemCount =
             3 + (if (lineItemsAdapter.isInaccurateExtraction) 3 else 0) + lineItemsAdapter.lineItems.size
         smoothScroller = SmoothScroller(
@@ -480,7 +527,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         scrollList(false)
     }
 
-    override fun onEditLineItem(selectableLineItem: SelectableLineItem) {
+    private fun onEditLineItem(selectableLineItem: SelectableLineItem) {
         safeNavigate(
             navController = findNavController(),
             navDirections = DigitalInvoiceFragmentDirections.toDigitalInvoiceEditItemBottomSheetDialog(
@@ -489,7 +536,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
         )
     }
 
-    override fun showOnboarding() {
+    private fun showOnboarding() {
         findNavController().navigate(DigitalInvoiceFragmentDirections.toDigitalInvoiceOnboardingFragment())
     }
 
@@ -533,7 +580,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
 
     }
 
-    override fun updateFooterDetails(data: DigitalInvoiceScreenContract.FooterDetails) {
+    private fun updateFooterDetails(data: FooterDetails) {
         val (integral, fractional) = data.totalGrossPriceIntegralAndFractionalParts
         binding.grossPriceTotalIntegralPart.text = integral
         binding.grossPriceTotalFractionalPart.text = fractional
@@ -592,11 +639,11 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      *
      * @suppress
      */
-    override fun showAddons(addons: List<DigitalInvoiceAddon>) {
+    private fun showAddons(addons: List<DigitalInvoiceAddon>) {
         lineItemsAdapter.addons = addons
     }
 
-    override fun showSkonto(data: DigitalInvoiceSkontoListItem) {
+    private fun showSkonto(data: DigitalInvoiceSkontoListItem) {
         lineItemsAdapter.skontoDiscount = listOf(data)
     }
 
@@ -605,7 +652,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      *
      * @suppress
      */
-    override fun showReturnReasonDialog(
+    private fun showReturnReasonDialog(
         reasons: List<GiniCaptureReturnReason>,
         resultCallback: ReturnReasonDialogResultCallback
     ) {
@@ -622,18 +669,9 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      *
      * @suppress
      */
-    override fun setPresenter(presenter: DigitalInvoiceScreenContract.Presenter) {
-        this.presenter = presenter
-    }
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
     override fun onStart() {
         super.onStart()
-        presenter?.start()
+        viewModel.start()
         setBottomSheetResultListener()
         setSkontoResultListener()
     }
@@ -650,7 +688,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
                     SelectableLineItem::class.java
                 )
                     ?.let { selectableLineItem ->
-                        presenter?.updateLineItem(selectableLineItem)
+                        viewModel.updateLineItem(selectableLineItem)
                     }
             }
     }
@@ -666,11 +704,11 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
                     DigitalInvoiceSkontoFragment.RESULT_KEY,
                     DigitalInvoiceSkontoResultArgs::class.java
                 )?.let { skontoResult ->
-                    presenter?.updateSkontoData(skontoResult.skontoData)
+                    viewModel.updateSkontoData(skontoResult.skontoData)
                     if (skontoResult.isSkontoEnabled) {
-                        presenter?.enableSkonto()
+                        viewModel.enableSkonto()
                     } else {
-                        presenter?.disableSkonto()
+                        viewModel.disableSkonto()
                     }
                 }
             }
@@ -681,19 +719,8 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
      *
      * @suppress
      */
-    override fun onStop() {
-        super.onStop()
-        presenter?.stop()
-    }
-
-
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
     override fun onLineItemClicked(lineItem: SelectableLineItem) {
-        presenter?.editLineItem(lineItem)
+        viewModel.editLineItem(lineItem)
         trackItemEditTappedTappedEvent()
     }
 
@@ -711,7 +738,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
             }
         }
         lineItemsAdapter.updateLineItems(updatedItems)
-        presenter?.selectLineItem(lineItem)
+        viewModel.selectLineItem(lineItem)
         trackItemSwitchTappedTappedEvent(lineItem.selected)
     }
 
@@ -729,7 +756,7 @@ internal open class DigitalInvoiceFragment : Fragment(), DigitalInvoiceScreenCon
             }
         }
         lineItemsAdapter.updateLineItems(updatedItems)
-        presenter?.deselectLineItem(lineItem)
+        viewModel.deselectLineItem(lineItem)
         trackItemSwitchTappedTappedEvent(lineItem.selected)
     }
 

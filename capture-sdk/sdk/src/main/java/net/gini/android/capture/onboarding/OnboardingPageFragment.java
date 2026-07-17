@@ -2,7 +2,6 @@ package net.gini.android.capture.onboarding;
 
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,20 +19,20 @@ import net.gini.android.capture.view.InjectedViewContainer;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 /**
  * Internal use only.
  *
  * @suppress
  */
-public class OnboardingPageFragment extends Fragment implements OnboardingPageContract.View {
+public class OnboardingPageFragment extends Fragment {
 
     private static final String ARGS_PAGE = "GC_PAGE";
     private static final String ARGS_PADDING_FOR_LANDSCAPE = "ARGS_PADDING_FOR_LANDSCAPE";
     private static final String ARGS_IS_LAST_PAGE = "GC_IS_LAST_PAGE";
 
-    private OnboardingPageContract.Presenter mPresenter;
+    private OnboardingPageViewModel mViewModel;
 
     private boolean isLastPage;
 
@@ -57,14 +56,10 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final FragmentActivity activity = getActivity();
-        if (activity == null) {
-            throw new IllegalStateException("Missing activity for fragment.");
-        }
-
         isLastPage = getIsLastPage();
 
-        initPresenter(activity, getOnboardingPage());
+        mViewModel = new ViewModelProvider(this).get(OnboardingPageViewModel.class);
+        mViewModel.setPage(getOnboardingPage());
     }
 
     private boolean getIsLastPage() {
@@ -97,16 +92,6 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
         return page;
     }
 
-    private void initPresenter(@NonNull final Activity activity,
-                               @NonNull final OnboardingPage page) {
-        createPresenter(activity);
-        mPresenter.setPage(page);
-    }
-
-    private void createPresenter(@NonNull final Activity activity) {
-        new OnboardingPagePresenter(activity, this);
-    }
-
     @NonNull
     @Override
     public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
@@ -120,8 +105,20 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding_page, container, false);
         bindViews(view);
-        mPresenter.start();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        observeViewModel();
+        mViewModel.start();
+    }
+
+    private void observeViewModel() {
+        mViewModel.getIllustrationAdapter().observe(getViewLifecycleOwner(), this::showImage);
+        mViewModel.getTitleResId().observe(getViewLifecycleOwner(), this::showTitle);
+        mViewModel.getMessageResId().observe(getViewLifecycleOwner(), this::showMessage);
     }
 
     private void adjustPaddingsLandscape(@NonNull final View view) {
@@ -146,35 +143,27 @@ public class OnboardingPageFragment extends Fragment implements OnboardingPageCo
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.onPageIsVisible();
+        mViewModel.onPageIsVisible();
     }
 
-    @Override
-    public void setPresenter(@NonNull OnboardingPageContract.Presenter presenter) {
-        mPresenter = presenter;
-    }
-
-    @Override
-    public void showImage(@NonNull OnboardingIllustrationAdapter illustrationAdapter) {
+    private void showImage(@NonNull OnboardingIllustrationAdapter illustrationAdapter) {
         injectedIconContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
                 // We can create our local instance because onboarding illustrations are not shown on multiple screens
                 new InjectedViewAdapterInstance<>(illustrationAdapter), injectedViewAdapter -> {
         }));
     }
 
-    @Override
-    public void showTitle(int titleResId) {
+    private void showTitle(int titleResId) {
         mTextTitle.setText(titleResId);
     }
 
-    @Override
-    public void showMessage(int messageResId) {
+    private void showMessage(int messageResId) {
         mTextMessage.setText(messageResId);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mPresenter.onPageIsHidden();
+        mViewModel.onPageIsHidden();
     }
 }

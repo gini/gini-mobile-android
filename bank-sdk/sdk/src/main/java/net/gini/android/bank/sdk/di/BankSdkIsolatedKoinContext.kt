@@ -5,7 +5,13 @@ import android.content.Context
 import android.util.Log
 import net.gini.android.bank.sdk.capture.captureFlowFragmentModule
 import net.gini.android.bank.sdk.capture.di.skonto.skontoCommonModule
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.lineItemDetailsScreenModule
+import net.gini.android.bank.sdk.capture.digitalinvoice.digitalInvoiceScreenModule
+import net.gini.android.bank.sdk.capture.digitalinvoice.help.digitalInvoiceHelpScreenModule
+import net.gini.android.bank.sdk.capture.digitalinvoice.onboarding.digitalInvoiceOnboardingScreenModule
+import net.gini.android.bank.sdk.capture.digitalinvoice.returnReasonsScreenModule
 import net.gini.android.bank.sdk.capture.digitalinvoice.skonto.digitalInvoiceSkontoScreenModule
+import net.gini.android.bank.sdk.capture.skonto.help.skontoHelpScreenModule
 import net.gini.android.bank.sdk.capture.skonto.skontoScreenModule
 import net.gini.android.bank.sdk.capture.skonto.usecase.di.skontoUseCaseModule
 import net.gini.android.bank.sdk.invoice.invoicePreviewScreenModule
@@ -79,7 +85,13 @@ private val screenModules = listOf(
     invoicePreviewScreenModule,
     transactionDocInvoicePreviewScreenModule,
     captureFlowFragmentModule,
-    digitalInvoiceSkontoScreenModule
+    digitalInvoiceSkontoScreenModule,
+    digitalInvoiceOnboardingScreenModule,
+    lineItemDetailsScreenModule,
+    digitalInvoiceScreenModule,
+    digitalInvoiceHelpScreenModule,
+    returnReasonsScreenModule,
+    skontoHelpScreenModule
 )
 
 fun getGiniBankKoin() = BankSdkIsolatedKoinContext.koin

@@ -9,9 +9,6 @@
         android:appComponentFactory="androidx.core.app.CoreComponentFactory">
 
         <activity
-            android:name="net.gini.android.capture.analysis.AnalysisFragmentHostActivity"
-            android:theme="@style/GiniCaptureTheme" />
-        <activity
             android:name="net.gini.android.capture.onboarding.OnboardingFragmentHostActivity"
             android:theme="@style/GiniCaptureTheme" />
         <activity android:name="net.gini.android.capture.help.CustomHelpActivity" />

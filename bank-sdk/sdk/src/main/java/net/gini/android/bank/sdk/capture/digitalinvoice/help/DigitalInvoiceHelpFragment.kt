@@ -5,10 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceHelpBinding
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.autoCleared
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
@@ -21,6 +26,8 @@ import net.gini.android.capture.view.NavButtonType
  */
 class DigitalInvoiceHelpFragment : Fragment() {
     private var binding: GbsFragmentDigitalInvoiceHelpBinding by autoCleared()
+
+    private val viewModel: DigitalInvoiceHelpViewModel by giniBankViewModel()
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -38,10 +45,29 @@ class DigitalInvoiceHelpFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeSideEffects()
+    }
+
+    private fun observeSideEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sideEffects.collect { sideEffect ->
+                    when (sideEffect) {
+                        DigitalInvoiceHelpViewModel.SideEffect.NavigateBack ->
+                            NavHostFragment.findNavController(this@DigitalInvoiceHelpFragment)
+                                .popBackStack()
+                    }
+                }
+            }
+        }
+    }
+
     private fun setupHelpList() {
         val recyclerView = binding.gbsHelpItems
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = HelpItemAdapter(requireContext())
+        recyclerView.adapter = HelpItemAdapter(requireContext(), viewModel.helpItems)
     }
 
     private fun setupTopBarNavigation() {
@@ -57,7 +83,7 @@ class DigitalInvoiceHelpFragment : Fragment() {
                 injectedAdapterView.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
 
                 injectedAdapterView.setOnNavButtonClickListener(IntervalClickListener {
-                    NavHostFragment.findNavController(this).popBackStack()
+                    viewModel.onBackClicked()
                 })
             }
         }
@@ -69,7 +95,7 @@ class DigitalInvoiceHelpFragment : Fragment() {
             injectedViewContainer.injectedViewAdapterHolder =
                 InjectedViewAdapterHolder(GiniBank.digitalInvoiceHelpNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
                     injectedViewAdapter.setOnBackButtonClickListener(IntervalClickListener {
-                        NavHostFragment.findNavController(this).popBackStack()
+                        viewModel.onBackClicked()
                     })
                 }
         }

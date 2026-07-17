@@ -39,15 +39,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
-import net.gini.android.bank.sdk.GiniBank
+import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.help.colors.SkontoHelpScreenColors
 import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpDescriptionSectionColors
 import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpFooterSectionColors
 import net.gini.android.bank.sdk.capture.skonto.help.colors.section.SkontoHelpItemsSectionColors
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.disallowScreenshots
-import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ui.components.tooltip.GiniTooltipBox
 import net.gini.android.capture.ui.components.topbar.GiniTopBar
 import net.gini.android.capture.ui.components.topbar.GiniTopBarColors
@@ -58,17 +61,14 @@ import net.gini.android.capture.view.InjectedViewAdapterInstance
 
 class SkontoHelpFragment : Fragment() {
 
-    private val isBottomNavigationBarEnabled =
-        GiniCapture.getInstance().isBottomNavigationBarEnabled
+    private val viewModel: SkontoHelpViewModel by giniBankViewModel()
 
-    private val customBottomNavBarAdapter: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? =
-        GiniBank.skontoHelpNavigationBarBottomAdapterInstance
     private var customBottomNavigationBarView: View? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (GiniCapture.hasInstance() && !GiniCapture.getInstance().allowScreenshots) {
+        if (viewModel.shouldDisallowScreenshots) {
             requireActivity().window.disallowScreenshots()
         }
 
@@ -81,20 +81,37 @@ class SkontoHelpFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         customBottomNavigationBarView =
-            container?.let { customBottomNavBarAdapter?.viewAdapter?.onCreateView(it) }
+            container?.let { viewModel.customBottomNavBarAdapter?.viewAdapter?.onCreateView(it) }
 
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 GiniTheme {
                     ScreenContent(
-                        isBottomNavigationBarEnabled = isBottomNavigationBarEnabled,
-                        customBottomNavBarAdapter = customBottomNavBarAdapter,
+                        isBottomNavigationBarEnabled = viewModel.isBottomNavigationBarEnabled,
+                        customBottomNavBarAdapter = viewModel.customBottomNavBarAdapter,
                         navigateBack = {
-                            findNavController()
-                                .navigateUp()
+                            viewModel.onBackClicked()
                         }
                     )
+                }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeSideEffects()
+    }
+
+    private fun observeSideEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sideEffects.collect { sideEffect ->
+                    when (sideEffect) {
+                        SkontoHelpViewModel.SideEffect.NavigateBack ->
+                            findNavController().navigateUp()
+                    }
                 }
             }
         }

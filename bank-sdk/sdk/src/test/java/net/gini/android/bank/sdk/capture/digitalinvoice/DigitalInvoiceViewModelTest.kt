@@ -1,29 +1,34 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import io.mockk.Runs
-import io.mockk.confirmVerified
 import io.mockk.every
-import io.mockk.excludeRecords
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import net.gini.android.bank.sdk.GiniBank
-import net.gini.android.bank.sdk.di.BankSdkIsolatedKoinContext
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoAmountUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoDefaultSelectionStateUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoEdgeCaseUseCase
+import net.gini.android.bank.sdk.capture.skonto.usecase.GetSkontoSavedAmountUseCase
+import net.gini.android.bank.sdk.capture.util.OncePerInstallEventStore
+import net.gini.android.bank.sdk.capture.util.SimpleBusEventStore
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
 
-@RunWith(AndroidJUnit4::class)
-class DigitalInvoiceScreenPresenterTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class DigitalInvoiceViewModelTest {
 
     private val returnReasonsFixture = listOf(
         GiniCaptureReturnReason("1", mapOf("de" to "Foo", "en" to "Foo")),
@@ -32,64 +37,75 @@ class DigitalInvoiceScreenPresenterTest {
 
     @Before
     fun setUp() {
-        BankSdkIsolatedKoinContext.init(InstrumentationRegistry.getInstrumentation().context)
+        Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    private fun createViewModel(
+        extractions: Map<String, GiniCaptureSpecificExtraction> = emptyMap(),
+        compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
+        returnReasons: List<GiniCaptureReturnReason> = emptyList(),
+        oncePerInstallEventStore: OncePerInstallEventStore = mockk(relaxed = true),
+        simpleBusEventStore: SimpleBusEventStore = mockk(relaxed = true) {
+            every { observeChange(any()) } returns emptyFlow()
+        },
+    ) = DigitalInvoiceViewModel(
+        extractions = extractions,
+        compoundExtractions = compoundExtractions,
+        returnReasons = returnReasons,
+        skontoData = null,
+        savedInstanceBundle = null,
+        oncePerInstallEventStore = oncePerInstallEventStore,
+        simpleBusEventStore = simpleBusEventStore,
+        getSkontoDefaultSelectionStateUseCase = GetSkontoDefaultSelectionStateUseCase(),
+        getSkontoEdgeCaseUseCase = GetSkontoEdgeCaseUseCase(),
+        getSkontoAmountUseCase = GetSkontoAmountUseCase(),
+        getSkontoSavedAmountUseCase = GetSkontoSavedAmountUseCase(),
+        skontoInfoBannerTextFactory = mockk(),
+    )
+
     @Test
-    fun `shows return reasons dialog when enabled and has a return reasons list`() {
+    fun `shows return reasons dialog when enabled and has a return reasons list`() = runTest {
         // Given
         GiniBank.enableReturnReasons = true
 
-        val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
+        val viewModel = createViewModel(returnReasons = returnReasonsFixture)
 
-        val presenter = DigitalInvoiceScreenPresenter(
-            activity = mockk(),
-            view = view,
-            returnReasons = returnReasonsFixture,
-            savedInstanceBundle = null,
-            oncePerInstallEventStore = mockk(),
-            simpleBusEventStore = mockk()
-        )
+        viewModel.sideEffects.test {
+            // When
+            viewModel.deselectLineItem(mockk<SelectableLineItem>())
 
-        // When
-        presenter.deselectLineItem(mockk<SelectableLineItem>())
-
-        // Then
-        excludeRecords { view.setPresenter(any()) }
-        verify { view.showReturnReasonDialog(any(), any()) }
-        confirmVerified(view)
+            // Then
+            val sideEffect = awaitItem()
+            assertThat(sideEffect)
+                .isInstanceOf(DigitalInvoiceSideEffect.ShowReturnReasonDialog::class.java)
+            assertThat(
+                (sideEffect as DigitalInvoiceSideEffect.ShowReturnReasonDialog).reasons
+            ).isEqualTo(returnReasonsFixture)
+            expectNoEvents()
+        }
     }
 
     @Test
-    fun `skips return reasons dialog - (isReturnReasonsEnabled, listOfReturnReasons)`() {
+    fun `skips return reasons dialog - (isReturnReasonsEnabled, listOfReturnReasons)`() = runTest {
 
         skipsReturnReasonDialogValues().forEach { (isReturnReasonsEnabled, listOfReturnReasons) ->
             // Given
             GiniBank.enableReturnReasons = isReturnReasonsEnabled
 
-            val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
+            val viewModel = createViewModel(returnReasons = listOfReturnReasons)
 
-            val presenter = DigitalInvoiceScreenPresenter(
-                activity = mockk(),
-                view = view,
-                returnReasons = listOfReturnReasons,
-                savedInstanceBundle = null,
-                oncePerInstallEventStore = mockk(relaxed = true),
-                simpleBusEventStore = mockk()
-            )
+            viewModel.sideEffects.test {
+                // When
+                viewModel.deselectLineItem(mockk<SelectableLineItem>())
 
-            // When
-            presenter.deselectLineItem(mockk<SelectableLineItem>())
-
-            // Then
-            excludeRecords {
-                view.setPresenter(any())
-                view.showLineItems(any(), any())
-                view.updateFooterDetails(any())
-                view.showAddons(any())
+                // Then
+                expectNoEvents()
             }
-            verify(exactly = 0) { view.showReturnReasonDialog(any(), any()) }
-            confirmVerified(view)
         }
     }
 
@@ -227,43 +243,26 @@ class DigitalInvoiceScreenPresenterTest {
     )
 
     @Test
-    fun `enables pay button - (extractions, compoundExtractions, deselectedLineItems)`() {
+    fun `enables pay button - (extractions, compoundExtractions, deselectedLineItems)`() = runTest {
         enablesPayButtonValues().forEach { (extractions, compoundExtractions, deselectedLineItemIndexes) ->
 
             GiniBank.enableReturnReasons = false
 
-            val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
-            val footerDetailsSlot = slot<DigitalInvoiceScreenContract.FooterDetails>()
-            every { view.updateFooterDetails(capture(footerDetailsSlot)) } just Runs
-
-            val presenter = DigitalInvoiceScreenPresenter(
-                activity = mockk(),
-                view = view,
+            val viewModel = createViewModel(
                 extractions = extractions,
-                compoundExtractions = compoundExtractions,
-                savedInstanceBundle = null,
-                oncePerInstallEventStore = mockk(relaxed = true),
-                simpleBusEventStore = mockk(relaxed = true)
+                compoundExtractions = compoundExtractions
             )
 
             // When
-            presenter.start()
+            viewModel.start()
             deselectedLineItemIndexes.forEach { index ->
-                presenter.deselectLineItem(index)
+                viewModel.deselectLineItem(index)
             }
 
             // Then
-            excludeRecords {
-                view.setPresenter(any())
-                view.showLineItems(any(), any())
-                view.showAddons(any())
-                view.animateListScroll()
-                view.showOnboarding()
-            }
-            verify { view.updateFooterDetails(any()) }
-            confirmVerified(view)
-
-            assertThat(footerDetailsSlot.captured.buttonEnabled).isTrue()
+            val footerDetails = viewModel.uiState.value.footerDetails
+            assertThat(footerDetails).isNotNull()
+            assertThat(footerDetails!!.buttonEnabled).isTrue()
         }
     }
 
@@ -296,93 +295,56 @@ class DigitalInvoiceScreenPresenterTest {
     }
 
     @Test
-    fun `disables pay button if total price is zero without selected line items`() {
+    fun `disables pay button if total price is zero without selected line items`() = runTest {
         // Given
         GiniBank.enableReturnReasons = false
 
-        val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
-        val footerDetailsSlot = slot<DigitalInvoiceScreenContract.FooterDetails>()
-        every { view.updateFooterDetails(capture(footerDetailsSlot)) } just Runs
-
-        val presenter = DigitalInvoiceScreenPresenter(
-            activity = mockk(),
-            view = view,
+        val viewModel = createViewModel(
             extractions = extractionsWithoutOtherChargesFixture,
-            compoundExtractions = compoundExtractionsFixture,
-            savedInstanceBundle = null,
-            oncePerInstallEventStore = mockk(relaxed = true),
-            simpleBusEventStore = mockk(relaxed = true)
+            compoundExtractions = compoundExtractionsFixture
         )
 
         // When
-        presenter.start()
-        presenter.deselectAllLineItems()
+        viewModel.start()
+        viewModel.deselectAllLineItems()
 
         // Then
-        excludeRecords {
-            view.setPresenter(any())
-            view.showLineItems(any(), any())
-            view.showAddons(any())
-            view.animateListScroll()
-            view.showOnboarding()
-        }
-        verify { view.updateFooterDetails(any()) }
-        confirmVerified(view)
-
-        assertThat(footerDetailsSlot.captured.buttonEnabled).isFalse()
+        val footerDetails = viewModel.uiState.value.footerDetails
+        assertThat(footerDetails).isNotNull()
+        assertThat(footerDetails!!.buttonEnabled).isFalse()
     }
 
     @Test
-    fun `disables pay button if total price is zero with selected line items`() {
+    fun `disables pay button if total price is zero with selected line items`() = runTest {
         // Given
         GiniBank.enableReturnReasons = false
 
-        val view: DigitalInvoiceScreenContract.View = mockk(relaxed = true)
-
-        val footerDetailsSlot = slot<DigitalInvoiceScreenContract.FooterDetails>()
-        every { view.updateFooterDetails(capture(footerDetailsSlot)) } just Runs
-
-        val lineItemsSlot = slot<List<SelectableLineItem>>()
-        every { view.showLineItems(capture(lineItemsSlot), any()) } just Runs
-
-        val presenter = DigitalInvoiceScreenPresenter(
-            activity = mockk(),
-            view = view,
+        val viewModel = createViewModel(
             extractions = extractionsWithoutOtherChargesFixture,
-            compoundExtractions = compoundExtractionsFixture,
-            savedInstanceBundle = null,
-            oncePerInstallEventStore = mockk(relaxed = true),
-            simpleBusEventStore = mockk(relaxed = true)
+            compoundExtractions = compoundExtractionsFixture
         )
 
         // When
-        presenter.start()
+        viewModel.start()
+        val lineItems = viewModel.uiState.value.lineItems
         // Leave only first item selected
-        lineItemsSlot.captured.forEachIndexed { index, selectableLineItem ->
+        lineItems.forEachIndexed { index, selectableLineItem ->
             if (index != 0) {
-                presenter.deselectLineItem(selectableLineItem)
+                viewModel.deselectLineItem(selectableLineItem)
             }
         }
         // Set first item's price to 0
-        presenter.updateLineItem(
-            lineItemsSlot.captured[0].copy(
-                lineItem = lineItemsSlot.captured[0].lineItem.copy(
+        viewModel.updateLineItem(
+            lineItems[0].copy(
+                lineItem = lineItems[0].lineItem.copy(
                     rawGrossPrice = "0.00:EUR"
                 )
             )
         )
 
         // Then
-        excludeRecords {
-            view.setPresenter(any())
-            view.showLineItems(any(), any())
-            view.showAddons(any())
-            view.animateListScroll()
-            view.showOnboarding()
-        }
-        verify { view.updateFooterDetails(any()) }
-        confirmVerified(view)
-
-        assertThat(footerDetailsSlot.captured.buttonEnabled).isFalse()
+        val footerDetails = viewModel.uiState.value.footerDetails
+        assertThat(footerDetails).isNotNull()
+        assertThat(footerDetails!!.buttonEnabled).isFalse()
     }
 }

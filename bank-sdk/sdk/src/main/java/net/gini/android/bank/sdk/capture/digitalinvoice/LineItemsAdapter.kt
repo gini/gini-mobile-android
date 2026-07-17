@@ -113,7 +113,7 @@ internal class LineItemsAdapter(
 
     var isInaccurateExtraction: Boolean = false
 
-    private var footerDetails: DigitalInvoiceScreenContract.FooterDetails? = null
+    private var footerDetails: FooterDetails? = null
         set(value) {
             field = value
             notifyDataSetChanged()

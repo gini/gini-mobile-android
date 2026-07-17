@@ -8,8 +8,6 @@ import androidx.annotation.Nullable;
 
 import net.gini.android.capture.BankSDKBridge;
 import net.gini.android.capture.Document;
-import net.gini.android.capture.internal.ui.FragmentImplCallback;
-import net.gini.android.capture.internal.util.CancelListener;
 
 /**
  * Helper class for setting arguments to analysis fragment
@@ -33,26 +31,36 @@ final class AnalysisFragmentHelper {
         return arguments;
     }
 
-    static AnalysisFragmentImpl createFragmentImpl(@NonNull final FragmentImplCallback fragment, @NonNull CancelListener cancelListener,
-                                                   @NonNull final Bundle arguments) {
-        final Document document = arguments.getParcelable(ARGS_DOCUMENT);
-        final Boolean isInvoiceSavingEnabled = arguments.getBoolean(GC_ARGS_SAVE_INVOICES, false);
-        if (document != null) {
-            final String analysisErrorMessage = arguments.getString(
-                    ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE);
-            return new AnalysisFragmentImpl(fragment, cancelListener, document, analysisErrorMessage, isInvoiceSavingEnabled);
-        } else {
+    @NonNull
+    static Document requireDocument(@Nullable final Bundle arguments) {
+        final Document document = arguments != null
+                ? arguments.getParcelable(ARGS_DOCUMENT)
+                : null;
+        if (document == null) {
             throw new IllegalStateException(
                     "AnalysisFragmentCompat requires a Document. Use the createInstance() method of these classes for instantiating.");
         }
+        return document;
     }
 
-    public static void setListener(@NonNull final AnalysisFragmentImpl fragmentImpl,
-            @NonNull final Context context, @Nullable final AnalysisFragmentListener listener) {
+    @Nullable
+    static String getDocumentAnalysisErrorMessage(@Nullable final Bundle arguments) {
+        return arguments != null
+                ? arguments.getString(ARGS_DOCUMENT_ANALYSIS_ERROR_MESSAGE)
+                : null;
+    }
+
+    static boolean isInvoiceSavingEnabled(@Nullable final Bundle arguments) {
+        return arguments != null && arguments.getBoolean(GC_ARGS_SAVE_INVOICES, false);
+    }
+
+    @NonNull
+    static AnalysisFragmentListener resolveListener(@Nullable final Context context,
+            @Nullable final AnalysisFragmentListener listener) {
         if (context instanceof AnalysisFragmentListener) {
-            fragmentImpl.setListener((AnalysisFragmentListener) context);
+            return (AnalysisFragmentListener) context;
         } else if (listener != null) {
-            fragmentImpl.setListener(listener);
+            return listener;
         } else {
             throw new IllegalStateException(
                     "AnalysisFragmentListener not set. "
@@ -61,12 +69,13 @@ final class AnalysisFragmentHelper {
         }
     }
 
-    public static void setBankSDKBridge(@NonNull final AnalysisFragmentImpl fragmentImpl,
-                                        @NonNull final Context context, @Nullable final BankSDKBridge bankSDKBridge) {
+    @NonNull
+    static BankSDKBridge resolveBankSDKBridge(@Nullable final Context context,
+            @Nullable final BankSDKBridge bankSDKBridge) {
         if (context instanceof BankSDKBridge) {
-            fragmentImpl.setBankSDKBridge((BankSDKBridge) context);
+            return (BankSDKBridge) context;
         } else if (bankSDKBridge != null) {
-            fragmentImpl.setBankSDKBridge(bankSDKBridge);
+            return bankSDKBridge;
         } else {
             throw new IllegalStateException(
                     "BankSDKBridge not set. "

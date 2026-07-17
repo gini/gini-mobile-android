@@ -1,6 +1,5 @@
 package net.gini.android.bank.sdk.capture.digitalinvoice
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -18,26 +17,28 @@ import androidx.core.os.BundleCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.analytics.getDifferences
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenContract
-import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsScreenPresenter
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsSideEffect
+import net.gini.android.bank.sdk.capture.digitalinvoice.details.LineItemDetailsViewModel
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.MIN_QUANTITY
 import net.gini.android.bank.sdk.capture.digitalinvoice.details.doAfterTextChanged
 import net.gini.android.bank.sdk.capture.util.amountWatcher
 import net.gini.android.bank.sdk.capture.util.hideKeyboard
 import net.gini.android.bank.sdk.capture.util.showKeyboard
 import net.gini.android.bank.sdk.databinding.GbsEditItemBottomSheetBinding
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.bank.sdk.util.wrappedWithGiniCaptureTheme
 import net.gini.android.capture.AmountCurrency
 import net.gini.android.capture.GiniCapture
-import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent
 import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty
@@ -48,7 +49,7 @@ private const val ARGS_SELECTABLE_LINE_ITEM = "GBS_ARGS_SELECTABLE_LINE_ITEM"
 /**
  * Internal use only.
  */
-internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItemDetailsScreenContract.View {
+internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: GbsEditItemBottomSheetBinding
     private var selectableLineItem: SelectableLineItem? = null
@@ -75,13 +76,41 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
     private var restoringFromOrientationChange = false
 
+    private val viewModel: LineItemDetailsViewModel by giniBankViewModel(
+        parameters = { org.koin.core.parameter.parametersOf(requireNotNull(selectableLineItem)) }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             selectableLineItem = BundleCompat.getParcelable(it, ARGS_SELECTABLE_LINE_ITEM, SelectableLineItem::class.java)
             originalSelectableLineItem = selectableLineItem?.copy()
-            activity?.let { activity ->
-                createPresenter(activity)
+        }
+        observeSideEffects()
+    }
+
+    private fun observeSideEffects() {
+        // Intentionally not bound to repeatOnLifecycle: the Save side effect is emitted right
+        // before dismiss() and must still be delivered while the dialog is going away.
+        lifecycleScope.launch {
+            viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is LineItemDetailsSideEffect.Save -> {
+                        trackSaveTappedEvent(sideEffect.selectableLineItem)
+                        setFragmentResult(REQUEST_KEY, Bundle().apply {
+                            putParcelable(RESULT_KEY, sideEffect.selectableLineItem)
+                        })
+                    }
+
+                    is LineItemDetailsSideEffect.UpdateQuantityField -> {
+                        quantity = sideEffect.quantity
+                        binding.gbsQuantityEditTxt.setText("$quantity")
+                    }
+
+                    is LineItemDetailsSideEffect.ShowReturnReasonDialog -> {
+                        // Not applicable in bottom sheet - return reason dialog not shown here
+                    }
+                }
             }
         }
     }
@@ -129,11 +158,6 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         return R.style.GiniCaptureTheme_DigitalInvoice_Edit_BottomSheetDialog
 
     }
-
-    private fun createPresenter(activity: Activity) = LineItemDetailsScreenPresenter(
-        activity, this,
-        selectableLineItem!!
-    )
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -260,17 +284,17 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
      */
     override fun onStart() {
         super.onStart()
-        presenter?.start()
+        showInitialFieldValues()
     }
 
-    /**
-     * Internal use only.
-     *
-     * @suppress
-     */
-    override fun onStop() {
-        super.onStop()
-        presenter?.stop()
+    private fun showInitialFieldValues() {
+        if (restoringFromOrientationChange) return
+        viewModel.uiState.value.let { state ->
+            binding.gbsArticleNameEditTxt.setText(state.description)
+            quantity = state.quantity
+            binding.gbsQuantityEditTxt.setText("$quantity")
+            binding.gbsUnitPriceEditTxt.setText(state.grossPriceDisplay)
+        }
     }
 
     override fun onResume() {
@@ -302,7 +326,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
         binding.gbsUnitPriceEditTxt.setOnEditorActionListener(editorListener)
 
         binding.gbsQuantityEditTxt.doAfterTextChanged {
-            presenter?.setQuantity(
+            viewModel.setQuantity(
                 try {
                     it.toInt()
                 } catch (_: NumberFormatException) {
@@ -367,7 +391,7 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
     private fun handleSave() {
         if (selectableLineItem == null) return
         if (!validateLineItemValues()) return
-        presenter?.save()
+        viewModel.save()
         dismiss()
     }
 
@@ -376,20 +400,20 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
 
         val editedName = binding.gbsArticleNameEditTxt.text.toString()
 
-        if (presenter?.validateLineItemName(editedName) == false) {
+        if (!viewModel.validateLineItemName(editedName)) {
             binding.gbsNameErrorTextView.visibility = View.VISIBLE
             fieldsAreValid = false
         }
 
         val editedPrice = binding.gbsUnitPriceEditTxt.text.toString()
 
-        if (presenter?.validateLineItemGrossPrice(editedPrice) == false) {
+        if (!viewModel.validateLineItemGrossPrice(editedPrice)) {
             binding.gbsPriceErrorTextView.visibility = View.VISIBLE
             fieldsAreValid = false
         }
 
-        presenter?.setDescription(editedName)
-        presenter?.setGrossPrice(editedPrice)
+        viewModel.setDescription(editedName)
+        viewModel.setGrossPrice(editedPrice)
 
         return fieldsAreValid
     }
@@ -445,66 +469,6 @@ internal class DigitalInvoiceBottomSheet : BottomSheetDialogFragment(), LineItem
             setupInputHandlers()
             manageFocuses()
         }
-    }
-
-    private var presenter: LineItemDetailsScreenContract.Presenter? = null
-
-    override fun showDescription(description: String) {
-        if (restoringFromOrientationChange) return
-        binding.gbsArticleNameEditTxt.setText(description)
-    }
-
-    override fun showQuantity(quantity: Int) {
-        if (restoringFromOrientationChange) return
-        this.quantity = quantity
-        binding.gbsQuantityEditTxt.setText("${this.quantity}")
-    }
-
-    override fun showGrossPrice(displayedGrossPrice: String, currency: String) {
-        if (restoringFromOrientationChange) return
-        binding.gbsUnitPriceEditTxt.setText(displayedGrossPrice)
-    }
-
-    override fun showCheckbox(selected: Boolean, quantity: Int, visible: Boolean) {
-        // Not applicable in bottom sheet - checkbox is not shown here
-    }
-
-    override fun showTotalGrossPrice(integralPart: String, fractionalPart: String) {
-        // Not applicable in bottom sheet - total price is not displayed here
-    }
-
-    override fun enableSaveButton() {
-        // Not applicable in bottom sheet - save button state is managed differently
-    }
-
-    override fun disableSaveButton() {
-        // Not applicable in bottom sheet - save button state is managed differently
-    }
-
-    override fun enableInput() {
-        // Not applicable in bottom sheet - input is always enabled
-    }
-
-    override fun disableInput() {
-        // Not applicable in bottom sheet - input disabling not needed here
-    }
-
-    override fun showReturnReasonDialog(
-        reasons: List<GiniCaptureReturnReason>,
-        resultCallback: ReturnReasonDialogResultCallback
-    ) {
-        // Not applicable in bottom sheet - return reason dialog not shown here
-    }
-
-    override fun onSave(selectableLineItem: SelectableLineItem) {
-        trackSaveTappedEvent(selectableLineItem)
-        setFragmentResult(REQUEST_KEY, Bundle().apply {
-            putParcelable(RESULT_KEY, selectableLineItem)
-        })
-    }
-
-    override fun setPresenter(presenter: LineItemDetailsScreenContract.Presenter) {
-        this.presenter = presenter
     }
 
     @ColorInt

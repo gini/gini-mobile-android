@@ -1,6 +1,5 @@
 package net.gini.android.capture.onboarding;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,9 +17,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -53,11 +52,11 @@ import static net.gini.android.capture.onboarding.view.OnboardingNavigationBarBo
  *
  * @suppress
  */
-public class OnboardingFragment extends Fragment implements OnboardingScreenContract.View {
+public class OnboardingFragment extends Fragment {
 
     private static final Logger LOG = LoggerFactory.getLogger(OnboardingFragment.class);
 
-    private OnboardingScreenContract.Presenter mPresenter;
+    private OnboardingViewModel mViewModel;
 
     private ViewPager mViewPager;
     private LinearLayout mLayoutPageIndicators;
@@ -79,11 +78,11 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final FragmentActivity activity = getActivity();
-        if (activity == null) {
-            throw new IllegalStateException("Missing activity for fragment.");
+        mViewModel = new ViewModelProvider(this).get(OnboardingViewModel.class);
+        final ArrayList<OnboardingPage> customPages = getCustomOnboardingPages();
+        if (customPages != null) {
+            mViewModel.setCustomPages(customPages);
         }
-        initPresenter(activity, getCustomOnboardingPages());
     }
 
     @Nullable
@@ -92,17 +91,6 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
             return GiniCapture.getInstance().getCustomOnboardingPages();
         }
         return null;
-    }
-
-    private void initPresenter(@NonNull final Activity activity, @Nullable final ArrayList<OnboardingPage> pages) { // NOPMD - Bundle
-        createPresenter(activity);
-        if (pages != null) {
-            mPresenter.setCustomPages(pages);
-        }
-    }
-
-    protected void createPresenter(@NonNull final Activity activity) {
-        new OnboardingScreenPresenter(activity, this);
     }
 
     @NonNull
@@ -119,20 +107,66 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         final View view = inflater.inflate(R.layout.gc_fragment_onboarding, container, false);
         bindViews(view);
         addInputHandlers();
-        mPresenter.start();
         return view;
     }
 
     @Override
-    public void hideButtons() {
+    public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        observeViewModel();
+        mViewModel.start();
+    }
+
+    private void observeViewModel() {
+        mViewModel.getPages().observe(getViewLifecycleOwner(), this::showPages);
+        mViewModel.getScrollToPage().observe(getViewLifecycleOwner(), event -> {
+            final Integer pageIndex = event.getContentIfNotHandled();
+            if (pageIndex != null) {
+                scrollToPage(pageIndex);
+            }
+        });
+        mViewModel.getActivePageIndex().observe(getViewLifecycleOwner(),
+                this::activatePageIndicatorForPage);
+        mViewModel.getNavigationBarBottomAdapterInstance().observe(getViewLifecycleOwner(),
+                adapterInstance -> {
+                    setNavigationBarBottomAdapterInstance(adapterInstance);
+                    hideButtons();
+                });
+        mViewModel.getButtonsState().observe(getViewLifecycleOwner(), this::updateButtons);
+        mViewModel.getCloseOnboarding().observe(getViewLifecycleOwner(), event -> {
+            if (event.getContentIfNotHandled() != null) {
+                close();
+            }
+        });
+    }
+
+    private void updateButtons(@NonNull final OnboardingButtonsState buttonsState) {
+        switch (buttonsState) {
+            case SKIP_AND_NEXT:
+                showSkipAndNextButtons();
+                break;
+            case SKIP_AND_NEXT_IN_NAVIGATION_BAR_BOTTOM:
+                showSkipAndNextButtonsInNavigationBarBottom();
+                break;
+            case GET_STARTED:
+                showGetStartedButton();
+                break;
+            case GET_STARTED_IN_NAVIGATION_BAR_BOTTOM:
+                showGetStartedButtonInNavigationBarBottom();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void hideButtons() {
         if (injectedNavigationBarBottomContainer != null) {
             groupNextAndSkipButtons.setVisibility(View.GONE);
             buttonGetStarted.setVisibility(View.GONE);
         }
     }
 
-    @Override
-    public void close() {
+    private void close() {
         NavHostFragment.findNavController(this).popBackStack();
     }
 
@@ -170,18 +204,12 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
     }
 
     private void addInputHandlers() {
-        ClickListenerExtKt.setIntervalClickListener(buttonNext, v -> mPresenter.showNextPage());
-        ClickListenerExtKt.setIntervalClickListener(buttonSkip, v -> mPresenter.skip());
-        ClickListenerExtKt.setIntervalClickListener(buttonGetStarted, v -> mPresenter.showNextPage());
+        ClickListenerExtKt.setIntervalClickListener(buttonNext, v -> mViewModel.showNextPage());
+        ClickListenerExtKt.setIntervalClickListener(buttonSkip, v -> mViewModel.skip());
+        ClickListenerExtKt.setIntervalClickListener(buttonGetStarted, v -> mViewModel.showNextPage());
     }
 
-    @Override
-    public void setPresenter(@NonNull OnboardingScreenContract.Presenter presenter) {
-        mPresenter = presenter;
-    }
-
-    @Override
-    public void showPages(@NonNull List<OnboardingPage> pages) {
+    private void showPages(@NonNull List<OnboardingPage> pages) {
         setUpViewPager(pages);
     }
 
@@ -223,7 +251,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         mPageIndicators = new PageIndicators(getActivity(), numberOfPageIndicators, mLayoutPageIndicators);
         mPageIndicators.create();
 
-        mViewPager.addOnPageChangeListener(new PageChangeListener(mPresenter));
+        mViewPager.addOnPageChangeListener(new PageChangeListener(mViewModel));
     }
 
     private void handleViewPagerContentOnRunTime(@NonNull final List<OnboardingPage> pages) {
@@ -242,24 +270,20 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
                     }
                 });
     }
-    @Override
-    public void scrollToPage(int pageIndex) {
+    private void scrollToPage(int pageIndex) {
         mViewPager.setCurrentItem(pageIndex);
     }
 
-    @Override
-    public void activatePageIndicatorForPage(int pageIndex) {
+    private void activatePageIndicatorForPage(int pageIndex) {
         mPageIndicators.setActive(pageIndex);
     }
 
-    @Override
-    public void showGetStartedButton() {
+    private void showGetStartedButton() {
         groupNextAndSkipButtons.setVisibility(View.INVISIBLE);
         buttonGetStarted.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public void showGetStartedButtonInNavigationBarBottom() {
+    private void showGetStartedButtonInNavigationBarBottom() {
         navigationBarBottomButtons = new OnboardingNavigationBarBottomButton[]{GET_STARTED};
         if (injectedNavigationBarBottomContainer != null) {
             injectedNavigationBarBottomContainer.modifyAdapterIfOwned(adapter -> {
@@ -269,14 +293,12 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         }
     }
 
-    @Override
-    public void showSkipAndNextButtons() {
+    private void showSkipAndNextButtons() {
         groupNextAndSkipButtons.setVisibility(View.VISIBLE);
         buttonGetStarted.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    public void showSkipAndNextButtonsInNavigationBarBottom() {
+    private void showSkipAndNextButtonsInNavigationBarBottom() {
         navigationBarBottomButtons = new OnboardingNavigationBarBottomButton[]{SKIP, NEXT};
         if (injectedNavigationBarBottomContainer != null) {
             injectedNavigationBarBottomContainer.modifyAdapterIfOwned(adapter -> {
@@ -286,13 +308,12 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         }
     }
 
-    @Override
-    public void setNavigationBarBottomAdapterInstance(@NonNull InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> adapterInstance) {
+    private void setNavigationBarBottomAdapterInstance(@NonNull InjectedViewAdapterInstance<OnboardingNavigationBarBottomAdapter> adapterInstance) {
         if (injectedNavigationBarBottomContainer != null) {
             injectedNavigationBarBottomContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(adapterInstance, injectedViewAdapter -> {
-                injectedViewAdapter.setOnNextButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
-                injectedViewAdapter.setOnSkipButtonClickListener(new IntervalClickListener(v -> mPresenter.skip()));
-                injectedViewAdapter.setOnGetStartedButtonClickListener(new IntervalClickListener(v -> mPresenter.showNextPage()));
+                injectedViewAdapter.setOnNextButtonClickListener(new IntervalClickListener(v -> mViewModel.showNextPage()));
+                injectedViewAdapter.setOnSkipButtonClickListener(new IntervalClickListener(v -> mViewModel.skip()));
+                injectedViewAdapter.setOnGetStartedButtonClickListener(new IntervalClickListener(v -> mViewModel.showNextPage()));
                 injectedViewAdapter.showButtons(navigationBarBottomButtons);
             }));
         }
@@ -382,10 +403,10 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
 
     private static class PageChangeListener implements ViewPager.OnPageChangeListener {
 
-        private final OnboardingScreenContract.Presenter mPresenter;
+        private final OnboardingViewModel mViewModel;
 
-        PageChangeListener(@NonNull final OnboardingScreenContract.Presenter presenter) {
-            mPresenter = presenter;
+        PageChangeListener(@NonNull final OnboardingViewModel viewModel) {
+            mViewModel = viewModel;
         }
 
         @Override
@@ -397,7 +418,7 @@ public class OnboardingFragment extends Fragment implements OnboardingScreenCont
         @Override
         public void onPageSelected(final int position) {
             LOG.info("page selected: {}", position);
-            mPresenter.onScrolledToPage(position);
+            mViewModel.onScrolledToPage(position);
         }
 
         @Override

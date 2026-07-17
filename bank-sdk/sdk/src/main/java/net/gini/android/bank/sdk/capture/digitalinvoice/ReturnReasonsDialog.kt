@@ -17,11 +17,13 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.util.autoCleared
 import net.gini.android.bank.sdk.databinding.GbsFragmentReturnReasonDialogBinding
+import net.gini.android.bank.sdk.di.koin.giniBankViewModel
 import net.gini.android.bank.sdk.util.disallowScreenshots
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.internal.ui.setIntervalClickListener
 import net.gini.android.capture.internal.util.ContextHelper
+import org.koin.core.parameter.parametersOf
 
 /**
  * Created by Alpar Szotyori on 22.01.2020.
@@ -42,6 +44,10 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
 
     private var binding by autoCleared<GbsFragmentReturnReasonDialogBinding>()
     private lateinit var reasons: List<GiniCaptureReturnReason>
+
+    private val viewModel: ReturnReasonsViewModel by giniBankViewModel(
+        parameters = { parametersOf(reasons) }
+    )
 
     var callback: ReturnReasonDialogResultCallback? = null
 
@@ -106,16 +112,14 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
 
     private fun initListView() {
         activity?.let {
-            binding.gbsReturnReasonsList.adapter = ArrayAdapter(it, R.layout.gbs_item_return_reason, localizedReasons())
+            binding.gbsReturnReasonsList.adapter = ArrayAdapter(it, R.layout.gbs_item_return_reason, viewModel.localizedReasons)
             binding.gbsReturnReasonsList.onItemClickListener =
                 AdapterView.OnItemClickListener { _, _, position, _ ->
-                    callback?.invoke(reasons[position])
+                    callback?.invoke(viewModel.reasonAt(position))
                     dismissAllowingStateLoss()
                 }
         }
     }
-
-    private fun localizedReasons() = reasons.map { it.labelInLocalLanguageOrGerman ?: "" }
 
     override fun onCancel(dialog: DialogInterface) {
         callback?.invoke(null)
