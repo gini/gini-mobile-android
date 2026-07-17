@@ -17,6 +17,18 @@ External dependencies are managed using [gradle's version catalogs](https://docs
 Each SDK, library and example app have their own version which is set in their releasable sub-modules' `gradle.properties` file. In case of
 apps this also contains the `versionCode`.
 
+# Public API Compatibility
+
+The releasable modules apply the [binary-compatibility-validator](https://github.com/Kotlin/binary-compatibility-validator) gradle plugin. Each module's public binary API is described by a committed dump file in its `api` folder (e.g., `core-api-library/library/api/library.api`). The `apiCheck` task compares the compiled public API against the dump and fails on any difference. It runs in every module's check workflow, so a public API change fails CI until the dump is updated.
+
+When you intentionally change the public API of a module:
+
+1. Run `./gradlew <project-id>:<module-id>:apiDump` to regenerate the dump.
+2. Review the dump diff — it shows exactly what is added to, removed from or changed in the public API. Removals and signature changes break our clients' builds: they must be avoided, or introduced via deprecation first and removal in the next major version.
+3. Commit the updated dump file together with the code change, so the API change is visible in the pull request.
+
+An unintentional `apiCheck` failure means you changed or exposed public API by accident (remember that Kotlin declarations are public by default) — restrict the visibility instead of updating the dump.
+
 # Documentation
 
 We provide two types of documentation: reference documentation and integration guides.
@@ -95,7 +107,9 @@ The release tags must adhere to this pattern:
 <project-name>;<version>
 ```
 
-For example `bank-sdk;1.0.2` or `health-api-lib;2.0.3`.
+Where `<project-name>` is the top-level project folder name. For example `bank-sdk;1.0.2` or `health-api-library;2.0.3`.
+
+The release workflows also trigger on beta and snapshot versions, for example `bank-sdk;2.0.0-beta01` or `health-sdk;5.4.0-SNAPSHOT` (the Health SDK additionally has a dedicated snapshot release workflow).
 
 ## Documentation
 
@@ -108,11 +122,11 @@ When only documentation release is necessary, then use a subtag of the last SDK 
 <project-name>;<latest-version>;doc-<number>
 ```
 
-For example `bank-sdk;2.0.1;doc-1` or `health-api-lib;1.5.4;doc-1` or `health-api-lib;1.5.4;doc-2`.
+For example `bank-sdk;2.0.1;doc-1` or `health-api-library;1.5.4;doc-1` or `health-api-library;1.5.4;doc-2`.
 
 ## Example Apps
 
-Note: automated example app publishing is not working yet ([PIA-1857](https://ginis.atlassian.net/browse/PIA-1857)).
+QA builds of the example apps are published to Firebase App Distribution by the `*.publish.firebase.example.yml` workflows. The Bank SDK and Health SDK example app workflows run automatically on pull requests which touch their projects (and can also be triggered manually), while the GPC example app workflow is triggered manually only.
 
 # CI
 
@@ -178,4 +192,4 @@ We are using merge commits and restrict rebasing and squashing to feature branch
 
 # Common issues
 
-After cloning if this issue is happening "java.lang.IllegalAccessError: superclass access check failed", Please goto Tools -> SDK manager -> Build, Execution, Deployment -> Build Tools -> Gradle, after clicking Gradle and on the right pane change the Gradle JDK to version 17 or lower. Version 17 is preferred.
+If the build fails with `java.lang.IllegalAccessError: superclass access check failed` after cloning, then Gradle is running on the wrong JDK. It must run on JDK 17 (the minimum required by the Android Gradle Plugin; newer versions cause this error). In Android Studio go to Settings -> Build, Execution, Deployment -> Build Tools -> Gradle and set the Gradle JDK to version 17.
