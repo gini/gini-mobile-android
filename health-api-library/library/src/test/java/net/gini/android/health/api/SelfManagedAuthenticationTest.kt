@@ -83,6 +83,31 @@ class SelfManagedAuthenticationTest {
     }
 
     @Test
+    fun `api requests are sent without authorization header when the consumer does not authenticate them`() = runTest {
+        server.enqueue(
+            MockResponse().setResponseCode(401).setBody("""{"message":"unauthorized"}""")
+        )
+
+        val plainProvider = GiniHttpClientProvider { OkHttpClient() }
+        val giniHealthApi = GiniHealthAPIBuilder(context)
+            .setApiBaseUrl(server.url("/").toString())
+            .setHttpClientProvider(plainProvider)
+            .setSelfManagedAuthentication(true)
+            .setCredentialsStore(InMemoryCredentialsStore())
+            .let { it as GiniHealthAPIBuilder }
+            .build()
+
+        val resource = giniHealthApi.documentManager.getConfigurations()
+
+        // The SDK does not interfere: the request goes out unauthenticated and the API's
+        // error response is mapped to an error resource
+        val request = server.takeRequest()
+        assertThat(request.getHeader("Authorization")).isNull()
+        val error = resource as Resource.Error
+        assertThat(error.responseStatusCode).isEqualTo(401)
+    }
+
+    @Test
     fun `building with self-managed authentication fails without a custom http client provider`() {
         val builder = GiniHealthAPIBuilder(context)
             .setApiBaseUrl(server.url("/").toString())
