@@ -12,6 +12,7 @@ import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.http.GiniSessionInterceptor
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
+import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.core.api.requests.ApiException
@@ -54,8 +55,10 @@ class DocumentRepositoryTest {
         server.shutdown()
     }
 
-    private fun createRepository(sessionManager: SessionManager): TestDocumentRepository {
-        val apiType = WireTestGiniApiType()
+    private fun createRepository(sessionManager: SessionManager): TestDocumentRepository =
+        TestDocumentRepository(createRemoteSource(sessionManager), sessionManager, WireTestGiniApiType())
+
+    private fun createRemoteSource(sessionManager: SessionManager): DocumentRemoteSourceForTests {
         val retrofit = Retrofit.Builder()
             .baseUrl(server.url("/"))
             .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build()))
@@ -67,13 +70,12 @@ class DocumentRepositoryTest {
                     .build()
             )
             .build()
-        val remoteSource = DocumentRemoteSourceForTests(
+        return DocumentRemoteSourceForTests(
             Dispatchers.Unconfined,
             retrofit.create(DocumentService::class.java),
-            apiType,
+            WireTestGiniApiType(),
             server.url("/").toString()
         )
-        return TestDocumentRepository(remoteSource, sessionManager, apiType)
     }
 
     private fun successfulSessionManager(accessToken: String = ACCESS_TOKEN) =
@@ -248,6 +250,29 @@ class DocumentRepositoryTest {
         assertThat(lineItems.specificExtractionMaps[0]["description"]?.value).isEqualTo("Shoes")
     }
 
+    @Test
+    fun `overridden extractionFromApiResponse is applied to specific, compound and candidate extractions`() = runTest {
+        // Pins the contract that justified plumbing extractionFromApiResponse into the parser
+        // as a function parameter: subclasses customizing how a single extraction is parsed
+        // must see their override applied everywhere extractions are created.
+        server.enqueue(MockResponse().setResponseCode(200).setBody(EXTRACTIONS_JSON))
+        val sessionManager = successfulSessionManager()
+        val repository = TaggingDocumentRepository(
+            createRemoteSource(sessionManager), sessionManager, WireTestGiniApiType()
+        )
+
+        val resource = repository.getAllExtractions(document())
+
+        val container = (resource as Resource.Success).data
+        val amountToPay = container.specificExtractions["amountToPay"]!!
+        assertThat(amountToPay.entity).isEqualTo("amount-tagged")
+        amountToPay.candidate.forEach { candidate ->
+            assertThat(candidate.entity).isEqualTo("amount-tagged")
+        }
+        val description = container.compoundExtractions["lineItems"]!!.specificExtractionMaps[0]["description"]!!
+        assertThat(description.entity).isEqualTo("text-tagged")
+    }
+
     // --- Composite document JSON (request body the client asked a public mapper for) ---
 
     @Test
@@ -365,6 +390,25 @@ class DocumentRepositoryTest {
         @Suppress("DEPRECATION")
         suspend fun callWithAccessToken(block: suspend (String) -> Resource<Unit>): Resource<Unit> =
             withAccessToken { accessToken -> block(accessToken) }
+    }
+
+    // A consumer subclass customizing how a single extraction is parsed
+    private class TaggingDocumentRepository(
+        remoteSource: DocumentRemoteSource,
+        sessionManager: SessionManager,
+        apiType: GiniApiType
+    ) : DocumentRepository<ExtractionsContainer>(remoteSource, sessionManager, apiType) {
+
+        override fun createExtractionsContainer(
+            specificExtractions: Map<String, SpecificExtraction>,
+            compoundExtractions: Map<String, CompoundExtraction>,
+            responseJSON: JSONObject
+        ): ExtractionsContainer = ExtractionsContainer(specificExtractions, compoundExtractions)
+
+        override fun extractionFromApiResponse(responseData: JSONObject): Extraction {
+            val extraction = super.extractionFromApiResponse(responseData)
+            return Extraction(extraction.value, extraction.entity + "-tagged", extraction.box)
+        }
     }
 
     private fun document(id: String = "document-id-13") =
