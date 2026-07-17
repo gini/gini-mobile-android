@@ -1,9 +1,9 @@
 ---
-name: check
+name: gini-check
 description: Run the CI check suite (testDebugUnitTest, apiCheck, lint, detekt, ktlintCheck) locally for the modules affected by the current changes, expanding through the inter-module dependency chain. Use before pushing, or when asked to "run the checks" / "verify CI will pass". Accepts optional explicit module paths as arguments (e.g. "bank-sdk:sdk").
 ---
 
-# /check — run the CI gate for affected modules
+# /gini-check — run the CI gate for affected modules
 
 Run the same per-module task set as the GitHub Actions check workflows, but locally and only for the modules affected by the current changes.
 

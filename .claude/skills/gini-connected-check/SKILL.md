@@ -1,11 +1,11 @@
 ---
-name: connected-check
-description: Run the CI steps that /check omits — instrumented tests (connectedCheck) on a device/emulator, plus optional Jacoco coverage and Sonar analysis — for the modules affected by the current changes. Use after /check passes, or when asked to "run the instrumented tests" / "run connectedCheck locally". Accepts optional explicit module paths as arguments (e.g. "bank-api-library:library").
+name: gini-connected-check
+description: Run the CI steps that /gini-check omits — instrumented tests (connectedCheck) on a device/emulator, plus optional Jacoco coverage and Sonar analysis — for the modules affected by the current changes. Use after /gini-check passes, or when asked to "run the instrumented tests" / "run connectedCheck locally". Accepts optional explicit module paths as arguments (e.g. "bank-api-library:library").
 ---
 
-# /connected-check — run instrumented tests (and optionally Jacoco/Sonar) for affected modules
+# /gini-connected-check — run instrumented tests (and optionally Jacoco/Sonar) for affected modules
 
-Complements `/check`: runs the remaining CI steps that need a device/emulator or external services. Reuse `/check`'s steps 1–2 to determine the affected projects (same changed-file collection and dependency-expansion table), then filter to the modules below.
+Complements `/gini-check`: runs the remaining CI steps that need a device/emulator or external services. Reuse `/gini-check`'s steps 1–2 to determine the affected projects (same changed-file collection and dependency-expansion table), then filter to the modules below.
 
 ## 1. Modules with a connectedCheck suite in CI
 
