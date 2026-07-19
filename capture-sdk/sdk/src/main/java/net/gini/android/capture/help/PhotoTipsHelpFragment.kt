@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +25,8 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
  */
 class PhotoTipsHelpFragment : Fragment() {
     private var binding: GcFragmentPhotoTipsHelpBinding by autoCleared()
+
+    private val viewModel: PhotoTipsHelpViewModel by viewModels()
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
@@ -54,8 +57,7 @@ class PhotoTipsHelpFragment : Fragment() {
                 GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
             ) { injectedViewAdapter: NavigationBarTopAdapter ->
                 injectedViewAdapter.setNavButtonType(
-                    if (GiniCapture.getInstance()
-                            .isBottomNavigationBarEnabled
+                    if (viewModel.uiState.value.isBottomNavigationBarEnabled
                     ) NavButtonType.NONE else NavButtonType.BACK
                 )
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_photo_tips))
@@ -68,7 +70,7 @@ class PhotoTipsHelpFragment : Fragment() {
 
     private fun setupBottomBarNavigation() {
         val injectedViewContainer = binding.gcInjectedNavigationBarContainerBottom
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+        if (GiniCapture.hasInstance() && viewModel.uiState.value.isBottomNavigationBarEnabled) {
             injectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder<HelpNavigationBarBottomAdapter>(
                 GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
             ) { injectedViewAdapter: HelpNavigationBarBottomAdapter ->

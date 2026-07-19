@@ -2,7 +2,6 @@ package net.gini.android.capture.review.zoom;
 
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,21 +11,12 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
-import net.gini.android.capture.AsyncCallback;
-import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.document.ImageDocument;
-import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.review.RotatableTouchImageViewContainer;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
-import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
-
-import java.util.HashSet;
 
 public class ZoomInPreviewFragment extends Fragment {
 
@@ -34,8 +24,7 @@ public class ZoomInPreviewFragment extends Fragment {
     private ImageDocument mImageDocument;
 
     private RotatableTouchImageViewContainer mRotatableTouchImageViewContainer;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.ReviewZoom.INSTANCE;
-    private UserAnalyticsEventTracker userAnalyticsEventTracker = null;
+    private ZoomInPreviewViewModel mViewModel;
 
     public static ZoomInPreviewFragment newInstance(ImageDocument imageDocument) {
         Bundle args = new Bundle();
@@ -51,7 +40,10 @@ public class ZoomInPreviewFragment extends Fragment {
         if (getArguments() != null) {
             mImageDocument = getArguments().getParcelable(ARGS_DOCUMENT);
         }
-        userAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
+        mViewModel = new ViewModelProvider(this,
+                new ZoomInPreviewViewModel.Factory(requireActivity().getApplication(),
+                        mImageDocument))
+                .get(ZoomInPreviewViewModel.class);
     }
 
     @NonNull
@@ -66,29 +58,13 @@ public class ZoomInPreviewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.gc_fragment_zoom_in_preview, container, false);
         setupInputHandlers(view);
-        if (userAnalyticsEventTracker != null) {
-            userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
-        }
+        mViewModel.onScreenShown();
         return view;
     }
 
     private void setupInputHandlers(View view) {
-        view.findViewById(R.id.gc_action_close).setOnClickListener(v -> {
-            if (userAnalyticsEventTracker != null) {
-                userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
-            }
-            NavHostFragment.findNavController(this).popBackStack();
-        });
+        view.findViewById(R.id.gc_action_close).setOnClickListener(v ->
+                mViewModel.onCloseClicked());
         handleOnBackPressed();
     }
 
@@ -96,16 +72,8 @@ public class ZoomInPreviewFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (userAnalyticsEventTracker != null) {
-                    userAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.CLOSE_TAPPED,
-                            new HashSet<UserAnalyticsEventProperty>() {
-                                {
-                                    add(new UserAnalyticsEventProperty.Screen(screenName));
-                                }
-                            });
-                }
                 remove();
-                NavHostFragment.findNavController(ZoomInPreviewFragment.this).popBackStack();
+                mViewModel.onCloseClicked();
             }
         });
     }
@@ -115,37 +83,27 @@ public class ZoomInPreviewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRotatableTouchImageViewContainer = view.findViewById(R.id.gc_rotatable_img_container);
+        observeViewModel();
+    }
+
+    private void observeViewModel() {
+        mViewModel.getPreview().observe(getViewLifecycleOwner(), uiState -> {
+            mRotatableTouchImageViewContainer.getImageView().setImageBitmap(
+                    uiState.getPreviewBitmap());
+            mRotatableTouchImageViewContainer.rotateImageView(uiState.getRotationForDisplay(),
+                    false);
+        });
+        mViewModel.getCloseEvent().observe(getViewLifecycleOwner(), consumableEvent -> {
+            if (consumableEvent.getContentIfNotHandled() != null) {
+                NavHostFragment.findNavController(this).popBackStack();
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        final Context context = getContext();
-        if (context == null) {
-            return;
-        }
-        if (GiniCapture.hasInstance()) {
-            GiniCapture.getInstance().internal().getPhotoMemoryCache()
-                    .get(context, mImageDocument, new AsyncCallback<Photo, Exception>() {
-                        @Override
-                        public void onSuccess(final Photo result) {
-
-                            mRotatableTouchImageViewContainer.getImageView().setImageBitmap(
-                                    result.getBitmapPreview());
-                            mRotatableTouchImageViewContainer.rotateImageView(mImageDocument.getRotationForDisplay(), false);
-                        }
-
-                        @Override
-                        public void onError(final Exception exception) {
-                            //showPreviewError(context);
-                        }
-
-                        @Override
-                        public void onCancelled() {
-                            // Not used
-                        }
-                    });
-        }
+        mViewModel.onStart();
     }
 
 }

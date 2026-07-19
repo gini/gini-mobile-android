@@ -42,7 +42,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.launch
 import net.gini.android.bank.sdk.R
 import net.gini.android.bank.sdk.capture.skonto.help.colors.SkontoHelpScreenColors

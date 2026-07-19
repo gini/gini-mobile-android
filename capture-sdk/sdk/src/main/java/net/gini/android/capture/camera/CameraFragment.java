@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -36,6 +37,7 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     private CancelListener mCancelListener;
 
     private CameraFragmentImpl mFragmentImpl;
+    private CameraViewModel mViewModel;
     private boolean addPages = false;
 
     /**
@@ -47,7 +49,11 @@ public class CameraFragment extends Fragment implements CameraFragmentInterface,
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         readArguments();
+        mViewModel = new ViewModelProvider(this,
+                new CameraViewModelFactory(requireActivity().getApplication()))
+                .get(CameraViewModel.class);
         mFragmentImpl = createFragmentImpl(mCancelListener, addPages);
+        mFragmentImpl.setViewModel(mViewModel);
         setListener(mFragmentImpl, mListener);
         mFragmentImpl.onCreate(savedInstanceState);
     }

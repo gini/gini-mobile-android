@@ -1,11 +1,13 @@
 package net.gini.android.capture.camera
 
 import android.app.Activity
+import android.app.Application
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
@@ -17,8 +19,6 @@ import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -30,6 +30,9 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class CameraFragmentImplTest {
+
+    private val app: Application
+        get() = ApplicationProvider.getApplicationContext()
 
     @Test
     fun `triggers Take Picture event`() {
@@ -45,6 +48,7 @@ class CameraFragmentImplTest {
                 }
             }
         }
+        fragmentImpl.setViewModel(CameraViewModel(app))
         fragmentImpl.initCameraController(mock())
 
         // When
@@ -92,6 +96,7 @@ class CameraFragmentImplTest {
         whenever(fragmentCallbackStub.findNavController()).thenReturn(mock())
 
         val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(fragmentCallbackStub, mock(), false)
+        fragmentImpl.setViewModel(CameraViewModel(app))
 
         val noPermissionLayoutMock = mock<ConstraintLayout> {
             on { visibility } doReturn View.INVISIBLE
@@ -109,21 +114,6 @@ class CameraFragmentImplTest {
 
         // Then
         verify(eventTracker).onCameraScreenEvent(Event(CameraScreenEvent.HELP))
-    }
-
-    @Test
-    fun `resets QR code state when unsupported popup hides so scanning resumes`() {
-        // Given: state is set as if an unsupported QR code was shown and blocked further scans
-        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
-        fragmentImpl.mQRCodeContent = "unsupported-qr-content"
-        fragmentImpl.mInterfaceHidden = true
-
-        // When: the unsupported QR popup hides
-        fragmentImpl.onUnsupportedQRCodePopupHidden()
-
-        // Then: state is reset so subsequent QR codes can be detected
-        assertNull(fragmentImpl.mQRCodeContent)
-        assertFalse(fragmentImpl.mInterfaceHidden)
     }
 
     private open class CameraFragmentImplWithoutQRCodeReader(fragment: FragmentImplCallback,

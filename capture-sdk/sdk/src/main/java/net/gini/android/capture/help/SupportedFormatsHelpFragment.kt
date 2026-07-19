@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,10 @@ import net.gini.android.capture.view.NavigationBarTopAdapter
 class SupportedFormatsHelpFragment : Fragment() {
     private var binding: GcFragmentSupportedFormatsHelpBinding by autoCleared()
 
+    private val viewModel: SupportedFormatsHelpViewModel by viewModels {
+        SupportedFormatsHelpViewModel.Factory(isQrCodeDocument = false)
+    }
+
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
         val inflater = super.onGetLayoutInflater(savedInstanceState)
         return this.getLayoutInflaterWithGiniCaptureTheme(inflater)
@@ -44,7 +49,11 @@ class SupportedFormatsHelpFragment : Fragment() {
     private fun setUpFormatsList() {
         val recyclerView: RecyclerView = binding.gcFormatsList
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = SupportedFormatsAdapter(false)
+        val uiState = viewModel.uiState.value
+        recyclerView.adapter = SupportedFormatsAdapter(
+            uiState.formatItems,
+            uiState.isEInvoiceEnabled
+        )
     }
 
     private fun setupTopBarNavigation() {
@@ -54,8 +63,7 @@ class SupportedFormatsHelpFragment : Fragment() {
                 GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
             ) { injectedViewAdapter: NavigationBarTopAdapter ->
                 injectedViewAdapter.setNavButtonType(
-                    if (GiniCapture.getInstance()
-                            .isBottomNavigationBarEnabled
+                    if (viewModel.uiState.value.isBottomNavigationBarEnabled
                     ) NavButtonType.NONE else NavButtonType.BACK
                 )
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_supported_formats))
@@ -68,7 +76,7 @@ class SupportedFormatsHelpFragment : Fragment() {
 
     private fun setupBottomBarNavigation() {
         val injectedViewContainer = binding.gcInjectedNavigationBarContainerBottom
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
+        if (GiniCapture.hasInstance() && viewModel.uiState.value.isBottomNavigationBarEnabled) {
             injectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder<HelpNavigationBarBottomAdapter>(
                 GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
             ) { injectedViewAdapter: HelpNavigationBarBottomAdapter ->

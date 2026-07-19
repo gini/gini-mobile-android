@@ -16,7 +16,6 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.EnterManuallyButtonListener;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
-import net.gini.android.capture.document.ImageMultiPageDocument;
 import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter;
 import net.gini.android.capture.help.PhotoTipsAdapter;
 import net.gini.android.capture.help.SupportedFormatsAdapter;
@@ -24,26 +23,18 @@ import net.gini.android.capture.internal.ui.ClickListenerExtKt;
 import net.gini.android.capture.internal.ui.FragmentImplCallback;
 import net.gini.android.capture.internal.ui.IntervalClickListener;
 import net.gini.android.capture.internal.util.CancelListener;
-import net.gini.android.capture.tracking.AnalysisScreenEvent;
-import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsMappersKt;
-import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventSuperProperty;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
 import net.gini.android.capture.view.NavButtonType;
 import net.gini.android.capture.view.NavigationBarTopAdapter;
 
-import java.util.HashSet;
-
 import static android.view.View.GONE;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
 
 /**
  * Main logic implementation for no results UI presented by {@link NoResultsFragment}.
+ * The back/retake/enter manually decisions and the analytics tracking live in
+ * {@link NoResultsViewModel}; this class renders the view model's state and executes its
+ * one-shot events.
  * Internal use only.
  */
 class NoResultsFragmentImpl {
@@ -55,18 +46,19 @@ class NoResultsFragmentImpl {
     private final FragmentImplCallback mFragment;
     private View mView;
     private final Document mDocument;
+    private final NoResultsViewModel mViewModel;
     // CancelListener should be removed in the next major version - not a breaking change but better to keep it for now
     private final CancelListener mCancelListener;
     private EnterManuallyButtonListener mListener;
     private TextView mTitleTextView;
-    private UserAnalyticsEventTracker mUserAnalyticsEventTracker;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.NoResults.INSTANCE;
 
     NoResultsFragmentImpl(@NonNull final FragmentImplCallback fragment,
                           @NonNull final Document document,
+                          @NonNull final NoResultsViewModel viewModel,
                           @NonNull final CancelListener cancelListener) {
         mFragment = fragment;
         mDocument = document;
+        mViewModel = viewModel;
         mCancelListener = cancelListener;
     }
 
@@ -78,60 +70,29 @@ class NoResultsFragmentImpl {
         }
     }
 
-    void onCreate(final Bundle savedInstanceState) {
-        // Clear the image from the memory store because the user can only exit for manual entry or in some cases
-        // can go back to the camera to take new pictures
-        if (GiniCapture.hasInstance()) {
-            GiniCapture.getInstance().internal().getImageMultiPageDocumentMemoryStore().clear();
-        }
-    }
-
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                       final Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.gc_fragment_noresults, container, false);
         final View retakeImagesButton = mView.findViewById(R.id.gc_button_no_results_retake_images);
         handleOnBackPressed();
-        mUserAnalyticsEventTracker = UserAnalytics.INSTANCE.getAnalyticsEventTracker();
-        if (mUserAnalyticsEventTracker != null) {
-            mUserAnalyticsEventTracker.setEventSuperProperty(
-                    new UserAnalyticsEventSuperProperty.DocumentType(
-                            UserAnalyticsMappersKt.mapToAnalyticsDocumentType(mDocument)
-                    )
-            );
-            mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.SCREEN_SHOWN,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                            add(new UserAnalyticsEventProperty.DocumentId(mDocument.getId()));
-                        }
-                    }
-            );
-        }
-        if (shouldAllowRetakeImages()) {
-            ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v -> {
-                trackAnalysisScreenEvent(AnalysisScreenEvent.RETRY);
-                navigateToCameraScreen(UserAnalyticsEvent.RETAKE_IMAGES_TAPPED);
-            });
+        mViewModel.onScreenShown();
+        observeViewModel();
+
+        final NoResultsUiState uiState = mViewModel.getUiState().getValue();
+        if (uiState != null && uiState.getAllowRetakeImages()) {
+            ClickListenerExtKt.setIntervalClickListener(retakeImagesButton, v ->
+                    mViewModel.onRetakeImagesClicked());
         } else {
             retakeImagesButton.setVisibility(GONE);
         }
 
         final View enterManuallyButton = mView.findViewById(R.id.gc_button_no_results_enter_manually);
-        ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v -> {
-            if (mUserAnalyticsEventTracker != null) {
-                mUserAnalyticsEventTracker.trackEvent(UserAnalyticsEvent.ENTER_MANUALLY_TAPPED,
-                        new HashSet<UserAnalyticsEventProperty>() {
-                            {
-                                add(new UserAnalyticsEventProperty.Screen(screenName));
-                            }
-                        });
-            }
-            mListener.onEnterManuallyPressed();
-        });
+        ClickListenerExtKt.setIntervalClickListener(enterManuallyButton, v ->
+                mViewModel.onEnterManuallyClicked());
 
         bindViews(mView);
 
-        if (mDocument.getType() == Document.Type.QRCode || mDocument.getType() == Document.Type.QR_CODE_MULTI_PAGE) {
+        if (uiState != null && uiState.getShowQrCodeTitle()) {
             mTitleTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_noresults_header_qr));
         }
 
@@ -142,34 +103,27 @@ class NoResultsFragmentImpl {
         return mView;
     }
 
-    private void handleOnBackPressed() {
-        mFragment.getActivity().getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED);
+    private void observeViewModel() {
+        mViewModel.getEvents().observe(mFragment.getViewLifecycleOwner(), consumableEvent -> {
+            final NoResultsViewEvent event = consumableEvent.getContentIfNotHandled();
+            if (event == null) {
+                return;
+            }
+            if (event instanceof NoResultsViewEvent.NavigateToCamera) {
+                mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
+            } else if (event instanceof NoResultsViewEvent.EnterManually) {
+                mListener.onEnterManuallyPressed();
             }
         });
     }
 
-    private boolean isDocumentFromCameraScreen(Document document) {
-        return document.getImportMethod() != Document.ImportMethod.OPEN_WITH && document.getSource().getName().equals("camera");
-    }
-
-    private boolean shouldAllowRetakeImages() {
-        if (mDocument instanceof ImageMultiPageDocument) {
-            ImageMultiPageDocument doc = (ImageMultiPageDocument) mDocument;
-            boolean isImportedDocFound = false;
-            int i = 0;
-
-            while (!isImportedDocFound && i < doc.getDocuments().size()) {
-                isImportedDocFound = !isDocumentFromCameraScreen(doc.getDocuments().get(i));
-                i++;
+    private void handleOnBackPressed() {
+        mFragment.getActivity().getOnBackPressedDispatcher().addCallback(mFragment.getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                mViewModel.onCloseClicked();
             }
-
-            return !isImportedDocFound;
-        }
-
-        return isDocumentFromCameraScreen(mDocument);
+        });
     }
 
     private void setUpList(View view) {
@@ -206,7 +160,7 @@ class NoResultsFragmentImpl {
                                         : ""
                         );
                         injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                            navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED);
+                            mViewModel.onCloseClicked();
                         }));
                     }
             ));
@@ -221,23 +175,11 @@ class NoResultsFragmentImpl {
             topBarContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(
                     GiniCapture.getInstance().internal().getErrorNavigationBarBottomAdapterInstance(),
                     injectedViewAdapter -> injectedViewAdapter.setOnBackClickListener(new IntervalClickListener(v -> {
-                        navigateToCameraScreen(UserAnalyticsEvent.CLOSE_TAPPED);
+                        mViewModel.onCloseClicked();
                     }))
             ));
         }
 
-    }
-
-    private void navigateToCameraScreen(UserAnalyticsEvent event) {
-        if (mUserAnalyticsEventTracker != null) {
-            mUserAnalyticsEventTracker.trackEvent(event,
-                    new HashSet<UserAnalyticsEventProperty>() {
-                        {
-                            add(new UserAnalyticsEventProperty.Screen(screenName));
-                        }
-                    });
-        }
-        mFragment.findNavController().navigate(NoResultsFragmentDirections.toCameraFragment());
     }
 
     private void bindViews(@NonNull final View view) {

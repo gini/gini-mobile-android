@@ -9,9 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.launch
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcWarningBottomSheetBinding
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
@@ -37,25 +42,43 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var binding: GcWarningBottomSheetBinding
 
-    private var titleText: CharSequence? = null
-    private var descText: CharSequence? = null
-
     var listener: Listener? = null
+
+    private val viewModel: WarningBottomSheetViewModel by viewModels {
+        WarningBottomSheetViewModel.Factory(warningTypeFromArguments())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val type: WarningType? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        // Side effects are collected on the fragment's own lifecycle (instead of the view
+        // lifecycle) because on tablets the sheet is shown as an AlertDialog without a
+        // fragment view (see [onCreateDialog]).
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sideEffects.collect { sideEffect ->
+                    when (sideEffect) {
+                        WarningSideEffect.CancelAndDismiss -> {
+                            listener?.onCancelAction()
+                            dismissAllowingStateLoss()
+                        }
+
+                        WarningSideEffect.ProceedAndDismiss -> {
+                            listener?.onProceedAction()
+                            dismissAllowingStateLoss()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun warningTypeFromArguments(): WarningType? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getSerializable(ARG_TYPE, WarningType::class.java)
         } else {
             @Suppress("DEPRECATION")
             arguments?.getSerializable(ARG_TYPE) as? WarningType
         }
-
-        if (type != null) {
-            titleText = getString(type.titleRes)
-            descText = getString(type.descriptionRes)
-        }
-    }
 
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
@@ -171,19 +194,18 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun bindUi() {
-        binding.warningTitle.text = titleText
-        binding.warningDescription.text = descText
+        val uiState = viewModel.uiState.value
+        binding.warningTitle.text = uiState.titleRes?.let { getString(it) }
+        binding.warningDescription.text = uiState.descriptionRes?.let { getString(it) }
 
         binding.warningIcon?.contentDescription = getString(R.string.gc_warning_icon_content_description)
         binding.warningIcon?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
 
         binding.cancelButton.setOnClickListener {
-            listener?.onCancelAction()
-            dismissAllowingStateLoss()
+            viewModel.onCancelClicked()
         }
         binding.proceedButton.setOnClickListener {
-            listener?.onProceedAction()
-            dismissAllowingStateLoss()
+            viewModel.onProceedClicked()
         }
     }
 

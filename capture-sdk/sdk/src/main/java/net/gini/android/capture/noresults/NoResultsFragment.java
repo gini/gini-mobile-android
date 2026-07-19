@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.NavDirections;
@@ -49,8 +50,6 @@ public class NoResultsFragment extends Fragment implements FragmentImplCallback 
         super.onCreate(savedInstanceState);
         mFragmentImpl = createFragmentImpl(this, getArguments());
         mFragmentImpl.setListener(mListener);
-        mFragmentImpl.onCreate(savedInstanceState);
-
     }
 
     @NonNull
@@ -87,7 +86,9 @@ public class NoResultsFragment extends Fragment implements FragmentImplCallback 
                                              @NonNull final Bundle arguments) {
         final Document document = arguments.getParcelable(ARGS_DOCUMENT);
         if (document != null) {
-            return new NoResultsFragmentImpl(fragment, document, mCancelListener);
+            final NoResultsViewModel viewModel = new ViewModelProvider(this,
+                    new NoResultsViewModel.Factory(document)).get(NoResultsViewModel.class);
+            return new NoResultsFragmentImpl(fragment, document, viewModel, mCancelListener);
         } else {
             throw new IllegalStateException(
                     "NoResultsFragmentCompat requires a Document. Use the createInstance() method of these classes for instantiating.");

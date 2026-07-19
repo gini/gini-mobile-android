@@ -42,10 +42,15 @@ public class SupportedFormatsAdapter extends
         isQRDocument = isQrCodeDocument;
         getEInvoiceFeatureEnabledUseCase = CaptureSdkJavaInterop.getEInvoiceFeatureEnabledUseCase();
         isEInvoiceEnabled = getEInvoiceFeatureEnabledUseCase.invoke();
-        mItems = setUpItems();
+        mItems = setUpItems(isQRDocument, isEInvoiceEnabled);
     }
 
-    private List<Enum> setUpItems() {
+    SupportedFormatsAdapter(final List<Enum> items, final boolean isEInvoiceEnabled) {
+        mItems = items;
+        this.isEInvoiceEnabled = isEInvoiceEnabled;
+    }
+
+    static List<Enum> setUpItems(final boolean isQRDocument, final boolean isEInvoiceEnabled) {
         final ArrayList<Enum> items = new ArrayList<>();
         items.add(SectionHeader.SUPPORTED_FORMATS);
         if (isQRDocument) {
