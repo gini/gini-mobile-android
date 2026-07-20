@@ -32,10 +32,10 @@ Release order for :capture-sdk:default-network 4.4.0:
  3. :capture-sdk:sdk 4.4.0
  4. :capture-sdk:default-network 4.4.0
 
-Release order for :bank-sdk:sdk 4.3.1:
+Release order for :bank-sdk:sdk 4.4.0:
  1. :core-api-library:library 3.5.0
  2. :bank-api-library:library 4.4.0
  3. :capture-sdk:sdk 4.4.0
  4. :capture-sdk:default-network 4.4.0
- 5. :bank-sdk:sdk 4.3.1
+ 5. :bank-sdk:sdk 4.4.0
 
