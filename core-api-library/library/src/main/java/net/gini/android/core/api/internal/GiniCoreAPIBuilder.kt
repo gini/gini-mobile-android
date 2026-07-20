@@ -15,7 +15,6 @@ import net.gini.android.core.api.Utils
 import net.gini.android.core.api.authorization.AnonymousSessionManager
 import net.gini.android.core.api.authorization.CredentialsStore
 import net.gini.android.core.api.authorization.EncryptedCredentialsStore
-import net.gini.android.core.api.authorization.Session
 import net.gini.android.core.api.authorization.SessionManager
 import net.gini.android.core.api.authorization.UserRemoteSource
 import net.gini.android.core.api.authorization.UserRepository
@@ -362,7 +361,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     @Synchronized
     open fun getSessionManager(): SessionManager {
         if (isSelfManagedAuthentication) {
-            return SelfManagedAuthenticationSessionManager
+            return selfManagedAuthenticationSessionManager
         }
         if (sessionManager == null) {
             sessionManager = AnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
@@ -375,8 +374,8 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      * requests sessions in that mode, so this only returns an error in case something still
      * asks for a session (e.g. the deprecated DocumentRepository.withAccessToken).
      */
-    private object SelfManagedAuthenticationSessionManager : SessionManager {
-        override suspend fun getSession(): Resource<Session> = Resource.Error(
+    private val selfManagedAuthenticationSessionManager = SessionManager {
+        Resource.Error(
             message = "No session available: authentication is self-managed. " +
                     "API requests are authenticated by the custom OkHttpClient (GiniHttpClientProvider)."
         )
@@ -423,44 +422,54 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val installSessionInterceptor = addSessionInterceptor && !isSelfManagedAuthentication
 
         // If a custom provider is set, use it as a base and add SDK's required configuration on top
-        if (mHttpClientProvider != null) {
-            val baseClient = mHttpClientProvider!!.provideOkHttpClient()
+        return mHttpClientProvider
+            ?.let { provider -> customizeConsumerOkHttpClient(provider.provideOkHttpClient(), installSessionInterceptor) }
+            ?: createDefaultOkHttpClient(installSessionInterceptor)
+    }
 
-            // Clone the consumer's client and add SDK's required interceptors
-            return baseClient.newBuilder()
-                .apply {
-                    // Add SDK's required User-Agent header
-                    // This is placed at the end of the interceptor chain so consumer's interceptors run first
-                    addInterceptor { chain ->
-                        val request = chain.request()
-                        // Only add User-Agent if not already set by consumer
-                        val hasUserAgent = request.header("User-Agent") != null
-                        if (hasUserAgent) {
-                            chain.proceed(request)
-                        } else {
-                            chain.proceed(
-                                request.newBuilder()
-                                    .header(
-                                        "User-Agent",
-                                        System.getProperty("http.agent") ?: FALLBACK_USER_AGENT
-                                    )
-                                    .build()
-                            )
-                        }
-                    }
-                    if (installSessionInterceptor) {
-                        // Placed after the consumer's application interceptors: an Authorization
-                        // header set by those wins and the session interceptor passes through.
-                        // (Consumer network interceptors run after this one instead - consumers
-                        // authenticating requests themselves should use self-managed
-                        // authentication, which skips installing this interceptor entirely.)
-                        addInterceptor(mSessionInterceptor)
+    /**
+     * Clones the consumer's client and adds the SDK's required interceptors.
+     */
+    private fun customizeConsumerOkHttpClient(
+        baseClient: OkHttpClient,
+        installSessionInterceptor: Boolean
+    ): OkHttpClient =
+        baseClient.newBuilder()
+            .apply {
+                // Add SDK's required User-Agent header
+                // This is placed at the end of the interceptor chain so consumer's interceptors run first
+                addInterceptor { chain ->
+                    val request = chain.request()
+                    // Only add User-Agent if not already set by consumer
+                    val hasUserAgent = request.header("User-Agent") != null
+                    if (hasUserAgent) {
+                        chain.proceed(request)
+                    } else {
+                        chain.proceed(
+                            request.newBuilder()
+                                .header(
+                                    "User-Agent",
+                                    System.getProperty("http.agent") ?: FALLBACK_USER_AGENT
+                                )
+                                .build()
+                        )
                     }
                 }
-                .build()
-        }
+                if (installSessionInterceptor) {
+                    // Placed after the consumer's application interceptors: an Authorization
+                    // header set by those wins and the session interceptor passes through.
+                    // (Consumer network interceptors run after this one instead - consumers
+                    // authenticating requests themselves should use self-managed
+                    // authentication, which skips installing this interceptor entirely.)
+                    addInterceptor(mSessionInterceptor)
+                }
+            }
+            .build()
 
-        // Otherwise, create a default provider with the configured settings
+    /**
+     * Creates a client from a default provider with the configured settings.
+     */
+    private fun createDefaultOkHttpClient(installSessionInterceptor: Boolean): OkHttpClient {
         val defaultProvider = DefaultGiniHttpClientProvider.builder(context)
             .setHostnames(getHostnames())
             .apply {

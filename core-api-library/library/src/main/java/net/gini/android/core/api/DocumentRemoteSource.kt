@@ -43,6 +43,7 @@ abstract class DocumentRemoteSource(
         uploadDocument(headerMap(contentType = contentType, metadata = metadata), data, filename, docType)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun uploadDocument(
         accessToken: String, data: ByteArray, contentType: String, filename: String?,
         docType: String?, metadata: Map<String, String>?
@@ -67,6 +68,7 @@ abstract class DocumentRemoteSource(
     }
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun deleteDocument(accessToken: String, documentUri: Uri): Unit = withContext(coroutineContext) {
         SafeApiRequest.apiRequest {
             documentService.deleteDocumentFromUri(
@@ -83,6 +85,7 @@ abstract class DocumentRemoteSource(
     }
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun deleteDocument(accessToken: String, documentId: String): Unit = withContext(coroutineContext) {
         SafeApiRequest.apiRequest {
             documentService.deleteDocument(
@@ -96,6 +99,7 @@ abstract class DocumentRemoteSource(
         getDocument(headerMap(), documentId)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getDocument(accessToken: String, documentId: String): String =
         getDocument(bearerHeaderMap(accessToken), documentId)
 
@@ -111,6 +115,7 @@ abstract class DocumentRemoteSource(
         getDocumentFromUri(headerMap(contentType = giniApiType.giniJsonMediaType), uri)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getDocumentFromUri(accessToken: String, uri: Uri): String =
         getDocumentFromUri(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), uri)
 
@@ -126,6 +131,7 @@ abstract class DocumentRemoteSource(
         getExtractions(headerMap(contentType = giniApiType.giniJsonMediaType), documentId)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getExtractions(accessToken: String, documentId: String): String =
         getExtractions(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId)
 
@@ -141,6 +147,7 @@ abstract class DocumentRemoteSource(
         getDocumentLayout(headerMap(contentType = giniApiType.giniJsonMediaType), documentId)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getDocumentLayout(accessToken: String, documentId: String): DocumentLayout =
         getDocumentLayout(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId)
 
@@ -156,6 +163,7 @@ abstract class DocumentRemoteSource(
         getDocumentPages(headerMap(contentType = giniApiType.giniJsonMediaType), documentId)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getDocumentPages(accessToken: String, documentId: String): List<DocumentPage> =
         getDocumentPages(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), documentId)
 
@@ -179,6 +187,7 @@ abstract class DocumentRemoteSource(
     }
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun sendFeedback(
         accessToken: String, documentId: String, requestBody: RequestBody
     ): Unit = withContext(coroutineContext) {
@@ -195,6 +204,7 @@ abstract class DocumentRemoteSource(
         getFile(headerMap(accept = null, contentType = giniApiType.giniJsonMediaType), location)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getFile(accessToken: String, location: String): ByteArray =
         getFile(bearerHeaderMap(accessToken, accept = null, contentType = giniApiType.giniJsonMediaType), location)
 
@@ -210,6 +220,7 @@ abstract class DocumentRemoteSource(
         getPaymentRequest(headerMap(contentType = giniApiType.giniJsonMediaType), id)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getPaymentRequest(accessToken: String, id: String): PaymentRequestResponse =
         getPaymentRequest(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType), id)
 
@@ -226,6 +237,7 @@ abstract class DocumentRemoteSource(
         getPaymentRequests(headerMap(contentType = giniApiType.giniJsonMediaType))
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getPaymentRequests(accessToken: String): List<PaymentRequestResponse> =
         getPaymentRequests(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType))
 
@@ -242,6 +254,7 @@ abstract class DocumentRemoteSource(
         getPayment(headerMap(giniApiType.giniJsonMediaType), id)
 
     @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getPayment(accessToken: String, id: String): Payment =
         getPayment(bearerHeaderMap(accessToken, giniApiType.giniJsonMediaType), id)
 
