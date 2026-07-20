@@ -19,6 +19,7 @@ load 'util/git.rb'
 load 'util/html.rb'
 
 require 'base64'
+require 'yaml'
 
 default_platform(:android)
 
@@ -155,7 +156,11 @@ platform :android do
       check_and_get_options(options, [:project_id, :module_id], UI)
     # Optional options
     if options[:links_to_projects] && !options[:links_to_projects].to_s.empty?
-      links_to_projects = JSON.parse options[:links_to_projects]
+      # Parsed as YAML instead of JSON: the fastlane GitHub action strips unescaped double
+      # quotes from lane options, turning '[{"project_id": "capture-sdk"}]' into
+      # '[{project_id: capture-sdk}]'. JSON is a subset of YAML and the quote-stripped form
+      # is valid YAML flow syntax, so YAML.safe_load accepts both.
+      links_to_projects = YAML.safe_load options[:links_to_projects]
     else
       links_to_projects = []
     end
