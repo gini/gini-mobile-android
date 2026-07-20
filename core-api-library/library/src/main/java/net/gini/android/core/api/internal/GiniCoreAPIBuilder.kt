@@ -24,6 +24,7 @@ import net.gini.android.core.api.http.GiniHttpClientProvider
 import net.gini.android.core.api.http.GiniSessionInterceptor
 import net.gini.android.core.api.models.ExtractionsContainer
 import okhttp3.Cache
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -42,12 +43,16 @@ import javax.net.ssl.TrustManager
  * @param sessionManager if not null, then the [SessionManager] instance will be used for session management. If null, then anonymous Gini users will be used.
  */
 abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<DM, DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer>(
-    private val context: Context,
+    context: Context,
     private val clientId: String,
     private val clientSecret: String,
     private val emailDomain: String,
     private var sessionManager: SessionManager? = null
 ) {
+
+    // The session interceptor's provider closure keeps this builder alive for the lifetime of
+    // the OkHttp clients - hold the application context so an Activity context can't be leaked.
+    private val context: Context = context.applicationContext ?: context
     private var mApiBaseUrl: String? = null
     private var mUserCenterApiBaseUrl = "https://user.gini.net/"
 
@@ -422,9 +427,17 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val installSessionInterceptor = addSessionInterceptor && !isSelfManagedAuthentication
 
         // If a custom provider is set, use it as a base and add SDK's required configuration on top
-        return mHttpClientProvider
-            ?.let { provider -> customizeConsumerOkHttpClient(provider.provideOkHttpClient(), installSessionInterceptor) }
+        val client = mHttpClientProvider
+            ?.let { provider ->
+                customizeConsumerOkHttpClient(provider.provideOkHttpClient(), installSessionInterceptor)
+            }
             ?: createDefaultOkHttpClient(installSessionInterceptor)
+
+        // The User Center API client must not share a Dispatcher with the API clients: the
+        // session interceptor blocks API calls (and their dispatcher slots) while it fetches a
+        // token through this client - with a shared Dispatcher at its concurrent request limit
+        // the token request could never start and the blocked API calls would wait forever.
+        return if (addSessionInterceptor) client else client.newBuilder().dispatcher(Dispatcher()).build()
     }
 
     /**
