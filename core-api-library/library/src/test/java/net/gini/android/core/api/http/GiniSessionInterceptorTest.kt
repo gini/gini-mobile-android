@@ -15,6 +15,7 @@ import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import java.util.Date
+import java.util.concurrent.CancellationException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
@@ -103,6 +104,38 @@ class GiniSessionInterceptorTest {
     @Test
     fun `throws SessionCancellationException when the session request is cancelled`() {
         val sessionManager = SessionManager { Resource.Cancelled() }
+
+        try {
+            clientWith(sessionManager).newCall(request()).execute()
+            fail("Expected SessionCancellationException")
+        } catch (e: SessionCancellationException) {
+            // expected
+        }
+
+        assertThat(server.requestCount).isEqualTo(0)
+    }
+
+    @Test
+    fun `wraps exceptions thrown by the session manager in an ApiException`() {
+        // A SessionManager should return Resource errors but may throw anything. Only
+        // IOExceptions may leave an interceptor: OkHttp's async path rethrows anything else
+        // on its dispatcher thread which crashes the app.
+        val sessionManager = SessionManager { throw IllegalStateException("token backend exploded") }
+
+        try {
+            clientWith(sessionManager).newCall(request()).execute()
+            fail("Expected ApiException")
+        } catch (e: ApiException) {
+            assertThat(e.message).isEqualTo("Session request failed: token backend exploded")
+            assertThat(e.cause).isInstanceOf(IllegalStateException::class.java)
+        }
+
+        assertThat(server.requestCount).isEqualTo(0)
+    }
+
+    @Test
+    fun `maps a CancellationException thrown by the session manager to a SessionCancellationException`() {
+        val sessionManager = SessionManager { throw CancellationException("session scope was cancelled") }
 
         try {
             clientWith(sessionManager).newCall(request()).execute()

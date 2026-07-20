@@ -10,6 +10,7 @@ import net.gini.android.core.api.requests.BearerAuthorizatonHeader
 import net.gini.android.core.api.requests.SessionCancellationException
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.util.concurrent.CancellationException
 
 /**
  * OkHttp interceptor which authenticates API requests with an access token from the
@@ -39,7 +40,10 @@ import okhttp3.Response
  * [SessionCancellationException] (session cancellations) which
  * [Resource.Companion.wrapInResource] maps back to the same [Resource.Error] and
  * [Resource.Cancelled] shapes that the repositories returned when they handled tokens
- * themselves.
+ * themselves. Exceptions *thrown* by a [SessionManager] (instead of returned as a Resource
+ * error) are wrapped in the same way: OkHttp only propagates [java.io.IOException]s from
+ * interceptors safely - anything else is rethrown on its dispatcher thread and crashes the
+ * app.
  *
  * The [SessionManager] is resolved lazily via [sessionManagerProvider] on the first request to
  * avoid initialization order issues between the HTTP client and the session manager (which
@@ -61,10 +65,21 @@ internal class GiniSessionInterceptor(
         // Deliberately blocking: OkHttp interceptors are synchronous (cf. okhttp3.Authenticator).
         // If the caller cancels mid-fetch, this completes anyway - the result lands in the
         // session manager's cache, so the work is not wasted.
-        val sessionResource = runBlocking {
-            sessionMutex.withLock {
-                sessionManager.getSession()
+        //
+        // TooGenericExceptionCaught: only IOExceptions may leave an interceptor - OkHttp's
+        // async path rethrows anything else on its dispatcher thread which crashes the app.
+        // A consumer's SessionManager should return Resource errors but may throw anything.
+        @Suppress("TooGenericExceptionCaught")
+        val sessionResource = try {
+            runBlocking {
+                sessionMutex.withLock {
+                    sessionManager.getSession()
+                }
             }
+        } catch (e: CancellationException) {
+            throw SessionCancellationException()
+        } catch (e: Exception) {
+            throw ApiException(message = "Session request failed: ${e.message}", cause = e)
         }
         return when (sessionResource) {
             is Resource.Success -> chain.proceed(
