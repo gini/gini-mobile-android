@@ -1,5 +1,6 @@
 package net.gini.android.core.api
 
+import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
@@ -14,13 +15,16 @@ import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.Extraction
 import net.gini.android.core.api.models.ExtractionsContainer
+import net.gini.android.core.api.models.PaymentRequest
 import net.gini.android.core.api.models.SpecificExtraction
 import net.gini.android.core.api.requests.ApiException
 import net.gini.android.core.api.test.DocumentRemoteSourceForTests
+import net.gini.android.core.api.test.TestDocumentService
 import net.gini.android.core.api.test.WireTestGiniApiType
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okio.Buffer
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
@@ -72,7 +76,7 @@ class DocumentRepositoryTest {
             .build()
         return DocumentRemoteSourceForTests(
             Dispatchers.Unconfined,
-            retrofit.create(DocumentService::class.java),
+            retrofit.create(TestDocumentService::class.java),
             WireTestGiniApiType(),
             server.url("/").toString()
         )
@@ -362,6 +366,199 @@ class DocumentRepositoryTest {
         assertThat(server.requestCount).isEqualTo(0)
     }
 
+    // --- Request/response mapping of the remaining repository methods ---
+
+    @Test
+    fun `deletePartialDocumentAndParents deletes the composite parents and then the partial document`() = runTest {
+        val compositeUri = server.url("/documents/composite-id-1").toString()
+        server.enqueue(
+            MockResponse().setResponseCode(200).setBody(
+                documentJson(id = "partial-id-1", compositeDocuments = listOf(compositeUri))
+            )
+        )
+        repeat(2) { server.enqueue(MockResponse().setResponseCode(204)) }
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.deletePartialDocumentAndParents("partial-id-1")
+
+        assertThat(resource).isInstanceOf(Resource.Success::class.java)
+        assertThat(server.takeRequest().path).isEqualTo("/documents/partial-id-1")
+        val deleteParent = server.takeRequest()
+        assertThat(deleteParent.method).isEqualTo("DELETE")
+        assertThat(deleteParent.path).isEqualTo("/documents/composite-id-1")
+        val deletePartial = server.takeRequest()
+        assertThat(deletePartial.method).isEqualTo("DELETE")
+        assertThat(deletePartial.path).isEqualTo("/documents/partial-id-1")
+    }
+
+    @Test
+    fun `createCompositeDocument from a document list defaults every rotation to zero`() = runTest {
+        server.enqueue(
+            MockResponse().setResponseCode(201)
+                .setHeader("Location", server.url("/documents/composite-id-7"))
+        )
+        server.enqueue(MockResponse().setResponseCode(200).setBody(documentJson(id = "composite-id-7")))
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.createCompositeDocument(listOf(document("partial-id-1")), null, null)
+
+        assertThat((resource as Resource.Success).data.id).isEqualTo("composite-id-7")
+        val uploadBody = JSONObject(server.takeRequest().body.readUtf8())
+        val partialDocuments = uploadBody.getJSONArray("partialDocuments")
+        assertThat(partialDocuments.length()).isEqualTo(1)
+        assertThat(partialDocuments.getJSONObject(0).getString("document"))
+            .isEqualTo("https://api.gini.net/documents/partial-id-1")
+        assertThat(partialDocuments.getJSONObject(0).getInt("rotationDelta")).isEqualTo(0)
+    }
+
+    @Test
+    fun `getDocument by uri fetches the document from the uri`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(documentJson()))
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.getDocument(Uri.parse(server.url("/documents/document-id-13").toString()))
+
+        assertThat((resource as Resource.Success).data.id).isEqualTo("document-id-13")
+        assertThat(server.takeRequest().path).isEqualTo("/documents/document-id-13")
+    }
+
+    @Test
+    fun `sendFeedbackForExtractions sends the extraction values as feedback`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(204))
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.sendFeedbackForExtractions(document(), mapOf("amountToPay" to specificExtraction()))
+
+        assertThat(resource).isInstanceOf(Resource.Success::class.java)
+        val body = JSONObject(server.takeRequest().body.readUtf8())
+        assertThat(
+            body.getJSONObject("feedback").getJSONObject("amountToPay").getString("value")
+        ).isEqualTo("335.50:EUR")
+    }
+
+    @Test
+    fun `sendFeedbackWithSpecificExtractions sends the extraction values as extractions`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(204))
+        val repository = createRepository(successfulSessionManager())
+
+        val resource =
+            repository.sendFeedbackWithSpecificExtractions(document(), mapOf("amountToPay" to specificExtraction()))
+
+        assertThat(resource).isInstanceOf(Resource.Success::class.java)
+        val body = JSONObject(server.takeRequest().body.readUtf8())
+        assertThat(
+            body.getJSONObject("extractions").getJSONObject("amountToPay").getString("value")
+        ).isEqualTo("335.50:EUR")
+    }
+
+    @Test
+    fun `sendFeedbackForExtractions sends specific and compound extraction feedback`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(204))
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.sendFeedbackForExtractions(
+            document(),
+            mapOf("amountToPay" to specificExtraction()),
+            mapOf("lineItems" to CompoundExtraction("lineItems", listOf(mapOf("description" to specificExtraction()))))
+        )
+
+        assertThat(resource).isInstanceOf(Resource.Success::class.java)
+        val body = JSONObject(server.takeRequest().body.readUtf8())
+        assertThat(body.has("extractions")).isTrue()
+        assertThat(body.has("compoundExtractions")).isTrue()
+    }
+
+    @Test
+    fun `getDocumentLayout maps the layout response`() = runTest {
+        server.enqueue(
+            MockResponse().setResponseCode(200).setBody(
+                """{"pages":[{"number":1,"sizeX":595.0,"sizeY":842.0,"textZones":[],"regions":[]}]}"""
+            )
+        )
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.getDocumentLayout("document-id-13")
+
+        val layout = (resource as Resource.Success).data
+        assertThat(layout.pages).hasSize(1)
+        assertThat(layout.pages.first().number).isEqualTo(1)
+    }
+
+    @Test
+    fun `getDocumentPages maps the page responses`() = runTest {
+        server.enqueue(
+            MockResponse().setResponseCode(200).setBody(
+                """[{"pageNumber":1,"images":{"medium":"https://api.gini.net/image/medium","large":null}}]"""
+            )
+        )
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.getDocumentPages("document-id-13")
+
+        val pages = (resource as Resource.Success).data
+        assertThat(pages).hasSize(1)
+        assertThat(pages.first().pageNumber).isEqualTo(1)
+    }
+
+    @Test
+    fun `getFile returns the raw response bytes`() = runTest {
+        val fileBytes = byteArrayOf(1, 2, 3, 4)
+        server.enqueue(MockResponse().setResponseCode(200).setBody(Buffer().write(fileBytes)))
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.getFile(server.url("/files/file-1").toString())
+
+        assertThat((resource as Resource.Success).data).isEqualTo(fileBytes)
+    }
+
+    @Test
+    fun `getPaymentRequest maps the payment request response`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(paymentRequestJson()))
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.getPaymentRequest("payment-request-id-1")
+
+        val paymentRequest = (resource as Resource.Success).data
+        assertThat(paymentRequest.recipient).isEqualTo("Dr. Fake")
+        assertThat(paymentRequest.status).isEqualTo(PaymentRequest.Status.OPEN)
+    }
+
+    @Test
+    fun `getPaymentRequests maps the payment request list response`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(200).setBody("[${paymentRequestJson()}]"))
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.getPaymentRequests()
+
+        val paymentRequests = (resource as Resource.Success).data
+        assertThat(paymentRequests).hasSize(1)
+        assertThat(paymentRequests.first().iban).isEqualTo("DE02300209000106531065")
+    }
+
+    @Test
+    fun `getPayment maps the payment response`() = runTest {
+        server.enqueue(
+            MockResponse().setResponseCode(200).setBody(
+                """
+                {
+                    "paidAt": "2024-07-30T10:20:30",
+                    "recipient": "Dr. Fake",
+                    "iban": "DE02300209000106531065",
+                    "amount": "335.50:EUR",
+                    "purpose": "invoice 1"
+                }
+                """.trimIndent()
+            )
+        )
+        val repository = createRepository(successfulSessionManager())
+
+        val resource = repository.getPayment("payment-id-1")
+
+        val payment = (resource as Resource.Success).data
+        assertThat(payment.recipient).isEqualTo("Dr. Fake")
+        assertThat(payment.paidAt).isEqualTo("2024-07-30T10:20:30")
+    }
+
     // --- Helpers ---
 
     private class CountingSessionManager(
@@ -414,7 +611,11 @@ class DocumentRepositoryTest {
     private fun document(id: String = "document-id-13") =
         Document.fromApiResponse(JSONObject(documentJson(id)))
 
-    private fun documentJson(id: String = "document-id-13", progress: String = "COMPLETED") = """
+    private fun documentJson(
+        id: String = "document-id-13",
+        progress: String = "COMPLETED",
+        compositeDocuments: List<String> = emptyList()
+    ) = """
         {
             "id": "$id",
             "progress": "$progress",
@@ -422,10 +623,28 @@ class DocumentRepositoryTest {
             "name": "invoice.jpg",
             "creationDate": 1515932941283,
             "sourceClassification": "NATIVE",
+            "compositeDocuments": [${compositeDocuments.joinToString(",") { """{"document": "$it"}""" }}],
             "_links": {
                 "document": "https://api.gini.net/documents/$id",
                 "extractions": "https://api.gini.net/documents/$id/extractions"
             }
+        }
+    """.trimIndent()
+
+    private fun specificExtraction() =
+        SpecificExtraction("amountToPay", "335.50:EUR", "amount", null, emptyList())
+
+    private fun paymentRequestJson() = """
+        {
+            "paymentProvider": "payment-provider-id-1",
+            "requesterUri": "https://requester.example.com",
+            "recipient": "Dr. Fake",
+            "iban": "DE02300209000106531065",
+            "amount": "335.50:EUR",
+            "purpose": "invoice 1",
+            "status": "open",
+            "createdAt": "2024-07-30T10:20:30",
+            "expirationDate": "2024-08-30T10:20:30"
         }
     """.trimIndent()
 
