@@ -18,6 +18,18 @@ sonar {
         property("sonar.organization", "gini")
         property("sonar.sources", "src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")
+        // S1133 ("remove this deprecated code someday") is by design on the accessToken
+        // compatibility API deprecated in PP-2363: it is scheduled for removal with the
+        // next major version, so the reminder must not fail the quality gate until then.
+        property("sonar.issue.ignore.multicriteria", "deprecatedAccessTokenApi")
+        property(
+            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenApi.ruleKey",
+            "kotlin:S1133"
+        )
+        property(
+            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenApi.resourceKey",
+            "**/net/gini/android/health/api/*RemoteSource.kt"
+        )
     }
 }
 
