@@ -660,12 +660,7 @@ internal constructor(
          * @return new [GiniCaptureDefaultNetworkService] instance
          */
         fun build(): GiniCaptureDefaultNetworkService {
-            if (isSelfManagedAuthentication && sessionManager != null) {
-                LOG.warn(
-                    "Self-managed authentication is enabled - the SessionManager set on " +
-                            "this builder is ignored."
-                )
-            }
+            warnAboutIgnoredAuthenticationConfig()
             val giniApiBuilder = when {
                 isSelfManagedAuthentication ->
                     GiniBankAPIBuilder(mContext).setSelfManagedAuthentication(true)
@@ -698,6 +693,24 @@ internal constructor(
             giniApiBuilder.setDebuggingEnabled(isDebuggingEnabled)
             val giniBankApi = giniApiBuilder.build()
             return GiniCaptureDefaultNetworkService(giniBankApi, documentMetadata, mContext)
+        }
+
+        private fun warnAboutIgnoredAuthenticationConfig() {
+            if (!isSelfManagedAuthentication) {
+                return
+            }
+            if (sessionManager != null) {
+                LOG.warn(
+                    "Self-managed authentication is enabled - the SessionManager set on " +
+                            "this builder is ignored."
+                )
+            }
+            if (clientId.isNotEmpty() || clientSecret.isNotEmpty() || emailDomain.isNotEmpty()) {
+                LOG.warn(
+                    "Self-managed authentication is enabled - the client credentials set on " +
+                            "this builder are ignored."
+                )
+            }
         }
 
         /**

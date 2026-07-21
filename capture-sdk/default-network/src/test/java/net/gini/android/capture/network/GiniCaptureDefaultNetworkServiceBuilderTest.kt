@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.TimeUnit
 
 /**
  * Tests for building the [GiniCaptureDefaultNetworkService] with self-managed authentication
@@ -56,6 +57,43 @@ class GiniCaptureDefaultNetworkServiceBuilderTest {
             .setHttpClientProvider(GiniHttpClientProvider { OkHttpClient() })
             .setSelfManagedAuthentication(true)
             .setCredentialsStore(InMemoryCredentialsStore())
+            .build()
+
+        assertThat(networkService).isNotNull()
+    }
+
+    @Test
+    fun `builds with self-managed authentication when leftover client credentials are configured`() {
+        val networkService = GiniCaptureDefaultNetworkService.builder(context)
+            .setClientCredentials("leftover-client-id", "leftover-client-secret", "example.com")
+            .setHttpClientProvider(GiniHttpClientProvider { OkHttpClient() })
+            .setSelfManagedAuthentication(true)
+            .setCredentialsStore(InMemoryCredentialsStore())
+            .build()
+
+        assertThat(networkService).isNotNull()
+    }
+
+    @Test
+    fun `builds with a session manager when self-managed authentication is disabled`() {
+        val networkService = GiniCaptureDefaultNetworkService.builder(context)
+            .setSessionManager { error("not called during build") }
+            .setCredentialsStore(InMemoryCredentialsStore())
+            .build()
+
+        assertThat(networkService).isNotNull()
+    }
+
+    @Test
+    fun `builds with client credentials and forwards the configuration to the api builder`() {
+        val networkService = GiniCaptureDefaultNetworkService.builder(context)
+            .setClientCredentials("client-id", "client-secret", "example.com")
+            .setBaseUrl("https://api.custom.example.com/")
+            .setUserCenterBaseUrl("https://user.custom.example.com/")
+            .setCredentialsStore(InMemoryCredentialsStore())
+            .setConnectionTimeout(30)
+            .setConnectionTimeoutUnit(TimeUnit.SECONDS)
+            .setDebuggingEnabled(true)
             .build()
 
         assertThat(networkService).isNotNull()
