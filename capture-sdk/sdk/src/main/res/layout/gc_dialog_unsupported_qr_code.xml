@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/gc_unsupported_qr_dialog_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/gc_large_24"
-        android:layout_marginStart="@dimen/gc_large_24"
-        android:layout_marginEnd="@dimen/gc_large_24"
-        android:text="@string/gc_unsupported_qr_code_dialog_title"
-        android:textAppearance="?attr/textAppearanceTitleLarge" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/gc_btn_scan_another_qr_code"
-        style="?attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="@dimen/gc_large_24"
-        android:layout_marginEnd="@dimen/gc_large_24"
-        android:text="@string/gc_unsupported_qr_code_dialog_scan_qr_code" />
+        <TextView
+            android:id="@+id/gc_unsupported_qr_dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gc_large_24"
+            android:layout_marginStart="@dimen/gc_large_24"
+            android:layout_marginEnd="@dimen/gc_large_24"
+            android:text="@string/gc_unsupported_qr_code_dialog_title"
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
-    <Button
-        android:id="@+id/gc_btn_capture_document"
-        style="?attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="@dimen/gc_large_24"
-        android:layout_marginBottom="@dimen/gc_large_24"
-        android:text="@string/gc_unsupported_qr_code_dialog_capture_document" />
+        <Button
+            android:id="@+id/gc_btn_scan_another_qr_code"
+            style="?attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/gc_large_24"
+            android:layout_marginEnd="@dimen/gc_large_24"
+            android:text="@string/gc_unsupported_qr_code_dialog_scan_qr_code" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/gc_btn_capture_document"
+            style="?attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/gc_large_24"
+            android:layout_marginBottom="@dimen/gc_large_24"
+            android:text="@string/gc_unsupported_qr_code_dialog_capture_document" />
+
+    </LinearLayout>
+
+</ScrollView>
