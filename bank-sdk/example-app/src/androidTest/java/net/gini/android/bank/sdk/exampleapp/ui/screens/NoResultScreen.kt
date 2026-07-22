@@ -10,7 +10,10 @@ class NoResultScreen {
         var isElementDisplayed = false
         onView(withText(resourceId)).
             check { view, _ ->
-                if (view.isShown()) {
+                // When the view is not found, Espresso passes a null view (with the
+                // NoMatchingViewException in the second param). Guard against null so a
+                // missing element returns false instead of throwing a NullPointerException.
+                if (view != null && view.isShown()) {
                     isElementDisplayed = true
             }
         }

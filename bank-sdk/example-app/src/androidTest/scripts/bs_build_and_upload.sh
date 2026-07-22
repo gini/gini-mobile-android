@@ -163,6 +163,10 @@ BUILD_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
     \"devices\": [\"$DEVICE_1\", \"$DEVICE_2\"],
     \"app\": \"$APP_URL\",
     \"testSuite\": \"$TEST_URL\",
+    \"singleRunnerInvocation\": \"true\",
+    \"useOrchestrator\": \"true\",
+    \"clearPackageData\": \"true\",
+    \"disableAnimations\": \"true\",
     $FILTER_JSON
     \"uploadMedia\": [\"$IMAGE_URL\", \"$PDF_URL\", \"$SAMPLE_PDF_URL\"]
   }")

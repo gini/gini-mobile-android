@@ -53,8 +53,13 @@ class ExtractionScreenTests {
     }
 
     val testProperties = Properties().apply {
-        getApplicationContext<Context>().resources.assets
-            .open("test.properties").use { load(it) }
+        // On CI / BrowserStack the generated test.properties may be absent from the
+        // test APK. A missing file must mean "run the test" (see cancelTestIfRunOnCi),
+        // so swallow the error instead of aborting the whole test class at construction.
+        runCatching {
+            getApplicationContext<Context>().resources.assets
+                .open("test.properties").use { load(it) }
+        }
     }
 
     @Before
@@ -143,7 +148,7 @@ class ExtractionScreenTests {
     }
 
     private fun cancelTestIfRunOnCi() {
-        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        val ignoreTests = testProperties["ignoreLocalTests"] as? String
         Assume.assumeTrue(ignoreTests != "true")
     }
 
