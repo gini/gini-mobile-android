@@ -174,10 +174,12 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
      *
      * - No need to handle the bottom sheet case, system insets are applied automatically.
      * - For standard fragments:
-     *   - On Android 15+ (API 35+), applying insetter causes unwanted bottom padding when keyboard
-     *   is visible.
+     *   - On Android 15+ (API 35+), relying on the raw WindowInsetsCompat ime inset adds unwanted
+     *   bottom padding when the keyboard is visible.
      *     So we manually observe keyboard visibility and apply the correct height.
-     *   - On Android 14 and below, WindowInsetsCompat listener is used.
+     *   - On Android 14 and below, a WindowInsetsCompat listener is used, with an attach-aware
+     *   insets request so the padding is applied even when the listener is installed after the
+     *   initial insets dispatch.
      */
 
     private fun handleViewInsets() {
@@ -209,6 +211,7 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
                     v.updatePadding(bottom = bottom)
                     insets
                 }
+                requestApplyInsetsWhenAttached(binding.gpsPaymentDetails)
             }
         }
     }
@@ -312,12 +315,23 @@ class ReviewView(private val context: Context, attrs: AttributeSet?) :
             insets
         }
 
+        requestApplyInsetsWhenAttached(view)
+    }
+
+    /**
+     * Triggers an insets pass for [target] as soon as this view is attached to the window.
+     *
+     * A freshly installed [ViewCompat.setOnApplyWindowInsetsListener] only runs on the next insets
+     * dispatch. When the listener is installed after the initial dispatch it may never run until an
+     * unrelated insets event occurs, so we explicitly request an insets pass once we are attached.
+     */
+    private fun requestApplyInsetsWhenAttached(target: View) {
         if (isAttachedToWindow) {
-            ViewCompat.requestApplyInsets(view)
+            ViewCompat.requestApplyInsets(target)
         } else {
             addOnAttachStateChangeListener(object : OnAttachStateChangeListener {
                 override fun onViewAttachedToWindow(v: View) {
-                    ViewCompat.requestApplyInsets(v)
+                    ViewCompat.requestApplyInsets(target)
                     v.removeOnAttachStateChangeListener(this)
                 }
 
