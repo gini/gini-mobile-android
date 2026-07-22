@@ -1,7 +1,7 @@
 name: Release docs for Capture SDK
 
 permissions:
-  contents: read
+  contents: write
 
 on:
   workflow_dispatch:
@@ -22,8 +22,9 @@ concurrency:
 
 jobs:
   publish-sdk:
-    # Note: permissions: blocks on caller jobs have no effect when using reusable workflows (uses:).
-    # The reusable workflow (sdk.publish.docs.yml) declares its own permissions: contents: write.
+    # The called workflow's release-docs job requests contents: write, so this workflow's
+    # permissions must grant at least that — a called workflow can only downgrade the
+    # caller's permissions, never elevate them.
     uses: ./.github/workflows/sdk.publish.docs.yml
     with:
       project_id: 'capture-sdk'
@@ -38,8 +39,9 @@ jobs:
 
   publish-default-network:
     needs: [publish-sdk]
-    # Note: permissions: blocks on caller jobs have no effect when using reusable workflows (uses:).
-    # The reusable workflow (sdk.publish.docs.yml) declares its own permissions: contents: write.
+    # The called workflow's release-docs job requests contents: write, so this workflow's
+    # permissions must grant at least that — a called workflow can only downgrade the
+    # caller's permissions, never elevate them.
     uses: ./.github/workflows/sdk.publish.docs.yml
     with:
       project_id: 'capture-sdk'

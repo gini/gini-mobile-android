@@ -142,16 +142,18 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
                     .setView(dialogView)
                     .setCancelable(false)
                     .create()
-                dialogView.findViewById<Button>(R.id.gc_btn_scan_another_qr_code).setOnClickListener {
-                    unsupportedQrDialog?.dismiss()
-                    hide()
-                    onScanAnotherQRCode?.invoke()
-                }
-                dialogView.findViewById<Button>(R.id.gc_btn_capture_document).setOnClickListener {
-                    unsupportedQrDialog?.dismiss()
-                    hide()
-                    onCaptureDocument?.invoke()
-                }
+                allowMultilineLabel(dialogView.findViewById(R.id.gc_btn_scan_another_qr_code))
+                    .setOnClickListener {
+                        unsupportedQrDialog?.dismiss()
+                        hide()
+                        onScanAnotherQRCode?.invoke()
+                    }
+                allowMultilineLabel(dialogView.findViewById(R.id.gc_btn_capture_document))
+                    .setOnClickListener {
+                        unsupportedQrDialog?.dismiss()
+                        hide()
+                        onCaptureDocument?.invoke()
+                    }
                 unsupportedQrDialog?.show()
             } else {
                 mUnknownQRCodeWrapper.visibility = View.VISIBLE
@@ -191,4 +193,16 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
         popupView.performHapticFeedback(constant)
     }
 
+    companion object {
+        // The Material dialog button style (buttonBarButtonStyle) sets android:lines="1",
+        // which overrides any android:maxLines from the layout because TextView applies the
+        // "lines" attribute after "maxLines". Overriding it here after inflation lets long
+        // labels wrap at large accessibility font scales instead of being ellipsized.
+        fun allowMultilineLabel(button: Button): Button = button.apply {
+            setSingleLine(false)
+            maxLines = MAX_BUTTON_LABEL_LINES
+        }
+
+        private const val MAX_BUTTON_LABEL_LINES = 3
+    }
 }

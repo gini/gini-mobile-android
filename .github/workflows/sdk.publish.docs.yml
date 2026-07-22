@@ -92,9 +92,11 @@ jobs:
           # Note on links_to_projects encoding: inputs.links_to_projects is a string that already
           # contains a JSON array (e.g. '[{"project_id":"capture-sdk","module_id":"sdk"}]').
           # toJson() is required to safely embed that string as a JSON value — without it the
-          # inner double-quotes would break the outer JSON object.  The value Fastlane receives is
-          # therefore the original JSON-array string, and Fastfile calls JSON.parse once to decode
-          # it into a Ruby array.  If that JSON.parse call is ever removed, this will silently break.
+          # inner double-quotes would break the outer JSON object.  The fastlane action then
+          # strips the unescaped double quotes when tokenizing the lane options, so the string
+          # Fastlane receives looks like '[{project_id: capture-sdk, module_id: sdk}]' — the
+          # Fastfile decodes it with YAML.safe_load, which accepts both the quoted and the
+          # quote-stripped form.  Plain JSON.parse would fail on the stripped form.
           options: >
             {
               "project_id": "${{ inputs.project_id }}",

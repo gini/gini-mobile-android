@@ -92,9 +92,10 @@ Parameters:
   module_id             - the id of the project's module to be released (e.g., sdk, lib)
   git_tag               - the git tag name used to release the documentation
   ci                    - set to "true" if running on a CI machine
-  git_user              - the username to use for git authentication
-  git_password          - the password to use for git authentication
   documentation_title   - the title used on the root index page
+  git_token             - (optional) GitHub App token for authentication; if not provided, the GH_TOKEN env var is used as fallback
+  git_user              - (legacy) username for git authentication; used when git_token and GH_TOKEN are not available
+  git_password          - (legacy) password for git authentication; used when git_token and GH_TOKEN are not available
   links_to_projects     - (optional) a json array of projects that are linked to in the documentation, for example: [{"project_id": "capture-sdk", "module_id": "sdk"}]
   dry_run               - (optional) executes without permanent side effects
 

@@ -161,9 +161,17 @@ class GiniCaptureFragmentTest {
             scenario.moveToState(Lifecycle.State.RESUMED)
             val giniBankConfigurationProvider =
                 getGiniCaptureKoin().get<GiniBankConfigurationProvider>()
-            val configuration = giniBankConfigurationProvider.provide()
 
-            assertThat(configuration.isSavePhotosLocallyEnabled).isTrue()
+            // The flag propagates asynchronously (network callback → DataStore write →
+            // observer → provider), so poll with a deadline instead of asserting immediately.
+            val deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2)
+            while (!giniBankConfigurationProvider.provide().isSavePhotosLocallyEnabled &&
+                System.currentTimeMillis() < deadline
+            ) {
+                Thread.sleep(POLL_INTERVAL_MS)
+            }
+
+            assertThat(giniBankConfigurationProvider.provide().isSavePhotosLocallyEnabled).isTrue()
         }
     }
 
