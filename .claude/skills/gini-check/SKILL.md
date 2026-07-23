@@ -1,6 +1,6 @@
 ---
 name: gini-check
-description: Run the CI check suite (testDebugUnitTest, apiCheck, lint, detekt, ktlintCheck) locally for the modules affected by the current changes, expanding through the inter-module dependency chain. Use before pushing, or when asked to "run the checks" / "verify CI will pass". Accepts optional explicit module paths as arguments (e.g. "bank-sdk:sdk").
+description: Run the CI check suite (testDebugUnitTest, lint, detekt, ktlintCheck) locally for the modules affected by the current changes, expanding through the inter-module dependency chain. Use before pushing, or when asked to "run the checks" / "verify CI will pass". Accepts optional explicit module paths as arguments (e.g. "bank-sdk:sdk").
 ---
 
 # /gini-check — run the CI gate for affected modules
@@ -59,11 +59,11 @@ Before running, tell the user which modules will be checked and why (which chang
 
 ## 3. Run the CI task set
 
-For the affected modules, run the five CI tasks in a single Gradle invocation with `--continue` so one failure doesn't hide others:
+For the affected modules, run the four CI tasks in a single Gradle invocation with `--continue` so one failure doesn't hide others:
 
 ```bash
 ./gradlew --continue \
-  <module>:testDebugUnitTest <module>:apiCheck <module>:lint <module>:detekt <module>:ktlintCheck \
+  <module>:testDebugUnitTest <module>:lint <module>:detekt <module>:ktlintCheck \
   <next-module>:testDebugUnitTest ...
 ```
 
@@ -73,8 +73,7 @@ Notes:
 
 ## 4. Report
 
-Summarize as a table: module × task → pass/fail. For failures, quote the relevant error output (test name + assertion, lint/detekt rule, or the apiCheck diff) and state the likely fix:
-- `apiCheck` failure: accidentally exposed API → restrict visibility; intentional API change → run `<module>:apiDump`, review the diff for removals/signature changes (deprecate first!), and commit the dump.
+Summarize as a table: module × task → pass/fail. For failures, quote the relevant error output (test name + assertion, or lint/detekt rule) and state the likely fix:
 - `ktlintCheck` failure: offer to run `<module>:ktlintFormat`.
 
 End with a clear verdict: "CI should pass" or "CI will fail on: …".

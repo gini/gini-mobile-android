@@ -23,7 +23,7 @@ Source lives under `src/main/java/` even for Kotlin files. Toolchain: JDK 17, Ko
 
 ## Build, test, lint
 
-Always use the Gradle wrapper and fully qualified module paths — `<project>:<module>:<task>`, e.g. `bank-sdk:sdk:lint` or `core-api-library:library:apiCheck`. The same task set applies to every module:
+Always use the Gradle wrapper and fully qualified module paths — `<project>:<module>:<task>`, e.g. `bank-sdk:sdk:lint` or `core-api-library:library:detekt`. The same task set applies to every module:
 
 ```bash
 ./gradlew <project>:<module>:assembleDebug       # build one module
@@ -32,23 +32,14 @@ Always use the Gradle wrapper and fully qualified module paths — `<project>:<m
 ./gradlew <project>:<module>:lint                # Android Lint
 ./gradlew <project>:<module>:detekt              # Detekt (config/detekt/detekt.yml)
 ./gradlew <project>:<module>:ktlintCheck         # ktlint
-./gradlew <project>:<module>:apiCheck            # binary-compatibility check (see below)
-./gradlew <project>:<module>:apiDump             # regenerate api/*.api after intentional public API change
 
 # Example: run the unit tests of the Bank SDK
 ./gradlew bank-sdk:sdk:testDebugUnitTest
 ```
 
-CI (GitHub Actions, `.github/workflows/<project>.check.yml`) runs per module: `testDebugUnitTest`, `apiCheck`, `lint`, `detekt`, `ktlintCheck`, plus example-app assembly and Sonar/Jacoco. The API libraries', capture-sdk's and bank-sdk's check workflows also run `connectedCheck` on an emulator (bank-sdk additionally has a separate `bank-sdk.check.ui-tests.yml`). Match that set locally before pushing. Checkstyle/PMD tasks exist for legacy Java code but are non-blocking (`ignoreFailures = true`).
+CI (GitHub Actions, `.github/workflows/<project>.check.yml`) runs per module: `testDebugUnitTest`, `lint`, `detekt`, `ktlintCheck`, plus example-app assembly and Sonar/Jacoco. The API libraries', capture-sdk's and bank-sdk's check workflows also run `connectedCheck` on an emulator (bank-sdk additionally has a separate `bank-sdk.check.ui-tests.yml`). Match that set locally before pushing. Checkstyle/PMD tasks exist for legacy Java code but are non-blocking (`ignoreFailures = true`).
 
 Reference docs (Dokka): `./gradlew <project>:<module>:dokkaHtmlSiblingCollector` → `<project>/<module>/build/docs/dokka`. Sphinx-based integration guides exist alongside the reference docs; both build via `bundle exec fastlane build_documentation project_id:<project> module_id:<module>` → `<project>/<module>/build/docs/html` (guides) and `.../docs/dokka` (reference). Release automation runs through fastlane (`fastlane/` folder, `bundle exec fastlane ...`).
-
-## Public API compatibility — always
-
-Releasable modules apply `binary-compatibility-validator`. Each module's public API is a committed dump in its `api/` folder (e.g. `core-api-library/library/api/library.api`).
-
-- If `apiCheck` fails unexpectedly, you exposed API by accident (Kotlin is public by default) — restrict visibility instead of updating the dump.
-- For intentional API changes: run `apiDump`, review the diff (removals/signature changes break clients — deprecate first, remove in the next major), and commit the dump with the code change.
 
 ## Dependencies & versioning
 
@@ -64,7 +55,7 @@ Releasable modules apply `binary-compatibility-validator`. Each module's public 
 - **UI pattern:** MVVM with Jetpack `ViewModel` and `StateFlow`/`SharedFlow` for state (used across capture/bank/health/internal-payment SDKs). Views are Fragment/View-based with ViewBinding; Jetpack Compose is used in parts of `capture-sdk`/`bank-sdk` and the health example app. No Hilt in the SDK modules themselves (only the `bank-sdk` example app uses it) — SDKs wire dependencies manually to stay DI-framework-agnostic for integrators.
 - **Networking:** Retrofit + OkHttp + Moshi in the API libraries (Retrofit interfaces + remote-source classes, e.g. `HealthApiDocumentRemoteSource`).
 - Public entry points are singleton-style facade classes (`GiniHealth`, `GiniBank`, `GiniCapture`, …).
-- Kotlin declarations are public by default — mark everything `internal`/`private` unless it is deliberately part of the SDK's public API (enforced by `apiCheck`).
+- Kotlin declarations are public by default — mark everything `internal`/`private` unless it is deliberately part of the SDK's public API.
 - Style is enforced by ktlint and Detekt (`config/detekt/detekt.yml`); run both before committing.
 
 ## Testing conventions
