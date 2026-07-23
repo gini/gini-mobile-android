@@ -1068,7 +1068,7 @@ public final class net/gini/android/capture/databinding/GcDialogUnsupportedQrCod
 	public final field gcUnsupportedQrDialogTitle Landroid/widget/TextView;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcDialogUnsupportedQrCodeBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroid/widget/LinearLayout;
+	public fun getRoot ()Landroid/widget/ScrollView;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/capture/databinding/GcDialogUnsupportedQrCodeBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/capture/databinding/GcDialogUnsupportedQrCodeBinding;
 }
