@@ -1,5 +1,6 @@
 package net.gini.android.bank.api
 
+import net.gini.android.bank.api.mapper.BankExtractionsParser
 import net.gini.android.bank.api.models.AmplitudeRoot
 import net.gini.android.bank.api.models.Configuration
 import net.gini.android.bank.api.models.ExtractionsContainer
@@ -33,7 +34,7 @@ class BankApiDocumentRepository(
         responseJSON: JSONObject
     ): ExtractionsContainer {
         val returnReasons: List<ReturnReason> =
-            parseReturnReason(responseJSON.optJSONArray("returnReasons"))
+            BankExtractionsParser.parseReturnReasons(responseJSON.optJSONArray("returnReasons"))
 
         return ExtractionsContainer(specificExtractions, compoundExtractions, returnReasons)
     }
@@ -42,57 +43,25 @@ class BankApiDocumentRepository(
         requestId: String,
         resolvePaymentInput: ResolvePaymentInput
     ): Resource<ResolvedPayment> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.resolvePaymentRequests(
-                    accessToken,
-                    requestId,
-                    resolvePaymentInput
-                )
-            }
+        wrapInResource {
+            documentRemoteSource.resolvePaymentRequests(
+                requestId,
+                resolvePaymentInput
+            )
         }
 
     suspend fun logErrorEvent(errorEvent: ErrorEvent): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.logErrorEvent(accessToken, errorEvent)
-            }
+        wrapInResource {
+            documentRemoteSource.logErrorEvent(errorEvent)
         }
 
     suspend fun getConfigurations(): Resource<Configuration> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getConfigurations(accessToken)
-            }
+        wrapInResource {
+            documentRemoteSource.getConfigurations()
         }
 
     suspend fun sendEvents(amplitudeRoot: AmplitudeRoot): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                trackingAnalysisRemoteSource.sendEvents(accessToken, amplitudeRoot)
-            }
+        wrapInResource {
+            trackingAnalysisRemoteSource.sendEvents(amplitudeRoot)
         }
-
-
-    @Throws(JSONException::class)
-    private fun parseReturnReason(returnReasonsJson: JSONArray?): List<ReturnReason> {
-        if (returnReasonsJson == null) {
-            return emptyList()
-        }
-        val returnReasons: MutableList<ReturnReason> = ArrayList()
-        for (i in 0 until returnReasonsJson.length()) {
-            val returnReasonJson = returnReasonsJson.getJSONObject(i)
-            val localizedLabels: MutableMap<String, String> = HashMap()
-            val keys = returnReasonJson.keys()
-            while (keys.hasNext()) {
-                val key = keys.next()
-                if (key == "id") {
-                    continue
-                }
-                localizedLabels[key] = returnReasonJson.getString(key)
-            }
-            returnReasons.add(ReturnReason(returnReasonJson.getString("id"), localizedLabels))
-        }
-        return returnReasons
-    }
 }

@@ -1,0 +1,380 @@
+public final class net/gini/android/health/sdk/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public static final field VERSION_CODE Ljava/lang/String;
+	public static final field VERSION_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class net/gini/android/health/sdk/GiniHealth {
+	public static final field Companion Lnet/gini/android/health/sdk/GiniHealth$Companion;
+	public fun <init> (Lnet/gini/android/health/api/GiniHealthAPI;Landroid/content/Context;)V
+	public final fun checkIfDocumentContainsMultipleDocuments (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun checkIfDocumentIsPayable (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deleteDocuments (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequests (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getDisplayedScreen ()Lkotlinx/coroutines/flow/SharedFlow;
+	public final fun getDocumentFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getDocumentManager ()Lnet/gini/android/health/api/HealthApiDocumentManager;
+	public final fun getGiniInternalPaymentModule ()Lnet/gini/android/internal/payment/GiniInternalPaymentModule;
+	public final fun getOpenBankState ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getPayment (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getPaymentFragmentWithDocument (Ljava/lang/String;Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;)Lnet/gini/android/health/sdk/integratedFlow/PaymentFragment;
+	public final fun getPaymentFragmentWithoutDocument (Lnet/gini/android/health/sdk/review/model/PaymentDetails;Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;)Lnet/gini/android/health/sdk/integratedFlow/PaymentFragment;
+	public final fun getSDKLanguage (Landroid/content/Context;)Lnet/gini/android/internal/payment/utils/GiniLocalization;
+	public final fun getTrustMarkersFlow ()Lkotlinx/coroutines/flow/Flow;
+	public final fun loadPaymentProviders (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun setDocumentForReview (Ljava/lang/String;Lnet/gini/android/health/sdk/review/model/PaymentDetails;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun setDocumentForReview (Lnet/gini/android/core/api/models/Document;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun setDocumentForReview$default (Lnet/gini/android/health/sdk/GiniHealth;Ljava/lang/String;Lnet/gini/android/health/sdk/review/model/PaymentDetails;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun setSDKLanguage (Lnet/gini/android/internal/payment/utils/GiniLocalization;Landroid/content/Context;)V
+	public final fun setSavedStateRegistryOwner (Landroidx/savedstate/SavedStateRegistryOwner;Lkotlinx/coroutines/CoroutineScope;)V
+}
+
+public final class net/gini/android/health/sdk/GiniHealth$CapturedArguments$DocumentId$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun createFromParcel (Landroid/os/Parcel;)Lnet/gini/android/health/sdk/GiniHealth$CapturedArguments$DocumentId;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+	public final fun newArray (I)[Lnet/gini/android/health/sdk/GiniHealth$CapturedArguments$DocumentId;
+}
+
+public final class net/gini/android/health/sdk/GiniHealth$CapturedArguments$DocumentInstance$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun createFromParcel (Landroid/os/Parcel;)Lnet/gini/android/health/sdk/GiniHealth$CapturedArguments$DocumentInstance;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+	public final fun newArray (I)[Lnet/gini/android/health/sdk/GiniHealth$CapturedArguments$DocumentInstance;
+}
+
+public final class net/gini/android/health/sdk/GiniHealth$Companion {
+	public final fun getInstance ()Lnet/gini/android/health/sdk/GiniHealth;
+	public final fun setInstance (Lnet/gini/android/health/sdk/GiniHealth;)V
+}
+
+public abstract class net/gini/android/health/sdk/GiniHealth$PaymentState {
+}
+
+public final class net/gini/android/health/sdk/GiniHealth$PaymentState$Cancel : net/gini/android/health/sdk/GiniHealth$PaymentState {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/GiniHealth$PaymentState$Cancel;
+}
+
+public final class net/gini/android/health/sdk/GiniHealth$PaymentState$Error : net/gini/android/health/sdk/GiniHealth$PaymentState {
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun getThrowable ()Ljava/lang/Throwable;
+}
+
+public final class net/gini/android/health/sdk/GiniHealth$PaymentState$Loading : net/gini/android/health/sdk/GiniHealth$PaymentState {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/GiniHealth$PaymentState$Loading;
+}
+
+public final class net/gini/android/health/sdk/GiniHealth$PaymentState$NoAction : net/gini/android/health/sdk/GiniHealth$PaymentState {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/GiniHealth$PaymentState$NoAction;
+}
+
+public final class net/gini/android/health/sdk/GiniHealth$PaymentState$Success : net/gini/android/health/sdk/GiniHealth$PaymentState {
+	public fun <init> (Lnet/gini/android/health/sdk/review/model/PaymentRequest;)V
+	public final fun getPaymentRequest ()Lnet/gini/android/health/sdk/review/model/PaymentRequest;
+}
+
+public final class net/gini/android/health/sdk/GiniHealth$TrustMarkerResponse {
+	public fun <init> (Landroid/graphics/drawable/BitmapDrawable;Landroid/graphics/drawable/BitmapDrawable;I)V
+	public final fun component1 ()Landroid/graphics/drawable/BitmapDrawable;
+	public final fun component2 ()Landroid/graphics/drawable/BitmapDrawable;
+	public final fun component3 ()I
+	public final fun copy (Landroid/graphics/drawable/BitmapDrawable;Landroid/graphics/drawable/BitmapDrawable;I)Lnet/gini/android/health/sdk/GiniHealth$TrustMarkerResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/health/sdk/GiniHealth$TrustMarkerResponse;Landroid/graphics/drawable/BitmapDrawable;Landroid/graphics/drawable/BitmapDrawable;IILjava/lang/Object;)Lnet/gini/android/health/sdk/GiniHealth$TrustMarkerResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getExtraPaymentProvidersCount ()I
+	public final fun getPaymentProviderIcon ()Landroid/graphics/drawable/BitmapDrawable;
+	public final fun getSecondPaymentProviderIcon ()Landroid/graphics/drawable/BitmapDrawable;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/health/sdk/databinding/GhsFragmentHealthBinding : androidx/viewbinding/ViewBinding {
+	public final field ghsFragmentContainerView Landroidx/fragment/app/FragmentContainerView;
+	public final field loading Landroid/widget/ProgressBar;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/health/sdk/databinding/GhsFragmentHealthBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/FrameLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/health/sdk/databinding/GhsFragmentHealthBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/health/sdk/databinding/GhsFragmentHealthBinding;
+}
+
+public final class net/gini/android/health/sdk/databinding/GhsFragmentReviewBinding : androidx/viewbinding/ViewBinding {
+	public final field close Landroid/widget/ImageButton;
+	public final field constraintRoot Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field dragHandle Lcom/google/android/material/bottomsheet/BottomSheetDragHandleView;
+	public final field dragHandleContainer Landroid/widget/FrameLayout;
+	public final field ghsContainerView Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field ghsPaymentDetails Lnet/gini/android/internal/payment/review/reviewComponent/ReviewView;
+	public final field indicator Lcom/google/android/material/tabs/TabLayout;
+	public final field loading Landroid/widget/ProgressBar;
+	public final field pager Landroidx/viewpager2/widget/ViewPager2;
+	public final field pagerNegativeSpace Landroid/widget/Space;
+	public final field paymentDetailsInfoBar Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field paymentDetailsScrollview Landroid/widget/ScrollView;
+	public final field paymentInfoLabel Landroid/widget/TextView;
+	public final field snackbarGuardGuideline Landroidx/constraintlayout/widget/Guideline;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/health/sdk/databinding/GhsFragmentReviewBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/coordinatorlayout/widget/CoordinatorLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/health/sdk/databinding/GhsFragmentReviewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/health/sdk/databinding/GhsFragmentReviewBinding;
+}
+
+public final class net/gini/android/health/sdk/databinding/GhsItemPageErrorBinding : androidx/viewbinding/ViewBinding {
+	public final field pageErrorRetry Lcom/google/android/material/button/MaterialButton;
+	public final field pageErrorText Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/health/sdk/databinding/GhsItemPageErrorBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/FrameLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/health/sdk/databinding/GhsItemPageErrorBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/health/sdk/databinding/GhsItemPageErrorBinding;
+}
+
+public final class net/gini/android/health/sdk/databinding/GhsItemPageHorizontalBinding : androidx/viewbinding/ViewBinding {
+	public final field error Lnet/gini/android/health/sdk/databinding/GhsItemPageErrorBinding;
+	public final field image Lcom/github/chrisbanes/photoview/PhotoView;
+	public final field loading Landroid/widget/ProgressBar;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/health/sdk/databinding/GhsItemPageHorizontalBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/FrameLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/health/sdk/databinding/GhsItemPageHorizontalBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/health/sdk/databinding/GhsItemPageHorizontalBinding;
+}
+
+public final class net/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public static final field Companion Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration$Companion;
+	public static final field DEFAULT_POPUP_DURATION I
+	public fun <init> ()V
+	public fun <init> (ZZZI)V
+	public synthetic fun <init> (ZZZIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun component4 ()I
+	public final fun copy (ZZZI)Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;
+	public static synthetic fun copy$default (Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;ZZZIILjava/lang/Object;)Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPopupDurationPaymentReview ()I
+	public final fun getShouldHandleErrorsInternally ()Z
+	public final fun getShouldShowReviewBottomDialog ()Z
+	public final fun getShowCloseButtonOnReviewFragment ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class net/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration$Companion {
+}
+
+public final class net/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun createFromParcel (Landroid/os/Parcel;)Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+	public final fun newArray (I)[Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;
+}
+
+public final class net/gini/android/health/sdk/integratedFlow/PaymentFlowViewModel : androidx/lifecycle/ViewModel, net/gini/android/internal/payment/utils/BackListener, net/gini/android/internal/payment/utils/FlowBottomSheetsManager {
+	public fun <init> (Landroidx/lifecycle/SavedStateHandle;Lnet/gini/android/health/sdk/GiniHealth;)V
+	public final fun addToBackStack (Lnet/gini/android/health/sdk/util/DisplayedScreen;)V
+	public fun backCalled ()V
+	public final fun checkBankAppInstallState (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;)V
+	public fun checkNextStep (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Ljava/io/File;Lkotlinx/coroutines/CoroutineScope;)V
+	public final fun emitShareWithStartedEvent ()V
+	public final fun getBackButtonEvent ()Lkotlinx/coroutines/flow/SharedFlow;
+	public final fun getDocumentId ()Ljava/lang/String;
+	public final fun getGiniHealth ()Lnet/gini/android/health/sdk/GiniHealth;
+	public fun getGiniInternalPaymentModule ()Lnet/gini/android/internal/payment/GiniInternalPaymentModule;
+	public final fun getLastBackstackEntry ()Lnet/gini/android/health/sdk/util/DisplayedScreen;
+	public final fun getPaymentComponent ()Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;
+	public final fun getPaymentDetails ()Lnet/gini/android/health/sdk/review/model/PaymentDetails;
+	public final fun getPaymentFlowConfiguration ()Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;
+	public final fun getPaymentNextStep ()Lkotlinx/coroutines/flow/SharedFlow;
+	public fun getPaymentNextStepFlow ()Lkotlinx/coroutines/flow/MutableSharedFlow;
+	public final fun getPaymentProviderApp ()Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;
+	public fun getPaymentRequest (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getPaymentRequestDocument (Lnet/gini/android/internal/payment/api/model/PaymentRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getPaymentRequestFlow ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public fun getPaymentRequestImage (Lnet/gini/android/internal/payment/api/model/PaymentRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getShareWithFlowStarted ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public final fun loadPaymentProviderApps ()Lkotlinx/coroutines/Job;
+	public final fun onForwardToSharePdfTapped (Ljava/lang/String;)V
+	public final fun onPayment ()Lkotlinx/coroutines/Job;
+	public final fun onPaymentButtonTapped ()V
+	public final fun paymentProviderAppChanged (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;)Z
+	public final fun popBackStack ()V
+	public final fun setDocumentId (Ljava/lang/String;)V
+	public final fun setExternalCacheDir (Ljava/io/File;)V
+	public final fun setFlowCancelled ()V
+	public final fun setPaymentDetails (Lnet/gini/android/health/sdk/review/model/PaymentDetails;)V
+	public final fun setPaymentFlowConfiguration (Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;)V
+	public fun sharePdf (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Ljava/io/File;Ljava/lang/String;Lkotlinx/coroutines/CoroutineScope;Lnet/gini/android/internal/payment/api/model/PaymentRequest;)V
+	public final fun updatePaymentDetails (Lnet/gini/android/health/sdk/review/model/PaymentDetails;)V
+}
+
+public final class net/gini/android/health/sdk/integratedFlow/PaymentFlowViewModel$PaymentFlowViewModelFactory : androidx/lifecycle/AbstractSavedStateViewModelFactory {
+	public fun <init> (Lnet/gini/android/health/sdk/GiniHealth;Landroidx/savedstate/SavedStateRegistryOwner;Landroid/os/Bundle;)V
+	public synthetic fun <init> (Lnet/gini/android/health/sdk/GiniHealth;Landroidx/savedstate/SavedStateRegistryOwner;Landroid/os/Bundle;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public class net/gini/android/health/sdk/integratedFlow/PaymentFragment : androidx/fragment/app/Fragment {
+	public static final field Companion Lnet/gini/android/health/sdk/integratedFlow/PaymentFragment$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (Lnet/gini/android/health/sdk/GiniHealth;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getViewModel ()Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowViewModel;
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDetach ()V
+	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
+	public fun onStop ()V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class net/gini/android/health/sdk/integratedFlow/PaymentFragment$Companion {
+	public final fun newInstance (Lnet/gini/android/health/sdk/GiniHealth;Ljava/lang/String;Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;)Lnet/gini/android/health/sdk/integratedFlow/PaymentFragment;
+	public final fun newInstance (Lnet/gini/android/health/sdk/GiniHealth;Lnet/gini/android/health/sdk/review/model/PaymentDetails;Lnet/gini/android/health/sdk/integratedFlow/PaymentFlowConfiguration;)Lnet/gini/android/health/sdk/integratedFlow/PaymentFragment;
+}
+
+public final class net/gini/android/health/sdk/review/ReviewFragment : androidx/fragment/app/Fragment {
+	public fun <init> ()V
+	public synthetic fun <init> (Landroidx/lifecycle/ViewModelProvider$Factory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun onCreate (Landroid/os/Bundle;)V
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDestroyView ()V
+	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
+	public fun onSaveInstanceState (Landroid/os/Bundle;)V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class net/gini/android/health/sdk/review/error/NoPaymentDataExtracted : java/lang/Throwable {
+	public fun <init> ()V
+}
+
+public final class net/gini/android/health/sdk/review/model/ExtractionResultKt {
+	public static final fun wrapToResult (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/health/sdk/review/model/PaymentDetails : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/models/ExtractionsContainer;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/models/ExtractionsContainer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Lnet/gini/android/core/api/models/ExtractionsContainer;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/models/ExtractionsContainer;)Lnet/gini/android/health/sdk/review/model/PaymentDetails;
+	public static synthetic fun copy$default (Lnet/gini/android/health/sdk/review/model/PaymentDetails;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/models/ExtractionsContainer;ILjava/lang/Object;)Lnet/gini/android/health/sdk/review/model/PaymentDetails;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()Ljava/lang/String;
+	public final fun getExtractions ()Lnet/gini/android/core/api/models/ExtractionsContainer;
+	public final fun getIban ()Ljava/lang/String;
+	public final fun getPurpose ()Ljava/lang/String;
+	public final fun getRecipient ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class net/gini/android/health/sdk/review/model/PaymentDetails$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun createFromParcel (Landroid/os/Parcel;)Lnet/gini/android/health/sdk/review/model/PaymentDetails;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+	public final fun newArray (I)[Lnet/gini/android/health/sdk/review/model/PaymentDetails;
+}
+
+public final class net/gini/android/health/sdk/review/model/PaymentRequest {
+	public fun <init> (Ljava/lang/String;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;
+	public final fun copy (Ljava/lang/String;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;)Lnet/gini/android/health/sdk/review/model/PaymentRequest;
+	public static synthetic fun copy$default (Lnet/gini/android/health/sdk/review/model/PaymentRequest;Ljava/lang/String;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;ILjava/lang/Object;)Lnet/gini/android/health/sdk/review/model/PaymentRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBankApp ()Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;
+	public final fun getId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class net/gini/android/health/sdk/review/model/ResultWrapper {
+}
+
+public final class net/gini/android/health/sdk/review/model/ResultWrapper$Error : net/gini/android/health/sdk/review/model/ResultWrapper {
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun getError ()Ljava/lang/Throwable;
+}
+
+public final class net/gini/android/health/sdk/review/model/ResultWrapper$Loading : net/gini/android/health/sdk/review/model/ResultWrapper {
+	public fun <init> ()V
+}
+
+public final class net/gini/android/health/sdk/review/model/ResultWrapper$Success : net/gini/android/health/sdk/review/model/ResultWrapper {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun getValue ()Ljava/lang/Object;
+}
+
+public abstract class net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field Companion Lnet/gini/android/health/sdk/util/DisplayedScreen$Companion;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$BankSelectionBottomSheet : net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/util/DisplayedScreen$BankSelectionBottomSheet;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$Companion {
+	public final fun toInternalDisplayedScreen (Lnet/gini/android/health/sdk/util/DisplayedScreen;)Lnet/gini/android/internal/payment/utils/DisplayedScreen;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$InstallAppBottomSheet : net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/util/DisplayedScreen$InstallAppBottomSheet;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$MoreInformationFragment : net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/util/DisplayedScreen$MoreInformationFragment;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$Nothing : net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/util/DisplayedScreen$Nothing;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$OpenWithBottomSheet : net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/util/DisplayedScreen$OpenWithBottomSheet;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$PaymentComponentBottomSheet : net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/util/DisplayedScreen$PaymentComponentBottomSheet;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$ReviewBottomSheet : net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/util/DisplayedScreen$ReviewBottomSheet;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$ReviewFragment : net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/util/DisplayedScreen$ReviewFragment;
+}
+
+public final class net/gini/android/health/sdk/util/DisplayedScreen$ShareSheet : net/gini/android/health/sdk/util/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/health/sdk/util/DisplayedScreen$ShareSheet;
+}
+
+public final class net/gini/android/health/sdk/util/ExtensionsKt {
+	public static final fun hideKeyboard (Landroid/view/View;)V
+}
+
+public final class net/gini/android/health/sdk/util/GiniHealthAPIKt {
+	public static final fun getGiniApi (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)Lnet/gini/android/health/api/GiniHealthAPI;
+	public static final fun getGiniApi (Landroid/content/Context;Lnet/gini/android/core/api/authorization/SessionManager;I)Lnet/gini/android/health/api/GiniHealthAPI;
+	public static synthetic fun getGiniApi$default (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IILjava/lang/Object;)Lnet/gini/android/health/api/GiniHealthAPI;
+	public static synthetic fun getGiniApi$default (Landroid/content/Context;Lnet/gini/android/core/api/authorization/SessionManager;IILjava/lang/Object;)Lnet/gini/android/health/api/GiniHealthAPI;
+}
+

@@ -25,7 +25,9 @@ import net.gini.android.core.api.models.ExtractionsContainer
  * @param sessionManager if not null, then the [SessionManager] instance will be used for session management. If null, then anonymous Gini users will be used.
  */
 class GiniHealthAPIBuilder @JvmOverloads constructor(
-    private val context: Context,
+    // Not stored: the base builder keeps only the application context, so an Activity context
+    // can't be leaked through the session interceptor's builder reference
+    context: Context,
     clientId: String = "",
     clientSecret: String = "",
     emailDomain: String = "",
@@ -72,6 +74,26 @@ class GiniHealthAPIBuilder @JvmOverloads constructor(
      */
     override fun setHttpClientProvider(provider: GiniHttpClientProvider): GiniHealthAPIBuilder {
         super.setHttpClientProvider(provider)
+        return this
+    }
+
+    /**
+     * Enable self-managed authentication: the SDK will not authenticate API requests and no
+     * [SessionManager] (or client credentials) are required.
+     *
+     * When enabled, your [GiniHttpClientProvider]'s OkHttpClient is responsible for adding the
+     * `Authorization` header to API requests (for example with your own application or network
+     * interceptor - either works, because the SDK installs no authentication of its own in this
+     * mode). Your access token is never passed through the SDK.
+     *
+     * A custom [GiniHttpClientProvider] must be set via [setHttpClientProvider], otherwise
+     * building will throw an [IllegalStateException]. Disabled by default.
+     *
+     * @param enabled pass `true` to authenticate API requests yourself
+     * @return The builder instance to enable chaining
+     */
+    override fun setSelfManagedAuthentication(enabled: Boolean): GiniHealthAPIBuilder {
+        super.setSelfManagedAuthentication(enabled)
         return this
     }
 

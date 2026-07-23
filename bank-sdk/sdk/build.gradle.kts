@@ -11,6 +11,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.binary.compatibility.validator)
 }
 
 sonar {

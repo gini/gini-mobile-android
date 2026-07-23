@@ -21,6 +21,10 @@ data class ConfigurationResponse(
     @Json(name = "unsupportedQRCodeWarningEnabled") val unsupportedQRCodeWarningEnabled: Boolean?,
 )
 
+/**
+ * Maps the configuration response to the SDK's [Configuration] model, applying the same
+ * defaults for missing fields that the SDK uses.
+ */
 internal fun ConfigurationResponse.toConfiguration() = Configuration(
     clientID = clientID ?: "",
     isUserJourneyAnalyticsEnabled = userJourneyAnalyticsEnabled ?: false,

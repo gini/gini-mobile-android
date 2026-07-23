@@ -27,142 +27,214 @@ class HealthApiDocumentRemoteSource internal constructor(
     baseUriString: String,
 ) : DocumentRemoteSource(coroutineContext, documentService, giniApiType, baseUriString) {
 
-    internal suspend fun getPages(accessToken: String, documentId: String): List<PageResponse> =
+    internal suspend fun getPages(documentId: String): List<PageResponse> =
         withContext(coroutineContext) {
             val response = SafeApiRequest.apiRequest {
                 documentService.getPages(
-                    bearerHeaderMap(
-                        accessToken,
-                        contentType = giniApiType.giniJsonMediaType
-                    ), documentId
+                    headerMap(contentType = giniApiType.giniJsonMediaType), documentId
                 )
             }
             response.body() ?: throw ApiException.forResponse("Empty response body", response)
         }
 
-    internal suspend fun getPaymentProviders(accessToken: String): List<PaymentProviderResponse> =
+    internal suspend fun getPaymentProviders(): List<PaymentProviderResponse> =
         withContext(coroutineContext) {
             val response = SafeApiRequest.apiRequest {
                 documentService.getPaymentProviders(
-                    bearerHeaderMap(
-                        accessToken,
-                        contentType = giniApiType.giniJsonMediaType
-                    )
+                    headerMap(contentType = giniApiType.giniJsonMediaType)
                 )
             }
             response.body() ?: throw ApiException.forResponse("Empty response body", response)
         }
 
-    internal suspend fun getPaymentProvider(
-        accessToken: String,
-        providerId: String
-    ): PaymentProviderResponse = withContext(coroutineContext) {
-        val response = SafeApiRequest.apiRequest {
-            documentService.getPaymentProvider(
-                bearerHeaderMap(
-                    accessToken,
-                    contentType = giniApiType.giniJsonMediaType
-                ), providerId
-            )
+    internal suspend fun getPaymentProvider(providerId: String): PaymentProviderResponse =
+        withContext(coroutineContext) {
+            val response = SafeApiRequest.apiRequest {
+                documentService.getPaymentProvider(
+                    headerMap(contentType = giniApiType.giniJsonMediaType), providerId
+                )
+            }
+            response.body() ?: throw ApiException.forResponse("Empty response body", response)
         }
-        response.body() ?: throw ApiException.forResponse("Empty response body", response)
-    }
 
+    suspend fun createPaymentRequest(paymentRequestInput: PaymentRequestInput): String =
+        createPaymentRequest(headerMap(contentType = giniApiType.giniJsonMediaType), paymentRequestInput)
+
+    @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun createPaymentRequest(
         accessToken: String,
         paymentRequestInput: PaymentRequestInput
+    ): String =
+        createPaymentRequest(
+            bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
+            paymentRequestInput
+        )
+
+    private suspend fun createPaymentRequest(
+        headers: Map<String, String>,
+        paymentRequestInput: PaymentRequestInput
     ): String = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.createPaymentRequest(
-                bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
-                body = paymentRequestInput.toPaymentRequestBody()
-            )
+            documentService.createPaymentRequest(headers, paymentRequestInput.toPaymentRequestBody())
         }
 
         response.headers()["location"]?.substringAfterLast("/")
             ?: throw ApiException.forResponse("Location is missing from header", response)
     }
 
-    suspend fun getPaymentRequestDocument(
-        accessToken: String,
+    suspend fun getPaymentRequestDocument(paymentRequestId: String): ByteArray =
+        getPaymentRequestDocument(
+            headerMap(
+                contentType = giniApiType.giniPaymentRequestDocumentMediaType,
+                accept = giniApiType.giniPaymentRequestDocumentMediaType
+            ),
+            paymentRequestId
+        )
+
+    @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
+    suspend fun getPaymentRequestDocument(accessToken: String, paymentRequestId: String): ByteArray =
+        getPaymentRequestDocument(
+            bearerHeaderMap(
+                accessToken,
+                contentType = giniApiType.giniPaymentRequestDocumentMediaType,
+                accept = giniApiType.giniPaymentRequestDocumentMediaType
+            ),
+            paymentRequestId
+        )
+
+    private suspend fun getPaymentRequestDocument(
+        headers: Map<String, String>,
         paymentRequestId: String
     ): ByteArray = withContext(coroutineContext) {
         val response = SafeApiRequest.apiRequest {
-            documentService.getPaymentRequestDocument(
-                bearerHeaderMap(
-                    accessToken,
-                    contentType = giniApiType.giniPaymentRequestDocumentMediaType,
-                    accept = giniApiType.giniPaymentRequestDocumentMediaType
-                ),
-                paymentRequestId
-            )
+            documentService.getPaymentRequestDocument(headers, paymentRequestId)
         }
         response.body()?.bytes() ?: throw ApiException.forResponse("Empty response body", response)
     }
 
+    suspend fun deletePaymentRequest(paymentRequestId: String): Unit =
+        deletePaymentRequest(
+            headerMap(contentType = giniApiType.giniPaymentRequestDocumentMediaType),
+            paymentRequestId
+        )
+
+    @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun deletePaymentRequest(accessToken: String, paymentRequestId: String): Unit =
-        withContext(coroutineContext) {
-            val response = SafeApiRequest.apiRequest {
-                documentService.deletePaymentRequest(
-                    bearerHeaderMap(
-                        accessToken,
-                        contentType = giniApiType.giniPaymentRequestDocumentMediaType
-                    ),
-                    paymentRequestId
-                )
-            }
-            response.body()
-        }
+        deletePaymentRequest(
+            bearerHeaderMap(accessToken, contentType = giniApiType.giniPaymentRequestDocumentMediaType),
+            paymentRequestId
+        )
 
+    private suspend fun deletePaymentRequest(
+        headers: Map<String, String>,
+        paymentRequestId: String
+    ): Unit = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            documentService.deletePaymentRequest(headers, paymentRequestId)
+        }
+        response.body()
+    }
+
+    suspend fun getPaymentRequestImage(paymentRequestId: String): ByteArray =
+        getPaymentRequestImage(
+            headerMap(
+                contentType = giniApiType.giniPaymentRequestDocumentPngMediaType,
+                accept = giniApiType.giniPaymentRequestDocumentPngMediaType
+            ),
+            paymentRequestId
+        )
+
+    @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getPaymentRequestImage(accessToken: String, paymentRequestId: String): ByteArray =
-        withContext(coroutineContext) {
-            val response = SafeApiRequest.apiRequest {
-                documentService.getPaymentRequestDocument(
-                    bearerHeaderMap(
-                        accessToken,
-                        contentType = giniApiType.giniPaymentRequestDocumentPngMediaType,
-                        accept = giniApiType.giniPaymentRequestDocumentPngMediaType
-                    ),
-                    paymentRequestId
-                )
-            }
-            response.body()?.bytes() ?: throw ApiException.forResponse(
-                "Empty response body",
-                response
-            )
-        }
+        getPaymentRequestImage(
+            bearerHeaderMap(
+                accessToken,
+                contentType = giniApiType.giniPaymentRequestDocumentPngMediaType,
+                accept = giniApiType.giniPaymentRequestDocumentPngMediaType
+            ),
+            paymentRequestId
+        )
 
+    private suspend fun getPaymentRequestImage(
+        headers: Map<String, String>,
+        paymentRequestId: String
+    ): ByteArray = withContext(coroutineContext) {
+        val response = SafeApiRequest.apiRequest {
+            documentService.getPaymentRequestDocument(headers, paymentRequestId)
+        }
+        response.body()?.bytes() ?: throw ApiException.forResponse(
+            "Empty response body",
+            response
+        )
+    }
+
+    suspend fun getConfigurations(): ConfigurationResponse =
+        getConfigurations(headerMap(contentType = giniApiType.giniJsonMediaType))
+
+    @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun getConfigurations(accessToken: String): ConfigurationResponse =
+        getConfigurations(bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType))
+
+    private suspend fun getConfigurations(headers: Map<String, String>): ConfigurationResponse =
         withContext(coroutineContext) {
             val response = SafeApiRequest.apiRequest {
-                documentService.getConfigurations(
-                    bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType)
-                )
+                documentService.getConfigurations(headers)
             }
             response.body() ?: throw ApiException.forResponse("Empty response body", response)
         }
 
-    suspend fun deleteDocuments(accessToken: String, documentIds: List<String>): Unit =
-        withContext(coroutineContext) {
-            val response =
-                SafeApiRequest.apiRequest {
-                    documentService.batchDeleteDocuments(
-                        bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
-                        documentIds
-                    )
-                }
-            response.body()
-        }
+    suspend fun deleteDocuments(documentIds: List<String>): Unit =
+        deleteDocuments(headerMap(contentType = giniApiType.giniJsonMediaType), documentIds)
 
+    @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
+    suspend fun deleteDocuments(accessToken: String, documentIds: List<String>): Unit =
+        deleteDocuments(
+            bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
+            documentIds
+        )
+
+    private suspend fun deleteDocuments(
+        headers: Map<String, String>,
+        documentIds: List<String>
+    ): Unit = withContext(coroutineContext) {
+        val response =
+            SafeApiRequest.apiRequest {
+                documentService.batchDeleteDocuments(headers, documentIds)
+            }
+        response.body()
+    }
+
+    suspend fun deletePaymentRequests(paymentRequestIds: List<String>): Unit =
+        deletePaymentRequests(headerMap(contentType = giniApiType.giniJsonMediaType), paymentRequestIds)
+
+    @Deprecated(ACCESS_TOKEN_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     suspend fun deletePaymentRequests(accessToken: String, paymentRequestIds: List<String>): Unit =
-        withContext(coroutineContext) {
-            val response =
-                SafeApiRequest.apiRequest {
-                    documentService.batchDeletePaymentRequests(
-                        bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
-                        paymentRequestIds
-                    )
-                }
-            response.body()
-        }
+        deletePaymentRequests(
+            bearerHeaderMap(accessToken, contentType = giniApiType.giniJsonMediaType),
+            paymentRequestIds
+        )
+
+    private suspend fun deletePaymentRequests(
+        headers: Map<String, String>,
+        paymentRequestIds: List<String>
+    ): Unit = withContext(coroutineContext) {
+        val response =
+            SafeApiRequest.apiRequest {
+                documentService.batchDeletePaymentRequests(headers, paymentRequestIds)
+            }
+        response.body()
+    }
+
+    private companion object {
+        private const val ACCESS_TOKEN_DEPRECATION_MESSAGE =
+            "The Authorization header is added by the SDK's session interceptor in the OkHttp layer. " +
+                    "Use the overload without an accessToken parameter."
+    }
 }

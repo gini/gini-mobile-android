@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import net.gini.android.core.api.DocumentManager
 import net.gini.android.core.api.DocumentRepository
 import net.gini.android.core.api.GiniApiType
+import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Utils
 import net.gini.android.core.api.authorization.AnonymousSessionManager
 import net.gini.android.core.api.authorization.CredentialsStore
@@ -20,8 +21,10 @@ import net.gini.android.core.api.authorization.UserRepository
 import net.gini.android.core.api.authorization.UserService
 import net.gini.android.core.api.http.DefaultGiniHttpClientProvider
 import net.gini.android.core.api.http.GiniHttpClientProvider
+import net.gini.android.core.api.http.GiniSessionInterceptor
 import net.gini.android.core.api.models.ExtractionsContainer
 import okhttp3.Cache
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -40,12 +43,16 @@ import javax.net.ssl.TrustManager
  * @param sessionManager if not null, then the [SessionManager] instance will be used for session management. If null, then anonymous Gini users will be used.
  */
 abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<DM, DR, E>, DR : DocumentRepository<E>, E : ExtractionsContainer>(
-    private val context: Context,
+    context: Context,
     private val clientId: String,
     private val clientSecret: String,
     private val emailDomain: String,
     private var sessionManager: SessionManager? = null
 ) {
+
+    // The session interceptor's provider closure keeps this builder alive for the lifetime of
+    // the OkHttp clients - hold the application context so an Activity context can't be leaked.
+    private val context: Context = context.applicationContext ?: context
     private var mApiBaseUrl: String? = null
     private var mUserCenterApiBaseUrl = "https://user.gini.net/"
 
@@ -66,6 +73,22 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var mDocumentRepository: DR? = null
     private var mHttpClientProvider: GiniHttpClientProvider? = null
     private var isDebuggingEnabled = false
+    private var isSelfManagedAuthentication = false
+
+    /**
+     * The authentication mechanism for API requests (PP-2363): adds the `Authorization` header
+     * to requests which don't carry one yet. Requests made through the deprecated
+     * accessToken-taking methods still set the header themselves and are passed through.
+     *
+     * Shared between the main API client (documents and payment requests, [mPayApiRetrofit])
+     * and the tracking analytics client so their session requests are serialized by the same
+     * mutex. It must NOT be added to the User Center API client because the session manager
+     * itself uses that client to fetch tokens (circular dependency). Not installed at all when
+     * the consumer manages authentication themselves (see [setSelfManagedAuthentication]).
+     */
+    private val mSessionInterceptor: GiniSessionInterceptor by lazy {
+        GiniSessionInterceptor { getSessionManager() }
+    }
 
     /**
      * Set the resource id for the network security configuration xml to enable public key pinning.
@@ -215,6 +238,31 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     }
 
     /**
+     * Enable self-managed authentication: the SDK will not authenticate API requests and no
+     * [SessionManager] (or client credentials) are required.
+     *
+     * When enabled, your [GiniHttpClientProvider]'s OkHttpClient is responsible for adding the
+     * `Authorization` header to API requests (for example with your own application or network
+     * interceptor - either works, because the SDK installs no authentication of its own in this
+     * mode). Your access token is never passed through the SDK.
+     *
+     * Requirements:
+     * - A custom [GiniHttpClientProvider] must be set via [setHttpClientProvider]. Building
+     *   without one will throw an [IllegalStateException].
+     * - Any [SessionManager] or client credentials passed to the builder are ignored: the SDK
+     *   will not request sessions and will not create anonymous Gini users.
+     *
+     * Disabled by default.
+     *
+     * @param enabled pass `true` to authenticate API requests yourself
+     * @return The builder instance to enable chaining.
+     */
+    open fun setSelfManagedAuthentication(enabled: Boolean): GiniCoreAPIBuilder<DM, G, DR, E> {
+        isSelfManagedAuthentication = enabled
+        return this
+    }
+
+    /**
      * Builds an instance with the configuration settings of the builder instance.
      *
      * @return The fully configured instance.
@@ -305,18 +353,37 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     protected abstract fun createDocumentRepository(): DR
 
     /**
-     * Return the [SessionManager] set via #setSessionManager. If no SessionManager has been set, default to
-     * [AnonymousSessionManager].
+     * Return the [SessionManager] set via the builder constructor. If no SessionManager has
+     * been set, default to [AnonymousSessionManager].
+     *
+     * When self-managed authentication is enabled (see [setSelfManagedAuthentication]) a
+     * [SessionManager] which always returns an error is used — even if a SessionManager was
+     * passed to the builder constructor: the SDK never requests sessions in that mode because
+     * the consumer's OkHttpClient authenticates the API requests.
      *
      * @return The SessionManager instance.
      */
     @Synchronized
     open fun getSessionManager(): SessionManager {
+        if (isSelfManagedAuthentication) {
+            return selfManagedAuthenticationSessionManager
+        }
         if (sessionManager == null) {
-            sessionManager =
-                AnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
+            sessionManager = AnonymousSessionManager(getUserRepository(), getCredentialsStore(), emailDomain)
         }
         return sessionManager as SessionManager
+    }
+
+    /**
+     * Used when authentication is self-managed by the consumer's OkHttpClient. The SDK never
+     * requests sessions in that mode, so this only returns an error in case something still
+     * asks for a session (e.g. the deprecated DocumentRepository.withAccessToken).
+     */
+    private val selfManagedAuthenticationSessionManager = SessionManager {
+        Resource.Error(
+            message = "No session available: authentication is self-managed. " +
+                    "API requests are authenticated by the custom OkHttpClient (GiniHttpClientProvider)."
+        )
     }
 
     @Synchronized
@@ -324,7 +391,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val retrofit = Retrofit.Builder()
             .baseUrl(mUserCenterApiBaseUrl)
             .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
-            .client(createOkHttpClient())
+            .client(createOkHttpClient(addSessionInterceptor = false))
             .build()
         mUserApiRetrofit = retrofit
         return retrofit
@@ -336,44 +403,86 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val retrofit = Retrofit.Builder()
             .baseUrl(getApiBaseUrl()!!)
             .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
-            .client(createOkHttpClient())
+            .client(createOkHttpClient(addSessionInterceptor = true))
             .build()
         mTrackingAnalysisApiRetrofit = retrofit
         return retrofit
     }
 
-    private fun createOkHttpClient(): OkHttpClient {
-        // If a custom provider is set, use it as a base and add SDK's required configuration on top
-        if (mHttpClientProvider != null) {
-            val baseClient = mHttpClientProvider!!.provideOkHttpClient()
-            
-            // Clone the consumer's client and add SDK's required interceptors
-            return baseClient.newBuilder()
-                .apply {
-                    // Add SDK's required User-Agent header
-                    // This is placed at the end of the interceptor chain so consumer's interceptors run first
-                    addInterceptor { chain ->
-                        val request = chain.request()
-                        // Only add User-Agent if not already set by consumer
-                        val hasUserAgent = request.header("User-Agent") != null
-                        if (hasUserAgent) {
-                            chain.proceed(request)
-                        } else {
-                            chain.proceed(
-                                request.newBuilder()
-                                    .header(
-                                        "User-Agent",
-                                        System.getProperty("http.agent") ?: FALLBACK_USER_AGENT
-                                    )
-                                    .build()
-                            )
-                        }
-                    }
-                }
-                .build()
+    /**
+     * @param addSessionInterceptor pass `true` for clients of APIs which are authenticated with
+     * a session access token (document and tracking APIs) and `false` for the User Center API
+     * client which the session manager itself uses to fetch tokens (adding the interceptor
+     * there would cause a circular dependency).
+     */
+    private fun createOkHttpClient(addSessionInterceptor: Boolean): OkHttpClient {
+        check(!(isSelfManagedAuthentication && mHttpClientProvider == null)) {
+            "Self-managed authentication requires a custom GiniHttpClientProvider. " +
+                    "Set one via setHttpClientProvider() with an OkHttpClient which adds the " +
+                    "Authorization header to API requests, or disable self-managed authentication."
         }
 
-        // Otherwise, create a default provider with the configured settings
+        // In self-managed authentication mode the consumer's OkHttpClient authenticates the
+        // API requests, so the SDK's session interceptor is not installed
+        val installSessionInterceptor = addSessionInterceptor && !isSelfManagedAuthentication
+
+        // If a custom provider is set, use it as a base and add SDK's required configuration on top
+        val client = mHttpClientProvider
+            ?.let { provider ->
+                customizeConsumerOkHttpClient(provider.provideOkHttpClient(), installSessionInterceptor)
+            }
+            ?: createDefaultOkHttpClient(installSessionInterceptor)
+
+        // The User Center API client must not share a Dispatcher with the API clients: the
+        // session interceptor blocks API calls (and their dispatcher slots) while it fetches a
+        // token through this client - with a shared Dispatcher at its concurrent request limit
+        // the token request could never start and the blocked API calls would wait forever.
+        return if (addSessionInterceptor) client else client.newBuilder().dispatcher(Dispatcher()).build()
+    }
+
+    /**
+     * Clones the consumer's client and adds the SDK's required interceptors.
+     */
+    private fun customizeConsumerOkHttpClient(
+        baseClient: OkHttpClient,
+        installSessionInterceptor: Boolean
+    ): OkHttpClient =
+        baseClient.newBuilder()
+            .apply {
+                // Add SDK's required User-Agent header
+                // This is placed at the end of the interceptor chain so consumer's interceptors run first
+                addInterceptor { chain ->
+                    val request = chain.request()
+                    // Only add User-Agent if not already set by consumer
+                    val hasUserAgent = request.header("User-Agent") != null
+                    if (hasUserAgent) {
+                        chain.proceed(request)
+                    } else {
+                        chain.proceed(
+                            request.newBuilder()
+                                .header(
+                                    "User-Agent",
+                                    System.getProperty("http.agent") ?: FALLBACK_USER_AGENT
+                                )
+                                .build()
+                        )
+                    }
+                }
+                if (installSessionInterceptor) {
+                    // Placed after the consumer's application interceptors: an Authorization
+                    // header set by those wins and the session interceptor passes through.
+                    // (Consumer network interceptors run after this one instead - consumers
+                    // authenticating requests themselves should use self-managed
+                    // authentication, which skips installing this interceptor entirely.)
+                    addInterceptor(mSessionInterceptor)
+                }
+            }
+            .build()
+
+    /**
+     * Creates a client from a default provider with the configured settings.
+     */
+    private fun createDefaultOkHttpClient(installSessionInterceptor: Boolean): OkHttpClient {
         val defaultProvider = DefaultGiniHttpClientProvider.builder(context)
             .setHostnames(getHostnames())
             .apply {
@@ -387,7 +496,13 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
             }
             .build()
 
-        return defaultProvider.provideOkHttpClient()
+        return defaultProvider.provideOkHttpClient().let { client ->
+            if (installSessionInterceptor) {
+                client.newBuilder().addInterceptor(mSessionInterceptor).build()
+            } else {
+                client
+            }
+        }
     }
 
     @Synchronized
@@ -395,7 +510,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
         val retrofit = Retrofit.Builder()
             .baseUrl(getApiBaseUrl()!!)
             .addConverterFactory(MoshiConverterFactory.create(getMoshi()))
-            .client(createOkHttpClient())
+            .client(createOkHttpClient(addSessionInterceptor = true))
             .build()
         mPayApiRetrofit = retrofit
         return retrofit
