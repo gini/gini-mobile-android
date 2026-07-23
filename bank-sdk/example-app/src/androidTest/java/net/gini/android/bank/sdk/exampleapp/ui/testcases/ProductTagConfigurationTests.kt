@@ -10,8 +10,10 @@ import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ConfigurationScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ProductTag
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -27,6 +29,9 @@ import org.junit.Test
  */
 class ProductTagConfigurationTests {
 
+    @get:Rule(order = -1)
+    val retryRule = RetryRule()
+
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
 
@@ -37,6 +42,14 @@ class ProductTagConfigurationTests {
     private val mainScreen = MainScreen()
     private val onboardingScreen = OnboardingScreen()
     private val configurationScreen = ConfigurationScreen()
+
+    @After
+    fun resetProductTag() {
+        // These tests change the SDK's global product tag; reset it to the default
+        // (SepaExtractions) so they don't pollute the configuration for tests that run
+        // afterwards. Wrapped defensively so a reset hiccup can't fail an otherwise-green test.
+        runCatching { setProductTag(ProductTag.SepaExtractions) }
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
 

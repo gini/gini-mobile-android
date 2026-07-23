@@ -1,5 +1,8 @@
 package net.gini.android.bank.sdk.exampleapp.ui.screens
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -9,6 +12,17 @@ import androidx.test.uiautomator.UiSelector
 
 class ErrorScreen {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+    // Whether the device currently has an internet-capable active network. Used to detect
+    // environments (e.g. BrowserStack cloud devices) where disconnectTheInternetConnection()
+    // cannot actually turn the network off, so the offline test can be skipped there.
+    fun isInternetAvailable(): Boolean {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(network) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
 
     fun checkErrorTextDisplayed(): Boolean {
         val errorText = device.findObject(

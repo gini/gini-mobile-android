@@ -8,6 +8,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ErrorScreen
@@ -24,6 +25,9 @@ import java.util.Properties
  * Test class for Error Screens.
  */
 class ErrorScreenTests {
+    @get:Rule(order = -1)
+    val retryRule = RetryRule()
+
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
 
@@ -89,6 +93,13 @@ class ErrorScreenTests {
     @Test
     fun test2_verifyNetworkErrorScreen() {
         ErrorScreen().disconnectTheInternetConnection()
+        // On devices where the network can't actually be turned off (e.g. BrowserStack cloud
+        // devices, where `svc wifi/data disable` is blocked), skip: the offline scenario
+        // cannot be exercised there. Runs normally on local devices/emulators.
+        Assume.assumeFalse(
+            "Skipping: network could not be disabled on this device (e.g. BrowserStack)",
+            errorScreen.isInternetAvailable()
+        )
         clickPhotoPaymentButtonAndSkipOnboarding()
         idlingResource.waitForIdle()
         val errorTextVisible = errorScreen.checkErrorTextDisplayed()

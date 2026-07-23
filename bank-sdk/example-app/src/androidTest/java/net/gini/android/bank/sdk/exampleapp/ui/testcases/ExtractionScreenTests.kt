@@ -11,6 +11,7 @@ import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ConfigurationScreen
@@ -30,6 +31,9 @@ import java.util.Properties
  * Test class for Extraction screen.
  */
 class ExtractionScreenTests {
+    @get:Rule(order = -1)
+    val retryRule = RetryRule()
+
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
 

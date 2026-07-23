@@ -7,6 +7,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.PdfUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ConfigurationScreen
@@ -24,6 +25,9 @@ import org.junit.Test
  * Test class for Digital Invoice Screen.
  */
 class DigitalInvoiceScreenTests {
+    @get:Rule(order = -1)
+    val retryRule = RetryRule()
+
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
 

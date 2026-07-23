@@ -8,6 +8,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.PdfUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.DigitalInvoiceEditButton
@@ -28,6 +29,9 @@ import java.util.Properties
  * Test class for Edit button on Digital Invoice Screen.
  */
 class DigitalInvoiceEditButtonTests {
+    @get:Rule(order = -1)
+    val retryRule = RetryRule()
+
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
 

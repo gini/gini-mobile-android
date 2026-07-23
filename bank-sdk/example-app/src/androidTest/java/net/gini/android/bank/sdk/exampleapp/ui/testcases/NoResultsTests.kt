@@ -10,6 +10,7 @@ import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
 import net.gini.android.bank.sdk.exampleapp.ui.resources.PdfUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
@@ -25,8 +26,11 @@ import org.junit.Test
  * Test class for No Result screen.
  */
 class NoResultsTests {
+    @get:Rule(order = -1)
+    val retryRule = RetryRule()
+
     @get:Rule
-    val activityRule = activityScenarioRule<MainActivity>() 
+    val activityRule = activityScenarioRule<MainActivity>()
 
     @get: Rule
     val grantPermissionRule: GrantPermissionRule =
@@ -58,6 +62,8 @@ class NoResultsTests {
         imageUploader.clickAddButton()
         idlingResource.waitForIdle()
         reviewScreen.clickProcessButton()
+        // Wait for the no-result screen to load (depends on the network response) before asserting.
+        noResultScreen.waitForNoResultScreen(net.gini.android.capture.R.string.gc_title_no_results)
         val isNoResultTitleVisible = noResultScreen.checkElementWithTextIsDisplayed(net.gini.android.capture.R.string.gc_title_no_results)
         assertEquals(true, isNoResultTitleVisible)
 
