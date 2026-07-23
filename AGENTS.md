@@ -19,7 +19,7 @@ Monorepo of Gini's Android SDKs and API client libraries, published to Maven Cen
 Inter-module dependency chain (project dependencies, resolved locally):
 `core-api-library` ← `health-api-library` / `bank-api-library`; `health-api-library` ← `internal-payment-sdk` ← `health-sdk`; `bank-api-library` ← `capture-sdk:default-network`; `capture-sdk:sdk` + `capture-sdk:default-network` + `bank-api-library` ← `bank-sdk`. `RELEASE-ORDER.md` is auto-generated (`updateReleaseOrderFile` task) — never edit it manually.
 
-Source lives under `src/main/java/` even for Kotlin files. Toolchain: JDK 17, Kotlin 2.0.20, compileSdk/targetSdk 36, minSdk 23, SDK modules compile to JVM target 1.8.
+Source lives under `src/main/java/` even for Kotlin files. Toolchain: JDK 17, Kotlin 2.0.20, compileSdk/targetSdk 36, minSdk 23, SDK modules compile to JVM target 1.8. These versions are a point-in-time snapshot — `gradle/libs.versions.toml` is the source of truth if they have drifted.
 
 ## Build, test, lint
 

@@ -192,4 +192,4 @@ We are using merge commits and restrict rebasing and squashing to feature branch
 
 # Common issues
 
-If the build fails with `java.lang.IllegalAccessError: superclass access check failed` after cloning, then Gradle is running on the wrong JDK. It must run on JDK 17 (the minimum required by the Android Gradle Plugin; newer versions cause this error). In Android Studio go to Settings -> Build, Execution, Deployment -> Build Tools -> Gradle and set the Gradle JDK to version 17.
+If the build fails with `java.lang.IllegalAccessError: superclass access check failed` after cloning, then Gradle is running on the wrong JDK. It must run on exactly JDK 17: the Android Gradle Plugin requires at least JDK 17, and newer JDK versions cause this error in this project. In Android Studio go to Settings -> Build, Execution, Deployment -> Build Tools -> Gradle and set the Gradle JDK to version 17.
