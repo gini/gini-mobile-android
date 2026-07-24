@@ -6,20 +6,29 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiCollection
+import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
 
 class DigitalInvoiceEditButton {
 
+    private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
     fun checkEditButtonTitleIsDisplayed() :Boolean {
-        val uiCollection =
-            UiCollection(UiSelector().className("android.view.ViewGroup"))
-        val editButton = uiCollection.getChildByInstance(
+        // The digital-invoice content is rendered from the network extraction result, which
+        // can be slow on remote devices. Wait for the Edit button to exist before checking,
+        // so a slow render doesn't fail the lookup.
+        // Resolve the package at runtime (the applicationId varies by flavor) rather than
+        // hard-coding it into the resourceId.
+        val pkg = InstrumentationRegistry.getInstrumentation().targetContext.packageName
+        val editButton = device.findObject(
             UiSelector().className("android.widget.TextView")
                 .text("Edit")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_edit_button"), 0)
-        return editButton.isEnabled
+                .resourceId("$pkg:id/gbs_edit_button")
+        )
+        return editButton.waitForExists(DIGITAL_INVOICE_TIMEOUT) && editButton.isEnabled
     }
 
     fun clickEditButtonOnDigitalInvoiceScreen() {
@@ -163,5 +172,9 @@ class DigitalInvoiceEditButton {
         val regex = Regex("""^(\d+)x""")
         val matchResult = regex.find(input)
         return matchResult?.groups?.get(1)?.value
+    }
+
+    companion object {
+        private const val DIGITAL_INVOICE_TIMEOUT = 15_000L
     }
 }

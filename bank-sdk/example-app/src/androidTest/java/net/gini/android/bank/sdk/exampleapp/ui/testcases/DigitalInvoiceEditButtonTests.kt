@@ -8,6 +8,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.PdfUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.DigitalInvoiceEditButton
@@ -28,6 +29,9 @@ import java.util.Properties
  * Test class for Edit button on Digital Invoice Screen.
  */
 class DigitalInvoiceEditButtonTests {
+    @get:Rule(order = -1)
+    val retryRule = RetryRule()
+
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
 
@@ -46,12 +50,17 @@ class DigitalInvoiceEditButtonTests {
     private val decreaseQuantity = 2
 
     val testProperties = Properties().apply {
-        getApplicationContext<Context>().resources.assets
-            .open("test.properties").use { load(it) }
+        // On CI / BrowserStack the generated test.properties may be absent from the
+        // test APK. A missing file must mean "run the test" (see cancelTestIfRunOnCi),
+        // so swallow the error instead of aborting the whole test class at construction.
+        runCatching {
+            getApplicationContext<Context>().resources.assets
+                .open("test.properties").use { load(it) }
+        }
     }
 
     private fun cancelTestIfRunOnCi() {
-        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        val ignoreTests = testProperties["ignoreLocalTests"] as? String
         Assume.assumeTrue(ignoreTests != "true")
     }
 

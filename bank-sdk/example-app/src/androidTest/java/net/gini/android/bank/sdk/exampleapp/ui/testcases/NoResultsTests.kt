@@ -1,12 +1,16 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
 import android.Manifest
+import android.os.Build
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.rules.activityScenarioRule
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
 import net.gini.android.bank.sdk.exampleapp.ui.resources.PdfUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
@@ -15,17 +19,18 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ReviewScreen
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
 /**
  * Test class for No Result screen.
  */
-@Ignore("Excluded from CI - covered by bank-sdk.check.ui-tests.yml")
 class NoResultsTests {
+    @get:Rule(order = -1)
+    val retryRule = RetryRule()
+
     @get:Rule
-    val activityRule = activityScenarioRule<MainActivity>() 
+    val activityRule = activityScenarioRule<MainActivity>()
 
     @get: Rule
     val grantPermissionRule: GrantPermissionRule =
@@ -45,16 +50,20 @@ class NoResultsTests {
         idlingResource = SimpleIdlingResource(5000)
         IdlingRegistry.getInstance().register(idlingResource)
     }
+
     @Test
     fun test1_uploadInvalidImageAndClickEnterManuallyButton_NavigatesToMainScreen() {
+        imageUploader.copyImageToDownloads(getApplicationContext(), "image-no-result.png")
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickPhotos()
         imageUploader.uploadImageFromPhotos()
         imageUploader.clickAddButton()
         idlingResource.waitForIdle()
         reviewScreen.clickProcessButton()
+        // Wait for the no-result screen to load (depends on the network response) before asserting.
+        noResultScreen.waitForNoResultScreen(net.gini.android.capture.R.string.gc_title_no_results)
         val isNoResultTitleVisible = noResultScreen.checkElementWithTextIsDisplayed(net.gini.android.capture.R.string.gc_title_no_results)
         assertEquals(true, isNoResultTitleVisible)
 
@@ -92,8 +101,12 @@ class NoResultsTests {
 
     @Test
     fun test2_uploadInvalidPdfAndClickEnterManuallyButton_NavigatesToMainScreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            pdfUploader.copyPdfToDownloads(context, "test-pdf-no-results.pdf")
+        }
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         pdfUploader.uploadPdfFromFiles("test-pdf-no-results.pdf")

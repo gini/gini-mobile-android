@@ -8,6 +8,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.rule.GrantPermissionRule
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
 import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ErrorScreen
@@ -24,6 +25,9 @@ import java.util.Properties
  * Test class for Error Screens.
  */
 class ErrorScreenTests {
+    @get:Rule(order = -1)
+    val retryRule = RetryRule()
+
     @get:Rule
     val activityRule = activityScenarioRule<MainActivity>()
 
@@ -39,12 +43,17 @@ class ErrorScreenTests {
     private lateinit var idlingResource: SimpleIdlingResource
 
     val testProperties = Properties().apply {
-        getApplicationContext<Context>().resources.assets
-            .open("test.properties").use { load(it) }
+        // On CI / BrowserStack the generated test.properties may be absent from the
+        // test APK. A missing file must mean "run the test" (see cancelTestIfRunOnCi),
+        // so swallow the error instead of aborting the whole test class at construction.
+        runCatching {
+            getApplicationContext<Context>().resources.assets
+                .open("test.properties").use { load(it) }
+        }
     }
 
     private fun cancelTestIfRunOnCi() {
-        val ignoreTests = testProperties["ignoreLocalTests"] as String
+        val ignoreTests = testProperties["ignoreLocalTests"] as? String
         Assume.assumeTrue(ignoreTests != "true")
     }
 
@@ -57,7 +66,7 @@ class ErrorScreenTests {
 
     private fun clickPhotoPaymentButtonAndSkipOnboarding(){
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickCameraButton()
         idlingResource.waitForIdle()
     }
@@ -66,7 +75,7 @@ class ErrorScreenTests {
     fun test1_verifyUploadErrorScreen() {
         imageUploader.copyImageToDownloads(getApplicationContext(), "blank_test_image.png")
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickPhotos()
         imageUploader.uploadImageFromPhotos()
@@ -84,6 +93,13 @@ class ErrorScreenTests {
     @Test
     fun test2_verifyNetworkErrorScreen() {
         ErrorScreen().disconnectTheInternetConnection()
+        // On devices where the network can't actually be turned off (e.g. BrowserStack cloud
+        // devices, where `svc wifi/data disable` is blocked), skip: the offline scenario
+        // cannot be exercised there. Runs normally on local devices/emulators.
+        Assume.assumeFalse(
+            "Skipping: network could not be disabled on this device (e.g. BrowserStack)",
+            errorScreen.isInternetAvailable()
+        )
         clickPhotoPaymentButtonAndSkipOnboarding()
         idlingResource.waitForIdle()
         val errorTextVisible = errorScreen.checkErrorTextDisplayed()

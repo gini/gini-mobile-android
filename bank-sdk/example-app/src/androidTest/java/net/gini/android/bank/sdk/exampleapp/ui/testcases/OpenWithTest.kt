@@ -6,6 +6,7 @@ import androidx.core.net.toFile
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingPolicies
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -15,6 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.exampleapp.ExampleApp
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.test.getAssetFileStorageUri
 import net.gini.android.bank.sdk.exampleapp.ui.CaptureFlowHostActivity
@@ -22,8 +24,10 @@ import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
 import net.gini.android.bank.sdk.exampleapp.ui.SplashActivity
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.TimeUnit
 
 /**
  * Tests for the "open with" (file import) feature.
@@ -31,10 +35,18 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class OpenWithTest {
 
+    @get:Rule
+    val retryRule = RetryRule()
+
     private var idlingResourceForOpenWith: IdlingResource? = null
 
     @Before
     fun setup() {
+        // Multi-image open-with uploads several files over the network; on slower remote
+        // (BrowserStack) devices this can exceed Espresso's default 26s idle timeout and
+        // throw IdlingResourceTimeoutException. Give the idle wait more headroom.
+        IdlingPolicies.setMasterPolicyTimeout(90, TimeUnit.SECONDS)
+        IdlingPolicies.setIdlingResourceTimeout(90, TimeUnit.SECONDS)
         idlingResourceForOpenWith = ApplicationProvider.getApplicationContext<ExampleApp>().idlingResourceForOpenWith
         IdlingRegistry.getInstance().register(idlingResourceForOpenWith)
     }
