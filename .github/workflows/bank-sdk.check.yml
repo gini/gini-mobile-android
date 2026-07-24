@@ -264,28 +264,11 @@ jobs:
           name: bank-sdk-ktlint-report
           path: bank-sdk/sdk/build/reports/ktlint/**/*.html
   sonar:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "21"
-          cache: "gradle"
-
+    uses: ./.github/workflows/sonar.yml
+    with:
       # Build both modules (example-app depends on sdk)
-      - name: Build modules for Sonar
-        run: |
-          ./gradlew bank-sdk:sdk:assembleDebug \
-                    bank-sdk:example-app:assembleDevExampleAppDebug
-
-      - name: Generate coverage report
-        run: ./gradlew :bank-sdk:sdk:jacocoTestReport
-
-      - name: SonarQube Scan
-        run: ./gradlew bank-sdk:sdk:sonar --info --stacktrace
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      prepare-tasks: 'bank-sdk:sdk:assembleDebug bank-sdk:example-app:assembleDevExampleAppDebug'
+      coverage-tasks: ':bank-sdk:sdk:jacocoTestReport'
+      sonar-tasks: 'bank-sdk:sdk:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

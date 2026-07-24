@@ -1,0 +1,75 @@
+name: SonarCloud Scan
+
+# Reusable SonarCloud analysis used by all <project>.check.yml workflows and by
+# sonar-baselines.yml (which refreshes the main-branch baselines on every merge).
+# The sonar Gradle task auto-detects branch vs. pull-request analysis from the
+# GitHub Actions environment.
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      prepare-tasks:
+        description: "Gradle tasks that build the modules required by the scan (skipped when empty)"
+        required: false
+        type: string
+        default: ""
+      coverage-tasks:
+        description: "Gradle tasks that generate the Jacoco coverage report(s)"
+        required: true
+        type: string
+      sonar-tasks:
+        description: "Gradle sonar task(s) to run"
+        required: true
+        type: string
+      google-services-json-path:
+        description: "If set, decode the GOOGLE_SERVICES_JSON_B64 secret into this file before building"
+        required: false
+        type: string
+        default: ""
+    secrets:
+      SONAR_TOKEN:
+        required: true
+      GINI_MOBILE_TEST_CLIENT_SECRET:
+        required: false
+      GOOGLE_SERVICES_JSON_B64:
+        required: false
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+          cache: "gradle"
+
+      - name: Create google-services.json
+        if: inputs.google-services-json-path != ''
+        run: |
+          mkdir -p "$(dirname '${{ inputs.google-services-json-path }}')"
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > '${{ inputs.google-services-json-path }}'
+
+      # clientId/clientSecret are only read by the example-app builds; modules
+      # that don't use them ignore the extra properties.
+      - name: Build modules for Sonar
+        if: inputs.prepare-tasks != ''
+        run: >
+          ./gradlew ${{ inputs.prepare-tasks }}
+          -PclientId="gini-mobile-ci"
+          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+
+      - name: Generate coverage report
+        run: ./gradlew ${{ inputs.coverage-tasks }}
+
+      - name: SonarQube Scan
+        run: ./gradlew ${{ inputs.sonar-tasks }} --info --stacktrace
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

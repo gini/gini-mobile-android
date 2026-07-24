@@ -1,0 +1,164 @@
+name: Refresh SonarCloud Main Baselines
+
+# SonarCloud pull-request analyses never update the main-branch baseline — only
+# an analysis of main itself does. This workflow runs a Sonar analysis of main
+# for every project affected by a push (i.e. a PR merge), so PR quality gates
+# always compare against a fresh baseline. A manual dispatch refreshes all
+# projects unconditionally.
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'core-api-library/**'
+      - 'bank-api-library/**'
+      - 'health-api-library/**'
+      - 'capture-sdk/**'
+      - 'bank-sdk/**'
+      - 'health-sdk/**'
+      - 'internal-payment-sdk/**'
+      - 'gradle/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      core-api-library: ${{ github.event_name == 'workflow_dispatch' && 'true' || steps.filter.outputs.core-api-library }}
+      bank-api-library: ${{ github.event_name == 'workflow_dispatch' && 'true' || steps.filter.outputs.bank-api-library }}
+      health-api-library: ${{ github.event_name == 'workflow_dispatch' && 'true' || steps.filter.outputs.health-api-library }}
+      capture-sdk: ${{ github.event_name == 'workflow_dispatch' && 'true' || steps.filter.outputs.capture-sdk }}
+      bank-sdk: ${{ github.event_name == 'workflow_dispatch' && 'true' || steps.filter.outputs.bank-sdk }}
+      health-sdk: ${{ github.event_name == 'workflow_dispatch' && 'true' || steps.filter.outputs.health-sdk }}
+      internal-payment-sdk: ${{ github.event_name == 'workflow_dispatch' && 'true' || steps.filter.outputs.internal-payment-sdk }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Filters mirror the paths triggers of the <project>.check.yml workflows.
+      - name: Detect affected projects
+        id: filter
+        if: github.event_name == 'push'
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        with:
+          filters: |
+            core-api-library:
+              - 'core-api-library/**'
+              - 'gradle/**'
+            bank-api-library:
+              - 'bank-api-library/**'
+              - 'core-api-library/**'
+              - 'gradle/**'
+            health-api-library:
+              - 'health-api-library/**'
+              - 'core-api-library/**'
+              - 'gradle/**'
+            capture-sdk:
+              - 'capture-sdk/**'
+              - 'bank-api-library/**'
+              - 'core-api-library/**'
+              - 'gradle/**'
+            bank-sdk:
+              - 'bank-sdk/**'
+              - 'capture-sdk/**'
+              - 'bank-api-library/**'
+              - 'core-api-library/**'
+              - 'gradle/**'
+            health-sdk:
+              - 'health-sdk/**'
+              - 'health-api-library/**'
+              - 'core-api-library/**'
+              - 'gradle/**'
+            internal-payment-sdk:
+              - 'internal-payment-sdk/**'
+              - 'health-api-library/**'
+              - 'core-api-library/**'
+              - 'gradle/**'
+
+  core-api-library:
+    needs: changes
+    if: needs.changes.outputs.core-api-library == 'true'
+    uses: ./.github/workflows/sonar.yml
+    with:
+      coverage-tasks: ':core-api-library:library:jacocoTestReport'
+      sonar-tasks: ':core-api-library:library:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  bank-api-library:
+    needs: changes
+    if: needs.changes.outputs.bank-api-library == 'true'
+    uses: ./.github/workflows/sonar.yml
+    with:
+      coverage-tasks: ':bank-api-library:library:jacocoTestReport'
+      sonar-tasks: ':bank-api-library:library:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  health-api-library:
+    needs: changes
+    if: needs.changes.outputs.health-api-library == 'true'
+    uses: ./.github/workflows/sonar.yml
+    with:
+      coverage-tasks: ':health-api-library:library:jacocoTestReport'
+      sonar-tasks: ':health-api-library:library:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  capture-sdk:
+    needs: changes
+    if: needs.changes.outputs.capture-sdk == 'true'
+    uses: ./.github/workflows/sonar.yml
+    with:
+      # Build both modules (default-network depends on sdk)
+      prepare-tasks: 'capture-sdk:sdk:assembleDebug capture-sdk:default-network:assembleDebug'
+      coverage-tasks: ':capture-sdk:sdk:jacocoTestReport :capture-sdk:default-network:jacocoTestReport'
+      sonar-tasks: 'capture-sdk:sdk:sonar capture-sdk:default-network:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  bank-sdk:
+    needs: changes
+    if: needs.changes.outputs.bank-sdk == 'true'
+    uses: ./.github/workflows/sonar.yml
+    with:
+      # Build both modules (example-app depends on sdk)
+      prepare-tasks: 'bank-sdk:sdk:assembleDebug bank-sdk:example-app:assembleDevExampleAppDebug'
+      coverage-tasks: ':bank-sdk:sdk:jacocoTestReport'
+      sonar-tasks: 'bank-sdk:sdk:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  health-sdk:
+    needs: changes
+    if: needs.changes.outputs.health-sdk == 'true'
+    uses: ./.github/workflows/sonar.yml
+    with:
+      # Build both modules (example-app depends on sdk)
+      prepare-tasks: 'health-sdk:sdk:assembleDebug health-sdk:example-app:assembleDebug'
+      coverage-tasks: ':health-sdk:sdk:jacocoTestReport'
+      sonar-tasks: ':health-sdk:sdk:sonar'
+      google-services-json-path: 'health-sdk/example-app/google-services.json'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      GOOGLE_SERVICES_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_B64 }}
+
+  internal-payment-sdk:
+    needs: changes
+    if: needs.changes.outputs.internal-payment-sdk == 'true'
+    uses: ./.github/workflows/sonar.yml
+    with:
+      prepare-tasks: ':internal-payment-sdk:sdk:assembleDebug'
+      coverage-tasks: ':internal-payment-sdk:sdk:jacocoTestReport'
+      sonar-tasks: ':internal-payment-sdk:sdk:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
