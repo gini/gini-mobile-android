@@ -242,21 +242,9 @@ jobs:
           path: health-api-library/library/build/reports/ktlint/**/*.html
 
   sonar:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "21"
-
-      - name: Generate coverage report
-        run: ./gradlew :health-api-library:library:jacocoTestReport
-
-      - name: SonarQube Scan
-        run: ./gradlew :health-api-library:library:sonar --info --stacktrace
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    uses: ./.github/workflows/sonar.yml
+    with:
+      coverage-tasks: ':health-api-library:library:jacocoTestReport'
+      sonar-tasks: ':health-api-library:library:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

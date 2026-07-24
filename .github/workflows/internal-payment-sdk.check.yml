@@ -5,18 +5,8 @@ permissions:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'internal-payment-sdk/**'
-      - 'health-api-library/**'
-      - 'core-api-library/**'
-      - 'gradle/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'internal-payment-sdk/**'
       - 'health-api-library/**'
@@ -115,24 +105,10 @@ jobs:
           path: internal-payment-sdk/sdk/build/reports/ktlint/**/*.html
 
   sonar:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "21"
-
-      - name: Build Internal Payment SDK
-        run: ./gradlew :internal-payment-sdk:sdk:assembleDebug
-
-      - name: Generate coverage report
-        run: ./gradlew :internal-payment-sdk:sdk:jacocoTestReport
-
-      - name: SonarQube Scan
-        run: ./gradlew :internal-payment-sdk:sdk:sonar --info --stacktrace
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    uses: ./.github/workflows/sonar.yml
+    with:
+      prepare-tasks: ':internal-payment-sdk:sdk:assembleDebug'
+      coverage-tasks: ':internal-payment-sdk:sdk:jacocoTestReport'
+      sonar-tasks: ':internal-payment-sdk:sdk:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
