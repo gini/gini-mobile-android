@@ -20,10 +20,13 @@ class DigitalInvoiceEditButton {
         // The digital-invoice content is rendered from the network extraction result, which
         // can be slow on remote devices. Wait for the Edit button to exist before checking,
         // so a slow render doesn't fail the lookup.
+        // Resolve the package at runtime (the applicationId varies by flavor) rather than
+        // hard-coding it into the resourceId.
+        val pkg = InstrumentationRegistry.getInstrumentation().targetContext.packageName
         val editButton = device.findObject(
             UiSelector().className("android.widget.TextView")
                 .text("Edit")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_edit_button")
+                .resourceId("$pkg:id/gbs_edit_button")
         )
         return editButton.waitForExists(DIGITAL_INVOICE_TIMEOUT) && editButton.isEnabled
     }

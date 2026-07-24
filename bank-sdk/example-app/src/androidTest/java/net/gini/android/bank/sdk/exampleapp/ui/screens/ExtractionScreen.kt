@@ -18,9 +18,13 @@ class ExtractionScreen {
     // sleep. Wait for the transfer-summary button to actually exist before interacting,
     // so slow network responses don't cause a NoMatchingViewException.
     private fun waitForExtractionScreen() {
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val device = UiDevice.getInstance(instrumentation)
+        // Resolve the package at runtime — the app-under-test's applicationId varies by
+        // flavor (e.g. paymentProvider flavors), so don't hard-code it into the resourceId.
+        val pkg = instrumentation.targetContext.packageName
         device.findObject(
-            UiSelector().resourceId("net.gini.android.bank.sdk.exampleapp:id/transfer_summary")
+            UiSelector().resourceId("$pkg:id/transfer_summary")
         ).waitForExists(EXTRACTION_TIMEOUT)
     }
 
