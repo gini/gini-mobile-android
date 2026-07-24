@@ -37,45 +37,61 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 class HealthApiDocumentRemoteSourceTest {
 
+    // The Authorization header is added by the SDK's session interceptor in the OkHttp layer
+    // (PP-2363). The remote source must not add it so that the interceptor (or a consumer
+    // managing authentication themselves) stays in control of it.
+
     @Test
-    fun `sets bearer authorization header with capital case 'Bearer' in getPages`() = runTest {
-        val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
-            getPages(accessToken, "")
+    fun `does not set authorization header in getPages`() = runTest {
+        verifyNoAuthorizationHeader(this) {
+            getPages("")
         }
     }
 
     @Test
-    fun `sets bearer authorization header with capital case 'Bearer' in getPaymentProviders`() = runTest {
-        val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
-            getPaymentProviders(accessToken)
+    fun `does not set authorization header in getPaymentProviders`() = runTest {
+        verifyNoAuthorizationHeader(this) {
+            getPaymentProviders()
         }
     }
 
     @Test
-    fun `sets bearer authorization header with capital case 'Bearer' in getPaymentProvider`() = runTest {
-        val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
-            getPaymentProvider(accessToken, "")
+    fun `does not set authorization header in getPaymentProvider`() = runTest {
+        verifyNoAuthorizationHeader(this) {
+            getPaymentProvider("")
         }
     }
 
     @Test
-    fun `sets bearer authorization header with capital case 'Bearer' in createPaymentRequest`() = runTest {
-        val accessToken = UUID.randomUUID().toString()
-        val expectedAuthorizationHeader = "Bearer $accessToken"
-        verifyAuthorizationHeader(expectedAuthorizationHeader, this) {
-            createPaymentRequest(accessToken, PaymentRequestInput("", "", "", "", ""))
+    fun `does not set authorization header in createPaymentRequest`() = runTest {
+        verifyNoAuthorizationHeader(this) {
+            createPaymentRequest(PaymentRequestInput("", "", "", "", ""))
         }
     }
+
+    @Suppress("DEPRECATION")
+    @Test
+    fun `deprecated createPaymentRequest with access token still sets bearer authorization header`() = runTest {
+        val accessToken = UUID.randomUUID().toString()
+        val expectedAuthorizationHeader = "Bearer $accessToken"
+        val documentServiceAuthInterceptor = DocumentServiceAuthInterceptor()
+        val testSubject = HealthApiDocumentRemoteSource(
+            StandardTestDispatcher(testScheduler),
+            documentServiceAuthInterceptor,
+            GiniHealthApiType(1),
+            ""
+        )
+
+        testSubject.createPaymentRequest(accessToken, PaymentRequestInput("", "", "", "", ""))
+        advanceUntilIdle()
+
+        Truth.assertThat(documentServiceAuthInterceptor.bearerAuthHeader).isNotNull()
+        Truth.assertThat(documentServiceAuthInterceptor.bearerAuthHeader).isEqualTo(expectedAuthorizationHeader)
+    }
+
     @Test
     fun `keeps absolute sourceDocumentLocation unchanged when it is not null`() = runTest {
         // Given
-        val accessToken = UUID.randomUUID().toString()
         val documentServiceAuthInterceptor = DocumentServiceAuthInterceptor()
 
         val baseUrl = "https://health.gini.net/"
@@ -102,7 +118,7 @@ class HealthApiDocumentRemoteSourceTest {
         )
 
         // When
-        testSubject.createPaymentRequest(accessToken, input)
+        testSubject.createPaymentRequest(input)
         advanceUntilIdle()
 
         // Then
@@ -115,7 +131,6 @@ class HealthApiDocumentRemoteSourceTest {
     @Test
     fun `does not set sourceDocumentLocation when it is null`() = runTest {
         // Given
-        val accessToken = UUID.randomUUID().toString()
         val documentServiceAuthInterceptor = DocumentServiceAuthInterceptor()
 
         val baseUrl = "https://health.gini.net/"
@@ -142,7 +157,7 @@ class HealthApiDocumentRemoteSourceTest {
         )
 
         // When
-        testSubject.createPaymentRequest(accessToken, input)
+        testSubject.createPaymentRequest(input)
         advanceUntilIdle()
 
         // Then
@@ -151,8 +166,7 @@ class HealthApiDocumentRemoteSourceTest {
         Truth.assertThat(body!!.sourceDocumentLocation).isNull()
     }
 
-    private inline fun verifyAuthorizationHeader(
-        expectedAuthorizationHeader: String,
+    private inline fun verifyNoAuthorizationHeader(
         testScope: TestScope,
         testBlock: HealthApiDocumentRemoteSource.() -> Unit
     ) {
@@ -173,23 +187,27 @@ class HealthApiDocumentRemoteSourceTest {
         testScope.advanceUntilIdle()
 
         // Then
-        Truth.assertThat(documentServiceAuthInterceptor.bearerAuthHeader).isNotNull()
-        Truth.assertThat(documentServiceAuthInterceptor.bearerAuthHeader).isEqualTo(expectedAuthorizationHeader)
+        Truth.assertThat(documentServiceAuthInterceptor.capturedHeaders).isNotNull()
+        Truth.assertThat(documentServiceAuthInterceptor.capturedHeaders).doesNotContainKey("Authorization")
+        Truth.assertThat(documentServiceAuthInterceptor.capturedHeaders).containsKey("Accept")
     }
 
     private class DocumentServiceAuthInterceptor : HealthApiDocumentService {
 
         var bearerAuthHeader: String? = null
+        var capturedHeaders: Map<String, String>? = null
         var lastPaymentRequestBody: PaymentRequestBody? = null
 
 
         override suspend fun getPages(bearer: Map<String, String>, documentId: String): Response<List<PageResponse>> {
             bearerAuthHeader = bearer["Authorization"]
+            capturedHeaders = bearer
             return Response.success(listOf(PageResponse(0, emptyMap())))
         }
 
         override suspend fun getPaymentProviders(bearer: Map<String, String>): Response<List<PaymentProviderResponse>> {
             bearerAuthHeader = bearer["Authorization"]
+            capturedHeaders = bearer
             return Response.success(
                 listOf(
                     PaymentProviderResponse(
@@ -212,6 +230,7 @@ class HealthApiDocumentRemoteSourceTest {
             documentId: String
         ): Response<PaymentProviderResponse> {
             bearerAuthHeader = bearer["Authorization"]
+            capturedHeaders = bearer
             return Response.success(PaymentProviderResponse("", "", "", AppVersionResponse(""), Colors("", ""), "", "", listOf("android"), listOf()))
         }
 
@@ -220,6 +239,7 @@ class HealthApiDocumentRemoteSourceTest {
             body: PaymentRequestBody
         ): Response<ResponseBody> {
             bearerAuthHeader = bearer["Authorization"]
+            capturedHeaders = bearer
             lastPaymentRequestBody = body
             return Response.success(null, Headers.Builder().set("Location", "somewhere").build())
         }

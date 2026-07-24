@@ -77,6 +77,39 @@ with this configuration would be ``550e8400-e29b-11d4-a716-446655440000@example.
     // The BankApiDocumentManager provides the high-level API to work with documents.
     val documentManager: BankApiDocumentManager = giniBankApi.documentManager;
 
+Self-managed authentication
+---------------------------
+
+If your app authenticates the Gini Bank API requests itself (for example through your own backend), you don't
+need client credentials or a ``SessionManager``. Enable self-managed authentication and pass your own
+``OkHttpClient`` which adds the ``Authorization`` header to the API requests (with an application or network
+interceptor - either works, because the library installs no authentication of its own in this mode). Your access
+token is never passed through the library and no anonymous Gini users are created:
+
+.. code-block:: java
+
+    val giniBankApi: GiniBankAPI =
+            GiniBankAPIBuilder(context)
+                    .setSelfManagedAuthentication(true)
+                    .setHttpClientProvider { myOkHttpClientWithAuthorization }
+                    .build();
+
+A custom ``GiniHttpClientProvider`` is required in this mode: building without one throws an
+``IllegalStateException``. Any client credentials or ``SessionManager`` passed to the builder are ignored.
+
+Authentication behavior changes in this version
+-----------------------------------------------
+
+The library now adds the ``Authorization`` header in the OkHttp layer (via an interceptor) instead of per request
+in the repositories. This is transparent to the API of the library, but two behaviors changed:
+
+- API requests are no longer serialized: previously all requests of a document manager ran one at a time while
+  the access token was managed. Now only the session request itself is serialized (so no duplicate anonymous
+  users are created) and API requests run in parallel.
+- When requesting a session fails, the ``exception`` of the returned ``Resource.Error`` is now an
+  ``ApiException`` which wraps the original exception as its ``cause`` (previously it was the original
+  exception itself). Message, status code, headers and body are unchanged.
+
 Public Key Pinning
 ==================
 

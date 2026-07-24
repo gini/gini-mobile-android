@@ -44,6 +44,9 @@ jobs:
       - name: run unit tests
         run: ./gradlew internal-payment-sdk:sdk:testDebugUnitTest
 
+      - name: check binary compatibility of the public api
+        run: ./gradlew internal-payment-sdk:sdk:apiCheck
+
       - name: archive unit test results
         if: always()
         uses: actions/upload-artifact@v4

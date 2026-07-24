@@ -5,6 +5,7 @@ import net.gini.gradle.DependencyUpdatesPlugin
 
 plugins {
     alias(libs.plugins.devtools.ksp) apply false
+    alias(libs.plugins.binary.compatibility.validator) apply false
 }
 
 buildscript {
