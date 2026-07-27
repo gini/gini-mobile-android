@@ -54,6 +54,10 @@ jobs:
       - name: Create google-services.json
         if: inputs.google-services-json-path != ''
         run: |
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" ]; then
+            echo "::error::google-services-json-path was set but the GOOGLE_SERVICES_JSON_B64 secret is empty or missing."
+            exit 1
+          fi
           mkdir -p "$(dirname '${{ inputs.google-services-json-path }}')"
           echo "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > '${{ inputs.google-services-json-path }}'
 
