@@ -22,6 +22,23 @@ The user wants to point the Android Gini Bank SDK "Figma Links" documentation
 page at a newer Figma UI-customisation guide (new SDK version). The page contains
 many Figma links, one per screen/section.
 
+## How to run
+
+Type `/update-figma-links` and paste the new Figma guide URL, or just say in
+plain words: *"update the Android Figma links to this new guide: <URL>"*.
+
+You normally provide **only the new Figma guide URL** — the Confluence page is
+already known (see Repo defaults). Example:
+
+```
+/update-figma-links https://www.figma.com/design/<NEW_KEY>/Android-Gini-Bank-SDK-<version>-UI-Customisation
+```
+
+What happens next: it reads the page, verifies each screen's node-id in the new
+file, shows you a ✅/❌ table, and **pauses for your sign-off** (and asks you to
+paste the correct link for any screen that moved) before writing. You approve; it
+writes and then diffs to confirm. Nothing is written without your OK.
+
 ## Repo defaults (Android)
 
 This skill targets the **Android** Gini Bank SDK documentation. Use these unless
@@ -29,7 +46,9 @@ the user overrides them:
 
 - **Confluence page:** "Figma Links in public documentation" — page ID `435257345`
   (`https://gini.atlassian.net/wiki/spaces/GBSV/pages/435257345/Figma+Links+in+public+documentation`)
-- **Confluence site (cloudId):** `gini.atlassian.net`
+- **Confluence site:** `gini.atlassian.net` — pass this as the `cloudId` argument to
+  the Atlassian MCP tools (they accept a site hostname, so the literal cloudId UUID
+  is not needed here).
 - **Guide name pattern:** `Android-Gini-Bank-SDK-<version>-UI-Customisation`
 
 Because the page is already known, the user normally only needs to paste the

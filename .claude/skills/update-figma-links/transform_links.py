@@ -36,7 +36,10 @@ import argparse
 import re
 import sys
 
-FIGMA_URL_RE = re.compile(r'https://www\.figma\.com/[^\s"\'<>]+')
+# Stops at whitespace / real quotes / < > AND at an encoded quote `&quot;` (the JSON
+# string delimiter inside the plugin extension), while still keeping `&amp;` — the
+# real param separator inside the URL.
+FIGMA_URL_RE = re.compile(r'https://www\.figma\.com/(?:(?!&quot;)[^\s"\'<>])+')
 
 # Uniform preview wrapper, matching the Colors section (centered, full width).
 EMBED_TMPL = ('<div data-type="embed-card" data-layout="center" data-width="100">'
