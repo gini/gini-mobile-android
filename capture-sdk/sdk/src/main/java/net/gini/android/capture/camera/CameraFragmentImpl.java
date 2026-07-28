@@ -1094,7 +1094,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         }
     }
 
-    private boolean isOnlyQRCodeScanningEnabled() {
+    @Override
+    protected boolean isOnlyQRCodeScanningEnabled() {
         if (mOnlyQRCodeScanningRuntimeOverride != null) {
             return mOnlyQRCodeScanningRuntimeOverride;
         }
