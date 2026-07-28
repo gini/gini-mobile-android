@@ -4,14 +4,17 @@ import com.google.common.truth.Truth.assertThat
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
 class CameraFragmentExtensionTest {
 
     private lateinit var configurationProvider: GiniBankConfigurationProvider
     private lateinit var sessionPin: UnsupportedQrWarningSessionPin
+    private lateinit var koinTestModule: Module
     private lateinit var extension: CameraFragmentExtension
 
     @Before
@@ -20,17 +23,21 @@ class CameraFragmentExtensionTest {
         // which is shared by all tests running in the same JVM.
         configurationProvider = GiniBankConfigurationProvider()
         sessionPin = UnsupportedQrWarningSessionPin()
-        getGiniCaptureKoin().loadModules(
-            listOf(
-                module {
-                    single { configurationProvider }
-                    single { sessionPin }
-                }
-            )
-        )
+        koinTestModule = module {
+            single { configurationProvider }
+            single { sessionPin }
+        }
+        getGiniCaptureKoin().loadModules(listOf(koinTestModule))
         extension = object : CameraFragmentExtension() {
             override fun hideImageCorners() = Unit
         }
+    }
+
+    @After
+    fun tearDown() {
+        // Restores the production singletons so the test instances don't leak into other test
+        // classes sharing the same Koin context.
+        getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
     }
 
     @Test
