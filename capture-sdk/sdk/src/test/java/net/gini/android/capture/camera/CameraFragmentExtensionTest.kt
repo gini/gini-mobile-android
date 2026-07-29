@@ -35,9 +35,14 @@ class CameraFragmentExtensionTest {
 
     @After
     fun tearDown() {
-        // Restores the production singletons so the test instances don't leak into other test
-        // classes sharing the same Koin context.
+        // Koin's unloadModules drops the overriding definitions instead of restoring the
+        // production ones, so the session pin is re-declared here: otherwise the shared Koin
+        // context is left with no UnsupportedQrWarningSessionPin definition and every later
+        // test in this JVM that resolves it fails with NoDefinitionFoundException.
         getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
+        getGiniCaptureKoin().loadModules(
+            listOf(module { single { UnsupportedQrWarningSessionPin() } })
+        )
     }
 
     @Test
