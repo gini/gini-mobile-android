@@ -138,13 +138,55 @@ over the docs and CI workflows (image assets are skipped).
   - `graphify query "<question>"` — broad context (BFS)
   - `graphify path "<A>" "<B>"` — shortest path between two concepts (e.g. `"bank-sdk" "core-api-library"`)
   - `graphify explain "<concept>"` — plain-language explanation of a node
-- Open `graphify-out/graph.html` in a browser for the interactive community view (aggregated,
-  since the full graph exceeds 5,000 nodes).
-- The graph is **not** auto-rebuilt — no git hook is installed, so it can go stale as the code
-  moves on. Rebuild manually:
-  - After pulling or switching branches: `graphify update .` (AST-only, no API cost).
-  - After changing **docs, CI workflows, or PDFs** in a session: `/graphify --update` (folds the
-    semantic content back into the graph).
-- graphify can also expose a live subset of the graph over MCP via `/graphify --mcp`
-  (`query_graph`, `get_node`, `get_neighbors`, `god_nodes`, `shortest_path`, …); no MCP server
-  is connected by default.
+- Open `graphify-out/graph.html` in a browser for the interactive community view.
+- **The graph auto-rebuilds on branch switch** via a `post-checkout` git hook (AST-only, no API
+  cost), installed at `.git/hooks/post-checkout`. This is the only hook installed: commits do
+  **not** trigger a rebuild, and a plain `git pull` does **not** either (a pull fires no checkout).
+- After a `git pull` (e.g. pulling `main`) that you don't follow with a branch switch, run
+  `graphify update .` to refresh the graph against the pulled code.
+- After changing **docs, images, or PDFs** in a session (the hook only covers code), run
+  `/graphify --update` to fold them into the graph.
+- To rebuild manually at any time: `graphify update .` (AST-only, no API cost).
+---
+
+## MCP Tools: code-review-graph (optional — only if configured)
+
+> **NOTE:** The `code-review-graph` MCP server is **not currently connected** to this project.
+> The tools below are only available once that MCP server has been added to the Claude Code /
+> Claude Desktop config. Until then, use the `graphify` CLI commands in the `## graphify` section
+> above and fall back to Grep/Glob/Read. graphify can expose a subset of these live via
+> `/graphify --mcp` (tools: `query_graph`, `get_node`, `get_neighbors`, `get_community`,
+> `god_nodes`, `graph_stats`, `shortest_path`).
+
+**IF the `code-review-graph` MCP server is configured, prefer its tools BEFORE Grep/Glob/Read
+when exploring the codebase** — the graph is faster, cheaper (fewer tokens), and gives
+structural context (callers, dependents, test coverage) that file scanning cannot.
+
+### When to use graph tools first
+
+- **Exploring code**: `semantic_search_nodes` or `query_graph` instead of Grep
+- **Understanding impact**: `get_impact_radius` instead of manually tracing imports
+- **Code review**: `detect_changes` + `get_review_context` instead of reading entire files
+- **Finding relationships**: `query_graph` with callers_of / callees_of / imports_of / tests_for
+- **Architecture questions**: `get_architecture_overview` + `list_communities`
+
+Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
+
+### Key tools
+
+| Tool | Use when |
+|------|----------|
+| `detect_changes` | Reviewing code changes — gives risk-scored analysis |
+| `get_review_context` | Need source snippets for review — token-efficient |
+| `get_impact_radius` | Understanding blast radius of a change |
+| `get_affected_flows` | Finding which execution paths are impacted |
+| `query_graph` | Tracing callers, callees, imports, tests, dependencies |
+| `semantic_search_nodes` | Finding functions/classes by name or keyword |
+| `get_architecture_overview` | Understanding high-level codebase structure |
+| `refactor_tool` | Planning renames, finding dead code |
+
+### Workflow (when the MCP server is configured)
+
+1. Use `detect_changes` for code review.
+2. Use `get_affected_flows` to understand impact.
+3. Use `query_graph` with `pattern="tests_for"` to check coverage.
