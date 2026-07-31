@@ -89,8 +89,8 @@ When generating a pull request description:
 **Requirements**
 
 - Use the repository PR template (`.github/pull_request_template.md`) exactly — it is the file GitHub pre-fills when a PR is opened.
-- Extract the Jira ticket from the commit message (the `<ticket-id>` line, e.g. `PP-1234`, `HEAL-99`, `XPL-42`, `SDK-4`).
-- Replace the `[TICKET-ID]` placeholder with the real ticket.
+- If there is a Jira ticket, extract it from the commit message (the `<ticket-id>` line, e.g. `PP-1234`, `HEAL-99`, `XPL-42`, `SDK-4`).
+ - Replace the `[TICKET-ID]` placeholder with the real ticket, or `N/A` if no ticket applies.
 - Describe **what** changed, **why** the change was needed, and **how** it was implemented (high level).
 - Mention affected projects/modules explicitly in `<project>:<module>` form (e.g. `bank-sdk:sdk`, `capture-sdk:default-network`).
 - Keep the description concise and reviewer-friendly.
