@@ -40,21 +40,20 @@ Use the Atlassian connector. One ticket per side — Bank releases in project **
 - **Title:** `[Android] RC for Android Gini Bank SDK <new-version>` / `[Android] RC for Android Gini Health SDK <new-version>` — the version is the main SDK's new version from the user's list in step 1.
 - **Description:** built from **the tickets that share this release's fix version**, not from your own reading of the diffs. Read the two most recent Release Candidate tickets in the target project — `project = <KEY> AND issuetype = "Release Candidate" ORDER BY created DESC` — and match their shape; some are much terser than others, so follow the fuller example. The usual sections:
 
-  1. **Tickets in this release** — a link per ticket, `https://ginis.atlassian.net/browse/<KEY>`. Find them with `fixVersion in ("<version>", …)` using the same fix versions the RC ticket carries.
+  1. **Tickets in this release** — a link per ticket, `https://ginis.atlassian.net/browse/<TICKET-KEY>` (an issue key such as `PP-123` or `HEAL-456`, not the project key). Find them with `fixVersion in ("<version>", …)` using the same fix versions the RC ticket carries.
   2. **Modules released** — old → new per module.
   3. **Scope of testing** — frequently included, especially for Health. **Ask the user for it; do not invent it** — they decide smoke-test breadth and which OS versions QA runs. Optionally follow it with the areas most likely to be affected, derived from the diffs (version-gated code paths, transitive dependency uplifts), calling out anything with no ticket of its own.
-  4. **Listed Releases** — the release report of each fix version:
+  4. **Listed Releases** — the Jira **release report** page of each fix version:
 
-  ```
-  You can find all the tickets related to this release here:
-  https://ginis.atlassian.net/projects/<KEY>/versions/<version-id>/tab/release-report-all-issues
-  ```
+     ```
+     You can find all the tickets related to this release here:
+     https://ginis.atlassian.net/projects/<KEY>/versions/<version-id>/tab/release-report-all-issues
+     ```
 
+     Look up the Jira release matching the new SDK version in the project's releases (PP or HEAL) to get its numeric `<version-id>`. If other released modules (e.g. bank-api-library) have their own Jira release, add their report links too.
   5. **Attachments / build for testing** — the Firebase App Distribution links for the example-app build QA installs. Ask the user for these; they come from the CI/Firebase build and cannot be generated here.
 
-  The link is the Jira **release report** page of this release's fix version. Look up the Jira release matching the new SDK version in the project's releases (PP or HEAL) to get its numeric `<version-id>`; if the Jira release doesn't exist yet, create it first (per `RELEASE.md` step 1 — tickets get connected via "Fix versions", and the release description later carries the markdown release notes). If other released modules (e.g. bank-api-library) have their own Jira release, add their report links too.
-
-**Check the Jira releases exist, and create the missing ones.** Open the project's Releases page at `https://ginis.atlassian.net/projects/<KEY>?selectedItem=com.atlassian.jira.jira-projects-plugin:release-page&status=all` — `status=all` matters, the default filter hides released versions. There should be one release per released module that has release notes of its own (see the ownership note at the end of step 4); the one you want is the latest `UNRELEASED` entry matching that product and version. Watch out for permanent placeholder `UNRELEASED` versions kept for parking bug tickets, so match on name rather than taking the last row.
+**Check the Jira releases exist, and create the missing ones** (per `RELEASE.md` step 1 — tickets get connected to a release via "Fix versions", and the release description later carries the markdown release notes). Open the project's Releases page at `https://ginis.atlassian.net/projects/<KEY>?selectedItem=com.atlassian.jira.jira-projects-plugin:release-page&status=all` — `status=all` matters, the default filter hides released versions. There should be one release per released module that has release notes of its own (see the ownership note at the end of step 4); the one you want is the latest `UNRELEASED` entry matching that product and version. Watch out for permanent placeholder `UNRELEASED` versions kept for parking bug tickets, so match on name rather than taking the last row.
 
 For any that are missing, create them **through that page in the browser** — the Atlassian connector has no tool for creating Jira versions, and Jira rejects an unknown `fixVersions` name (`Version name '…' is not valid`) instead of auto-creating it. Naming follows `<Platform> Gini <Product> <version>`, so keep the `Android`/`iOS` prefix to avoid colliding with the other platform's releases. In the `Create release` dialog: fill Release name and Description, and **clear the prefilled Release date** — it defaults to today, which is wrong for a version that hasn't shipped. Clear it by clicking the field, `cmd+a`, `Backspace`, then click the dialog heading to dismiss the date picker; setting an empty string via `form_input` does not work. After saving, **reload the page** — the table does not refresh, so a successful create looks like a failure. Don't click `Create release` twice either; the second click closes the dialog. Read each version's numeric id off its table link (`/projects/<KEY>/versions/<id>/tab/...`).
 
@@ -70,7 +69,7 @@ Report the created ticket key(s) — they go into every bump commit.
 
 Three major versions (1.x/2.x/3.x lines) are maintained on parallel branches. If the target version's major matches the version on `main`, branch from `main`; otherwise the release must branch from the matching version branch — check the wiki page linked in `RELEASE.md` step 2 and confirm with the user before proceeding.
 
-Create the RC branch (used to release **all** modules of this release): `PP-XXX-RC-bank-SDK-x.x.x` (bank) or `HEAL-XXX-RC-Health-SDK-x.x.x` (insurance). For "both", use a single branch named after the bank ticket unless the user wants separate branches — confirm.
+Create the RC branch (used to release **all** modules of this release): `PP-XXX-RC-bank-SDK-x.x.x` (bank) or `HEAL-XXX-RC-Health-SDK-x.x.x` (health). For "both", use a single branch named after the bank ticket unless the user wants separate branches — confirm.
 
 ## 4. Bump versions, one commit per module, in release order
 
