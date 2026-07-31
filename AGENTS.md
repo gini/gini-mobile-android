@@ -82,6 +82,36 @@ Reference docs (Dokka): `./gradlew <project>:<module>:dokkaHtmlSiblingCollector`
 - Release tags: `<project-name>;<version>` (e.g. `bank-sdk;1.0.2`) — tags trigger release workflows, so never push them casually.
 - Releases follow `RELEASE.md`: `capture-sdk:default-network` is always version-bumped together with `capture-sdk`, and multiple major versions (1.x/2.x/3.x) are maintained on parallel branches — fixes for older majors must branch from the matching version branch, not `main`.
 
+## Pull request descriptions
+
+When generating a pull request description:
+
+**Requirements**
+
+- Use the repository PR template (`.github/pull_request_template.md`) exactly — it is the file GitHub pre-fills when a PR is opened.
+- Extract the Jira ticket from the commit message (the `<ticket-id>` line, e.g. `PP-1234`, `HEAL-99`, `XPL-42`, `SDK-4`).
+- Replace the `[TICKET-ID]` placeholder with the real ticket.
+- Describe **what** changed, **why** the change was needed, and **how** it was implemented (high level).
+- Mention affected projects/modules explicitly in `<project>:<module>` form (e.g. `bank-sdk:sdk`, `capture-sdk:default-network`).
+- Keep the description concise and reviewer-friendly.
+
+**Notes for Reviewers** — include:
+
+- how the changes were verified: unit tests (`./gradlew <project>:<module>:testDebugUnitTest`), lint/detekt/ktlint, or the `/gini-check` skill; instrumented tests via `connectedCheck` or the `/gini-connected-check` skill
+- test scenario(s) reviewers can follow
+- unit/instrumented tests added or updated
+- known limitations or follow-up work
+
+**Rules**
+
+- Do not invent missing details.
+- Use only information from the git diff, the changed files, and the commit messages.
+- If something is unknown, state it clearly instead of guessing.
+
+**PR template**
+
+The canonical PR template is [`.github/pull_request_template.md`](.github/pull_request_template.md) — the file GitHub pre-fills when a pull request is opened. Use it verbatim as the structure for every generated PR description; do not redefine or paraphrase the template here, so the two never drift apart.
+
 ## Gotchas
 
 - Gradle must run on JDK 17 (newer JDKs cause `IllegalAccessError` in the build).
