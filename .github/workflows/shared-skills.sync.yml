@@ -4,9 +4,10 @@ name: Open sync PR in iOS repo for shared Claude skills
 # gini-mobile-ios carrying the same change, so the byte-identical contract
 # checked by shared-skills.check.yml is easy to keep.
 #
-# Requires the MOBILE_SKILLS_SYNC_TOKEN secret: a fine-grained PAT (or GitHub
-# App token) with Contents: read/write and Pull requests: read/write on
-# gini/gini-mobile-ios.
+# Auth: reuses the MOBILE_CI GitHub App (same secrets as the release-docs
+# workflows) to mint a short-lived installation token scoped to
+# gini-mobile-ios. The app must be installed on that repo with
+# Contents: read/write and Pull requests: read/write.
 #
 # No sync loop can occur even if the iOS repo runs the same workflow: the PR
 # only carries already-merged content, so once both repos converge the copy
@@ -27,10 +28,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Generate a token for gini-mobile-ios
+        id: generate-token
+        uses: actions/create-github-app-token@064492a9a1762067169d50c792a7dc02bc3d1254 # v2.0.0
+        with:
+          app-id: ${{ secrets.MOBILE_CI_APP_ID }}
+          private-key: ${{ secrets.MOBILE_CI_APP_PRIVATE_KEY }}
+          owner: gini
+          repositories: gini-mobile-ios
+
       - uses: actions/checkout@v4
         with:
           repository: gini/gini-mobile-ios
-          token: ${{ secrets.MOBILE_SKILLS_SYNC_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
           path: ios-repo
 
       - name: Copy mirrored skill files into the iOS checkout
@@ -49,7 +59,9 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           path: ios-repo
-          token: ${{ secrets.MOBILE_SKILLS_SYNC_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
+          committer: '${{ steps.generate-token.outputs.app-slug }}[bot] <${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com>'
+          author: '${{ steps.generate-token.outputs.app-slug }}[bot] <${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com>'
           branch: sync/shared-claude-skills
           delete-branch: true
           commit-message: |
