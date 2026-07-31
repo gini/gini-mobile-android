@@ -13,6 +13,11 @@ name: Open sync PR in iOS repo for shared Claude skills
 # only carries already-merged content, so once both repos converge the copy
 # step produces no diff and create-pull-request skips PR creation.
 
+# The default GITHUB_TOKEN only checks out this repo — all writes to
+# gini-mobile-ios use the app installation token minted in the job.
+permissions:
+  contents: read
+
 on:
   push:
     branches:

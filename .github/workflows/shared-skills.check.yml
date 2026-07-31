@@ -10,6 +10,9 @@ name: Check shared Claude skills are in sync with iOS
 # schedule and on manual dispatch, where divergence means lasting drift
 # (an abandoned sync PR, or the iOS copy was edited directly).
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     paths:
