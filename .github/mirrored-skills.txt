@@ -4,3 +4,4 @@
 # Read by shared-skills.check.yml and shared-skills.sync.yml.
 .claude/skills/gini-spec-feature/SKILL.md
 .claude/skills/gini-build/SKILL.md
+.claude/skills/gini-fix/SKILL.md

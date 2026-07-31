@@ -26,14 +26,18 @@ workflow.
 
 ## 1. Load the spec — no spec, no code
 
-Read `specs/$ARGUMENTS-feature.md`. If it does not exist, stop and tell the
-user to run `/gini-spec-feature $ARGUMENTS` first — do not improvise a spec
-from the ticket.
+Read `specs/$ARGUMENTS-feature.md`, or — for a bug diagnosed with
+`/gini-fix` — `specs/$ARGUMENTS-bug.md`. If neither exists, stop and tell
+the user to run `/gini-spec-feature $ARGUMENTS` (features) or
+`/gini-fix $ARGUMENTS` (bugs) first — do not improvise a spec from the
+ticket.
 
-From the spec, internalize: the numbered requirements, the affected modules,
-the public API impact, the technical conventions, the design, the test plan,
-and — just as important — the "Out of scope" section. If the "Open questions"
-section is non-empty, surface those questions to the user with
+From a feature spec, internalize: the numbered requirements, the affected
+modules, the public API impact, the technical conventions, the design, the
+test plan, and — just as important — the "Out of scope" section. From a bug
+diagnosis: the root cause, the proposed fix, and the regression test plan
+(the regression test must fail before the fix and pass after). If the "Open
+questions" section is non-empty, surface those questions to the user with
 AskUserQuestion before writing any code.
 
 ## 2. Verify the spec against the code
@@ -73,7 +77,8 @@ still fails or was skipped, say so explicitly.
 
 ## 6. Wrap up
 
-- Update the spec's `Status:` line from `draft` to `implemented`.
+- Update the spec's `Status:` line from `draft` to `implemented` (feature)
+  or `fixed` (bug).
 - Summarize for the user: each requirement and where it was implemented and
   tested (file paths), verification results, and anything left to manual QA
   per the spec's test plan.
