@@ -89,7 +89,7 @@ Changes to integrator-visible declarations per module, or "none". Note whether
 changes are additive or breaking. Assess visibility as prescribed by platform.md.
 
 ## Technical conventions
-Concrete, repo-grounded rules /implement must follow. Cover every item in the
+Concrete, repo-grounded rules /gini-build must follow. Cover every item in the
 conventions checklist in platform.md, grounded in the modules actually touched.
 
 ## Design
@@ -103,7 +103,7 @@ the expectation that every new class gets a unit test, and list what is left
 to manual QA.
 
 ## Out of scope
-Explicitly excluded work, so /implement doesn't drift into it.
+Explicitly excluded work, so /gini-build doesn't drift into it.
 
 ## Open questions
 Anything still unresolved (should be empty or short after step 3).
@@ -112,5 +112,5 @@ Anything still unresolved (should be empty or short after step 3).
 ## 5. Hand off
 
 Show the user a short summary of the spec and where it was written. Remind
-them to review/edit it, then run `/implement $ARGUMENTS` (ideally in a fresh
+them to review/edit it, then run `/gini-build $ARGUMENTS` (ideally in a fresh
 session) to build it. Do not start implementing yourself.
