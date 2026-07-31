@@ -90,3 +90,31 @@ Reference docs (Dokka): `./gradlew <project>:<module>:dokkaHtmlSiblingCollector`
 - `bank-sdk:example-app` uses two flavor dimensions (`environment`: prod/dev/qa; `purpose`: exampleApp/paymentProviderN) — build a single variant, e.g. `assembleDevExampleAppDebug` (CI builds `assembleQaExampleAppRelease` and `assembleProdExampleAppRelease`); a plain `assembleDebug` builds every flavor combination.
 - Keep vector-drawable handling as-is (`vectorDrawables.useSupportLibrary = true`); see comments in module build files before touching drawables.
 - Complex automation belongs in fastlane lanes, not GitHub Actions steps (lanes must be runnable locally).
+
+## graphify
+
+This monorepo has a **graphify knowledge graph** at `graphify-out/` covering all seven projects
+(`core-api-library`, `health-api-library`, `bank-api-library`, `capture-sdk`, `bank-sdk`,
+`health-sdk`, `internal-payment-sdk`). It is built from Kotlin/Java AST plus semantic extraction
+over the docs and CI workflows (image assets are skipped).
+
+**Rules:**
+
+- Before answering architecture or codebase questions, read `graphify-out/GRAPH_REPORT.md` for
+  the god nodes (`CameraFragmentImpl`, `GiniCapture`, `Document()`, `ImageDocument`, `Resource`,
+  `MultiPageReviewFragment`, `GiniCaptureDocument` …) and the community structure.
+- For cross-module "how does X relate to Y" questions, prefer graph traversal over grep — it
+  follows the graph's EXTRACTED + INFERRED edges instead of scanning files:
+  - `graphify query "<question>"` — broad context (BFS)
+  - `graphify path "<A>" "<B>"` — shortest path between two concepts (e.g. `"bank-sdk" "core-api-library"`)
+  - `graphify explain "<concept>"` — plain-language explanation of a node
+- Open `graphify-out/graph.html` in a browser for the interactive community view (aggregated,
+  since the full graph exceeds 5,000 nodes).
+- The graph is **not** auto-rebuilt — no git hook is installed, so it can go stale as the code
+  moves on. Rebuild manually:
+  - After pulling or switching branches: `graphify update .` (AST-only, no API cost).
+  - After changing **docs, CI workflows, or PDFs** in a session: `/graphify --update` (folds the
+    semantic content back into the graph).
+- graphify can also expose a live subset of the graph over MCP via `/graphify --mcp`
+  (`query_graph`, `get_node`, `get_neighbors`, `god_nodes`, `shortest_path`, …); no MCP server
+  is connected by default.
