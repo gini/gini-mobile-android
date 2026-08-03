@@ -56,22 +56,26 @@ jobs:
 
       - name: Create google-services.json
         if: inputs.google-services-json-path != ''
+        env:
+          GOOGLE_SERVICES_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_B64 }}
         run: |
-          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" ]; then
+          if [ -z "$GOOGLE_SERVICES_JSON_B64" ]; then
             echo "::error::google-services-json-path was set but the GOOGLE_SERVICES_JSON_B64 secret is empty or missing."
             exit 1
           fi
           mkdir -p "$(dirname '${{ inputs.google-services-json-path }}')"
-          echo "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > '${{ inputs.google-services-json-path }}'
+          echo "$GOOGLE_SERVICES_JSON_B64" | base64 --decode > '${{ inputs.google-services-json-path }}'
 
       # clientId/clientSecret are only read by the example-app builds; modules
       # that don't use them ignore the extra properties.
       - name: Build modules for Sonar
         if: inputs.prepare-tasks != ''
+        env:
+          GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
         run: >
           ./gradlew ${{ inputs.prepare-tasks }}
           -PclientId="gini-mobile-ci"
-          -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+          -PclientSecret="$GINI_MOBILE_TEST_CLIENT_SECRET"
 
       - name: Generate coverage report
         run: ./gradlew ${{ inputs.coverage-tasks }}
