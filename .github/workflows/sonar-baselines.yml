@@ -24,9 +24,10 @@ on:
       - 'internal-payment-sdk/**'
       - 'gradle/**'
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# Concurrency is declared per project job (not workflow-wide): a newer refresh
+# of the same Sonar project may cancel an older in-flight one, but must not
+# cancel refreshes of *other* projects started by an earlier merge — those
+# would silently stay stale, which is the problem this workflow exists to fix.
 
 jobs:
   changes:
@@ -86,6 +87,9 @@ jobs:
   core-api-library:
     needs: changes
     if: needs.changes.outputs.core-api-library == 'true'
+    concurrency:
+      group: sonar-baseline-core-api-library
+      cancel-in-progress: true
     uses: ./.github/workflows/sonar.yml
     with:
       coverage-tasks: ':core-api-library:library:jacocoTestReport'
@@ -96,6 +100,9 @@ jobs:
   bank-api-library:
     needs: changes
     if: needs.changes.outputs.bank-api-library == 'true'
+    concurrency:
+      group: sonar-baseline-bank-api-library
+      cancel-in-progress: true
     uses: ./.github/workflows/sonar.yml
     with:
       coverage-tasks: ':bank-api-library:library:jacocoTestReport'
@@ -106,6 +113,9 @@ jobs:
   health-api-library:
     needs: changes
     if: needs.changes.outputs.health-api-library == 'true'
+    concurrency:
+      group: sonar-baseline-health-api-library
+      cancel-in-progress: true
     uses: ./.github/workflows/sonar.yml
     with:
       coverage-tasks: ':health-api-library:library:jacocoTestReport'
@@ -116,6 +126,9 @@ jobs:
   capture-sdk:
     needs: changes
     if: needs.changes.outputs.capture-sdk == 'true'
+    concurrency:
+      group: sonar-baseline-capture-sdk
+      cancel-in-progress: true
     uses: ./.github/workflows/sonar.yml
     with:
       # Build both modules (default-network depends on sdk)
@@ -128,6 +141,9 @@ jobs:
   bank-sdk:
     needs: changes
     if: needs.changes.outputs.bank-sdk == 'true'
+    concurrency:
+      group: sonar-baseline-bank-sdk
+      cancel-in-progress: true
     uses: ./.github/workflows/sonar.yml
     with:
       # Build both modules (example-app depends on sdk)
@@ -140,6 +156,9 @@ jobs:
   health-sdk:
     needs: changes
     if: needs.changes.outputs.health-sdk == 'true'
+    concurrency:
+      group: sonar-baseline-health-sdk
+      cancel-in-progress: true
     uses: ./.github/workflows/sonar.yml
     with:
       # Build both modules (example-app depends on sdk)
@@ -155,6 +174,9 @@ jobs:
   internal-payment-sdk:
     needs: changes
     if: needs.changes.outputs.internal-payment-sdk == 'true'
+    concurrency:
+      group: sonar-baseline-internal-payment-sdk
+      cancel-in-progress: true
     uses: ./.github/workflows/sonar.yml
     with:
       prepare-tasks: ':internal-payment-sdk:sdk:assembleDebug'
