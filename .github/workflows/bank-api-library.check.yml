@@ -215,6 +215,8 @@ jobs:
           name: bank-api-library-ktlint-report
           path: bank-api-library/library/build/reports/ktlint/**/*.html
 
+  # Keep the with: block in sync with the matching job in sonar-baselines.yml,
+  # so the main baseline is built and scanned exactly like this PR analysis.
   sonar:
     uses: ./.github/workflows/sonar.yml
     with:

@@ -84,6 +84,9 @@ jobs:
               - 'core-api-library/**'
               - 'gradle/**'
 
+  # The with: blocks below mirror the sonar jobs of the <project>.check.yml
+  # workflows — keep them in sync so the main baseline is built and scanned
+  # exactly like the PR analyses it is compared against.
   core-api-library:
     needs: changes
     if: needs.changes.outputs.core-api-library == 'true'
