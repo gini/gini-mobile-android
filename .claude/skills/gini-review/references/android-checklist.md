@@ -13,12 +13,12 @@ to report.
   dependencies for cross-SDK, `buildSrc` for custom logic
 - **Release mechanics** — generated `RELEASE-ORDER.md`, `capture-sdk:default-network` co-bumping,
   per-module `gradle.properties`, version-branch targeting for older majors
-- **Module ripple** — the downstream-consumer table for all seven projects
+- **Module ripple** — the downstream-consumer table for every project that has consumers
 - **Architecture and style** — Kotlin + coroutines, MVVM with `StateFlow`, no DI framework in SDK
   modules, legacy `capture-sdk` Java policy, `src/main/java` layout
-- **Test conventions** — MockK vs Mockito-Kotlin per module, Turbine, MockWebServer, when a missing
-  regression test is blocking
-- **Commit hygiene** — the `<type>(<project>): <subject>` format and ticket trailer
+- **Test conventions** — MockK vs Mockito-Kotlin per module, Turbine, the MockWebServer myth, when a
+  missing regression test is blocking versus genuinely unreachable
+- **Commit hygiene** — deferred to `AGENTS.md`; only the auto-generated-PR-title check lives here
 - **Do-not-flag list** — lint/Detekt/compiler-catchable issues, pre-existing lines, legacy Java,
   deliberate suppressions, gitignored credentials
 
@@ -27,6 +27,12 @@ source-level only.
 
 Repo-specific things a reviewer must check that a generic code reviewer would miss.
 Canonical source for all of these is `AGENTS.md` — cite it when you flag something.
+
+**Nothing here is tied to a particular PR, ticket or branch, and it must stay that way** — this file is
+read on every review. The module names, tables and tool lists below describe the default branch; older
+majors (1.x/2.x/3.x) are maintained on parallel branches where the module set and conventions can
+differ. So read `AGENTS.md` and the build files **on the branch under review** and let those win over
+anything written here. Never record the state of one branch, one release or one PR in this file.
 
 ## Public API surface
 
@@ -69,11 +75,21 @@ for consumers, not just the changed module:
 
 | Changed | Downstream consumers to consider |
 |---|---|
-| `core-api-library` | everything |
-| `health-api-library` | `internal-payment-sdk`, `health-sdk` |
-| `bank-api-library` | `capture-sdk:default-network`, `bank-sdk` |
-| `internal-payment-sdk` | `health-sdk` |
-| `capture-sdk` | `bank-sdk` |
+| `core-api-library:library` | everything |
+| `health-api-library:library` | `internal-payment-sdk`, `health-sdk` |
+| `bank-api-library:library` | `capture-sdk:default-network`, `bank-sdk` |
+| `internal-payment-sdk:sdk` | `health-sdk` |
+| `capture-sdk:sdk` | `capture-sdk:default-network`, `bank-sdk` |
+| `capture-sdk:default-network` | `bank-sdk` |
+
+`capture-sdk:sdk` → `capture-sdk:default-network` is the row most often forgotten
+(`capture-sdk/default-network/build.gradle.kts` depends on `project(":capture-sdk:sdk")`), and it is
+the same pair `AGENTS.md` requires to be version-bumped together — so a change to `capture-sdk:sdk`
+that ignores `default-network` is worth raising twice over.
+
+Test-only edge: `health-api-library` and `bank-api-library` reference each other via
+`androidTestImplementation`, not production code. A public-API change in either can break the other's
+instrumented tests without touching its runtime behaviour.
 
 A behaviour change in `core-api-library` with tests only in `core-api-library` is worth asking
 about downstream impact.
@@ -96,29 +112,24 @@ about downstream impact.
 - Newer modules use MockK, older ones Mockito-Kotlin — match the module, don't mix frameworks in
   one file.
 - Flow assertions use Turbine; suspending code uses `kotlinx-coroutines-test`.
-- API libraries test HTTP against OkHttp MockWebServer rather than mocking Retrofit interfaces.
+- **There is no fake HTTP server in this repo.** `AGENTS.md` claims the API libraries use OkHttp
+  MockWebServer, but it appears in no build file, version-catalog entry or source file — the API
+  libraries' network-layer tests are instrumented (`src/androidTest`) and mock collaborators with
+  MockK. Never ask for a MockWebServer-style test, and do not treat its absence as a gap.
 - A bug fix with no regression test is a legitimate blocking finding — but check whether the behaviour is
   reachable in a unit test before insisting (some camera/UI paths genuinely need instrumentation).
 
 ## Commit hygiene
 
-Format from `.git-stuff/commit-msg-template.txt`:
+**Not restated here.** `AGENTS.md` §"Git conventions" is canonical for the commit format, the `type`
+vocabulary and the ticket trailer, and it links
+[`.git-stuff/commit-msg-template.txt`](../../../../.git-stuff/commit-msg-template.txt) for the full
+per-type guidance. The review already reads `AGENTS.md`, so a copy here would only be one more thing
+to drift.
 
-```
-<type>(<project>): <subject>
-
-<body>
-
-<ticket-id>
-```
-
-- `type` ∈ `feat` | `fix` | `refactor` | `docs` | `ci` | `chore` (chore for cross-cutting).
-- `project` is the top-level folder, e.g. `fix(capture-sdk):`.
-- Subject in imperative mood.
-- Ticket id on its own trailing line.
-
-An auto-generated PR title like `Pp 1234 snapshot` means the branch was pushed without a proper
-title — worth raising, since the title becomes the merge commit subject.
+The one thing worth checking that neither file mentions: an auto-generated PR title like
+`Pp 1234 snapshot` means the branch was pushed without a proper title — raise it, since the title
+becomes the merge commit subject.
 
 ## Do NOT flag
 

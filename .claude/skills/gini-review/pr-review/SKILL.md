@@ -340,9 +340,18 @@ surface clean, repo conventions followed, all 7 files reviewed" is a valid and g
 **the hard length budget**, and the rule that internal machinery — confidence scores, dimension names,
 severity labels — never appears in a comment a human reads.
 
+**Everything in this section is the terminal report — it is not what gets posted.** This is the long
+form: it carries the coverage count, the per-file table and the section headings, and a finding here may
+spend as many sentences as the mechanism needs. §6 strips it down for the PR, and its cut list is
+explicit that the full call chain *belongs* here.
+
+So the length budget in `references/comment-style.md` applies **when a finding is posted**, not here.
+Do not truncate the terminal report to fit it, and do not pad a posted comment because the terminal one
+was long.
+
 Structure: overview, grouped changes, coverage count, per-file table in `<details>`, then the findings.
-Each finding body uses the three-part inline form: **fact about the code → consequence → concrete
-fix**, inside the length budget, impersonal, no labels inside the text.
+Each finding body uses the three-part form: **fact about the code → consequence → concrete fix**,
+impersonal, no labels inside the text.
 
 Everything in angle brackets below is a slot to fill from the PR under review. Substitute all of
 them — never carry an example value through into a real review.

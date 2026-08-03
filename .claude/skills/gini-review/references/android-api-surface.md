@@ -26,49 +26,53 @@ and Kotlin defaults to public — so a declaration can become permanent API by o
 
 **Does not cover:** source-level repo conventions → `android-checklist.md`
 
-Applies to the seven releasable modules published to Maven Central under `net.gini.android`.
+Applies to every module published to Maven Central under `net.gini.android` — `RELEASE-ORDER.md`
+lists the current set, so do not hard-code a count.
 Sources: [Kotlin library authors' guidelines](https://kotlinlang.org/docs/api-guidelines-introduction.html),
 [Kotlin backward compatibility](https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html),
 [AndroidX API guidelines](https://android.googlesource.com/platform/frameworks/support/+/androidx-main/docs/api_guidelines/).
 
-## First: is `apiCheck` in place on this branch?
+## First: does anything automated guard public API on this branch?
 
-The repo gained the [binary-compatibility-validator](https://github.com/Kotlin/binary-compatibility-validator)
-plugin at some point. Whether the branch under review has it changes how you review. Check:
+**Run the check; never assume the answer.** Whether
+[binary-compatibility-validator](https://github.com/Kotlin/binary-compatibility-validator) and
+committed `.api` dumps are in place decides how you review, and it varies — parallel major-version
+branches (1.x/2.x/3.x) are maintained here, so a branch can differ from the default branch and from
+whatever was true the last time this file was read.
 
 ```bash
-ls */*/api/*.api 2>/dev/null            # committed dumps, e.g. core-api-library/library/api/library.api
-grep -n "binary.compatibility.validator" gradle/libs.versions.toml
+find . -path ./build -prune -o -name '*.api' -print 2>/dev/null | head   # committed dumps
+grep -rn "binary-compatibility-validator\|binaryCompatibilityValidator" gradle/libs.versions.toml build.gradle.kts
+grep -rn "explicitApi" --include="*.gradle.kts" . | grep -v /build/
 ```
 
-**Dumps present** — `apiCheck` runs in every module's check workflow and fails CI on any public API
-difference. CI is now the gate for *detection*; your job shifts to judging **intent** (see the next
-section). Do not re-derive what `apiCheck` already catches.
+**Nothing found** — nothing automated catches a binary-breaking change. **Review is the only gate**, and
+an accidentally-public declaration is blocking, not a nit. Everything below about reading a dump diff
+does not apply; skip to §"Binary-breaking changes" and judge the source directly.
 
-**No dumps** (an older branch, or a version branch from before the plugin was added) — nothing automated catches a
-binary-breaking change. Review is the only gate, and an accidentally-public declaration is
-blocking, not a nit.
+**Dumps or the plugin present** — `apiCheck` fails CI on any public API difference, so CI is the gate
+for *detection* and your job shifts to judging **intent** (the next section). Do not re-derive what
+`apiCheck` already catches.
 
-Either way, **`explicitApi` mode is still not enabled** in any module. Kotlin declarations remain
-public by default, so a new top-level declaration without `internal` / `private` ships to Maven
-Central whether or not anyone intended it. With dumps in place, that shows up as a dump diff rather
-than as a silent leak — which is exactly why the dump diff is worth reading.
+**Unless the third grep shows `explicitApi` enabled**, Kotlin declarations are public by default, so a
+new top-level declaration without `internal` / `private` ships to Maven Central whether or not anyone
+intended it. Without dumps that leak is silent — which is why the source-level visibility check matters
+more here than it would in a repo with `apiCheck`.
 
 Note that this repo already contains a large amount of public surface, including many public
 `data class` declarations. That is pre-existing, not a backlog to file findings against — see the
 scope rule below.
 
-## The `.api` dump diff is your highest-signal check
+## If dumps exist: the `.api` diff is your highest-signal check
+
+**Conditional on the check above** — skip this section entirely when the branch has no dumps.
 
 When a PR touches `<module>/api/<module>.api`, that file **is** the public API change, stated
 explicitly. Read it before the implementation.
 
-`README.md` documents the intended workflow: run `apiDump`, review the dump diff, commit it with the
-code change. Its key rule, worth enforcing in review:
-
-> An unintentional `apiCheck` failure means you changed or exposed public API by accident (remember
-> that Kotlin declarations are public by default) — **restrict the visibility instead of updating the
-> dump.**
+The rule to enforce, whenever a dump diff and an `apiCheck` failure meet: an unintentional failure
+means public API was changed or exposed by accident, and Kotlin's public-by-default is usually why —
+so **restrict the visibility instead of updating the dump.**
 
 So the findings to look for:
 

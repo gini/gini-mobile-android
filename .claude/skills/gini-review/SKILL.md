@@ -40,8 +40,10 @@ Its own references resolve against `pr-review/` — `pr-review/references/ticket
 **`references/android-api-surface.md`** — read at **§3**, only when the diff touches a releasable
 module.
 
-- Supports: detecting whether `apiCheck` guards this branch · reading an `.api` dump diff · identifying
-  binary-breaking changes · judging new public API · deprecation cycles
+- Supports: Kotlin's public-by-default trap · identifying binary-breaking changes · judging new public
+  API · deprecation cycles · reading an `.api` dump diff when the branch has one
+- Opens with a check for whether `apiCheck` and committed dumps guard **this** branch, because that
+  decides whether CI catches an accidental leak or review is the only gate. Run it; do not assume.
 - Skip for: example apps, tests, CI, docs
 
 **Repo instructions** — `AGENTS.md` (root `CLAUDE.md` just includes it), plus any `CLAUDE.md` in the
