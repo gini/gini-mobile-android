@@ -43,6 +43,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Sonar needs the full git history for blame data and new-code detection
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v4
