@@ -12,3 +12,4 @@ fastlane/report.xml
 .kotlin/
 test.properties
 **/google-services.json
+/graphify-out/
