@@ -169,6 +169,7 @@ jobs:
     with:
       # Build both modules (example-app depends on sdk)
       prepare-tasks: 'health-sdk:sdk:assembleDebug health-sdk:example-app:assembleDebug'
+      prepare-args: '-PclientId="gini-mobile-ci" -PclientSecret="$GINI_MOBILE_TEST_CLIENT_SECRET"'
       coverage-tasks: ':health-sdk:sdk:jacocoTestReport'
       sonar-tasks: ':health-sdk:sdk:sonar'
       google-services-json-path: 'health-sdk/example-app/google-services.json'

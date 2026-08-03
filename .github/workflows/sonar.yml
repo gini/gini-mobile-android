@@ -16,6 +16,11 @@ on:
         required: false
         type: string
         default: ""
+      prepare-args:
+        description: "Extra Gradle arguments for the prepare build; shell-expanded, so $GINI_MOBILE_TEST_CLIENT_SECRET can be referenced"
+        required: false
+        type: string
+        default: ""
       coverage-tasks:
         description: "Gradle tasks that generate the Jacoco coverage report(s)"
         required: true
@@ -66,16 +71,11 @@ jobs:
           mkdir -p "$(dirname '${{ inputs.google-services-json-path }}')"
           echo "$GOOGLE_SERVICES_JSON_B64" | base64 --decode > '${{ inputs.google-services-json-path }}'
 
-      # clientId/clientSecret are only read by the example-app builds; modules
-      # that don't use them ignore the extra properties.
       - name: Build modules for Sonar
         if: inputs.prepare-tasks != ''
         env:
           GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
-        run: >
-          ./gradlew ${{ inputs.prepare-tasks }}
-          -PclientId="gini-mobile-ci"
-          -PclientSecret="$GINI_MOBILE_TEST_CLIENT_SECRET"
+        run: ./gradlew ${{ inputs.prepare-tasks }} ${{ inputs.prepare-args }}
 
       - name: Generate coverage report
         run: ./gradlew ${{ inputs.coverage-tasks }}
