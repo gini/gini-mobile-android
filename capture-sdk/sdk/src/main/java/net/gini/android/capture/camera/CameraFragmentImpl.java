@@ -407,6 +407,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     @VisibleForTesting
     void enableDocumentCapture() {
+        // The runtime override must never win over the integrator's QR-only configuration:
+        // with setOnlyQRCodeScanning(true) document capture is not available in this session.
+        if (GiniCapture.hasInstance()
+                && GiniCapture.getInstance().isOnlyQRCodeScanning()
+                && GiniCapture.getInstance().isQRCodeScanningEnabled()) {
+            return;
+        }
         mIsUnsupportedQRDialogShowing = false;
         mQRCodeScanningDisabledByUser = true;
         mInterfaceHidden = false;
@@ -1094,7 +1101,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         }
     }
 
-    private boolean isOnlyQRCodeScanningEnabled() {
+    @Override
+    protected boolean isOnlyQRCodeScanningEnabled() {
         if (mOnlyQRCodeScanningRuntimeOverride != null) {
             return mOnlyQRCodeScanningRuntimeOverride;
         }

@@ -11,6 +11,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.nhaarman.mockitokotlin2.*
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.internal.camera.api.CameraInterface
 import net.gini.android.capture.internal.ui.FragmentImplCallback
 import net.gini.android.capture.internal.util.CancelListener
@@ -18,8 +19,11 @@ import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker
+import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -32,6 +36,11 @@ import org.robolectric.Robolectric
 
 @RunWith(AndroidJUnit4::class)
 class CameraFragmentImplTest {
+
+    @After
+    fun tearDown() {
+        GiniCaptureHelper.setGiniCaptureInstance(null)
+    }
 
     @Test
     fun `triggers Take Picture event`() {
@@ -206,11 +215,48 @@ class CameraFragmentImplTest {
         assertFalse(fragmentImpl.mInterfaceHidden)
     }
 
+    @Test
+    fun `enableDocumentCapture does not override integrator-configured QR-only mode`() {
+        // Given: the integrator configured QR-code-scanning-only mode
+        GiniCapture.Builder()
+            .setQRCodeScanningEnabled(true)
+            .setOnlyQRCodeScanning(true)
+            .build()
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
+
+        // When: document capture is requested (e.g. through a future caller)
+        fragmentImpl.enableDocumentCapture()
+
+        // Then: the runtime override is not set and QR-only mode stays active
+        assertNull(fragmentImpl.mOnlyQRCodeScanningRuntimeOverride)
+        assertTrue(fragmentImpl.isOnlyQRCodeScanningEnabledForTest())
+    }
+
+    @Test
+    fun `enableDocumentCapture switches back to document capture in standard mode`() {
+        // Given: standard mode, where the user switched to QR-only via the warning dialog
+        GiniCapture.Builder()
+            .setQRCodeScanningEnabled(true)
+            .build()
+        val fragmentImpl = CameraFragmentImplWithoutQRCodeReader(mock(), mock<CancelListener>(), false)
+        fragmentImpl.mOnlyQRCodeScanningRuntimeOverride = true
+
+        // When: the user switches back to document capture
+        fragmentImpl.enableDocumentCapture()
+
+        // Then: the runtime override disables QR-only mode again
+        assertEquals(false, fragmentImpl.mOnlyQRCodeScanningRuntimeOverride)
+        assertFalse(fragmentImpl.isOnlyQRCodeScanningEnabledForTest())
+        assertTrue(fragmentImpl.mQRCodeScanningDisabledByUser)
+    }
+
     private open class CameraFragmentImplWithoutQRCodeReader(fragment: FragmentImplCallback,
                                                         cancelListener: CancelListener, addPages: Boolean
     ) : CameraFragmentImpl(fragment, cancelListener, addPages) {
             override fun initQRCodeReader() {
                 // Do nothing, because no QR code reader is available in JVM tests
             }
+
+            fun isOnlyQRCodeScanningEnabledForTest() = isOnlyQRCodeScanningEnabled()
     }
 }
