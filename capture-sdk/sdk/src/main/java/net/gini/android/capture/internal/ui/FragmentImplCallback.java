@@ -51,7 +51,8 @@ public interface FragmentImplCallback {
     @NonNull
     FragmentManager getChildFragmentManager();
 
-    default void showWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {}
+    default void showWarning(@NonNull WarningType warningType, @Nullable String titleFormatArg,
+                             @NonNull Runnable onProceed) {}
 
     @NonNull
     FragmentManager getParentFragmentManager();

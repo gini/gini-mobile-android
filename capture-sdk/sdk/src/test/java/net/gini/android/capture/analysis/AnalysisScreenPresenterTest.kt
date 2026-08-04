@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.os.Looper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
@@ -28,6 +29,7 @@ import io.mockk.verify
 import jersey.repackaged.jsr166e.CompletableFuture
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -39,6 +41,8 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
 import net.gini.android.capture.ProductTag
 import net.gini.android.capture.analysis.AnalysisScreenPresenter.CROSS_BORDER_PAYMENT_KEY
+import net.gini.android.capture.analysis.warning.WarningType
+import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.document.DocumentFactory
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.ImageDocument
@@ -47,6 +51,7 @@ import net.gini.android.capture.document.PdfDocument
 import net.gini.android.capture.document.PdfDocumentFake
 import net.gini.android.capture.internal.document.DocumentRenderer
 import net.gini.android.capture.internal.document.ImageMultiPageDocumentMemoryStore
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.util.FileImportHelper.ShowAlertCallback
 import net.gini.android.capture.internal.util.Size
 import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
@@ -59,9 +64,14 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.robolectric.Shadows
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Collections
 import java.util.concurrent.CancellationException
 import kotlinx.coroutines.Job
@@ -79,16 +89,45 @@ class AnalysisScreenPresenterTest {
     @Mock
     private lateinit var mView: AnalysisScreenContract.View
 
+    private lateinit var configurationProvider: GiniBankConfigurationProvider
+    private lateinit var koinTestModule: Module
+
     @Before
     @Throws(Exception::class)
     fun setUp() {
         MockitoAnnotations.initMocks(this)
+        // The configuration provider is registered in the SDK's isolated Koin context by the
+        // Bank SDK's DI bridge, so unit tests have to provide their own definition. The
+        // LastAnalyzedDocumentProvider is mocked because its production definition requires an
+        // initialized UserAnalytics tracker.
+        configurationProvider = GiniBankConfigurationProvider()
+        koinTestModule = module {
+            single { configurationProvider }
+            single<LastAnalyzedDocumentProvider> { mock() }
+        }
+        getGiniCaptureKoin().loadModules(listOf(koinTestModule))
     }
 
     @After
     @Throws(Exception::class)
     fun tearDown() {
         GiniCaptureHelper.setGiniCaptureInstance(null)
+        // Koin's unloadModules drops the overriding definitions instead of restoring the
+        // previous ones, so equivalents are re-declared for later tests running in the same JVM.
+        getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
+        getGiniCaptureKoin().loadModules(
+            listOf(
+                module {
+                    single { GiniBankConfigurationProvider() }
+                    single<LastAnalyzedDocumentProvider> {
+                        LastAnalyzedDocumentProvider(
+                            backgroundDispatcher = Dispatchers.IO,
+                            userAnalyticsEventTracker = get(),
+                        )
+                    }
+                }
+            )
+        )
     }
 
     // TODO: test navigation to Error screen instead of the snackbbar (when it is implemented)
@@ -1133,5 +1172,315 @@ class AnalysisScreenPresenterTest {
             .build()
         return GiniCapture.getInstance()
     }
+
+    // region Payment due hint bottom sheet (PP-3262)
+
+    @Test
+    fun `should show payment due hint sheet when flags on and due date beyond threshold`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        val formattedDueDate = dueDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        idleMainLooperUntil {
+            verify(mView).showPaymentDueHint(eq(formattedDueDate), any())
+        }
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    @Test
+    fun `should show payment due hint sheet when remaining days equal the threshold`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(
+            GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS.toLong()
+        )
+
+        // When
+        startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showPaymentDueHint(any(), any())
+        }
+    }
+
+    @Test
+    fun `should not show payment due hint when due date is below the threshold`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(4)
+
+        // When
+        val listener = startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `should not show payment due hint when due date is today`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(LocalDate.now().toString())
+        )
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `should not show payment due hint when due date is in the past`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(LocalDate.now().minusDays(3).toString())
+        )
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `should not show payment due hint when due date extraction is missing`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(dueHintExtractions(dueDate = null))
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `should not show payment due hint when due date is unparseable`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(dueHintExtractions("not-a-date"))
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `should not show payment due hint when client configuration flag is off`() {
+        // Given the provider default (isPaymentDueHintEnabled = false)
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `should not show payment due hint when SDK flag is off`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
+            .setGiniCaptureNetworkService(mock())
+            .setPaymentDueHintEnabled(false)
+            .build()
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString()),
+            giniCapture = GiniCapture.getInstance()
+        )
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `should not show payment due hint when payment state is not to-be-paid`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString(), paymentState = "booked")
+        )
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `should show already paid warning instead of payment due hint when document is paid`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isPaymentDueHintEnabled = true, isAlreadyPaidHintEnabled = true)
+        }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString(), paymentState = "Paid")
+        )
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showAlreadyPaidWarning(
+                eq(WarningType.DOCUMENT_MARKED_AS_PAID),
+                any()
+            )
+        }
+        verify(mView, never()).showPaymentDueHint(any(), any())
+    }
+
+    @Test
+    fun `should not show payment due hint in CX mode`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
+        val cbpRow = mapOf("amount" to mock<GiniCaptureSpecificExtraction>())
+        val cbp = GiniCaptureCompoundExtraction(CROSS_BORDER_PAYMENT_KEY, listOf(cbpRow))
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString()),
+            compoundExtractions = mapOf(CROSS_BORDER_PAYMENT_KEY to cbp),
+            giniCapture = giniCapture
+        )
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `should not show payment due hint when Skonto extractions are present`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString()),
+            bankSDKProperties = BankSDKProperties(
+                isSkontoSDKFlagEnabled = true,
+                isSkontoExtractionsValid = true
+            )
+        )
+
+        // Then
+        assertProceedsWithoutDueHint(listener)
+    }
+
+    @Test
+    fun `proceed continuation of payment due hint should return extractions unchanged`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentDueHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val listener = startPresenterForDueHint(extractions)
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showPaymentDueHint(any(), onProceedCaptor.capture())
+        }
+
+        // When the user taps "Proceed Anyway"
+        onProceedCaptor.lastValue.run()
+
+        // Then
+        verify(listener).onExtractionsAvailable(eq(extractions), any(), any())
+    }
+
+    private fun startPresenterForDueHint(
+        extractions: Map<String, GiniCaptureSpecificExtraction>,
+        compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
+        giniCapture: GiniCapture? = createGiniCaptureInstance(),
+        bankSDKProperties: BankSDKProperties? = null
+    ): AnalysisFragmentListener {
+        whenever(mActivity.getString(anyInt())).thenReturn("A String")
+        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
+        analysisFuture.complete(
+            AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                extractions,
+                compoundExtractions,
+                emptyList(),
+                "dummy_doc_id",
+                "dummy_doc_filename",
+            )
+        )
+        val presenter = createPresenterWithAnalysisFuture(
+            ImageDocumentFake(),
+            giniCapture = giniCapture,
+            analysisFuture = analysisFuture
+        )
+        if (bankSDKProperties != null) {
+            val bridge = mock<BankSDKBridge> {
+                on { getBankSDKProperties(any()) } doReturn bankSDKProperties
+            }
+            presenter.setBankSDKBridge(bridge)
+        }
+        val listener = mock<AnalysisFragmentListener>()
+        presenter.setListener(listener)
+        presenter.start()
+        return listener
+    }
+
+    private fun dueHintExtractions(
+        dueDate: String?,
+        paymentState: String = "ToBePaid"
+    ): Map<String, GiniCaptureSpecificExtraction> {
+        val extractions = mutableMapOf(
+            "paymentState" to specificExtraction("paymentState", paymentState)
+        )
+        if (dueDate != null) {
+            extractions["paymentDueDate"] = specificExtraction("paymentDueDate", dueDate)
+        }
+        return extractions
+    }
+
+    private fun specificExtraction(name: String, value: String) =
+        GiniCaptureSpecificExtraction(name, value, "text", null, emptyList())
+
+    private fun assertProceedsWithoutDueHint(listener: AnalysisFragmentListener) {
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(any(), any(), any())
+        }
+        verify(mView, never()).showPaymentDueHint(any(), any())
+    }
+
+    /**
+     * The presenter extension dispatches view calls through a background coroutine which
+     * posts back to the main looper, so the main looper is idled repeatedly until the
+     * verification passes (or the timeout is reached).
+     */
+    private fun idleMainLooperUntil(timeoutMs: Long = 5000, verification: () -> Unit) {
+        val deadline = System.currentTimeMillis() + timeoutMs
+        var lastError: AssertionError? = null
+        while (System.currentTimeMillis() < deadline) {
+            Shadows.shadowOf(Looper.getMainLooper()).idle()
+            try {
+                verification()
+                return
+            } catch (error: AssertionError) {
+                lastError = error
+                Thread.sleep(10)
+            }
+        }
+        throw lastError ?: AssertionError("Condition not met within $timeoutMs ms")
+    }
+
+    // endregion
 
 }

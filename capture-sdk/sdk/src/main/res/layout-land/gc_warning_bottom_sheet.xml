@@ -56,21 +56,19 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancel_button"
+            android:id="@+id/primary_button"
             style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/gc_cancel_transfer" />
+            android:layout_weight="1" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/proceed_button"
+            android:id="@+id/secondary_button"
             style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="@dimen/gc_large"
-            android:text="@string/gc_proceed_anyway" />
+            android:layout_marginStart="@dimen/gc_large" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,7 +33,6 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
-import net.gini.android.capture.analysis.paymentDueHint.PaymentDueHintDismissListener;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -349,16 +348,12 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
-        mFragment.showWarning(warningType, onProceed);
+        mFragment.showWarning(warningType, null, onProceed);
     }
 
     @Override
-    void showPaymentDueHint(PaymentDueHintDismissListener listener, String dueDate) {
-        fragmentExtension.showPaymentDueHint(() -> {
-                    listener.onDismiss();
-                    return Unit.INSTANCE;
-                },
-                dueDate);
+    void showPaymentDueHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed) {
+        mFragment.showWarning(WarningType.PAYMENT_DUE_DATE, formattedDueDate, onProceed);
     }
 
     @Override

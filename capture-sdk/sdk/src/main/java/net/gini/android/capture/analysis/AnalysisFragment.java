@@ -230,14 +230,15 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     }
 
     @Override
-    public void showWarning(@NonNull WarningType type, @NonNull Runnable onProceed) {
+    public void showWarning(@NonNull WarningType type, @Nullable String titleFormatArg,
+                            @NonNull Runnable onProceed) {
         WarningBottomSheet sheet = (WarningBottomSheet)  fragmentManager.findFragmentByTag(WARNING_TAG);
         if (sheet == null) {
-            sheet = WarningBottomSheet.Companion.newInstance(type);
+            sheet = WarningBottomSheet.Companion.newInstance(type, titleFormatArg);
         }
 
         sheet.setCancelable(false);
-        sheet.setListener(makeWarningListener(onProceed));
+        sheet.setListener(makeWarningListener(type, onProceed));
         if (!sheet.isAdded()) {
             if (!fragmentManager.isStateSaved()) {
                 sheet.show(fragmentManager, WARNING_TAG);
@@ -247,22 +248,44 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         }
     }
 
-    private WarningBottomSheet.Listener makeWarningListener(@NonNull Runnable onProceed) {
+    /**
+     * Maps the sheet's primary/secondary CTAs to the behaviors of the given warning type.
+     * The CTA labels are declared on {@link WarningType}; this mapping must match them.
+     */
+    private WarningBottomSheet.Listener makeWarningListener(@NonNull WarningType type,
+                                                            @NonNull Runnable onProceed) {
+        switch (type) {
+            case PAYMENT_DUE_DATE:
+                // Primary: "Proceed Anyway", secondary: "Cancel Transfer"
+                return makeWarningListener(onProceed, this::cancelTransaction);
+            case DOCUMENT_MARKED_AS_PAID:
+            default:
+                // Primary: "Cancel Transfer", secondary: "Proceed Anyway"
+                return makeWarningListener(this::cancelTransaction, onProceed);
+        }
+    }
+
+    private WarningBottomSheet.Listener makeWarningListener(@NonNull Runnable primaryAction,
+                                                            @NonNull Runnable secondaryAction) {
         return new WarningBottomSheet.Listener() {
             @Override
-            public void onCancelAction() {
-                if (getActivity() != null) ImageDiskStore.clear(getActivity());
-
-                if (mCancelListener != null) {
-                    mCancelListener.onCancelFlow();
-                }
+            public void onPrimaryAction() {
+                primaryAction.run();
             }
 
             @Override
-            public void onProceedAction() {
-                onProceed.run();
+            public void onSecondaryAction() {
+                secondaryAction.run();
             }
         };
+    }
+
+    private void cancelTransaction() {
+        if (getActivity() != null) ImageDiskStore.clear(getActivity());
+
+        if (mCancelListener != null) {
+            mCancelListener.onCancelFlow();
+        }
     }
 
     @NonNull
