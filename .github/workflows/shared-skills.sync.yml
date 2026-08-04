@@ -1,0 +1,86 @@
+name: Open sync PR in iOS repo for shared Claude skills
+
+# When a mirrored Claude skill file changes on main, open (or update) a PR in
+# gini-mobile-ios carrying the same change, so the byte-identical contract
+# checked by shared-skills.check.yml is easy to keep.
+#
+# Auth: reuses the MOBILE_CI GitHub App (same secrets as the release-docs
+# workflows) to mint a short-lived installation token scoped to
+# gini-mobile-ios. The app must be installed on that repo with
+# Contents: read/write and Pull requests: read/write.
+#
+# No sync loop can occur even if the iOS repo runs the same workflow: the PR
+# only carries already-merged content, so once both repos converge the copy
+# step produces no diff and create-pull-request skips PR creation.
+
+# The default GITHUB_TOKEN only checks out this repo — all writes to
+# gini-mobile-ios use the app installation token minted in the job.
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.claude/skills/**'
+      - '.github/mirrored-skills.txt'
+  workflow_dispatch:
+
+jobs:
+  sync-to-ios:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate a token for gini-mobile-ios
+        id: generate-token
+        uses: actions/create-github-app-token@064492a9a1762067169d50c792a7dc02bc3d1254 # v2.0.0
+        with:
+          app-id: ${{ secrets.MOBILE_CI_APP_ID }}
+          private-key: ${{ secrets.MOBILE_CI_APP_PRIVATE_KEY }}
+          owner: gini
+          repositories: gini-mobile-ios
+
+      - uses: actions/checkout@v4
+        with:
+          repository: gini/gini-mobile-ios
+          token: ${{ steps.generate-token.outputs.token }}
+          path: ios-repo
+
+      - name: Copy mirrored skill files into the iOS checkout
+        run: |
+          while IFS= read -r f; do
+            case "$f" in ''|\#*) continue ;; esac
+            if [ ! -f "$f" ]; then
+              echo "::error file=.github/mirrored-skills.txt::listed file $f is missing in this repo"
+              exit 1
+            fi
+            mkdir -p "ios-repo/$(dirname "$f")"
+            cp "$f" "ios-repo/$f"
+          done < .github/mirrored-skills.txt
+
+      - name: Create pull request in gini-mobile-ios
+        uses: peter-evans/create-pull-request@v7
+        with:
+          path: ios-repo
+          token: ${{ steps.generate-token.outputs.token }}
+          committer: '${{ steps.generate-token.outputs.app-slug }}[bot] <${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com>'
+          author: '${{ steps.generate-token.outputs.app-slug }}[bot] <${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com>'
+          branch: sync/shared-claude-skills
+          delete-branch: true
+          commit-message: |
+            chore: Sync shared Claude skills from gini-mobile-android
+
+            Automated mirror of the shared (general) Claude skill files.
+          title: 'chore: Sync shared Claude skills from gini-mobile-android'
+          body: |
+            Automated sync of the mirrored Claude skill files from
+            [gini-mobile-android](https://github.com/gini/gini-mobile-android)
+            (see `.github/mirrored-skills.txt` there for the list).
+
+            The general `SKILL.md` files must stay byte-identical across the
+            Android and iOS repos; each repo's `platform.md` is intentionally
+            different and is never synced.
+
+            Triggered by ${{ github.sha }}.

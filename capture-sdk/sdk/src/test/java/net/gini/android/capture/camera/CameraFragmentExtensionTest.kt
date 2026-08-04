@@ -4,14 +4,17 @@ import com.google.common.truth.Truth.assertThat
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
 class CameraFragmentExtensionTest {
 
     private lateinit var configurationProvider: GiniBankConfigurationProvider
     private lateinit var sessionPin: UnsupportedQrWarningSessionPin
+    private lateinit var koinTestModule: Module
     private lateinit var extension: CameraFragmentExtension
     private var onlyQRCodeScanningEnabled = false
 
@@ -21,19 +24,28 @@ class CameraFragmentExtensionTest {
         // which is shared by all tests running in the same JVM.
         configurationProvider = GiniBankConfigurationProvider()
         sessionPin = UnsupportedQrWarningSessionPin()
-        getGiniCaptureKoin().loadModules(
-            listOf(
-                module {
-                    single { configurationProvider }
-                    single { sessionPin }
-                }
-            )
-        )
+        koinTestModule = module {
+            single { configurationProvider }
+            single { sessionPin }
+        }
+        getGiniCaptureKoin().loadModules(listOf(koinTestModule))
         onlyQRCodeScanningEnabled = false
         extension = object : CameraFragmentExtension() {
             override fun hideImageCorners() = Unit
             override fun isOnlyQRCodeScanningEnabled() = onlyQRCodeScanningEnabled
         }
+    }
+
+    @After
+    fun tearDown() {
+        // Koin's unloadModules drops the overriding definitions instead of restoring the
+        // production ones, so the session pin is re-declared here: otherwise the shared Koin
+        // context is left with no UnsupportedQrWarningSessionPin definition and every later
+        // test in this JVM that resolves it fails with NoDefinitionFoundException.
+        getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
+        getGiniCaptureKoin().loadModules(
+            listOf(module { single { UnsupportedQrWarningSessionPin() } })
+        )
     }
 
     @Test
