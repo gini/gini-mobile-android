@@ -78,7 +78,7 @@ Reference docs (Dokka): `./gradlew <project>:<module>:dokkaHtmlSiblingCollector`
   <ticket-id>
   ```
 
-  `type` ∈ `feat` | `fix` | `refactor` | `docs` | `ci` (`chore` for cross-cutting changes); `project` is the top-level folder, e.g. `feat(bank-sdk): Add error logging interface`. Subject in imperative mood; body explains what/why.
+  The commit template is the source of truth for the allowed `type` values and what each covers — read `.git-stuff/commit-msg-template.txt` rather than relying on a list duplicated here. `project` is the top-level folder (e.g. `feat(bank-sdk): Add error logging interface`); leave it off when the change spans many projects or none in particular. Subject in imperative mood; body explains what/why.
 - Release tags: `<project-name>;<version>` (e.g. `bank-sdk;1.0.2`) — tags trigger release workflows, so never push them casually.
 - Releases follow `RELEASE.md`: `capture-sdk:default-network` is always version-bumped together with `capture-sdk`, and multiple major versions (1.x/2.x/3.x) are maintained on parallel branches — fixes for older majors must branch from the matching version branch, not `main`.
 

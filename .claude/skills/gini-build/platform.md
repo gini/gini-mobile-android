@@ -68,7 +68,9 @@ Format (see `.git-stuff/commit-msg-template.txt`):
 <ticket-id>
 ```
 
-`type` ∈ feat | fix | refactor | docs | ci (chore for cross-cutting);
+The commit template at `.git-stuff/commit-msg-template.txt` (repo root) is the
+source of truth for the allowed `type` values and what each covers — read it
+rather than relying on a list duplicated here.
 `project` is the top-level folder, e.g. `feat(bank-sdk): Add error logging
 interface`. Subject in imperative mood; the ticket id ($ARGUMENTS) goes in
 the footer. Never push release tags (`<project>;<version>`) — they trigger
