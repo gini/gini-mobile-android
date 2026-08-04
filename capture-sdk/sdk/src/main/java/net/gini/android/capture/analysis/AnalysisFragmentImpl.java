@@ -82,6 +82,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private ConstraintLayout mLayoutRoot;
     private LinearLayout mAnalysisOverlay;
     private AnalysisHintsAnimator mHintsAnimator;
+    private View mHintsContainer;
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
@@ -348,12 +349,23 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
+        stopAndHideHints();
         mFragment.showWarning(warningType, null, onProceed);
     }
 
     @Override
     void showPaymentDueHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed) {
+        stopAndHideHints();
         mFragment.showWarning(WarningType.PAYMENT_DUE_DATE, formattedDueDate, onProceed);
+    }
+
+    // Keeps TalkBack focus on the warning bottom sheet by removing the rotating
+    // capture suggestions behind it.
+    private void stopAndHideHints() {
+        mHintsAnimator.stop();
+        if (mHintsContainer != null) {
+            mHintsContainer.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -415,6 +427,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         final TextView hintTextView = view.findViewById(R.id.gc_analysis_hint_text);
         final View hintContainer = view.findViewById(R.id.gc_analysis_hint_container);
         final TextView hintHeadlineTextView = view.findViewById(R.id.gc_analysis_hint_headline);
+        mHintsContainer = hintContainer;
         mHintsAnimator = new AnalysisHintsAnimator(mFragment.getActivity().getApplication(),
                 hintContainer, hintImageView, hintTextView, hintHeadlineTextView);
     }
