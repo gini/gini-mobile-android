@@ -36,8 +36,10 @@ internal class QRCodePopup<T> @JvmOverloads constructor(
     private val onScanAnotherQRCode: (() -> Unit)? = null,
     private val onCaptureDocument: (() -> Unit)? = null,
     // Supplier instead of a captured Boolean: the warning type may not be known yet when the
-    // popup is created (the persisted configuration loads asynchronously), so it is resolved
-    // when the popup is actually shown.
+    // popup is created (the persisted configuration loads and the remote configuration is
+    // fetched asynchronously). The supplier resolves the session-pinned decision, which is taken
+    // only when the first warning is shown (see
+    // CameraFragmentExtension.isUnsupportedQRCodeWarningEnabled).
     private val isNewWarningEnabled: () -> Boolean = { false }
 ) {
 
