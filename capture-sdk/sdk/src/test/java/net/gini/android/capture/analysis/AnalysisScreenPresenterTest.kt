@@ -29,7 +29,6 @@ import io.mockk.verify
 import jersey.repackaged.jsr166e.CompletableFuture
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -43,6 +42,7 @@ import net.gini.android.capture.ProductTag
 import net.gini.android.capture.analysis.AnalysisScreenPresenter.CROSS_BORDER_PAYMENT_KEY
 import net.gini.android.capture.analysis.warning.WarningType
 import net.gini.android.capture.di.getGiniCaptureKoin
+import net.gini.android.capture.di.providerModule
 import net.gini.android.capture.document.DocumentFactory
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.ImageDocument
@@ -113,18 +113,15 @@ class AnalysisScreenPresenterTest {
     fun tearDown() {
         GiniCaptureHelper.setGiniCaptureInstance(null)
         // Koin's unloadModules drops the overriding definitions instead of restoring the
-        // previous ones, so equivalents are re-declared for later tests running in the same JVM.
+        // previous ones, so the SDK's real providerModule is re-loaded for later tests running
+        // in the same JVM. The GiniBankConfigurationProvider has no capture-sdk production
+        // module (it is registered by the Bank SDK's DI bridge), so it stays a test binding.
         getGiniCaptureKoin().unloadModules(listOf(koinTestModule))
         getGiniCaptureKoin().loadModules(
             listOf(
+                providerModule,
                 module {
                     single { GiniBankConfigurationProvider() }
-                    single<LastAnalyzedDocumentProvider> {
-                        LastAnalyzedDocumentProvider(
-                            backgroundDispatcher = Dispatchers.IO,
-                            userAnalyticsEventTracker = get(),
-                        )
-                    }
                 }
             )
         )

@@ -232,8 +232,10 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     @Override
     public void showWarning(@NonNull WarningType type, @Nullable String titleFormatArg,
                             @NonNull Runnable onProceed) {
-        WarningBottomSheet sheet = (WarningBottomSheet)  fragmentManager.findFragmentByTag(WARNING_TAG);
-        if (sheet == null) {
+        // Reuse the sheet only while it is added (state restoration); a found but not added
+        // instance may hold stale arguments, so a fresh one is created instead.
+        WarningBottomSheet sheet = (WarningBottomSheet) fragmentManager.findFragmentByTag(WARNING_TAG);
+        if (sheet == null || !sheet.isAdded()) {
             sheet = WarningBottomSheet.Companion.newInstance(type, titleFormatArg);
         }
 
