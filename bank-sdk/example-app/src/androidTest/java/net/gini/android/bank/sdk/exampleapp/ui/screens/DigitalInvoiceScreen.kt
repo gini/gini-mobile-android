@@ -14,6 +14,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.`is`
+import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 
 
 class DigitalInvoiceScreen {
@@ -36,9 +37,9 @@ class DigitalInvoiceScreen {
             UiSelector()
                 .className("android.widget.TextView")
                 .text("Digital invoice")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/onboarding_text_1")
+                .resourceId(AppResources.resId("onboarding_text_1"))
         )
-        return onboardingScreenText.waitForExists(8000)
+        return onboardingScreenText.waitForExists(ONBOARDING_TIMEOUT)
     }
 
     fun checkDigitalInvoiceButtonOnOnboardingScreenIsDisplayed(): Boolean {
@@ -46,9 +47,9 @@ class DigitalInvoiceScreen {
             UiSelector()
                 .className("android.widget.Button")
                 .text("Get Started")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/done_button")
+                .resourceId(AppResources.resId("done_button"))
         )
-        return onboardingScreenButton.waitForExists(10000)
+        return onboardingScreenButton.waitForExists(ONBOARDING_TIMEOUT)
     }
 
     fun clickGetStartedButtonOnOnboardingScreen() {
@@ -56,9 +57,9 @@ class DigitalInvoiceScreen {
             UiSelector()
                 .className("android.widget.Button")
                 .text("Get Started")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/done_button")
+                .resourceId(AppResources.resId("done_button"))
         )
-        if (onboardingScreenButton.waitForExists(5000) && onboardingScreenButton.isClickable) {
+        if (onboardingScreenButton.waitForExists(ONBOARDING_TIMEOUT) && onboardingScreenButton.isClickable) {
             onboardingScreenButton.click()
         }
     }
@@ -75,10 +76,16 @@ class DigitalInvoiceScreen {
     }
 
     fun assertOtherChargesDisplayed() : Boolean {
+        // The digital-invoice content comes from the network extraction result; wait for the
+        // "other charges" label to render before asserting so a slow render doesn't fail it.
+        val text = InstrumentationRegistry.getInstrumentation().targetContext
+            .getString(net.gini.android.bank.sdk.R.string.gbs_digital_invoice_addon_other_charges)
+        device.findObject(UiSelector().textContains(text)).waitForExists(15_000L)
+
         var isOtherChargesDisplayed = false
         onView(withText(net.gini.android.bank.sdk.R.string.gbs_digital_invoice_addon_other_charges))
             .check { view,_ ->
-                if (view.isShown()) {
+                if (view != null && view.isShown()) {
                     isOtherChargesDisplayed = true
                 }
             }
@@ -93,7 +100,7 @@ class DigitalInvoiceScreen {
         val articleSwitch = device.findObject(
             UiSelector()
                 .className("android.widget.Switch")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_enable_switch")
+                .resourceId(AppResources.resId("gbs_enable_switch"))
                 .index(1)
         )
         if(articleSwitch.exists() && articleSwitch.isClickable){
@@ -132,7 +139,7 @@ class DigitalInvoiceScreen {
     fun  checkItemIsDisabledFromDigitalScreen(): Boolean {
         val returnReasonsItems = device.findObject(UiSelector()
             .className("android.view.ViewGroup")
-            .resourceId("net.gini.android.bank.sdk.exampleapp:id/gsb_line_item")
+            .resourceId(AppResources.resId("gsb_line_item"))
             .index(0))
         return !(returnReasonsItems.isEnabled)
     }
@@ -140,7 +147,7 @@ class DigitalInvoiceScreen {
     fun  checkItemIsEnabledFromDigitalScreen(): Boolean {
         val returnReasonsItems = device.findObject(UiSelector()
             .className("android.view.ViewGroup")
-            .resourceId("net.gini.android.bank.sdk.exampleapp:id/gsb_line_item")
+            .resourceId(AppResources.resId("gsb_line_item"))
             .index(0))
         return returnReasonsItems.isEnabled
     }
@@ -228,5 +235,11 @@ class DigitalInvoiceScreen {
                 val totalTextView = view as TextView
                 updatedValue = totalTextView.text.toString()
             }
+    }
+
+    companion object {
+        // The digital-invoice onboarding screen only appears after the Gini API returns the
+        // extraction, which can be slow on remote/BrowserStack devices. Wait generously.
+        private const val ONBOARDING_TIMEOUT = 30_000L
     }
 }
