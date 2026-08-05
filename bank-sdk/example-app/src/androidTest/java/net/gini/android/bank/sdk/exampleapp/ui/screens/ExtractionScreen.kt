@@ -10,6 +10,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import net.gini.android.bank.sdk.exampleapp.R
 import org.hamcrest.Matchers.allOf
+import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 
 class ExtractionScreen {
 
@@ -22,9 +23,8 @@ class ExtractionScreen {
         val device = UiDevice.getInstance(instrumentation)
         // Resolve the package at runtime — the app-under-test's applicationId varies by
         // flavor (e.g. paymentProvider flavors), so don't hard-code it into the resourceId.
-        val pkg = instrumentation.targetContext.packageName
         device.findObject(
-            UiSelector().resourceId("$pkg:id/transfer_summary")
+            UiSelector().resourceId(AppResources.resId("transfer_summary"))
         ).waitForExists(EXTRACTION_TIMEOUT)
     }
 

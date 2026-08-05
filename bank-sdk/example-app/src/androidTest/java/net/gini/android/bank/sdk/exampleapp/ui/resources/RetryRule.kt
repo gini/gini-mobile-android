@@ -14,11 +14,12 @@ import org.junit.runners.model.Statement
  * transiently. Retrying gives such a test another chance, while a genuinely broken test
  * (which fails on every attempt) still fails.
  *
- * Apply it as the OUTERMOST rule (lowest `order`, since in JUnit a lower order wraps
- * further out) so each attempt re-runs the whole test — including the ActivityScenarioRule,
- * which relaunches a fresh activity:
+ * Apply it as the OUTERMOST rule so each attempt re-runs the whole test — including the
+ * ActivityScenarioRule, which relaunches a fresh activity. In JUnit a *lower* order wraps
+ * further out, and `Rule.DEFAULT_ORDER == -1`, so use `Int.MIN_VALUE` (strictly below the
+ * default) to guarantee this rule is outside `activityScenarioRule` and the others:
  *
- *     @get:Rule(order = -1)
+ *     @get:Rule(order = Int.MIN_VALUE)
  *     val retryRule = RetryRule()
  *
  *     @get:Rule

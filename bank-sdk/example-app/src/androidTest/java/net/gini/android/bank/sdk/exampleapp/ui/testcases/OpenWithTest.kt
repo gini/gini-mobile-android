@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit
 @RunWith(AndroidJUnit4::class)
 class OpenWithTest {
 
-    @get:Rule
+    @get:Rule(order = Int.MIN_VALUE)
     val retryRule = RetryRule()
 
     private var idlingResourceForOpenWith: IdlingResource? = null

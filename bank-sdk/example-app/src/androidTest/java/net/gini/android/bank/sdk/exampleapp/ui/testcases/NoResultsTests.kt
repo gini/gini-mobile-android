@@ -26,7 +26,7 @@ import org.junit.Test
  * Test class for No Result screen.
  */
 class NoResultsTests {
-    @get:Rule(order = -1)
+    @get:Rule(order = Int.MIN_VALUE)
     val retryRule = RetryRule()
 
     @get:Rule

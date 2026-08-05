@@ -25,7 +25,7 @@ import org.junit.Test
  * Test class for Digital Invoice Screen.
  */
 class DigitalInvoiceScreenTests {
-    @get:Rule(order = -1)
+    @get:Rule(order = Int.MIN_VALUE)
     val retryRule = RetryRule()
 
     @get:Rule

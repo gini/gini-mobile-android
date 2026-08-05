@@ -14,6 +14,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.`is`
+import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 
 
 class DigitalInvoiceScreen {
@@ -36,7 +37,7 @@ class DigitalInvoiceScreen {
             UiSelector()
                 .className("android.widget.TextView")
                 .text("Digital invoice")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/onboarding_text_1")
+                .resourceId(AppResources.resId("onboarding_text_1"))
         )
         return onboardingScreenText.waitForExists(ONBOARDING_TIMEOUT)
     }
@@ -46,7 +47,7 @@ class DigitalInvoiceScreen {
             UiSelector()
                 .className("android.widget.Button")
                 .text("Get Started")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/done_button")
+                .resourceId(AppResources.resId("done_button"))
         )
         return onboardingScreenButton.waitForExists(ONBOARDING_TIMEOUT)
     }
@@ -56,7 +57,7 @@ class DigitalInvoiceScreen {
             UiSelector()
                 .className("android.widget.Button")
                 .text("Get Started")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/done_button")
+                .resourceId(AppResources.resId("done_button"))
         )
         if (onboardingScreenButton.waitForExists(ONBOARDING_TIMEOUT) && onboardingScreenButton.isClickable) {
             onboardingScreenButton.click()
@@ -99,7 +100,7 @@ class DigitalInvoiceScreen {
         val articleSwitch = device.findObject(
             UiSelector()
                 .className("android.widget.Switch")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_enable_switch")
+                .resourceId(AppResources.resId("gbs_enable_switch"))
                 .index(1)
         )
         if(articleSwitch.exists() && articleSwitch.isClickable){
@@ -138,7 +139,7 @@ class DigitalInvoiceScreen {
     fun  checkItemIsDisabledFromDigitalScreen(): Boolean {
         val returnReasonsItems = device.findObject(UiSelector()
             .className("android.view.ViewGroup")
-            .resourceId("net.gini.android.bank.sdk.exampleapp:id/gsb_line_item")
+            .resourceId(AppResources.resId("gsb_line_item"))
             .index(0))
         return !(returnReasonsItems.isEnabled)
     }
@@ -146,7 +147,7 @@ class DigitalInvoiceScreen {
     fun  checkItemIsEnabledFromDigitalScreen(): Boolean {
         val returnReasonsItems = device.findObject(UiSelector()
             .className("android.view.ViewGroup")
-            .resourceId("net.gini.android.bank.sdk.exampleapp:id/gsb_line_item")
+            .resourceId(AppResources.resId("gsb_line_item"))
             .index(0))
         return returnReasonsItems.isEnabled
     }

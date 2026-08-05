@@ -14,6 +14,7 @@ import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.ErrorScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
 import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assume
 import org.junit.Before
@@ -25,7 +26,7 @@ import java.util.Properties
  * Test class for Error Screens.
  */
 class ErrorScreenTests {
-    @get:Rule(order = -1)
+    @get:Rule(order = Int.MIN_VALUE)
     val retryRule = RetryRule()
 
     @get:Rule
@@ -64,6 +65,23 @@ class ErrorScreenTests {
         IdlingRegistry.getInstance().register(idlingResource)
     }
 
+    @After
+    fun tearDown() {
+        // Always restore connectivity so a failed or skipped offline test never leaves the
+        // device offline for the tests that run afterwards.
+        ErrorScreen().reconnectTheInternetConnection()
+    }
+
+    // The offline tests disable wifi/data via shell, which is blocked on BrowserStack cloud
+    // devices. If the network is still up after the disconnect attempt, skip — the offline
+    // scenario can't be exercised here (runs normally on local devices/emulators).
+    private fun skipIfNetworkCouldNotBeDisabled() {
+        Assume.assumeFalse(
+            "Skipping: network could not be disabled on this device (e.g. BrowserStack)",
+            errorScreen.isInternetAvailable()
+        )
+    }
+
     private fun clickPhotoPaymentButtonAndSkipOnboarding(){
         mainScreen.clickPhotoPaymentButton()
         onboardingScreen.clickSkipButtonIfPresent()
@@ -93,13 +111,7 @@ class ErrorScreenTests {
     @Test
     fun test2_verifyNetworkErrorScreen() {
         ErrorScreen().disconnectTheInternetConnection()
-        // On devices where the network can't actually be turned off (e.g. BrowserStack cloud
-        // devices, where `svc wifi/data disable` is blocked), skip: the offline scenario
-        // cannot be exercised there. Runs normally on local devices/emulators.
-        Assume.assumeFalse(
-            "Skipping: network could not be disabled on this device (e.g. BrowserStack)",
-            errorScreen.isInternetAvailable()
-        )
+        skipIfNetworkCouldNotBeDisabled()
         clickPhotoPaymentButtonAndSkipOnboarding()
         idlingResource.waitForIdle()
         val errorTextVisible = errorScreen.checkErrorTextDisplayed()
@@ -108,12 +120,12 @@ class ErrorScreenTests {
         assertEquals(true, errorHeaderVisible)
         val errorTextViewVisible = errorScreen.checkErrorTextViewDisplayed("Please check your internet connection and try again later on.")
         assertEquals(true, errorTextViewVisible)
-        ErrorScreen().reconnectTheInternetConnection()
     }
 
     @Test
     fun test3_navigateToMainScreenByClickingEnterManuallyButton() {
         ErrorScreen().disconnectTheInternetConnection()
+        skipIfNetworkCouldNotBeDisabled()
         clickPhotoPaymentButtonAndSkipOnboarding()
 
         val enterManuallyButtonVisible = errorScreen.checkEnterManuallyButtonIsDisplayed()
@@ -121,12 +133,12 @@ class ErrorScreenTests {
         errorScreen.clickEnterManuallyButton()
         val isDescriptionTitleVisible = mainScreen.assertDescriptionTitle()
         assertEquals(true, isDescriptionTitleVisible)
-        ErrorScreen().reconnectTheInternetConnection()
     }
 
     @Test
     fun test4_navigateToCameraScreenByClickingBackToCameraButton() {
         ErrorScreen().disconnectTheInternetConnection()
+        skipIfNetworkCouldNotBeDisabled()
         clickPhotoPaymentButtonAndSkipOnboarding()
 
         val backToCameraButtonVisible = errorScreen.checkBackToCameraButtonIsDisplayed()
@@ -134,7 +146,6 @@ class ErrorScreenTests {
         errorScreen.clickBackToCameraButton()
         val isScanTextVisible = captureScreen.checkScanTextDisplayed()
         assertEquals(true, isScanTextVisible)
-        ErrorScreen().reconnectTheInternetConnection()
     }
 
 }
