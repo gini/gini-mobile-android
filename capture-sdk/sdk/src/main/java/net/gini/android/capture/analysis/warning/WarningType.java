@@ -1,5 +1,6 @@
 package net.gini.android.capture.analysis.warning;
 
+import androidx.annotation.RestrictTo;
 import androidx.annotation.StringRes;
 
 import net.gini.android.capture.R;
@@ -12,6 +13,7 @@ import net.gini.android.capture.R;
  * so that the UI can easily fetch localized strings when displaying the warning.
  * The behavior behind the two CTAs is wired by the caller showing the sheet.
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public enum WarningType {
     DOCUMENT_MARKED_AS_PAID(
             R.string.gc_document_marked_paid_title,

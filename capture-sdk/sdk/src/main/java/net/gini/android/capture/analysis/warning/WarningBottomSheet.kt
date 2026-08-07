@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RestrictTo
 import androidx.core.view.ViewCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -31,7 +32,8 @@ import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTh
  * Use [newInstance] with a [WarningType] to configure the title, description and CTA labels.
  */
 
-class WarningBottomSheet : BottomSheetDialogFragment() {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+internal class WarningBottomSheet : BottomSheetDialogFragment() {
 
     interface Listener {
         fun onPrimaryAction()
