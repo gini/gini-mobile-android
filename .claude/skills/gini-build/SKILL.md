@@ -54,6 +54,10 @@ If the spec already contains an `## Implementation plan` section with
 unchecked steps, you are resuming an interrupted build: verify that the
 checked steps really exist in the working tree (a session can die mid-edit),
 then continue from the first unchecked step. Do not replan from scratch.
+The checkboxes — verified against the working tree — are the source of
+truth, not the `Status:` count: a session can die between ticking a box and
+updating the count, so rewrite `Status: implementing (k/N)` to match the
+verified boxes before continuing.
 
 Otherwise, produce an ordered list of steps, each mapped to the spec
 requirement(s) it satisfies. Order it so tests can be written first and the
