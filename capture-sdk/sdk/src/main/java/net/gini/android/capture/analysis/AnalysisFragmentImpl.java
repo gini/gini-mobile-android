@@ -359,6 +359,14 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mFragment.showWarning(WarningType.PAYMENT_DUE_DATE, formattedDueDate, onProceed);
     }
 
+    @Override
+    void showSchedulePaymentHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed,
+                                 @NonNull Runnable onSchedule) {
+        stopAndHideHints();
+        mFragment.showWarning(
+                WarningType.SCHEDULE_PAYMENT, formattedDueDate, onProceed, onSchedule);
+    }
+
     // Keeps TalkBack focus on the warning bottom sheet by removing the rotating
     // capture suggestions behind it.
     private void stopAndHideHints() {

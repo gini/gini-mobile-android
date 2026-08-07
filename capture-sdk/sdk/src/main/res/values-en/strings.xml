@@ -196,4 +196,10 @@
     <string name="gc_due_date_hint_desc">You could set it up as a scheduled transfer.</string>
     <!--   endregion -->
 
+    <!--   region Schedule Payment -->
+    <!--   The title is shared with the due date state (see gc_due_date_hint_title). -->
+    <string name="gc_schedule_payment_hint_desc">You can proceed with this Transaction now or schedule it for a future execution.</string>
+    <string name="gc_schedule_payment">Schedule Payment</string>
+    <!--   endregion -->
+
 </resources>

@@ -24,6 +24,19 @@ sealed class CaptureSDKResult : Parcelable {
     ) : CaptureSDKResult()
 
     /**
+     * The user chose to schedule the payment for the invoice's due date instead of paying now.
+     *
+     * Carries the same extractions as [Success] — the hosting app is expected to open its own
+     * scheduled transfer flow with them.
+     */
+    @Parcelize
+    class SchedulePayment(
+        val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
+        val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
+        val returnReasons: List<GiniCaptureReturnReason>,
+    ) : CaptureSDKResult()
+
+    /**
      * No extraction.
      */
     @Parcelize

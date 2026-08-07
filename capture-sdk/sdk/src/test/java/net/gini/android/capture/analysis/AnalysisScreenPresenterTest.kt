@@ -1457,6 +1457,343 @@ class AnalysisScreenPresenterTest {
         verify(mView, never()).showPaymentDueHint(any(), any())
     }
 
+    // endregion
+
+    // region Schedule payment bottom sheet (PP-3264)
+
+    @Test
+    fun `should show schedule payment sheet when flags on and due date beyond threshold`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        val formattedDueDate = dueDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(eq(formattedDueDate), any(), any())
+        }
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+        verify(listener, never()).onSchedulePayment(any(), any(), any())
+    }
+
+    /**
+     * Requirement 2 — the scheduled payment state is shown regardless of `paymentDueHintEnabled`.
+     *
+     * **Fails when reverted**: making `shouldShowSchedulePaymentHint` also require the payment
+     * due hint flags makes this assertion fail, because the due hint flag is off here.
+     */
+    @Test
+    fun `should show schedule payment sheet when payment due hint flag is off`() {
+        // Given only the schedule flag is on
+        configurationProvider.update {
+            it.copy(isPaymentScheduleHintEnabled = true, isPaymentDueHintEnabled = false)
+        }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(any(), any(), any())
+        }
+        verify(mView, never()).showPaymentDueHint(any(), any())
+    }
+
+    /**
+     * Requirement 2 — the scheduled payment state takes priority when both flags are on.
+     *
+     * **Fails when reverted**: putting the `shouldShowPaymentDueHint` branch back before the
+     * schedule branch in [AnalysisScreenPresenter] shows the due date state instead.
+     */
+    @Test
+    fun `should prefer schedule payment sheet over payment due hint when both flags are on`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isPaymentScheduleHintEnabled = true, isPaymentDueHintEnabled = true)
+        }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(any(), any(), any())
+        }
+        verify(mView, never()).showPaymentDueHint(any(), any())
+    }
+
+    @Test
+    fun `should fall back to payment due hint when only the due hint flag is on`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isPaymentScheduleHintEnabled = false, isPaymentDueHintEnabled = true)
+        }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showPaymentDueHint(any(), any())
+        }
+        verify(mView, never()).showSchedulePaymentHint(any(), any(), any())
+    }
+
+    @Test
+    fun `should show already paid warning instead of schedule payment sheet when document is paid`() {
+        // Given
+        configurationProvider.update {
+            it.copy(isPaymentScheduleHintEnabled = true, isAlreadyPaidHintEnabled = true)
+        }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString(), paymentState = "Paid")
+        )
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showAlreadyPaidWarning(
+                eq(WarningType.DOCUMENT_MARKED_AS_PAID),
+                any()
+            )
+        }
+        verify(mView, never()).showSchedulePaymentHint(any(), any(), any())
+    }
+
+    @Test
+    fun `should show schedule payment sheet when remaining days equal the threshold`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(
+            GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS.toLong()
+        )
+
+        // When
+        startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `should not show schedule payment sheet when due date is below the threshold`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(LocalDate.now().plusDays(4).toString())
+        )
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    @Test
+    fun `should not show schedule payment sheet when due date is today`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(LocalDate.now().toString())
+        )
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    @Test
+    fun `should not show schedule payment sheet when due date is in the past`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(LocalDate.now().minusDays(3).toString())
+        )
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    @Test
+    fun `should not show schedule payment sheet when due date extraction is missing`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(dueHintExtractions(dueDate = null))
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    @Test
+    fun `should not show schedule payment sheet when due date is unparseable`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(dueHintExtractions("not-a-date"))
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    @Test
+    fun `should not show schedule payment sheet when both hint flags are off`() {
+        // Given the provider defaults (both hint flags false)
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(dueHintExtractions(dueDate.toString()))
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    @Test
+    fun `should not show schedule payment sheet when SDK flag is off`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
+            .setGiniCaptureNetworkService(mock())
+            .setPaymentScheduleHintEnabled(false)
+            .setPaymentDueHintEnabled(false)
+            .build()
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString()),
+            giniCapture = GiniCapture.getInstance()
+        )
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    @Test
+    fun `should not show schedule payment sheet when payment state is not to-be-paid`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString(), paymentState = "booked")
+        )
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    @Test
+    fun `should not show schedule payment sheet in CX mode`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
+        val cbpRow = mapOf("amount" to mock<GiniCaptureSpecificExtraction>())
+        val cbp = GiniCaptureCompoundExtraction(CROSS_BORDER_PAYMENT_KEY, listOf(cbpRow))
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString()),
+            compoundExtractions = mapOf(CROSS_BORDER_PAYMENT_KEY to cbp),
+            giniCapture = giniCapture
+        )
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    @Test
+    fun `should not show schedule payment sheet when Skonto extractions are present`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+
+        // When
+        val listener = startPresenterForDueHint(
+            dueHintExtractions(dueDate.toString()),
+            bankSDKProperties = BankSDKProperties(
+                isSkontoSDKFlagEnabled = true,
+                isSkontoExtractionsValid = true
+            )
+        )
+
+        // Then
+        assertProceedsWithoutSchedulePaymentSheet(listener)
+    }
+
+    /**
+     * Requirement 6 — the schedule CTA hands the extractions over unchanged and must NOT also
+     * continue into the pay-now flow.
+     */
+    @Test
+    fun `schedule CTA should hand over extractions unchanged without proceeding to pay now`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val listener = startPresenterForDueHint(extractions)
+        val onScheduleCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(any(), any(), onScheduleCaptor.capture())
+        }
+
+        // When the user taps "Schedule Payment"
+        onScheduleCaptor.lastValue.run()
+
+        // Then
+        verify(listener).onSchedulePayment(eq(extractions), any(), any())
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    /**
+     * Requirement 7 — "Proceed Anyway" on the scheduled payment state behaves exactly like the
+     * due date state's proceed action.
+     */
+    @Test
+    fun `proceed continuation of schedule payment sheet should return extractions unchanged`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val listener = startPresenterForDueHint(extractions)
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(any(), onProceedCaptor.capture(), any())
+        }
+
+        // When the user taps "Proceed Anyway"
+        onProceedCaptor.lastValue.run()
+
+        // Then
+        verify(listener).onExtractionsAvailable(eq(extractions), any(), any())
+        verify(listener, never()).onSchedulePayment(any(), any(), any())
+    }
+
+    private fun assertProceedsWithoutSchedulePaymentSheet(listener: AnalysisFragmentListener) {
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(any(), any(), any())
+        }
+        verify(mView, never()).showSchedulePaymentHint(any(), any(), any())
+        verify(listener, never()).onSchedulePayment(any(), any(), any())
+    }
+
     /**
      * The presenter extension dispatches view calls through a background coroutine which
      * posts back to the main looper, so the main looper is idled repeatedly until the

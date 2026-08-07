@@ -71,6 +71,53 @@ class WarningBottomSheetTest {
     }
 
     @Test
+    fun `builds title with format argument for SCHEDULE_PAYMENT`() {
+        launchSheet(WarningType.SCHEDULE_PAYMENT, "13.08.2026").onFragment { sheet ->
+            val title = sheet.dialog?.findViewById<TextView>(R.id.warningTitle)
+            assertThat(title?.text?.toString())
+                .isEqualTo(sheet.getString(R.string.gc_due_date_hint_title, "13.08.2026"))
+        }
+    }
+
+    /**
+     * Both states of the due date bottom sheet share the same title string (confirmed against
+     * Figma), so the schedule state must not introduce a second title resource.
+     */
+    @Test
+    fun `SCHEDULE_PAYMENT shares its title with PAYMENT_DUE_DATE`() {
+        assertThat(WarningType.SCHEDULE_PAYMENT.titleRes)
+            .isEqualTo(WarningType.PAYMENT_DUE_DATE.titleRes)
+    }
+
+    @Test
+    fun `shows description of SCHEDULE_PAYMENT type`() {
+        launchSheet(WarningType.SCHEDULE_PAYMENT, "13.08.2026").onFragment { sheet ->
+            val description = sheet.dialog?.findViewById<TextView>(R.id.warningDescription)
+            assertThat(description?.text?.toString())
+                .isEqualTo(sheet.getString(R.string.gc_schedule_payment_hint_desc))
+        }
+    }
+
+    @Test
+    fun `schedule payment is the primary CTA for SCHEDULE_PAYMENT`() {
+        launchSheet(WarningType.SCHEDULE_PAYMENT, "13.08.2026").onFragment { sheet ->
+            val primary = sheet.dialog?.findViewById<Button>(R.id.primary_button)
+            val secondary = sheet.dialog?.findViewById<Button>(R.id.secondary_button)
+            assertThat(primary?.text?.toString())
+                .isEqualTo(sheet.getString(R.string.gc_schedule_payment))
+            assertThat(secondary?.text?.toString())
+                .isEqualTo(sheet.getString(R.string.gc_proceed_anyway))
+        }
+    }
+
+    @Test
+    fun `schedule payment sheet is not cancelable`() {
+        launchSheet(WarningType.SCHEDULE_PAYMENT, "13.08.2026").onFragment { sheet ->
+            assertThat(sheet.isCancelable).isFalse()
+        }
+    }
+
+    @Test
     fun `sheet is not cancelable`() {
         launchSheet(WarningType.PAYMENT_DUE_DATE, "13.08.2026").onFragment { sheet ->
             assertThat(sheet.isCancelable).isFalse()

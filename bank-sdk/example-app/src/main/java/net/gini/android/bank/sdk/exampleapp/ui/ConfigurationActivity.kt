@@ -207,6 +207,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.switchPaymentDueHint.isChecked =
             configuration.isPaymentDueHintEnabled
 
+        // enable the scheduled payment state of the due date bottom sheet
+        binding.layoutFeatureToggle.switchPaymentScheduleHint.isChecked =
+            configuration.isPaymentScheduleHintEnabled
+
         // set payment due hint threshold days
         binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays.hint =
             configuration.paymentDueHintThresholdDays.toString()
@@ -479,6 +483,12 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.switchPaymentDueHint.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(isPaymentDueHintEnabled = isChecked)
+            )
+        }
+        // enable the scheduled payment state of the due date bottom sheet
+        binding.layoutFeatureToggle.switchPaymentScheduleHint.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(isPaymentScheduleHintEnabled = isChecked)
             )
         }
         // set payment due hint threshold days

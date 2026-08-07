@@ -193,6 +193,13 @@
         android:layout_height="wrap_content"
         android:text="@string/payment_due_hint_switch_label" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_paymentScheduleHint"
+        style="@style/SwitchConfigurationStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/payment_schedule_hint_switch_label" />
+
     <TextView
         android:id="@+id/textView_paymentDueHintThresholdDays"
         style="@style/SwitchConfigurationStyle"

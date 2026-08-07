@@ -32,6 +32,7 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.paymentHints.GetAlreadyPaidHintEnabledUseCase
 import net.gini.android.capture.paymentHints.GetPaymentDueHintEnabledUseCase
+import net.gini.android.capture.paymentHints.GetPaymentScheduleHintEnabledUseCase
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
@@ -48,6 +49,9 @@ internal class AnalysisScreenPresenterExtension(
 
     val paymentDueHintEnabledUseCase:
             GetPaymentDueHintEnabledUseCase by getGiniCaptureKoin().inject()
+
+    val paymentScheduleHintEnabledUseCase:
+            GetPaymentScheduleHintEnabledUseCase by getGiniCaptureKoin().inject()
 
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()
@@ -233,6 +237,58 @@ internal class AnalysisScreenPresenterExtension(
                 }
             }
         }
+    }
+
+    fun showSchedulePaymentHint(
+        resultHolder: ResultHolder,
+        dueDate: String,
+        mIsInvoiceSavingEnabled: Boolean,
+        isSavingInvoicesInProgress: Boolean,
+        activity: Activity
+    ) {
+        if (isSavingInvoicesInProgress) {
+            handleSaveInvoicesLocally(
+                mIsInvoiceSavingEnabled,
+                true,
+                resultHolder,
+                activity
+            )
+        } else {
+            doWhenEducationFinished {
+                view.showSchedulePaymentHint(
+                    DueDateFormatter.formatToLocalStyle(dueDate),
+                    {
+                        handleSaveInvoicesLocally(
+                            mIsInvoiceSavingEnabled,
+                            false,
+                            resultHolder,
+                            activity
+                        )
+                    },
+                    {
+                        proceedWithSchedulePayment(resultHolder, activity)
+                    }
+                )
+            }
+        }
+    }
+
+    /**
+     * Hands the extractions to the hosting app so it can open its own scheduled transfer flow.
+     * The saved images are cleared just like on the pay-now path, but the flow finishes through
+     * [AnalysisFragmentListener.onSchedulePayment] instead of `onExtractionsAvailable`.
+     */
+    fun proceedWithSchedulePayment(
+        resultHolder: ResultHolder,
+        activity: Activity
+    ) {
+        ImageDiskStore.clear(activity)
+        getAnalysisFragmentListenerOrNoOp()
+            .onSchedulePayment(
+                getMapOrEmpty(resultHolder.extractions),
+                getMapOrEmpty(resultHolder.compoundExtractions),
+                getListOrEmpty(resultHolder.returnReasons)
+            )
     }
 
     fun getInvoiceEducationType(): InvoiceEducationType? {

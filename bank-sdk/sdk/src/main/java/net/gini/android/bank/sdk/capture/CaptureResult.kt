@@ -24,6 +24,18 @@ sealed class CaptureResult : Parcelable {
     ) : CaptureResult()
 
     /**
+     * The user chose to schedule the payment for the invoice's due date instead of paying now.
+     *
+     * Carries the same extractions as [Success]. Open your scheduled transfer flow with them
+     * instead of executing the payment immediately.
+     */
+    class SchedulePayment(
+        val specificExtractions: Map<String, GiniCaptureSpecificExtraction>,
+        val compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
+        val returnReasons: List<GiniCaptureReturnReason>,
+    ) : CaptureResult()
+
+    /**
      * No extraction.
      */
     object Empty : CaptureResult()
@@ -48,6 +60,13 @@ fun CaptureSDKResult.toCaptureResult(): CaptureResult {
     return when (this) {
         is CaptureSDKResult.Success -> {
             CaptureResult.Success(
+                this.specificExtractions,
+                this.compoundExtractions,
+                this.returnReasons
+            )
+        }
+        is CaptureSDKResult.SchedulePayment -> {
+            CaptureResult.SchedulePayment(
                 this.specificExtractions,
                 this.compoundExtractions,
                 this.returnReasons

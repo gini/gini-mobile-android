@@ -156,6 +156,24 @@ class ClientBankSDKFragment :
                 activity?.finish()
             }
 
+            // A real bank app would open its scheduled transfer flow here instead of paying now.
+            is CaptureResult.SchedulePayment -> {
+                Toast.makeText(
+                    requireContext(),
+                    "Schedule payment requested",
+                    Toast.LENGTH_SHORT
+                ).show()
+                startActivity(
+                    ExtractionsActivity.getStartIntent(
+                        requireContext(),
+                        result.specificExtractions,
+                        result.compoundExtractions,
+                        GiniCapture.getInstance().productTag == ProductTag.CxExtractions,
+                    )
+                )
+                activity?.finish()
+            }
+
             is CaptureResult.Error -> {
                 when (result.value) {
                     is ResultError.Capture ->

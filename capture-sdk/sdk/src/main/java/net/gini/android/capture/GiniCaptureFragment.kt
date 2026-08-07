@@ -306,6 +306,22 @@ class GiniCaptureFragment(
         )
     }
 
+    override fun onSchedulePayment(
+        extractions: MutableMap<String, GiniCaptureSpecificExtraction>,
+        compoundExtractions: MutableMap<String, GiniCaptureCompoundExtraction>,
+        returnReasons: MutableList<GiniCaptureReturnReason>
+    ) {
+        didFinishWithResult = true
+        lastExtractionsProvider.update(extractions)
+        giniCaptureFragmentListener?.onFinishedWithResult(
+            CaptureSDKResult.SchedulePayment(
+                extractions,
+                compoundExtractions,
+                returnReasons
+            )
+        )
+    }
+
     override fun onProceedToNoExtractionsScreen(document: Document) {
         NoResultsFragment.navigateToNoResultsFragment(
             navController,

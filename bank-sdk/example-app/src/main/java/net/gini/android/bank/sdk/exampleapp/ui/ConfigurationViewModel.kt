@@ -133,6 +133,8 @@ class ConfigurationViewModel @Inject constructor(
             alreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
             // enable payment due hint
             paymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
+            // enable the scheduled payment state of the due date bottom sheet
+            paymentScheduleHintEnabled = configuration.isPaymentScheduleHintEnabled,
             // set payment due hint threshold days
             paymentDueHintThresholdDays = configuration.paymentDueHintThresholdDays,
             // enable onboarding screens at first launch

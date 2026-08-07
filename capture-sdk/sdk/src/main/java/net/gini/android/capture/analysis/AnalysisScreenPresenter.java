@@ -357,6 +357,15 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                                             isSavingInvoicesInProgress,
                                             successResultHolder,
                                             getActivity());
+                                } else if (shouldShowSchedulePaymentHint(resultHolder)) {
+                                    successResultHolder = resultHolder;
+                                    shouldClearImageCaches = false;
+                                    extension.showSchedulePaymentHint(
+                                            resultHolder,
+                                            extractPaymentDueDateFromExtraction(resultHolder),
+                                            mIsInvoiceSavingEnabled,
+                                            isSavingInvoicesInProgress,
+                                            getActivity());
                                 } else if (shouldShowPaymentDueHint(resultHolder)) {
                                     successResultHolder = resultHolder;
                                     shouldClearImageCaches = false;
@@ -607,6 +616,47 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         final boolean paymentDueHintSDKFlag =
                 GiniCapture.hasInstance() && GiniCapture.getInstance().isPaymentDueHintEnabled();
 
+        if (!paymentDueHintClientFlagEnabled || !paymentDueHintSDKFlag) {
+            return false;
+        }
+
+        return isDueDateBottomSheetEligible(resultHolder);
+    }
+
+    /**
+     * Whether the scheduled payment state of the due date bottom sheet should be shown.
+     *
+     * <p>Deliberately independent of the payment due hint flags: the scheduled payment state is
+     * shown regardless of {@code paymentDueHintEnabled} and is checked before the payment due
+     * hint, so it takes priority over it.
+     */
+    private boolean shouldShowSchedulePaymentHint(
+            @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+
+        final boolean paymentScheduleHintClientFlagEnabled =
+                extension.getPaymentScheduleHintEnabledUseCase().invoke();
+
+        final boolean paymentScheduleHintSDKFlag = GiniCapture.hasInstance()
+                && GiniCapture.getInstance().isPaymentScheduleHintEnabled();
+
+        if (!paymentScheduleHintClientFlagEnabled || !paymentScheduleHintSDKFlag) {
+            return false;
+        }
+
+        return isDueDateBottomSheetEligible(resultHolder);
+    }
+
+    /**
+     * Conditions shared by both states of the due date bottom sheet: a parseable due date at
+     * least the threshold days in the future on an invoice that still has to be paid. Neither
+     * state is shown in CX mode or alongside Return Assistant / Skonto extractions.
+     *
+     * <p>Only the feature flags differ between the two states — keeping the rest here stops the
+     * two predicates from drifting apart.
+     */
+    private boolean isDueDateBottomSheetEligible(
+            @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+
         if (isCxMode()) {
             return false;
         }
@@ -615,12 +665,11 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
             return false;
         }
 
-
-        if (!paymentDueHintClientFlagEnabled || !paymentDueHintSDKFlag) {
+        if (!GiniCapture.hasInstance()) {
             return false;
         }
 
-        String paymentDueDate = extractPaymentDueDateFromExtraction(resultHolder);
+        final String paymentDueDate = extractPaymentDueDateFromExtraction(resultHolder);
         if (paymentDueDate.isEmpty()) {
             return false;
         }
@@ -628,7 +677,6 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
         if (calculateRemainingDays(paymentDueDate) < GiniCapture.getInstance().getPaymentDueHintThresholdDays()) {
             return false;
         }
-
 
         final Map<String, GiniCaptureSpecificExtraction> extractions = resultHolder.getExtractions();
         // Payment state

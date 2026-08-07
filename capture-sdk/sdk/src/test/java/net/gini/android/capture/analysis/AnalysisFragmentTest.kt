@@ -156,6 +156,57 @@ class AnalysisFragmentTest {
         }
     }
 
+    /**
+     * Requirements 6 + 7 — for the scheduled payment state the primary CTA is "Schedule Payment"
+     * (hand-off) and the secondary is "Proceed Anyway". Neither CTA cancels the transaction.
+     */
+    @Test
+    fun `wires schedule to primary CTA and proceed to secondary CTA for SCHEDULE_PAYMENT warning`() {
+        val cancelListener = mock<CancelListener>()
+        launchFragment(cancelListener).use { scenario ->
+            scenario.onFragment { fragment ->
+                // When
+                val proceeded = AtomicBoolean(false)
+                val scheduled = AtomicBoolean(false)
+                fragment.showWarning(
+                    WarningType.SCHEDULE_PAYMENT,
+                    "13.08.2026",
+                    { proceeded.set(true) },
+                    { scheduled.set(true) }
+                )
+                fragment.requireActivity().supportFragmentManager.executePendingTransactions()
+                Shadows.shadowOf(Looper.getMainLooper()).idle()
+                val sheet = fragment.requireActivity().supportFragmentManager
+                    .findFragmentByTag("WarningBottomSheet") as WarningBottomSheet
+
+                // Then: primary = "Schedule Payment" hands off, without proceeding or cancelling
+                sheet.dialog?.findViewById<View>(R.id.primary_button)?.performClick()
+                Truth.assertThat(scheduled.get()).isTrue()
+                Truth.assertThat(proceeded.get()).isFalse()
+                verify(cancelListener, never()).onCancelFlow()
+                // Complete the pending dismissal before showing the sheet again
+                fragment.requireActivity().supportFragmentManager.executePendingTransactions()
+
+                // And: secondary = "Proceed Anyway" continues the flow
+                scheduled.set(false)
+                fragment.showWarning(
+                    WarningType.SCHEDULE_PAYMENT,
+                    "13.08.2026",
+                    { proceeded.set(true) },
+                    { scheduled.set(true) }
+                )
+                fragment.requireActivity().supportFragmentManager.executePendingTransactions()
+                Shadows.shadowOf(Looper.getMainLooper()).idle()
+                val secondSheet = fragment.requireActivity().supportFragmentManager
+                    .findFragmentByTag("WarningBottomSheet") as WarningBottomSheet
+                secondSheet.dialog?.findViewById<View>(R.id.secondary_button)?.performClick()
+                Truth.assertThat(proceeded.get()).isTrue()
+                Truth.assertThat(scheduled.get()).isFalse()
+                verify(cancelListener, never()).onCancelFlow()
+            }
+        }
+    }
+
     private fun launchFragment(cancelListener: CancelListener): FragmentScenario<AnalysisFragment> {
         GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
             .setGiniCaptureNetworkService(mock()).build()
