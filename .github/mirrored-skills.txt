@@ -5,3 +5,4 @@
 .claude/skills/gini-plan/SKILL.md
 .claude/skills/gini-build/SKILL.md
 .claude/skills/gini-fix/SKILL.md
+.claude/skills/gini-reflect/SKILL.md
