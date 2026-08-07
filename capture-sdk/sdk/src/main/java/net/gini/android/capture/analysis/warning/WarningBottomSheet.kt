@@ -211,12 +211,16 @@ internal class WarningBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_TITLE_FORMAT_ARG = "arg_title_format_arg"
         @JvmStatic
         @JvmOverloads
-        fun newInstance(type: WarningType, titleFormatArg: String? = null) =
-            WarningBottomSheet().apply {
+        fun newInstance(type: WarningType, titleFormatArg: String? = null): WarningBottomSheet {
+            require(!type.requiresTitleFormatArg() || titleFormatArg != null) {
+                "WarningType.$type has a format placeholder in its title and requires a titleFormatArg"
+            }
+            return WarningBottomSheet().apply {
                 arguments = Bundle().apply {
                     putSerializable(ARG_TYPE, type) // WarningType is an enum (Serializable)
                     putString(ARG_TITLE_FORMAT_ARG, titleFormatArg)
                 }
             }
+        }
     }
 }
