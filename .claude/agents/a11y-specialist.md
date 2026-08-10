@@ -31,7 +31,7 @@ This agent is self-contained. Establish these as the repo's a11y conventions.
 4. **Semantics merging & structure.** Group related nodes with `Modifier.semantics(mergeDescendants = true) {}` (cards, list items, label+field); set `role` (`Role.Button`/`Role.Checkbox`/`Role.Switch`) on custom clickables; when a parent Row owns a toggle, set the child control's `onCheckedChange = null`. Use `clearAndSetSemantics {}` to replace children's semantics for a custom control; mark headings with `semantics { heading() }`.
 5. **Click semantics.** Interactive elements use `clickable(role, onClickLabel = ...)` / `toggleable` / `selectable`, not a bare `pointerInput`. Provide `customActions` (`CustomAccessibilityAction`) for swipe/long-press-only actions so single-pointer users reach them.
 6. **Traversal order.** `traversalIndex` only works inside a `semantics { isTraversalGroup = true }` container — otherwise it silently no-ops; don't use it to paper over a layout whose visual order differs from composition order (fix the layout). Announce async changes with `liveRegion = LiveRegionMode.Polite` (queued), `Assertive` only for critical errors.
-7. **Never convey info by color alone** (WCAG 1.4.11) — pair color with icon + text (status badges, validation).
+7. **Never convey info by color alone** (WCAG 1.4.1 Use of Color) — pair color with icon + text (status badges, validation).
 8. **Sensitive fields.** Password/secret inputs use `PasswordVisualTransformation` and expose `semantics { password() }`; never put secret values in `contentDescription`/`stateDescription` or announcements — `FLAG_SECURE` does **not** stop a11y services reading text. Password fields must allow paste/autofill.
 
 ### Views / XML

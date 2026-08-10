@@ -25,7 +25,7 @@ Compose is **hosted inside Fragments** (via `ComposeView`/`setContent`) that sit
 
 ## Gini Compose Conventions (reference)
 
-The full rule set this agent enforces. **Stack:** Kotlin 2.0.20, AGP 8.10.1, Compose BOM 2026.02.00, minSdk 23, Koin (not Hilt) for SDK DI, AndroidX Navigation Component fragment nav graphs (no Navigation3 / Navigation-Compose), no Room, MVVM + `StateFlow` (Orbit-MVI only in bank-sdk). Ignore Navigation3 / Room3 / Hilt-first patterns; confirm any Compose API newer than BOM 2026.02.00 before relying on it.
+The full rule set this agent enforces. **Stack:** Kotlin 2.0.20, AGP 8.10.1, Compose BOM 2026.02.00 (a point-in-time snapshot — `gradle/libs.versions.toml` is the source of truth if these have drifted), minSdk 23, Koin (not Hilt) for SDK DI, AndroidX Navigation Component fragment nav graphs (no Navigation3 / Navigation-Compose), no Room, MVVM + `StateFlow` (Orbit-MVI only in bank-sdk). Ignore Navigation3 / Room3 / Hilt-first patterns; confirm any Compose API newer than BOM 2026.02.00 before relying on it.
 
 ### Version gating
 
@@ -41,9 +41,9 @@ The design system lives in `capture-sdk/sdk` at `net.gini.android.capture.ui.the
 
 ### State & composition
 
-- **Route/Screen split:** stateful `Route` (collects state, `koinViewModel()`, nav glue) + stateless `Screen(uiState, onAction, modifier)`. UI state = `sealed interface`; single `onAction` sink.
+- **Screen structure (repo convention):** the host Fragment resolves the ViewModel and hosts a `<Name>ScreenContent(...)` composable inside `GiniTheme { }` (e.g. `SkontoFragment` → `SkontoScreenContent`); inner composables are stateless and take state + per-event callbacks (`onBackClicked`, `onProceedClicked`, …). A stateful-Route + single-`onAction`-sink split is acceptable for brand-new screens, but do **not** flag existing callback-style `ScreenContent` screens as violations.
 - `collectAsStateWithLifecycle()`, never `collectAsState()`. Hoist state low; `remember` for caching, `rememberSaveable` for process/config survival.
-- **Stability:** honest `@Immutable`/`@Stable` (a false annotation skips recomposition → stale UI); wrap unstable `LocalDate`/`LocalTime`; `StateFlow<PersistentList<T>>` for lists; primitive holders `mutableIntStateOf`/`mutableFloatStateOf`/`mutableLongStateOf`; replace `mutableStateListOf` elements via `list[i] = copy(...)` (in-place mutation doesn't recompose).
+- **Stability:** honest `@Immutable`/`@Stable` (a false annotation skips recomposition → stale UI); wrap unstable `LocalDate`/`LocalTime`; `StateFlow<PersistentList<T>>` for lists; primitive holders `mutableIntStateOf`/`mutableFloatStateOf`/`mutableLongStateOf`. `mutableStateListOf` returns a `SnapshotStateList` whose own mutations (`add`/`remove`/`set`/`clear`) **do** trigger recomposition — the real hazard is mutating `var` fields of an element object held inside the list (invisible to snapshots): keep elements immutable and replace them (`list[i] = item.copy(...)`).
 - **Side effects:** `LaunchedEffect(key)` (keyed coroutine work), `DisposableEffect` (listeners + `onDispose`), `rememberCoroutineScope()` (launch from callbacks), `SideEffect` (post-composition sync only). Never launch coroutines in `SideEffect`. Key deliberately (`Unit` = once); capture changing lambdas with `rememberUpdatedState`. React to state as a Flow via `snapshotFlow{}.debounce`; use `derivedStateOf` for expensive derived state.
 - Never construct `Animatable`/`MutableInteractionSource` unremembered; never mutate state during composition. Animate via `Modifier.graphicsLayer {}` / `offset {}` lambda (not `offset(x = dp)`); pass `label` to `animate*AsState`; respect reduced-motion.
 - Every composable: `modifier: Modifier = Modifier` first optional param, applied to root; one `safe*Padding` per node. Stable `key` in lazy `items`; lazy layouts for large lists; no heavy work in the body.
@@ -51,9 +51,12 @@ The design system lives in `capture-sdk/sdk` at `net.gini.android.capture.ui.the
 - **Adaptive:** branch on `windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)`, never `== Compact`. Edge-to-edge: `enableEdgeToEdge()` before `setContent`, `Scaffold` `innerPadding`, insets → list `contentPadding`, `imePadding()` before `verticalScroll`, `adjustResize` hosts.
 - **XML→Compose migration:** one layout at a time, pixel-parity vs a baseline screenshot, add `@Preview`, migrate minimum theming (keep XML theme for interop), delete XML only after confirming no other references.
 
-### Dependency injection (Koin)
+### Dependency injection (Koin — isolated contexts)
 
-- In capture-sdk/bank-sdk, obtain ViewModels with `koinViewModel()`; declare deps in the module Koin graph (`single {}`, `factory {}`, `viewModel {}`). Don't hand-construct ViewModels. Hilt is only in the bank example app; manual wiring in health-sdk/internal-payment-sdk — match the module.
+- capture-sdk and bank-sdk each run an **isolated** Koin context (`CaptureSdkIsolatedKoinContext` / `BankSdkIsolatedKoinContext`); `startKoin` is never called in SDK code. **Never use `koinViewModel()`/`koinInject()`** — they resolve from the global Koin context and throw `IllegalStateException` at runtime here.
+- **bank-sdk ViewModels:** declare `viewModel { params -> … }` in a per-screen Koin module (e.g. `SkontoScreenModule`) and resolve in the Fragment via the `by giniBankViewModel {}` / `getGiniBankViewModel()` extensions (`net.gini.android.bank.sdk.di.koin.AndroidFragmentExt`).
+- **capture-sdk:** its Koin graph holds `single {}` dependencies only — no `viewModel {}` bindings; ViewModels are built with a `ViewModelProvider.Factory` in the Fragment (see `GiniCaptureFragment`). That Factory pattern **is** the module convention — don't flag it as a DI violation.
+- Hilt is only in the bank example app; manual wiring in health-sdk/internal-payment-sdk — match the module. Never expose Koin in the public API.
 
 ### Orbit-MVI (bank-sdk only)
 
@@ -73,25 +76,19 @@ The design system lives in `capture-sdk/sdk` at `net.gini.android.capture.ui.the
 
 ## Coroutines & Flow (ViewModel layer)
 
-The shared concurrency contract for ViewModels feeding this screen.
-
-- **Inject `CoroutineDispatcher`** (bind named dispatchers in a Koin module); never hardcode `Dispatchers.IO`/`Default`. `viewModelScope` for UI work (don't wrap it in a `SupervisorJob` — it has one); never `GlobalScope`.
-- **State/event type:** `StateFlow` for UI state; `Channel(BUFFERED).receiveAsFlow()` for one-shot commands; `SharedFlow` only for multi-collector. Set state with `.value =`, not `.emit()`. Cold repo flows → hot via `stateIn(scope, SharingStarted.WhileSubscribed(5_000), initial)`.
-- Compose sources with `combine`; `flatMapLatest` for user-driven switching (cancels stale work). ViewModels launch + expose triggers; repos/use-cases expose `suspend`/`Flow` only and never launch (a `Flow`-returning function must not be `suspend`).
-- Dispatcher-safe: `withContext(dispatcher)` in suspend fns, `flowOn` upstream; switch at data-source boundaries only. Never catch `CancellationException`; catch expected types not `Throwable`; `coroutineScope` (atomic) vs `supervisorScope` (independent, `await()` every `async`).
-- Don't launch/emit inside `combine`/`map` transforms — use `onEach`. Backpressure: `buffer`/`conflate`/`debounce`/`sample`. Bridge callbacks with `callbackFlow` (`awaitClose`, `trySend`) or `suspendCancellableCoroutine` (resume once, `invokeOnCancellation`); `.await()` for `Task<T>`. Release hardware in `finally { withContext(NonCancellable) { … } }`; make CPU loops cancellable (`ensureActive()`/`yield()`).
+The shared concurrency contract lives in **`.claude/rules/coroutines-flow.md`** — Read that file before reviewing any coroutine/Flow code and enforce it from there (single source of truth shared with views-specialist and testing-specialist). Key repo reality: bank-sdk one-shots go through Orbit `postSideEffect`, the other SDKs use `MutableSharedFlow` — don't demand `Channel`/`WhileSubscribed` refactors of existing code.
 
 ## What You Review
 
 Read the code. Flag these issues:
 
-1. **State not hoisted / no Route/Screen split.** Screen should be a stateful `Route` (collects state, `koinViewModel()`, nav glue) + a stateless `Screen(uiState, onAction, modifier)`. UI state should be a `sealed interface` with a single `onAction` sink. State owned below where it's read.
+1. **State not hoisted / stateful leaf composables.** The Fragment resolves the ViewModel and hosts a `<Name>ScreenContent` composable; inner composables should be stateless, taking state + per-event callbacks (a single `onAction` sink is fine for new screens). Flag state owned below where it's read — not the existing callback-style `ScreenContent` structure.
 2. **Wrong state APIs.** `collectAsState()` instead of `collectAsStateWithLifecycle()`; `remember` where `rememberSaveable` is needed; unremembered `Animatable`/`MutableInteractionSource`; boxing where `mutableIntStateOf`/`mutableFloatStateOf`/`mutableLongStateOf` fit.
-3. **Recomposition / stability problems.** Unstable params; **false `@Immutable`/`@Stable`** annotations (skip recomposition → stale UI); unstable `LocalDate`/`LocalTime` not wrapped; in-place mutation of `mutableStateListOf` (must `list[i] = copy`); missing `key` in lazy `items`; non-lazy layouts for large lists; reading state too high in the tree.
+3. **Recomposition / stability problems.** Unstable params; **false `@Immutable`/`@Stable`** annotations (skip recomposition → stale UI); unstable `LocalDate`/`LocalTime` not wrapped; mutating `var` fields of elements held in a `mutableStateListOf` (snapshot-invisible — replace via `list[i] = item.copy(...)`; the list's own `add`/`remove`/`set` do recompose); missing `key` in lazy `items`; non-lazy layouts for large lists; reading state too high in the tree.
 4. **Heavy work in composition.** Filtering/sorting/allocation in the body instead of `remember(...)`, `derivedStateOf`, or the ViewModel.
 5. **Side effects misused.** Coroutines launched in `SideEffect` or in composition instead of `LaunchedEffect`/`DisposableEffect`/`rememberCoroutineScope`; wrong/lambda `LaunchedEffect` keys (use `rememberUpdatedState`); reacting to state per-keystroke instead of `snapshotFlow{}.debounce`; one-shot events modeled as state instead of `Channel`/`SharedFlow`; `DisposableEffect` without `onDispose`.
 6. **Hardcoded design values.** Raw `Color(...)`, hex, `.dp` magic numbers, or `MaterialTheme.colorScheme` directly where **`GiniTheme.colorScheme`/`GiniTheme.typography`** tokens (from `LocalGiniColors`/`LocalGiniTypography`) or a `...ScreenColors` data class should be used.
-7. **DI not via Koin.** ViewModels constructed by hand instead of `koinViewModel()` / `viewModel {}`; dependencies not declared in the module's Koin graph (in bank-sdk/capture-sdk).
+7. **DI against the module convention.** In bank-sdk: ViewModels not resolved via `giniBankViewModel {}` + a `viewModel {}` binding, or any global-Koin API (`koinViewModel()`, `koinInject()`) used — those crash against the isolated context. In capture-sdk: the `ViewModelProvider.Factory` wiring is the convention — flag only dependencies that bypass its Koin graph, not the Factory itself.
 8. **Orbit-MVI misuse (bank-sdk).** State mutated outside `intent {}`/`reduce {}`; one-shot navigation/toasts as state instead of `postSideEffect`; `ContainerHost` contract broken.
 9. **Missing accessibility.** No `contentDescription` on meaningful images/icons, missing `Modifier.semantics {}`, icon-only buttons without a label. (Route to a11y-specialist.)
 10. **minSdk-23 gating.** Newer APIs used without `if (Build.VERSION.SDK_INT >= ...)` gating; assuming APIs above minSdk 23.
@@ -106,7 +103,7 @@ Read the code. Flag these issues:
 - [ ] No heavy work / allocation in composition (use `remember` or ViewModel)
 - [ ] Side effects in the right effect API with correct keys; one-shot events via SharedFlow/Channel
 - [ ] Colors/typography via `GiniTheme` tokens / `...ScreenColors`, not raw values
-- [ ] ViewModels obtained via Koin (`koinViewModel`); deps in the Koin graph
+- [ ] ViewModels resolved per module convention (`giniBankViewModel` + `viewModel {}` binding in bank-sdk; `ViewModelProvider.Factory` in capture-sdk); never `koinViewModel()`
 - [ ] Orbit-MVI state changes only inside `intent {}`; side effects via `postSideEffect` (bank-sdk)
 - [ ] Accessibility: contentDescription / semantics on interactive & meaningful elements
 - [ ] Newer-than-minSdk-23 APIs gated on `Build.VERSION.SDK_INT`

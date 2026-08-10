@@ -56,13 +56,7 @@ capture-sdk is camera-heavy (and partly legacy Java). For CameraX code:
 
 ## Coroutines & Flow (ViewModel layer)
 
-The shared concurrency contract for ViewModels feeding Fragment UI.
-
-- **Inject `CoroutineDispatcher`** (bind named dispatchers in Koin); never hardcode `Dispatchers.IO`/`Default`. `viewModelScope` for UI work (don't wrap in a `SupervisorJob`); never `GlobalScope`.
-- **State/event type:** `StateFlow` for UI state; `Channel(BUFFERED).receiveAsFlow()` for one-shot commands (navigate/snackbar); `SharedFlow` only for multi-collector. Set state with `.value =`, not `.emit()`. Cold repo flows → hot via `stateIn(scope, SharingStarted.WhileSubscribed(5_000), initial)`.
-- Collect in the Fragment with `viewLifecycleOwner.lifecycleScope` + `repeatOnLifecycle(STARTED)` (see lifecycle rules above). Compose sources with `combine`; `flatMapLatest` for user-driven switching (cancels stale work).
-- ViewModels launch + expose triggers; repos/use-cases expose `suspend`/`Flow` only and never launch (a `Flow`-returning function must not be `suspend`). Dispatcher-safe: `withContext(dispatcher)` in suspend fns, `flowOn` upstream, switch at data-source boundaries only.
-- Never catch `CancellationException`; catch expected types not `Throwable`; `coroutineScope` (atomic) vs `supervisorScope` (independent, `await()` every `async`). Don't launch/emit inside `combine`/`map` transforms — use `onEach`. Bridge callbacks with `callbackFlow` (`awaitClose`, `trySend`) / `suspendCancellableCoroutine` (resume once, `invokeOnCancellation`); release hardware in `finally { withContext(NonCancellable) { … } }`.
+The shared concurrency contract lives in **`.claude/rules/coroutines-flow.md`** — Read that file before reviewing any coroutine/Flow code and enforce it from there (single source of truth shared with compose-specialist and testing-specialist). Key repo reality: one-shot events use Orbit `postSideEffect` in bank-sdk and `MutableSharedFlow` in the other SDKs — don't demand `Channel`/`WhileSubscribed` refactors of existing code. Fragment collection rules (`viewLifecycleOwner` + `repeatOnLifecycle(STARTED)`) still apply as above.
 
 ## Review Checklist
 
