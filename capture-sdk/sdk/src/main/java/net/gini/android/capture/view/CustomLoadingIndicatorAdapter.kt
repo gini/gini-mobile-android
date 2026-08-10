@@ -48,5 +48,5 @@ class DefaultLoadingIndicatorAdapter: CustomLoadingIndicatorAdapter {
         return progressBar
     }
 
-    override fun onDestroy() {}
+    override fun onDestroy() { /* No-op */ }
 }

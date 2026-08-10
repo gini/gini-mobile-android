@@ -7,6 +7,17 @@ plugins {
     kotlin("android")
     id("jacoco")
     alias(libs.plugins.devtools.ksp)
+    id ("org.sonarqube")
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-health-api-library")
+        property("sonar.projectName", "Android Health API Library")
+        property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 jacoco {
@@ -113,6 +124,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<PropertiesPlugin>()
 apply<SBOMPlugin>()
 

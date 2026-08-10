@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.gini.android.health.api.response.DeleteDocumentErrorResponse
+import net.gini.android.health.sdk.review.model.ResultWrapper
 import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesRepository
 import net.gini.android.health.sdk.exampleapp.invoices.ui.model.InvoiceItem
 import net.gini.android.health.sdk.integratedFlow.PaymentFlowConfiguration
 import net.gini.android.health.sdk.integratedFlow.PaymentFragment
 import net.gini.android.health.sdk.review.model.PaymentDetails
-import net.gini.android.health.sdk.review.model.ResultWrapper
+import net.gini.android.internal.payment.GiniHealthException
 import org.slf4j.LoggerFactory
 
 class InvoicesViewModel(
@@ -35,15 +35,21 @@ class InvoicesViewModel(
     val openBankState = invoicesRepository.giniHealth.openBankState
     val displayedScreen = invoicesRepository.giniHealth.displayedScreen
     val trustMarkersFlow = invoicesRepository.giniHealth.trustMarkersFlow
+    val documentFlow = invoicesRepository.giniHealth.documentFlow
+    val paymentFlow = invoicesRepository.giniHealth.paymentFlow
+
+    // Expose extraction error flow from repository
+    val extractionErrorFlow = invoicesRepository.extractionErrorFlow
+
     private val _startIntegratedPaymentFlow = MutableSharedFlow<PaymentDetails>(
         extraBufferCapacity = 1
     )
     val startIntegratedPaymentFlow = _startIntegratedPaymentFlow
 
-    private val _deleteDocumentsFlow = MutableSharedFlow<DeleteDocumentErrorResponse?>(
+    private val _deleteDocumentsFlow = MutableSharedFlow<GiniHealthException?>(
         extraBufferCapacity = 1
     )
-    val deleteDocumentsFlow: SharedFlow<DeleteDocumentErrorResponse?> = _deleteDocumentsFlow
+    val deleteDocumentsFlow: SharedFlow<GiniHealthException?> = _deleteDocumentsFlow
 
     fun updateDocument() {
         viewModelScope.launch {
@@ -67,13 +73,20 @@ class InvoicesViewModel(
         }
     }
 
+    fun resetUploadState() {
+        invoicesRepository.resetUploadState()
+    }
+
     fun batchDelete(documentIds: List<String>) {
         viewModelScope.launch {
-            val deleteDocumentsRequest = giniHealth.deleteDocuments(documentIds)
-            if (deleteDocumentsRequest == null) {
+            try {
+                giniHealth.deleteDocuments(documentIds)
                 invoicesRepository.deleteDocuments(documentIds)
+                _deleteDocumentsFlow.tryEmit(null)
+            } catch (e: GiniHealthException) {
+                _deleteDocumentsFlow.tryEmit(e)
             }
-            _deleteDocumentsFlow.tryEmit(deleteDocumentsRequest)
+
         }
     }
 
@@ -82,14 +95,14 @@ class InvoicesViewModel(
             invoicesRepository.invoicesFlow.value.find { it.documentId == documentId }
 
         return if (documentWithExtractions != null) {
-            return try {
+             try {
                 val paymentReviewFragment = invoicesRepository.giniHealth.getPaymentFragmentWithDocument(
                     documentWithExtractions.documentId,
                     PaymentFlowConfiguration(
-                        shouldHandleErrorsInternally = true,
+                        shouldHandleErrorsInternally = paymentFlowConfiguration?.shouldHandleErrorsInternally ?: true,
                         shouldShowReviewBottomDialog = false,
                         showCloseButtonOnReviewFragment = true,
-                        popupDurationPaymentReview = paymentFlowConfiguration?.popupDurationPaymentReview?: PaymentFlowConfiguration.DEFAULT_POPUP_DURATION
+                        popupDurationPaymentReview = paymentFlowConfiguration?.popupDurationPaymentReview ?: PaymentFlowConfiguration.DEFAULT_POPUP_DURATION
                     )
                 )
                 Result.success(paymentReviewFragment)
@@ -109,7 +122,7 @@ class InvoicesViewModel(
 
     fun getPaymentFragmentForPaymentDetails(paymentDetails: PaymentDetails, paymentFlowConfiguration: PaymentFlowConfiguration?): Result<PaymentFragment> {
         try {
-            val paymentFragment = invoicesRepository.giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewBottomDialog = paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false, shouldHandleErrorsInternally = true))
+            val paymentFragment = invoicesRepository.giniHealth.getPaymentFragmentWithoutDocument(paymentDetails, PaymentFlowConfiguration(shouldShowReviewBottomDialog = paymentFlowConfiguration?.shouldShowReviewBottomDialog ?: false, shouldHandleErrorsInternally = paymentFlowConfiguration?.shouldHandleErrorsInternally ?: true))
             return Result.success(paymentFragment)
         } catch (e: Exception) {
             LOG.error("Error getting payment fragment without document", e)

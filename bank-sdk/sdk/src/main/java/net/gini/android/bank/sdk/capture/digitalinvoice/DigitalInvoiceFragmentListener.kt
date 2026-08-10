@@ -12,7 +12,7 @@ import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 /**
  * Interface used by the [DigitalInvoiceFragment] to dispatch events to the hosting Activity.
  */
-interface DigitalInvoiceFragmentListener {
+fun interface DigitalInvoiceFragmentListener {
 
     /**
      * Called when the user presses the buy button.

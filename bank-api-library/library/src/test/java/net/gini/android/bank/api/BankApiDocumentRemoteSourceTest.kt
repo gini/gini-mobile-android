@@ -127,6 +127,7 @@ class BankApiDocumentRemoteSourceTest {
                     null,
                     null,
                     null,
+                    null,
                     null
                 )
             )
@@ -165,14 +166,6 @@ class BankApiDocumentRemoteSourceTest {
         override suspend fun deleteDocumentFromUri(
             bearer: Map<String, String>,
             documentUri: Uri
-        ): Response<ResponseBody> {
-            // Is tested in core api library
-            return Response.success(null)
-        }
-
-        override suspend fun getLayoutForDocument(
-            bearer: Map<String, String>,
-            documentId: String
         ): Response<ResponseBody> {
             // Is tested in core api library
             return Response.success(null)

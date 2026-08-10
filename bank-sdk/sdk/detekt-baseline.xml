@@ -181,7 +181,6 @@
     <ID>UnusedPrivateProperty:DigitalInvoiceFragment.kt$private const val TAG_WHAT_IS_THIS_DIALOG = "TAG_WHAT_IS_THIS_DIALOG"</ID>
     <ID>UnusedPrivateProperty:SkontoDataExtractor.kt$SkontoDataExtractor.Companion$val skontoAmountDiscounted = skontoDiscountData.extractDataByKeys( "skontoAmountDiscounted", "skontoAmountDiscountedCalculated" )</ID>
     <ID>UseCheckOrError:AutoClearedValue.kt$AutoClearedValue$throw IllegalStateException( "should never call auto-cleared-value get when it might not be available" )</ID>
-    <ID>UseCheckOrError:LineItemsAdapter.kt$ViewType.Companion$throw IllegalStateException("Unknow adapter view type id: $viewTypeId")</ID>
     <ID>UtilityClassWithPublicConstructor:LineItemsValidator.kt$LineItemsValidator</ID>
     <ID>UtilityClassWithPublicConstructor:SkontoDataExtractor.kt$SkontoDataExtractor</ID>
     <ID>WildcardImport:CoroutineContinuationHelper.kt$import kotlinx.coroutines.*</ID>

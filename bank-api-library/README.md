@@ -25,7 +25,3 @@ The Gini Bank API Library has the following dependencies:
 * [Retrofit2](https://square.github.io/retrofit/)
 * [TrustKit from DataTheorem](https://github.com/datatheorem/TrustKit-Android)
 
-License
--------
-
-The Gini Bank API Library is available under the MIT license. See the LICENSE file for details.

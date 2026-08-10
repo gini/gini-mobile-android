@@ -16,5 +16,6 @@ data class Configuration(
     val isSavePhotosLocallyEnabled: Boolean,
     val isAlreadyPaidHintEnabled: Boolean,
     val isPaymentDueHintEnabled: Boolean,
+    val isUnsupportedQRCodeWarningEnabled: Boolean = false,
     val isCreditNoteHintEnabled: Boolean,
 )

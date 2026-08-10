@@ -18,7 +18,7 @@ import net.gini.android.internal.payment.paymentComponent.PaymentProviderAppsSta
 import net.gini.android.internal.payment.paymentComponent.SelectedPaymentProviderAppState
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
-import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
+import net.gini.android.internal.payment.test.ViewModelTestCoroutineRule
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule

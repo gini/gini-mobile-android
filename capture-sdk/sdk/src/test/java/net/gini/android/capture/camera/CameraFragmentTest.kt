@@ -1,5 +1,6 @@
 package net.gini.android.capture.camera
 
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.FragmentScenario
@@ -8,17 +9,25 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.GiniCaptureHelper
+import net.gini.android.capture.R
+import net.gini.android.capture.di.CaptureSdkIsolatedKoinContext
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
 import net.gini.android.capture.internal.util.CancelListener
 import net.gini.android.capture.tracking.CameraScreenEvent
 import net.gini.android.capture.tracking.Event
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.dsl.module
 
 /**
  * Created by Alpar Szotyori on 02.03.2020.
@@ -28,6 +37,21 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class CameraFragmentTest {
+
+    private val koinTestModule = module {
+        single { GiniBankConfigurationProvider() }
+    }
+
+    @Before
+    fun setup() {
+        CaptureSdkIsolatedKoinContext.koin.loadModules(listOf(koinTestModule))
+    }
+
+    @After
+    fun after() {
+        GiniCaptureHelper.setGiniCaptureInstance(null)
+        CaptureSdkIsolatedKoinContext.koin.unloadModules(listOf(koinTestModule))
+    }
 
     @Test
     fun `triggers Exit event when back was pressed`() {
@@ -62,6 +86,37 @@ class CameraFragmentTest {
 
                 // Then
                 verify(eventTracker).onCameraScreenEvent(Event(CameraScreenEvent.EXIT))
+            }
+        }
+    }
+
+    @Test
+    fun `camera trigger button is visible to user after resumed state`() {
+
+        val eventTracker = spy<EventTracker>()
+        GiniCapture.Builder().setEventTracker(eventTracker).build()
+        UserAnalytics.initialize(InstrumentationRegistry.getInstrumentation().context)
+
+        val scenario = FragmentScenario.launchInContainer(
+            fragmentClass = CameraFragmentWithoutQRCodeReader::class.java,
+            factory = object : FragmentFactory() {
+                override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
+                    return CameraFragmentWithoutQRCodeReader().apply {
+                        setListener(mock())
+                        setCancelListener(mock())
+                    }
+                }
+            }
+        )
+
+        scenario.use {
+            scenario.moveToState(Lifecycle.State.RESUMED)
+
+            scenario.onFragment { fragment ->
+                val cameraTriggerButton =
+                    fragment.requireView().findViewById<View>(R.id.gc_button_camera_trigger)
+
+                Truth.assertThat(cameraTriggerButton.visibility).isEqualTo(View.VISIBLE)
             }
         }
     }

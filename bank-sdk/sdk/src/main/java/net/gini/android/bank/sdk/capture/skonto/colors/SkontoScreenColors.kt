@@ -26,6 +26,7 @@ data class SkontoScreenColors(
 
     companion object {
         @Composable
+        @Suppress("kotlin:S107") // Color factory functions intentionally have many optional parameters
         fun colors(
             backgroundColor: Color =
                 GiniTheme.colorScheme.background.primary,

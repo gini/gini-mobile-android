@@ -263,6 +263,26 @@ public class PaymentQRCodeData implements Parcelable {
         /**
          * Gini Payment QR Code format. Can't be disabled
          */
-        GINI_PAYMENT
+        GINI_PAYMENT,
+        /**
+         * Swiss Payment Code (SPC) QR Code format.
+         */
+        SPC,
+        /**
+         * Slovak Payment Descriptor (SPD) QR Code format.
+         */
+        SPD,
+        /**
+         * Pay by Square QR Code format used in Slovakia and Czech Republic.
+         */
+        PAY_BY_SQUARE,
+        /**
+         * Universal Payment Note (UPNQR) QR Code format used in Slovenia.
+         */
+        UPNQR,
+        /**
+         * HUB3 payment standard used in Croatia, encoded as a PDF417 barcode.
+         */
+        HUB3
     }
 }

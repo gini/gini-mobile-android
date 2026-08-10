@@ -34,6 +34,9 @@ internal class ReviewViewModel(
     val reviewFragmentListener: ReviewFragmentListener
 ) : ViewModel() {
 
+    var reviewPagerPosition: Int = 0
+    var pagerHeight = 0
+
     internal var userPreferences: UserPreferences? = null
 
     val reviewComponent: ReviewComponent = ReviewComponent(

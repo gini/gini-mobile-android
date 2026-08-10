@@ -1,4 +1,4 @@
-Copyright (c) 2014-2024, Gini GmbH
+Copyright (c) 2014, Gini GmbH
 All rights reserved.
 
 The Gini Internal Payment SDK is licensed through Gini GmbH ("Gini") and may not be

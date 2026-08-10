@@ -71,7 +71,11 @@ class GiniInternalPaymentModuleTest {
     @Test
     fun `gets payment request`() = runTest {
         // Given
-        coEvery { giniPaymentManager.getPaymentRequest(paymentProviderApp, paymentDetails) } coAnswers { invalidPaymentRequest }
+        coEvery { giniPaymentManager.getPaymentRequest(
+            null,
+            paymentProviderApp,
+            paymentDetails
+        ) } coAnswers { invalidPaymentRequest }
         coEvery { giniHealthAPI.documentManager.getPaymentRequest("1234") } coAnswers { Resource.Success(net.gini.android.core.api.models.PaymentRequest(
             paymentProviderId = paymentProviderApp.paymentProvider.id,
             requesterUri = null,
@@ -89,7 +93,7 @@ class GiniInternalPaymentModuleTest {
         val giniInternalPaymentModule = GiniInternalPaymentModule(context, giniHealthAPI)
 
         // When
-        val paymentRequest = giniInternalPaymentModule.getPaymentRequest(paymentProviderApp, paymentDetails)
+        val paymentRequest = giniInternalPaymentModule.getPaymentRequest(null ,paymentProviderApp, paymentDetails)
 
         // Then
         assertThat(paymentRequest.id).isEqualTo(invalidPaymentRequest.id)

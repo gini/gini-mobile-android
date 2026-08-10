@@ -1,26 +1,16 @@
 package net.gini.android.capture.internal.camera.photo;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.os.AsyncTask;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Size;
 import android.view.View;
-
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Internal use only.
@@ -123,10 +113,12 @@ public class PhotoEdit {
         private static final PhotoEditCallback NO_OP_CALLBACK = new PhotoEditCallback() {
             @Override
             public void onDone(@NonNull final Photo photo) {
+                // No-op
             }
 
             @Override
             public void onFailed() {
+                // No-op
             }
         };
 

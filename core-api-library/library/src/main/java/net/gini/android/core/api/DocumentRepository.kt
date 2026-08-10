@@ -82,7 +82,17 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
             }
         }
 
-    suspend fun createCompositeDocument(documents: List<Document>, documentType: DocumentManager.DocumentType?): Resource<Document> =
+    suspend fun createCompositeDocument(
+        documents: List<Document>,
+        documentType: DocumentManager.DocumentType?
+    ): Resource<Document> =
+        createCompositeDocument(documents, documentType, null)
+
+    suspend fun createCompositeDocument(
+        documents: List<Document>,
+        documentType: DocumentManager.DocumentType?,
+        documentMetadata: DocumentMetadata?
+    ): Resource<Document> =
         withAccessToken { accessToken ->
             wrapInResource {
                 val uri = documentRemoteSource.uploadDocument(
@@ -91,13 +101,23 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
                     giniApiType.giniCompositeJsonMediaType,
                     null,
                     documentType?.apiDoctypeHint,
-                    null
+                    documentMetadata?.metadata
                 )
                 getDocumentInternal(accessToken, uri)
             }
         }
 
-    suspend fun createCompositeDocument(documentRotationMap: LinkedHashMap<Document, Int>, documentType: DocumentManager.DocumentType?): Resource<Document> =
+    suspend fun createCompositeDocument(
+        documentRotationMap: LinkedHashMap<Document, Int>,
+        documentType: DocumentManager.DocumentType?
+    ): Resource<Document> =
+        createCompositeDocument(documentRotationMap, documentType, null)
+
+    suspend fun createCompositeDocument(
+        documentRotationMap: LinkedHashMap<Document, Int>,
+        documentType: DocumentManager.DocumentType?,
+        documentMetadata: DocumentMetadata?
+    ): Resource<Document> =
         withAccessToken { accessToken ->
             wrapInResource {
                 val uri = documentRemoteSource.uploadDocument(
@@ -106,7 +126,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
                     giniApiType.giniCompositeJsonMediaType,
                     null,
                     documentType?.apiDoctypeHint,
-                    null
+                    documentMetadata?.metadata
                 )
                 getDocumentInternal(accessToken, uri)
             }
@@ -155,7 +175,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         do {
             when (val apiDocumentResource = getDocument(document.id)) {
                 is Resource.Success -> {
-                    if (apiDocumentResource.data?.state != Document.ProcessingState.PENDING) {
+                    if (apiDocumentResource.data.state != Document.ProcessingState.PENDING) {
                         return apiDocumentResource
                     }
                 }
@@ -184,7 +204,28 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
 
         val bodyJSON = JSONObject()
         bodyJSON.put("feedback", feedbackForExtractions)
-        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        val body: RequestBody = bodyJSON.toString().toRequestBody(JSON_CONTENT_TYPE.toMediaTypeOrNull())
+        return withAccessToken { accessToken ->
+            wrapInResource {
+                documentRemoteSource.sendFeedback(accessToken, document.id, body)
+            }
+        }
+    }
+
+    @Throws(JSONException::class)
+    suspend fun sendFeedbackWithSpecificExtractions(document: Document, extractions: Map<String, SpecificExtraction>): Resource<Unit> {
+        val feedbackForExtractions = JSONObject()
+        for (entry in extractions.entries) {
+            val extraction = entry.value
+            val extractionData = JSONObject()
+            extractionData.put("value", extraction.value)
+            extractionData.put("entity", extraction.entity)
+            feedbackForExtractions.put(entry.key, extractionData)
+        }
+
+        val bodyJSON = JSONObject()
+        bodyJSON.put("extractions", feedbackForExtractions)
+        val body: RequestBody = bodyJSON.toString().toRequestBody(JSON_CONTENT_TYPE.toMediaTypeOrNull())
         return withAccessToken { accessToken ->
             wrapInResource {
                 documentRemoteSource.sendFeedback(accessToken, document.id, body)
@@ -224,21 +265,10 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         val bodyJSON = JSONObject()
         bodyJSON.put("extractions", feedbackForExtractions)
         bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
-        val body: RequestBody = bodyJSON.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        val body: RequestBody = bodyJSON.toString().toRequestBody(JSON_CONTENT_TYPE.toMediaTypeOrNull())
         return withAccessToken { accessToken ->
             wrapInResource {
                 documentRemoteSource.sendFeedback(accessToken, document.id, body)
-            }
-        }
-    }
-
-    @Deprecated( "This method is deprecated and can be deleted in future. Use another one, please.",
-        replaceWith = ReplaceWith("getLayoutModel(documentId)"))
-    suspend fun getLayout(document: Document): Resource<JSONObject> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                val layoutJsonString = documentRemoteSource.getLayout(accessToken, document.id)
-                JSONObject(layoutJsonString)
             }
         }
     }
@@ -301,7 +331,7 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
             if (extractionData.has("candidates")) {
                 val candidatesName = extractionData.getString("candidates")
                 if (candidates.containsKey(candidatesName)) {
-                    candidatesForExtraction = candidates[candidatesName]!!
+                    candidatesForExtraction = candidates[candidatesName] ?: emptyList()
                 }
             }
             val specificExtraction = SpecificExtraction(
@@ -438,5 +468,6 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
          */
         const val DEFAULT_COMPRESSION = 50
 
+        private const val JSON_CONTENT_TYPE = "application/json; charset=utf-8"
     }
 }

@@ -5,7 +5,23 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
+    id("jacoco")
+    id ("org.sonarqube")
     alias(libs.plugins.devtools.ksp)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-bank-api-library")
+        property("sonar.projectName", "Android Bank API Library")
+        property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
 }
 
 android {
@@ -30,7 +46,6 @@ android {
     }
     buildTypes {
         getByName("debug") {
-            // Disabled due to a jacoco error when using kotlin 1.5 (java.lang.IllegalStateException: Unexpected SMAP line: *S KotlinDebug)
             isTestCoverageEnabled = false
             // Needed for instrumented tests
             multiDexEnabled = true
@@ -102,6 +117,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<PropertiesPlugin>()
 apply<SBOMPlugin>()
 
@@ -114,8 +130,18 @@ tasks.register<CreatePropertiesTask>("injectTestProperties") {
 
     doFirst {
         propertiesMap.clear()
-        propertiesMap.putAll(readLocalPropertiesToMapSilent(project,
-            listOf("testClientId", "testClientSecret", "testApiUri", "testUserCenterUri", "testHealthApiUri")))
+        propertiesMap.putAll(
+            readLocalPropertiesToMapSilent(
+                project,
+                listOf(
+                    "testClientId",
+                    "testClientSecret",
+                    "testApiUri",
+                    "testUserCenterUri",
+                    "testHealthApiUri"
+                )
+            )
+        )
     }
 
     destinations.put(

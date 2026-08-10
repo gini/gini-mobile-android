@@ -9,5 +9,5 @@ interface ErrorLoggerListener {
      *
      * @param errorLog error details and metadata for logging
      */
-    fun handleErrorLog(errorLog: ErrorLog) { }
+    fun handleErrorLog(errorLog: ErrorLog) { /* No-op */ }
 }

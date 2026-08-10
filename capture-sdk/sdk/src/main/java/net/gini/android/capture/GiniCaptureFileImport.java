@@ -136,6 +136,7 @@ public final class GiniCaptureFileImport {
             return new CancellationToken() {
                 @Override
                 public void cancel() {
+                    // No-op
                 }
             };
         }

@@ -15,6 +15,8 @@ import net.gini.android.health.sdk.GiniHealth
 import net.gini.android.health.sdk.exampleapp.invoices.data.InvoicesLocalDataSource
 import net.gini.android.health.sdk.exampleapp.invoices.data.model.DocumentWithExtractions
 import net.gini.android.health.sdk.exampleapp.util.getBytes
+import net.gini.android.internal.payment.GiniHealthException
+import org.slf4j.LoggerFactory
 
 class UploadViewModel(
     private val giniHealthAPI: GiniHealthAPI,
@@ -38,7 +40,18 @@ class UploadViewModel(
                     )
                     when (partialDocumentResource) {
                         is Resource.Cancelled -> throw Exception("Cancelled")
-                        is Resource.Error -> throw Exception(partialDocumentResource.exception)
+                        is Resource.Error -> {
+                            // Error is already parsed by Resource!
+                            val errorMessage = partialDocumentResource.errorResponse?.items?.firstOrNull()?.message
+                                ?: partialDocumentResource.exception?.message
+                                ?: "Failed to create partial document"
+                            throw GiniHealthException(
+                                message = errorMessage,
+                                statusCode = partialDocumentResource.responseStatusCode,
+                                errorResponse = partialDocumentResource.errorResponse,
+                                cause = partialDocumentResource.exception
+                            )
+                        }
                         is Resource.Success -> partialDocumentResource.data
                     }
                 }
@@ -48,21 +61,46 @@ class UploadViewModel(
                     }
                 when (polledDocumentResource) {
                     is Resource.Cancelled -> throw Exception("Cancelled")
-                    is Resource.Error -> throw Exception(polledDocumentResource.exception)
+                    is Resource.Error -> {
+                        // Error is already parsed by Resource!
+                        val errorMessage = polledDocumentResource.errorResponse?.items?.firstOrNull()?.message
+                            ?: polledDocumentResource.exception?.message
+                            ?: "Failed to create composite document"
+                        throw GiniHealthException(
+                            message = errorMessage,
+                            statusCode = polledDocumentResource.responseStatusCode,
+                            errorResponse = polledDocumentResource.errorResponse,
+                            cause = polledDocumentResource.exception
+                        )
+                    }
                     is Resource.Success -> {
                         _uploadState.value = UploadState.Success(polledDocumentResource.data.id)
                         setDocumentForReview(polledDocumentResource.data.id)
 
                         giniHealthAPI.documentManager.getAllExtractions(polledDocumentResource.data)
                             .mapSuccess { extractionsResource ->
-                                val isPayable = giniHealth.checkIfDocumentIsPayable(polledDocumentResource.data.id)
-                                invoicesLocalDataSource.appendInvoiceWithExtractions(
-                                    DocumentWithExtractions.fromDocumentAndExtractions(
-                                        polledDocumentResource.data,
-                                        extractionsResource.data,
-                                        isPayable
+                                try {
+                                    val isPayable = giniHealth.checkIfDocumentIsPayable(polledDocumentResource.data.id)
+                                    invoicesLocalDataSource.appendInvoiceWithExtractions(
+                                        DocumentWithExtractions.fromDocumentAndExtractions(
+                                            polledDocumentResource.data,
+                                            extractionsResource.data,
+                                            isPayable
+                                        )
                                     )
-                                )
+                                } catch (e: GiniHealthException) {
+                                    // Log detailed error information
+                                    LOG.error("Error checking if document is payable: ${e.message}", e)
+
+                                    // Store document with unknown payable status
+                                    invoicesLocalDataSource.appendInvoiceWithExtractions(
+                                        DocumentWithExtractions.fromDocumentAndExtractions(
+                                            polledDocumentResource.data,
+                                            extractionsResource.data,
+                                            false // Default to not payable on error
+                                        )
+                                    )
+                                }
                                 extractionsResource
                             }
                     }
@@ -83,5 +121,9 @@ class UploadViewModel(
         object Loading : UploadState()
         class Success(val documentId: String) : UploadState()
         class Failure(val throwable: Throwable) : UploadState()
+    }
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(UploadViewModel::class.java)
     }
 }

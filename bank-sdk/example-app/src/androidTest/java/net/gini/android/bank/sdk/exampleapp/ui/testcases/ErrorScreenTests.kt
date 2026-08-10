@@ -1,0 +1,151 @@
+package net.gini.android.bank.sdk.exampleapp.ui.testcases
+
+import android.Manifest
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.ext.junit.rules.activityScenarioRule
+import androidx.test.rule.GrantPermissionRule
+import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
+import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
+import net.gini.android.bank.sdk.exampleapp.ui.resources.RetryRule
+import net.gini.android.bank.sdk.exampleapp.ui.resources.SimpleIdlingResource
+import net.gini.android.bank.sdk.exampleapp.ui.screens.CaptureScreen
+import net.gini.android.bank.sdk.exampleapp.ui.screens.ErrorScreen
+import net.gini.android.bank.sdk.exampleapp.ui.screens.MainScreen
+import net.gini.android.bank.sdk.exampleapp.ui.screens.OnboardingScreen
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assume
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import java.util.Properties
+
+/**
+ * Test class for Error Screens.
+ */
+class ErrorScreenTests {
+    @get:Rule(order = Int.MIN_VALUE)
+    val retryRule = RetryRule()
+
+    @get:Rule
+    val activityRule = activityScenarioRule<MainActivity>()
+
+    @get: Rule
+    val grantPermissionRule: GrantPermissionRule =
+        GrantPermissionRule.grant(Manifest.permission.CAMERA)
+
+    private val mainScreen = MainScreen()
+    private val onboardingScreen = OnboardingScreen()
+    private val captureScreen = CaptureScreen()
+    private val errorScreen = ErrorScreen()
+    private val imageUploader = ImageUploader()
+    private lateinit var idlingResource: SimpleIdlingResource
+
+    val testProperties = Properties().apply {
+        // On CI / BrowserStack the generated test.properties may be absent from the
+        // test APK. A missing file must mean "run the test" (see cancelTestIfRunOnCi),
+        // so swallow the error instead of aborting the whole test class at construction.
+        runCatching {
+            getApplicationContext<Context>().resources.assets
+                .open("test.properties").use { load(it) }
+        }
+    }
+
+    private fun cancelTestIfRunOnCi() {
+        val ignoreTests = testProperties["ignoreLocalTests"] as? String
+        Assume.assumeTrue(ignoreTests != "true")
+    }
+
+    @Before
+    fun setup() {
+        cancelTestIfRunOnCi()
+        idlingResource = SimpleIdlingResource(5000)
+        IdlingRegistry.getInstance().register(idlingResource)
+    }
+
+    @After
+    fun tearDown() {
+        // Always restore connectivity so a failed or skipped offline test never leaves the
+        // device offline for the tests that run afterwards.
+        ErrorScreen().reconnectTheInternetConnection()
+    }
+
+    // The offline tests disable wifi/data via shell, which is blocked on BrowserStack cloud
+    // devices. If the network is still up after the disconnect attempt, skip — the offline
+    // scenario can't be exercised here (runs normally on local devices/emulators).
+    private fun skipIfNetworkCouldNotBeDisabled() {
+        Assume.assumeFalse(
+            "Skipping: network could not be disabled on this device (e.g. BrowserStack)",
+            errorScreen.isInternetAvailable()
+        )
+    }
+
+    private fun clickPhotoPaymentButtonAndSkipOnboarding(){
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButtonIfPresent()
+        captureScreen.clickCameraButton()
+        idlingResource.waitForIdle()
+    }
+
+    @Test
+    fun test1_verifyUploadErrorScreen() {
+        imageUploader.copyImageToDownloads(getApplicationContext(), "blank_test_image.png")
+        mainScreen.clickPhotoPaymentButton()
+        onboardingScreen.clickSkipButtonIfPresent()
+        captureScreen.clickFilesButton()
+        captureScreen.clickPhotos()
+        imageUploader.uploadImageFromPhotos()
+        imageUploader.clickAddButton()
+        idlingResource.waitForIdle()
+
+        val errorTextVisible = errorScreen.checkErrorTextDisplayed()
+        assertEquals(true, errorTextVisible)
+        val errorHeaderVisible = errorScreen.checkErrorHeaderTextDisplayed("There was a problem with the upload")
+        assertEquals(true, errorHeaderVisible)
+        val errorTextViewVisible = errorScreen.checkErrorTextViewDisplayed("The document couldn’t be accepted. Please check if the image is sharp, the document contains payment information and has the right file type.")
+        assertEquals(true, errorTextViewVisible)
+    }
+
+    @Test
+    fun test2_verifyNetworkErrorScreen() {
+        ErrorScreen().disconnectTheInternetConnection()
+        skipIfNetworkCouldNotBeDisabled()
+        clickPhotoPaymentButtonAndSkipOnboarding()
+        idlingResource.waitForIdle()
+        val errorTextVisible = errorScreen.checkErrorTextDisplayed()
+        assertEquals(true, errorTextVisible)
+        val errorHeaderVisible = errorScreen.checkErrorHeaderTextDisplayed( "There was a problem connecting to the internet")
+        assertEquals(true, errorHeaderVisible)
+        val errorTextViewVisible = errorScreen.checkErrorTextViewDisplayed("Please check your internet connection and try again later on.")
+        assertEquals(true, errorTextViewVisible)
+    }
+
+    @Test
+    fun test3_navigateToMainScreenByClickingEnterManuallyButton() {
+        ErrorScreen().disconnectTheInternetConnection()
+        skipIfNetworkCouldNotBeDisabled()
+        clickPhotoPaymentButtonAndSkipOnboarding()
+
+        val enterManuallyButtonVisible = errorScreen.checkEnterManuallyButtonIsDisplayed()
+        assertEquals(true, enterManuallyButtonVisible)
+        errorScreen.clickEnterManuallyButton()
+        val isDescriptionTitleVisible = mainScreen.assertDescriptionTitle()
+        assertEquals(true, isDescriptionTitleVisible)
+    }
+
+    @Test
+    fun test4_navigateToCameraScreenByClickingBackToCameraButton() {
+        ErrorScreen().disconnectTheInternetConnection()
+        skipIfNetworkCouldNotBeDisabled()
+        clickPhotoPaymentButtonAndSkipOnboarding()
+
+        val backToCameraButtonVisible = errorScreen.checkBackToCameraButtonIsDisplayed()
+        assertEquals(true, backToCameraButtonVisible)
+        errorScreen.clickBackToCameraButton()
+        val isScanTextVisible = captureScreen.checkScanTextDisplayed()
+        assertEquals(true, isScanTextVisible)
+    }
+
+}

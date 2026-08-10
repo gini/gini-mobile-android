@@ -4,12 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
-import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
+/*
  * Created by Alpar Szotyori on 25.10.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -28,6 +28,8 @@ public class DocumentMetadata {
     public static final String BRANCH_ID_HEADER_FIELD_NAME = HEADER_FIELD_NAME_PREFIX + "BranchId";
     @VisibleForTesting
     public static final String UPLOAD_METADATA_HEADER_FIELD_NAME = HEADER_FIELD_NAME_PREFIX + "Upload";
+    @VisibleForTesting
+    public static final String PRODUCT_TAG_HEADER_FIELD_NAME = "x-document-metadata-product-tag";
 
 
     private final Map<String, String> mMetadataMap = new HashMap<>();
@@ -37,13 +39,7 @@ public class DocumentMetadata {
      * Create a new instance.
      */
     public DocumentMetadata() {
-        try {
-            final Charset asciiCharset = Charset.forName("ASCII");
-            mAsciiCharsetEncoder = asciiCharset.newEncoder();
-        } catch (IllegalArgumentException ignore) {
-            // Shouldn't happen
-            mAsciiCharsetEncoder = null;
-        }
+        mAsciiCharsetEncoder = StandardCharsets.US_ASCII.newEncoder();
     }
 
     @VisibleForTesting
@@ -59,7 +55,7 @@ public class DocumentMetadata {
      */
     public void setBranchId(@NonNull final String branchId) throws IllegalArgumentException {
         if (isASCIIEncodable(branchId)) {
-            mMetadataMap.put(BRANCH_ID_HEADER_FIELD_NAME, branchId);
+            putMetadata(BRANCH_ID_HEADER_FIELD_NAME, branchId);
         } else {
             throw new IllegalArgumentException("Metadata is not encodable as ASCII: " + branchId);
         }
@@ -72,9 +68,23 @@ public class DocumentMetadata {
      */
     public void setUploadMetadata(@NonNull final String uploadMetadata) {
         if (isASCIIEncodable(uploadMetadata)) {
-            mMetadataMap.put(UPLOAD_METADATA_HEADER_FIELD_NAME, uploadMetadata);
+            putMetadata(UPLOAD_METADATA_HEADER_FIELD_NAME, uploadMetadata);
         } else {
             throw new IllegalArgumentException("Metadata is not encodable as ASCII: " + uploadMetadata);
+        }
+    }
+
+    /**
+     * Set the product tag to be sent to backend for document submissions.
+     *
+     * @param productTag identifies which extraction type should be used
+     * @throws IllegalArgumentException if the productTag string cannot be encoded as ASCII
+     */
+    public void setProductTag(@NonNull final String productTag) {
+        if (isASCIIEncodable(productTag)) {
+            putMetadata(PRODUCT_TAG_HEADER_FIELD_NAME, productTag);
+        } else {
+            throw new IllegalArgumentException("Metadata is not encodable as ASCII: " + productTag);
         }
     }
 
@@ -110,7 +120,7 @@ public class DocumentMetadata {
         } else {
             completeName = HEADER_FIELD_NAME_PREFIX + name;
         }
-        mMetadataMap.put(completeName, value);
+        putMetadata(completeName, value);
     }
 
     /**
@@ -120,8 +130,12 @@ public class DocumentMetadata {
      */
     public DocumentMetadata copy() {
         DocumentMetadata copy = new DocumentMetadata();
-        mMetadataMap.forEach((key, value) -> copy.add(key, value));
+        mMetadataMap.forEach(copy::putMetadata);
         return copy;
+    }
+
+    private void putMetadata(@NonNull final String name, @NonNull final String value) {
+        mMetadataMap.put(name, value);
     }
 
     @NonNull

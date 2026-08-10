@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- The example app itself follows the system Day/Night setting. The SDK's theme is NOT
+         statically pinned here: it is driven at runtime by the "Force dark/light theme (QA)"
+         toggles in ConfigurationActivity, which set a local night mode on CaptureFlowHostActivity
+         so only the SDK flow is forced. Both toggles off = the SDK follows the system too. -->
     <style name="AppTheme" parent="Root.AppTheme">
         <item name="android:windowLightStatusBar">false</item>
     </style>
-
 </resources>

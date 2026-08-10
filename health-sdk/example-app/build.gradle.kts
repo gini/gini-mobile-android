@@ -7,6 +7,18 @@ plugins {
     kotlin("android")
     id("kotlin-parcelize")
     alias(libs.plugins.devtools.ksp)
+    id ("org.sonarqube")
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.google.services)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-health-sdk")
+        property("sonar.projectName", "Android Health SDK")
+        property("sonar.organization", "gini")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 android {
@@ -91,6 +103,9 @@ dependencies {
 
     implementation(project(":health-sdk:sdk"))
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.fragment.ktx)
@@ -98,7 +113,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.insetter)
     implementation(libs.datastore.preferences)
     implementation(libs.moshi.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)

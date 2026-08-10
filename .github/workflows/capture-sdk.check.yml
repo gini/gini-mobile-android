@@ -3,6 +3,7 @@ name: Check Capture SDK
 permissions:
   contents: read
 
+
 on:
   workflow_dispatch:
   pull_request:
@@ -17,6 +18,8 @@ on:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
       CAPTURE_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+        required: true
+      SONAR_TOKEN:
         required: true
 
 concurrency:
@@ -322,3 +325,14 @@ jobs:
         with:
           name: capture-sdk-ktlint-report
           path: capture-sdk/sdk/build/reports/ktlint/**/*.html
+  # Keep the with: block in sync with the matching job in sonar-baselines.yml,
+  # so the main baseline is built and scanned exactly like this PR analysis.
+  sonar:
+    uses: ./.github/workflows/sonar.yml
+    with:
+      # Build both modules (default-network depends on sdk)
+      prepare-tasks: 'capture-sdk:sdk:assembleDebug capture-sdk:default-network:assembleDebug'
+      coverage-tasks: ':capture-sdk:sdk:jacocoTestReport :capture-sdk:default-network:jacocoTestReport'
+      sonar-tasks: 'capture-sdk:sdk:sonar capture-sdk:default-network:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

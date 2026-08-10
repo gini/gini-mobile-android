@@ -37,6 +37,8 @@ import net.gini.android.capture.BankSDKProperties
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
+import net.gini.android.capture.ProductTag
+import net.gini.android.capture.analysis.AnalysisScreenPresenter.CROSS_BORDER_PAYMENT_KEY
 import net.gini.android.capture.document.DocumentFactory
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.ImageDocument
@@ -62,6 +64,7 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.util.Collections
 import java.util.concurrent.CancellationException
+import kotlinx.coroutines.Job
 
 /**
  * Created by Alpar Szotyori on 10.05.2019.
@@ -631,6 +634,36 @@ class AnalysisScreenPresenterTest {
         verify(listener).onDefaultPDFAppAlertDialogCancelled()
     }
 
+    // ── PP-2278 regression test (Fix 3) ───────────────────────────────────────
+
+    /**
+     * [AnalysisScreenPresenter.stop] must call [AnalysisScreenPresenterExtension.cancel] so that
+     * all coroutines managing post-analysis navigation are cancelled when the fragment is destroyed.
+     *
+     * Without this call, the coroutine scope inside the extension is never cancelled and a
+     * pending navigation can still fire on a dead NavController, causing an NPE crash.
+     *
+     * **Fails when reverted**: Removing `extension.cancel()` from [AnalysisScreenPresenter.stop]
+     * leaves the extension job active after stop() and this assertion fails.
+     */
+    @Test
+    @Throws(Exception::class)
+    fun should_cancel_extensionScope_whenStopped() {
+        // Given
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val presenter = createPresenter(imageDocument, null)
+        val jobField = AnalysisScreenPresenterExtension::class.java.getDeclaredField("job")
+        jobField.isAccessible = true
+        val job = jobField.get(presenter.extension) as Job
+        Truth.assertThat(job.isActive).isTrue()
+
+        // When: user presses Back (fragment destroyed -> stop() is called)
+        presenter.stop()
+
+        // Then: extension scope must be cancelled so no pending navigation fires on dead NavController
+        Truth.assertThat(job.isCancelled).isTrue()
+    }
+
     @Test
     @Throws(Exception::class)
     fun should_stopScanAnimation_whenStopped() {
@@ -955,5 +988,150 @@ class AnalysisScreenPresenterTest {
     }
 
 
-}
+    // region CX extractions — no-results routing
 
+    @Test
+    @Throws(Exception::class)
+    fun `CX mode - crossBorderPayment absent - should proceed to no-extractions screen`() {
+        // Given
+        whenever(mActivity.getString(anyInt())).thenReturn("A String")
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
+        analysisFuture.complete(
+            AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                emptyMap(),
+                emptyMap(),
+                emptyList(),
+                "dummy_doc_id",
+                "dummy_doc_filename",
+            )
+        )
+        val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
+        val presenter = createPresenterWithAnalysisFuture(
+            imageDocument,
+            giniCapture = giniCapture,
+            analysisFuture = analysisFuture
+        )
+        val listener = mock<AnalysisFragmentListener>()
+        presenter.setListener(listener)
+
+        // When
+        presenter.start()
+
+        // Then
+        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `CX mode - crossBorderPayment present but empty specificExtractionMaps - should proceed to no-extractions screen`() {
+        // Given
+        whenever(mActivity.getString(anyInt())).thenReturn("A String")
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val emptyCbp = GiniCaptureCompoundExtraction(CROSS_BORDER_PAYMENT_KEY, emptyList())
+        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
+        analysisFuture.complete(
+            AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                emptyMap(),
+                mapOf(CROSS_BORDER_PAYMENT_KEY to emptyCbp),
+                emptyList(),
+                "dummy_doc_id",
+                "dummy_doc_filename",
+            )
+        )
+        val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
+        val presenter = createPresenterWithAnalysisFuture(
+            imageDocument,
+            giniCapture = giniCapture,
+            analysisFuture = analysisFuture
+        )
+        val listener = mock<AnalysisFragmentListener>()
+        presenter.setListener(listener)
+
+        // When
+        presenter.start()
+
+        // Then
+        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `CX mode - crossBorderPayment has fields - should forward extractions`() {
+        // Given
+        whenever(mActivity.getString(anyInt())).thenReturn("A String")
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val cbpRow = mapOf("amount" to mock<GiniCaptureSpecificExtraction>())
+        val cbp = GiniCaptureCompoundExtraction(CROSS_BORDER_PAYMENT_KEY, listOf(cbpRow))
+        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
+        analysisFuture.complete(
+            AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                emptyMap(),
+                mapOf(CROSS_BORDER_PAYMENT_KEY to cbp),
+                emptyList(),
+                "dummy_doc_id",
+                "dummy_doc_filename",
+            )
+        )
+        val giniCapture = createGiniCaptureInstanceWithProductTag(ProductTag.CxExtractions)
+        val presenter = createPresenterWithAnalysisFuture(
+            imageDocument,
+            giniCapture = giniCapture,
+            analysisFuture = analysisFuture
+        )
+        val listener = mock<AnalysisFragmentListener>()
+        presenter.setListener(listener)
+
+        // When
+        presenter.start()
+
+        // Then
+        TestScope().launch {
+            verify(listener).onExtractionsAvailable(any(), any(), any())
+            verify(listener, never()).onProceedToNoExtractionsScreen(any())
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `SEPA mode - empty specific extractions - should proceed to no-extractions screen (regression)`() {
+        // Given
+        whenever(mActivity.getString(anyInt())).thenReturn("A String")
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
+        analysisFuture.complete(
+            AnalysisInteractor.ResultHolder(
+                AnalysisInteractor.Result.SUCCESS_WITH_EXTRACTIONS,
+                emptyMap(),
+                emptyMap(),
+                emptyList(),
+                "dummy_doc_id",
+                "dummy_doc_filename",
+            )
+        )
+        // Default SEPA product tag
+        val presenter = createPresenterWithAnalysisFuture(imageDocument, analysisFuture = analysisFuture)
+        val listener = mock<AnalysisFragmentListener>()
+        presenter.setListener(listener)
+
+        // When
+        presenter.start()
+
+        // Then
+        TestScope().launch { verify(listener).onProceedToNoExtractionsScreen(any()) }
+    }
+
+    // endregion
+
+    private fun createGiniCaptureInstanceWithProductTag(productTag: ProductTag): GiniCapture {
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
+            .setGiniCaptureNetworkService(mock())
+            .setProductTag(productTag)
+            .build()
+        return GiniCapture.getInstance()
+    }
+
+}

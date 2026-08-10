@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.os.BundleCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
@@ -72,7 +73,9 @@ internal class ReturnReasonDialog : BottomSheetDialogFragment() {
 
     private fun readArguments() {
         arguments?.run {
-            reasons = getParcelableArrayList(ARG_RETURN_REASONS) ?: emptyList()
+            reasons = BundleCompat.getParcelableArrayList(
+                this, ARG_RETURN_REASONS, GiniCaptureReturnReason::class.java
+            ) ?: emptyList()
         }
     }
 

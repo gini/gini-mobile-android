@@ -1,9 +1,7 @@
 package net.gini.android.core.api;
 
-import android.net.Uri;
-
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Internal use only.
@@ -27,5 +25,5 @@ public class Utils {
         return reference;
     }
 
-    public static Charset CHARSET_UTF8 = Charset.forName("utf-8");
+    public static final Charset CHARSET_UTF8 = StandardCharsets.UTF_8;
 }

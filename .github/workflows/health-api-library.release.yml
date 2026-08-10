@@ -16,6 +16,7 @@ jobs:
     uses: ./.github/workflows/health-api-library.check.yml
     secrets:
       GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   release:
     needs: check
@@ -70,5 +71,5 @@ jobs:
     needs: release
     uses: ./.github/workflows/health-api-library.docs.release.yml
     secrets:
-      RELEASE_GITHUB_USER: ${{ secrets.RELEASE_GITHUB_USER }}
-      RELEASE_GITHUB_PASSWORD: ${{ secrets.RELEASE_GITHUB_PASSWORD }}
+      MOBILE_CI_APP_ID: ${{ secrets.MOBILE_CI_APP_ID }}
+      MOBILE_CI_APP_PRIVATE_KEY: ${{ secrets.MOBILE_CI_APP_PRIVATE_KEY }}

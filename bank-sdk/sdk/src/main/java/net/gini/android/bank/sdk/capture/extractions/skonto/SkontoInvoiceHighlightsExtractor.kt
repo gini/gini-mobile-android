@@ -11,8 +11,8 @@ internal class SkontoInvoiceHighlightsExtractor {
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction>,
     ): List<SkontoInvoiceHighlightBoxes> {
 
-        val skontoDiscountMaps = compoundExtractions["skontoDiscounts"]?.specificExtractionMaps
-            ?: throw NoSuchElementException("Field `compoundExtractions.skontoDiscounts` is missing")
+        val skontoDiscountMaps = (compoundExtractions["skontoDiscounts"]?.specificExtractionMaps
+            ?: throw NoSuchElementException("Field `compoundExtractions.skontoDiscounts` is missing")).toList()
 
         return skontoDiscountMaps.map { skontoDiscountData ->
             val skontoPercentageDiscounted = extractPercentageDiscountedOrError(skontoDiscountData)

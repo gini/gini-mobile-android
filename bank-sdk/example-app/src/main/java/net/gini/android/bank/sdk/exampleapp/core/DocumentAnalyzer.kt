@@ -43,29 +43,31 @@ class DocumentAnalyzer @JvmOverloads internal constructor(
                 filename = null,
                 documentType = null
             ).mapSuccess { partialDocumentResource ->
-                Log.d("gini-api", "Partial document created: " + partialDocumentResource.data.id)
+                Log.d(TAG, "Partial document created: " + partialDocumentResource.data.id)
                 Log.d(
-                    "gini-api", "Creating composite document for partial document: " + partialDocumentResource.data.id
+                    TAG, "Creating composite document for partial document: " + partialDocumentResource.data.id
                 )
                 documentManager.createCompositeDocument(listOf(partialDocumentResource.data))
             }.mapSuccess { compositeDocumentResource ->
-                Log.d("gini-api", "Composite document created: " + compositeDocumentResource.data.id)
+                Log.d(TAG, "Composite document created: " + compositeDocumentResource.data.id)
                 giniApiDocument = compositeDocumentResource.data
                 Log.d(
-                    "gini-api", "Getting extractions for composite document: " + compositeDocumentResource.data.id
+                    TAG, "Getting extractions for composite document: " + compositeDocumentResource.data.id
                 )
                 documentManager.getAllExtractionsWithPolling(compositeDocumentResource.data)
             }
             when (extractionsResource) {
                 is Resource.Success -> {
-                    Log.d("gini-api", "Analysis completed for document: ${giniApiDocument?.id}")
+                    Log.d(TAG, "Analysis completed for document: ${giniApiDocument?.id}")
                     listener?.onExtractionsReceived(extractionsResource.data.specificExtractions)
                 }
                 is Resource.Error -> {
-                    Log.d("gini-api", "Analysis failed for document ${giniApiDocument?.id}: ${extractionsResource!!.message}")
+                    Log.d(TAG, "Analysis failed for document ${giniApiDocument?.id}: ${extractionsResource.message}")
                     listener?.onException(Exception(extractionsResource.message, extractionsResource.exception))
                 }
-                is Resource.Cancelled -> {}
+                is Resource.Cancelled -> {
+                    // no-op: cancellation is expected and handled by the caller
+                }
             }
             this@DocumentAnalyzer.extractionsResource = extractionsResource
         }
@@ -81,5 +83,9 @@ class DocumentAnalyzer @JvmOverloads internal constructor(
     interface Listener {
         fun onException(exception: Exception)
         fun onExtractionsReceived(extractions: Map<String, SpecificExtraction>)
+    }
+
+    companion object {
+        private const val TAG = "gini-api"
     }
 }

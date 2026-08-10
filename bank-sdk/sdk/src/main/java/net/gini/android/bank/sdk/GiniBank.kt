@@ -6,13 +6,6 @@ import androidx.activity.result.ActivityResultLauncher
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
 import net.gini.android.bank.api.models.ResolvedPayment
-import net.gini.android.bank.sdk.GiniBank.getPaymentRequest
-import net.gini.android.bank.sdk.GiniBank.resolvePaymentRequest
-import net.gini.android.bank.sdk.GiniBank.returnToPaymentInitiatorApp
-import net.gini.android.bank.sdk.GiniBank.setCaptureConfiguration
-import net.gini.android.bank.sdk.GiniBank.setGiniApi
-import net.gini.android.bank.sdk.GiniBank.startCaptureFlow
-import net.gini.android.bank.sdk.GiniBank.startCaptureFlowForIntent
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.capture.CaptureFlowFragment
 import net.gini.android.bank.sdk.capture.CaptureImportInput
@@ -47,8 +40,6 @@ import net.gini.android.capture.ImportedFileValidationException
 import net.gini.android.capture.di.getGiniCaptureKoin
 import net.gini.android.capture.onboarding.view.ImageOnboardingIllustrationAdapter
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
-import net.gini.android.capture.requirements.GiniCaptureRequirements
-import net.gini.android.capture.requirements.RequirementsReport
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.capture.view.InjectedViewAdapterInstance
 import net.gini.android.core.api.Resource
@@ -71,6 +62,9 @@ import net.gini.android.core.api.models.PaymentRequest
  */
 object GiniBank {
 
+    private const val CAPTURE_NOT_CONFIGURED_MSG =
+        "Capture feature is not configured. Call setCaptureConfiguration before starting the flow."
+
     private var giniCapture: GiniCapture? = null
     private var captureConfiguration: CaptureConfiguration? = null
     private var giniApi: GiniBankAPI? = null
@@ -90,27 +84,6 @@ object GiniBank {
         get() = giniGankTransactions
             ?: error("Transaction list not initialized. Call `initializeTransactionListFeature(...)` first.")
 
-    /**
-     * Bottom navigation bar adapters. Could be changed to custom ones.
-     */
-    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
-    var digitalInvoiceOnboardingNavigationBarBottomAdapter: DigitalInvoiceOnboardingNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceOnboardingNavigationBarBottomAdapterInstance =
-                InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceOnboardingNavigationBarBottomAdapterInstance.viewAdapter
-
-    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
-        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
-    var digitalInvoiceHelpNavigationBarBottomAdapter: DigitalInvoiceHelpNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceHelpNavigationBarBottomAdapterInstance =
-                InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceHelpNavigationBarBottomAdapterInstance.viewAdapter
-
     internal var digitalInvoiceOnboardingIllustrationAdapterInstance: InjectedViewAdapterInstance<OnboardingIllustrationAdapter> =
         InjectedViewAdapterInstance(
             ImageOnboardingIllustrationAdapter(
@@ -124,45 +97,34 @@ object GiniBank {
         }
         get() = digitalInvoiceOnboardingIllustrationAdapterInstance.viewAdapter
 
+    /**
+     * Below listed internal bottom bar instances are only kept here because they are used in many
+     * places, Once the code clean up happens, these must be removed as we drop support for custom
+     * bottom bars.
+     * - [digitalInvoiceNavigationBarBottomAdapterInstance]
+     * - [digitalInvocieSkontoNavigationBarBottomAdapterInstance]
+     * - [digitalInvoiceHelpNavigationBarBottomAdapterInstance]
+     * - [digitalInvoiceOnboardingNavigationBarBottomAdapterInstance]
+     * - [skontoHelpNavigationBarBottomAdapterInstance]
+     * - [skontoNavigationBarBottomAdapterInstance]
+     * */
+    internal var digitalInvoiceOnboardingNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceOnboardingNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter())
+
+    internal var digitalInvoiceHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceHelpNavigationBarBottomAdapter> =
+        InjectedViewAdapterInstance(DefaultDigitalInvoiceHelpNavigationBarBottomAdapter())
+
     internal var digitalInvoiceNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceNavigationBarBottomAdapter> =
         InjectedViewAdapterInstance(DefaultDigitalInvoiceNavigationBarBottomAdapter())
-    var digitalInvoiceNavigationBarBottomAdapter: DigitalInvoiceNavigationBarBottomAdapter
-        set(value) {
-            digitalInvoiceNavigationBarBottomAdapterInstance = InjectedViewAdapterInstance(value)
-        }
-        get() = digitalInvoiceNavigationBarBottomAdapterInstance.viewAdapter
-
 
     internal var skontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoNavigationBarBottomAdapter>? =
         null
 
-    var skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter?
-        set(value) {
-            skontoNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = skontoNavigationBarBottomAdapterInstance?.viewAdapter
-
     internal var digitalInvocieSkontoNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<DigitalInvoiceSkontoNavigationBarBottomAdapter>? =
         null
 
-    var digitalInvoiceSkontoNavigationBarBottomAdapter: DigitalInvoiceSkontoNavigationBarBottomAdapter?
-        set(value) {
-            digitalInvocieSkontoNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = digitalInvocieSkontoNavigationBarBottomAdapterInstance?.viewAdapter
-
     internal var skontoHelpNavigationBarBottomAdapterInstance: InjectedViewAdapterInstance<SkontoHelpNavigationBarBottomAdapter>? =
         null
-
-    var skontoHelpNavigationBarBottomAdapter: SkontoHelpNavigationBarBottomAdapter?
-        set(value) {
-            skontoHelpNavigationBarBottomAdapterInstance =
-                value?.let { InjectedViewAdapterInstance(it) }
-        }
-        get() = skontoHelpNavigationBarBottomAdapterInstance?.viewAdapter
-
 
     internal fun getCaptureConfiguration() = captureConfiguration
 
@@ -175,27 +137,12 @@ object GiniBank {
     }
 
     /**
+     * The return reasons dialog will be deleted in the next release.
+     * Right now, we are removing the public API for showing the return reasons dialog.
      * Shows the return reasons dialog in the return assistant, if enabled.
      * Note that it is disabled by default.
      */
-    var enableReturnReasons = false
-
-    /**
-     * Sets configuration for Capture feature.
-     * Note that configuration is immutable. [cleanupCapture] needs to be called before passing a new configuration.
-     *
-     * @throws IllegalStateException if capture is already configured.
-     */
-    @Deprecated(
-        "Please use setCaptureConfiguration(context, captureConfiguration) which allows instance recreation without having to call releaseCapture()",
-        ReplaceWith("setCaptureConfiguration(context, captureConfiguration)")
-    )
-    fun setCaptureConfiguration(captureConfiguration: CaptureConfiguration) {
-        check(giniCapture == null) { "Gini Capture already configured. Call releaseCapture() before setting a new configuration." }
-        GiniBank.captureConfiguration = captureConfiguration
-        GiniCapture.newInstance().applyConfiguration(captureConfiguration).build()
-        giniCapture = GiniCapture.getInstance()
-    }
+    internal var enableReturnReasons = false
 
     /**
      * Sets configuration for Capture feature.
@@ -205,7 +152,7 @@ object GiniBank {
         GiniCapture.newInstance(context).applyConfiguration(captureConfiguration).build()
         giniCapture = GiniCapture.getInstance()
 
-        releaseTransactionDocsFeature(context)
+        releaseTransactionDocsFeature()
         BankSdkIsolatedKoinContext.init(context)
         getGiniCaptureKoin().loadModules(listOf(captureSdkDiBridge))
         this.giniBankTransactionDocs = GiniBankTransactionDocs()
@@ -214,7 +161,7 @@ object GiniBank {
 
 
     /**
-     * Provides transfer summary to Gini.
+     * Sends the confirmed SEPA transfer summary to Gini.
      *
      * Please provide the required transfer summary to improve the future extraction accuracy.
      *
@@ -223,6 +170,8 @@ object GiniBank {
      * - Provide values for all necessary fields, including those that were not extracted.
      * - Provide the final data approved by the user (and not the initially extracted only).
      * - Send the transfer summary after TAN verification and provide the extraction values the user has used.
+     *
+     * For cross-border (CX) payments use [sendTransferSummary] with a `Map<String, String>` instead.
      *
      * @param paymentRecipient payment receiver
      * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
@@ -252,6 +201,48 @@ object GiniBank {
         )
     }
 
+    /**
+     * Sends the confirmed transfer summary to Gini for any payment type.
+     *
+     * The SDK routes the confirmed values to the correct backend structure based on the
+     * configured [net.gini.android.capture.ProductTag]:
+     *
+     * **CX payments** ([net.gini.android.capture.ProductTag.CxExtractions]):
+     * Pass the confirmed CX field names and values as a flat map (e.g. the first row from
+     * `result.compoundExtractions["crossBorderPayment"]?.specificExtractionMaps`).
+     * The SDK automatically wraps them back under `compoundExtractions["crossBorderPayment"]`
+     * when sending feedback.
+     * ```kotlin
+     * val fields = result.compoundExtractions["crossBorderPayment"]
+     *     ?.specificExtractionMaps
+     *     ?.firstOrNull()
+     *     ?.mapValues { it.value.value }
+     *     ?: emptyMap()
+     * GiniBank.sendTransferSummary(fields)
+     * ```
+     *
+     * **SEPA payments** (all other [net.gini.android.capture.ProductTag] values):
+     * Pass the confirmed SEPA field names and their values as a map.
+     * When providing `amountToPay`, use the `"value:currency"` format, e.g. `"950.00:EUR"`.
+     * ```kotlin
+     * GiniBank.sendTransferSummary(
+     *     mapOf(
+     *         "iban"             to "DE89370400440532013000",
+     *         "bic"              to "COBADEFFXXX",
+     *         "amountToPay"      to "950.00:EUR",
+     *         "paymentRecipient" to "Acme GmbH",
+     *         "paymentReference" to "REF-2024-001",
+     *         "paymentPurpose"   to "Invoice March"
+     *     )
+     * )
+     * ```
+     *
+     * @param extractions map of extraction field names to their confirmed values
+     */
+    fun sendTransferSummary(extractions: Map<String, String>) {
+        GiniCapture.sendTransferSummary(extractions)
+    }
+
     internal fun sendTransferSummaryForSkonto(
         amount: Amount,
         skontoAmountToPayCalculated: String,
@@ -268,70 +259,6 @@ object GiniBank {
 
     }
 
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * Please provide the required transfer summary to improve the future extraction accuracy.
-     * Follow the recommendations below:
-     *
-     * - Provide values for all necessary fields, including those that were not extracted.</li>
-     * - Provide the final data approved by the user (and not the initially extracted only).</li>
-     * - Do cleanup after TAN verification.to clean up and provide the extraction values the user has used.</li>
-     *
-     * @param context Android context
-     * @param paymentRecipient payment receiver
-     * @param paymentReference ID based on Client ID (Kundennummer) and invoice ID (Rechnungsnummer)
-     * @param paymentPurpose statement what this payment is for
-     * @param iban international bank account
-     * @param bic bank identification code
-     * @param amount accepts extracted amount and currency
-     *
-     * @deprecated Use [sendTransferSummary] to provide the required transfer summary first (if the user has completed TAN verification) and then [cleanupCapture] to let the SDK free up used resources.
-     */
-    @Deprecated(
-        "Please use sendTransferSummary() to provide the required transfer summary first (if the user has completed TAN verification) and then releaseCapture() to let the SDK free up used resources.",
-        ReplaceWith("releaseCapture(context)")
-    )
-    fun releaseCapture(
-        context: Context,
-        paymentRecipient: String,
-        paymentReference: String,
-        paymentPurpose: String,
-        iban: String,
-        bic: String,
-        amount: Amount
-    ) {
-        sendTransferSummary(
-            paymentRecipient, paymentReference, paymentPurpose, iban, bic, amount
-        )
-        cleanupCapture(context)
-        releaseTransactionDocsFeature(context)
-        BankSdkIsolatedKoinContext.clean()
-    }
-
-
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * @param context Android context
-     *
-     */
-    @Deprecated(
-        "Please use cleanupCapture(context). This method will be removed in a future release.",
-        ReplaceWith("cleanupCapture(context)")
-    )
-    fun releaseCapture(
-        context: Context
-    ) {
-        cleanupCapture(context)
-    }
-
-    /**
-     * Frees up resources used by the capture flow.
-     *
-     * @param context Android context
-     *
-     */
     fun cleanupCapture(
         context: Context
     ) {
@@ -341,33 +268,14 @@ object GiniBank {
         captureConfiguration = null
         giniCapture = null
 
-        digitalInvoiceOnboardingNavigationBarBottomAdapter =
-            DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter()
-        digitalInvoiceHelpNavigationBarBottomAdapter =
-            DefaultDigitalInvoiceHelpNavigationBarBottomAdapter()
-
         digitalInvoiceOnboardingIllustrationAdapter = ImageOnboardingIllustrationAdapter(
             R.drawable.gbs_digital_invoice_list_image,
             R.string.gbs_digital_invoice_onboarding_text_1
         )
 
-        digitalInvoiceNavigationBarBottomAdapter = DefaultDigitalInvoiceNavigationBarBottomAdapter()
-        releaseTransactionDocsFeature(context)
+        releaseTransactionDocsFeature()
         BankSdkIsolatedKoinContext.clean()
     }
-
-    /**
-     *  Checks hardware requirements for Capture feature.
-     *  Requirements are not enforced, but are recommended to be checked before using.
-     *
-     * @deprecated Checking the requirements is no longer necessary and this method will be removed in a future release.
-     *             The majority of Android devices already meet the SDK's requirements.
-     */
-    @Deprecated(
-        "Checking the requirements is no longer necessary and this method will be removed in a future release."
-    )
-    fun checkCaptureRequirements(context: Context): RequirementsReport =
-        GiniCaptureRequirements.checkRequirements(context)
 
     /**
      * Screen API for starting the capture flow.
@@ -376,7 +284,7 @@ object GiniBank {
      * @throws IllegalStateException if the capture feature was not configured.
      */
     fun startCaptureFlow(resultLauncher: ActivityResultLauncher<Unit>) {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_MSG }
         resultLauncher.launch(Unit)
     }
 
@@ -437,7 +345,7 @@ object GiniBank {
         resultLauncher: ActivityResultLauncher<CaptureImportInput>, context: Context, intent: Intent
     ): CancellationToken {
         giniCapture.let { capture ->
-            check(capture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+            check(capture != null) { CAPTURE_NOT_CONFIGURED_MSG }
             return capture.createDocumentForImportedFiles(
                 intent,
                 context,
@@ -456,6 +364,7 @@ object GiniBank {
                     }
 
                     override fun onCancelled() {
+                        // Cancellation is handled by the result launcher - no further action needed
                     }
                 })
         }
@@ -607,7 +516,7 @@ object GiniBank {
      *  @param document The document with which the fragment will be created.
      */
     fun createCaptureFlowFragmentForDocument(document: Document): CaptureFlowFragment {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before starting the flow." }
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_MSG }
         return CaptureFlowFragment.createInstance(document)
     }
 
@@ -653,8 +562,7 @@ object GiniBank {
         )
     }
 
-    @Suppress("UnusedParameter")
-    private fun releaseTransactionDocsFeature(context: Context) {
+    private fun releaseTransactionDocsFeature() {
         giniBankTransactionDocs = null
         giniGankTransactions = null
     }

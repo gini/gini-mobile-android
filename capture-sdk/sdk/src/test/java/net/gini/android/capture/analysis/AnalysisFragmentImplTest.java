@@ -1,19 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.google.common.truth.Truth.assertThat;
-import static net.gini.android.capture.analysis.BitmapMatcher.withBitmap;
-import static net.gini.android.capture.analysis.RotationMatcher.withRotation;
-import static net.gini.android.capture.test.Helpers.getTestJpeg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -33,10 +19,10 @@ import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.internal.camera.photo.Photo;
 import net.gini.android.capture.internal.camera.photo.PhotoFactory;
+import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.internal.util.Size;
 import net.gini.android.capture.network.GiniCaptureNetworkService;
 import net.gini.android.capture.test.FragmentImplFactory;
-import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.view.DefaultLoadingIndicatorAdapter;
 
 import org.junit.After;
@@ -50,6 +36,20 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
+
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.google.common.truth.Truth.assertThat;
+import static net.gini.android.capture.analysis.BitmapMatcher.withBitmap;
+import static net.gini.android.capture.analysis.RotationMatcher.withRotation;
+import static net.gini.android.capture.test.Helpers.getTestJpeg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by Alpar Szotyori on 15.05.2019.
@@ -116,7 +116,7 @@ public class AnalysisFragmentImplTest {
                                 new CancelListener() {
                                     @Override
                                     public void onCancelFlow() {
-
+                                        // No-op
                                     }
                                 },
                                 document, null, false) {

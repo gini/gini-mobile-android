@@ -64,14 +64,21 @@ class OrderDetailsViewModel(
             is PaymentProviderAppsState.Success -> {
                 val paymentProviders = paymentProvidersAppsState.paymentProviderApps
                 paymentProviders.first { it.paymentProvider.id == PAYMENT_PROVIDER_ID_FOR_PAYMENT_REQUEST }.runCatching {
-                    giniHealth.giniInternalPaymentModule.getPaymentRequest(this, paymentDetails = getPaymentDetails()).also {
+                    giniHealth.giniInternalPaymentModule.getPaymentRequest(
+                        documentUri = null,
+                        paymentProviderApp= this,
+                        paymentDetails = getPaymentDetails()
+                    ).also {
                         val newOrder = _orderFlow.value.copy(expiryDate = it.expirationDate, requestId = it.id)
                         ordersRepository.convertToPaymentRequest(newOrder, it.id)
                         _orderFlow.value = newOrder.copy(id = it.id)
                     }
                 }.onFailure {
-                    _errorFlow.value = Error.ErrorMessage(it.message ?: "")
+                    _errorFlow.value = Error.ErrorMessage(it)
                 }
+            }
+            is PaymentProviderAppsState.Error -> {
+                _errorFlow.value = Error.ErrorMessage(paymentProvidersAppsState.throwable)
             }
             else -> {
                 _errorFlow.value = Error.GenericError
@@ -108,6 +115,6 @@ class OrderDetailsViewModel(
         data object InvalidIban: Error()
         data object PaymentDetailsIncomplete: Error()
         data object GenericError: Error()
-        data class ErrorMessage(val error: String): Error()
+        data class  ErrorMessage(val throwable: Throwable) : Error()
     }
 }

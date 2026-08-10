@@ -1,11 +1,9 @@
 package net.gini.android.core.api.authorization.crypto;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
+import android.util.Base64;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import android.util.Base64;
 
 import java.io.IOException;
 import java.security.Key;
@@ -19,7 +17,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.10.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -34,13 +32,13 @@ public abstract class GiniCrypto {
     static final String SECRET_KEY_ALIAS = "GiniCryptoKey";
     static final String AES_MODE = "AES/GCM/NoPadding";
 
-    public static GiniCrypto newInstance(@NonNull final SharedPreferences sharedPreferences,
-            @NonNull final Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return new GiniCryptoAndroidMOrGreater();
-        } else {
-            return new GiniCryptoPreAndroidM(sharedPreferences, context);
-        }
+    // SecureRandom is thread-safe and expensive to seed; create it once and reuse it for all IVs.
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
+    public static GiniCrypto newInstance() {
+        // minSdk = 23 (Android M), so we always use the M-or-greater implementation.
+        // GiniCryptoPreAndroidM has been removed as it was dead code (CWE-780, CWE-327).
+        return new GiniCryptoAndroidMOrGreater();
     }
 
     public String encrypt(@NonNull final String text) throws GiniCryptoException {
@@ -67,9 +65,8 @@ public abstract class GiniCrypto {
     }
 
     private byte[] generateIV() {
-        final SecureRandom secureRandom = new SecureRandom();
         final byte[] iv = new byte[12];
-        secureRandom.nextBytes(iv);
+        SECURE_RANDOM.nextBytes(iv);
         return iv;
     }
 

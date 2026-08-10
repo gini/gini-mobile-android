@@ -1,5 +1,9 @@
 package net.gini.android.capture.review.multipage
 
+import android.view.View
+import android.widget.Button
+import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.Navigation
@@ -12,6 +16,7 @@ import io.mockk.mockk
 import jersey.repackaged.jsr166e.CompletableFuture
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureHelper
+import net.gini.android.capture.R
 import net.gini.android.capture.di.CaptureSdkIsolatedKoinContext
 import net.gini.android.capture.document.GiniCaptureDocument
 import net.gini.android.capture.document.ImageDocumentFake
@@ -160,5 +165,34 @@ class MultipageReviewFragmentTest {
                 ERROR_OBJECT to exception
         )
         Mockito.verify(eventTracker).onReviewScreenEvent(Event(ReviewScreenEvent.UPLOAD_ERROR, errorDetails))
+    }
+
+    @Test
+    fun `process document view is shown`() {
+        val eventTracker = spy<EventTracker>()
+        GiniCapture.Builder().setEventTracker(eventTracker).build()
+        GiniCapture.getInstance().internal().imageMultiPageDocumentMemoryStore.setMultiPageDocument(
+            mock()
+        )
+        UserAnalytics.initialize(InstrumentationRegistry.getInstrumentation().context)
+        every { mockGetSaveInvoicesLocallyFeatureEnabledUseCase.invoke() } returns true
+
+        FragmentScenario.launchInContainer(fragmentClass = MultiPageReviewFragment::class.java)
+            .use { scenario ->
+                scenario.moveToState(Lifecycle.State.RESUMED)
+
+                scenario.onFragment { fragment ->
+                    val processDocumentsWrapper =
+                        fragment.requireView()
+                            .findViewById<ConstraintLayout>(R.id.gc_process_documents_wrapper)
+                    val nextButton =
+                        fragment.requireView().findViewById<Button>(R.id.gc_button_next)
+                    val addButton = fragment.requireView().findViewById<ImageView>(R.id.gc_add_page)
+
+                    Truth.assertThat(processDocumentsWrapper.visibility).isEqualTo(View.VISIBLE)
+                    Truth.assertThat(nextButton.visibility).isEqualTo(View.VISIBLE)
+                    Truth.assertThat(addButton.visibility).isEqualTo(View.VISIBLE)
+                }
+            }
     }
 }

@@ -63,13 +63,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Reserves ≥28 % of screen height above the payment panel so the anchored
+             Snackbar (~68–80dp two-line) always has room to appear fully visible in landscape. -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/snackbar_guard_guideline"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.25" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/payment_details_scrollview"
             android:importantForAccessibility="yes"
             android:focusable="true"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintTop_toBottomOf="@id/snackbar_guard_guideline"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="1.0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 

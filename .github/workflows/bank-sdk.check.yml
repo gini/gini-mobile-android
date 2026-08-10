@@ -19,6 +19,8 @@ on:
         required: true
       BANK_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
         required: true
+      SONAR_TOKEN:
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-check
@@ -123,27 +125,37 @@ jobs:
           name: bank-sdk-instrumented-test-results
           path: bank-sdk/sdk/build/outputs/androidTest-results/connected
 
-      - name: run example app instrumented tests
-        timeout-minutes: 20
-        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
-        with:
-          api-level: 33
-          arch: x86_64
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: >
-            adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
-            ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest
-            -PclientId="gini-mobile-ci"
-            -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-
-      - name: archive instrumented test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: bank-sdk-example-app-instrumented-test-results
-          path: bank-sdk/example-app/build/outputs/androidTest-results/connected
+      # Commented out: example-app UI tests (net.gini.android.bank.sdk.exampleapp.ui.testcases) are
+      # intentionally excluded from CI. Run them locally or via bs_build_and_upload.sh on BrowserStack.
+#      - name: run example app instrumented tests
+#        timeout-minutes: 20
+#        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
+#        with:
+#          api-level: 33
+#          arch: x86_64
+#          force-avd-creation: false
+#          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+#          disable-animations: true
+#          script: >
+#            adb push .github/test_pdfs/password-protected.pdf /sdcard/Download ;
+#            adb push .github/test_pdfs/sample.pdf /sdcard/Download ;
+#            adb push .github/test_pdfs/test_image.jpeg /sdcard/Download ;
+#            adb push .github/test_pdfs/test-image-no-results.jpg /sdcard/Download ;
+#            adb push .github/test_pdfs/test-pdf-no-results.pdf /sdcard/Download ;
+#            adb push .github/test_pdfs/Testrechnung-RA-1.pdf /sdcard/Download ;
+#            adb push .github/test_pdfs/too-many-pages.pdf /sdcard/Download ;
+#            adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
+#            ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest
+#            -PignoreLocalTests="true"
+#            -PclientId="gini-mobile-ci"
+#            -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
+#
+#      - name: archive instrumented test results
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: bank-sdk-example-app-instrumented-test-results
+#          path: bank-sdk/example-app/build/outputs/androidTest-results/connected
 
   build-example-apps:
     runs-on: ubuntu-latest
@@ -251,3 +263,14 @@ jobs:
         with:
           name: bank-sdk-ktlint-report
           path: bank-sdk/sdk/build/reports/ktlint/**/*.html
+  # Keep the with: block in sync with the matching job in sonar-baselines.yml,
+  # so the main baseline is built and scanned exactly like this PR analysis.
+  sonar:
+    uses: ./.github/workflows/sonar.yml
+    with:
+      # Build both modules (example-app depends on sdk)
+      prepare-tasks: 'bank-sdk:sdk:assembleDebug bank-sdk:example-app:assembleDevExampleAppDebug'
+      coverage-tasks: ':bank-sdk:sdk:jacocoTestReport'
+      sonar-tasks: 'bank-sdk:sdk:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

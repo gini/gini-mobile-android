@@ -1,7 +1,8 @@
 name: Check Health SDK
 
 permissions:
-  contents: read
+  contents: write
+  packages: write
 
 on:
   workflow_dispatch:
@@ -17,6 +18,10 @@ on:
       GINI_MOBILE_TEST_CLIENT_SECRET:
         required: true
       HEALTH_SDK_EXAMPLE_APP_KEYSTORE_PASSWORD:
+        required: true
+      SONAR_TOKEN:
+        required: true
+      GOOGLE_SERVICES_JSON_B64:
         required: true
 
 concurrency:
@@ -58,6 +63,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
+
+      - name: Create google-services.json
+        run: |
+          mkdir -p health-sdk/example-app
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > health-sdk/example-app/google-services.json
 
       - name: build release example app for QA
         run: >
@@ -153,3 +163,19 @@ jobs:
         with:
           name: health-sdk-ktlint-report
           path: health-sdk/sdk/build/reports/ktlint/**/*.html
+
+  # Keep the with: block in sync with the matching job in sonar-baselines.yml,
+  # so the main baseline is built and scanned exactly like this PR analysis.
+  sonar:
+    uses: ./.github/workflows/sonar.yml
+    with:
+      # Build both modules (example-app depends on sdk)
+      prepare-tasks: 'health-sdk:sdk:assembleDebug health-sdk:example-app:assembleDebug'
+      prepare-args: '-PclientId="gini-mobile-ci" -PclientSecret="$GINI_MOBILE_TEST_CLIENT_SECRET"'
+      coverage-tasks: ':health-sdk:sdk:jacocoTestReport'
+      sonar-tasks: ':health-sdk:sdk:sonar'
+      google-services-json-path: 'health-sdk/example-app/google-services.json'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      GOOGLE_SERVICES_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_B64 }}

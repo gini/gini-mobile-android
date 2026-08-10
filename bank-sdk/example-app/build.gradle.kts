@@ -8,10 +8,21 @@ plugins {
     kotlin("android")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
+    id ("org.sonarqube")
     id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.kotlin.plugin.serialization") version "2.1.0"
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.devtools.ksp)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "android-bank-sdk")
+        property("sonar.projectName", "Android Bank SDK")
+        property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 // TODO: construct version code and name in fastlane and inject them
@@ -74,6 +85,7 @@ android {
 
         // Use the test runner with JUnit4 support
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
 
         multiDexEnabled = true
     }
@@ -159,6 +171,28 @@ android {
     }
 }
 
+tasks.register<CreatePropertiesTask>("injectTestProperties") {
+    val propertiesMap = mutableMapOf<String, String>()
+
+    doFirst {
+        propertiesMap.clear()
+        propertiesMap.putAll(readLocalPropertiesToMapSilent(project,
+            listOf("ignoreLocalTests"))
+        )
+    }
+
+    destinations.put(
+        file("src/androidTest/assets/test.properties"),
+        propertiesMap
+    )
+}
+
+afterEvaluate {
+    tasks.filter { it.name.equals("connectedDevExampleAppDebugAndroidTest", ignoreCase = true) }.forEach {
+        it.dependsOn(tasks.getByName("injectTestProperties"))
+    }
+}
+
 // after upgrading to AGP 8, we need this, otherwise, gradle will complain to use the same jdk version as your machine (17 which is bundled with Android Studio)
 // https://youtrack.jetbrains.com/issue/KT-55947/Unable-to-set-kapt-jvm-target-version
 tasks.withType(type = org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask::class) {
@@ -185,7 +219,6 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.androidx.multidex)
-    implementation(libs.dexter)
     implementation(libs.logback.android)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)
@@ -212,16 +245,18 @@ dependencies {
 
     testImplementation(libs.junit)
 
-    androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.truth)
-    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.core.ktx)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.junit.ktx)
+    androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.androidx.multidex)
-    androidTestImplementation(libs.androidx.test.junit)
 
     androidTestUtil(libs.androidx.test.orchestrator)
 }

@@ -19,6 +19,8 @@ import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.capture.DocumentImportEnabledFileTypes
+import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.ProductTag
 import net.gini.android.capture.network.GiniCaptureDefaultNetworkService
 import net.gini.android.core.api.DocumentMetadata
 
@@ -56,24 +58,11 @@ class ClientBankSDKFragment :
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        if (wasCameraPermissionGranted) {
-            hideNoCameraPermissionMessage()
-        } else {
-            showNoCameraPermissionMessage()
-        }
-    }
-
-    private fun showNoCameraPermissionMessage() {
-        view?.findViewById<TextView>(R.id.no_camera_permission_message)?.visibility = View.VISIBLE
-    }
-
-    private fun hideNoCameraPermissionMessage() {
-        view?.findViewById<TextView>(R.id.no_camera_permission_message)?.visibility = View.GONE
-    }
-
-    private fun overrideBankSDKConfiguration() {
+    /**
+     * Example showing clients how to override the Bank SDK configuration.
+     * Call this before [startBankSDK] or [startBankSdkForIntent] if you need a custom configuration.
+     */
+    fun overrideBankSDKConfiguration() {
         val clientId = requireContext().getString(R.string.gini_api_client_id)
         val clientSecret = requireContext().getString(R.string.gini_api_client_secret)
         val documentMetadata = DocumentMetadata()
@@ -99,6 +88,23 @@ class ClientBankSDKFragment :
             multiPageEnabled = true,
         )
         GiniBank.setCaptureConfiguration(requireContext(), captureConfiguration)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (wasCameraPermissionGranted) {
+            hideNoCameraPermissionMessage()
+        } else {
+            showNoCameraPermissionMessage()
+        }
+    }
+
+    private fun showNoCameraPermissionMessage() {
+        view?.findViewById<TextView>(R.id.no_camera_permission_message)?.visibility = View.VISIBLE
+    }
+
+    private fun hideNoCameraPermissionMessage() {
+        view?.findViewById<TextView>(R.id.no_camera_permission_message)?.visibility = View.GONE
     }
 
 
@@ -142,7 +148,9 @@ class ClientBankSDKFragment :
                 startActivity(
                     ExtractionsActivity.getStartIntent(
                         requireContext(),
-                        result.specificExtractions
+                        result.specificExtractions,
+                        result.compoundExtractions,
+                        GiniCapture.getInstance().productTag == ProductTag.CxExtractions,
                     )
                 )
                 activity?.finish()

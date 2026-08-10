@@ -10,3 +10,6 @@ captures
 fastlane/report.xml
 .vscode
 .kotlin/
+test.properties
+**/google-services.json
+/graphify-out/

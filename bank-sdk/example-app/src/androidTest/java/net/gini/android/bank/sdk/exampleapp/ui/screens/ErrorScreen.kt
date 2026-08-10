@@ -1,0 +1,119 @@
+package net.gini.android.bank.sdk.exampleapp.ui.screens
+
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
+
+class ErrorScreen {
+    private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+    // Whether the device still has an internet-capable active network. Used to detect
+    // environments (e.g. BrowserStack cloud devices) where disconnectTheInternetConnection()
+    // cannot actually turn the network off, so the offline test can be skipped there.
+    //
+    // Polls for up to ~5s: right after a disconnect attempt, ConnectivityManager can briefly
+    // still report the dying network as available. Return false as soon as it drops (the
+    // disconnect worked → don't skip); only conclude the network is up if it's still up after
+    // the poll (e.g. on BrowserStack → skip).
+    fun isInternetAvailable(): Boolean {
+        val deadline = System.currentTimeMillis() + INTERNET_POLL_TIMEOUT_MS
+        while (System.currentTimeMillis() < deadline) {
+            if (!hasActiveInternet()) return false
+            Thread.sleep(250)
+        }
+        return hasActiveInternet()
+    }
+
+    private fun hasActiveInternet(): Boolean {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(network) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
+    fun checkErrorTextDisplayed(): Boolean {
+        val errorText = device.findObject(
+            UiSelector().className("android.widget.TextView").text("Error").index(1)
+        )
+        return errorText.waitForExists(5000)
+    }
+
+    fun checkErrorHeaderTextDisplayed(content: String): Boolean {
+        val errorHeaderText = device.findObject(
+            UiSelector().className("android.widget.TextView")
+                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gc_error_header").index(1)
+        )
+        if (errorHeaderText.waitForExists(5000)) {
+            if (errorHeaderText.text == content) return true
+        }
+        return false
+    }
+
+    fun checkErrorTextViewDisplayed(content: String): Boolean {
+        val errorTextViewText = device.findObject(
+            UiSelector().className("android.widget.TextView")
+                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gc_error_textview").index(3)
+        )
+        if (errorTextViewText.waitForExists(5000)) {
+            if (errorTextViewText.text == content) return true
+        }
+        return false
+    }
+
+    fun checkEnterManuallyButtonIsDisplayed(): Boolean {
+        var enterManuallyButtonDisplayed = false
+        onView(withText(net.gini.android.capture.R.string.gc_noresults_enter_manually)).check { view, _ ->
+            if (view.isShown()) {
+                enterManuallyButtonDisplayed = true
+            }
+        }
+        return enterManuallyButtonDisplayed
+    }
+
+    fun clickEnterManuallyButton() {
+        onView(withText(net.gini.android.capture.R.string.gc_noresults_enter_manually)).perform(
+            click()
+        )
+    }
+
+    fun checkBackToCameraButtonIsDisplayed(): Boolean {
+        var backToCameraButtonDisplayed = false
+        onView(withText(net.gini.android.capture.R.string.gc_error_back_to_camera)).check { view, _ ->
+            if (view.isShown()) {
+                backToCameraButtonDisplayed = true
+            }
+        }
+        return backToCameraButtonDisplayed
+    }
+
+    fun clickBackToCameraButton() {
+        onView(withText(net.gini.android.capture.R.string.gc_error_back_to_camera)).perform(
+            click()
+        )
+    }
+
+    fun disconnectTheInternetConnection() {
+        val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
+        uiAutomation.executeShellCommand("svc wifi disable").close()
+        uiAutomation.executeShellCommand("svc data disable").close()
+        Thread.sleep(2000)
+    }
+
+    fun reconnectTheInternetConnection() {
+        val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
+        uiAutomation.executeShellCommand("svc wifi enable").close()
+        uiAutomation.executeShellCommand("svc data enable").close()
+        Thread.sleep(2000)
+    }
+
+    companion object {
+        private const val INTERNET_POLL_TIMEOUT_MS = 5000L
+    }
+}

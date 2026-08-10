@@ -19,7 +19,7 @@ import net.gini.android.internal.payment.api.model.PaymentDetails
 import net.gini.android.internal.payment.api.model.PaymentRequest
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderApp
 import net.gini.android.internal.payment.paymentProvider.PaymentProviderAppColors
-import net.gini.android.merchant.sdk.test.ViewModelTestCoroutineRule
+import net.gini.android.internal.payment.test.ViewModelTestCoroutineRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,6 +37,7 @@ class GiniPaymentTest {
     private var giniPaymentModule: GiniInternalPaymentModule? = null
     private var context: Context? = null
 
+    private var documentId = "96fd66ac-86e5-4eaf-9cb9-9eef0f5fe597"
 
     private var paymentProviderApp =  PaymentProviderApp(
             name = "payment provider",
@@ -75,7 +76,7 @@ class GiniPaymentTest {
         val giniPayment = GiniPaymentManager(giniHealthAPI, null)
 
         // When - Then should throw error
-        giniPayment.getPaymentRequest(null, paymentDetails)
+        giniPayment.getPaymentRequest(documentId, null, paymentDetails)
     }
 
     @Test(expected = Exception::class)
@@ -85,7 +86,7 @@ class GiniPaymentTest {
         val giniPayment = GiniPaymentManager(giniHealthAPI, null)
 
         // When - Then should throw error
-        giniPayment.getPaymentRequest(paymentProviderApp, paymentDetails)
+        giniPayment.getPaymentRequest(documentId, paymentProviderApp, paymentDetails)
     }
 
     @Test(expected = Exception::class)
@@ -95,7 +96,7 @@ class GiniPaymentTest {
         val giniPayment = GiniPaymentManager(giniHealthAPI, null)
 
         // When - Then should throw error
-        giniPayment.getPaymentRequest(paymentProviderApp, paymentDetails)
+        giniPayment.getPaymentRequest(documentId, paymentProviderApp, paymentDetails)
     }
 
     @Test
@@ -106,7 +107,7 @@ class GiniPaymentTest {
         val giniPayment = GiniPaymentManager(giniHealthAPI, null)
 
         // Then
-        assertThat(giniPayment.getPaymentRequest(paymentProviderApp, paymentDetails)).isInstanceOf(PaymentRequest::class.java)
+        assertThat(giniPayment.getPaymentRequest(documentId, paymentProviderApp, paymentDetails)).isInstanceOf(PaymentRequest::class.java)
     }
 
 }

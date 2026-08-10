@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.github.chrisbanes.photoview.PhotoView
-import dev.chrisbanes.insetter.applyInsetter
 import net.gini.android.core.api.Resource
 import android.view.View
 import net.gini.android.health.sdk.databinding.GhsItemPageHorizontalBinding
@@ -101,14 +100,6 @@ class HorizontalViewHolder(
     private val photoViewMatrix = Matrix()
 
     init {
-        imageView.applyInsetter {
-            type(statusBars = true) {
-                padding(top = true)
-            }
-            type(ime = true) {
-                padding(bottom = true)
-            }
-        }
 
         imageView.setOnViewTapListener { view, _, _ ->
             view.hideKeyboard()
@@ -135,9 +126,10 @@ class HorizontalViewHolder(
 
 object DiffUtilCallback : DiffUtil.ItemCallback<Page>() {
     override fun areItemsTheSame(oldItem: Page, newItem: Page) = oldItem.number == newItem.number
-
+    // Resource<ByteArray>: ByteArray has no value equality, so reference equality is correct here
+    @Suppress("DiffUtilEquals")
     override fun areContentsTheSame(oldItem: Page, newItem: Page) =
-        oldItem.pageImage == newItem.pageImage
+        oldItem.pageImage === newItem.pageImage
 }
 
 data class Page(val pageImage: Resource<ByteArray>, val number: Int)

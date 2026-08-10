@@ -7,22 +7,18 @@ import net.gini.android.capture.DocumentImportEnabledFileTypes
 import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.camera.CameraActivity
-import net.gini.android.capture.camera.view.CameraNavigationBarBottomAdapter
-import net.gini.android.capture.error.view.ErrorNavigationBarBottomAdapter
 import net.gini.android.capture.help.HelpItem
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.util.FileImportValidator.FILE_SIZE_LIMIT
 import net.gini.android.capture.logging.ErrorLoggerListener
 import net.gini.android.capture.network.GiniCaptureNetworkService
 import net.gini.android.capture.onboarding.OnboardingPage
 import net.gini.android.capture.onboarding.view.OnboardingIllustrationAdapter
-import net.gini.android.capture.onboarding.view.OnboardingNavigationBarBottomAdapter
-import net.gini.android.capture.review.multipage.view.ReviewNavigationBarBottomAdapter
 import net.gini.android.capture.tracking.EventTracker
 import net.gini.android.capture.ui.components.GiniComposableStyleProvider
 import net.gini.android.capture.view.CustomLoadingIndicatorAdapter
 import net.gini.android.capture.view.NavigationBarTopAdapter
 import net.gini.android.capture.view.OnButtonLoadingIndicatorAdapter
+import net.gini.android.capture.ProductTag
 
 /**
  * Configuration class for Capture feature.
@@ -135,13 +131,6 @@ data class CaptureConfiguration(
     val navigationBarTopAdapter: NavigationBarTopAdapter? = null,
 
     /**
-     * Enable/disable the bottom navigation bar.
-     *
-     * Disabled by default.
-     */
-    val bottomNavigationBarEnabled: Boolean = false,
-
-    /**
      * Enable/disable the already paid hint.
      *
      * On by default.
@@ -168,11 +157,6 @@ data class CaptureConfiguration(
      * On by default.
      */
     val creditNoteHintEnabled: Boolean = true,
-
-    /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the onboarding screen.
-     */
-    val onboardingNavigationBarBottomAdapter: OnboardingNavigationBarBottomAdapter? = null,
 
     /**
      * Set an adapter implementation to show a custom illustration on the "align corners" onboarding page.
@@ -205,29 +189,10 @@ data class CaptureConfiguration(
     val onButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter? = null,
 
     /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the camera screen.
-     */
-    val cameraNavigationBarBottomAdapter: CameraNavigationBarBottomAdapter? = null,
-
-    /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the review screen.
-     */
-    val reviewNavigationBarBottomAdapter: ReviewNavigationBarBottomAdapter? = null,
-
-    /**
      * Set an adapter implementation to show a custom bottom navigation bar on the Skonto screen.
      */
     val skontoNavigationBarBottomAdapter: SkontoNavigationBarBottomAdapter? = null,
 
-    /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the help screen.
-     */
-    val helpNavigationBarBottomAdapter: HelpNavigationBarBottomAdapter? = null,
-
-    /**
-     * Set an adapter implementation to show a custom bottom navigation bar on the error screen.
-     */
-    val errorNavigationBarBottomAdapter: ErrorNavigationBarBottomAdapter? = null,
 
     /**
      * Set the entry point used for launching the SDK. See [EntryPoint] for possible values.
@@ -262,6 +227,18 @@ data class CaptureConfiguration(
      * Enable/disable the save invoices locally feature
      */
     val saveInvoicesLocallyEnabled: Boolean = true,
+
+    /**
+     * Product tag to identify which extraction type the app uses.
+     *
+     * - [ProductTag.SepaExtractions]: Show normal extractions
+     * - [ProductTag.CxExtractions]: Show compound extractions
+     * - [ProductTag.AutoDetectExtractions]: Auto-detect (not yet available)
+     *
+     * Default is [ProductTag.SepaExtractions] for backward compatibility.
+     *
+     */
+    val productTag: ProductTag = ProductTag.SepaExtractions,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -279,7 +256,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setCustomHelpItems(configuration.customHelpItems)
         .setGiniErrorLoggerIsOn(configuration.giniErrorLoggerIsOn)
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
-        .setBottomNavigationBarEnabled(configuration.bottomNavigationBarEnabled)
         .setAlreadyPaidHintEnabled(configuration.alreadyPaidHintEnabled)
         .setPaymentDueHintEnabled(configuration.paymentDueHintEnabled)
         .setPaymentDueHintThresholdDays(configuration.paymentDueHintThresholdDays)
@@ -287,6 +263,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
         .setSaveInvoicesLocallyEnabled(configuration.saveInvoicesLocallyEnabled)
+        .setProductTag(configuration.productTag)
         .addCustomUploadMetadata(GiniBank.USER_COMMENT_GINI_BANK_VERSION, BuildConfig.VERSION_NAME)
         .apply {
             configuration.eventTracker?.let { setEventTracker(it) }
@@ -323,23 +300,6 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
                     it
                 )
             }
-            configuration.onboardingNavigationBarBottomAdapter?.let {
-                setOnboardingNavigationBarBottomAdapter(
-                    it
-                )
-            }
-            configuration.cameraNavigationBarBottomAdapter?.let {
-                setCameraNavigationBarBottomAdapter(
-                    it
-                )
-            }
-            configuration.reviewNavigationBarBottomAdapter?.let {
-                setReviewBottomBarNavigationAdapter(
-                    it
-                )
-            }
-            configuration.helpNavigationBarBottomAdapter?.let { setHelpNavigationBarBottomAdapter(it) }
-            configuration.errorNavigationBarBottomAdapter?.let { setErrorNavigationBarBottomAdapter(it) }
             configuration.giniComposableStyleProvider?.let { setGiniComposableStyleProvider(it) }
         }
 }

@@ -2,10 +2,11 @@ package net.gini.android.bank.sdk.exampleapp.ui.util
 
 import android.app.Activity
 import android.widget.Toast
-import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.ui.ExtractionsActivity
 import net.gini.android.capture.CaptureSDKResult
+import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.GiniCaptureFragmentListener
+import net.gini.android.capture.ProductTag
 
 class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener {
     override fun onFinishedWithResult(result: CaptureSDKResult) {
@@ -35,8 +36,8 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
             is CaptureSDKResult.Error -> {
                 Toast.makeText(
                     context,
-                    "Error: ${(result.value as ResultError.FileImport).code} " +
-                            "${(result.value as ResultError.FileImport).message}",
+                    "Error: ${result.value.errorCode} " +
+                            "${result.value.message}",
                     Toast.LENGTH_LONG
                 ).show()
 
@@ -48,6 +49,8 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
                     ExtractionsActivity.getStartIntent(
                         context,
                         result.specificExtractions,
+                        result.compoundExtractions,
+                        GiniCapture.getInstance().productTag == ProductTag.CxExtractions,
                         true
                     )
                 )

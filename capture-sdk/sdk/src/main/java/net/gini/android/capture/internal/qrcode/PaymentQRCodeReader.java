@@ -2,14 +2,14 @@ package net.gini.android.capture.internal.qrcode;
 
 import android.media.Image;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
 import net.gini.android.capture.internal.util.Size;
 
 import java.util.List;
 import java.util.concurrent.CancellationException;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 
 /**
  * Created by Alpar Szotyori on 08.12.2017.
@@ -34,14 +34,17 @@ public class PaymentQRCodeReader {
         @Override
         public void onPaymentQRCodeDataAvailable(
                 @NonNull final PaymentQRCodeData paymentQRCodeData) {
+            // No-op
         }
 
         @Override
         public void onNonPaymentQRCodeDetected(@NonNull final String qrCodeContent) {
+            // No-op
         }
 
         @Override
         public void onQRCodeReaderFail() {
+            // No-op
         }
     };
     private boolean isReleased = false;

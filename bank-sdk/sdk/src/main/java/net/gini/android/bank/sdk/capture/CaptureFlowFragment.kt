@@ -37,9 +37,11 @@ import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDoc
 import net.gini.android.bank.sdk.transactiondocs.internal.usecase.TransactionDocDialogConfirmAttachUseCase
 import net.gini.android.bank.sdk.transactiondocs.ui.dialog.attachdoc.AttachDocumentToTransactionDialog
 import net.gini.android.bank.sdk.util.disallowScreenshots
+import net.gini.android.bank.sdk.capture.extractions.CxExtractionsFilter
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.Document
 import net.gini.android.capture.GiniCapture
+import net.gini.android.capture.ProductTag
 import net.gini.android.capture.GiniCaptureFragment
 import net.gini.android.capture.GiniCaptureFragmentDirections
 import net.gini.android.capture.GiniCaptureFragmentListener
@@ -98,10 +100,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
     private lateinit var composeView: ComposeView
 
-    private fun setReturnReasonsEventProperty() {
+    private fun setBankSdkVersionEventProperty() {
         userAnalyticsEventTracker?.setUserProperty(
             setOf(
-                UserAnalyticsUserProperty.ReturnReasonsEnabled(GiniBank.enableReturnReasons),
                 UserAnalyticsUserProperty.BankSdkVersionName(BuildConfig.VERSION_NAME),
             )
         )
@@ -131,7 +132,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         composeView = view.findViewById(R.id.gbs_compose_view)
-        setReturnReasonsEventProperty()
+        setBankSdkVersionEventProperty()
         view.protectViewFromInsets()
         userAnalyticsEventTracker?.trackEvent(UserAnalyticsEvent.SDK_OPENED)
         navController = (childFragmentManager.fragments[0]).findNavController()
@@ -220,15 +221,22 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     }
 
     private fun processOnFinishedResultSuccessState(result: CaptureSDKResult.Success) {
+        val filteredResult = if (GiniCapture.hasInstance() &&
+            GiniCapture.getInstance().productTag is ProductTag.CxExtractions
+        ) {
+            CxExtractionsFilter.filterForCxExtractions(result)
+        } else {
+            result
+        }
         when {
             GiniBank.getCaptureConfiguration()?.returnAssistantEnabled == true -> {
                 try {
-                    tryShowingReturnAssistant(result)
+                    tryShowingReturnAssistant(filteredResult)
                     return
                 } catch (notUsed: DigitalInvoiceException) {
-                    tryShowingSkontoScreen(result) {
+                    tryShowingSkontoScreen(filteredResult) {
                         tryShowAttachDocToTransactionDialog {
-                            finishWithResult(interceptSuccessResult(result).toCaptureResult())
+                            finishWithResult(interceptSuccessResult(filteredResult).toCaptureResult())
                         }
                     }
                     return
@@ -236,9 +244,9 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
             }
 
             GiniBank.getCaptureConfiguration()?.skontoEnabled == true -> {
-                tryShowingSkontoScreen(result) {
+                tryShowingSkontoScreen(filteredResult) {
                     tryShowAttachDocToTransactionDialog {
-                        finishWithResult(interceptSuccessResult(result).toCaptureResult())
+                        finishWithResult(interceptSuccessResult(filteredResult).toCaptureResult())
                     }
                 }
                 return
@@ -246,7 +254,7 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
 
             else -> {
                 tryShowAttachDocToTransactionDialog {
-                    finishWithResult(interceptSuccessResult(result).toCaptureResult())
+                    finishWithResult(interceptSuccessResult(filteredResult).toCaptureResult())
                 }
 
             }
@@ -397,6 +405,15 @@ class CaptureFlowFragment(private val openWithDocument: Document? = null) :
     }
 
     private fun interceptSuccessResult(result: CaptureSDKResult.Success): CaptureSDKResult {
+        if (GiniCapture.hasInstance() &&
+            GiniCapture.getInstance().productTag is ProductTag.CxExtractions
+        ) {
+            return if (CxExtractionsFilter.hasCxExtractions(result)) {
+                result
+            } else {
+                CaptureSDKResult.Empty
+            }
+        }
         return if (result.specificExtractions.isEmpty() ||
             !pay5ExtractionsAvailable(result.specificExtractions) &&
             !epsPaymentAvailable(result.specificExtractions)

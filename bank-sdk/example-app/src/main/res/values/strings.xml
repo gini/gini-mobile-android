@@ -124,7 +124,6 @@
     <string name="return_assistant_bottom_navigation_bar_switch_label">Return assistant bottom navigation bar</string>
     <string name="event_tracker_switch_label">Event tracker</string>
     <string name="save_invoices_feature_label">Save Invoices Locally</string>
-    <string name="return_reasons_dialog_switch_label">Return reasons dialog</string>
     <string name="gini_error_switch_label">Gini error logger</string>
     <string name="custom_error_switch_label">Custom error logger</string>
     <string name="imported_file_size_bytes_limit">Imported File Size Bytes Limit</string>
@@ -149,7 +148,14 @@
     <string name="use_custom_credentials_label">Use custom credentials</string>
     <string name="gini_client_id_label">Client Id</string>
     <string name="client_secret_label">Client Secret</string>
+    <string name="custom_http_client_switch_label">Enable Custom HTTP Client</string>
+    <string name="force_theme_label">Force SDK theme</string>
+    <string name="force_dark_theme_switch_label">Force dark theme</string>
+    <string name="force_light_theme_switch_label">Force light theme</string>
 
     <string name="configuration_transaction_docs_enabled">Transaction Docs enabled</string>
     <string name="configuration_transaction_docs_always_attach_docs">Always attach invoices</string>
+
+    <string name="product_tag_cx_switch_label">Enable CX Extractions</string>
+    <string name="product_tag_cx_switch_description">Turn on for CX (compound) extractions. Turn off for SEPA (standard) extractions.</string>
 </resources>

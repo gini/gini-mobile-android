@@ -12,6 +12,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
+import androidx.test.InstrumentationRegistry;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.uiautomator.UiDevice;
+
 import net.gini.android.capture.Document;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.ImageDocument;
@@ -24,12 +30,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
-import androidx.test.InstrumentationRegistry;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.uiautomator.UiDevice;
 
 public class Helpers {
 

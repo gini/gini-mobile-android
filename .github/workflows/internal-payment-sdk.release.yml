@@ -14,6 +14,8 @@ on:
 jobs:
   check:
     uses: ./.github/workflows/internal-payment-sdk.check.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   release:
     needs: check

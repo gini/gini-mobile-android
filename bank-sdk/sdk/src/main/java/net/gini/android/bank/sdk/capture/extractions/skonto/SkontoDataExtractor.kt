@@ -20,8 +20,8 @@ internal class SkontoDataExtractor {
         val totalAmountToPay = extractions["amountToPay"]
             ?: throw NoSuchElementException("Field `extractions.amountToPay` is missing")
 
-        val skontoDiscountMaps = compoundExtractions["skontoDiscounts"]?.specificExtractionMaps
-            ?: throw NoSuchElementException("Field `compoundExtractions.skontoDiscounts` is missing")
+        val skontoDiscountMaps = (compoundExtractions["skontoDiscounts"]?.specificExtractionMaps
+            ?: throw NoSuchElementException("Field `compoundExtractions.skontoDiscounts` is missing")).toList()
 
         return skontoDiscountMaps.map { skontoDiscountData ->
             val skontoPercentageDiscounted = skontoDiscountData.extractDataByKeys(

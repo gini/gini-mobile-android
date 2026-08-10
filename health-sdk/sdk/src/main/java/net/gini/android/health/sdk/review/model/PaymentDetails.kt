@@ -46,56 +46,62 @@ internal fun String.toAmount(): String {
     }
 }
 
-internal fun MutableMap<String, CompoundExtraction>.withFeedback(paymentDetails: PaymentDetails): Map<String, CompoundExtraction> {
-    this["payment"] = this["payment"].let { payment ->
-        CompoundExtraction(
-            payment?.name ?: "payment",
-            payment?.specificExtractionMaps?.mapIndexed { index, specificExtractions ->
-                if (index > 0) return@mapIndexed specificExtractions
-
-                mutableMapOf<String, SpecificExtraction>().also { extractions ->
-                    extractions.putAll(specificExtractions)
-                    extractions["payment_recipient"] = extractions["payment_recipient"].let { extraction ->
-                        SpecificExtraction(
-                            extraction?.name ?: "payment_recipient",
-                            paymentDetails.recipient,
-                            extraction?.entity ?: "",
-                            extraction?.box,
-                            extraction?.candidate ?: emptyList()
-                        )
-                    }
-                    extractions["iban"] = extractions["iban"].let { extraction ->
-                        SpecificExtraction(
-                            extraction?.name ?: "iban",
-                            paymentDetails.iban,
-                            extraction?.entity ?: "",
-                            extraction?.box,
-                            extraction?.candidate ?: emptyList()
-                        )
-                    }
-                    extractions["amount_to_pay"] = extractions["amount_to_pay"].let { extraction ->
-                        SpecificExtraction(
-                            extraction?.name ?: "amount_to_pay",
-                            "${paymentDetails.amount.sanitizeAmount().toBackendFormat()}:EUR",
-                            extraction?.entity ?: "",
-                            extraction?.box,
-                            extraction?.candidate ?: emptyList()
-                        )
-                    }
-                    extractions["payment_purpose"] = extractions["payment_purpose"].let { extraction ->
-                        SpecificExtraction(
-                            extraction?.name ?: "payment_purpose",
-                            paymentDetails.purpose,
-                            extraction?.entity ?: "",
-                            extraction?.box,
-                            extraction?.candidate ?: emptyList()
-                        )
-                    }
-                }
-            } ?: listOf()
-        )
+/**
+ * Updates specific extractions with feedback from payment details.
+ *
+ * This function creates a new map of specific extractions with updated values from the provided
+ * [PaymentDetails]. The backend (as of BAC-1771) automatically maps feedback sent via specific
+ * extractions to both specific and compound extractions, eliminating the need for duplicate data.
+ *
+ * The function preserves existing extraction metadata (box, entity, candidates) while updating
+ * the values with user-modified payment information.
+ *
+ * @param paymentDetails The payment details containing updated values to send as feedback
+ * @return A map of specific extractions with updated values for the four main payment fields:
+ *         payment_recipient, iban, amount_to_pay, and payment_purpose
+ *
+ * @see PaymentDetails
+ * @see SpecificExtraction
+ */
+internal fun MutableMap<String, SpecificExtraction>.withFeedback(paymentDetails: PaymentDetails): Map<String, SpecificExtraction> {
+    return this.toMutableMap().apply {
+        this["payment_recipient"] = this["payment_recipient"].let { extraction ->
+            SpecificExtraction(
+                extraction?.name ?: "payment_recipient",
+                paymentDetails.recipient,
+                extraction?.entity ?: "companyname",
+                extraction?.box,
+                extraction?.candidate ?: emptyList()
+            )
+        }
+        this["iban"] = this["iban"].let { extraction ->
+            SpecificExtraction(
+                extraction?.name ?: "iban",
+                paymentDetails.iban,
+                extraction?.entity ?: "iban",
+                extraction?.box,
+                extraction?.candidate ?: emptyList()
+            )
+        }
+        this["amount_to_pay"] = this["amount_to_pay"].let { extraction ->
+            SpecificExtraction(
+                extraction?.name ?: "amount_to_pay",
+                "${paymentDetails.amount.sanitizeAmount().toBackendFormat()}:EUR",
+                extraction?.entity ?: "amount",
+                extraction?.box,
+                extraction?.candidate ?: emptyList()
+            )
+        }
+        this["payment_purpose"] = this["payment_purpose"].let { extraction ->
+            SpecificExtraction(
+                extraction?.name ?: "payment_purpose",
+                paymentDetails.purpose,
+                extraction?.entity ?: "text",
+                extraction?.box,
+                extraction?.candidate ?: emptyList()
+            )
+        }
     }
-    return this
 }
 
 internal fun MutableMap<String, CompoundExtraction>.getPaymentExtraction(name: String) = this["payment"]?.specificExtractionMaps?.get(0)?.get(name)
