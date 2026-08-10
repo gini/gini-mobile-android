@@ -32,6 +32,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
     private val keyIsPaymentDueHintEnabled = booleanPreferencesKey("is_payment_due_hint_enabled")
     private val keyIsUnsupportedQRCodeWarningEnabled =
         booleanPreferencesKey("is_unsupported_qr_code_warning_enabled")
+    private val keyIsCreditNoteHintEnabled = booleanPreferencesKey("is_credit_note_hint_enabled")
 
     fun getConfiguration(): Flow<Configuration?> = context.dataStore.data.map { prefs ->
         if (prefs[keyIsCached] != true) return@map null
@@ -50,6 +51,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
             isPaymentDueHintEnabled = prefs[keyIsPaymentDueHintEnabled] ?: false,
             isUnsupportedQRCodeWarningEnabled = prefs[keyIsUnsupportedQRCodeWarningEnabled]
                 ?: false,
+            isCreditNoteHintEnabled = prefs[keyIsCreditNoteHintEnabled] ?: false,
         )
     }
 
@@ -71,6 +73,8 @@ internal class ClientConfigurationStorage(private val context: Context) {
             prefs[keyIsPaymentDueHintEnabled] = configuration.isPaymentDueHintEnabled
             prefs[keyIsUnsupportedQRCodeWarningEnabled] =
                 configuration.isUnsupportedQRCodeWarningEnabled
+            prefs[keyIsCreditNoteHintEnabled] =
+                configuration.isCreditNoteHintEnabled
             prefs[keyIsCached] = true
         }
     }

@@ -84,5 +84,6 @@ class ClientConfigurationStorageTest {
         isAlreadyPaidHintEnabled = false,
         isPaymentDueHintEnabled = false,
         isUnsupportedQRCodeWarningEnabled = isUnsupportedQRCodeWarningEnabled,
+        isCreditNoteHintEnabled = false,
     )
 }
