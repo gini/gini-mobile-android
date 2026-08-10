@@ -30,7 +30,7 @@ Dependency chain (release order): `core-api-library` → `health-api-library`/`b
 **Build new UI in Jetpack Compose where and when feasible; default to Fragment/Views only when Compose can't meet the requirement.** Going-forward default for **new** work — not a mandate to rewrite existing Views/XML screens. Preserve the architecture: the public entry point stays a singleton facade returning a **`Fragment`** (e.g. `GiniBank.createCaptureFlowFragment(): CaptureFlowFragment`); Compose screens are hosted inside that Fragment via `ComposeView`/`setContent` and placed in the AndroidX Navigation Component nav graph (the Coordinator analog — there is no Navigation-Compose here).
 
 - **`capture-sdk` and `bank-sdk`** already have Compose infrastructure (`GiniTheme`, Koin `viewModel {}`, Orbit-MVI in bank-sdk) — new UI there is straightforwardly Compose-first.
-- **`health-sdk` and `internal-payment-sdk` have no Compose today (XML/Fragment only).** New UI there is still Compose-first per policy, but flag that it requires bootstrapping `GiniTheme` access first — surface that cost and let the user decide per screen rather than silently starting a migration.
+- **The `health-sdk/sdk` and `internal-payment-sdk` SDK modules have no Compose today (XML/Fragment only)** — though the health-sdk **example app** is already Compose-based. New UI in those SDK modules is still Compose-first per policy, but flag that it requires bootstrapping `GiniTheme` access first — surface that cost and let the user decide per screen rather than silently starting a migration.
 - Fall back to Fragment/Views when: the screen is camera/legacy-Java-heavy capture, it needs a Views-only capability the SDK already implements, or an API isn't feasible at minSdk 23 and can't be gated cleanly.
 
 ## Your Team
@@ -52,7 +52,9 @@ Dependency chain (release order): `core-api-library` → `health-api-library`/`b
 6. When Compose feasibility is unclear (especially in health-sdk/internal-payment-sdk), ask before committing to a stack.
 7. Architecture, DI (Koin), coroutines/concurrency, security, performance, and localization standards still apply (see Mandatory Rules) — enforce them inline; dedicated specialists for those are not in the reduced team.
 
-## Mandatory Rules (from AGENTS.md)
+## Mandatory Rules
+
+The canonical standards are in `AGENTS.md` — this list restates them with the repo specifics this team enforces. **If this list and `AGENTS.md` ever disagree, `AGENTS.md` wins — and flag the drift to the user.**
 
 - **No mocks/placeholders/stubs in production code.** Every line must be real and functional. If information is missing, ask the user.
 - **Kotlin-first.** New code is Kotlin + coroutines. `capture-sdk` has substantial legacy Java — don't convert it opportunistically; follow the style of the file you're editing.

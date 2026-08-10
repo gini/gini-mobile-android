@@ -25,14 +25,14 @@ This agent is self-contained. Establish these as the repo's a11y conventions.
 
 ### Compose
 
-1. **Meaningful images/icons need labels.** `Icon`/`Image` conveying meaning must set `contentDescription`; decorative ones set it to `null` deliberately (or `Modifier.semantics { invisibleToUser() }`), not by omission.
+1. **Meaningful images/icons need labels.** `Icon`/`Image` conveying meaning must set `contentDescription`; decorative ones set it to `null` deliberately (or `Modifier.semantics { hideFromAccessibility() }` — `invisibleToUser()` is deprecated at this Compose BOM), not by omission.
 2. **Icon-only buttons.** Must carry a label via `contentDescription` or `Modifier.semantics { contentDescription = ... }` — never an unlabeled clickable icon.
 3. **Labels describe purpose, not control/gesture.** "Delete message", not "Delete button" / "tap to delete" — TalkBack already announces the role. Include dynamic state via `stateDescription` ("Notifications enabled"); set `error(msg)` semantics on invalid fields so errors are announced.
 4. **Semantics merging & structure.** Group related nodes with `Modifier.semantics(mergeDescendants = true) {}` (cards, list items, label+field); set `role` (`Role.Button`/`Role.Checkbox`/`Role.Switch`) on custom clickables; when a parent Row owns a toggle, set the child control's `onCheckedChange = null`. Use `clearAndSetSemantics {}` to replace children's semantics for a custom control; mark headings with `semantics { heading() }`.
 5. **Click semantics.** Interactive elements use `clickable(role, onClickLabel = ...)` / `toggleable` / `selectable`, not a bare `pointerInput`. Provide `customActions` (`CustomAccessibilityAction`) for swipe/long-press-only actions so single-pointer users reach them.
 6. **Traversal order.** `traversalIndex` only works inside a `semantics { isTraversalGroup = true }` container — otherwise it silently no-ops; don't use it to paper over a layout whose visual order differs from composition order (fix the layout). Announce async changes with `liveRegion = LiveRegionMode.Polite` (queued), `Assertive` only for critical errors.
 7. **Never convey info by color alone** (WCAG 1.4.11) — pair color with icon + text (status badges, validation).
-8. **Sensitive fields.** Mark individual sensitive nodes with `semantics { sensitiveData = true }` (not whole screens); `FLAG_SECURE` does **not** stop a11y services reading text. Password fields must allow paste/autofill.
+8. **Sensitive fields.** Password/secret inputs use `PasswordVisualTransformation` and expose `semantics { password() }`; never put secret values in `contentDescription`/`stateDescription` or announcements — `FLAG_SECURE` does **not** stop a11y services reading text. Password fields must allow paste/autofill.
 
 ### Views / XML
 
@@ -60,7 +60,7 @@ This agent is self-contained. Establish these as the repo's a11y conventions.
 - [ ] Layout survives max font scale and long German strings; no clipping
 - [ ] Contrast adequate (4.5:1 / 3:1); colors from theme tokens; API-34 contrast reads gated
 - [ ] Info never conveyed by color alone (icon + text pairing)
-- [ ] Sensitive nodes marked `sensitiveData`; password fields allow paste/autofill
+- [ ] Password/secret fields use `password()` semantics + `PasswordVisualTransformation`; paste/autofill allowed; no secrets in announcements
 - [ ] Focus order/visibility managed; focused element not hidden behind IME/sheets
 - [ ] RTL reading order correct
 - [ ] All a11y copy localized via string resources / `GiniLocalization`

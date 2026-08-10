@@ -5,17 +5,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat <<'HOOK_OUTPUT'\nINSTRUCTION: GINI ANDROID AGENTS CHECK\nIf this task involves Kotlin, Jetpack Compose, Fragments/Views, coroutines,\nDI, networking, testing, Play submission, or any Gini Android SDK code:\n\n1. Delegate to the gini-orchestrator agent.\n2. gini-orchestrator decides which specialists review: compose, views,\n   a11y, testing.\n   Architecture, DI (Koin), coroutines, security, performance, and localization\n   standards still apply and are enforced inline.\n3. Do NOT write UI code without a11y-specialist review.\n4. Ensure coroutine/Flow correctness (structured concurrency, injected dispatchers,\n   lifecycle-aware collection) — enforced inline.\n5. Follow AGENTS.md standards: Kotlin-first; MVVM + StateFlow (Orbit-MVI in bank-sdk);\n   singleton-facade-returns-Fragment entry; Koin DI; GiniTheme design tokens; version\n   catalog only; ktlint + Detekt gate; KDoc; internal-by-default; <type>(<project>): subject commits.\n6. NEVER create mock, placeholder, or stub implementations in production code. Use built-in features.\n\nIf the task does not involve Kotlin or Android code, proceed normally.\nHOOK_OUTPUT"
+            "command": "cat <<'HOOK_OUTPUT'\nINSTRUCTION: GINI ANDROID AGENTS CHECK\nOnly if this prompt asks for Gini Android SDK code to be written, changed, or reviewed\n(Kotlin, Jetpack Compose, Fragments/Views, coroutines, DI, networking, tests):\n\n1. Delegate substantive work to the gini-orchestrator agent (or /gini-task), which\n   routes to the compose/views/a11y/testing specialists.\n2. Do NOT write UI code without a11y-specialist review.\n3. The canonical repo standards live in AGENTS.md — follow them. Never create mock,\n   placeholder, or stub implementations in production code.\n\nFor questions, trivial fixes, or non-Android tasks, proceed normally.\nHOOK_OUTPUT"
           }
         ]
       }
     ],
-    "SubagentStop": [
+    "PostToolUse": [
       {
+        "matcher": "Task",
         "hooks": [
           {
             "type": "command",
-            "command": "cat <<'HOOK_OUTPUT'\nVALIDATION: Before presenting specialist output to the user:\n- Check for conflicts between specialist recommendations\n- Verify accessibility was reviewed for user-facing UI code\n- Verify GiniTheme design tokens and localization resources were applied to UI code\n- Verify new Compose UI was assessed for test coverage (Compose UI tests are a known repo gap)\n- Reject any mock, placeholder, or stub implementations in production code\nHOOK_OUTPUT"
+            "command": "cat <<'HOOK_OUTPUT'\n{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"VALIDATION: Before presenting specialist output to the user:\\n- Check for conflicts between specialist recommendations\\n- Verify accessibility was reviewed for user-facing UI code\\n- Verify GiniTheme design tokens and localization resources were applied to UI code\\n- Verify new Compose UI was assessed for test coverage (Compose UI tests are a known repo gap)\\n- Reject any mock, placeholder, or stub implementations in production code\"}}\nHOOK_OUTPUT"
           }
         ]
       }
