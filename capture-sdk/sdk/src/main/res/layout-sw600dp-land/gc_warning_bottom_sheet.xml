@@ -71,31 +71,29 @@
             </androidx.core.widget.NestedScrollView>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/cancel_button"
+                android:id="@+id/primary_button"
                 style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_analysis_hint_icon_size"
                 android:layout_marginHorizontal="@dimen/gc_analysis_hint_icon_size"
-                android:text="@string/gc_cancel_transfer"
                 app:layout_constraintTop_toBottomOf="@id/textScroll"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                  />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/proceed_button"
+                android:id="@+id/secondary_button"
                 style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/gc_medium"
                 android:layout_marginHorizontal="@dimen/gc_analysis_hint_icon_size"
                 android:layout_marginBottom="@dimen/gc_analysis_hint_icon_size"
-                android:text="@string/gc_proceed_anyway"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cancel_button" />
+                app:layout_constraintTop_toBottomOf="@id/primary_button" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
