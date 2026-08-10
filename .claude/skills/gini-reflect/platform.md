@@ -18,9 +18,11 @@
   `.claude/skills/gini-fix/platform.md`,
   `.claude/skills/gini-reflect/platform.md` — Android-specific guidance for
   the shared skills. Target the skill whose step the learning improves.
-- `.claude/skills/*/SKILL.md` — only for flaws in the shared workflow
-  itself. These are mirrored byte-identical with gini-mobile-ios
-  (CI: shared-skills.check.yml), so every change needs a paired iOS PR.
+- `.claude/skills/*/SKILL.md` — only for flaws in the workflow itself. The
+  files listed in `.github/mirrored-skills.txt` are mirrored byte-identical
+  with gini-mobile-ios (CI: shared-skills.check.yml), so a learning routed
+  there needs a paired iOS PR. The remaining skills are Android-only and
+  can be edited directly.
 
 NOT learning targets:
 
