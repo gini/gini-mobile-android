@@ -19,14 +19,25 @@ sonar {
         // S1133 ("remove this deprecated code someday") is by design on the accessToken
         // compatibility API deprecated in PP-2363: it is scheduled for removal with the
         // next major version, so the reminder must not fail the quality gate until then.
-        property("sonar.issue.ignore.multicriteria", "deprecatedAccessTokenApi")
         property(
-            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenApi.ruleKey",
+            "sonar.issue.ignore.multicriteria",
+            "deprecatedAccessTokenRepository,deprecatedAccessTokenRemoteSource"
+        )
+        property(
+            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenRepository.ruleKey",
             "kotlin:S1133"
         )
         property(
-            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenApi.resourceKey",
-            "**/net/gini/android/core/api/Document*.kt"
+            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenRepository.resourceKey",
+            "**/net/gini/android/core/api/DocumentRepository.kt"
+        )
+        property(
+            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenRemoteSource.ruleKey",
+            "kotlin:S1133"
+        )
+        property(
+            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenRemoteSource.resourceKey",
+            "**/net/gini/android/core/api/DocumentRemoteSource.kt"
         )
     }
 }
