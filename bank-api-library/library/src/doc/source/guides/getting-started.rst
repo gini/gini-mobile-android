@@ -101,7 +101,7 @@ Authentication behavior changes in this version
 -----------------------------------------------
 
 The library now adds the ``Authorization`` header in the OkHttp layer (via an interceptor) instead of per request
-in the repositories. This is transparent to the API of the library, but two behaviors changed:
+in the repositories. This is transparent to the API of the library, but three behaviors changed:
 
 - API requests are no longer serialized: previously all requests of a document manager ran one at a time while
   the access token was managed. Now only the session request itself is serialized (so no duplicate anonymous
@@ -109,6 +109,10 @@ in the repositories. This is transparent to the API of the library, but two beha
 - When requesting a session fails, the ``exception`` of the returned ``Resource.Error`` is now an
   ``ApiException`` which wraps the original exception as its ``cause`` (previously it was the original
   exception itself). Message, status code, headers and body are unchanged.
+- ``SessionManager.getSession()`` is now called once per HTTP request instead of once per document manager
+  operation. Operations which perform multiple HTTP requests (for example creating a partial document) call
+  it multiple times, so a custom ``SessionManager`` should return a cached session while it is valid instead
+  of authenticating on every call (the default anonymous session manager already does this).
 
 Public Key Pinning
 ==================
