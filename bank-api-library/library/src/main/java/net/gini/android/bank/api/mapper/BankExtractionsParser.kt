@@ -8,13 +8,12 @@ import org.json.JSONException
 import org.json.JSONObject
 
 /**
- * Internal use only. (Public visibility is required because the capture sdk consumes this
- * parser from its own module.)
+ * Internal use only.
  *
  * Parses the Gini Bank API extractions response JSON into the Bank SDK's extraction models,
  * including the Bank API specific return reasons.
  */
-object BankExtractionsParser {
+internal object BankExtractionsParser {
 
     /**
      * Parses a complete extractions response (the response body of
