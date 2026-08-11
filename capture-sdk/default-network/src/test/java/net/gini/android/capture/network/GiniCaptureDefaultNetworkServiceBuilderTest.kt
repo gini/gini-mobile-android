@@ -36,9 +36,9 @@ class GiniCaptureDefaultNetworkServiceBuilderTest {
 
     @Test
     fun `self-managed authentication takes precedence over a configured SessionManager`() {
-        // Black-box pin of the `when` branch order in build(): the self-managed branch
-        // requires a GiniHttpClientProvider and must throw without one - if the SessionManager
-        // branch won instead, build() would succeed and the SessionManager would be live.
+        // Black-box pin of the precedence: self-managed authentication requires a
+        // GiniHttpClientProvider and must throw without one - if the configured SessionManager
+        // won instead, build() would succeed and the SessionManager would be live.
         val builder = GiniCaptureDefaultNetworkService.builder(context)
             .setSessionManager { error("must never be used") }
             .setSelfManagedAuthentication(true)

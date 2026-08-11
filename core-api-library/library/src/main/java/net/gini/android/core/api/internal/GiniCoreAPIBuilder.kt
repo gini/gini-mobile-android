@@ -259,7 +259,29 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
      */
     open fun setSelfManagedAuthentication(enabled: Boolean): GiniCoreAPIBuilder<DM, G, DR, E> {
         isSelfManagedAuthentication = enabled
+        if (enabled) {
+            warnAboutIgnoredAuthenticationConfig()
+        }
         return this
+    }
+
+    // The SessionManager and the client credentials can only be passed to the constructor, so
+    // when self-managed authentication is enabled the ignored configuration is already known.
+    private fun warnAboutIgnoredAuthenticationConfig() {
+        if (sessionManager != null) {
+            Log.w(
+                LOG_TAG,
+                "Self-managed authentication is enabled - the SessionManager passed to " +
+                        "this builder is ignored."
+            )
+        }
+        if (clientId.isNotEmpty() || clientSecret.isNotEmpty() || emailDomain.isNotEmpty()) {
+            Log.w(
+                LOG_TAG,
+                "Self-managed authentication is enabled - the client credentials passed to " +
+                        "this builder are ignored."
+            )
+        }
     }
 
     /**

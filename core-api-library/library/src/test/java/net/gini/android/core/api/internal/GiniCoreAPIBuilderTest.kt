@@ -1,6 +1,7 @@
 package net.gini.android.core.api.internal
 
 import android.content.Context
+import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
@@ -41,6 +42,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.shadows.ShadowLog
 import java.io.IOException
 import java.util.Date
 
@@ -98,6 +100,36 @@ class GiniCoreAPIBuilderTest {
         assertThat(session).isInstanceOf(Resource.Error::class.java)
         assertThat((session as Resource.Error).message).contains("self-managed")
     }
+
+    @Test
+    fun `enabling self-managed authentication warns about an ignored SessionManager and client credentials`() {
+        builder(sessionManager = successfulSessionManager()).setSelfManagedAuthentication(true)
+
+        val warnings = builderWarnings()
+        assertThat(warnings.filter { "SessionManager" in it && "ignored" in it }).hasSize(1)
+        assertThat(warnings.filter { "client credentials" in it && "ignored" in it }).hasSize(1)
+    }
+
+    @Test
+    fun `enabling self-managed authentication warns only about the client credentials when no SessionManager is set`() {
+        builder().setSelfManagedAuthentication(true)
+
+        val warnings = builderWarnings()
+        assertThat(warnings.filter { "SessionManager" in it }).isEmpty()
+        assertThat(warnings.filter { "client credentials" in it }).hasSize(1)
+    }
+
+    @Test
+    fun `enabling self-managed authentication without authentication config does not warn`() {
+        TestCoreApiBuilder(context, "", "", "").setSelfManagedAuthentication(true)
+
+        assertThat(builderWarnings()).isEmpty()
+    }
+
+    private fun builderWarnings(): List<String> =
+        ShadowLog.getLogs()
+            .filter { it.tag == GiniCoreAPIBuilder.LOG_TAG && it.type == Log.WARN }
+            .map { it.msg }
 
     @Test
     fun `getSessionManager returns the session manager passed to the constructor`() {
