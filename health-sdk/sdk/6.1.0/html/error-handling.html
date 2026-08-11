@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Error Handling &mdash; Gini Health SDK for Android  documentation</title>
+  
+
+  
+  
+
+  
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,400italic,600italic|Source+Code+Pro|Roboto+Slab:400,700" rel="stylesheet" type="text/css" />
+
+  
+  
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:'./',
+        VERSION:'',
+        COLLAPSE_INDEX:false,
+        FILE_SUFFIX:'.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+    <script type="text/javascript">
+        jQuery(function () {
+            SphinxRtdTheme.StickyNav.enable();
+        });
+    </script>
+  
+
+  
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Gini Health SDK for Android  documentation" href="index.html"/>
+        <link rel="next" title="Event Tracking" href="event-tracking.html"/>
+        <link rel="prev" title="Flow" href="flow.html"/> 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" id="gini-logo">
+          <img src="_static/logo_flat.png" />
+        </a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-pay-deep-link-for-your-app">Gini Pay Deep Link For Your App</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html#gini-health-api-client-credentials">Gini Health API Client Credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authentication.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-ginihealth-instance">Create the GiniHealth instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#upload-documents">Upload documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#check-which-documents-invoices-are-payable">Check which documents/invoices are payable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#check-if-document-has-multiple-invoices">Check if document has multiple invoices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#create-the-paymentfragment">Create the PaymentFragment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#get-payment-details">Get Payment Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#sending-feedback-for-extractions">Sending Feedback for Extractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#delete-payment-request">Delete payment request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#delete-multiple-payment-requests">Delete multiple payment requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#delete-multiple-documents-at-once">Delete multiple documents at once</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#handling-process-death">Handling process death</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="flow.html#example-koin">Example (Koin)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flow.html#koin-bootstrap-in-application">Koin bootstrap (in Application)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Error Handling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-ginihealthexception-class">The <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-errorresponse-class">The <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code> class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-errors-are-propagated">How errors are propagated</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flows">Flows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ginihealth-suspend-functions"><code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> suspend functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentmanager-functions-resource-return-type"><code class="docutils literal notranslate"><span class="pre">documentManager</span></code> functions (<code class="docutils literal notranslate"><span class="pre">Resource</span></code> return type)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#breaking-changes">Breaking changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#return-type-changes">Return type changes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="event-tracking.html">Event Tracking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#ginihealth">GiniHealth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="event-tracking.html#paymentcomponent">PaymentComponent</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#example-banking-app">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#development-gini-health-api-client-credentials">Development Gini Health API client credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#end-to-end-testing">End to end testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#id1">Example banking app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-fragment">Payment Fragment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-component-bottom-sheet">Payment component bottom sheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#bank-picker">Bank picker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#more-information-and-faq">More information and FAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#payment-review">Payment review</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#execute-payment">Execute payment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html#return-to-your-app">Return to your app</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#testing-in-production">Testing in production</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">UI Customization Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#overview-of-ui-customization-options">Overview of UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#styles">Styles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#colors">Colors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#typography">Typography</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#dark-mode">Dark mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#ui-customization-options">UI customization options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-component">Payment Component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#bank-selection-bottom-sheet">Bank Selection Bottom Sheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-feature-info-screen">Payment Feature Info Screen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customization.html#payment-review-screen">Payment Review Screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accessibility.html">Accessibility Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-safety.html">Google Play Data Safety Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data-safety.html#data-collection-and-security">Data collection and security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data-safety.html#data-types">Data types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data-safety.html#data-usage-and-handling">Data usage and handling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data-safety.html#financial-info-purchase-history">Financial info - Purchase history</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data-safety.html#photos-and-videos">Photos and videos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data-safety.html#files-and-docs">Files and docs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data-safety.html#device-or-other-ids">Device or other IDs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#licenses-and-acknowledgements-for-incorporated-software">Licenses and Acknowledgements for Incorporated Software</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#photoview">PhotoView</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#insetter">Insetter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Gini Health SDK for Android</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Error Handling</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="error-handling">
+<h1>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h1>
+<p>The Gini Health SDK provides structured, detailed error information for API failures. Errors carry the HTTP
+status code, a message, a support request ID, and — for bulk operations — the list of affected
+entity IDs (documents or payment requests).</p>
+<p>The SDK error model is built around <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code>, <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code>, and <code class="docutils literal notranslate"><span class="pre">ErrorItem</span></code>, each
+described in detail below.</p>
+<div class="section" id="the-ginihealthexception-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> class<a class="headerlink" href="#the-ginihealthexception-class" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> extends <code class="docutils literal notranslate"><span class="pre">Exception</span></code> and is thrown whenever an API call fails — whether the failure
+is an HTTP error response (<code class="docutils literal notranslate"><span class="pre">statusCode</span></code> and <code class="docutils literal notranslate"><span class="pre">errorResponse</span></code> are populated) or a network-level failure such
+as a timeout (<code class="docutils literal notranslate"><span class="pre">cause</span></code> holds the underlying exception, <code class="docutils literal notranslate"><span class="pre">statusCode</span></code> and <code class="docutils literal notranslate"><span class="pre">errorResponse</span></code> are <code class="docutils literal notranslate"><span class="pre">null</span></code>).</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p><code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> does <strong>not</strong> cover all exceptions that the SDK may throw. The following categories of
+exception are thrown directly as their native types and are <strong>not</strong> wrapped in <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code>:</p>
+<ul class="simple">
+<li><strong>Coroutine cancellation</strong> — Kotlin’s coroutine framework signals cancellation via <code class="docutils literal notranslate"><span class="pre">CancellationException</span></code>
+(a subclass of <code class="docutils literal notranslate"><span class="pre">Exception</span></code>). It will be caught by a generic <code class="docutils literal notranslate"><span class="pre">catch</span> <span class="pre">(e:</span> <span class="pre">Exception)</span></code> block — if your
+coroutine scope requires cooperative cancellation, rethrow it manually.</li>
+<li><strong>Validation / precondition errors</strong> — e.g. <code class="docutils literal notranslate"><span class="pre">IllegalStateException</span></code> when input validation fails.</li>
+<li><strong>Programming errors</strong> — e.g. <code class="docutils literal notranslate"><span class="pre">NullPointerException</span></code> or <code class="docutils literal notranslate"><span class="pre">IllegalArgumentException</span></code> caused by
+internal SDK misconfiguration.</li>
+</ul>
+<p class="last">Always place a general <code class="docutils literal notranslate"><span class="pre">catch</span> <span class="pre">(e:</span> <span class="pre">Exception)</span></code> block <strong>after</strong> your <code class="docutils literal notranslate"><span class="pre">catch</span> <span class="pre">(e:</span> <span class="pre">GiniHealthException)</span></code> block
+to handle these remaining cases.</p>
+</div>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">open</span> <span class="k">class</span> <span class="nc">GiniHealthException</span><span class="p">(</span>
+    <span class="n">message</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>             <span class="c1">// Raw message (maybe a JSON string — kept for backward compatibility)</span>
+    <span class="n">cause</span><span class="p">:</span> <span class="n">Throwable</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>    <span class="c1">// Underlying exception — e.g. SocketTimeoutException for network failures, ApiException for HTTP errors</span>
+    <span class="k">val</span> <span class="py">statusCode</span><span class="p">:</span> <span class="n">Int</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span> <span class="c1">// HTTP status code (e.g., 404, 422, 500)</span>
+    <span class="k">val</span> <span class="py">errorResponse</span><span class="p">:</span> <span class="n">ErrorResponse</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span>  <span class="c1">// Fully parsed API error body</span>
+<span class="p">)</span> <span class="p">:</span> <span class="n">Exception</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">cause</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// message for display — resolves in priority order:</span>
+    <span class="c1">// 1. errorResponse.message  2. raw message  3. &quot;Unknown error&quot;</span>
+    <span class="k">val</span> <span class="py">parsedMessage</span><span class="p">:</span> <span class="n">String</span>
+
+    <span class="c1">// Unique request ID from errorResponse — provide to Gini support when reporting issues</span>
+    <span class="k">val</span> <span class="py">requestId</span><span class="p">:</span> <span class="n">String</span><span class="p">?</span>
+
+    <span class="c1">// Individual error entries from errorResponse.items (code, message, affected entity IDs)</span>
+    <span class="k">val</span> <span class="py">errorItems</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">ErrorItem</span><span class="p">&gt;?</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-errorresponse-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code> class<a class="headerlink" href="#the-errorresponse-class" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code> is the data model for the Gini Health API v5.0 error body:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Validation of the request entity failed&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;requestId&quot;</span><span class="p">:</span> <span class="s2">&quot;8896f9dc-260d-4133-9848-c54e5715270f&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;2002&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Value too long&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;object&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;doc-id-1&quot;</span><span class="p">,</span> <span class="s2">&quot;doc-id-2&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Mapped to Kotlin as:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">data</span> <span class="k">class</span> <span class="nc">ErrorResponse</span><span class="p">(</span>
+    <span class="k">val</span> <span class="py">message</span><span class="p">:</span> <span class="n">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>         <span class="c1">// Human-consumable description — not intended for direct end-user display</span>
+    <span class="k">val</span> <span class="py">requestId</span><span class="p">:</span> <span class="n">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>       <span class="c1">// Unique request ID — provide to support</span>
+    <span class="k">val</span> <span class="py">items</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">ErrorItem</span><span class="p">&gt;?</span> <span class="p">=</span> <span class="k">null</span>   <span class="c1">// Individual error entries</span>
+<span class="p">)</span>
+
+<span class="k">data</span> <span class="k">class</span> <span class="nc">ErrorItem</span><span class="p">(</span>
+    <span class="k">val</span> <span class="py">code</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>                        <span class="c1">// Short error code (e.g., &quot;2002&quot;)</span>
+    <span class="k">val</span> <span class="py">message</span><span class="p">:</span> <span class="n">String</span><span class="p">?</span> <span class="p">=</span> <span class="k">null</span><span class="p">,</span>             <span class="c1">// Per-item description</span>
+    <span class="k">val</span> <span class="py">affectedIds</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;?</span> <span class="p">=</span> <span class="k">null</span> <span class="c1">// Affected entity IDs (documents or payment requests)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code> is parsed automatically from the raw HTTP response body. You do not need to parse it yourself.
+It is available via <code class="docutils literal notranslate"><span class="pre">GiniHealthException.errorResponse</span></code>.</p>
+</div>
+</div>
+<div class="section" id="how-errors-are-propagated">
+<h2>How errors are propagated<a class="headerlink" href="#how-errors-are-propagated" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="flows">
+<h3>Flows<a class="headerlink" href="#flows" title="Permalink to this headline">¶</a></h3>
+<p>Errors from <code class="docutils literal notranslate"><span class="pre">GiniHealth.documentFlow</span></code> and <code class="docutils literal notranslate"><span class="pre">GiniHealth.paymentFlow</span></code> arrive as <code class="docutils literal notranslate"><span class="pre">ResultWrapper.Error</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">error</span></code> property is a <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> when an API call fails, or a plain <code class="docutils literal notranslate"><span class="pre">Throwable</span></code> otherwise:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">lifecycleScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+    <span class="n">giniHealth</span><span class="p">.</span><span class="n">documentFlow</span><span class="p">.</span><span class="n">collect</span> <span class="p">{</span> <span class="n">result</span> <span class="p">-&gt;</span>
+        <span class="k">when</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">is</span> <span class="n">ResultWrapper</span><span class="p">.</span><span class="n">Loading</span> <span class="p">-&gt;</span> <span class="n">showProgressIndicator</span><span class="p">()</span>
+            <span class="k">is</span> <span class="n">ResultWrapper</span><span class="p">.</span><span class="n">Success</span> <span class="p">-&gt;</span> <span class="n">showDocument</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">is</span> <span class="n">ResultWrapper</span><span class="p">.</span><span class="n">Error</span> <span class="p">-&gt;</span> <span class="p">{</span>
+                <span class="k">val</span> <span class="py">exception</span> <span class="p">=</span> <span class="n">result</span><span class="p">.</span><span class="n">error</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">exception</span> <span class="k">is</span> <span class="n">GiniHealthException</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">Log</span><span class="p">.</span><span class="n">e</span><span class="p">(</span><span class="s">&quot;GiniHealth&quot;</span><span class="p">,</span> <span class="s">&quot;HTTP ${exception.statusCode}: ${exception.parsedMessage}&quot;</span><span class="p">)</span>
+                    <span class="n">showError</span><span class="p">(</span><span class="n">exception</span><span class="p">.</span><span class="n">parsedMessage</span><span class="p">)</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="n">showError</span><span class="p">(</span><span class="n">exception</span><span class="p">.</span><span class="n">message</span> <span class="o">?:</span> <span class="s">&quot;Unknown error&quot;</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ginihealth-suspend-functions">
+<h3><code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> suspend functions<a class="headerlink" href="#ginihealth-suspend-functions" title="Permalink to this headline">¶</a></h3>
+<p>All <code class="docutils literal notranslate"><span class="pre">GiniHealth</span></code> suspend functions throw <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> when an API call fails. Always add a second
+<code class="docutils literal notranslate"><span class="pre">catch</span></code> for cancellation and other non-API failures:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">coroutineScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="k">val</span> <span class="py">payment</span> <span class="p">=</span> <span class="n">giniHealth</span><span class="p">.</span><span class="n">getPayment</span><span class="p">(</span><span class="n">paymentRequestId</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">GiniHealthException</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// API error — structured details available</span>
+        <span class="n">Log</span><span class="p">.</span><span class="n">e</span><span class="p">(</span><span class="s">&quot;GiniHealth&quot;</span><span class="p">,</span> <span class="s">&quot;HTTP ${e.statusCode}: ${e.parsedMessage}&quot;</span><span class="p">)</span>
+        <span class="n">Log</span><span class="p">.</span><span class="n">e</span><span class="p">(</span><span class="s">&quot;GiniHealth&quot;</span><span class="p">,</span> <span class="s">&quot;Request ID: ${e.requestId}&quot;</span><span class="p">)</span>
+        <span class="n">e</span><span class="p">.</span><span class="n">errorItems</span><span class="o">?.</span><span class="n">forEach</span> <span class="p">{</span> <span class="n">item</span> <span class="p">-&gt;</span>
+            <span class="n">Log</span><span class="p">.</span><span class="n">e</span><span class="p">(</span><span class="s">&quot;GiniHealth&quot;</span><span class="p">,</span> <span class="s">&quot;  Code=${item.code} | Affected: ${item.affectedIds}&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// SDK request cancellation, validation error, or CancellationException from coroutine scope</span>
+        <span class="n">Log</span><span class="p">.</span><span class="n">e</span><span class="p">(</span><span class="s">&quot;GiniHealth&quot;</span><span class="p">,</span> <span class="s">&quot;Unexpected: ${e.message}&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The same pattern applies to <code class="docutils literal notranslate"><span class="pre">deletePaymentRequest()</span></code>, <code class="docutils literal notranslate"><span class="pre">deletePaymentRequests()</span></code>, and <code class="docutils literal notranslate"><span class="pre">deleteDocuments()</span></code>.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">checkIfDocumentIsPayable()</span></code> and <code class="docutils literal notranslate"><span class="pre">checkIfDocumentContainsMultipleDocuments()</span></code>, the same
+<code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> is thrown on API failure — however, <strong>cancellation does not throw</strong>: both
+functions return <code class="docutils literal notranslate"><span class="pre">false</span></code> when the underlying request is cancelled.</p>
+</div>
+<div class="section" id="documentmanager-functions-resource-return-type">
+<h3><code class="docutils literal notranslate"><span class="pre">documentManager</span></code> functions (<code class="docutils literal notranslate"><span class="pre">Resource</span></code> return type)<a class="headerlink" href="#documentmanager-functions-resource-return-type" title="Permalink to this headline">¶</a></h3>
+<p>Functions on <code class="docutils literal notranslate"><span class="pre">giniHealth.documentManager</span></code> return <code class="docutils literal notranslate"><span class="pre">Resource&lt;T&gt;</span></code> directly instead of throwing.
+<code class="docutils literal notranslate"><span class="pre">Resource.Error</span></code> carries the full <code class="docutils literal notranslate"><span class="pre">errorResponse</span></code>:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">coroutineScope</span><span class="p">.</span><span class="n">launch</span> <span class="p">{</span>
+    <span class="k">val</span> <span class="py">result</span> <span class="p">=</span> <span class="n">giniHealth</span><span class="p">.</span><span class="n">documentManager</span><span class="p">.</span><span class="n">createPartialDocument</span><span class="p">(</span>
+        <span class="n">document</span> <span class="p">=</span> <span class="n">imageBytes</span><span class="p">,</span>
+        <span class="n">contentType</span> <span class="p">=</span> <span class="s">&quot;image/jpeg&quot;</span><span class="p">,</span>
+        <span class="n">filename</span> <span class="p">=</span> <span class="s">&quot;invoice_page_1.jpg&quot;</span>
+    <span class="p">)</span>
+    <span class="k">when</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Success</span> <span class="p">-&gt;</span> <span class="p">{</span> <span class="cm">/* use result.data */</span> <span class="p">}</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Error</span> <span class="p">-&gt;</span> <span class="p">{</span>
+            <span class="k">val</span> <span class="py">errorMsg</span> <span class="p">=</span> <span class="n">result</span><span class="p">.</span><span class="n">errorResponse</span><span class="o">?.</span><span class="n">message</span> <span class="o">?:</span> <span class="n">result</span><span class="p">.</span><span class="n">message</span>
+            <span class="n">Log</span><span class="p">.</span><span class="n">e</span><span class="p">(</span><span class="s">&quot;GiniHealth&quot;</span><span class="p">,</span> <span class="s">&quot;HTTP ${result.responseStatusCode}: $errorMsg&quot;</span><span class="p">)</span>
+            <span class="n">Log</span><span class="p">.</span><span class="n">e</span><span class="p">(</span><span class="s">&quot;GiniHealth&quot;</span><span class="p">,</span> <span class="s">&quot;Request ID: ${result.errorResponse?.requestId}&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">is</span> <span class="n">Resource</span><span class="p">.</span><span class="n">Cancelled</span> <span class="p">-&gt;</span> <span class="p">{</span> <span class="cm">/* handle cancellation */</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="breaking-changes">
+<h2>Breaking changes<a class="headerlink" href="#breaking-changes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="return-type-changes">
+<h3>Return type changes<a class="headerlink" href="#return-type-changes" title="Permalink to this headline">¶</a></h3>
+<p>The three delete methods return <code class="docutils literal notranslate"><span class="pre">Unit</span></code> and throw <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> on failure. Any existing code that checked for a non-null return value must be
+replaced with a <code class="docutils literal notranslate"><span class="pre">try/catch</span></code> block.</p>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">deletePaymentRequest</span></code></dt>
+<dd><ul class="first last simple">
+<li><strong>Old return type:</strong> <code class="docutils literal notranslate"><span class="pre">String?</span></code> (error message or null)</li>
+<li><strong>New behaviour:</strong> <code class="docutils literal notranslate"><span class="pre">Unit</span></code> — throws <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> (API error) or <code class="docutils literal notranslate"><span class="pre">Exception</span></code></li>
+</ul>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">deletePaymentRequests</span></code></dt>
+<dd><ul class="first last simple">
+<li><strong>Old return type:</strong> <code class="docutils literal notranslate"><span class="pre">DeletePaymentRequestErrorResponse?</span></code></li>
+<li><strong>New behaviour:</strong> <code class="docutils literal notranslate"><span class="pre">Unit</span></code> — throws <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> (API error) or <code class="docutils literal notranslate"><span class="pre">Exception</span></code></li>
+</ul>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">deleteDocuments</span></code></dt>
+<dd><ul class="first last simple">
+<li><strong>Old return type:</strong> <code class="docutils literal notranslate"><span class="pre">DeleteDocumentErrorResponse?</span></code></li>
+<li><strong>New behaviour:</strong> <code class="docutils literal notranslate"><span class="pre">Unit</span></code> — throws <code class="docutils literal notranslate"><span class="pre">GiniHealthException</span></code> (API error) or <code class="docutils literal notranslate"><span class="pre">Exception</span></code></li>
+</ul>
+</dd>
+</dl>
+<p>Old API — return value check:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">val</span> <span class="py">error</span> <span class="p">=</span> <span class="n">giniHealth</span><span class="p">.</span><span class="n">deletePaymentRequests</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">error</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">showError</span><span class="p">(</span><span class="n">error</span><span class="p">.</span><span class="n">message</span> <span class="o">?:</span> <span class="s">&quot;Unknown error&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>New API — <code class="docutils literal notranslate"><span class="pre">try/catch</span></code> block:</p>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="k">try</span> <span class="p">{</span>
+    <span class="n">giniHealth</span><span class="p">.</span><span class="n">deletePaymentRequests</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">GiniHealthException</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">showError</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">parsedMessage</span><span class="p">)</span>
+    <span class="c1">// Inspect which IDs caused the failure</span>
+    <span class="n">e</span><span class="p">.</span><span class="n">errorItems</span><span class="o">?.</span><span class="n">forEach</span> <span class="p">{</span> <span class="n">item</span> <span class="p">-&gt;</span>
+        <span class="n">Log</span><span class="p">.</span><span class="n">e</span><span class="p">(</span><span class="s">&quot;GiniHealth&quot;</span><span class="p">,</span> <span class="s">&quot;Code=${item.code} | Affected: ${item.affectedIds}&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="n">Exception</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// SDK request cancellation, validation error, or CancellationException from coroutine scope</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="event-tracking.html" class="btn btn-neutral float-right" title="Event Tracking">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="flow.html" class="btn btn-neutral" title="Flow"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+</body>
+</html>

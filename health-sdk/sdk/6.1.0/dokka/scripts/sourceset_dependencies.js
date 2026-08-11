@@ -1,0 +1,1 @@
+sourceset_dependencies='{":health-sdk:sdk:dokkaHtml/debug":[],":health-sdk:sdk:dokkaHtml/main":[],":health-sdk:sdk:dokkaHtml/release":[],":internal-payment-sdk:sdk:dokkaHtml/debug":[],":internal-payment-sdk:sdk:dokkaHtml/main":[],":internal-payment-sdk:sdk:dokkaHtml/release":[]}'
