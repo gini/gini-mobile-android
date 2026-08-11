@@ -203,7 +203,7 @@ class DocumentRepositoryTest {
     }
 
     @Test
-    fun `parallel api calls are serialized by the access token mutex`() = runTest {
+    fun `parallel api calls are serialized by the session interceptor's mutex`() = runTest {
         repeat(3) { server.enqueue(MockResponse().setResponseCode(200).setBody(documentJson())) }
         val concurrentSessions = AtomicInteger(0)
         val maxConcurrentSessions = AtomicInteger(0)
@@ -224,8 +224,9 @@ class DocumentRepositoryTest {
 
         assertThat(results).hasSize(3)
         results.forEach { assertThat(it).isInstanceOf(Resource.Success::class.java) }
-        // The accessTokenMutex guarantees only one session request runs at a time. This prevents
-        // creating multiple anonymous users on first use with parallel uploads.
+        // GiniSessionInterceptor.sessionMutex guarantees only one session request runs at a
+        // time. This prevents creating multiple anonymous users on first use with parallel
+        // uploads.
         assertThat(maxConcurrentSessions.get()).isEqualTo(1)
         assertThat(sessionManager.getSessionCallCount.get()).isEqualTo(3)
     }
