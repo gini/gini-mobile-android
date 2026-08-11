@@ -65,13 +65,13 @@ need client credentials or a ``SessionManager``. Enable self-managed authenticat
 interceptor - either works, because the library installs no authentication of its own in this mode). Your access
 token is never passed through the library and no anonymous Gini users are created:
 
-.. code-block:: java
+.. code-block:: kotlin
 
     val giniHealthApi: GiniHealthAPI =
             GiniHealthAPIBuilder(context)
                     .setSelfManagedAuthentication(true)
                     .setHttpClientProvider { myOkHttpClientWithAuthorization }
-                    .build();
+                    .build()
 
 A custom ``GiniHttpClientProvider`` is required in this mode: building without one throws an
 ``IllegalStateException``. Any client credentials or ``SessionManager`` passed to the builder are ignored.
