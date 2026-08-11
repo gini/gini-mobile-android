@@ -3,37 +3,17 @@ package net.gini.android.core.api.mapper
 import net.gini.android.core.api.models.Box
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Extraction
-import net.gini.android.core.api.models.ExtractionsContainer
 import net.gini.android.core.api.models.SpecificExtraction
 import org.json.JSONException
 import org.json.JSONObject
 
 /**
- * Internal use only. (Public visibility is required because the bank api library and the
- * capture sdk consume this parser from their own modules.)
+ * Internal use only. (Public visibility is required because the bank api library consumes this
+ * parser from its own module.)
  *
  * Parses the Gini API extractions response JSON into the SDK's extraction models.
  */
 object ExtractionsParser {
-
-    /**
-     * Parses a complete extractions response (the response body of
-     * `GET /documents/{id}/extractions`) into an [ExtractionsContainer].
-     *
-     * @param extractionsResponse the extractions response JSON
-     * @return The parsed [ExtractionsContainer] with specific and compound extractions.
-     * @throws JSONException If the JSON does not have the expected structure or contains invalid data.
-     */
-    @JvmStatic
-    @Throws(JSONException::class)
-    fun parseExtractionsContainer(extractionsResponse: JSONObject): ExtractionsContainer {
-        val candidates = parseCandidates(extractionsResponse.getJSONObject("candidates"))
-        val specificExtractions =
-            parseSpecificExtractions(extractionsResponse.getJSONObject("extractions"), candidates)
-        val compoundExtractions =
-            parseCompoundExtractions(extractionsResponse.optJSONObject("compoundExtractions"), candidates)
-        return ExtractionsContainer(specificExtractions, compoundExtractions)
-    }
 
     /**
      * Parses the `extractions` object of the extractions response JSON.

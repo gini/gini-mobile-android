@@ -12,25 +12,23 @@ import org.junit.runner.RunWith
 class BankExtractionsParserTest {
 
     @Test
-    fun `parses extractions with return reasons into the bank extractions container`() {
-        val container = BankExtractionsParser.parseExtractionsContainer(
-            JSONObject(EXTRACTIONS_WITH_RETURN_REASONS_JSON)
+    fun `parses return reasons with localized labels`() {
+        val returnReasons = BankExtractionsParser.parseReturnReasons(
+            JSONObject(EXTRACTIONS_WITH_RETURN_REASONS_JSON).getJSONArray("returnReasons")
         )
 
-        assertThat(container.specificExtractions["amountToPay"]?.value).isEqualTo("335.50:EUR")
-        assertThat(container.compoundExtractions["lineItems"]?.specificExtractionMaps).hasSize(1)
-        assertThat(container.returnReasons).hasSize(1)
-        assertThat(container.returnReasons[0].id).isEqualTo("r1")
-        assertThat(container.returnReasons[0].localizedLabels["de"]).isEqualTo("Beschädigt")
+        assertThat(returnReasons).hasSize(1)
+        assertThat(returnReasons[0].id).isEqualTo("r1")
+        assertThat(returnReasons[0].localizedLabels["de"]).isEqualTo("Beschädigt")
     }
 
     @Test
     fun `parses missing return reasons to an empty list`() {
-        val container = BankExtractionsParser.parseExtractionsContainer(
-            JSONObject("""{"extractions":{},"candidates":{}}""")
+        val returnReasons = BankExtractionsParser.parseReturnReasons(
+            JSONObject("""{"extractions":{},"candidates":{}}""").optJSONArray("returnReasons")
         )
 
-        assertThat(container.returnReasons).isEmpty()
+        assertThat(returnReasons).isEmpty()
     }
 
     @Test

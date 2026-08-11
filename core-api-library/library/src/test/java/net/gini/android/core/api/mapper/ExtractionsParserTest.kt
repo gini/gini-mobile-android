@@ -11,9 +11,15 @@ class ExtractionsParserTest {
 
     @Test
     fun `parses specific extractions with candidates and boxes`() {
-        val container = ExtractionsParser.parseExtractionsContainer(JSONObject(EXTRACTIONS_JSON))
+        val extractionsResponse = JSONObject(EXTRACTIONS_JSON)
+        val candidates = ExtractionsParser.parseCandidates(extractionsResponse.getJSONObject("candidates"))
 
-        val amountToPay = container.specificExtractions["amountToPay"]
+        val specificExtractions = ExtractionsParser.parseSpecificExtractions(
+            extractionsResponse.getJSONObject("extractions"),
+            candidates
+        )
+
+        val amountToPay = specificExtractions["amountToPay"]
         assertThat(amountToPay).isNotNull()
         assertThat(amountToPay!!.value).isEqualTo("335.50:EUR")
         assertThat(amountToPay.entity).isEqualTo("amount")
@@ -26,9 +32,15 @@ class ExtractionsParserTest {
 
     @Test
     fun `parses compound extractions`() {
-        val container = ExtractionsParser.parseExtractionsContainer(JSONObject(EXTRACTIONS_JSON))
+        val extractionsResponse = JSONObject(EXTRACTIONS_JSON)
+        val candidates = ExtractionsParser.parseCandidates(extractionsResponse.getJSONObject("candidates"))
 
-        val lineItems = container.compoundExtractions["lineItems"]
+        val compoundExtractions = ExtractionsParser.parseCompoundExtractions(
+            extractionsResponse.getJSONObject("compoundExtractions"),
+            candidates
+        )
+
+        val lineItems = compoundExtractions["lineItems"]
         assertThat(lineItems).isNotNull()
         assertThat(lineItems!!.specificExtractionMaps).hasSize(1)
         assertThat(lineItems.specificExtractionMaps[0]["description"]?.value).isEqualTo("Shoes")
@@ -37,11 +49,19 @@ class ExtractionsParserTest {
     @Test
     fun `parses response without compound extractions to an empty map`() {
         val json = JSONObject("""{"extractions":{},"candidates":{}}""")
+        val candidates = ExtractionsParser.parseCandidates(json.getJSONObject("candidates"))
 
-        val container = ExtractionsParser.parseExtractionsContainer(json)
+        val specificExtractions = ExtractionsParser.parseSpecificExtractions(
+            json.getJSONObject("extractions"),
+            candidates
+        )
+        val compoundExtractions = ExtractionsParser.parseCompoundExtractions(
+            json.optJSONObject("compoundExtractions"),
+            candidates
+        )
 
-        assertThat(container.specificExtractions).isEmpty()
-        assertThat(container.compoundExtractions).isEmpty()
+        assertThat(specificExtractions).isEmpty()
+        assertThat(compoundExtractions).isEmpty()
     }
 
     @Test

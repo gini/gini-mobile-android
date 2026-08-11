@@ -1,44 +1,15 @@
 package net.gini.android.bank.api.mapper
 
-import net.gini.android.bank.api.models.ExtractionsContainer
 import net.gini.android.bank.api.models.ReturnReason
-import net.gini.android.core.api.mapper.ExtractionsParser
 import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
 
 /**
  * Internal use only.
  *
- * Parses the Gini Bank API extractions response JSON into the Bank SDK's extraction models,
- * including the Bank API specific return reasons.
+ * Parses the Bank API specific return reasons of the extractions response JSON.
  */
 internal object BankExtractionsParser {
-
-    /**
-     * Parses a complete extractions response (the response body of
-     * `GET /documents/{id}/extractions`) into an [ExtractionsContainer] with specific
-     * extractions, compound extractions and return reasons.
-     *
-     * @param extractionsResponse the extractions response JSON
-     * @return The parsed [ExtractionsContainer].
-     * @throws JSONException If the JSON does not have the expected structure or contains invalid data.
-     */
-    @JvmStatic
-    @Throws(JSONException::class)
-    fun parseExtractionsContainer(extractionsResponse: JSONObject): ExtractionsContainer {
-        val candidates = ExtractionsParser.parseCandidates(extractionsResponse.getJSONObject("candidates"))
-        val specificExtractions = ExtractionsParser.parseSpecificExtractions(
-            extractionsResponse.getJSONObject("extractions"),
-            candidates
-        )
-        val compoundExtractions = ExtractionsParser.parseCompoundExtractions(
-            extractionsResponse.optJSONObject("compoundExtractions"),
-            candidates
-        )
-        val returnReasons = parseReturnReasons(extractionsResponse.optJSONArray("returnReasons"))
-        return ExtractionsContainer(specificExtractions, compoundExtractions, returnReasons)
-    }
 
     /**
      * Parses the `returnReasons` array of the extractions response JSON.
