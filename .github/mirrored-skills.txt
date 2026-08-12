@@ -8,4 +8,5 @@
 .claude/skills/gini-build/SKILL.md
 .claude/skills/gini-fix/SKILL.md
 .claude/skills/gini-reflect/SKILL.md
+.claude/skills/gini-doc/SKILL.md
 .github/mirrored-skills.txt

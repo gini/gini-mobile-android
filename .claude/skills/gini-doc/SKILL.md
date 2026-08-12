@@ -5,11 +5,12 @@ argument-hint: --platform <platform> --feature-slug <slug> [--note "..."]
 ---
 
 <!--
-  SHARED FILE — this workflow is designed to stay identical between
-  gini-mobile-android and gini-mobile-ios. Platform-specific rules do NOT
-  belong here — they live in the sibling platform.md, which is intentionally
-  different per repo. (Not yet listed in .github/mirrored-skills.txt; add it
-  there once the iOS counterpart exists.)
+  MIRRORED FILE — this file must stay byte-identical to
+  .claude/skills/gini-doc/SKILL.md in gini-mobile-ios.
+  If you change it here, open a paired PR in the other repo with the same
+  content. CI (shared-skills.check.yml) fails when the copies diverge.
+  Platform-specific rules do NOT belong here — they live in the sibling
+  platform.md, which is intentionally different per repo.
 -->
 
 # Skill: /gini-doc
