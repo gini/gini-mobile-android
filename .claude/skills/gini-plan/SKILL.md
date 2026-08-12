@@ -200,4 +200,3 @@ If any item fails, do NOT hand off: return to step 2 (re-explore) or step 3
 Show the user a short summary of the spec and where it was written. Remind
 them to review/edit it, then run `/gini-build $ARGUMENTS` (ideally in a fresh
 session) to build it. Do not start implementing yourself.
-## End
