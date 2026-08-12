@@ -12,6 +12,7 @@ import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import net.gini.android.capture.R
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows
@@ -35,6 +36,18 @@ class WarningBottomSheetTest {
             assertThat(description?.text?.toString())
                 .isEqualTo(sheet.getString(R.string.gc_due_date_hint_desc))
         }
+    }
+
+    @Test
+    fun `throws when a dated type is created without format argument`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            WarningBottomSheet.newInstance(WarningType.PAYMENT_DUE_DATE)
+        }
+    }
+
+    @Test
+    fun `creates an undated type without format argument`() {
+        assertThat(WarningBottomSheet.newInstance(WarningType.DOCUMENT_MARKED_AS_PAID)).isNotNull()
     }
 
     @Test

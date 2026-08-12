@@ -436,7 +436,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_stopAndHideHints_whenPaymentDueHintIsShown() throws Exception {
+    public void should_stopAndHideHints_whenPaymentDueHintIsShown() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -456,6 +456,7 @@ public class AnalysisFragmentImplTest {
                             analysisFragment.showPaymentDueHint("13.08.2026", new Runnable() {
                                 @Override
                                 public void run() {
+                                    // no-op: the test only verifies hint suppression
                                 }
                             });
                         }
@@ -469,7 +470,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_stopAndHideHints_whenSchedulePaymentHintIsShown() throws Exception {
+    public void should_stopAndHideHints_whenSchedulePaymentHintIsShown() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -506,7 +507,7 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
-    public void should_stopAndHideHints_whenAlreadyPaidWarningIsShown() throws Exception {
+    public void should_stopAndHideHints_whenAlreadyPaidWarningIsShown() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
                 new AtomicReference<>();
@@ -527,6 +528,7 @@ public class AnalysisFragmentImplTest {
                                     WarningType.DOCUMENT_MARKED_AS_PAID, new Runnable() {
                                         @Override
                                         public void run() {
+                                            // no-op: the test only verifies hint suppression
                                         }
                                     });
                         }
