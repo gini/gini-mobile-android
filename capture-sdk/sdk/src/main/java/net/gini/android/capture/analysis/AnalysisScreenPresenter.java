@@ -563,8 +563,10 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     }
 
     @Override
-    void updateInvoiceSavingState(Boolean isInProgress) {
+    void updateInvoiceSavingState(Boolean isInProgress,
+            @Nullable final String pendingSavingAction) {
         isSavingInvoicesInProgress = isInProgress;
+        extension.restorePendingSavingAction(pendingSavingAction);
     }
 
     @Override
@@ -585,7 +587,7 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
     @Override
     public void resumeInterruptedFlow() {
         if (successResultHolder == null) return;
-        extension.clearSavedImagesAndProceed(successResultHolder, getActivity());
+        extension.resumeAfterInvoiceSaving(successResultHolder, getActivity());
     }
 
     private boolean shouldShowAlreadyPaidInvoiceWarning(

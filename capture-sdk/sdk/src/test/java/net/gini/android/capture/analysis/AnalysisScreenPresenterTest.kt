@@ -153,7 +153,8 @@ class AnalysisScreenPresenterTest {
         pdfPageCount: Int = 0,
         pdfPageCountError: Exception? = null,
         documentAnalysisErrorMessage: String? = null,
-        analysisInteractor: AnalysisInteractor? = null
+        analysisInteractor: AnalysisInteractor? = null,
+        isInvoiceSavingEnabled: Boolean = false
     ): AnalysisScreenPresenter {
         if (giniCapture != null) {
             GiniCaptureHelper.setGiniCaptureInstance(giniCapture)
@@ -186,7 +187,7 @@ class AnalysisScreenPresenterTest {
         if (analysisInteractor == null) {
             presenter = object : AnalysisScreenPresenter(
                 mActivity, mView,
-                document, documentAnalysisErrorMessage, false
+                document, documentAnalysisErrorMessage, isInvoiceSavingEnabled
             ) {
                 public override fun createDocumentRenderer() {
                     mDocumentRenderer = documentRenderer
@@ -196,7 +197,7 @@ class AnalysisScreenPresenterTest {
             presenter = object : AnalysisScreenPresenter(
                 mActivity, mView, document,
                 documentAnalysisErrorMessage,
-                analysisInteractor, false
+                analysisInteractor, isInvoiceSavingEnabled
             ) {
                 public override fun createDocumentRenderer() {
                     mDocumentRenderer = documentRenderer
@@ -483,7 +484,8 @@ class AnalysisScreenPresenterTest {
     private fun createPresenterWithAnalysisFuture(
         document: Document,
         giniCapture: GiniCapture? = createGiniCaptureInstance(),
-        analysisFuture: CompletableFuture<AnalysisInteractor.ResultHolder>
+        analysisFuture: CompletableFuture<AnalysisInteractor.ResultHolder>,
+        isInvoiceSavingEnabled: Boolean = false
     ): AnalysisScreenPresenter {
         val analysisInteractor = mock<AnalysisInteractor> {
             on { analyzeMultiPageDocument(any()) } doReturn analysisFuture
@@ -491,7 +493,8 @@ class AnalysisScreenPresenterTest {
         return createPresenter(
             document,
             giniCapture = giniCapture,
-            analysisInteractor = analysisInteractor
+            analysisInteractor = analysisInteractor,
+            isInvoiceSavingEnabled = isInvoiceSavingEnabled
         )
     }
 
@@ -1403,8 +1406,28 @@ class AnalysisScreenPresenterTest {
         extractions: Map<String, GiniCaptureSpecificExtraction>,
         compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
         giniCapture: GiniCapture? = createGiniCaptureInstance(),
-        bankSDKProperties: BankSDKProperties? = null
-    ): AnalysisFragmentListener {
+        bankSDKProperties: BankSDKProperties? = null,
+        isInvoiceSavingEnabled: Boolean = false
+    ): AnalysisFragmentListener = startPresenterForDueHintReturningPresenter(
+        extractions,
+        compoundExtractions,
+        giniCapture,
+        bankSDKProperties,
+        isInvoiceSavingEnabled
+    ).second
+
+    /**
+     * Same as [startPresenterForDueHint] but also returns the presenter, so tests can drive the
+     * post-invoice-saving continuation via `resumeInterruptedFlow()`.
+     */
+    private fun startPresenterForDueHintReturningPresenter(
+        extractions: Map<String, GiniCaptureSpecificExtraction>,
+        compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
+        giniCapture: GiniCapture? = createGiniCaptureInstance(),
+        bankSDKProperties: BankSDKProperties? = null,
+        isInvoiceSavingEnabled: Boolean = false,
+        startPresenter: Boolean = true
+    ): Pair<AnalysisScreenPresenter, AnalysisFragmentListener> {
         whenever(mActivity.getString(anyInt())).thenReturn("A String")
         val analysisFuture = CompletableFuture<AnalysisInteractor.ResultHolder>()
         analysisFuture.complete(
@@ -1420,7 +1443,8 @@ class AnalysisScreenPresenterTest {
         val presenter = createPresenterWithAnalysisFuture(
             ImageDocumentFake(),
             giniCapture = giniCapture,
-            analysisFuture = analysisFuture
+            analysisFuture = analysisFuture,
+            isInvoiceSavingEnabled = isInvoiceSavingEnabled
         )
         if (bankSDKProperties != null) {
             val bridge = mock<BankSDKBridge> {
@@ -1430,8 +1454,10 @@ class AnalysisScreenPresenterTest {
         }
         val listener = mock<AnalysisFragmentListener>()
         presenter.setListener(listener)
-        presenter.start()
-        return listener
+        if (startPresenter) {
+            presenter.start()
+        }
+        return presenter to listener
     }
 
     private fun dueHintExtractions(
@@ -1783,6 +1809,209 @@ class AnalysisScreenPresenterTest {
 
         // Then
         verify(listener).onExtractionsAvailable(eq(extractions), any(), any())
+        verify(listener, never()).onSchedulePayment(any(), any(), any())
+    }
+
+    /**
+     * Requirement from product (Valentina, PP-3264): the schedule CTA must save the invoice
+     * locally first, exactly like the due date state's "Proceed Anyway", and only hand off to the
+     * bank app afterwards.
+     *
+     * **Fails when reverted**: if the schedule CTA calls `proceedWithSchedulePayment` directly
+     * again, `processInvoiceSaving()` is never requested and `onSchedulePayment` fires
+     * immediately, so both assertions below fail.
+     */
+    @Test
+    fun `schedule CTA should save the invoice locally before handing off`() {
+        // Given invoice saving is enabled
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val listener = startPresenterForDueHint(extractions, isInvoiceSavingEnabled = true)
+        val onScheduleCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(any(), any(), onScheduleCaptor.capture())
+        }
+
+        // When the user taps "Schedule Payment"
+        onScheduleCaptor.lastValue.run()
+
+        // Then saving is requested first, tagged with the CTA so it survives a recreation, and
+        // the hand-off has NOT happened yet
+        verify(mView).processInvoiceSaving("SCHEDULE_PAYMENT")
+        verify(listener, never()).onSchedulePayment(any(), any(), any())
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    /**
+     * After the Storage Access Framework finishes writing the files the SDK calls
+     * `resumeInterruptedFlow()`. It must continue with the scheduled payment hand-off, not the
+     * pay-now path.
+     *
+     * **Fails when reverted**: restoring the hardcoded `clearSavedImagesAndProceed` in
+     * `resumeInterruptedFlow` makes this fire `onExtractionsAvailable` instead.
+     */
+    @Test
+    fun `resuming after invoice saving should hand off to schedule payment, not pay now`() {
+        // Given the user tapped "Schedule Payment" with invoice saving enabled
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val presenter = startPresenterForDueHintReturningPresenter(
+            extractions,
+            isInvoiceSavingEnabled = true
+        )
+        val listener = presenter.second
+        val onScheduleCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(any(), any(), onScheduleCaptor.capture())
+        }
+        onScheduleCaptor.lastValue.run()
+        verify(mView).processInvoiceSaving(any())
+
+        // When saving finishes and the SDK resumes the flow
+        presenter.first.resumeInterruptedFlow()
+
+        // Then the extractions go to the scheduled payment callback
+        verify(listener).onSchedulePayment(eq(extractions), any(), any())
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    /**
+     * The pay-now path must be unchanged: "Proceed Anyway" still saves and then continues with
+     * `onExtractionsAvailable`.
+     */
+    @Test
+    fun `resuming after invoice saving should continue pay now for the proceed CTA`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val presenter = startPresenterForDueHintReturningPresenter(
+            extractions,
+            isInvoiceSavingEnabled = true
+        )
+        val listener = presenter.second
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(any(), onProceedCaptor.capture(), any())
+        }
+        onProceedCaptor.lastValue.run()
+        verify(mView).processInvoiceSaving(any())
+
+        // When
+        presenter.first.resumeInterruptedFlow()
+
+        // Then
+        verify(listener).onExtractionsAvailable(eq(extractions), any(), any())
+        verify(listener, never()).onSchedulePayment(any(), any(), any())
+    }
+
+    /**
+     * With invoice saving disabled the schedule CTA hands off straight away — no saving step.
+     */
+    @Test
+    fun `schedule CTA should hand off directly when invoice saving is disabled`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val listener = startPresenterForDueHint(extractions, isInvoiceSavingEnabled = false)
+        val onScheduleCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showSchedulePaymentHint(any(), any(), onScheduleCaptor.capture())
+        }
+
+        // When
+        onScheduleCaptor.lastValue.run()
+
+        // Then
+        verify(listener).onSchedulePayment(eq(extractions), any(), any())
+        verify(mView, never()).processInvoiceSaving(any())
+    }
+
+    /**
+     * The screen can be recreated (rotation, low memory) while the SAF folder picker is open. The
+     * restored `isSavingInvoicesInProgress` flag alone does not say which CTA started saving, so
+     * the CTA is persisted with it and restored through `updateInvoiceSavingState`.
+     *
+     * **Fails when reverted**: without the restored action the presenter assumes pay-now, so this
+     * fires `onExtractionsAvailable` and the user who asked to schedule is charged immediately.
+     */
+    @Test
+    fun `schedule payment survives a recreation while invoice saving is in progress`() {
+        // Given the user tapped "Schedule Payment" and the screen was recreated mid-saving
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val (presenter, listener) = startPresenterForDueHintReturningPresenter(
+            extractions,
+            isInvoiceSavingEnabled = true,
+            startPresenter = false
+        )
+        presenter.updateInvoiceSavingState(true, "SCHEDULE_PAYMENT")
+
+        // When the flow resumes after recreation
+        presenter.start()
+
+        // Then the hand-off wins, not pay-now
+        idleMainLooperUntil {
+            verify(listener).onSchedulePayment(eq(extractions), any(), any())
+        }
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    /**
+     * Same recreation, but the user had tapped "Proceed Anyway". The pay-now path must still win —
+     * this is the behavior that existed before the scheduled payment state.
+     */
+    @Test
+    fun `proceed survives a recreation while invoice saving is in progress`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val (presenter, listener) = startPresenterForDueHintReturningPresenter(
+            extractions,
+            isInvoiceSavingEnabled = true,
+            startPresenter = false
+        )
+        presenter.updateInvoiceSavingState(true, "PROCEED")
+
+        // When
+        presenter.start()
+
+        // Then
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(eq(extractions), any(), any())
+        }
+        verify(listener, never()).onSchedulePayment(any(), any(), any())
+    }
+
+    /**
+     * A missing persisted action (e.g. state written by an older SDK version) must behave like
+     * before the scheduled payment state existed: pay now, never an unexpected hand-off.
+     */
+    @Test
+    fun `unknown persisted action falls back to pay now`() {
+        // Given
+        configurationProvider.update { it.copy(isPaymentScheduleHintEnabled = true) }
+        val dueDate = LocalDate.now().plusDays(10)
+        val extractions = dueHintExtractions(dueDate.toString())
+        val (presenter, listener) = startPresenterForDueHintReturningPresenter(
+            extractions,
+            isInvoiceSavingEnabled = true,
+            startPresenter = false
+        )
+        presenter.updateInvoiceSavingState(true, null)
+
+        // When
+        presenter.start()
+
+        // Then
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(eq(extractions), any(), any())
+        }
         verify(listener, never()).onSchedulePayment(any(), any(), any())
     }
 

@@ -490,10 +490,12 @@ public class AnalysisFragmentImplTest {
                             analysisFragment.showSchedulePaymentHint("13.08.2026", new Runnable() {
                                 @Override
                                 public void run() {
+                                    // no-op: the test only verifies hint suppression
                                 }
                             }, new Runnable() {
                                 @Override
                                 public void run() {
+                                    // no-op: the test only verifies hint suppression
                                 }
                             });
                         }

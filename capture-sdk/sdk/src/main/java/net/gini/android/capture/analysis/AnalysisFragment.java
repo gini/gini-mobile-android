@@ -30,6 +30,7 @@ import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.CancelListener;
 
 import static net.gini.android.capture.analysis.AnalysisFragmentImpl.INVOICE_SAVING_IN_PROGRESS_KEY;
+import static net.gini.android.capture.analysis.AnalysisFragmentImpl.PENDING_SAVING_ACTION_KEY;
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 
 /**
@@ -67,6 +68,9 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         outState.putBoolean(
                 INVOICE_SAVING_IN_PROGRESS_KEY,
                 mFragmentImpl.getIsInvoiceSavingInProgress());
+        outState.putString(
+                PENDING_SAVING_ACTION_KEY,
+                mFragmentImpl.getPendingSavingAction());
     }
 
     private void registerSafFolderSelectionHandler() {
