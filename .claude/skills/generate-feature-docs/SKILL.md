@@ -4,6 +4,14 @@ description: "Generate a plain Markdown feature documentation page for Confluenc
 argument-hint: --platform <platform> --feature-slug <slug> [--note "..."]
 ---
 
+<!--
+  SHARED FILE — this workflow is designed to stay identical between
+  gini-mobile-android and gini-mobile-ios. Platform-specific rules do NOT
+  belong here — they live in the sibling platform.md, which is intentionally
+  different per repo. (Not yet listed in .github/mirrored-skills.txt; add it
+  there once the iOS counterpart exists.)
+-->
+
 # Skill: /generate-feature-docs
 
 Generate a plain Markdown (`.md`) feature documentation page for Confluence from GiniBankSDK source code changes on the current branch.
@@ -28,7 +36,7 @@ If any required argument is missing, stop and ask the user. Do not infer or gues
 
 ### `--platform`
 
-Always `android` for this repository.
+The valid value for this repository is defined in `platform.md` (in this skill's directory).
 
 Retained as a required argument to keep the skill interface consistent with other Gini repositories.
 
@@ -99,16 +107,16 @@ Do not use: simply · just · easily · obviously · normally · basically
 | SDK | library, module, framework |
 | document | file (when referring to what Gini processes) |
 | integration | implementation (when referring to customer work) |
-| Android | android |
-| Kotlin | kotlin |
 | Return Assistant | RA (on first mention; RA acceptable after) |
+
+Write platform and language names with their official capitalization (e.g. Android, Kotlin — never android, kotlin).
 
 - Write the full term first, followed by the acronym in parentheses on first use.
 - Use one term per concept consistently throughout. Do not alternate between synonyms.
 
 ### Formatting
 
-- **Code blocks:** always specify the language tag (`kotlin`, `xml`, `bash`, `json`).
+- **Code blocks:** always specify the language tag (`bash`, `json`, and the platform tags defined in `platform.md`).
 - **Tables:** use tables for parameters, properties, error codes, localization keys — not prose lists.
 - **Paragraphs:** 1–4 sentences. Break longer explanations into sub-sections.
 - **Numbered lists:** only when sequence matters.
@@ -141,6 +149,10 @@ Apply before writing the output file:
 
 You are given `$ARGUMENTS`. Parse it to extract `--platform`, `--feature-slug`, and `--note`, then follow these steps exactly.
 
+### Step 0 — Load platform conventions — REQUIRED FIRST
+
+Read `platform.md` in this skill's directory. It defines this repository's source roots, localization string locations, configuration surface, permission-to-manifest mapping, and symbols to skip. Every platform-specific decision below MUST come from that file, never from your own defaults. If the file is missing, stop and tell the user this repository is not set up for this skill.
+
 ### Step 1 — Identify changed GiniBankSDK source files on the current branch
 
 Run:
@@ -149,13 +161,7 @@ Run:
 git diff main...HEAD --name-only
 ```
 
-Keep only files from these directories — everything else is out of scope:
-
-- `bank-sdk/sdk/src/main/` (Bank SDK source root)
-- `bank-api-library/library/src/main/` (Bank API library source root)
-- `capture-sdk/sdk/src/main/` (Capture SDK source root, if the feature touches shared capture logic)
-
-Skip test files, example apps, CI scripts, package manifests, localization strings (collected separately in Step 2), and build output.
+Keep only files under the source roots listed in `platform.md` — everything else is out of scope. Apply the skip list from `platform.md` (test files, example apps, CI scripts, and so on; localization strings are collected separately in Step 2).
 
 Read each kept file. For large files, focus on the diff:
 
@@ -167,26 +173,7 @@ git diff main...HEAD -- <file>
 
 ### Step 2 — Collect localization strings for the feature
 
-**iOS (`--platform ios`):** search all `.strings` files in `BankSDK/` for keys matching the feature prefix:
-
-```bash
-grep -r "<featureprefix>" --include="*.strings" BankSDK/
-```
-
-Derive the prefix from the feature slug (e.g. `cross-border-payments` → try `crossborder`, `cx`, `crossBorder`).
-
-Also search `CaptureSDK/` if the feature uses shared capture strings:
-
-```bash
-grep -r "<featureprefix>" --include="*.strings" CaptureSDK/
-```
-
-**Android (`--platform android`):** search `res/values/strings.xml` and `res/values-en/strings.xml` in the relevant modules for matching keys:
-
-```bash
-grep -r "<featureprefix>" --include="strings.xml" bank-sdk/sdk/src/main/res/
-grep -r "<featureprefix>" --include="strings.xml" capture-sdk/sdk/src/main/res/
-```
+Search the localization string locations defined in `platform.md` for keys matching the feature prefix. Derive the prefix from the feature slug (e.g. `cross-border-payments` → try `crossborder`, `cx`, `crossBorder`). `platform.md` also defines which file maps to which language column in the output tables.
 
 Collect all matching keys. Typical groups:
 - **Feature UI strings** — labels, titles, descriptions shown in the feature's views
@@ -198,20 +185,17 @@ Omit a group if it has no keys. If you expect keys but cannot find them, add `<!
 ### Step 3 — Identify what to document
 
 From the filtered source, extract:
-- Public configuration properties on `CaptureConfiguration` (Android, in `bank-sdk/sdk/src/main/.../capture/Configuration.kt`) and their types/defaults
+- Public configuration properties on the configuration surface defined in `platform.md`, with their types/defaults
 - Public methods or enums a consumer would call or reference
 - Extraction result fields populated or modified by this feature
 - Behavioral rules — what the SDK does and does not do when this feature is active
-- OS APIs used in source — infer `AndroidManifest.xml` requirements:
-  - `android.permission.CAMERA` → `<uses-permission android:name="android.permission.CAMERA" />` required
-  - `android.permission.READ_EXTERNAL_STORAGE` / `READ_MEDIA_IMAGES` → `<uses-permission>` required
+- OS APIs used in source — infer app-level setup requirements using the permission mapping in `platform.md`
 - Edge cases and error states described in source or doc comments
 
 **Skip:**
-- Anything `internal`, `private`, or prefixed with `_`
+- The platform-specific symbols listed in `platform.md`
 - Symbols used only in test files
 - UI implementation details invisible to the SDK consumer
-- Internal classes like `GiniCaptureUserDefaultsStorage` or `GiniConfiguration`
 
 **Cross-feature impact:** if the branch modifies behavior of existing features (e.g. Skonto or Return Assistant suppressed when a new flag is set), document those changes in an `## Impact on Other Features` section.
 
@@ -223,6 +207,8 @@ Use the structure below. Replace every `[placeholder]` with content derived from
 
 Use only standard Markdown. No Docusaurus frontmatter, no `:::caution` / `:::tip` admonitions. Use `> **Note:**`, `> **Warning:**`, `> **Caution:**` blockquotes where admonitions would otherwise appear.
 
+> Published GBSV pages render these blockquotes as Confluence info/warning panels. The person publishing converts them manually (or via import) — do not attempt to emit Confluence storage-format macros from this skill.
+
 ---
 
 **Output structure:**
@@ -231,6 +217,8 @@ Use only standard Markdown. No Docusaurus frontmatter, no `:::caution` / `:::tip
 # [Feature Name]
 
 > **Note:** To use the [Feature Name] feature, contact Gini Customer Support to have it enabled in the backend platform.
+
+> **QA Recommendation:** We highly recommend scheduling a QA session with Gini before releasing the [Feature Name] feature to your customers.
 
 [One paragraph: what the feature does, when it activates, and what the user experiences. Present tense, second person. Accurately reflect all supported input methods — camera, imported PDF, file opened via share sheet — unless you have explicit evidence the feature is camera-only. Example: "Cross-Border Payments routes captured or imported documents through the Gini CX Payments extraction pipeline instead of the standard SEPA pipeline."]
 
@@ -279,7 +267,7 @@ GiniBank.setCaptureConfiguration(context, captureConfiguration)
 
 [This section is mandatory for all features that render any user-visible UI — strings, colors, icons, or layouts. Remove only if the feature has no UI at all.]
 
-The [Feature Name] UI supports customization of strings, colors, and other appearance attributes. <!-- TOBEADDED: link to UI customization guide -->
+The [Feature Name] UI supports customization of strings, colors, and other appearance attributes. See the [UI Customisation Guides](https://gini.atlassian.net/wiki/spaces/GBSV/pages/76283941) for details.
 
 ## Extraction Result
 
@@ -357,10 +345,6 @@ The [Feature Name] UI uses the following string resource keys. Override them in 
 | Key | Default (de) | Default (en) | Description |
 |---|---|---|---|
 | `[key]` | `[German default]` | `[English default]` | [Shown when permission has been denied.] |
-
----
-
-> **QA Recommendation:** We highly recommend scheduling a QA session with Gini before releasing the [Feature Name] feature to your customers.
 ```
 
 ---
@@ -369,9 +353,9 @@ The [Feature Name] UI uses the following string resource keys. Override them in 
 
 Output file: `docs/[platform]/features/[feature-slug]/[feature-slug].md` relative to the repository root.
 
-Example for `--platform ios --feature-slug cross-border-payments`:
+Example for `--platform android --feature-slug cross-border-payments`:
 ```
-docs/ios/features/cross-border-payments/cross-border-payments.md
+docs/android/features/cross-border-payments/cross-border-payments.md
 ```
 
 Create the directory if it does not exist.
