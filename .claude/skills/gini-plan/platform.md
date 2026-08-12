@@ -1,4 +1,4 @@
-# gini-spec-feature platform conventions — Android (gini-mobile-android)
+# gini-plan platform conventions — Android (gini-mobile-android)
 
 <!--
   NOT MIRRORED — this file is Android-specific by design. The iOS repo has its
