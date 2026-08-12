@@ -1,5 +1,5 @@
 ---
-name: generate-feature-docs
+name: gini-doc
 description: "Generate a plain Markdown feature documentation page for Confluence from GiniBankSDK code changes on the current branch. Use when asked to document a GiniBankSDK feature or generate Confluence docs from the current branch."
 argument-hint: --platform <platform> --feature-slug <slug> [--note "..."]
 ---
@@ -12,7 +12,7 @@ argument-hint: --platform <platform> --feature-slug <slug> [--note "..."]
   there once the iOS counterpart exists.)
 -->
 
-# Skill: /generate-feature-docs
+# Skill: /gini-doc
 
 Generate a plain Markdown (`.md`) feature documentation page for Confluence from GiniBankSDK source code changes on the current branch.
 
@@ -23,7 +23,7 @@ This skill always targets **GiniBankSDK**. The output is standard Markdown with 
 ## Usage
 
 ```
-/generate-feature-docs --platform <platform> --feature-slug <slug> [--note "..."]
+/gini-doc --platform <platform> --feature-slug <slug> [--note "..."]
 ```
 
 `--platform` and `--feature-slug` are **required**.
