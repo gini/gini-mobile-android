@@ -205,7 +205,7 @@ private fun DocumentImage(
     if (imageUrl != null) {
         // Place Async Image here in future
     } else {
-        val iconResId = if (imageExtensions.find { documentName.endsWith(it, true) } != null) {
+        val iconResId = if (imageExtensions.any { documentName.endsWith(it, true) }) {
             R.drawable.gbs_tl_document_placeholder_image
         } else {
             R.drawable.gbs_tl_document_placeholder_file

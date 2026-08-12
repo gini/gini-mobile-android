@@ -10,7 +10,7 @@ import net.gini.android.capture.test.FragmentHostActivity;
 public class AnalysisFragmentHostActivity extends FragmentHostActivity<AnalysisFragmentCompatFake> {
     @Override
     protected void setListener() {
-
+        // No-op
     }
 
     @Override

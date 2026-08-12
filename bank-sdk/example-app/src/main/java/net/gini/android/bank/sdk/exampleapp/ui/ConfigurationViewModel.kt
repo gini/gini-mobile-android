@@ -85,10 +85,31 @@ class ConfigurationViewModel @Inject constructor(
 
     fun configureGiniBank(context: Context) {
         val intent = Intent(context, CustomHelpActivity::class.java)
-
         val configuration = configurationFlow.value
 
-        var captureConfiguration = CaptureConfiguration(
+        var captureConfiguration = buildBaseCaptureConfiguration(configuration)
+        captureConfiguration = applyOnboardingCustomizations(configuration, captureConfiguration)
+        captureConfiguration = applyAdapterCustomizations(configuration, captureConfiguration, intent)
+
+        GiniBank.setCaptureConfiguration(context, captureConfiguration)
+
+        // Digital invoice onboarding custom illustration
+        if (configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled) {
+            GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
+                CustomOnboardingIllustrationAdapter(R.raw.ai_animation)
+        }
+
+        // Debug mode
+        GiniCaptureDebug.enable()
+        configureLogging()
+        if (configuration.isDebugModeEnabled) {
+            GiniCaptureDebug.enable()
+            configureLogging()
+        }
+    }
+
+    private fun buildBaseCaptureConfiguration(configuration: ExampleAppBankConfiguration): CaptureConfiguration {
+        return CaptureConfiguration(
             // Debug mode
             networkService = if (configuration.isDebugModeEnabled)
                 defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled
@@ -130,149 +151,101 @@ class ConfigurationViewModel @Inject constructor(
             allowScreenshots = configuration.isAllowScreenshotsEnabled,
             // enable skonto
             skontoEnabled = configuration.isSkontoEnabled,
-
             // enable transaction docs
             transactionDocsEnabled = configuration.isTransactionDocsEnabled,
-
             // enables saving invoices locally after analysis
             saveInvoicesLocallyEnabled = configuration.saveInvoicesLocallyEnabled,
-
             // product tag
             productTag = configuration.productTag,
         )
+    }
 
-        // enable image picker screens custom bottom navigation bar -> was implemented on iOS, not needed for Android
+    private fun applyOnboardingCustomizations(
+        configuration: ExampleAppBankConfiguration,
+        captureConfiguration: CaptureConfiguration
+    ): CaptureConfiguration {
+        var result = captureConfiguration
 
         // enable custom onboarding pages
         if (configuration.isCustomOnboardingPagesEnabled) {
-            val pages = DefaultPages.asArrayList(
-                configuration.isMultiPageEnabled,
-                configuration.isQrCodeEnabled
-            )
-            pages.add(
-                OnboardingPage(
-                    R.string.additional_onboarding_page_title,
-                    R.string.additional_onboarding_page_message,
-                    null
-                )
-            )
-
-            captureConfiguration =
-                captureConfiguration.copy(onboardingPages = pages)
+            val pages = DefaultPages.asArrayList(configuration.isMultiPageEnabled, configuration.isQrCodeEnabled)
+            pages.add(OnboardingPage(R.string.additional_onboarding_page_title, R.string.additional_onboarding_page_message, null))
+            result = result.copy(onboardingPages = pages)
         }
 
         // enable align corners in custom onboarding pages
         if (configuration.isAlignCornersInCustomOnboardingEnabled) {
-            captureConfiguration = captureConfiguration.copy(
-                onboardingAlignCornersIllustrationAdapter = CustomOnboardingIllustrationAdapter(
-                    R.raw.floating_document
-                )
-            )
+            result = result.copy(onboardingAlignCornersIllustrationAdapter = CustomOnboardingIllustrationAdapter(R.raw.floating_document))
         }
 
         // enable lighting in custom onboarding pages
         if (configuration.isLightingInCustomOnboardingEnabled) {
-            captureConfiguration = captureConfiguration.copy(
-                onboardingLightingIllustrationAdapter = CustomOnboardingIllustrationAdapter(
-                    R.raw.lighting
-                )
-            )
+            result = result.copy(onboardingLightingIllustrationAdapter = CustomOnboardingIllustrationAdapter(R.raw.lighting))
         }
 
         // enable QR code in custom onboarding pages
         if (configuration.isQRCodeInCustomOnboardingEnabled) {
-            captureConfiguration = captureConfiguration.copy(
-                onboardingQRCodeIllustrationAdapter = CustomOnboardingIllustrationAdapter(
-                    R.raw.scan_qr_code
-                )
-            )
+            result = result.copy(onboardingQRCodeIllustrationAdapter = CustomOnboardingIllustrationAdapter(R.raw.scan_qr_code))
         }
 
         // enable multi page in custom onboarding pages
         if (configuration.isMultiPageInCustomOnboardingEnabled) {
-            captureConfiguration = captureConfiguration.copy(
-                onboardingMultiPageIllustrationAdapter = CustomOnboardingIllustrationAdapter(
-                    R.raw.multipage
-                )
-            )
+            result = result.copy(onboardingMultiPageIllustrationAdapter = CustomOnboardingIllustrationAdapter(R.raw.multipage))
         }
+
+        return result
+    }
+
+    private fun applyAdapterCustomizations(
+        configuration: ExampleAppBankConfiguration,
+        captureConfiguration: CaptureConfiguration,
+        intent: Intent
+    ): CaptureConfiguration {
+        var result = captureConfiguration
 
         // enable button's custom loading indicator
         if (configuration.isButtonsCustomLoadingIndicatorEnabled) {
-            captureConfiguration = captureConfiguration.copy(
-                onButtonLoadingIndicatorAdapter = CustomOnButtonLoadingIndicatorAdapter()
-            )
+            result = result.copy(onButtonLoadingIndicatorAdapter = CustomOnButtonLoadingIndicatorAdapter())
         }
 
         // enable screen's custom loading indicator
         if (configuration.isScreenCustomLoadingIndicatorEnabled) {
-            captureConfiguration = captureConfiguration.copy(
-                customLoadingIndicatorAdapter = CustomLottiLoadingIndicatorAdapter(
-                    R.raw.custom_loading
-                )
-            )
+            result = result.copy(customLoadingIndicatorAdapter = CustomLottiLoadingIndicatorAdapter(R.raw.custom_loading))
         }
 
         // enable custom help items
         if (configuration.isCustomHelpItemsEnabled) {
             val customHelpItems: MutableList<HelpItem.Custom> = ArrayList()
-            customHelpItems.add(
-                HelpItem.Custom(
-                    R.string.custom_help_screen_title,
-                    intent
-                )
-            )
-            captureConfiguration = captureConfiguration.copy(
-                customHelpItems = customHelpItems
-            )
+            customHelpItems.add(HelpItem.Custom(R.string.custom_help_screen_title, intent))
+            result = result.copy(customHelpItems = customHelpItems)
         }
 
         // enable custom navigation bar
-        if (configuration.isCustomNavBarEnabled)
-            captureConfiguration = captureConfiguration.copy(
-                navigationBarTopAdapter = CustomNavigationBarTopAdapter()
-            )
+        if (configuration.isCustomNavBarEnabled) {
+            result = result.copy(navigationBarTopAdapter = CustomNavigationBarTopAdapter())
+        }
 
         // enable event tracker
-        if (configuration.isEventTrackerEnabled)
-            captureConfiguration = captureConfiguration.copy(
-                eventTracker = GiniCaptureEventTracker()
-            )
+        if (configuration.isEventTrackerEnabled) {
+            result = result.copy(eventTracker = GiniCaptureEventTracker())
+        }
 
         // enable custom error logger
-        if (configuration.isCustomErrorLoggerEnabled)
-            captureConfiguration = captureConfiguration.copy(
-                errorLoggerListener = CustomErrorLoggerListener()
-            )
+        if (configuration.isCustomErrorLoggerEnabled) {
+            result = result.copy(errorLoggerListener = CustomErrorLoggerListener())
+        }
 
         // set imported file size bytes limit
-        if (configuration.importedFileSizeBytesLimit != FileImportValidator.FILE_SIZE_LIMIT && configuration.importedFileSizeBytesLimit >= 0)
-            captureConfiguration = captureConfiguration.copy(
-                importedFileSizeBytesLimit = configuration.importedFileSizeBytesLimit
-            )
+        if (configuration.importedFileSizeBytesLimit != FileImportValidator.FILE_SIZE_LIMIT && configuration.importedFileSizeBytesLimit >= 0) {
+            result = result.copy(importedFileSizeBytesLimit = configuration.importedFileSizeBytesLimit)
+        }
 
+        // enable custom primary compose button
         if (configuration.isCustomPrimaryComposeButtonEnabled) {
-            captureConfiguration = captureConfiguration.copy(
-                giniComposableStyleProvider = CustomGiniComposableStyleProvider()
-            )
-        }
-        GiniBank.setCaptureConfiguration(context, captureConfiguration)
-
-        // Digital invoice onboarding custom illustration
-        if (configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled) {
-            GiniBank.digitalInvoiceOnboardingIllustrationAdapter =
-                CustomOnboardingIllustrationAdapter(
-                    R.raw.ai_animation
-                )
+            result = result.copy(giniComposableStyleProvider = CustomGiniComposableStyleProvider())
         }
 
-        // Debug mode
-        GiniCaptureDebug.enable()
-        configureLogging()
-        if (configuration.isDebugModeEnabled) {
-            GiniCaptureDebug.enable()
-            configureLogging()
-        }
+        return result
     }
 
     private class GiniCaptureEventTracker : EventTracker {

@@ -36,5 +36,7 @@ class CustomOnButtonLoadingIndicatorAdapter: OnButtonLoadingIndicatorAdapter {
         return progressBar
     }
 
-    override fun onDestroy() {}
+    override fun onDestroy() {
+        // no-op: the progress bar view is managed by the Android view hierarchy
+    }
 }

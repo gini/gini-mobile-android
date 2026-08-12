@@ -12,7 +12,7 @@ plugins {
 }
 sonar {
     properties {
-        property("sonar.projectKey", "android-capture-sdk")
+        property("sonar.projectKey", "android-capture-sdk-default-network")
         property("sonar.projectName", "Android Capture SDK Default Network")
         property("sonar.organization", "gini")
         property("sonar.sources", "src/main/java")
@@ -47,7 +47,7 @@ android {
 
     buildTypes {
         debug {
-            isTestCoverageEnabled = true
+            isTestCoverageEnabled = false
         }
         release {
             isMinifyEnabled = false
@@ -119,6 +119,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<CodeAnalysisPlugin>()
 apply<DokkaPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<SBOMPlugin>()
 
 tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {

@@ -17,20 +17,17 @@ import kotlinx.coroutines.flow.StateFlow;
 import kotlinx.coroutines.flow.StateFlowKt;
 
 /**
- * Created by Alpár Szotyori on 19.01.22.
- * <p>
- * Copyright (c) 2022 Gini GmbH.
- */
-
-/**
  * Example showing how to use the GiniBank suspending functions from Java.
+ *
+ * Created by Alpár Szotyori on 19.01.22.
+ * Copyright (c) 2022 Gini GmbH.
  */
 public class PayViewModelJava extends ViewModel implements PayViewModelInterface {
 
     private final GiniBank giniBank;
 
-    private final MutableStateFlow<ResultWrapper<PaymentRequest>> _paymentRequest = StateFlowKt.MutableStateFlow(new ResultWrapper.Loading<>());
-    private final MutableStateFlow<ResultWrapper<ResolvedPayment>> _paymentState = StateFlowKt.MutableStateFlow(new ResultWrapper.Loading<>());
+    private final MutableStateFlow<ResultWrapper<PaymentRequest>> paymentRequestFlow = StateFlowKt.MutableStateFlow(new ResultWrapper.Loading<>());
+    private final MutableStateFlow<ResultWrapper<ResolvedPayment>> paymentStateFlow = StateFlowKt.MutableStateFlow(new ResultWrapper.Loading<>());
 
     private String requestId = null;
 
@@ -41,13 +38,13 @@ public class PayViewModelJava extends ViewModel implements PayViewModelInterface
     @NonNull
     @Override
     public StateFlow<ResultWrapper<PaymentRequest>> getPaymentRequest() {
-        return _paymentRequest;
+        return paymentRequestFlow;
     }
 
     @NonNull
     @Override
     public StateFlow<ResultWrapper<ResolvedPayment>> getPaymentState() {
-        return _paymentState;
+        return paymentStateFlow;
     }
 
     public void fetchPaymentRequest(@NonNull final String requestId) {
@@ -55,17 +52,17 @@ public class PayViewModelJava extends ViewModel implements PayViewModelInterface
         giniBank.getPaymentRequest(requestId, CoroutineContinuationHelper.callbackContinuation(new CoroutineContinuationHelper.ContinuationCallback<PaymentRequest>() {
             @Override
             public void onFinished(PaymentRequest result) {
-                _paymentRequest.setValue(new ResultWrapper.Success<>(result));
+                paymentRequestFlow.setValue(new ResultWrapper.Success<>(result));
             }
 
             @Override
             public void onFailed(@NonNull Throwable error) {
-                _paymentRequest.setValue(new ResultWrapper.Error<>(error));
+                paymentRequestFlow.setValue(new ResultWrapper.Error<>(error));
             }
 
             @Override
             public void onCancelled() {
-
+                // no-op: cancellation is not handled
             }
         }));
     }
@@ -76,28 +73,28 @@ public class PayViewModelJava extends ViewModel implements PayViewModelInterface
                 giniBank.resolvePaymentRequest(requestId, paymentDetails, CoroutineContinuationHelper.callbackContinuation(new CoroutineContinuationHelper.ContinuationCallback<ResolvedPayment>() {
                     @Override
                     public void onFinished(ResolvedPayment result) {
-                        _paymentState.setValue(new ResultWrapper.Success<>(result));
+                        paymentStateFlow.setValue(new ResultWrapper.Success<>(result));
                     }
 
                     @Override
                     public void onFailed(@NonNull Throwable error) {
-                        _paymentState.setValue(new ResultWrapper.Error<>(error));
+                        paymentStateFlow.setValue(new ResultWrapper.Error<>(error));
                     }
 
                     @Override
                     public void onCancelled() {
-
+                        // no-op: cancellation is not handled
                     }
                 }));
             } catch (final Exception exception) {
-                _paymentState.setValue(new ResultWrapper.Error<>(exception));
+                paymentStateFlow.setValue(new ResultWrapper.Error<>(exception));
             }
         }
     }
 
     public void returnToPaymentInitiatorApp(@NonNull final Context context) {
-        if (_paymentState.getValue() instanceof ResultWrapper.Success) {
-            final ResultWrapper.Success<ResolvedPayment> paymentStateValue = (ResultWrapper.Success<ResolvedPayment>) _paymentState.getValue();
+        if (paymentStateFlow.getValue() instanceof ResultWrapper.Success) {
+            final ResultWrapper.Success<ResolvedPayment> paymentStateValue = (ResultWrapper.Success<ResolvedPayment>) paymentStateFlow.getValue();
             final ResolvedPayment resolvedPayment = paymentStateValue.getValue();
             giniBank.returnToPaymentInitiatorApp(context, resolvedPayment);
         }

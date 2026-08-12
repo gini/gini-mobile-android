@@ -6,20 +6,29 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiCollection
+import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.Matchers.allOf
+import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 
 class DigitalInvoiceEditButton {
 
+    private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
     fun checkEditButtonTitleIsDisplayed() :Boolean {
-        val uiCollection =
-            UiCollection(UiSelector().className("android.view.ViewGroup"))
-        val editButton = uiCollection.getChildByInstance(
+        // The digital-invoice content is rendered from the network extraction result, which
+        // can be slow on remote devices. Wait for the Edit button to exist before checking,
+        // so a slow render doesn't fail the lookup.
+        // Resolve the package at runtime (the applicationId varies by flavor) rather than
+        // hard-coding it into the resourceId.
+        val editButton = device.findObject(
             UiSelector().className("android.widget.TextView")
                 .text("Edit")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_edit_button"), 0)
-        return editButton.isEnabled
+                .resourceId(AppResources.resId("gbs_edit_button"))
+        )
+        return editButton.waitForExists(DIGITAL_INVOICE_TIMEOUT) && editButton.isEnabled
     }
 
     fun clickEditButtonOnDigitalInvoiceScreen() {
@@ -28,7 +37,7 @@ class DigitalInvoiceEditButton {
         val editButton = uiCollection.getChildByInstance(
             UiSelector().className("android.widget.TextView")
                 .text("Edit")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_edit_button"), 0)
+                .resourceId(AppResources.resId("gbs_edit_button")), 0)
         if(editButton.exists() && editButton.isEnabled) {
             editButton.click()
         }
@@ -90,7 +99,7 @@ class DigitalInvoiceEditButton {
             UiCollection(UiSelector().className("android.view.ViewGroup"))
         val textView = uiCollection.getChildByInstance(
             UiSelector().className("android.widget.TextView")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_description")
+                .resourceId(AppResources.resId("gbs_description"))
             , 0)
         if (textView.exists()) {
             val actualText = textView.text.replace(Regex("\\d+x\\s*"), "")
@@ -106,7 +115,7 @@ class DigitalInvoiceEditButton {
             UiCollection(UiSelector().className("android.view.ViewGroup"))
         val textView = uiCollection.getChildByInstance(
             UiSelector().className("android.widget.TextView")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_per_unit")
+                .resourceId(AppResources.resId("gbs_per_unit"))
             , 0)
         if (textView.exists()) {
             val actualText = textView.text
@@ -123,7 +132,7 @@ class DigitalInvoiceEditButton {
             UiCollection(UiSelector().className("android.view.ViewGroup"))
         val textView = uiCollection.getChildByInstance(
             UiSelector().className("android.widget.TextView")
-                .resourceId("net.gini.android.bank.sdk.exampleapp:id/gbs_description")
+                .resourceId(AppResources.resId("gbs_description"))
             , 0)
         if (textView.exists()) {
             val actualText = extractQuantity(textView.text)
@@ -163,5 +172,9 @@ class DigitalInvoiceEditButton {
         val regex = Regex("""^(\d+)x""")
         val matchResult = regex.find(input)
         return matchResult?.groups?.get(1)?.value
+    }
+
+    companion object {
+        private const val DIGITAL_INVOICE_TIMEOUT = 15_000L
     }
 }

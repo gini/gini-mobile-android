@@ -1,11 +1,6 @@
 package net.gini.android.bank.api.models;
 
-import static net.gini.android.core.api.Utils.checkNotNull;
-import static net.gini.android.core.api.internal.BundleHelper.bundleToMap;
-import static net.gini.android.core.api.internal.BundleHelper.mapToBundle;
-
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
@@ -15,6 +10,8 @@ import net.gini.android.core.api.models.SpecificExtraction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static net.gini.android.core.api.Utils.checkNotNull;
 
 /**
  * Created by Alpar Szotyori on 13.02.2020.
@@ -30,6 +27,9 @@ import java.util.Map;
  * <a href="https://pay-api.gini.net/documentation/#document-extractions-for-payment">Gini Bank API documentation</a>
  * for a list of the names of the specific extractions and compound specific extractions.
  */
+
+// Cannot rename the class as it will be a breaking change for the clients!
+@SuppressWarnings("java:S2176")
 public class ExtractionsContainer extends net.gini.android.core.api.models.ExtractionsContainer {
 
     private final List<ReturnReason> mReturnReasons;

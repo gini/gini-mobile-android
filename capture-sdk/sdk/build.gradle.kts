@@ -71,7 +71,7 @@ android {
     buildTypes {
         val credentials = readLocalPropertiesToMapSilent(project, listOf("amplitudeApiKey"))
         debug {
-            isTestCoverageEnabled = true
+            isTestCoverageEnabled = false
             resValue("string", "amplitude_api_key", credentials["amplitudeApiKey"] ?: "")
         }
         release {
@@ -137,6 +137,7 @@ dependencies {
     api(libs.slf4j.api)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.documentfile)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.viewpager)
     implementation(libs.androidx.recyclerview)
@@ -145,6 +146,8 @@ dependencies {
     implementation(libs.mlkit.barcodescanning)
     implementation(libs.mlkit.textrecognition)
     implementation(libs.apachecommons.imaging)
+    implementation(libs.apachecommons.compress)
+    implementation(libs.tukaani.xz)
     implementation(libs.completableFuture)
 
     implementation(libs.androidx.camera.camera2)
@@ -201,6 +204,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.androidx.multidex)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito.kotlin2)
     androidTestImplementation(libs.mockito.kotlin2)
     androidTestUtil(libs.androidx.test.orchestrator)
@@ -209,6 +213,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<SBOMPlugin>()
 
 tasks.getByName<DokkaCollectorTask>("dokkaHtmlSiblingCollector") {

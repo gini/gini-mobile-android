@@ -5,6 +5,7 @@ import org.jetbrains.dokka.gradle.DokkaCollectorTask
 plugins {
     id("com.android.library")
     kotlin("android")
+    id("jacoco")
     id ("org.sonarqube")
     alias(libs.plugins.devtools.ksp)
 }
@@ -18,6 +19,11 @@ sonar {
         property("sonar.host.url", "https://sonarcloud.io")
     }
 }
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
+
 android {
     // after upgrading to AGP 8, we need this (copied from the module's AndroidManifest.xml
     namespace = "net.gini.android.bank.api"
@@ -40,7 +46,6 @@ android {
     }
     buildTypes {
         getByName("debug") {
-            // Disabled due to a jacoco error when using kotlin 1.5 (java.lang.IllegalStateException: Unexpected SMAP line: *S KotlinDebug)
             isTestCoverageEnabled = false
             // Needed for instrumented tests
             multiDexEnabled = true
@@ -112,6 +117,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<PropertiesPlugin>()
 apply<SBOMPlugin>()
 

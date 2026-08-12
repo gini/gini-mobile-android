@@ -3,6 +3,7 @@ package net.gini.android.capture.analysis
 import android.app.Activity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -58,9 +59,16 @@ internal class AnalysisScreenPresenterExtension(
     private val incrementInvoiceRecognizedCounterUseCase: IncrementInvoiceRecognizedCounterUseCase
             by getGiniCaptureKoin().inject()
 
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
+
     private val educationMutex = Mutex()
 
     private var invoiceEducationType: InvoiceEducationType? = null
+
+    fun cancel() {
+        job.cancel()
+    }
 
     fun getAnalysisFragmentListenerOrNoOp(): AnalysisFragmentListener {
         return listener ?: noOpListener
@@ -254,7 +262,7 @@ internal class AnalysisScreenPresenterExtension(
     }
 
     private fun doWhenEducationFinished(action: () -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             educationMutex.withLock {
                 withContext(Dispatchers.Main) {
                     action()

@@ -4,7 +4,8 @@ import net.gini.android.core.api.models.Box;
 
 import androidx.annotation.Nullable;
 
-/**
+
+/*
  * Created by Alpar Szotyori on 30.01.2018.
  *
  * Copyright (c) 2018 Gini GmbH.

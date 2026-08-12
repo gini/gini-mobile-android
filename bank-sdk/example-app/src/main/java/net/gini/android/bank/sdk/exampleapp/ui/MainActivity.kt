@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -31,6 +32,7 @@ import net.gini.android.capture.EntryPoint
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ProductTag
 import net.gini.android.capture.util.CancellationToken
+import net.gini.android.capture.util.SharedPreferenceHelper
 
 /**
  * Entry point for the screen api example app.
@@ -86,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent != null && isIntentActionViewOrSend(intent)) {
+        if (isIntentActionViewOrSend(intent)) {
             startGiniBankSdkForOpenWith(intent)
         }
     }
@@ -104,11 +106,17 @@ class MainActivity : AppCompatActivity() {
         configurationActivityLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 when (result.resultCode) {
-                    RESULT_CANCELED -> {}
+                    RESULT_CANCELED -> {
+                        // no-op: when cancelled, no configuration update is needed
+                    }
                     RESULT_OK -> {
-                        val configurationResult: ExampleAppBankConfiguration? = result.data?.getParcelableExtra(
-                            CONFIGURATION_BUNDLE
-                        )
+                        val configurationResult = result.data?.let { data ->
+                            IntentCompat.getParcelableExtra(
+                                data,
+                                CONFIGURATION_BUNDLE,
+                                ExampleAppBankConfiguration::class.java
+                            )
+                        }
                         if (configurationResult != null) {
                             configurationViewModel.setConfiguration(configurationResult)
                         }
@@ -193,12 +201,18 @@ class MainActivity : AppCompatActivity() {
             startGiniBankSdk(openWithIntent)
         } else {
             MaterialAlertDialogBuilder(this).setMessage(R.string.file_import_feature_is_disabled_dialog_message)
-                .setPositiveButton("OK") { dialogInterface, i -> {} }.show()
+                .setPositiveButton("OK") { _, _ -> }.show()
         }
     }
 
     private fun startGiniBankSdk(intent: Intent? = null) {
         configureGiniBank()
+
+        // QA: the Bank SDK capture flow launched here runs in the SDK's own CaptureFlowActivity,
+        // which we can't set a local night mode on from the app side. So we force it globally just
+        // before launching; it's restored in onCaptureResult when the flow returns. The SDK screen
+        // is full-screen, so the example app behind it isn't visible while forced.
+        applyForcedSdkThemeGlobally()
 
         if (intent != null) {
             cancellationToken = GiniBank.startCaptureFlowForIntent(
@@ -209,7 +223,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun applyForcedSdkThemeGlobally() {
+        val nightMode = when (SharedPreferenceHelper.getString(CaptureFlowHostActivity.FORCE_SDK_THEME_KEY, this)) {
+            CaptureFlowHostActivity.FORCE_SDK_THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
+            CaptureFlowHostActivity.FORCE_SDK_THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+        if (AppCompatDelegate.getDefaultNightMode() != nightMode) {
+            AppCompatDelegate.setDefaultNightMode(nightMode)
+        }
+    }
+
+    private fun restoreExampleAppTheme() {
+        if (AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
+
     private fun onCaptureResult(result: CaptureResult) {
+        // Undo the QA force-theme applied for the SDK flow so the example app returns to normal.
+        restoreExampleAppTheme()
         when (result) {
             is CaptureResult.Success -> {
                 startActivity(ExtractionsActivity.getStartIntent(
@@ -241,12 +274,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            CaptureResult.Empty -> {
-                if (isIntentActionViewOrSend(intent)) {
-                    finish()
-                }
-            }
-
+            CaptureResult.Empty,
             CaptureResult.Cancel -> {
                 if (isIntentActionViewOrSend(intent)) {
                     finish()

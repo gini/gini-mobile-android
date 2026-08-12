@@ -219,7 +219,6 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.androidx.multidex)
-    implementation(libs.dexter)
     implementation(libs.logback.android)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.material3)

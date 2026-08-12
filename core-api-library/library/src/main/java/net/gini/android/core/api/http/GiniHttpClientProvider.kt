@@ -47,7 +47,7 @@ import okhttp3.OkHttpClient
  *
  * @see DefaultGiniHttpClientProvider for the SDK's default implementation
  */
-interface GiniHttpClientProvider {
+fun interface GiniHttpClientProvider {
     /**
      * Provides a configured [OkHttpClient] instance for use by the Gini API libraries.
      *

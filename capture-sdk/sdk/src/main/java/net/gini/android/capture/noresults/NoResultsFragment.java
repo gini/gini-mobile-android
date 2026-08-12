@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -104,7 +105,8 @@ public class NoResultsFragment extends Fragment implements FragmentImplCallback 
             NavController navController,
             NavDirections direction
     ) {
-        if (navController.getCurrentDestination().getId() == R.id.gc_destination_noresults_fragment) {
+        NavDestination currentDest = navController.getCurrentDestination();
+        if (currentDest == null || currentDest.getId() == R.id.gc_destination_noresults_fragment) {
             return;
         }
         navController.navigate(direction);

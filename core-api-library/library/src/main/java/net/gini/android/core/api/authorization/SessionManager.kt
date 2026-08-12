@@ -8,6 +8,6 @@ import net.gini.android.core.api.authorization.apimodels.SessionToken
  *
  * Implement this interface and pass it to the API builder to provide your own session management.
  */
-interface SessionManager {
+fun interface SessionManager {
     suspend fun getSession(): Resource<Session>
 }

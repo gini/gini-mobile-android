@@ -18,6 +18,8 @@ import net.gini.android.capture.internal.qreducation.UpdateFlowTypeUseCase
 import net.gini.android.capture.internal.qreducation.model.FlowType
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.education.GetEducationFeatureEnabledUseCase
+import net.gini.android.capture.internal.provider.GiniBankConfigurationProvider
+import net.gini.android.capture.internal.provider.UnsupportedQrWarningSessionPin
 
 internal abstract class CameraFragmentExtension {
 
@@ -35,7 +37,22 @@ internal abstract class CameraFragmentExtension {
             GetEInvoiceFeatureEnabledUseCase by getGiniCaptureKoin().inject()
     private val getEducationFeatureEnabledUseCase:
             GetEducationFeatureEnabledUseCase by getGiniCaptureKoin().inject()
+    private val giniBankConfigurationProvider:
+            GiniBankConfigurationProvider by getGiniCaptureKoin().inject()
+    private val unsupportedQrWarningSessionPin:
+            UnsupportedQrWarningSessionPin by getGiniCaptureKoin().inject()
     private val educationMutex = Mutex()
+
+    /**
+     * Decides which unsupported-QR-code warning to show and pins that decision for the rest of
+     * the capture session, so the warning type cannot change mid-session. Usually the pin is
+     * already set by GiniCaptureViewModel from the first persisted configuration emission; the
+     * provider read is only the fallback when a QR code is scanned before that emission arrives.
+     */
+    fun isUnsupportedQRCodeWarningEnabled(): Boolean =
+        unsupportedQrWarningSessionPin.pinIfAbsent {
+            giniBankConfigurationProvider.provide().isUnsupportedQRCodeWarningEnabled
+        }
 
     fun showQrCodePopup(data: PaymentQRCodeData, onEducationFlowTriggered: () -> Unit) =
         runBlocking {

@@ -29,6 +29,7 @@ jobs:
 
   publish_to_firebase_distribution:
     needs: check
+    environment: firebase-manual-deploy
     runs-on: ubuntu-latest
     steps:
       - name: checkout

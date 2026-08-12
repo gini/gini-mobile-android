@@ -25,6 +25,29 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: run unit tests
+        run: ./gradlew bank-api-library:library:testDebugUnitTest
+
+      - name: archive unit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bank-api-library-unit-test-results
+          path: bank-api-library/library/build/reports/tests
+
+  instrumented-test:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         api-level: [ 23, 31 ]
@@ -192,22 +215,12 @@ jobs:
           name: bank-api-library-ktlint-report
           path: bank-api-library/library/build/reports/ktlint/**/*.html
 
+  # Keep the with: block in sync with the matching job in sonar-baselines.yml,
+  # so the main baseline is built and scanned exactly like this PR analysis.
   sonar:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "17"
-
-      - name: Build Bank API Library
-        run: ./gradlew :bank-api-library:library:assembleDebug
-
-      - name: SonarQube Scan
-        run: ./gradlew :bank-api-library:library:sonar --info --stacktrace
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    uses: ./.github/workflows/sonar.yml
+    with:
+      coverage-tasks: ':bank-api-library:library:jacocoTestReport'
+      sonar-tasks: ':bank-api-library:library:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

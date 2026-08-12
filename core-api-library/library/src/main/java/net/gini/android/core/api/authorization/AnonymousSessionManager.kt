@@ -2,7 +2,6 @@ package net.gini.android.core.api.authorization
 
 import net.gini.android.core.api.Resource
 import net.gini.android.core.api.Utils
-import net.gini.android.core.api.authorization.apimodels.SessionToken
 import net.gini.android.core.api.authorization.apimodels.UserRequestModel
 import org.json.JSONObject
 import java.util.*
@@ -18,55 +17,44 @@ internal class AnonymousSessionManager(
     private var currentSession: Session? = null
 
     override suspend fun getSession(): Resource<Session> {
-        currentSession?.let { session ->
-            if (!session.hasExpired()) {
-                return Resource.Success(session)
-            }
-        }
-
-        val userCredentials = credentialsStore.userCredentials
-        return if (userCredentials == null) {
-            when (val createResponse = createUser()) {
-                is Resource.Cancelled -> Resource.Cancelled()
-                is Resource.Error -> Resource.Error(createResponse)
-                is Resource.Success -> {
-                    val loginResponse = loginUser()
-                    currentSession = when (loginResponse) {
-                        is Resource.Success -> loginResponse.data
-                        else -> null
-                    }
-                    loginResponse
-                }
-            }
+        currentSession?.takeUnless { it.hasExpired() }?.let { return Resource.Success(it) }
+        return if (credentialsStore.userCredentials == null) {
+            createUserAndLogin()
         } else {
-            return when (val loginResponse = loginUser()) {
-                is Resource.Success -> {
-                    currentSession = loginResponse.data
-                    loginResponse
-                }
-                is Resource.Error -> {
-                    if (isInvalidUserError(loginResponse)) {
-                        currentSession = null
-                        credentialsStore.deleteUserCredentials()
-                        return when (val createResponse = createUser()) {
-                            is Resource.Cancelled -> Resource.Cancelled()
-                            is Resource.Error -> Resource.Error(createResponse)
-                            is Resource.Success -> {
-                                val newUserLoginResponse = loginUser()
-                                currentSession = when (newUserLoginResponse) {
-                                    is Resource.Success -> newUserLoginResponse.data
-                                    else -> null
-                                }
-                                newUserLoginResponse
-                            }
-                        }
-                    } else {
-                        loginResponse
-                    }
-                }
-                is Resource.Cancelled -> loginResponse
-            }
+            loginOrRecreateUser()
         }
+    }
+
+    private suspend fun createUserAndLogin(): Resource<Session> {
+        return when (val createResponse = createUser()) {
+            is Resource.Cancelled -> Resource.Cancelled()
+            is Resource.Error -> Resource.Error(createResponse)
+            is Resource.Success -> loginAndCacheSession()
+        }
+    }
+
+    private suspend fun loginOrRecreateUser(): Resource<Session> {
+        return when (val loginResponse = loginUser()) {
+            is Resource.Success -> {
+                currentSession = loginResponse.data
+                loginResponse
+            }
+            is Resource.Error -> handleLoginError(loginResponse)
+            is Resource.Cancelled -> loginResponse
+        }
+    }
+
+    private suspend fun handleLoginError(error: Resource.Error<Session>): Resource<Session> {
+        if (!isInvalidUserError(error)) return error
+        currentSession = null
+        credentialsStore.deleteUserCredentials()
+        return createUserAndLogin()
+    }
+
+    private suspend fun loginAndCacheSession(): Resource<Session> {
+        val loginResponse = loginUser()
+        currentSession = (loginResponse as? Resource.Success)?.data
+        return loginResponse
     }
 
     private suspend fun createUser(): Resource<Unit> {

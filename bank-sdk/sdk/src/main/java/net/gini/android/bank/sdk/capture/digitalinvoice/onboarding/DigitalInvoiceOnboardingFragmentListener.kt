@@ -11,7 +11,7 @@ package net.gini.android.bank.sdk.capture.digitalinvoice.onboarding
  *
  * @suppress
  */
-interface DigitalInvoiceOnboardingFragmentListener {
+fun interface DigitalInvoiceOnboardingFragmentListener {
 
     fun onCloseOnboarding()
 }

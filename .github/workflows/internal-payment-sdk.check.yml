@@ -5,18 +5,8 @@ permissions:
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'internal-payment-sdk/**'
-      - 'health-api-library/**'
-      - 'core-api-library/**'
-      - 'gradle/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
   pull_request:
-    types: [opened, edited, reopened]
+    types: [opened, edited, reopened, synchronize]
     paths:
       - 'internal-payment-sdk/**'
       - 'health-api-library/**'
@@ -26,6 +16,10 @@ on:
     secrets:
       SONAR_TOKEN:
         required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'refs/tags/')}}
 
 jobs:
   test:
@@ -114,22 +108,13 @@ jobs:
           name: internal-payment-sdk-ktlint-report
           path: internal-payment-sdk/sdk/build/reports/ktlint/**/*.html
 
+  # Keep the with: block in sync with the matching job in sonar-baselines.yml,
+  # so the main baseline is built and scanned exactly like this PR analysis.
   sonar:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "17"
-
-      - name: Build Internal Payment SDK
-        run: ./gradlew :internal-payment-sdk:sdk:assembleDebug
-
-      - name: SonarQube Scan
-        run: ./gradlew :internal-payment-sdk:sdk:sonar --info --stacktrace
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    uses: ./.github/workflows/sonar.yml
+    with:
+      prepare-tasks: ':internal-payment-sdk:sdk:assembleDebug'
+      coverage-tasks: ':internal-payment-sdk:sdk:jacocoTestReport'
+      sonar-tasks: ':internal-payment-sdk:sdk:sonar'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

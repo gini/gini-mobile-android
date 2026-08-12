@@ -267,7 +267,7 @@ internal class CameraXController(val activity: Activity) : CameraInterface {
             previewContainer.previewView.width / 2f,
             previewContainer.previewView.height / 2f,
             object : CameraInterface.TapToFocusListener {
-                override fun onFocusing(point: Point, previewViewSize: Size) {}
+                override fun onFocusing(point: Point, previewViewSize: Size) { /* No-op */ }
 
                 override fun onFocused(success: Boolean) {
                     focusFuture.complete(success)

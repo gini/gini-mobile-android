@@ -16,6 +16,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import androidx.core.os.BundleCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -95,10 +96,10 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.transfer_summary -> {
-            if (isCaptureSDKExtractions)
-                sendTransferSummaryAndCloseForCapture()
-            else
-                sendTransferSummaryAndClose(binding)
+        if (isCaptureSDKExtractions)
+            sendTransferSummaryAndCloseForCapture()
+        else
+            sendTransferSummaryAndClose()
 
             true
         }
@@ -113,21 +114,25 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
     }
 
     private fun readExtras() {
-        intent.extras?.getParcelable<Bundle>(EXTRA_IN_EXTRACTIONS)?.run {
-            keySet().forEach { name ->
-                getParcelable<GiniCaptureSpecificExtraction>(name)?.let { mExtractions[name] = it }
+        intent.extras?.let { extras ->
+            BundleCompat.getParcelable(extras, EXTRA_IN_EXTRACTIONS, Bundle::class.java)?.run {
+                keySet().forEach { name ->
+                    BundleCompat.getParcelable(this, name, GiniCaptureSpecificExtraction::class.java)
+                        ?.let { mExtractions[name] = it }
+                }
+            }
+
+            // Read compound extractions
+            BundleCompat.getParcelable(extras, EXTRA_IN_COMPOUND_EXTRACTIONS, Bundle::class.java)?.run {
+                val tempMap = mutableMapOf<String, GiniCaptureCompoundExtraction>()
+                keySet().forEach { name ->
+                    BundleCompat.getParcelable(this, name, GiniCaptureCompoundExtraction::class.java)
+                        ?.let { tempMap[name] = it }
+                }
+                mCompoundExtractions = tempMap
             }
         }
-        
-        // Read compound extractions
-        intent.extras?.getParcelable<Bundle>(EXTRA_IN_COMPOUND_EXTRACTIONS)?.run {
-            val tempMap = mutableMapOf<String, GiniCaptureCompoundExtraction>()
-            keySet().forEach { name ->
-                getParcelable<GiniCaptureCompoundExtraction>(name)?.let { tempMap[name] = it }
-            }
-            mCompoundExtractions = tempMap
-        }
-        
+
         // Read isCxExtractions
         isCxExtractions = intent.getBooleanExtra(EXTRA_IN_IS_CX_EXTRACTIONS, false)
     }
@@ -146,8 +151,8 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
             .forEach { (_, compoundExtraction) ->
                 // Take first payment option (index 0)
                 if (compoundExtraction.specificExtractionMaps.isNotEmpty()) {
-                    val firstOption = compoundExtraction.specificExtractionMaps[0]
-                    
+                    val firstOption: Map<String, GiniCaptureSpecificExtraction> = compoundExtraction.specificExtractionMaps[0]
+
                     firstOption.forEach { (fieldName, specificExtraction) ->
                         flattened[fieldName] = specificExtraction
                     }
@@ -242,7 +247,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         instantPayment = extraction("instantPayment"),
     )
 
-    private fun sendTransferSummaryAndClose(binding: ActivityExtractionsBinding) {
+    private fun sendTransferSummaryAndClose() {
         // Transfer summary should be sent only for the user visible fields. Non-visible fields should be filtered out.
         // In a real application the user input should be used as the new value.
 
@@ -308,15 +313,6 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         finish()
     }
 
-    private fun showProgressIndicator(binding: ActivityExtractionsBinding) {
-        binding.recyclerviewExtractions.animate().alpha(0.5f)
-        binding.layoutProgress.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressIndicator(binding: ActivityExtractionsBinding) {
-        binding.recyclerviewExtractions.animate().alpha(1.0f)
-        binding.layoutProgress.visibility = View.GONE
-    }
 
     companion object {
         const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
@@ -350,7 +346,7 @@ private class ExtractionsAdapter(
     val editableSpecificExtractions: List<String>,
 ) : RecyclerView.Adapter<ViewHolder>() {
 
-    interface ExtractionsAdapterInterface {
+    fun interface ExtractionsAdapterInterface {
         fun valueChanged(key: String, value: String)
     }
 

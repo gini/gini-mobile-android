@@ -52,6 +52,7 @@ public final class PubKeyManager implements X509TrustManager {
             TrustKit.initializeWithNetworkSecurityConfiguration(mContext,
                     mNetworkSecurityConfigResId);
         } catch (IllegalStateException ignore) {
+            // TrustKit is already initialized — safe to continue
         }
         mLocalPublicKeys = getPublicKeys(TrustKit.getInstance());
         mTrustKitTrustManagers.clear();
@@ -124,8 +125,7 @@ public final class PubKeyManager implements X509TrustManager {
         }
     }
 
-    private Boolean isValidCertificate(final X509Certificate remoteCertificate)
-            throws CertificateException {
+    private boolean isValidCertificate(final X509Certificate remoteCertificate) {
         final PublicKeyPin remotePublicKey = new PublicKeyPin(remoteCertificate);
         for (final PublicKeyPin localPublicKey : mLocalPublicKeys) {
             if (localPublicKey.equals(remotePublicKey)) {

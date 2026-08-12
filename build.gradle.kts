@@ -5,7 +5,6 @@ import net.gini.gradle.DependencyUpdatesPlugin
 
 plugins {
     alias(libs.plugins.devtools.ksp) apply false
-    alias(libs.plugins.sonarqube) apply false
 }
 
 buildscript {

@@ -1010,18 +1010,22 @@ public class GiniCapture {
         private EventTracker mEventTracker = new EventTracker() {
             @Override
             public void onOnboardingScreenEvent(@NotNull final Event<OnboardingScreenEvent> event) {
+                // No-op
             }
 
             @Override
             public void onCameraScreenEvent(@NotNull final Event<CameraScreenEvent> event) {
+                // No-op
             }
 
             @Override
             public void onReviewScreenEvent(@NotNull final Event<ReviewScreenEvent> event) {
+                // No-op
             }
 
             @Override
             public void onAnalysisScreenEvent(@NotNull final Event<AnalysisScreenEvent> event) {
+                // No-op
             }
         };
         private List<HelpItem.Custom> mCustomHelpItems = new ArrayList<>();

@@ -86,6 +86,7 @@ import net.gini.android.capture.internal.util.ApplicationHelper;
 import net.gini.android.capture.internal.util.CancelListener;
 import net.gini.android.capture.internal.util.ContextHelper;
 import net.gini.android.capture.internal.util.DeviceHelper;
+import net.gini.android.capture.internal.util.LogSanitizer;
 import net.gini.android.capture.internal.util.FileImportValidator;
 import net.gini.android.capture.internal.util.MimeType;
 import net.gini.android.capture.internal.util.Size;
@@ -165,11 +166,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
         @Override
         public void onError(@NonNull final GiniCaptureError error) {
+            // No-op
         }
 
         @Override
         public void onExtractionsAvailable(
                 @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions) {
+            // No-op
         }
     };
 
@@ -181,6 +184,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private static final String GENERIC_ERROR_MESSAGE_KEY = "GENERIC_ERROR_MESSAGE_KEY";
     private static final String ERROR_TYPE_MULTI_PAGE = "ERROR_TYPE_MULTI_PAGE";
     private static final String ERROR_TYPE_INVALID_FILE = "ERROR_TYPE_INVALID_FILE";
+    private static final String ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY = "ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY";
+    private static final String ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY = "ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY";
+    private static final String QR_SCANNING_DISABLED_BY_USER_KEY = "QR_SCANNING_DISABLED_BY_USER_KEY";
+    private static final String QR_CODE_READER_FAILED_KEY = "QR_CODE_READER_FAILED_KEY";
+    private static final String UNSUPPORTED_QR_DIALOG_SHOWING_KEY = "UNSUPPORTED_QR_DIALOG_SHOWING_KEY";
 
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
@@ -189,11 +197,24 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private String currentGenericErrorMessage = "";
     private String genericErrorType = "";
 
-    private QRCodePopup<String> mUnsupportedQRCodePopup;
+    @VisibleForTesting
+    QRCodePopup<String> mUnsupportedQRCodePopup;
+
+    // null = use GiniCapture setting; true = only-QR mode; false = document capture mode
+    @VisibleForTesting
+    @Nullable
+    Boolean mOnlyQRCodeScanningRuntimeOverride = null;
+    @VisibleForTesting
+    boolean mQRCodeScanningDisabledByUser = false;
+    @VisibleForTesting
+    boolean mQRCodeReaderFailed = false;
+    @VisibleForTesting
+    boolean mIsUnsupportedQRDialogShowing = false;
 
     private View mImageCorners;
     private PhotoThumbnail mPhotoThumbnail;
-    private boolean mInterfaceHidden;
+    @VisibleForTesting
+    boolean mInterfaceHidden;
     private boolean mInMultiPageState;
     private boolean mIsFlashEnabled = true;
 
@@ -223,19 +244,22 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private Button mButtonImportDocument;
     private ConstraintLayout mCameraFrameWrapper;
     private View mActivityIndicatorBackground;
-    private ImageView mImageFrame;
+    @VisibleForTesting
+    ImageView mImageFrame;
     private ViewStubSafeInflater mViewStubInflater;
     private ConstraintLayout mPaneWrapper;
     private ConstraintLayout mDetectionErrorLayout;
     private TextView mScanTextView;
-    private TextView mIbanDetectedTextView;
+    @VisibleForTesting
+    TextView mIbanDetectedTextView;
     private boolean mIsTakingPicture;
     private boolean mIsDetectionErrorPopupShowed;
 
     private boolean mImportDocumentButtonEnabled;
     private ImportImageFileUrisAsyncTask mImportUrisAsyncTask;
     private Group mImportButtonGroup;
-    private String mQRCodeContent;
+    @VisibleForTesting
+    String mQRCodeContent;
     private boolean shouldSendUserAnalyticsTrackerForQrCodes = true;
     private boolean isIbanDetectedOnceForUserAnalytics = false;
 
@@ -257,11 +281,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
     @Override
     public void onPaymentQRCodeDataAvailable(@NonNull final PaymentQRCodeData paymentQRCodeData) {
+        if (mQRCodeScanningDisabledByUser) return;
         handleQRCodeDetected(paymentQRCodeData, paymentQRCodeData.getUnparsedContent());
     }
 
     @Override
     public void onNonPaymentQRCodeDetected(@NonNull String qrCodeContent) {
+        if (mQRCodeScanningDisabledByUser) return;
         if (mIbanDetectedTextView.getVisibility() == View.VISIBLE) {
             return;
         }
@@ -275,6 +301,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         LOG.warn(
                 "QRCode detector dependencies are not yet available. QRCode detection is disabled.");
 
+        mQRCodeReaderFailed = true;
         setQRDisabledTexts();
         if (!mIsDetectionErrorPopupShowed) {
             mIsDetectionErrorPopupShowed = true;
@@ -335,10 +362,88 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void showUnsupportedQRCodePopup() {
+        showUnsupportedQRCodePopup(true);
+    }
+
+    /**
+     * @param trackScanEvent whether to report the scan to analytics. Pass {@code false} when the
+     *                       popup is merely being re-shown after a configuration change (restore),
+     *                       so the same unsupported scan is not tracked more than once.
+     */
+    private void showUnsupportedQRCodePopup(boolean trackScanEvent) {
         if (mIbanDetectedTextView.getVisibility() != View.VISIBLE) {
+            // Session-pinned value; the popup resolves the same pin when showing, so this flag
+            // always matches the warning type that is actually rendered.
+            mIsUnsupportedQRDialogShowing = isUnsupportedQRCodeWarningEnabled();
+            if (mIsUnsupportedQRDialogShowing) {
+                // The dialog requires an explicit user choice; IBAN detection must not run while
+                // it is visible, otherwise a detected IBAN would dismiss it. The dialog's button
+                // handlers re-create the filter through updateCameraUIForCurrentMode().
+                releaseIBANRecognizerFilter();
+            }
             mUnsupportedQRCodePopup.show(null);
-            sendQRCodeScannedEventToUserAnalytics(false);
+            if (trackScanEvent) {
+                sendQRCodeScannedEventToUserAnalytics(false);
+            }
         }
+    }
+
+    @VisibleForTesting
+    void onUnsupportedQRCodePopupHidden() {
+        mIsUnsupportedQRDialogShowing = false;
+        mQRCodeContent = null;
+        mInterfaceHidden = false;
+    }
+
+    @VisibleForTesting
+    void enableOnlyQRScanning() {
+        mIsUnsupportedQRDialogShowing = false;
+        mQRCodeScanningDisabledByUser = false;
+        mInterfaceHidden = false;
+        mQRCodeContent = null;
+        mOnlyQRCodeScanningRuntimeOverride = true;
+        updateCameraUIForCurrentMode();
+    }
+
+    @VisibleForTesting
+    void enableDocumentCapture() {
+        mIsUnsupportedQRDialogShowing = false;
+        mQRCodeScanningDisabledByUser = true;
+        mInterfaceHidden = false;
+        mQRCodeContent = null;
+        mOnlyQRCodeScanningRuntimeOverride = false;
+        updateCameraUIForCurrentMode();
+    }
+
+    private void updateCameraUIForCurrentMode() {
+        final Activity activity = mFragment.getActivity();
+        if (activity == null) return;
+
+        if (isOnlyQRCodeScanningEnabled()) {
+            initOnlyQRScanning();
+            mBottomInjectedContainer.setInjectedViewAdapterHolder(null);
+            mImportButtonGroup.setVisibility(View.GONE);
+            mImportDocumentButtonEnabled = false;
+            releaseIBANRecognizerFilter();
+        } else {
+            mPaneWrapper.setVisibility(View.VISIBLE);
+            ConstraintLayout.LayoutParams params =
+                    (ConstraintLayout.LayoutParams) mImageFrame.getLayoutParams();
+            params.dimensionRatio = "1:1.414";
+            params.leftMargin = (int) activity.getResources().getDimension(R.dimen.gc_medium);
+            params.rightMargin = (int) activity.getResources().getDimension(R.dimen.gc_medium);
+            mImageFrame.setLayoutParams(params);
+            setBottomInjectedViewContainer();
+            initViews();
+            if (GiniCapture.hasInstance()
+                    && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD) {
+                initIBANRecognizerFilter();
+            }
+            if (!isQRCodeScanningAvailable()) {
+                setQRDisabledTexts();
+            }
+        }
+        setTopBarInjectedViewContainer();
     }
 
     @VisibleForTesting
@@ -377,6 +482,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mInMultiPageState = savedInstanceState.getBoolean(IN_MULTI_PAGE_STATE_KEY);
         mIsFlashEnabled = savedInstanceState.getBoolean(IS_FLASH_ENABLED_KEY);
         mIsDetectionErrorPopupShowed = savedInstanceState.getBoolean(IS_NOT_AVAILABLE_DETECTION_POPUP_SHOWED_KEY);
+        mQRCodeScanningDisabledByUser = savedInstanceState.getBoolean(QR_SCANNING_DISABLED_BY_USER_KEY);
+        mQRCodeReaderFailed = savedInstanceState.getBoolean(QR_CODE_READER_FAILED_KEY);
+        mIsUnsupportedQRDialogShowing = savedInstanceState.getBoolean(UNSUPPORTED_QR_DIALOG_SHOWING_KEY);
+        if (savedInstanceState.getBoolean(ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY, false)) {
+            mOnlyQRCodeScanningRuntimeOverride = savedInstanceState.getBoolean(ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY);
+        } else {
+            mOnlyQRCodeScanningRuntimeOverride = null;
+        }
     }
 
     View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -397,7 +510,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         createPopups(view);
         initOnlyQRScanning();
 
-        if (!GiniCapture.getInstance().isQRCodeScanningEnabled()) {
+        if (!isQRCodeScanningAvailable()) {
             setQRDisabledTexts();
         }
 
@@ -407,6 +520,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     public void onViewCreated(View view, Bundle savedInstanceState) {
         handleOnBackPressed();
         showGenericErrorIfNeeded(savedInstanceState);
+        if (mOnlyQRCodeScanningRuntimeOverride != null) {
+            updateCameraUIForCurrentMode();
+        }
+        if (mIsUnsupportedQRDialogShowing) {
+            // Re-showing after a configuration change: do not re-track the scan event.
+            showUnsupportedQRCodePopup(false);
+        }
     }
 
     private void showGenericErrorIfNeeded(Bundle savedInstanceState) {
@@ -470,9 +590,19 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         mUnsupportedQRCodePopup =
                 new QRCodePopup<>(mFragment, mCameraFrameWrapper, mActivityIndicatorBackground, null,
                         getHideQRCodeDetectedPopupDelayMs(), false, null, () -> {
-                    mQRCodeContent = null;
+                    onUnsupportedQRCodePopupHidden();
                     return null;
-                });
+                }, () -> {
+                    enableOnlyQRScanning();
+                    return null;
+                }, () -> {
+                    enableDocumentCapture();
+                    return null;
+                },
+                        // Deliberately a supplier, not a captured value: the configuration may not
+                        // be loaded yet at view creation, so the warning type is resolved (and
+                        // pinned for the session) when the popup is first shown.
+                        this::isUnsupportedQRCodeWarningEnabled);
         qrCodeEducationPopup = new QRCodeEducationPopup<>(view.findViewById(R.id.gc_qr_code_education_compose_view));
     }
 
@@ -494,7 +624,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         initQRCodeReader();
         if (GiniCapture.hasInstance()
                 && GiniCapture.getInstance().getEntryPoint() == EntryPoint.FIELD
-                && !isOnlyQRCodeScanningEnabled()) {
+                && !isOnlyQRCodeScanningEnabled()
+                // Keep IBAN detection deactivated while the unsupported QR code dialog is
+                // visible (e.g. restored after a configuration change).
+                && !mIsUnsupportedQRDialogShowing) {
             initIBANRecognizerFilter();
         }
 
@@ -526,8 +659,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             importDocumentFromUriList(((FileChooserResult.FilesSelectedUri) result).getList());
         } else if (result instanceof FileChooserResult.Error) {
             final GiniCaptureError error = ((FileChooserResult.Error) result).getError();
-            final String message = "Document import failed: " + error.getMessage();
-            LOG.error(message);
+            LOG.error("Document import failed: {}", LogSanitizer.sanitize(error.getMessage()));
             showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
         }
     }
@@ -646,6 +778,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         ibanRecognizerFilter = new IBANRecognizerFilter(new IBANRecognizerImpl(cropToCameraFrameTextRecognizer), this::handleIBANsDetected);
     }
 
+    private void releaseIBANRecognizerFilter() {
+        if (ibanRecognizerFilter != null) {
+            ibanRecognizerFilter.cleanup();
+            ibanRecognizerFilter = null; // NOPMD
+        }
+    }
+
     private void enableTapToFocus() {
         mCameraController.enableTapToFocus(new CameraInterface.TapToFocusListener() {
             @Override
@@ -726,6 +865,13 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         outState.putString(GENERIC_ERROR_MESSAGE_KEY, currentGenericErrorMessage);
         outState.putBoolean(GENERIC_ERROR_SHOWING_STATE_KEY, isGenericErrorShowing);
         outState.putString(GENERIC_ERROR_TYPE_KEY, genericErrorType);
+        outState.putBoolean(QR_SCANNING_DISABLED_BY_USER_KEY, mQRCodeScanningDisabledByUser);
+        outState.putBoolean(QR_CODE_READER_FAILED_KEY, mQRCodeReaderFailed);
+        outState.putBoolean(UNSUPPORTED_QR_DIALOG_SHOWING_KEY, mIsUnsupportedQRDialogShowing);
+        outState.putBoolean(ONLY_QR_SCANNING_OVERRIDE_IS_SET_KEY, mOnlyQRCodeScanningRuntimeOverride != null);
+        if (mOnlyQRCodeScanningRuntimeOverride != null) {
+            outState.putBoolean(ONLY_QR_SCANNING_OVERRIDE_VALUE_KEY, mOnlyQRCodeScanningRuntimeOverride);
+        }
     }
 
     void onStop() {
@@ -750,10 +896,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             mPaymentQRCodeReader.release();
             mPaymentQRCodeReader = null; // NOPMD
         }
-        if (ibanRecognizerFilter != null) {
-            ibanRecognizerFilter.cleanup();
-            ibanRecognizerFilter = null; // NOPMD
-        }
+        releaseIBANRecognizerFilter();
         mCameraController.disableTapToFocus();
         mCameraController.setPreviewCallback(null);
         mCameraController.stopPreview();
@@ -843,7 +986,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_qr));
                 } else {
                     if (ContextHelper.isTablet(mFragment.getActivity())) {
-                        if (GiniCapture.getInstance().isQRCodeScanningEnabled()) {
+                        if (isQRCodeScanningAvailable()) {
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_invoice_and_qr));
                         } else {
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
@@ -851,8 +994,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     } else {
                         if (ContextHelper.isPortraitOrientation(mFragment.getActivity()))
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_title_camera));
-                        else
+                        else if (isQRCodeScanningAvailable())
                             injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_top_bar_title_landscape));
+                        else
+                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
                     }
                 }
 
@@ -950,11 +1095,19 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private boolean isOnlyQRCodeScanningEnabled() {
+        if (mOnlyQRCodeScanningRuntimeOverride != null) {
+            return mOnlyQRCodeScanningRuntimeOverride;
+        }
         if (!GiniCapture.hasInstance()) {
             return false;
         }
-
         return GiniCapture.getInstance().isOnlyQRCodeScanning() && GiniCapture.getInstance().isQRCodeScanningEnabled();
+    }
+
+    private boolean isQRCodeScanningAvailable() {
+        return isQRCodeScanningEnabled()
+                && !mQRCodeScanningDisabledByUser
+                && !mQRCodeReaderFailed;
     }
 
     private void initViews() {
@@ -1073,6 +1226,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             case EPC069_12:
             case BEZAHL_CODE:
             case GINI_PAYMENT:
+            case SPC:
+            case SPD:
+            case PAY_BY_SQUARE:
+            case UPNQR:
+            case HUB3:
                 QRCodeDocument mQRCodeDocument = QRCodeDocument.fromPaymentQRCodeData(
                         paymentQRCodeData);
                 sendQRCodeScannedEventToUserAnalytics(true);
@@ -1084,7 +1242,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 break;
             default:
                 sendQRCodeScannedEventToUserAnalytics(false);
-                LOG.error("Unknown payment QR Code format: {}", paymentQRCodeData);
+                LOG.error("Unknown payment QR Code format: {}", LogSanitizer.sanitize(paymentQRCodeData));
                 break;
         }
     }
@@ -1318,7 +1476,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     DeviceHelper.getDeviceOrientation(activity),
                     DeviceHelper.getDeviceType(activity),
                     ImportMethod.PICKER);
-            LOG.info("Document imported: {}", document);
+            LOG.info("Document imported: {}", LogSanitizer.sanitize(document));
             requestClientDocumentCheck(document);
         } catch (final IllegalArgumentException e) {
             LOG.error("Failed to import selected document", e);
@@ -1358,7 +1516,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
                     @Override
                     public void documentRejected(@NonNull final String messageForUser) {
-                        LOG.debug("Client rejected the document: {}", messageForUser);
+                        LOG.debug("Client rejected the document: {}", LogSanitizer.sanitize(messageForUser));
 
                         hideActivityIndicatorAndEnableInteraction();
 
@@ -1430,7 +1588,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                             mInMultiPageState = false;
                             return;
                         }
-                        LOG.info("Document imported: {}", mMultiPageDocument);
+                        LOG.info("Document imported: {}", LogSanitizer.sanitize(mMultiPageDocument));
                         updatePhotoThumbnail();
                         requestClientDocumentCheck(mMultiPageDocument);
                     }
@@ -1449,7 +1607,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
 
                     @Override
                     public void onCancelled() {
-
+                        // No-op
                     }
                 });
         mImportUrisAsyncTask.execute(uris.toArray(new Uri[uris.size()]));
@@ -1577,7 +1735,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return;
         }
         String message = activity.getString(errorType.getTitleTextResource());
-        LOG.error("Invalid document {}", message);
+        LOG.error("Invalid document {}", LogSanitizer.sanitize(message));
         showInvalidFileAlert(message);
     }
 
@@ -1949,6 +2107,14 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         } else {
             if (!isOnlyQRCodeScanningEnabled()) {
                 mScanTextView.setText(mFragment.getActivity().getResources().getString(R.string.gc_camera_info_label_only_invoice));
+                // In landscape the below-frame hint is hidden and the scan hint lives in the top bar,
+                // so update it live (a new holder alone only reconfigures on the next bind/rotation).
+                if (!ContextHelper.isPortraitOrientation(activity)) {
+                    topAdapterInjectedViewContainer.modifyAdapterIfOwned(injectedViewAdapter -> {
+                        injectedViewAdapter.setTitle(activity.getString(R.string.gc_camera_info_label_only_invoice));
+                        return Unit.INSTANCE;
+                    });
+                }
             }
         }
     }
@@ -2020,8 +2186,12 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         });
     }
 
-    private void handleIBANsDetected(List<String> ibans) {
-        if (!ibans.isEmpty() && !isPaymentQRCodeDetectionInProgress()) {
+    @VisibleForTesting
+    void handleIBANsDetected(List<String> ibans) {
+        // mIsUnsupportedQRDialogShowing: the filter is released while the unsupported QR code
+        // dialog is visible, but an in-flight recognition result may still arrive after the
+        // dialog is shown — it must not dismiss a dialog that awaits an explicit user choice.
+        if (!ibans.isEmpty() && !isPaymentQRCodeDetectionInProgress() && !mIsUnsupportedQRDialogShowing) {
             mUnsupportedQRCodePopup.hide();
             showIBANsDetectedOnScreen(ibans);
         } else {
@@ -2047,13 +2217,18 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void hideIBANsDetectedOnScreen() {
-        mImageFrame.setImageTintList(ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                                mFragment.getActivity(),
-                                R.color.gc_light_01
-                        )
-                )
-        );
+        // Don't reset the frame color while a QR code popup owns it (e.g. the red frame of the
+        // unsupported QR code warning restored after a configuration change), otherwise the first
+        // no-IBAN camera frame would overwrite it with the default color.
+        if (!mUnsupportedQRCodePopup.isShown() && !isPaymentQRCodeDetectionInProgress()) {
+            mImageFrame.setImageTintList(ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                    mFragment.getActivity(),
+                                    R.color.gc_light_01
+                            )
+                    )
+            );
+        }
         mIbanDetectedTextView.setVisibility(View.GONE);
         mIbanDetectedTextView.setText("");
     }
@@ -2069,11 +2244,11 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         ErrorLogger.log(new ErrorLog(errorCode.toString() + ": " + message, throwable));
         String errorMessage = message;
         if (throwable != null) {
-            LOG.error(message, throwable);
+            LOG.error("{}", LogSanitizer.sanitize(message), throwable);
             // Add error info to the message to help clients, if they don't have logging enabled
             errorMessage = errorMessage + ": " + throwable.getMessage();
         } else {
-            LOG.error(message);
+            LOG.error("{}", LogSanitizer.sanitize(message));
         }
         fragmentListener.onError(new GiniCaptureError(errorCode, errorMessage));
     }

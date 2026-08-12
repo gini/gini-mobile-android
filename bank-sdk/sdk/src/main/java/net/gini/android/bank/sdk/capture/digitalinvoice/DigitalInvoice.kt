@@ -300,67 +300,51 @@ internal class DigitalInvoice(
     fun updateLineItemExtractionsWithReviewedLineItems() {
         _compoundExtractions = compoundExtractions.mapValues { (name, extraction) ->
             when (name) {
-                "lineItems" -> {
-                    val cameraExtractions =
-                        extraction.specificExtractionMaps.mapIndexed { index, lineItemExtractions ->
-                            selectableLineItems.find { it.lineItem.id.toInt() == index }
-                                ?.let { sli ->
-                                    val extractions =
-                                        lineItemExtractions.mapValues { (name, lineItemExtraction) ->
-                                            when (name) {
-                                                "description" -> copyGiniCaptureSpecificExtraction(
-                                                    lineItemExtraction,
-                                                    sli.lineItem.description
-                                                )
-
-                                                "baseGross" -> copyGiniCaptureSpecificExtraction(
-                                                    lineItemExtraction,
-                                                    sli.lineItem.rawGrossPrice
-                                                )
-
-                                                "quantity" -> copyGiniCaptureSpecificExtraction(
-                                                    lineItemExtraction,
-                                                    if (sli.selected) {
-                                                        sli.lineItem.quantity.toString()
-                                                    } else {
-                                                        "0"
-                                                    }
-                                                )
-
-                                                else -> lineItemExtraction
-                                            }
-                                        }.toMutableMap()
-                                    sli.reason?.let { returnReason ->
-                                        extractions.put(
-                                            "returnReason", GiniCaptureSpecificExtraction(
-                                                "returnReason",
-                                                returnReason.id,
-                                                "",
-                                                null,
-                                                emptyList()
-                                            )
-                                        )
-                                    }
-                                    extractions
-                                }
-                        }.filterNotNull().toMutableList()
-
-
-                    val userAddedExtractions = selectableLineItems.filter { it.addedByUser }
-                        .map {
-                            it.lineItem.asGiniExtractionMap()
-                        }
-                    cameraExtractions.addAll(userAddedExtractions)
-
-
-                    return@mapValues GiniCaptureCompoundExtraction(
-                        name,
-                        cameraExtractions
-                    )
-                }
-
-                else -> return@mapValues extraction
+                "lineItems" -> buildReviewedLineItemsExtraction(name, extraction)
+                else -> extraction
             }
+        }
+    }
+
+    private fun buildReviewedLineItemsExtraction(
+        name: String,
+        extraction: GiniCaptureCompoundExtraction
+    ): GiniCaptureCompoundExtraction {
+        val cameraExtractions = extraction.specificExtractionMaps
+            .mapIndexed { index, lineItemExtractions ->
+                buildReviewedLineItemExtractionsForIndex(index, lineItemExtractions)
+            }
+            .filterNotNull()
+            .toMutableList()
+        val userAddedExtractions = selectableLineItems
+            .filter { it.addedByUser }
+            .map { it.lineItem.asGiniExtractionMap() }
+        cameraExtractions.addAll(userAddedExtractions)
+        return GiniCaptureCompoundExtraction(name, cameraExtractions)
+    }
+
+    private fun buildReviewedLineItemExtractionsForIndex(
+        index: Int,
+        lineItemExtractions: Map<String, GiniCaptureSpecificExtraction>
+    ): MutableMap<String, GiniCaptureSpecificExtraction>? {
+        return selectableLineItems.find { it.lineItem.id.toInt() == index }?.let { sli ->
+            val extractions = lineItemExtractions.mapValues { (name, lineItemExtraction) ->
+                when (name) {
+                    "description" -> copyGiniCaptureSpecificExtraction(lineItemExtraction, sli.lineItem.description)
+                    "baseGross" -> copyGiniCaptureSpecificExtraction(lineItemExtraction, sli.lineItem.rawGrossPrice)
+                    "quantity" -> copyGiniCaptureSpecificExtraction(
+                        lineItemExtraction,
+                        if (sli.selected) sli.lineItem.quantity.toString() else "0"
+                    )
+                    else -> lineItemExtraction
+                }
+            }.toMutableMap()
+            sli.reason?.let { returnReason ->
+                extractions["returnReason"] = GiniCaptureSpecificExtraction(
+                    "returnReason", returnReason.id, "", null, emptyList()
+                )
+            }
+            extractions
         }
     }
 

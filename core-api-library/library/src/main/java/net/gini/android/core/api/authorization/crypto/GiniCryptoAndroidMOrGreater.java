@@ -22,7 +22,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
 
-/**
+/*
  * Created by Alpar Szotyori on 08.10.2018.
  *
  * Copyright (c) 2018 Gini GmbH.
@@ -80,12 +80,17 @@ class GiniCryptoAndroidMOrGreater extends GiniCrypto {
             InvalidAlgorithmParameterException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES,
                 ANDROID_KEY_STORE);
-        final KeyGenParameterSpec spec = new KeyGenParameterSpec
-                .Builder(SECRET_KEY_ALIAS,
+        // User authentication is deliberately not required for this key (S6288): it encrypts the
+        // SDK's stored client credentials in the background; there is no user-facing unlock flow.
+        final KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(SECRET_KEY_ALIAS, //NOSONAR java:S6288
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(256) // CWE-327: explicitly use 256-bit AES key instead of the 128-bit default
+                // IVs are externally generated and prepended to the ciphertext (see GiniCrypto#encrypt),
+                // so randomized encryption must be disabled to allow supplying the IV.
                 .setRandomizedEncryptionRequired(false)
+                .setUserAuthenticationRequired(false) // Intentional: key is used for app credential storage, not user-facing data
                 .build();
         keyGenerator.init(spec);
         keyGenerator.generateKey();

@@ -64,6 +64,7 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.util.Collections
 import java.util.concurrent.CancellationException
+import kotlinx.coroutines.Job
 
 /**
  * Created by Alpar Szotyori on 10.05.2019.
@@ -631,6 +632,36 @@ class AnalysisScreenPresenterTest {
 
         // Then
         verify(listener).onDefaultPDFAppAlertDialogCancelled()
+    }
+
+    // ── PP-2278 regression test (Fix 3) ───────────────────────────────────────
+
+    /**
+     * [AnalysisScreenPresenter.stop] must call [AnalysisScreenPresenterExtension.cancel] so that
+     * all coroutines managing post-analysis navigation are cancelled when the fragment is destroyed.
+     *
+     * Without this call, the coroutine scope inside the extension is never cancelled and a
+     * pending navigation can still fire on a dead NavController, causing an NPE crash.
+     *
+     * **Fails when reverted**: Removing `extension.cancel()` from [AnalysisScreenPresenter.stop]
+     * leaves the extension job active after stop() and this assertion fails.
+     */
+    @Test
+    @Throws(Exception::class)
+    fun should_cancel_extensionScope_whenStopped() {
+        // Given
+        val imageDocument: ImageDocument = ImageDocumentFake()
+        val presenter = createPresenter(imageDocument, null)
+        val jobField = AnalysisScreenPresenterExtension::class.java.getDeclaredField("job")
+        jobField.isAccessible = true
+        val job = jobField.get(presenter.extension) as Job
+        Truth.assertThat(job.isActive).isTrue()
+
+        // When: user presses Back (fragment destroyed -> stop() is called)
+        presenter.stop()
+
+        // Then: extension scope must be cancelled so no pending navigation fires on dead NavController
+        Truth.assertThat(job.isCancelled).isTrue()
     }
 
     @Test

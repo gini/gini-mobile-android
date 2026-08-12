@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import androidx.test.filters.SmallTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import net.gini.android.core.api.DocumentMetadata;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +28,7 @@ public class DocumentMetadataTest {
     private DocumentMetadata mDocumentMetadata;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mDocumentMetadata = new DocumentMetadata();
     }
 

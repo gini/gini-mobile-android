@@ -1,10 +1,5 @@
 package net.gini.android.capture.review.multipage;
 
-import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
-import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -62,8 +57,8 @@ import net.gini.android.capture.tracking.ReviewScreenEvent.UPLOAD_ERROR_DETAILS_
 import net.gini.android.capture.tracking.useranalytics.UserAnalytics;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEvent;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsEventTracker;
-import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.tracking.useranalytics.UserAnalyticsScreen;
+import net.gini.android.capture.tracking.useranalytics.properties.UserAnalyticsEventProperty;
 import net.gini.android.capture.util.recyclerview.SnappedItemChangeRecyclerViewListener;
 import net.gini.android.capture.view.InjectedViewAdapterHolder;
 import net.gini.android.capture.view.InjectedViewContainer;
@@ -80,6 +75,11 @@ import java.util.Map;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
+
+import static net.gini.android.capture.internal.util.FileImportHelper.showAlertIfOpenWithDocumentAndAppIsDefault;
+import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.tracking.EventTrackingHelper.trackReviewScreenEvent;
 
 /**
  * Created by Alpar Szotyori on 07.05.2018.

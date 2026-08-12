@@ -15,6 +15,7 @@ sonar {
         property("sonar.projectKey", "android-health-api-library")
         property("sonar.projectName", "Android Health API Library")
         property("sonar.organization", "gini")
+        property("sonar.sources", "src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")
     }
 }
@@ -123,6 +124,7 @@ dependencies {
 apply<PublishToMavenPlugin>()
 apply<DokkaPlugin>()
 apply<CodeAnalysisPlugin>()
+apply<JacocoCoveragePlugin>()
 apply<PropertiesPlugin>()
 apply<SBOMPlugin>()
 
