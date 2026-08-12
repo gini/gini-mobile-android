@@ -61,7 +61,10 @@ Infer `AndroidManifest.xml` requirements from OS APIs used in source:
 ## Code sample conventions
 
 - Code block language tags: `kotlin` for SDK usage, `xml` for manifest and
-  resource snippets.
-- The capture flow result callback is `registerForActivityResult(CaptureFlowContract())`
-  handling `CaptureResult.Success / Error / Empty / Cancel / EnterManually`,
-  launched with `GiniBank.startCaptureFlow(captureLauncher)`.
+  resource snippets, `json` for extraction payload examples.
+- The capture flow result callback in published docs is
+  `registerForActivityResult(GiniBank.createCaptureFlowContract())` handling
+  `CaptureResult.Success / Error / Empty / Cancel`, launched with
+  `GiniBank.startCaptureFlow(resultLauncher)` (see
+  `templates/major-feature.md`). Include the `EnterManually` branch only when
+  the documented feature involves it.

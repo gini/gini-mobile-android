@@ -202,153 +202,24 @@ From the filtered source, extract:
 
 **Flag for review:** any public API with no tests or usage examples — wrap it in a `> **Needs review:**` blockquote.
 
-### Step 4 — Write the Markdown file
+### Step 4 — Choose a template and write the Markdown file
 
-Use the structure below. Replace every `[placeholder]` with content derived from source. Include a section only when the source provides evidence for it. Do not invent content — use `<!-- TOBEADDED -->` for anything unverifiable.
+Read the template files in `templates/` in this skill's directory. Like `platform.md`, they are platform-specific and not mirrored — both repos keep the same file names with platform-appropriate content. Each template is derived from a published documentation page and encodes the house structure and boilerplate wording. Choose one:
 
-Use only standard Markdown. No Docusaurus frontmatter, no `:::caution` / `:::tip` admonitions. Use `> **Note:**`, `> **Warning:**`, `> **Caution:**` blockquotes where admonitions would otherwise appear.
-
-> Published GBSV pages render these blockquotes as Confluence info/warning panels. The person publishing converts them manually (or via import) — do not attempt to emit Confluence storage-format macros from this skill.
-
----
-
-**Output structure:**
-
-```md
-# [Feature Name]
-
-> **Note:** To use the [Feature Name] feature, contact Gini Customer Support to have it enabled in the backend platform.
-
-> **QA Recommendation:** We highly recommend scheduling a QA session with Gini before releasing the [Feature Name] feature to your customers.
-
-[One paragraph: what the feature does, when it activates, and what the user experiences. Present tense, second person. Accurately reflect all supported input methods — camera, imported PDF, file opened via share sheet — unless you have explicit evidence the feature is camera-only. Example: "Cross-Border Payments routes captured or imported documents through the Gini CX Payments extraction pipeline instead of the standard SEPA pipeline."]
-
-## Permission Handling
-
-[Include this section ONLY if the feature uses an Android dangerous permission. Remove entirely if not applicable.]
-
-Add the following to your `AndroidManifest.xml` inside the `<manifest>` tag:
-
-```xml
-<uses-permission android:name="android.permission.[PERMISSION_NAME]" />
-```
-
-This feature includes built-in permission handling:
-
-- If the user has not been asked for [permission] before, the SDK requests it at runtime when [trigger action].
-- If the user previously denied permission, the SDK [describe behavior — e.g. shows a rationale screen and redirects to Settings].
-
-> **Warning:** Without the manifest entry the permission request will fail and the feature will not work.
-
-## Configuration
-
-The feature is controlled via the `[propertyName]` property on `CaptureConfiguration`.
-
-**Enable (default):**
-
-```kotlin
-val captureConfiguration = CaptureConfiguration(
-    [propertyName] = [defaultValue],
-    // ...
-)
-GiniBank.setCaptureConfiguration(context, captureConfiguration)
-```
-
-**Disable:**
-
-```kotlin
-val captureConfiguration = CaptureConfiguration(
-    [propertyName] = false,
-    // ...
-)
-GiniBank.setCaptureConfiguration(context, captureConfiguration)
-```
-
-## UI Customization
-
-[This section is mandatory for all features that render any user-visible UI — strings, colors, icons, or layouts. Remove only if the feature has no UI at all.]
-
-The [Feature Name] UI supports customization of strings, colors, and other appearance attributes. See the [UI Customisation Guides](https://gini.atlassian.net/wiki/spaces/GBSV/pages/76283941) for details.
-
-## Extraction Result
-
-[Include only if the feature adds or modifies fields in the extraction result.]
-
-When the user completes the [Feature Name] flow, the SDK delivers the updated extraction result via the `GiniBank` result callback:
-
-```kotlin
-// In your Activity/Fragment, register the launcher before onCreate:
-private val captureLauncher =
-    registerForActivityResult(CaptureFlowContract()) { result ->
-        when (result) {
-            is CaptureResult.Success -> handleExtractions(result.specificExtractions)
-            is CaptureResult.Error -> handleError(result.value)
-            CaptureResult.Empty -> handleNoResults()
-            CaptureResult.Cancel -> handleCancellation()
-            CaptureResult.EnterManually -> handleEnterManually()
-        }
-    }
-
-// Launch the flow:
-GiniBank.startCaptureFlow(captureLauncher)
-```
-
-The `AnalysisResult` includes:
-
-| Field | Value for [Feature Name] |
+| Template | Use when |
 |---|---|
-| `[fieldName]` | [What this feature sets or updates.] |
+| `templates/major-feature.md` | The feature introduces a new extraction pipeline or result type, changes how results are delivered, or interacts with multiple existing features |
+| `templates/flag-feature.md` | The feature is toggled by a single configuration property and adds no new extraction result fields. Also used once per sub-feature when documenting several small related features on one page |
+| `templates/os-integration.md` | The feature requires app-level setup — manifest or entitlement declarations, new document formats, share-sheet entry points, or OS permissions |
+| `templates/transfer-summary-extension.md` | The feature adds or changes a field in the extraction result and/or the transfer summary, without a new pipeline or UI flow |
 
-## Sending Transfer Summary
+If the feature spans categories, start from `templates/major-feature.md` and merge the sections you need from the other templates. If no template fits, stop and tell the user which kind of template is missing instead of inventing a structure.
 
-[Include only if the feature changes how `sendTransferSummary` is called or adds a new overload.]
+Fill the chosen template: replace every `[placeholder]` with content derived from source, and resolve every bracketed instruction. Include a section only when the source provides evidence for it. Do not invent content — use `<!-- TOBEADDED -->` for anything unverifiable. Remove the template's leading HTML comment from the output.
 
-[Describe which overload to use, with a complete Kotlin example and an explanation of routing behavior.]
+Use only standard Markdown. No Docusaurus frontmatter, no `:::caution` / `:::tip` admonitions. Use `> **Note:**`, `> **Info:**`, `> **Warning:**` blockquotes where admonitions would otherwise appear.
 
-## Impact on Other Features
-
-[Include one sub-section per existing feature whose behavior changes when this feature is active. Remove this entire section only if there are genuinely no interactions.]
-
-### [Feature Name] and [Other Feature]
-
-[Describe what changes — e.g. "Return Assistant is suppressed when `productTag` is set to `ProductTag.CxExtractions`, regardless of whether `returnAssistantEnabled` is `true` or whether line items are present."]
-
-## Edge Cases
-
-| Scenario | SDK behavior |
-|---|---|
-| [scenario] | [what the SDK does] |
-
-## Localization Keys
-
-[Include only if the feature renders user-visible strings. Remove entirely if not applicable.]
-
-The [Feature Name] UI uses the following string resource keys. Override them in your application's `strings.xml` to provide custom text.
-
-### Feature UI Strings
-
-| Key | Default (de) | Default (en) | Description |
-|---|---|---|---|
-| `[key]` | `[German default]` | `[English default]` | [What this string is used for.] |
-
-### Edge Case / Banner Strings
-
-[Include only if the feature shows contextual banners or alerts.]
-
-| Key | Default (de) | Default (en) | Description |
-|---|---|---|---|
-| `[key]` | `[German default]` | `[English default]` | [What this string is used for.] |
-
-### Permission Alert Strings
-
-[Include only if the feature uses an OS permission.]
-
-| Key | Default (de) | Default (en) | Description |
-|---|---|---|---|
-| `[key]` | `[German default]` | `[English default]` | [Shown when permission has been denied.] |
-```
-
----
+> Published pages in the developer documentation space render these blockquotes as note/info/warning panels. The person publishing converts them manually (or via import) — do not attempt to emit Confluence storage-format macros from this skill.
 
 ### Step 5 — Resolve the output path
 
@@ -363,10 +234,10 @@ Create the directory if it does not exist.
 
 ### Step 6 — Write the file
 
-Write the generated file. Confirm with a single line:
+Write the generated file. Confirm with a single line naming the template used:
 
 ```
-✅ Written to <path>
+✅ Written to <path> (template: <template-file>)
 ```
 
 ---
