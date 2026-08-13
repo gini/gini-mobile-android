@@ -167,36 +167,18 @@ jobs:
           name: health-sdk-ktlint-report
           path: health-sdk/sdk/build/reports/ktlint/**/*.html
 
+  # Keep the with: block in sync with the matching job in sonar-baselines.yml,
+  # so the main baseline is built and scanned exactly like this PR analysis.
   sonar:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "21"
-          cache: "gradle"
-      - name: Create google-services.json
-        run: |
-          mkdir -p health-sdk/example-app
-          echo "${{ secrets.GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > health-sdk/example-app/google-services.json
-
+    uses: ./.github/workflows/sonar.yml
+    with:
       # Build both modules (example-app depends on sdk)
-      - name: Build modules for Sonar
-        run: |
-          ./gradlew \
-            health-sdk:sdk:assembleDebug \
-            health-sdk:example-app:assembleDebug \
-            -PclientId="gini-mobile-ci" \
-            -PclientSecret="${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}"
-
-      - name: Generate coverage report
-        run: ./gradlew :health-sdk:sdk:jacocoTestReport
-
-      - name: SonarQube Scan
-        run: ./gradlew :health-sdk:sdk:sonar --info --stacktrace
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      prepare-tasks: 'health-sdk:sdk:assembleDebug health-sdk:example-app:assembleDebug'
+      prepare-args: '-PclientId="gini-mobile-ci" -PclientSecret="$GINI_MOBILE_TEST_CLIENT_SECRET"'
+      coverage-tasks: ':health-sdk:sdk:jacocoTestReport'
+      sonar-tasks: ':health-sdk:sdk:sonar'
+      google-services-json-path: 'health-sdk/example-app/google-services.json'
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GINI_MOBILE_TEST_CLIENT_SECRET: ${{ secrets.GINI_MOBILE_TEST_CLIENT_SECRET }}
+      GOOGLE_SERVICES_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_B64 }}

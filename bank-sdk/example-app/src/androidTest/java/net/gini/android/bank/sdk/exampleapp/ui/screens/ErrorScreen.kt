@@ -1,5 +1,8 @@
 package net.gini.android.bank.sdk.exampleapp.ui.screens
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -9,6 +12,31 @@ import androidx.test.uiautomator.UiSelector
 
 class ErrorScreen {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+    // Whether the device still has an internet-capable active network. Used to detect
+    // environments (e.g. BrowserStack cloud devices) where disconnectTheInternetConnection()
+    // cannot actually turn the network off, so the offline test can be skipped there.
+    //
+    // Polls for up to ~5s: right after a disconnect attempt, ConnectivityManager can briefly
+    // still report the dying network as available. Return false as soon as it drops (the
+    // disconnect worked → don't skip); only conclude the network is up if it's still up after
+    // the poll (e.g. on BrowserStack → skip).
+    fun isInternetAvailable(): Boolean {
+        val deadline = System.currentTimeMillis() + INTERNET_POLL_TIMEOUT_MS
+        while (System.currentTimeMillis() < deadline) {
+            if (!hasActiveInternet()) return false
+            Thread.sleep(250)
+        }
+        return hasActiveInternet()
+    }
+
+    private fun hasActiveInternet(): Boolean {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(network) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
 
     fun checkErrorTextDisplayed(): Boolean {
         val errorText = device.findObject(
@@ -83,5 +111,9 @@ class ErrorScreen {
         uiAutomation.executeShellCommand("svc wifi enable").close()
         uiAutomation.executeShellCommand("svc data enable").close()
         Thread.sleep(2000)
+    }
+
+    companion object {
+        private const val INTERNET_POLL_TIMEOUT_MS = 5000L
     }
 }
