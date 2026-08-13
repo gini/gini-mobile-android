@@ -12,7 +12,7 @@ import net.gini.android.capture.R
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
 
 /**
  * Internal use only
@@ -23,57 +23,84 @@ import org.robolectric.RuntimeEnvironment
  * These assert the contrast *ratio* rather than concrete colour values on purpose: the requirement
  * is WCAG 2.2 AAA (see PP-2330), so a future palette change that silently drops below the threshold
  * has to fail here instead of shipping.
+ *
+ * Each mode is a separate test with its own `@Config`, so a failure in one mode still leaves the
+ * other reported rather than hiding it.
  */
 @RunWith(RobolectricTestRunner::class)
 class SnackbarContrastTest {
 
     @Test
-    fun `snackbar action label meets AAA contrast in both modes`() {
-        forEachMode { context ->
-            val container = styleColor(context, snackbarStyle, backgroundTintAttr)
-            val actionLabel = styleColor(context, snackbarButtonStyle, textColorAttr)
-
-            assertContrastAtLeastAaa(actionLabel, container, "snackbar action label")
-        }
+    @Config(qualifiers = "notnight")
+    fun `snackbar action label meets AAA contrast in light mode`() {
+        assertActionLabelContrast(night = false)
     }
 
     @Test
-    fun `snackbar message text meets AAA contrast in both modes`() {
-        forEachMode { context ->
-            val container = styleColor(context, snackbarStyle, backgroundTintAttr)
-            val messageText = styleColor(context, snackbarTextViewStyle, textColorAttr)
-
-            assertContrastAtLeastAaa(messageText, container, "snackbar message text")
-        }
+    @Config(qualifiers = "night")
+    fun `snackbar action label meets AAA contrast in dark mode`() {
+        assertActionLabelContrast(night = true)
     }
+
+    @Test
+    @Config(qualifiers = "notnight")
+    fun `snackbar message text meets AAA contrast in light mode`() {
+        assertMessageTextContrast(night = false)
+    }
+
+    @Test
+    @Config(qualifiers = "night")
+    fun `snackbar message text meets AAA contrast in dark mode`() {
+        assertMessageTextContrast(night = true)
+    }
+
+    // region assertions
+
+    private fun assertActionLabelContrast(night: Boolean) {
+        val context = themedContext(night)
+        val container = styleColor(context, snackbarStyle, backgroundTintAttr)
+        val actionLabel = styleColor(context, snackbarButtonStyle, textColorAttr)
+
+        assertContrastAtLeastAaa(actionLabel, container, "snackbar action label", night)
+    }
+
+    private fun assertMessageTextContrast(night: Boolean) {
+        val context = themedContext(night)
+        val container = styleColor(context, snackbarStyle, backgroundTintAttr)
+        val messageText = styleColor(context, snackbarTextViewStyle, textColorAttr)
+
+        assertContrastAtLeastAaa(messageText, container, "snackbar message text", night)
+    }
+
+    private fun assertContrastAtLeastAaa(
+        foreground: Int,
+        background: Int,
+        what: String,
+        night: Boolean
+    ) {
+        val ratio = ColorUtils.calculateContrast(foreground, background)
+        assertWithMessage(
+            "$what in ${modeName(night)} mode: ${hex(foreground)} on ${hex(background)} is only " +
+                String.format(Locale.US, "%.2f", ratio) + ":1"
+        ).that(ratio).isAtLeast(AAA_NORMAL_TEXT_RATIO)
+    }
+
+    // endregion
 
     // region helpers
 
     /**
-     * Runs [assertions] once in light mode and once in dark mode. The themed context is rebuilt per
-     * mode so that any `values-night` override is picked up.
+     * Builds the themed context and checks that the `@Config` qualifier actually reached the theme.
+     * `colorOnBackground` is one of the attributes `values-night` re-points, so without this guard a
+     * qualifier that silently failed to apply would test light mode twice and still pass.
      */
-    private fun forEachMode(assertions: (Context) -> Unit) {
-        listOf("notnight", "night").forEach { qualifier ->
-            RuntimeEnvironment.setQualifiers("+$qualifier")
-            currentMode = qualifier
-            val context = ContextThemeWrapper(
-                ApplicationProvider.getApplicationContext(),
-                R.style.GiniCaptureTheme
-            )
-            assertQualifierApplied(context)
-            assertions(context)
-        }
-    }
-
-    /**
-     * Guards the loop itself. `colorOnBackground` is one of the attributes that `values-night`
-     * re-points, so if the qualifier switch ever stops working these tests would silently check
-     * light mode twice instead of failing.
-     */
-    private fun assertQualifierApplied(context: Context) {
+    private fun themedContext(night: Boolean): Context {
+        val context = ContextThemeWrapper(
+            ApplicationProvider.getApplicationContext(),
+            R.style.GiniCaptureTheme
+        )
         val expected = context.getColor(
-            if (currentMode == "night") R.color.gc_light_01 else R.color.gc_dark_02
+            if (night) R.color.gc_light_01 else R.color.gc_dark_02
         )
         val onBackground = TypedValue()
         assertThat(
@@ -83,27 +110,13 @@ class SnackbarContrastTest {
                 true
             )
         ).isTrue()
-        assertWithMessage("$currentMode qualifier was not applied to the theme")
+        assertWithMessage("the ${modeName(night)} qualifier was not applied to the theme")
             .that(onBackground.data)
             .isEqualTo(expected)
-    }
-
-    private fun assertContrastAtLeastAaa(foreground: Int, background: Int, what: String) {
-        val ratio = ColorUtils.calculateContrast(foreground, background)
-        assertWithMessage(
-            "$what in $currentMode mode: ${hex(foreground)} on ${hex(background)} is only " +
-                String.format(Locale.US, "%.2f", ratio) + ":1"
-        ).that(ratio).isAtLeast(AAA_NORMAL_TEXT_RATIO)
+        return context
     }
 
     /** Resolves a style pointed at by a theme attribute, so the theme wiring is covered too. */
-    private fun Context.styleFor(themeAttr: Int): Int {
-        val value = TypedValue()
-        val resolved = theme.resolveAttribute(themeAttr, value, true)
-        assertThat(resolved).isTrue()
-        return if (value.resourceId != 0) value.resourceId else value.data
-    }
-
     private fun styleColor(context: Context, themeAttr: Int, attr: Int): Int {
         val styleRes = context.styleFor(themeAttr)
         val attributes = context.obtainStyledAttributes(styleRes, intArrayOf(attr))
@@ -116,11 +129,18 @@ class SnackbarContrastTest {
         }
     }
 
+    private fun Context.styleFor(themeAttr: Int): Int {
+        val value = TypedValue()
+        val resolved = theme.resolveAttribute(themeAttr, value, true)
+        assertThat(resolved).isTrue()
+        return if (value.resourceId != 0) value.resourceId else value.data
+    }
+
+    private fun modeName(night: Boolean) = if (night) "dark" else "light"
+
     private fun hex(color: Int) = String.format(Locale.US, "#%06X", color and 0xFFFFFF)
 
     // endregion
-
-    private var currentMode = "notnight"
 
     private val backgroundTintAttr = com.google.android.material.R.attr.backgroundTint
     private val textColorAttr = android.R.attr.textColor
