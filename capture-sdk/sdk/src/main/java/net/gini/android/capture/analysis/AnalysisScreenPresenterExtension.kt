@@ -222,16 +222,15 @@ internal class AnalysisScreenPresenterExtension(
         } else {
             doWhenEducationFinished {
                 view.showPaymentDueHint(
-                    {
-                        handleSaveInvoicesLocally(
-                            mIsInvoiceSavingEnabled,
-                            false,
-                            resultHolder,
-                            activity
-                        )
-                    },
-                    dueDate
-                )
+                    DueDateFormatter.formatToLocalStyle(dueDate)
+                ) {
+                    handleSaveInvoicesLocally(
+                        mIsInvoiceSavingEnabled,
+                        false,
+                        resultHolder,
+                        activity
+                    )
+                }
             }
         }
     }

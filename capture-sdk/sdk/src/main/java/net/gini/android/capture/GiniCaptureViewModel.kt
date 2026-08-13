@@ -17,13 +17,13 @@ internal class GiniCaptureViewModel(
     init {
         // DataStore is the single source of truth for the configuration flags.
         //
-        // isUnsupportedQRCodeWarningEnabled must stay constant for the whole session. Normally
-        // this observer pins it to the first persisted value emitted by DataStore — not to a
-        // synchronous in-memory default: on a relaunch a persisted `true` may not have been
-        // loaded yet, and pinning to the cold default would incorrectly disable the warning for
-        // the entire run. The pin is first-wins and shared via UnsupportedQrWarningSessionPin:
-        // should an unsupported QR code be scanned before the first emission, the camera screen
-        // pins the session value instead (see CameraFragmentExtension).
+        // isUnsupportedQRCodeWarningEnabled must stay constant for the whole session, but it is
+        // deliberately NOT pinned here. The first DataStore emission is the value cached by the
+        // *previous* session; pinning it would latch that stale value and ignore the fresh remote
+        // configuration saved later in this session — every session would run with the previous
+        // session's flag. Instead the provider always tracks the latest persisted value, and the
+        // camera screen pins it at the moment the first unsupported-QR warning is actually shown
+        // (see CameraFragmentExtension.isUnsupportedQRCodeWarningEnabled).
         //
         // clientID and amplitudeApiKey are not persisted, so they are preserved from whatever the
         // provider already holds (empty on first launch, real after the API responds).
@@ -31,14 +31,10 @@ internal class GiniCaptureViewModel(
             clientConfigurationStorage.getConfiguration()
                 .filterNotNull()
                 .collect { config ->
-                    val pinnedQrCodeWarningEnabled = unsupportedQrWarningSessionPin.pinIfAbsent {
-                        config.isUnsupportedQRCodeWarningEnabled
-                    }
                     giniBankConfigurationProvider.update { current ->
                         config.copy(
                             clientID = current.clientID,
-                            amplitudeApiKey = current.amplitudeApiKey,
-                            isUnsupportedQRCodeWarningEnabled = pinnedQrCodeWarningEnabled
+                            amplitudeApiKey = current.amplitudeApiKey
                         )
                     }
                 }
