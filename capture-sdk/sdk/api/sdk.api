@@ -633,7 +633,7 @@ public class net/gini/android/capture/analysis/AnalysisFragment : androidx/fragm
 	public fun setCancelListener (Lnet/gini/android/capture/internal/util/CancelListener;)V
 	public fun setListener (Lnet/gini/android/capture/analysis/AnalysisFragmentListener;)V
 	public fun showAlertDialog (Ljava/lang/String;Ljava/lang/String;Landroid/content/DialogInterface$OnClickListener;Ljava/lang/String;Landroid/content/DialogInterface$OnClickListener;Landroid/content/DialogInterface$OnCancelListener;)V
-	public fun showWarning (Lnet/gini/android/capture/analysis/warning/WarningType;Ljava/lang/Runnable;)V
+	public fun showWarning (Lnet/gini/android/capture/analysis/warning/WarningType;Ljava/lang/String;Ljava/lang/Runnable;)V
 }
 
 public class net/gini/android/capture/analysis/AnalysisFragmentDirections {
@@ -680,10 +680,8 @@ public final class net/gini/android/capture/analysis/AnalysisFragmentExtension {
 	public static final field $stable I
 	public fun <init> ()V
 	public final fun bindViews (Landroid/view/View;)V
-	public final fun formatDateToLocalStyle (Ljava/lang/String;)Ljava/lang/String;
 	public final fun hideEducation ()V
 	public final fun showEducation (Lkotlin/jvm/functions/Function0;)V
-	public final fun showPaymentDueHint (Lkotlin/jvm/functions/Function0;Ljava/lang/String;)V
 }
 
 public abstract interface class net/gini/android/capture/analysis/AnalysisFragmentInterface {
@@ -763,71 +761,11 @@ public abstract interface class net/gini/android/capture/analysis/education/Educ
 	public abstract fun onComplete ()V
 }
 
-public abstract interface class net/gini/android/capture/analysis/paymentDueHint/PaymentDueHintDismissListener {
-	public abstract fun onDismiss ()V
-}
-
-public final class net/gini/android/capture/analysis/paymentDueHint/colors/PaymentDueHintColors {
-	public static final field $stable I
-	public static final field Companion Lnet/gini/android/capture/analysis/paymentDueHint/colors/PaymentDueHintColors$Companion;
-	public synthetic fun <init> (JJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getButtonBackgroundColor-0d7_KjU ()J
-	public final fun getButtonBorderColor-0d7_KjU ()J
-	public final fun getButtonProgressBarColor-0d7_KjU ()J
-	public final fun getButtonTextColor-0d7_KjU ()J
-	public final fun getTipBackgroundColor-0d7_KjU ()J
-	public final fun getTipContentWarningColor-0d7_KjU ()J
-}
-
-public final class net/gini/android/capture/analysis/paymentDueHint/colors/PaymentDueHintColors$Companion {
-	public final fun colors-5tl4gsc (JJJJJJLandroidx/compose/runtime/Composer;II)Lnet/gini/android/capture/analysis/paymentDueHint/colors/PaymentDueHintColors;
-}
-
-public final class net/gini/android/capture/analysis/paymentDueHint/ui/ComposableSingletons$PaymentDueHintContentKt {
-	public static final field INSTANCE Lnet/gini/android/capture/analysis/paymentDueHint/ui/ComposableSingletons$PaymentDueHintContentKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function2;
-	public fun <init> ()V
-	public final fun getLambda-1$net_gini_android_gini_capture_sdk_release ()Lkotlin/jvm/functions/Function2;
-}
-
-public final class net/gini/android/capture/analysis/paymentDueHint/ui/PaymentDueHintContentKt {
-	public static final fun AnimatedProgressBar (ILkotlin/jvm/functions/Function0;Lnet/gini/android/capture/analysis/paymentDueHint/colors/PaymentDueHintColors;Landroidx/compose/runtime/Composer;II)V
-	public static final fun DismissCard (Lnet/gini/android/capture/analysis/paymentDueHint/colors/PaymentDueHintColors;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-	public static final fun DismissibleTipScreenPreview (Landroidx/compose/runtime/Composer;I)V
-	public static final fun PaymentDueHintContent (Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lnet/gini/android/capture/analysis/paymentDueHint/colors/PaymentDueHintColors;Landroidx/compose/runtime/Composer;II)V
-	public static final fun TipCard (Lnet/gini/android/capture/analysis/paymentDueHint/colors/PaymentDueHintColors;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-}
-
 public abstract interface class net/gini/android/capture/analysis/transactiondoc/AttachedToTransactionDocumentProvider {
 	public abstract fun clear ()V
 	public abstract fun getData ()Lkotlinx/coroutines/flow/Flow;
 	public abstract fun provide ()Lnet/gini/android/capture/analysis/RemoteAnalyzedDocument;
 	public abstract fun update (Lnet/gini/android/capture/analysis/RemoteAnalyzedDocument;)V
-}
-
-public final class net/gini/android/capture/analysis/warning/WarningBottomSheet : com/google/android/material/bottomsheet/BottomSheetDialogFragment {
-	public static final field $stable I
-	public static final field Companion Lnet/gini/android/capture/analysis/warning/WarningBottomSheet$Companion;
-	public fun <init> ()V
-	public final fun getListener ()Lnet/gini/android/capture/analysis/warning/WarningBottomSheet$Listener;
-	public fun getTheme ()I
-	public static final fun newInstance (Lnet/gini/android/capture/analysis/warning/WarningType;)Lnet/gini/android/capture/analysis/warning/WarningBottomSheet;
-	public fun onCreate (Landroid/os/Bundle;)V
-	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
-	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
-	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
-	public fun onStart ()V
-	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
-	public final fun setListener (Lnet/gini/android/capture/analysis/warning/WarningBottomSheet$Listener;)V
-}
-
-public final class net/gini/android/capture/analysis/warning/WarningBottomSheet$Companion {
-	public final fun newInstance (Lnet/gini/android/capture/analysis/warning/WarningType;)Lnet/gini/android/capture/analysis/warning/WarningBottomSheet;
-}
-
-public abstract interface class net/gini/android/capture/analysis/warning/WarningBottomSheet$Listener {
-	public abstract fun onCancelAction ()V
-	public abstract fun onProceedAction ()V
 }
 
 public final class net/gini/android/capture/analysis/warning/WarningPaymentState : java/lang/Enum {
@@ -844,8 +782,12 @@ public final class net/gini/android/capture/analysis/warning/WarningPaymentState
 
 public final class net/gini/android/capture/analysis/warning/WarningType : java/lang/Enum {
 	public static final field DOCUMENT_MARKED_AS_PAID Lnet/gini/android/capture/analysis/warning/WarningType;
+	public static final field PAYMENT_DUE_DATE Lnet/gini/android/capture/analysis/warning/WarningType;
 	public fun getDescriptionRes ()I
+	public fun getPrimaryButtonTextRes ()I
+	public fun getSecondaryButtonTextRes ()I
 	public fun getTitleRes ()I
+	public fun requiresTitleFormatArg ()Z
 	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/capture/analysis/warning/WarningType;
 	public static fun values ()[Lnet/gini/android/capture/analysis/warning/WarningType;
 }
@@ -1096,7 +1038,6 @@ public final class net/gini/android/capture/databinding/GcFragmentAnalysisBindin
 	public final field gcInjectedLoadingIndicatorContainer Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gcLayoutRoot Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field gcNavigationTopBar Lnet/gini/android/capture/view/InjectedViewContainer;
-	public final field gcPaymentDueHintContainer Landroidx/compose/ui/platform/ComposeView;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/capture/databinding/GcFragmentAnalysisBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
 	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
@@ -1504,9 +1445,9 @@ public final class net/gini/android/capture/databinding/GcWarningBottomSheetBind
 	public final field WarningBottomSheet Landroidx/constraintlayout/widget/ConstraintLayout;
 	public final field actions Landroid/widget/LinearLayout;
 	public final field buttonContainer Landroid/widget/LinearLayout;
-	public final field cancelButton Lcom/google/android/material/button/MaterialButton;
 	public final field contentScroll Landroid/widget/ScrollView;
-	public final field proceedButton Lcom/google/android/material/button/MaterialButton;
+	public final field primaryButton Lcom/google/android/material/button/MaterialButton;
+	public final field secondaryButton Lcom/google/android/material/button/MaterialButton;
 	public final field textScroll Landroidx/core/widget/NestedScrollView;
 	public final field warningDescription Landroid/widget/TextView;
 	public final field warningIcon Landroid/widget/ImageView;
@@ -2874,7 +2815,7 @@ public abstract interface class net/gini/android/capture/internal/ui/FragmentImp
 	public abstract fun getViewLifecycleOwner ()Landroidx/lifecycle/LifecycleOwner;
 	public fun safeNavigate (Landroidx/navigation/NavDirections;)V
 	public abstract fun showAlertDialog (Ljava/lang/String;Ljava/lang/String;Landroid/content/DialogInterface$OnClickListener;Ljava/lang/String;Landroid/content/DialogInterface$OnClickListener;Landroid/content/DialogInterface$OnCancelListener;)V
-	public fun showWarning (Lnet/gini/android/capture/analysis/warning/WarningType;Ljava/lang/Runnable;)V
+	public fun showWarning (Lnet/gini/android/capture/analysis/warning/WarningType;Ljava/lang/String;Ljava/lang/Runnable;)V
 	public abstract fun startActivity (Landroid/content/Intent;)V
 	public abstract fun startActivityForResult (Landroid/content/Intent;I)V
 }
