@@ -46,6 +46,9 @@
         <item name="textAppearanceLabelLarge">?attr/textAppearanceButton</item>
         <item name="textAppearanceLabelMedium">?attr/textAppearanceOverline</item>
         <item name="android:colorControlHighlight">@color/gc_accent_06</item>
+        <item name="snackbarStyle">@style/GiniCaptureTheme.Widget.Snackbar</item>
+        <item name="snackbarButtonStyle">@style/GiniCaptureTheme.Widget.Snackbar.Button</item>
+        <item name="snackbarTextViewStyle">@style/GiniCaptureTheme.Widget.Snackbar.TextView</item>
     </style>
 
     <style name="Root.GiniCaptureTheme" parent="Root.GiniCaptureTheme.Internal"/>
@@ -90,6 +93,24 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <!-- The snackbar keeps the same container in light and dark mode, so that the action label can
+         use gc_accent_04. Any lighter container makes AAA contrast (7:1) unreachable with the
+         existing palette. See PP-2330. -->
+    <style name="Root.GiniCaptureTheme.Widget.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="backgroundTint">@color/gc_dark_03</item>
+    </style>
+    <style name="GiniCaptureTheme.Widget.Snackbar" parent="Root.GiniCaptureTheme.Widget.Snackbar" />
+
+    <style name="Root.GiniCaptureTheme.Widget.Snackbar.TextView" parent="Widget.Material3.Snackbar.TextView">
+        <item name="android:textColor">@color/gc_light_02</item>
+    </style>
+    <style name="GiniCaptureTheme.Widget.Snackbar.TextView" parent="Root.GiniCaptureTheme.Widget.Snackbar.TextView" />
+
+    <style name="Root.GiniCaptureTheme.Widget.Snackbar.Button" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/gc_accent_04</item>
+    </style>
+    <style name="GiniCaptureTheme.Widget.Snackbar.Button" parent="Root.GiniCaptureTheme.Widget.Snackbar.Button" />
 
     <style name="Root.GiniCaptureTheme.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
         <item name="useMaterialThemeColors">false</item>
