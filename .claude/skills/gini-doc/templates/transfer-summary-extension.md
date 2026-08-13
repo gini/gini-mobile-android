@@ -1,7 +1,12 @@
 <!--
-  Template: extraction / transfer-summary extension — Android (NOT MIRRORED;
-  the iOS repo has its own templates with the same file names but iOS content).
-  Derived from the published "Instant Payment" page (pageId 401571880).
+  MIRRORED FILE — must stay byte-identical to the same path in gini-mobile-ios
+  (listed in .github/mirrored-skills.txt; synced by shared-skills.sync.yml).
+  Platform-specific content is resolved from platform.md via [term: name] and
+  [snippet: name] references — see SKILL.md Step 4.
+
+  Template: extraction / transfer-summary extension. Derived from the
+  published "Instant Payment" feature page in the developer documentation
+  space.
   Use when the feature adds or changes a field in the extraction result and/or
   the transfer summary, without a new pipeline or UI flow.
 -->
@@ -26,6 +31,4 @@ For more information about the document's extractions, see the Gini Bank API's [
 
 After the user has reviewed and potentially corrected the extracted payment data, include the **[fieldName] flag** in the `sendTransferSummary` method to help improve the accuracy of future extractions.
 
-```kotlin
-[Kotlin example of the sendTransferSummary call including the new field.]
-```
+[Code block ([term: code-language]): the `sendTransferSummary` call including the new field.]

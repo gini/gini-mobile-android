@@ -204,7 +204,7 @@ From the filtered source, extract:
 
 ### Step 4 — Choose a template and write the Markdown file
 
-Read the template files in `templates/` in this skill's directory. Like `platform.md`, they are platform-specific and not mirrored — both repos keep the same file names with platform-appropriate content. Each template is derived from a published documentation page and encodes the house structure and boilerplate wording. Choose one:
+Read the template files in `templates/` in this skill's directory. They are shared between the repositories (mirrored, like this file) and platform-agnostic: platform-specific content is resolved from `platform.md` at generation time via the rules below. Each template is derived from a published documentation page and encodes the house structure and boilerplate wording. Choose one:
 
 | Template | Use when |
 |---|---|
@@ -214,6 +214,14 @@ Read the template files in `templates/` in this skill's directory. Like `platfor
 | `templates/transfer-summary-extension.md` | The feature adds or changes a field in the extraction result and/or the transfer summary, without a new pipeline or UI flow |
 
 If the feature spans categories, start from `templates/major-feature.md` and merge the sections you need from the other templates. If no template fits, stop and tell the user which kind of template is missing instead of inventing a structure.
+
+**Resolve platform references.** Templates contain three kinds of platform references, all resolved from `platform.md`:
+
+- `[term: name]` — replace with the value from the **Terms** table in `platform.md`.
+- `[snippet: name]` — replace with the code block defined under that name in the **Snippets** section of `platform.md`, then fill the snippet's own `[placeholder]` markers from source.
+- `<!-- platform: x -->` … `<!-- /platform -->` — keep the enclosed content only when `x` matches `--platform`; strip the markers. Content outside guards applies to every platform. Use guards in templates only for content that exists on a single platform — prefer terms and snippets everywhere else.
+
+If a referenced term or snippet is not defined in `platform.md`, stop and tell the user exactly which entry is missing — never substitute your own value, and never let a `[term: ...]` or `[snippet: ...]` marker leak into the output.
 
 Fill the chosen template: replace every `[placeholder]` with content derived from source, and resolve every bracketed instruction. Include a section only when the source provides evidence for it. Do not invent content — use `<!-- TOBEADDED -->` for anything unverifiable. Remove the template's leading HTML comment from the output.
 

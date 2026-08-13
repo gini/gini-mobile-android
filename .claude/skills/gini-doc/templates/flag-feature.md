@@ -1,9 +1,13 @@
 <!--
-  Template: configuration-flag feature — Android (NOT MIRRORED; the iOS repo
-  has its own templates with the same file names but iOS content).
-  Derived from the published "Save Invoices Locally" (pageId 599064577) and
-  "Warnings & Hints" (pageId 599064589) pages.
-  Use when the feature is toggled by one CaptureConfiguration property and adds
+  MIRRORED FILE — must stay byte-identical to the same path in gini-mobile-ios
+  (listed in .github/mirrored-skills.txt; synced by shared-skills.sync.yml).
+  Platform-specific content is resolved from platform.md via [term: name] and
+  [snippet: name] references — see SKILL.md Step 4.
+
+  Template: configuration-flag feature. Derived from the published
+  "Save Invoices Locally" and "Warnings & Hints" feature pages in the
+  developer documentation space.
+  Use when the feature is toggled by one configuration property and adds
   no new extraction result fields. When documenting several small related
   features on one page (the Warnings & Hints pattern), repeat this whole block
   once per sub-feature, each with its own H1.
@@ -20,17 +24,10 @@
 
 [State the supported input methods explicitly — e.g. "Supports photos and PDFs captured or imported via Camera, Upload, or Open With." — and any exclusions or interactions, e.g. "Excludes cases where Skonto or Return Assistant would be shown."]
 
-> **Info:** This feature is enabled by default with the `[propertyName]` property set to `true` in `CaptureConfiguration`.
+> **Info:** This feature is enabled by default with the `[propertyName]` property set to `true` in `[term: config-object]`.
 
-[If the feature is disabled by default, replace the Info line above with: "This feature is disabled by default. Enable it with the `[propertyName]` property in `CaptureConfiguration`."]
+[If the feature is disabled by default, replace the Info line above with: "This feature is disabled by default. Enable it with the `[propertyName]` property in `[term: config-object]`."]
 
-```kotlin
-val captureConfiguration = CaptureConfiguration(
-    [propertyName] = true,
-    [tuningPropertyName] = [value], // include tuning properties, e.g. thresholds
-    // ...
-)
-GiniBank.setCaptureConfiguration(context, captureConfiguration)
-```
+[snippet: flag-configuration]
 
-Find out how to customize the [Feature Name] feature [here](https://gini.atlassian.net/wiki/spaces/GBSV/pages/76283941).
+Find out how to customize the [Feature Name] feature [here]([term: ui-customization-guide-url]).

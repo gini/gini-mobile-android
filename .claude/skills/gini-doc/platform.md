@@ -62,9 +62,85 @@ Infer `AndroidManifest.xml` requirements from OS APIs used in source:
 
 - Code block language tags: `kotlin` for SDK usage, `xml` for manifest and
   resource snippets, `json` for extraction payload examples.
-- The capture flow result callback in published docs is
-  `registerForActivityResult(GiniBank.createCaptureFlowContract())` handling
-  `CaptureResult.Success / Error / Empty / Cancel`, launched with
-  `GiniBank.startCaptureFlow(resultLauncher)` (see
-  `templates/major-feature.md`). Include the `EnterManually` branch only when
-  the documented feature involves it.
+- The capture flow result callback in published docs handles
+  `CaptureResult.Success / Error / Empty / Cancel` (see the `result-callback`
+  snippet below). Include the `EnterManually` branch only when the documented
+  feature involves it.
+
+## Terms
+
+Values for the `[term: name]` references used in the shared templates.
+
+| Term | Value |
+|---|---|
+| `config-object` | `CaptureConfiguration` |
+| `sdk-entry-point` | `GiniBank` |
+| `manifest-file` | `AndroidManifest.xml` |
+| `result-type` | `CaptureResult` |
+| `success-result-case` | `CaptureResult.Success` |
+| `empty-result-case` | `CaptureResult.Empty` |
+| `cleanup-call` | `GiniBank.cleanupCapture()` |
+| `code-language` | Kotlin (code block tag `kotlin`) |
+| `ui-customization-guide-url` | `https://gini.atlassian.net/wiki/spaces/GBSV/pages/76283941` |
+
+## Snippets
+
+Code blocks for the `[snippet: name]` references used in the shared
+templates. Keep the `[placeholder]` markers — the skill fills them from
+source when generating a page.
+
+### `enable-configuration`
+
+```kotlin
+val captureConfiguration = CaptureConfiguration(
+    networkService = yourNetworkService,
+    [propertyName] = [enableValue],
+    // ...
+)
+GiniBank.setCaptureConfiguration(context, captureConfiguration)
+```
+
+### `revert-configuration`
+
+```kotlin
+val captureConfiguration = CaptureConfiguration(
+    networkService = yourNetworkService,
+    [propertyName] = [defaultValue], // default
+    // ...
+)
+GiniBank.setCaptureConfiguration(context, captureConfiguration)
+```
+
+### `flag-configuration`
+
+```kotlin
+val captureConfiguration = CaptureConfiguration(
+    [propertyName] = true,
+    [tuningPropertyName] = [value], // include tuning properties, e.g. thresholds
+    // ...
+)
+GiniBank.setCaptureConfiguration(context, captureConfiguration)
+```
+
+### `result-callback`
+
+```kotlin
+GiniBank.startCaptureFlow(resultLauncher)
+
+private val resultLauncher = registerForActivityResult(
+    GiniBank.createCaptureFlowContract()
+) { result ->
+    when (result) {
+        is CaptureResult.Success -> handleExtractions(result.specificExtractions, result.compoundExtractions)
+        is CaptureResult.Error -> handleError(result.value)
+        CaptureResult.Empty -> handleNoResults()
+        CaptureResult.Cancel -> handleCancellation()
+    }
+}
+```
+
+### `os-integration-declaration`
+
+```xml
+[intent-filter or uses-permission entry, copied from verified source — see the E-Invoice page for the intent-filter shape]
+```

@@ -1,9 +1,14 @@
 <!--
-  Template: OS-integration feature — Android (NOT MIRRORED; the iOS repo has
-  its own templates with the same file names but iOS content).
-  Derived from the published "E-Invoice" page (pageId 434470913).
-  Use when the feature requires app-level setup: AndroidManifest declarations,
-  new document formats, share-sheet entry points, or OS permissions.
+  MIRRORED FILE — must stay byte-identical to the same path in gini-mobile-ios
+  (listed in .github/mirrored-skills.txt; synced by shared-skills.sync.yml).
+  Platform-specific content is resolved from platform.md via [term: name] and
+  [snippet: name] references — see SKILL.md Step 4.
+
+  Template: OS-integration feature. Derived from the published "E-Invoice"
+  feature page in the developer documentation space.
+  Use when the feature requires app-level setup: manifest or entitlement
+  declarations, new document formats, share-sheet entry points, or OS
+  permissions.
 -->
 
 # [Feature Name]
@@ -27,19 +32,17 @@
 
 ### Declare supported document types
 
-Add the following entry to your `AndroidManifest.xml`:
+Add the following entry to your `[term: manifest-file]`:
 
-```xml
-[intent-filter or uses-permission entry, copied from verified source]
-```
+[snippet: os-integration-declaration]
 
-[Include only if the feature uses a runtime (dangerous) permission — describe the built-in permission handling:]
+[Include only if the feature uses an OS permission requiring user consent — describe the built-in permission handling:]
 
 This feature includes built-in permission handling:
 
 - If the user has not been asked for [permission] before, the SDK requests it at runtime when [trigger action].
 - If the user previously denied permission, the SDK [describe behavior — e.g. shows a rationale screen and redirects to Settings].
 
-> **Warning:** Without the manifest entry the permission request will fail and the feature will not work.
+> **Warning:** Without the `[term: manifest-file]` entry the permission request will fail and the feature will not work.
 
-Find out how to customize the [Feature Name] feature [here](https://gini.atlassian.net/wiki/spaces/GBSV/pages/76283941).
+Find out how to customize the [Feature Name] feature [here]([term: ui-customization-guide-url]).

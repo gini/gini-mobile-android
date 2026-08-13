@@ -1,7 +1,11 @@
 <!--
-  Template: major feature — Android (NOT MIRRORED; the iOS repo has its own
-  templates with the same file names but iOS content).
-  Derived from the published "Cross-Border Payments" page (GBSV, pageId 965148679).
+  MIRRORED FILE — must stay byte-identical to the same path in gini-mobile-ios
+  (listed in .github/mirrored-skills.txt; synced by shared-skills.sync.yml).
+  Platform-specific content is resolved from platform.md via [term: name] and
+  [snippet: name] references — see SKILL.md Step 4.
+
+  Template: major feature. Derived from the published "Cross-Border Payments"
+  feature page in the developer documentation space.
   Use when the feature introduces a new extraction pipeline or result type,
   changes how results are delivered, or interacts with multiple existing features.
   Replace every [placeholder]; include a section only when source provides
@@ -18,33 +22,19 @@
 
 ## Configuration
 
-The feature is controlled via the `[propertyName]` property on `CaptureConfiguration`. The **default value** is `[defaultValue]`.
+The feature is controlled via the `[propertyName]` property on `[term: config-object]`. The **default value** is `[defaultValue]`.
 
 **Enable [Feature Name]:**
 
-```kotlin
-val captureConfiguration = CaptureConfiguration(
-    networkService = yourNetworkService,
-    [propertyName] = [enableValue],
-    // ...
-)
-GiniBank.setCaptureConfiguration(context, captureConfiguration)
-```
+[snippet: enable-configuration]
 
 **Revert to the default behavior:**
 
-```kotlin
-val captureConfiguration = CaptureConfiguration(
-    networkService = yourNetworkService,
-    [propertyName] = [defaultValue], // default
-    // ...
-)
-GiniBank.setCaptureConfiguration(context, captureConfiguration)
-```
+[snippet: revert-configuration]
 
-[Include only if the property is an enum or sealed class:]
+[Include only if the property is an enum-like type:]
 
-The `[TypeName]` sealed class defines the following values:
+The `[TypeName]` type defines the following values:
 
 | Value | Description |
 |---|---|
@@ -54,22 +44,9 @@ The `[TypeName]` sealed class defines the following values:
 
 ## Extraction Result
 
-When the user completes the capture flow with [Feature Name] active, the SDK delivers the extraction result via the `GiniBank` result callback:
+When the user completes the capture flow with [Feature Name] active, the SDK delivers the extraction result via the `[term: sdk-entry-point]` result callback:
 
-```kotlin
-GiniBank.startCaptureFlow(resultLauncher)
-
-private val resultLauncher = registerForActivityResult(
-    GiniBank.createCaptureFlowContract()
-) { result ->
-    when (result) {
-        is CaptureResult.Success -> handleExtractions(result.specificExtractions, result.compoundExtractions)
-        is CaptureResult.Error -> handleError(result.value)
-        CaptureResult.Empty -> handleNoResults()
-        CaptureResult.Cancel -> handleCancellation()
-    }
-}
-```
+[snippet: result-callback]
 
 With [Feature Name] active, the extraction result contains:
 
@@ -79,21 +56,17 @@ With [Feature Name] active, the extraction result contains:
 
 **Accessing [Feature Name] fields:**
 
-```kotlin
-[Complete Kotlin example showing how to read the new fields from the result.]
-```
+[Code block ([term: code-language]): complete example showing how to read the new fields from the result.]
 
-[State the partial-result semantics if applicable — what counts as a valid result delivered as `CaptureResult.Success` vs. what is delivered as `CaptureResult.Empty`.]
+[State the partial-result semantics if applicable — what counts as a valid result delivered as `[term: success-result-case]` vs. what is delivered as `[term: empty-result-case]`.]
 
 ## Sending Transfer Summary
 
 [Include only if the feature changes how `sendTransferSummary` is called or adds a new overload. Name the exact overload to use — and the one NOT to use, if calling the wrong one sends incorrect feedback.]
 
-```kotlin
-[Complete Kotlin example.]
-```
+[Code block ([term: code-language]): complete example.]
 
-Call `sendTransferSummary` before calling `GiniBank.cleanupCapture()`, after the user has confirmed the payment. Provide the values the user has reviewed and confirmed — not the initially extracted values.
+Call `sendTransferSummary` before calling `[term: cleanup-call]`, after the user has confirmed the payment. Provide the values the user has reviewed and confirmed — not the initially extracted values.
 
 ## Impact on Other Features
 
@@ -101,23 +74,23 @@ Call `sendTransferSummary` before calling `GiniBank.cleanupCapture()`, after the
 
 ### [Feature Name] and [Other Feature]
 
-[What changes, the mechanism, and which configuration flags are ignored — e.g. "The [Other Feature] screen is not shown when `[propertyName]` is set to `[value]`. The `[compoundExtraction]` is removed from the result before the screen is evaluated, so the screen does not appear regardless of whether `[otherFlag]` is `true` in `CaptureConfiguration`."]
+[What changes, the mechanism, and which configuration flags are ignored — e.g. "The [Other Feature] screen is not shown when `[propertyName]` is set to `[value]`. The `[compoundExtraction]` is removed from the result before the screen is evaluated, so the screen does not appear regardless of whether `[otherFlag]` is `true` in `[term: config-object]`."]
 
 ## Edge Cases
 
 | Scenario | SDK behavior |
 |---|---|
-| [scenario — e.g. "The backend returns no [extraction]"] | [What the SDK does, naming the exact `CaptureResult` delivered.] |
+| [scenario — e.g. "The backend returns no [extraction]"] | [What the SDK does, naming the exact `[term: result-type]` delivered.] |
 
 ## UI Customization
 
 [Include only if the feature renders user-visible UI. One sentence, matching the published pages:]
 
-Find out how to customize the [Feature Name] feature [here](https://gini.atlassian.net/wiki/spaces/GBSV/pages/76283941).
+Find out how to customize the [Feature Name] feature [here]([term: ui-customization-guide-url]).
 
 ## Localization Keys
 
-[Optional appendix — published GBSV pages normally cover strings in the UI Customisation Guides instead. Include only when QA explicitly needs the string keys on the feature page.]
+[Optional appendix — published feature pages normally cover strings in the UI Customisation Guides instead. Include only when QA explicitly needs the string keys on the feature page.]
 
 | Key | Default (de) | Default (en) | Description |
 |---|---|---|---|
