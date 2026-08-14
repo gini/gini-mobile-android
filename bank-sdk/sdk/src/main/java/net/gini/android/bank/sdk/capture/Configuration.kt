@@ -145,6 +145,15 @@ data class CaptureConfiguration(
     val paymentDueHintEnabled: Boolean = true,
 
     /**
+     * Enable/disable the scheduled payment state of the due date bottom sheet.
+     *
+     * On by default. Only shown when the client configuration flag
+     * `paymentScheduleHintEnabled` is also on, in which case it takes priority over the
+     * payment due hint state.
+     */
+    val paymentScheduleHintEnabled: Boolean = true,
+
+    /**
      * Set the payment due hint threshold days
      *
      * 5 by default.
@@ -251,6 +260,7 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
         .setAlreadyPaidHintEnabled(configuration.alreadyPaidHintEnabled)
         .setPaymentDueHintEnabled(configuration.paymentDueHintEnabled)
+        .setPaymentScheduleHintEnabled(configuration.paymentScheduleHintEnabled)
         .setPaymentDueHintThresholdDays(configuration.paymentDueHintThresholdDays)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)

@@ -55,6 +55,25 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
                 )
                 context.finish()
             }
+
+            // A real bank app would open its scheduled transfer flow here instead of paying now.
+            is CaptureSDKResult.SchedulePayment -> {
+                Toast.makeText(
+                    context,
+                    "Schedule payment requested",
+                    Toast.LENGTH_SHORT
+                ).show()
+                context.startActivity(
+                    ExtractionsActivity.getStartIntent(
+                        context,
+                        result.specificExtractions,
+                        result.compoundExtractions,
+                        GiniCapture.getInstance().productTag == ProductTag.CxExtractions,
+                        true
+                    )
+                )
+                context.finish()
+            }
         }
     }
 }

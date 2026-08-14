@@ -470,6 +470,45 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
+    public void should_stopAndHideHints_whenSchedulePaymentHintIsShown() {
+        // Given
+        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
+                new AtomicReference<>();
+
+        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
+                analysisFragmentImplRef)) {
+
+            // When
+            scenario.onActivity(
+                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
+                        @Override
+                        public void perform(final AnalysisFragmentHostActivity activity) {
+                            activity.findViewById(R.id.gc_analysis_hint_container)
+                                    .setVisibility(android.view.View.VISIBLE);
+                            final AnalysisFragmentImpl analysisFragment =
+                                    analysisFragmentImplRef.get();
+                            analysisFragment.showSchedulePaymentHint("13.08.2026", new Runnable() {
+                                @Override
+                                public void run() {
+                                    // no-op: the test only verifies hint suppression
+                                }
+                            }, new Runnable() {
+                                @Override
+                                public void run() {
+                                    // no-op: the test only verifies hint suppression
+                                }
+                            });
+                        }
+                    });
+
+            // Then
+            assertThat(AnalysisHintsAnimatorShadow.stopCalled).isTrue();
+            onView(withId(R.id.gc_analysis_hint_container))
+                    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+        }
+    }
+
+    @Test
     public void should_stopAndHideHints_whenAlreadyPaidWarningIsShown() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =

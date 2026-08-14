@@ -229,4 +229,12 @@
     <string name="gc_due_date_hint_tip">Tipp:</string>
     <!--   endregion -->
 
+    <!--   region Schedule Payment -->
+    <!--   The title is shared with the due date state (see gc_due_date_hint_title). -->
+    <string name="gc_schedule_payment_hint_desc">
+        Du könntest diese Überweisung jetzt ausführen oder für einen späteren Zeitpunkt terminieren.
+    </string>
+    <string name="gc_schedule_payment">Terminüberweisung</string>
+    <!--   endregion -->
+
 </resources>

@@ -61,6 +61,7 @@
     <string name="default_sdk_configuration_switch_label">SDK default configurations</string>
     <string name="already_paid_hint_switch_label">Already Paid Hint</string>
     <string name="payment_due_hint_switch_label">Payment Due Hint</string>
+    <string name="payment_schedule_hint_switch_label">Payment Schedule Hint</string>
     <string name="payment_due_hint_threshold_days_label">Payment Due Hint Threshold Days</string>
     <string name="open_with_switch_label">Open with</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>

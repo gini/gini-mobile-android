@@ -30,6 +30,7 @@ import net.gini.android.capture.internal.util.AlertDialogHelperCompat;
 import net.gini.android.capture.internal.util.CancelListener;
 
 import static net.gini.android.capture.analysis.AnalysisFragmentImpl.INVOICE_SAVING_IN_PROGRESS_KEY;
+import static net.gini.android.capture.analysis.AnalysisFragmentImpl.PENDING_SAVING_ACTION_KEY;
 import static net.gini.android.capture.internal.util.FragmentExtensionsKt.getLayoutInflaterWithGiniCaptureTheme;
 
 /**
@@ -67,6 +68,9 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         outState.putBoolean(
                 INVOICE_SAVING_IN_PROGRESS_KEY,
                 mFragmentImpl.getIsInvoiceSavingInProgress());
+        outState.putString(
+                PENDING_SAVING_ACTION_KEY,
+                mFragmentImpl.getPendingSavingAction());
     }
 
     private void registerSafFolderSelectionHandler() {
@@ -232,6 +236,12 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
     @Override
     public void showWarning(@NonNull WarningType type, @Nullable String titleFormatArg,
                             @NonNull Runnable onProceed) {
+        showWarning(type, titleFormatArg, onProceed, null);
+    }
+
+    @Override
+    public void showWarning(@NonNull WarningType type, @Nullable String titleFormatArg,
+                            @NonNull Runnable onProceed, @Nullable Runnable onSchedule) {
         // Reuse the sheet only while it is added (state restoration); a found but not added
         // instance may hold stale arguments, so a fresh one is created instead.
         WarningBottomSheet sheet = (WarningBottomSheet) fragmentManager.findFragmentByTag(WARNING_TAG);
@@ -240,7 +250,7 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
         }
 
         sheet.setCancelable(false);
-        sheet.setListener(makeWarningListener(type, onProceed));
+        sheet.setListener(makeWarningListener(type, onProceed, onSchedule));
         if (!sheet.isAdded()) {
             if (!fragmentManager.isStateSaved()) {
                 sheet.show(fragmentManager, WARNING_TAG);
@@ -255,11 +265,18 @@ public class AnalysisFragment extends Fragment implements FragmentImplCallback,
      * The CTA labels are declared on {@link WarningType}; this mapping must match them.
      */
     private WarningBottomSheet.Listener makeWarningListener(@NonNull WarningType type,
-                                                            @NonNull Runnable onProceed) {
+                                                            @NonNull Runnable onProceed,
+                                                            @Nullable Runnable onSchedule) {
         switch (type) {
             case PAYMENT_DUE_DATE:
                 // Primary: "Proceed Anyway", secondary: "Cancel Transfer"
                 return makeWarningListener(onProceed, this::cancelTransaction);
+            case SCHEDULE_PAYMENT:
+                // Primary: "Schedule Payment" hands off to the bank app, secondary: "Proceed
+                // Anyway". Falling back to onProceed keeps the sheet operable if a caller omits
+                // the schedule action rather than leaving the primary CTA dead.
+                return makeWarningListener(
+                        onSchedule != null ? onSchedule : onProceed, onProceed);
             case DOCUMENT_MARKED_AS_PAID:
             default:
                 // Primary: "Cancel Transfer", secondary: "Proceed Anyway"

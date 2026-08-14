@@ -31,6 +31,19 @@ public enum WarningType {
             R.string.gc_proceed_anyway,
             R.string.gc_cancel_transfer,
             true
+    ),
+    /**
+     * Scheduled payment state of the due date bottom sheet. Shares its title with
+     * {@link #PAYMENT_DUE_DATE} (both read "Your invoice is due on &lt;date&gt;.") and offers
+     * "Schedule Payment" as the primary CTA, which hands the extractions back to the bank app
+     * instead of continuing the pay-now flow.
+     */
+    SCHEDULE_PAYMENT(
+            R.string.gc_due_date_hint_title,
+            R.string.gc_schedule_payment_hint_desc,
+            R.string.gc_schedule_payment,
+            R.string.gc_proceed_anyway,
+            true
     );
 
     @StringRes private final int titleRes;

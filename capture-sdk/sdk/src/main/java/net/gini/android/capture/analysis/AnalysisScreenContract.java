@@ -67,10 +67,20 @@ interface AnalysisScreenContract {
         abstract void showError(String errorMessage, Document document);
         abstract void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed);
         abstract void showPaymentDueHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed);
+        abstract void showSchedulePaymentHint(@NonNull String formattedDueDate,
+                @NonNull Runnable onProceed, @NonNull Runnable onSchedule);
         abstract void showError(ErrorType errorType, Document document);
 
         abstract void showEducation(EducationCompleteListener listener);
-        abstract void processInvoiceSaving();
+
+        /**
+         * Starts the local invoice saving step.
+         *
+         * @param pendingSavingAction name of the CTA waiting for saving to finish. The view must
+         *                            persist it, because saving leaves the SDK for the Storage
+         *                            Access Framework and the screen can be recreated meanwhile.
+         */
+        abstract void processInvoiceSaving(@NonNull String pendingSavingAction);
     }
 
     abstract class Presenter extends GiniCaptureBasePresenter<View> implements
@@ -87,7 +97,8 @@ interface AnalysisScreenContract {
 
         abstract List<Uri> assembleMultiPageDocumentUris();
 
-        abstract void updateInvoiceSavingState(Boolean isInProgress);
+        abstract void updateInvoiceSavingState(Boolean isInProgress,
+                @Nullable String pendingSavingAction);
 
         abstract void releaseMutexForEducation();
     }

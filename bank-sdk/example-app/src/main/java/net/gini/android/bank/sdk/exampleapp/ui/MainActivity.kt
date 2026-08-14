@@ -253,6 +253,17 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
+            // A real bank app would open its scheduled transfer flow here instead of paying now.
+            is CaptureResult.SchedulePayment -> {
+                Toast.makeText(this, "Schedule payment requested", Toast.LENGTH_SHORT).show()
+                startActivity(ExtractionsActivity.getStartIntent(
+                    this,
+                    result.specificExtractions,
+                    result.compoundExtractions,
+                    GiniCapture.getInstance().productTag == ProductTag.CxExtractions)
+                )
+            }
+
             is CaptureResult.Error -> {
                 when (result.value) {
                     is ResultError.Capture ->

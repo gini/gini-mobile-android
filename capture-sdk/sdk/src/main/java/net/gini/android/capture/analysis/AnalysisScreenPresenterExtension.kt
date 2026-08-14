@@ -32,6 +32,7 @@ import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.paymentHints.GetAlreadyPaidHintEnabledUseCase
 import net.gini.android.capture.paymentHints.GetPaymentDueHintEnabledUseCase
+import net.gini.android.capture.paymentHints.GetPaymentScheduleHintEnabledUseCase
 import net.gini.android.capture.tracking.AnalysisScreenEvent
 import net.gini.android.capture.tracking.EventTrackingHelper
 
@@ -49,6 +50,9 @@ internal class AnalysisScreenPresenterExtension(
     val paymentDueHintEnabledUseCase:
             GetPaymentDueHintEnabledUseCase by getGiniCaptureKoin().inject()
 
+    val paymentScheduleHintEnabledUseCase:
+            GetPaymentScheduleHintEnabledUseCase by getGiniCaptureKoin().inject()
+
     val lastAnalyzedDocumentProvider: LastAnalyzedDocumentProvider
             by getGiniCaptureKoin().inject()
 
@@ -65,6 +69,12 @@ internal class AnalysisScreenPresenterExtension(
     private val educationMutex = Mutex()
 
     private var invoiceEducationType: InvoiceEducationType? = null
+
+    /**
+     * Which CTA is waiting for the local invoice saving step to finish. Mirrored into the view's
+     * saved state so it survives a recreation while the SAF folder picker is open.
+     */
+    private var pendingSavingAction: PendingSavingAction = PendingSavingAction.PROCEED
 
     fun cancel() {
         job.cancel()
@@ -181,20 +191,76 @@ internal class AnalysisScreenPresenterExtension(
         }
     }
 
+    /**
+     * Runs the local invoice saving step, then continues with [pendingAction].
+     *
+     * Saving hands off to the Storage Access Framework, so the action cannot be run here. It is
+     * handed to the view, which persists it across a recreation (rotation, low memory) and gives
+     * it back through [restorePendingSavingAction]. [resumeAfterInvoiceSaving] then runs it once
+     * the files have been written.
+     */
     private fun handleSaveInvoicesLocally(
         mIsInvoiceSavingEnabled: Boolean,
         isSavingInvoicesInProgress: Boolean,
         resultHolder: ResultHolder,
-        activity: Activity
+        activity: Activity,
+        pendingAction: PendingSavingAction = PendingSavingAction.PROCEED
     ) {
         if (!mIsInvoiceSavingEnabled || isSavingInvoicesInProgress) {
-            clearSavedImagesAndProceed(
-                resultHolder, activity
-            )
+            runPendingSavingAction(pendingAction, resultHolder, activity)
             return
         } else {
-            view.processInvoiceSaving()
+            pendingSavingAction = pendingAction
+            view.processInvoiceSaving(pendingAction.name)
         }
+    }
+
+    /**
+     * Continues the flow after the local invoice saving step finished, with whichever CTA started
+     * it.
+     */
+    fun resumeAfterInvoiceSaving(
+        resultHolder: ResultHolder,
+        activity: Activity
+    ) {
+        val action = pendingSavingAction
+        pendingSavingAction = PendingSavingAction.PROCEED
+        runPendingSavingAction(action, resultHolder, activity)
+    }
+
+    private fun runPendingSavingAction(
+        action: PendingSavingAction,
+        resultHolder: ResultHolder,
+        activity: Activity
+    ) = when (action) {
+        PendingSavingAction.PROCEED -> clearSavedImagesAndProceed(resultHolder, activity)
+        PendingSavingAction.SCHEDULE_PAYMENT -> proceedWithSchedulePayment(resultHolder, activity)
+    }
+
+    /**
+     * Restores the CTA that started the local invoice saving step after the screen was recreated.
+     *
+     * Called with the value the view persisted. An unknown or missing name falls back to
+     * [PendingSavingAction.PROCEED], which is the behavior that existed before the scheduled
+     * payment state — so the due date hint and the already-paid warning are unaffected.
+     */
+    fun restorePendingSavingAction(actionName: String?) {
+        pendingSavingAction = PendingSavingAction.entries
+            .firstOrNull { it.name == actionName }
+            ?: PendingSavingAction.PROCEED
+    }
+
+    /**
+     * Which CTA is waiting for the local invoice saving step to finish. Persisted by the view,
+     * because saving leaves the SDK for the Storage Access Framework and the screen can be
+     * recreated while that is open.
+     */
+    internal enum class PendingSavingAction {
+        /** Continue the pay-now flow — "Proceed Anyway", and every state that has no other CTA. */
+        PROCEED,
+
+        /** Hand the extractions to the bank app — the scheduled payment state's primary CTA. */
+        SCHEDULE_PAYMENT
     }
 
     fun clearSavedImagesAndProceed(
@@ -233,6 +299,71 @@ internal class AnalysisScreenPresenterExtension(
                 }
             }
         }
+    }
+
+    fun showSchedulePaymentHint(
+        resultHolder: ResultHolder,
+        dueDate: String,
+        mIsInvoiceSavingEnabled: Boolean,
+        isSavingInvoicesInProgress: Boolean,
+        activity: Activity
+    ) {
+        if (isSavingInvoicesInProgress) {
+            // Saving was already running when the screen was recreated. The CTA the user actually
+            // tapped was restored into pendingSavingAction, so continue with that one instead of
+            // assuming pay-now.
+            handleSaveInvoicesLocally(
+                mIsInvoiceSavingEnabled,
+                true,
+                resultHolder,
+                activity,
+                pendingSavingAction
+            )
+        } else {
+            doWhenEducationFinished {
+                view.showSchedulePaymentHint(
+                    DueDateFormatter.formatToLocalStyle(dueDate),
+                    {
+                        handleSaveInvoicesLocally(
+                            mIsInvoiceSavingEnabled,
+                            false,
+                            resultHolder,
+                            activity,
+                            PendingSavingAction.PROCEED
+                        )
+                    },
+                    {
+                        // The invoice is saved locally first, exactly like the due date state's
+                        // "Proceed Anyway", and only then handed off to the bank app.
+                        handleSaveInvoicesLocally(
+                            mIsInvoiceSavingEnabled,
+                            false,
+                            resultHolder,
+                            activity,
+                            PendingSavingAction.SCHEDULE_PAYMENT
+                        )
+                    }
+                )
+            }
+        }
+    }
+
+    /**
+     * Hands the extractions to the hosting app so it can open its own scheduled transfer flow.
+     * The saved images are cleared just like on the pay-now path, but the flow finishes through
+     * [AnalysisFragmentListener.onSchedulePayment] instead of `onExtractionsAvailable`.
+     */
+    fun proceedWithSchedulePayment(
+        resultHolder: ResultHolder,
+        activity: Activity
+    ) {
+        ImageDiskStore.clear(activity)
+        getAnalysisFragmentListenerOrNoOp()
+            .onSchedulePayment(
+                getMapOrEmpty(resultHolder.extractions),
+                getMapOrEmpty(resultHolder.compoundExtractions),
+                getListOrEmpty(resultHolder.returnReasons)
+            )
     }
 
     fun getInvoiceEducationType(): InvoiceEducationType? {

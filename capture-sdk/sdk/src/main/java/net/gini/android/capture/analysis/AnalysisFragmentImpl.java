@@ -75,6 +75,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AnalysisFragmentImpl.class);
     protected static final String INVOICE_SAVING_IN_PROGRESS_KEY = "invoiceSavingInProgress";
+    protected static final String PENDING_SAVING_ACTION_KEY = "pendingSavingAction";
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
     private TextView mAnalysisMessageTextView;
@@ -91,6 +92,9 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     AnalysisFragmentExtension fragmentExtension = new AnalysisFragmentExtension();
 
     private boolean isInvoiceSavingInProgress = false;
+    // Which CTA started the invoice saving step. Persisted alongside isInvoiceSavingInProgress so
+    // a recreation during the SAF folder picker does not lose the user's choice.
+    private String pendingSavingAction = null;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
@@ -255,10 +259,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void processInvoiceSaving() {
+    void processInvoiceSaving(@NonNull final String pendingSavingAction) {
         if (mFragment.getActivity() == null) return;
         isInvoiceSavingInProgress = true;
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress);
+        this.pendingSavingAction = pendingSavingAction;
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction);
 
         String folderUri = SharedPreferenceHelper.INSTANCE.getString(
                 SAF_STORAGE_URI_KEY,
@@ -274,6 +279,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     public Boolean getIsInvoiceSavingInProgress() {
         return isInvoiceSavingInProgress;
+    }
+
+    @Nullable
+    public String getPendingSavingAction() {
+        return pendingSavingAction;
     }
 
     void hideEducation() {
@@ -359,6 +369,14 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         mFragment.showWarning(WarningType.PAYMENT_DUE_DATE, formattedDueDate, onProceed);
     }
 
+    @Override
+    void showSchedulePaymentHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed,
+                                 @NonNull Runnable onSchedule) {
+        stopAndHideHints();
+        mFragment.showWarning(
+                WarningType.SCHEDULE_PAYMENT, formattedDueDate, onProceed, onSchedule);
+    }
+
     // Keeps TalkBack focus on the warning bottom sheet by removing the rotating
     // capture suggestions behind it.
     private void stopAndHideHints() {
@@ -397,8 +415,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     // Required by superclass
     public void onCreate(final Bundle savedInstanceState) {
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             isInvoiceSavingInProgress = savedInstanceState.getBoolean(INVOICE_SAVING_IN_PROGRESS_KEY, false);
+            pendingSavingAction = savedInstanceState.getString(PENDING_SAVING_ACTION_KEY);
+        }
     }
 
 
@@ -499,7 +519,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onResume() {
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress);
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction);
         getPresenter().start();
     }
 

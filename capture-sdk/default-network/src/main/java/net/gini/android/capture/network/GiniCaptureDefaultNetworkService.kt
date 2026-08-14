@@ -211,7 +211,8 @@ internal constructor(
             isEInvoiceEnabled = configuration.isEInvoiceEnabled,
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
             isSavePhotosLocallyEnabled = configuration.isSavePhotosLocallyEnabled,
-            isUnsupportedQRCodeWarningEnabled = configuration.isUnsupportedQRCodeWarningEnabled
+            isUnsupportedQRCodeWarningEnabled = configuration.isUnsupportedQRCodeWarningEnabled,
+            isPaymentScheduleHintEnabled = configuration.isPaymentScheduleHintEnabled
         )
 
     @Suppress("LongMethod")
