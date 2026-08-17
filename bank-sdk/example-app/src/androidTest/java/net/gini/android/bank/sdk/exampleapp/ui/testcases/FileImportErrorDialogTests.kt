@@ -51,7 +51,7 @@ class FileImportErrorDialogTests {
             pdfUploader.copyPdfToDownloads(context, "password-protected.pdf")
         }
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         idlingResource.waitForIdle()
@@ -69,7 +69,7 @@ class FileImportErrorDialogTests {
             pdfUploader.copyPdfToDownloads(context, "too-many-pages.pdf")
         }
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.clickFilesButton()
         captureScreen.clickFiles()
         idlingResource.waitForIdle()

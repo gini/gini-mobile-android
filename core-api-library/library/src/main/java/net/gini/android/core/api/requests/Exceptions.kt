@@ -24,3 +24,14 @@ class ApiException(
         }
     }
 }
+
+/**
+ * Internal use only.
+ *
+ * Thrown when the session request was cancelled while authenticating an API request in the
+ * OkHttp layer. It extends [IOException] because OkHttp interceptors may only throw
+ * [IOException]s ([kotlinx.coroutines.CancellationException] would be wrapped by OkHttp and
+ * lose its meaning). [net.gini.android.core.api.Resource.Companion.wrapInResource] maps it to
+ * [net.gini.android.core.api.Resource.Cancelled].
+ */
+class SessionCancellationException : IOException("Session request was cancelled")

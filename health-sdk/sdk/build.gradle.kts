@@ -14,6 +14,7 @@ plugins {
     id("jacoco")
     alias(libs.plugins.devtools.ksp)
     id ("org.sonarqube")
+    alias(libs.plugins.binary.compatibility.validator)
 }
 
 sonar {

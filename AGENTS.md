@@ -52,11 +52,14 @@ Reference docs (Dokka): `./gradlew <project>:<module>:dokkaHtmlSiblingCollector`
 ## Architecture & code style
 
 - **Kotlin first.** New code is Kotlin with coroutines. `capture-sdk` still contains substantial legacy Java (~half its files) — don't convert it opportunistically; follow the style of the file you're editing.
-- **UI pattern:** MVVM with Jetpack `ViewModel` and `StateFlow`/`SharedFlow` for state (used across capture/bank/health/internal-payment SDKs). Views are Fragment/View-based with ViewBinding; Jetpack Compose is used in parts of `capture-sdk`/`bank-sdk` and the health example app. No Hilt in the SDK modules themselves (only the `bank-sdk` example app uses it) — SDKs wire dependencies manually to stay DI-framework-agnostic for integrators.
+- **UI pattern:** MVVM with Jetpack `ViewModel` and `StateFlow`/`SharedFlow` for state (used across capture/bank/health/internal-payment SDKs). Views are Fragment/View-based with ViewBinding; Jetpack Compose is used in parts of `capture-sdk`/`bank-sdk` only. No Hilt in the SDK modules themselves (only the `bank-sdk` example app uses it).
+- **Dependency injection:** `capture-sdk` and `bank-sdk` SDK modules use **Koin** internally via **isolated Koin contexts** (`CaptureSdkIsolatedKoinContext`/`BankSdkIsolatedKoinContext` — global-Koin APIs like `koinViewModel()` don't work here). Both declare `single {}` dependencies; `viewModel {}` bindings exist only in `bank-sdk` (resolved with the `giniBankViewModel` Fragment extension), while `capture-sdk` constructs ViewModels via `ViewModelProvider.Factory`. `health-sdk` and `internal-payment-sdk` wire dependencies manually. Match the module you're in, and never expose Koin (or any DI framework) in the public API — the SDKs stay DI-framework-agnostic for integrators.
 - **Networking:** Retrofit + OkHttp + Moshi in the API libraries (Retrofit interfaces + remote-source classes, e.g. `HealthApiDocumentRemoteSource`).
 - Public entry points are singleton-style facade classes (`GiniHealth`, `GiniBank`, `GiniCapture`, …).
 - Kotlin declarations are public by default — mark everything `internal`/`private` unless it is deliberately part of the SDK's public API.
 - Style is enforced by ktlint and Detekt (`config/detekt/detekt.yml`); run both before committing.
+- Public API declarations carry KDoc (`/** ... */`) — the Dokka reference docs are built from it.
+- Never add mock, placeholder, or stub implementations to production code — every shipped line must be real and functional.
 
 ## Testing conventions
 
@@ -78,7 +81,7 @@ Reference docs (Dokka): `./gradlew <project>:<module>:dokkaHtmlSiblingCollector`
   <ticket-id>
   ```
 
-  `type` ∈ `feat` | `fix` | `refactor` | `docs` | `ci` (`chore` for cross-cutting changes); `project` is the top-level folder, e.g. `feat(bank-sdk): Add error logging interface`. Subject in imperative mood; body explains what/why.
+  The commit template is the source of truth for the allowed `type` values and what each covers — read `.git-stuff/commit-msg-template.txt` rather than relying on a list duplicated here. `project` is the top-level folder (e.g. `feat(bank-sdk): Add error logging interface`); leave it off when the change spans many projects or none in particular. Subject in imperative mood; body explains what/why.
 - Release tags: `<project-name>;<version>` (e.g. `bank-sdk;1.0.2`) — tags trigger release workflows, so never push them casually.
 - Releases follow `RELEASE.md`: `capture-sdk:default-network` is always version-bumped together with `capture-sdk`, and multiple major versions (1.x/2.x/3.x) are maintained on parallel branches — fixes for older majors must branch from the matching version branch, not `main`.
 

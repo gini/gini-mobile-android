@@ -67,6 +67,21 @@ class JacocoCoveragePlugin : Plugin<Project> {
             sourceDirectories.setFrom(
                 project.files("src/main/java", "src/main/kotlin")
             )
+
+            // The Kotlin compiler emits line number 0 debug info for the synthetic
+            // `$$inlined$` suspend lambda classes it generates for inline functions, which
+            // JaCoCo copies into the report as `<line nr="0" .../>`. SonarCloud's importer
+            // rejects the WHOLE source file's coverage over such an entry ("Line number must
+            // be strictly positive"), so drop these entries from the XML. They carry no
+            // usable coverage information (there is no line 0).
+            doLast {
+                val xmlFile = xmlReportFile.get().asFile
+                if (xmlFile.exists()) {
+                    xmlFile.writeText(
+                        xmlFile.readText().replace(Regex("""<line nr="0"[^>]*/>"""), "")
+                    )
+                }
+            }
         }
 
         project.extensions.findByType(SonarExtension::class.java)?.properties {

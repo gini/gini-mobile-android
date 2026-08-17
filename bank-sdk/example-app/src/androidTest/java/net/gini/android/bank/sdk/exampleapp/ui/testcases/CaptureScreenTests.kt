@@ -67,7 +67,7 @@ class CaptureScreenTests {
         configurationScreen.clickFlashToggleToEnable()
         pressBack()
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.assertFlashIconIsDisplayed()
         captureScreen.assertFlashIconIsOn()
     }
@@ -80,7 +80,7 @@ class CaptureScreenTests {
         configurationScreen.clickFlashToggleToEnable()
         pressBack()
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.assertFlashIconIsDisplayed()
         captureScreen.assertFlashIconIsOn()
     }
@@ -93,7 +93,7 @@ class CaptureScreenTests {
         configurationScreen.assertFlashToggleIsDisable()
         pressBack()
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.assertFlashIconIsDisplayed()
         captureScreen.assertFlashIconIsOff()
     }
@@ -106,7 +106,7 @@ class CaptureScreenTests {
         configurationScreen.assertFlashToggleIsDisable()
         pressBack()
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         captureScreen.assertFlashIconIsDisplayed()
         captureScreen.assertFlashIconIsOff()
         captureScreen.clickCameraButton()

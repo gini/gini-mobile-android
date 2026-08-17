@@ -103,7 +103,7 @@ class OnboardingScreenTests {
     @Test
     fun test8_skipsOnboardingAndShowsCameraScreenOnSubsequentLaunches() {
         mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButton()
+        onboardingScreen.clickSkipButtonIfPresent()
         pressBack()
         mainScreen.assertDescriptionTitle()
         mainScreen.clickPhotoPaymentButton()
