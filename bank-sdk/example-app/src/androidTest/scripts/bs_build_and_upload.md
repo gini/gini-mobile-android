@@ -25,7 +25,7 @@ Builds the `example-app` and Espresso test suite APKs, uploads them to BrowserSt
 |---|---|
 | `test_image.jpeg` | Camera injection file (`CaptureInjectionImage`) |
 | `Testrechnung-RA-1.pdf` | PDF used in file picker upload tests (`UploadPDF`) |
-| `sample.pdf` | PDF used in file picker upload tests (`SamplePDF`) |
+| `sample.pdf` | PDF used in file picker upload tests (`SamplePDF`) — a copy of Gini's anonymised example invoice (`Gini_invoice_example.pdf`); keep test documents free of real names, addresses and bank details |
 | `Google Pixel 9-16.0` | Target BrowserStack device 1 |
 | `Google Pixel 10 Pro-16.0` | Target BrowserStack device 2 |
 | `net.gini.android.bank.sdk.exampleapp.ui.testcases` | Default test package (runs all test classes) |
