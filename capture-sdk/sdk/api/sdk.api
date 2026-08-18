@@ -196,6 +196,25 @@ public final class net/gini/android/capture/CaptureSDKResult$Error$Creator : and
 	public final fun newArray (I)[Lnet/gini/android/capture/CaptureSDKResult$Error;
 }
 
+public final class net/gini/android/capture/CaptureSDKResult$SchedulePayment : net/gini/android/capture/CaptureSDKResult {
+	public static final field $stable I
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
+	public final fun describeContents ()I
+	public final fun getCompoundExtractions ()Ljava/util/Map;
+	public final fun getReturnReasons ()Ljava/util/List;
+	public final fun getSpecificExtractions ()Ljava/util/Map;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class net/gini/android/capture/CaptureSDKResult$SchedulePayment$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun createFromParcel (Landroid/os/Parcel;)Lnet/gini/android/capture/CaptureSDKResult$SchedulePayment;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+	public final fun newArray (I)[Lnet/gini/android/capture/CaptureSDKResult$SchedulePayment;
+}
+
 public final class net/gini/android/capture/CaptureSDKResult$Success : net/gini/android/capture/CaptureSDKResult {
 	public static final field $stable I
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
@@ -328,6 +347,7 @@ public class net/gini/android/capture/GiniCapture {
 	public fun isMultiPageEnabled ()Z
 	public fun isOnlyQRCodeScanning ()Z
 	public fun isPaymentDueHintEnabled ()Z
+	public fun isPaymentScheduleHintEnabled ()Z
 	public fun isQRCodeScanningEnabled ()Z
 	public fun isSupportedFormatsHelpScreenEnabled ()Z
 	public static fun newInstance (Landroid/content/Context;)Lnet/gini/android/capture/GiniCapture$Builder;
@@ -370,6 +390,7 @@ public class net/gini/android/capture/GiniCapture$Builder {
 	public fun setOnlyQRCodeScanning (Z)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setPaymentDueHintEnabled (Ljava/lang/Boolean;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setPaymentDueHintThresholdDays (I)Lnet/gini/android/capture/GiniCapture$Builder;
+	public fun setPaymentScheduleHintEnabled (Ljava/lang/Boolean;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setProductTag (Lnet/gini/android/capture/ProductTag;)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setQRCodeScanningEnabled (Z)Lnet/gini/android/capture/GiniCapture$Builder;
 	public fun setSaveInvoicesLocallyEnabled (Z)Lnet/gini/android/capture/GiniCapture$Builder;
@@ -491,6 +512,7 @@ public final class net/gini/android/capture/GiniCaptureFragment : androidx/fragm
 	public fun onProceedToNoExtractionsScreen (Lnet/gini/android/capture/Document;)V
 	public fun onResume ()V
 	public fun onSaveInstanceState (Landroid/os/Bundle;)V
+	public fun onSchedulePayment (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
 	public final fun setBankSDKBridge (Lnet/gini/android/capture/BankSDKBridge;)V
 	public final fun setListener (Lnet/gini/android/capture/GiniCaptureFragmentListener;)V
@@ -634,6 +656,7 @@ public class net/gini/android/capture/analysis/AnalysisFragment : androidx/fragm
 	public fun setListener (Lnet/gini/android/capture/analysis/AnalysisFragmentListener;)V
 	public fun showAlertDialog (Ljava/lang/String;Ljava/lang/String;Landroid/content/DialogInterface$OnClickListener;Ljava/lang/String;Landroid/content/DialogInterface$OnClickListener;Landroid/content/DialogInterface$OnCancelListener;)V
 	public fun showWarning (Lnet/gini/android/capture/analysis/warning/WarningType;Ljava/lang/String;Ljava/lang/Runnable;)V
+	public fun showWarning (Lnet/gini/android/capture/analysis/warning/WarningType;Ljava/lang/String;Ljava/lang/Runnable;Ljava/lang/Runnable;)V
 }
 
 public class net/gini/android/capture/analysis/AnalysisFragmentDirections {
@@ -694,6 +717,7 @@ public abstract interface class net/gini/android/capture/analysis/AnalysisFragme
 	public abstract fun onError (Lnet/gini/android/capture/GiniCaptureError;)V
 	public abstract fun onExtractionsAvailable (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
 	public abstract fun onProceedToNoExtractionsScreen (Lnet/gini/android/capture/Document;)V
+	public fun onSchedulePayment (Ljava/util/Map;Ljava/util/Map;Ljava/util/List;)V
 }
 
 public final class net/gini/android/capture/analysis/AnalysisHint : java/lang/Enum {
@@ -783,6 +807,7 @@ public final class net/gini/android/capture/analysis/warning/WarningPaymentState
 public final class net/gini/android/capture/analysis/warning/WarningType : java/lang/Enum {
 	public static final field DOCUMENT_MARKED_AS_PAID Lnet/gini/android/capture/analysis/warning/WarningType;
 	public static final field PAYMENT_DUE_DATE Lnet/gini/android/capture/analysis/warning/WarningType;
+	public static final field SCHEDULE_PAYMENT Lnet/gini/android/capture/analysis/warning/WarningType;
 	public fun getDescriptionRes ()I
 	public fun getPrimaryButtonTextRes ()I
 	public fun getSecondaryButtonTextRes ()I
@@ -2380,14 +2405,15 @@ public class net/gini/android/capture/internal/network/AnalysisNetworkRequestRes
 
 public final class net/gini/android/capture/internal/network/Configuration {
 	public static final field $stable I
-	public fun <init> (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZ)V
-	public synthetic fun <init> (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZ)V
+	public synthetic fun <init> (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/UUID;
 	public final fun component10 ()Ljava/lang/String;
 	public final fun component11 ()Z
 	public final fun component12 ()Z
 	public final fun component13 ()Z
 	public final fun component14 ()Z
+	public final fun component15 ()Z
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
 	public final fun component4 ()Z
@@ -2396,8 +2422,8 @@ public final class net/gini/android/capture/internal/network/Configuration {
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZ)Lnet/gini/android/capture/internal/network/Configuration;
-	public static synthetic fun copy$default (Lnet/gini/android/capture/internal/network/Configuration;Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZILjava/lang/Object;)Lnet/gini/android/capture/internal/network/Configuration;
+	public final fun copy (Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZ)Lnet/gini/android/capture/internal/network/Configuration;
+	public static synthetic fun copy$default (Lnet/gini/android/capture/internal/network/Configuration;Ljava/util/UUID;Ljava/lang/String;ZZZZZZZLjava/lang/String;ZZZZZILjava/lang/Object;)Lnet/gini/android/capture/internal/network/Configuration;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAmplitudeApiKey ()Ljava/lang/String;
 	public final fun getClientID ()Ljava/lang/String;
@@ -2407,6 +2433,7 @@ public final class net/gini/android/capture/internal/network/Configuration {
 	public final fun isEInvoiceEnabled ()Z
 	public final fun isInstantPaymentEnabled ()Z
 	public final fun isPaymentDueHintEnabled ()Z
+	public final fun isPaymentScheduleHintEnabled ()Z
 	public final fun isQrCodeEducationEnabled ()Z
 	public final fun isReturnAssistantEnabled ()Z
 	public final fun isSavePhotosLocallyEnabled ()Z
@@ -2816,6 +2843,7 @@ public abstract interface class net/gini/android/capture/internal/ui/FragmentImp
 	public fun safeNavigate (Landroidx/navigation/NavDirections;)V
 	public abstract fun showAlertDialog (Ljava/lang/String;Ljava/lang/String;Landroid/content/DialogInterface$OnClickListener;Ljava/lang/String;Landroid/content/DialogInterface$OnClickListener;Landroid/content/DialogInterface$OnCancelListener;)V
 	public fun showWarning (Lnet/gini/android/capture/analysis/warning/WarningType;Ljava/lang/String;Ljava/lang/Runnable;)V
+	public fun showWarning (Lnet/gini/android/capture/analysis/warning/WarningType;Ljava/lang/String;Ljava/lang/Runnable;Ljava/lang/Runnable;)V
 	public abstract fun startActivity (Landroid/content/Intent;)V
 	public abstract fun startActivityForResult (Landroid/content/Intent;I)V
 }
