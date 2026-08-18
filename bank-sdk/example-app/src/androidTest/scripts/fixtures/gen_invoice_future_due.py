@@ -3,17 +3,31 @@
 
 Due date (paymentDueDate): 01.09.2028 — must match FIXTURE_DUE_DATE in the tests.
 """
+import os
+
 from PIL import Image, ImageDraw, ImageFont
 
 W, H = 1240, 1754  # A4 at 150 dpi
 img = Image.new("RGB", (W, H), "white")
 d = ImageDraw.Draw(img)
 
-FONT = "/System/Library/Fonts/Helvetica.ttc"
+# (regular path, bold path, ttc index regular, ttc index bold) per platform.
+# NOTE: a different font produces different image bytes — a regenerated fixture
+# must be re-validated against the Gini API before replacing the committed one.
+FONTS = [
+    ("/System/Library/Fonts/Helvetica.ttc", "/System/Library/Fonts/Helvetica.ttc", 0, 1),  # macOS
+    ("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 0, 0),  # Linux
+    ("C:/Windows/Fonts/arial.ttf", "C:/Windows/Fonts/arialbd.ttf", 0, 0),  # Windows
+]
 
 
 def f(size, bold=False):
-    return ImageFont.truetype(FONT, size, index=1 if bold else 0)
+    for regular, bold_path, regular_index, bold_index in FONTS:
+        path, index = (bold_path, bold_index) if bold else (regular, regular_index)
+        if os.path.exists(path):
+            return ImageFont.truetype(path, size, index=index)
+    raise SystemExit("No known font found — add your platform's font paths to FONTS.")
 
 
 x = 110
@@ -82,7 +96,6 @@ d.text(
     fill="black",
 )
 
-import os
 out = os.path.join(os.path.dirname(__file__), "..", "..", "assets", "invoice_future_due.jpeg")
 img.save(out, "JPEG", quality=92)
 print(out)
