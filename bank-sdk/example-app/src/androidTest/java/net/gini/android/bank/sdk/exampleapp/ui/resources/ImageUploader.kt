@@ -13,40 +13,73 @@ import androidx.test.uiautomator.UiSelector
 class ImageUploader {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     fun uploadImageFromPhotos() {
-       device.waitForIdle()
-        val selectPhoto = device.findObject(
+        device.waitForIdle()
+        // Legacy media-module picker (used by the BrowserStack Pixel devices).
+        val legacyThumbnail = device.findObject(
             UiSelector()
                 .className("android.widget.ImageView")
                 .resourceId("com.google.android.providers.media.module:id/icon_thumbnail")
         )
-        if (selectPhoto != null) {
-            selectPhoto.click()
-        } else {
-            throw Exception("First photo not found")
+        if (legacyThumbnail.waitForExists(3000)) {
+            legacyThumbnail.click()
+            return
         }
+        // New Compose-based Mainline photo picker (com.google.android.photopicker, seen on
+        // e.g. Samsung / Android 16): it exposes no resource ids at all — the photo tiles
+        // only carry a "Photo taken on …" content description. The first tile is the
+        // newest photo, i.e. the test image copied to the MediaStore right before.
+        val composeTile = device.findObject(
+            UiSelector().descriptionStartsWith("Photo taken on")
+        )
+        if (composeTile.waitForExists(5000)) {
+            composeTile.click()
+            return
+        }
+        throw Exception("First photo not found in photo picker")
     }
 
     fun clickAddButton() {
+        // Legacy media-module picker (BrowserStack Pixels).
         val addButton = device.findObject(
             UiSelector()
                 .className("android.widget.Button")
                 .resourceId("com.google.android.providers.media.module:id/button_add")
         )
-    if (addButton.exists()) {
-        addButton.click()
-    } else {
-        throw java.lang.Exception("Add button not found")
-    }
+        if (addButton.waitForExists(3000)) {
+            addButton.click()
+            return
+        }
+        // New Mainline photo picker: multi-select confirms via an Add/Done control (no
+        // resource id, so match by text/description); single-select closes right after
+        // the photo tap, in which case there is nothing to confirm and we return.
+        listOf(
+            UiSelector().text("Add"),
+            UiSelector().description("Add"),
+            UiSelector().text("Done"),
+            UiSelector().description("Done")
+        ).forEach { selector ->
+            val confirmButton = device.findObject(selector)
+            if (confirmButton.waitForExists(2000)) {
+                confirmButton.click()
+                return
+            }
+        }
     }
 
     fun copyImageToDownloads(context: Context, filename: String) {
-        context.contentResolver.delete(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
-            arrayOf(filename)
-        )
+        runCatching {
+            context.contentResolver.delete(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
+                arrayOf(filename)
+            )
+        }
+        // Insert under a unique display name: repeated same-name inserts can fail with
+        // "Failed to build unique file" when MediaStore is left with an orphaned file
+        // (seen locally under the Orchestrator's clearPackageData). Every caller selects
+        // the newest photo in the picker, never by name, so uniqueness is safe.
         val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+            put(MediaStore.Images.Media.DISPLAY_NAME, "${System.currentTimeMillis()}_$filename")
             put(MediaStore.Images.Media.MIME_TYPE, "image/png")
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
         }
