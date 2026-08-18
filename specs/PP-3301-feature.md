@@ -1,6 +1,6 @@
 # PP-3301: [Android] Due Date Hint — Add UI Automation tests (BrowserStack)
 
-Status: draft
+Status: implemented
 Ticket: https://ginis.atlassian.net/browse/PP-3301
 Source test cases: XRay CSV exports (PP-3300 / PP-3261 / PP-3263), provided as
 `PP-3261-due-date-hint-edited.csv`, `PP-3261-due-date-hint-accessibility-edited.csv`,
@@ -52,8 +52,8 @@ and (b) a fixed far-future test invoice plus the configurable
    (`net.gini.android.capture.R.string.gc_due_date_hint_title` etc.), so the
    same test passes on any device locale. Explicit EN/DE copy verification
    stays with unit tests and manual QA.
-5. **Minimal example-app observable for the schedule result** *(chosen while
-   resolving spec-review findings — veto at review if unwanted)*. The example
+5. **Minimal example-app observable for the schedule result** *(approved by
+   the user on 2026-08-17)*. The example
    app's `Success` and `SchedulePayment` handlers are identical except for a
    toast (`CaptureResultListener.kt:46-76`): both open `ExtractionsActivity`
    with the same extras. Toast assertions are unreliable on API 30+, so
@@ -121,10 +121,12 @@ assert on the title alone.
 - R5 (MUST, error): Given client flags due=OFF, schedule=OFF, when the
   qualifying invoice is processed, then neither sheet appears and the flow
   continues to the extraction screen. *(PP-3261 TC-026..029)*
-- R6 (SHOULD, error): Given a document whose extractions contain no
-  `paymentDueDate` (candidate: existing `test_image.jpeg` — must be verified,
-  see Open questions), when processed with both hint flags ON, then no sheet
-  appears. *(TC-005)*
+- R6 (MUST, error): Given the second fixture `invoice_no_due_date.jpeg`
+  (validated 2026-08-17: extractions contain `amountToPay`/`iban`/
+  `paymentState = ToBePaid` but NO `paymentDueDate`), when processed with
+  both hint flags ON, then no sheet appears and the flow continues to the
+  extraction screen. Note: `test_image.jpeg` was checked and is NOT suitable
+  — it extracts `paymentDueDate = 2014-08-30`. *(TC-005)*
 - R7 (SHOULD, error): Given the existing Return Assistant invoice
   `Testrechnung-RA-1.pdf` and both hint flags ON, when processed, then no
   due-date/schedule sheet appears (RA extractions suppress it; the digital
@@ -274,7 +276,8 @@ bank-sdk/example-app/src/androidTest/
 │   └── ConfigurationScreen.kt                (extended, only if UI toggling
 │                                              is needed as fallback)
 ├── assets/
-│   └── invoice_future_due.jpeg (or .png)     (new test document)
+│   ├── invoice_future_due.jpeg               (new: due 01.09.2028, ToBePaid)
+│   └── invoice_no_due_date.jpeg              (new: same invoice, no due date)
 └── scripts/
     ├── bs_run_group_duedate.sh               (new shard)
     └── bs_run_all_groups.sh                  (wire the new shard; update the
@@ -298,17 +301,26 @@ pattern). Using an image via `ImageUploader` avoids touching the
 BrowserStack `upload-media` calls in `bs_build_and_upload.sh` (those are only
 needed for PDFs picked through DocumentsUI).
 
-**The due date is chosen during fixture validation, not fixed here.** A
-decades-out date (2099) risks being down-ranked or rejected as implausible by
-the extraction model; a near date goes stale. Start ~2 years out and move
-further only if validation shows the backend extracts it reliably. The chosen
-date lives in a single `FIXTURE_DUE_DATE: LocalDate` constant next to the
-tests (the document and the constant must agree), with a comment stating the
-refresh deadline if a near-term date ends up being necessary. The document
-must be validated against the real API before the tests are written:
-extractions must contain `paymentDueDate = <FIXTURE_DUE_DATE as yyyy-MM-dd>`
-and `paymentState = ToBePaid` (confidence: LOW — verified only by a manual
-upload with the `gini-mobile-test` client; see Open questions).
+**Validated 2026-08-17 against the real API (`gini-mobile-test` client,
+partial→composite v1 flow):** two synthetic invoices were generated
+(PIL-rendered German invoice: Muster Bau GmbH → Max Mustermann, 570,50 €,
+IBAN DE02120300000000202051):
+
+- `invoice_future_due.jpeg` ("Zahlbar ohne Abzug bis zum 01.09.2028." +
+  "Fälligkeitsdatum: 01.09.2028") → extracted `paymentDueDate = 2028-09-01`,
+  `paymentState = ToBePaid`, `amountToPay = 570.50:EUR`. So
+  **`FIXTURE_DUE_DATE = LocalDate.of(2028, 9, 1)`** — a constant next to the
+  tests, with a refresh-by comment (mid-2028 the date must be regenerated;
+  the generator scripts should be kept alongside the assets or referenced in
+  the test kdoc).
+- `invoice_no_due_date.jpeg` (same invoice, both due-date lines removed) →
+  `paymentDueDate` absent, `paymentState = ToBePaid`, amount/IBAN extracted —
+  the R6 fixture.
+
+The same validation confirmed `/configurations` for this client returns
+`paymentDueHintEnabled = true` and `paymentScheduleHintEnabled = true`
+(PP-3260 live), and that `test_image.jpeg` is unsuitable for R6
+(`paymentDueDate = 2014-08-30`).
 
 ### Threshold arithmetic
 
@@ -336,9 +348,17 @@ new parameter defaulting to `false`, carried as
 `EXTRA_IN_IS_CX_EXTRACTIONS` (`ExtractionsActivity.kt:320`).
 `ExtractionsActivity` reads the extra and toggles a `TextView`
 (`@+id/text_scheduled_payment_indicator`, GONE by default) to VISIBLE. The
-`Success` branch is untouched, so the indicator is a faithful, real behavior
-of the example app — not a test-only stub — and gives R12/R13 their
+`Success` branches are untouched, so the indicator is a faithful, real
+behavior of the example app — not a test-only stub — and gives R12/R13 their
 distinguishing observable. The toast stays as-is.
+
+**All three result handlers must pass the extra** (found the hard way — the
+first BrowserStack run failed R12 because only one was patched): the example
+app handles the schedule result in `MainActivity.onCaptureResult`
+(`CaptureResult.SchedulePayment` — the default photo-payment path the tests
+drive), `ClientBankSDKFragment.onFinishedWithResult` (`CaptureResult`), and
+`CaptureResultListener` (`CaptureSDKResult` — capture-SDK-standalone path).
+These are the same three call sites PP-3264's build notes listed.
 
 ### Known stability assumptions (document in the test class kdoc)
 
@@ -496,26 +516,78 @@ production class); page objects and test classes are exercised by being run.
 
 ## Open questions
 
-1. **Fixture validation (blocking, first step of /gini-build):** upload the
-   candidate `invoice_future_due` document manually with the
-   `gini-mobile-test` client and confirm the API returns
-   `paymentDueDate = <FIXTURE_DUE_DATE>` and `paymentState = ToBePaid`; this
-   validation also fixes the actual due date (see Design → Test document). If
-   `ToBePaid` is not returned for a synthetic invoice, the
-   far-future-invoice strategy fails and the user must be consulted before
-   falling back to an injection seam. (confidence: LOW — backend behavior not
-   verifiable from this repo)
-2. **Empty-due-date fixture:** verify whether `test_image.jpeg` extractions
-   really lack `paymentDueDate` (R6 is SHOULD until confirmed). (confidence:
-   LOW)
-3. **PP-3260 status:** confirm the two server flags are actually enabled for
-   `gini-mobile-test` before the first BrowserStack run — the most likely
-   cause of a mysteriously all-red first run.
-4. **Decision 5 veto:** the example-app schedule indicator was chosen while
-   resolving spec-review findings (the toast alternative is unreliable on
-   API 30+ and dropping it would make R12 vacuous). If the example-app
-   main-source change is unwanted, say so before /gini-build — the fallback
-   is a mandatory toast assertion with its flakiness risk accepted.
+All resolved on 2026-08-17 (during /gini-build phase A):
+
+1. ~~Fixture validation~~ **Resolved:** `invoice_future_due.jpeg` validated
+   against the real API — `paymentDueDate = 2028-09-01`,
+   `paymentState = ToBePaid`. See Design → Test document.
+2. ~~Empty-due-date fixture~~ **Resolved:** `test_image.jpeg` is unsuitable
+   (extracts `paymentDueDate = 2014-08-30`); a second synthetic fixture
+   `invoice_no_due_date.jpeg` was generated and validated (`paymentDueDate`
+   absent, `ToBePaid`). R6 upgraded to MUST.
+3. ~~PP-3260 status~~ **Resolved:** `/configurations` for `gini-mobile-test`
+   returns `paymentDueHintEnabled = true`, `paymentScheduleHintEnabled =
+   true` (also `alreadyPaidHintEnabled`, `creditNoteHintEnabled`,
+   `paymentHintsEnabled` all true).
+4. ~~Decision 5 veto~~ **Resolved:** the user approved decision 5 (the
+   example-app schedule indicator) on 2026-08-17. No fallback needed.
+
+## Implementation plan
+- [x] 1. Add validated fixture assets `invoice_future_due.jpeg` +
+  `invoice_no_due_date.jpeg` to `bank-sdk/example-app/src/androidTest/assets/`
+  and the PIL generator scripts to `src/androidTest/scripts/fixtures/`
+  (requirements R1–R6 test data; fixtures validated against the live API on
+  2026-08-17)
+- [x] 2. Example-app schedule observable (decision 5):
+  `ExtractionsActivity.getStartIntent(..., isSchedulePayment = false)` + new
+  `EXTRA_IN_IS_SCHEDULE_PAYMENT`, indicator TextView
+  `text_scheduled_payment_indicator` in `activity_extractions.xml` (GONE by
+  default), string resource, `CaptureResultListener` passes `true` in the
+  `SchedulePayment` branch; a11y-specialist review of the new view
+  (requirements R12, R13)
+- [x] 3. New page object `WarningBottomSheetScreen.kt` (waits, state
+  assertions, CTA clicks, safe tap-outside, hints-container assert) and a
+  shared hint-flag/threshold configuration helper in `ui.resources`
+  (all requirements)
+- [x] 4. `DueDateHintBottomSheetTests.kt` — 10 tests (requirements R1, R3,
+  R4, R5, R6, R7, R8, R9, R10, R11, R14)
+- [x] 5. `SchedulePaymentBottomSheetTests.kt` — 5 tests (requirements R2,
+  R12, R13, R14)
+- [x] 6. BrowserStack wiring: new `bs_run_group_duedate.sh`, `run_group`
+  entry + class-count comment updates in `bs_run_all_groups.sh` and all
+  shard-script headers (requirement R15, script part)
+- [x] 7. Verify: `assembleDevExampleAppDebug` +
+  `assembleDevExampleAppDebugAndroidTest`, then lint/detekt/ktlint for
+  `bank-sdk:example-app`; local `connectedDevExampleAppDebugAndroidTest` for
+  the two new classes if a device is attached (the 3 BrowserStack runs of
+  R15 remain with the user).
+  Results 2026-08-17: assemble PASS (both APKs), ktlintCheck PASS, lint PASS,
+  testDevExampleAppDebugUnitTest PASS. detekt FAILS module-wide with 23
+  pre-existing findings, all in untouched files plus the pre-existing
+  `readExtras` NestedBlockDepth — verified identical on the branch base via
+  stash; CI does not run detekt for example-app, and this change net-fixed 2
+  findings (LongMethod + NewLineAtEndOfFile in CaptureResultListener). No
+  device attached → connected run skipped; BrowserStack runs pending (R15).
+  Update 2026-08-18: all 15 tests PASS on a physical Samsung Galaxy A55
+  (Android 16) after three environment fixes found by real runs:
+  (a) BrowserStack run 1 failed R12 → all three example-app result handlers
+  now pass the schedule extra (see Design);
+  (b) the A55 uses the new Compose-based Mainline photo picker
+  (com.google.android.photopicker, no resource ids) → ImageUploader gained a
+  content-description fallback, legacy selector still primary;
+  (c) MediaStore orphan-file collisions on repeated runs → images are
+  inserted under unique display names (all callers pick by newest, not
+  name), and test10 copies Testrechnung-RA-1.pdf from assets (runCatching)
+  since only BrowserStack pre-loads it as media.
+  Consolidation (user-requested): `src/androidTest/testDocuments/` was
+  removed — its files moved into `src/androidTest/assets/` as the single
+  source of truth (`sample.pdf` as-is; `test_image.jpeg` renamed to
+  `camera_injection_image.jpeg` because it is a DIFFERENT file from the
+  pre-existing `assets/test_image.jpeg` — it is the BrowserStack camera
+  injection image; the RA PDF deduplicated). `bs_build_and_upload.sh` now
+  uploads from assets; BrowserStack behavior is byte-identical. The third
+  copy set in `.github/test_pdfs/` (dead, commented-out CI references) was
+  deliberately left untouched.
 
 ## Observations found while planning (not in scope)
 
