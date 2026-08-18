@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 #
-# Shard 2/4 — Digital-invoice tests (network extraction of line items).
+# Shard 2/5 — Digital-invoice tests (network extraction of line items).
 #
 # These are isolated in their own build on purpose: they need the digital-invoice
 # onboarding/flow to trigger cleanly, which is unreliable when run in one giant
