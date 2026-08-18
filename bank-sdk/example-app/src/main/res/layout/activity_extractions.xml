@@ -17,11 +17,24 @@
         android:paddingEnd="10dp"
         tools:text="Analyzed Gini Bank API Document ID: asdadsasd-asdadsasd-asdadsasd-asdadsasd-asdadsasd" />
 
+    <TextView
+        android:id="@+id/text_scheduled_payment_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_document_id"
+        android:paddingStart="10dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="10dp"
+        android:text="@string/scheduled_payment_indicator"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_extractions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/text_document_id"
+        android:layout_below="@id/text_scheduled_payment_indicator"
         android:scrollbars="vertical"
         tools:listitem="@layout/item_extraction" />
 

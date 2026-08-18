@@ -260,7 +260,8 @@ class MainActivity : AppCompatActivity() {
                     this,
                     result.specificExtractions,
                     result.compoundExtractions,
-                    GiniCapture.getInstance().productTag == ProductTag.CxExtractions)
+                    GiniCapture.getInstance().productTag == ProductTag.CxExtractions,
+                    isSchedulePayment = true)
                 )
             }
 

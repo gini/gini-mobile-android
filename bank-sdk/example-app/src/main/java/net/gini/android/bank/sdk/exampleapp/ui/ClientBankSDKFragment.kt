@@ -169,6 +169,7 @@ class ClientBankSDKFragment :
                         result.specificExtractions,
                         result.compoundExtractions,
                         GiniCapture.getInstance().productTag == ProductTag.CxExtractions,
+                        isSchedulePayment = true,
                     )
                 )
                 activity?.finish()
