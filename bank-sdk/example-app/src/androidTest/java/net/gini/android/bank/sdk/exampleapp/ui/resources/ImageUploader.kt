@@ -78,9 +78,13 @@ class ImageUploader {
         // "Failed to build unique file" when MediaStore is left with an orphaned file
         // (seen locally under the Orchestrator's clearPackageData). Every caller selects
         // the newest photo in the picker, never by name, so uniqueness is safe.
+        val mimeType = when (filename.substringAfterLast('.').lowercase()) {
+            "jpg", "jpeg" -> "image/jpeg"
+            else -> "image/png"
+        }
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "${System.currentTimeMillis()}_$filename")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+            put(MediaStore.Images.Media.MIME_TYPE, mimeType)
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
         }
         val uri = context.contentResolver.insert(
