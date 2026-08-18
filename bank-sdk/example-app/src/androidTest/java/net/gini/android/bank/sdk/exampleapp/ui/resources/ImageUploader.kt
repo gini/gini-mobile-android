@@ -3,6 +3,7 @@ package net.gini.android.bank.sdk.exampleapp.ui.resources
 import android.content.ContentValues
 import android.content.Context
 import android.os.Environment
+import android.os.SystemClock
 import android.provider.MediaStore
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
@@ -26,14 +27,27 @@ class ImageUploader {
         }
         // New Compose-based Mainline photo picker (com.google.android.photopicker, seen on
         // e.g. Samsung / Android 16): it exposes no resource ids at all — the photo tiles
-        // only carry a "Photo taken on …" content description. The first tile is the
-        // newest photo, i.e. the test image copied to the MediaStore right before.
-        val composeTile = device.findObject(
-            UiSelector().descriptionStartsWith("Photo taken on")
+        // only carry a localized content description built from the picker's
+        // photopicker_item_content_desc template ("%1$s taken on %2$s" in English,
+        // "%1$s wurde am %2$s aufgenommen" in German). The first tile is the newest
+        // photo, i.e. the test image copied to the MediaStore right before.
+        val tileSelectors = listOf(
+            UiSelector().descriptionStartsWith("Photo taken on"), // English
+            UiSelector().descriptionStartsWith("Foto wurde am"), // German
+            // Locale-agnostic last resort: only the media tiles carry a year in their
+            // content description, whatever the device language.
+            UiSelector().descriptionMatches(".*\\b20\\d\\d\\b.*")
         )
-        if (composeTile.waitForExists(5000)) {
-            composeTile.click()
-            return
+        val deadline = SystemClock.uptimeMillis() + TILE_TIMEOUT
+        while (SystemClock.uptimeMillis() < deadline) {
+            tileSelectors.forEach { selector ->
+                val tile = device.findObject(selector)
+                if (tile.exists()) {
+                    tile.click()
+                    return
+                }
+            }
+            SystemClock.sleep(POLL_INTERVAL)
         }
         throw Exception("First photo not found in photo picker")
     }
@@ -49,20 +63,23 @@ class ImageUploader {
             addButton.click()
             return
         }
-        // New Mainline photo picker: multi-select confirms via an Add/Done control (no
-        // resource id, so match by text/description); single-select closes right after
-        // the photo tap, in which case there is nothing to confirm and we return.
-        listOf(
-            UiSelector().text("Add"),
-            UiSelector().description("Add"),
-            UiSelector().text("Done"),
-            UiSelector().description("Done")
-        ).forEach { selector ->
-            val confirmButton = device.findObject(selector)
-            if (confirmButton.waitForExists(2000)) {
-                confirmButton.click()
-                return
+        // New Mainline photo picker: multi-select confirms via a localized button (no
+        // resource id; photopicker_done_button_label is "Done" in English, "Fertig" in
+        // German — "Add"/"Hinzufügen" cover picker variants using an add label);
+        // single-select closes right after the photo tap, in which case there is
+        // nothing to confirm and we return once the deadline passes.
+        val confirmSelectors = listOf("Done", "Fertig", "Add", "Hinzufügen")
+            .flatMap { label -> listOf(UiSelector().text(label), UiSelector().description(label)) }
+        val deadline = SystemClock.uptimeMillis() + CONFIRM_TIMEOUT
+        while (SystemClock.uptimeMillis() < deadline) {
+            confirmSelectors.forEach { selector ->
+                val confirmButton = device.findObject(selector)
+                if (confirmButton.exists()) {
+                    confirmButton.click()
+                    return
+                }
             }
+            SystemClock.sleep(POLL_INTERVAL)
         }
     }
 
@@ -125,5 +142,11 @@ class ImageUploader {
                 device.waitForIdle()
             }
         }
+    }
+
+    companion object {
+        private const val TILE_TIMEOUT = 5_000L
+        private const val CONFIRM_TIMEOUT = 3_000L
+        private const val POLL_INTERVAL = 250L
     }
 }
