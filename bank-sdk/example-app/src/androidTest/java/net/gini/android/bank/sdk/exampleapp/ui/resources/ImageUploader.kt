@@ -84,11 +84,13 @@ class ImageUploader {
     }
 
     fun copyImageToDownloads(context: Context, filename: String) {
+        // LIKE match: inserts use unique "<timestamp>_<filename>" display names, so an
+        // exact match would never find the copies previous runs left behind.
         runCatching {
             context.contentResolver.delete(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
-                arrayOf(filename)
+                "${MediaStore.Images.Media.DISPLAY_NAME} LIKE ?",
+                arrayOf("%$filename")
             )
         }
         // Insert under a unique display name: repeated same-name inserts can fail with
