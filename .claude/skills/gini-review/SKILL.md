@@ -1,6 +1,6 @@
 ---
 name: gini-review
-description: Run a complete PR review so a human reviewer can spend minutes instead of an hour — resolves the PR from the current branch, a PR number, or a Jira ticket key (PP-/HEAL-/XPL-/FEAT-), reviews every changed file against the ticket's acceptance criteria and this repo's platform rules, reports a coverage ledger plus triaged findings, then asks whether to post them as PR comments. Use when asked to "review this PR", "review PP-1234", or to pre-review your own branch before pushing. Never casts an approve / request-changes verdict.
+description: Run a complete PR review so a human reviewer can spend minutes instead of an hour — resolves the PR from the current branch, a PR number, or a Jira ticket key (e.g. PP-1234, IPC-42 — any board), reviews every changed file against the ticket's acceptance criteria and this repo's platform rules, reports a coverage ledger plus triaged findings, then asks whether to post them as PR comments. Use when asked to "review this PR", "review PP-1234", or to pre-review your own branch before pushing. Never casts an approve / request-changes verdict.
 ---
 
 <!--
