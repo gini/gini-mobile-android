@@ -85,15 +85,6 @@ abstract class WarningBottomSheetTestBase {
     @After
     fun tearDown() {
         IdlingRegistry.getInstance().unregister(idlingResource)
-        // Defensive reset for runs without the Orchestrator (e.g. Android Studio run
-        // configs); under the Orchestrator every test starts in a fresh process anyway.
-        runCatching {
-            PaymentHintConfigurator.applyHintConfiguration(
-                activityRule.scenario,
-                paymentDueHintEnabled = true,
-                paymentScheduleHintEnabled = true
-            )
-        }
     }
 
     protected fun configureHints(
