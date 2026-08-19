@@ -84,7 +84,7 @@ jobs:
 #          script: >
 #            adb uninstall net.gini.android.bank.sdk.exampleapp.test ;
 #            adb push bank-sdk/example-app/src/androidTest/assets/camera_injection_image.jpeg /sdcard/Download ;
-#            adb shell am start -a android.intent.action.VIEW -n com.google.android.apps.photos/.home.HomeActivity -d file:///sdcard/Download/test_image.jpeg ;
+#            adb shell am start -a android.intent.action.VIEW -n com.google.android.apps.photos/.home.HomeActivity -d file:///sdcard/Download/camera_injection_image.jpeg ;
 #            adb push bank-sdk/example-app/src/androidTest/assets/Testrechnung-RA-1.pdf /sdcard/Download ;
 #            adb push bank-sdk/example-app/src/androidTest/assets/sample.pdf /sdcard/Download ;
 #            ./gradlew bank-sdk:example-app:connectedDevExampleAppDebugAndroidTest
