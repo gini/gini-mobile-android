@@ -6,7 +6,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 /**
- * Fixture data for the Due Date Hint / Schedule Payment bottom sheet tests (PP-3301).
+ * Fixture data for the Due Date Hint / Schedule Payment bottom sheet tests.
  *
  * The two invoice images were generated with the scripts in
  * `src/androidTest/scripts/fixtures/` and validated against the real Gini API on

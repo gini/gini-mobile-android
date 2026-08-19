@@ -7,7 +7,7 @@ import org.junit.Test
 
 /**
  * UI tests for the Schedule Payment state of the warning bottom sheet on the Analysis
- * screen (PP-3264, automated per PP-3301 from the PP-3263 XRay test cases).
+ * screen (automated from the XRay test cases).
  *
  * The Schedule Payment state shows whenever the client paymentScheduleHint flag is ON and
  * the invoice qualifies — it takes priority over the Due Date Hint and is independent of

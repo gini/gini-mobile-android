@@ -25,8 +25,7 @@ class GetPaymentScheduleHintEnabledUseCaseTest {
     }
 
     /**
-     * The scheduled payment state must not be coupled to the payment due hint flag — see
-     * PP-3264 requirement 2.
+     * The scheduled payment state must not be coupled to the payment due hint flag.
      */
     @Test
     fun `is independent of the payment due hint flag`() {

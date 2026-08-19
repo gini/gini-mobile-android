@@ -37,8 +37,8 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 class HealthApiDocumentRemoteSourceTest {
 
-    // The Authorization header is added by the SDK's session interceptor in the OkHttp layer
-    // (PP-2363). The remote source must not add it so that the interceptor (or a consumer
+    // The Authorization header is added by the SDK's session interceptor in the OkHttp
+    // layer. The remote source must not add it so that the interceptor (or a consumer
     // managing authentication themselves) stays in control of it.
 
     @Test

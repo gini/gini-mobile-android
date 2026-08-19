@@ -30,7 +30,7 @@ import java.util.Date
  * [HealthApiDocumentRepository] with a real Retrofit + OkHttp stack against a local [MockWebServer].
  *
  * They pin down the exact requests (method, path, headers, body) and response mappings which
- * must remain identical while the token handling is moved into an OkHttp interceptor (PP-2363).
+ * must remain identical while the token handling is moved into an OkHttp interceptor.
  */
 @RunWith(AndroidJUnit4::class)
 class HealthApiWireTest {

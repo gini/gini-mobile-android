@@ -13,7 +13,7 @@ import net.gini.android.capture.GiniCapture
  * before clicking the photo payment button.
  *
  * Note: these are the CLIENT-side flags. The server-side /configurations flags for the
- * gini-mobile-test client must both be true (verified 2026-08-17, PP-3260) — the sheet
+ * gini-mobile-test client must both be true (verified 2026-08-17) — the sheet
  * needs both gates.
  */
 object PaymentHintConfigurator {

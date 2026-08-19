@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a synthetic German invoice image for the PP-3301 UI test fixture.
+"""Render a synthetic German invoice image for the warning bottom sheet UI test fixture.
 
 Due date (paymentDueDate): 01.09.2028 — must match FIXTURE_DUE_DATE in the tests.
 """

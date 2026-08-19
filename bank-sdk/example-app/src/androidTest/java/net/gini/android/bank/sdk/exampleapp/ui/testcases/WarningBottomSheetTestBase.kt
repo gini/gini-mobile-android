@@ -32,7 +32,7 @@ import java.time.LocalTime
 import java.util.Properties
 
 /**
- * Shared scaffolding for the warning bottom sheet UI tests (PP-3301): rules, page
+ * Shared scaffolding for the warning bottom sheet UI tests: rules, page
  * objects and the fixture-driven flow helpers used by both
  * [DueDateHintBottomSheetTests] and [SchedulePaymentBottomSheetTests]. Keeping them
  * here means the flow (and the mid-2028 fixture refresh, see [DueDateFixtures]) is

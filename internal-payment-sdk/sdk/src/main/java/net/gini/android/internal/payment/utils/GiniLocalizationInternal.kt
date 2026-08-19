@@ -7,7 +7,7 @@ import java.util.Locale
  * [GiniLocalizationInternal] class to track record of language Internally (wrapper around [GiniLocalization])
  * because we don't want clients to see three languages as of now which are English, German and German Informal.
  * This class is implemented because we need to implement a workaround because of introduction of Informal
- * german language [IPC-492] and unfortunately, there is no formal or informal German according to IETF BCP 47
+ * german language and unfortunately, there is no formal or informal German according to IETF BCP 47
  * language tags and language packs provided by the system.
  *
  * That's why workaround is applied, which is,

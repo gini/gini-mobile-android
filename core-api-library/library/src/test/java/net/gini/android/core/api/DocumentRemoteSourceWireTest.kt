@@ -1,5 +1,5 @@
 // This suite intentionally exercises the deprecated accessToken-taking methods: they must keep
-// setting the Authorization header themselves until they are removed (PP-2363).
+// setting the Authorization header themselves until they are removed.
 @file:Suppress("DEPRECATION")
 
 package net.gini.android.core.api
@@ -32,7 +32,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
  * and the mapping of HTTP responses to return values and exceptions.
  *
  * They protect against unintended changes to the request format while the token handling is
- * moved from repositories/remote sources into an OkHttp interceptor (PP-2363). They assert
+ * moved from repositories/remote sources into an OkHttp interceptor. They assert
  * what is sent over the wire, not how it is produced, so they must pass unchanged after the
  * refactoring.
  */

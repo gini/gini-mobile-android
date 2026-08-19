@@ -49,7 +49,7 @@ import java.util.Date
 /**
  * Tests for the client composition done by [GiniCoreAPIBuilder]: which OkHttp clients get the
  * session interceptor, how self-managed authentication changes the composition, and the
- * isolation of the User Center API client (PP-2363).
+ * isolation of the User Center API client.
  */
 @RunWith(AndroidJUnit4::class)
 class GiniCoreAPIBuilderTest {

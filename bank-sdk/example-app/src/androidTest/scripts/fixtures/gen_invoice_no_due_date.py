@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a synthetic German invoice image for the PP-3301 UI test fixture.
+"""Render a synthetic German invoice image for the warning bottom sheet UI test fixture.
 
 Variant WITHOUT any due-date line: the API must extract NO paymentDueDate (fixture for R6).
 """

@@ -10,7 +10,7 @@ import org.junit.Test
 
 /**
  * UI tests for the Due Date Hint state of the warning bottom sheet on the Analysis screen
- * (PP-3262, automated per PP-3301 from the PP-3261 XRay test cases).
+ * (automated from the XRay test cases).
  *
  * The Due Date Hint shows when the client flags are paymentDueHint=ON /
  * paymentScheduleHint=OFF, the extractions carry paymentState=ToBePaid and a

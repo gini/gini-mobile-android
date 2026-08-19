@@ -22,7 +22,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 /**
  * Wire-level characterization tests for the tokenless [DocumentRemoteSource] overloads which
- * production code uses since the token handling moved into an OkHttp interceptor (PP-2363).
+ * production code uses since the token handling moved into an OkHttp interceptor.
  *
  * They mirror [DocumentRemoteSourceWireTest] (which pins the deprecated accessToken overloads
  * until they are removed): each request must look exactly like its deprecated counterpart's,

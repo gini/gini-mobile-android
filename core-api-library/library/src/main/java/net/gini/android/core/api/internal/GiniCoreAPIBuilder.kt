@@ -76,7 +76,7 @@ abstract class GiniCoreAPIBuilder<DM : DocumentManager<DR, E>, G : GiniCoreAPI<D
     private var isSelfManagedAuthentication = false
 
     /**
-     * The authentication mechanism for API requests (PP-2363): adds the `Authorization` header
+     * The authentication mechanism for API requests: adds the `Authorization` header
      * to requests which don't carry one yet. Requests made through the deprecated
      * accessToken-taking methods still set the header themselves and are passed through.
      *

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 #
-# Shard 5/5 — Due Date Hint / Schedule Payment bottom sheet tests (PP-3301).
+# Shard 5/5 — Due Date Hint / Schedule Payment bottom sheet tests.
 #
 # Every test performs a real upload + analysis round trip against the Gini API. Most
 # tests use the validated fixtures invoice_future_due.jpeg / invoice_no_due_date.jpeg
@@ -10,7 +10,7 @@ set -e
 # relies on the pre-loaded UploadPDF media, which bs_build_and_upload.sh uploads
 # unconditionally for every shard.
 # Preconditions: the /configurations flags paymentDueHintEnabled and
-# paymentScheduleHintEnabled must be enabled for the API client (PP-3260).
+# paymentScheduleHintEnabled must be enabled for the API client.
 #
 # Usage:
 #   BS_USER="myuser" BS_KEY="mykey" ./bs_run_group_duedate.sh
