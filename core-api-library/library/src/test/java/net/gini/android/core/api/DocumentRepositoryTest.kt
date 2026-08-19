@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * mutex serialization of API calls.
  *
  * These pin down the observable behavior which must remain identical when the token handling
- * moves from `withAccessToken` into an OkHttp interceptor (PP-2363).
+ * moves from `withAccessToken` into an OkHttp interceptor.
  */
 @RunWith(AndroidJUnit4::class)
 class DocumentRepositoryTest {

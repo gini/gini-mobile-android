@@ -47,10 +47,14 @@ APK_DIR="$REPO_ROOT/bank-sdk/example-app/build/outputs/apk"
 APP_APK="$APK_DIR/$FLAVOR/$BUILD_TYPE/example-app-dev-exampleApp-debug.apk"
 TEST_APK="$APK_DIR/androidTest/$FLAVOR/$BUILD_TYPE/example-app-dev-exampleApp-debug-androidTest.apk"
 
-TEST_DOCUMENTS="$SCRIPT_DIR/../testDocuments"
-TEST_IMAGE="$TEST_DOCUMENTS/test_image.jpeg"
-TEST_PDF="$TEST_DOCUMENTS/Testrechnung-RA-1.pdf"
-SAMPLE_PDF="$TEST_DOCUMENTS/sample.pdf"
+# Media files live in the androidTest assets (single source of truth — the test APK
+# copies them onto the device itself for local runs; this script uploads the same files
+# to BrowserStack's device storage). camera_injection_image.jpeg is deliberately NOT the
+# same file as test_image.jpeg — it is the image BrowserStack injects into the camera.
+TEST_ASSETS="$SCRIPT_DIR/../assets"
+TEST_IMAGE="$TEST_ASSETS/camera_injection_image.jpeg"
+TEST_PDF="$TEST_ASSETS/Testrechnung-RA-1.pdf"
+SAMPLE_PDF="$TEST_ASSETS/sample.pdf"
 
 DEVICE_1="Google Pixel 9-16.0"
 DEVICE_2="Google Pixel 10 Pro-16.0"

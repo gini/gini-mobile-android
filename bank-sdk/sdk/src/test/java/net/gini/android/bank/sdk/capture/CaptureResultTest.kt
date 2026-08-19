@@ -21,7 +21,7 @@ class CaptureResultTest {
     private val returnReasons = listOf(mockk<GiniCaptureReturnReason>())
 
     /**
-     * PP-3264 requirement 6 — the scheduled payment hand-off must survive the mapping with its
+     * The scheduled payment hand-off must survive the mapping with its
      * extractions intact, and must NOT collapse into [CaptureResult.Success] (which would make
      * the host pay immediately).
      */

@@ -41,6 +41,23 @@ class ExtractionScreen {
             .perform(replaceText(value))
     }
 
+    fun assertExtractionScreenIsDisplayed(): Boolean {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        return device.findObject(
+            UiSelector().resourceId(AppResources.resId("transfer_summary"))
+        ).waitForExists(EXTRACTION_TIMEOUT)
+    }
+
+    // The scheduled-payment indicator is GONE unless ExtractionsActivity was launched for
+    // a CaptureResult.SchedulePayment; a GONE view is absent from the accessibility tree,
+    // so exists() distinguishes the schedule path from the pay-now Success path.
+    fun isScheduledPaymentIndicatorDisplayed(): Boolean {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        return device.findObject(
+            UiSelector().resourceId(AppResources.resId("text_scheduled_payment_indicator"))
+        ).exists()
+    }
+
     fun checkTransferSummaryButtonIsClickable(): Boolean {
         waitForExtractionScreen()
         var isTransferSummaryButtonClickable = false

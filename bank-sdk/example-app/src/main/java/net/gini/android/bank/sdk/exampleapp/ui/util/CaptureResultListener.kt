@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.exampleapp.ui.util
 
 import android.app.Activity
 import android.widget.Toast
+import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.ui.ExtractionsActivity
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.GiniCapture
@@ -56,24 +57,29 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
                 context.finish()
             }
 
-            // A real bank app would open its scheduled transfer flow here instead of paying now.
-            is CaptureSDKResult.SchedulePayment -> {
-                Toast.makeText(
-                    context,
-                    "Schedule payment requested",
-                    Toast.LENGTH_SHORT
-                ).show()
-                context.startActivity(
-                    ExtractionsActivity.getStartIntent(
-                        context,
-                        result.specificExtractions,
-                        result.compoundExtractions,
-                        GiniCapture.getInstance().productTag == ProductTag.CxExtractions,
-                        true
-                    )
-                )
-                context.finish()
-            }
+            is CaptureSDKResult.SchedulePayment -> handleSchedulePayment(result)
         }
+    }
+
+    // A real bank app would open its scheduled transfer flow here instead of paying now.
+    // The example app surfaces the request via a toast and the scheduled-payment
+    // indicator on ExtractionsActivity, keeping it distinguishable from a Success result.
+    private fun handleSchedulePayment(result: CaptureSDKResult.SchedulePayment) {
+        Toast.makeText(
+            context,
+            context.getString(R.string.scheduled_payment_requested),
+            Toast.LENGTH_SHORT
+        ).show()
+        context.startActivity(
+            ExtractionsActivity.getStartIntent(
+                context,
+                result.specificExtractions,
+                result.compoundExtractions,
+                GiniCapture.getInstance().productTag == ProductTag.CxExtractions,
+                true,
+                isSchedulePayment = true
+            )
+        )
+        context.finish()
     }
 }

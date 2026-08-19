@@ -673,7 +673,7 @@ class AnalysisScreenPresenterTest {
         verify(listener).onDefaultPDFAppAlertDialogCancelled()
     }
 
-    // ── PP-2278 regression test (Fix 3) ───────────────────────────────────────
+    // ── Presenter stop cancellation regression test (Fix 3) ───────────────────
 
     /**
      * [AnalysisScreenPresenter.stop] must call [AnalysisScreenPresenterExtension.cancel] so that
@@ -1173,7 +1173,7 @@ class AnalysisScreenPresenterTest {
         return GiniCapture.getInstance()
     }
 
-    // region Payment due hint bottom sheet (PP-3262)
+    // region Payment due hint bottom sheet
 
     @Test
     fun `should show payment due hint sheet when flags on and due date beyond threshold`() {
@@ -1485,7 +1485,7 @@ class AnalysisScreenPresenterTest {
 
     // endregion
 
-    // region Schedule payment bottom sheet (PP-3264)
+    // region Schedule payment bottom sheet
 
     @Test
     fun `should show schedule payment sheet when flags on and due date beyond threshold`() {
@@ -1813,7 +1813,7 @@ class AnalysisScreenPresenterTest {
     }
 
     /**
-     * Requirement from product (Valentina, PP-3264): the schedule CTA must save the invoice
+     * Requirement from product (Valentina): the schedule CTA must save the invoice
      * locally first, exactly like the due date state's "Proceed Anyway", and only hand off to the
      * bank app afterwards.
      *

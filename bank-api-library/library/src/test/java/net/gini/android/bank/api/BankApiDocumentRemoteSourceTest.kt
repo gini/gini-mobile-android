@@ -1,5 +1,5 @@
 // This suite intentionally exercises the deprecated accessToken-taking methods: they must keep
-// setting the Authorization header themselves until they are removed (PP-2363).
+// setting the Authorization header themselves until they are removed.
 @file:Suppress("DEPRECATION")
 
 package net.gini.android.bank.api

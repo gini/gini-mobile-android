@@ -14,8 +14,8 @@ import org.junit.runner.RunWith
 import java.util.concurrent.TimeUnit
 
 /**
- * Tests for building the [GiniCaptureDefaultNetworkService] with self-managed authentication
- * (PP-2363): the consumer's OkHttpClient authenticates the API requests and neither a
+ * Tests for building the [GiniCaptureDefaultNetworkService] with self-managed
+ * authentication: the consumer's OkHttpClient authenticates the API requests and neither a
  * SessionManager nor client credentials are required.
  */
 @RunWith(AndroidJUnit4::class)

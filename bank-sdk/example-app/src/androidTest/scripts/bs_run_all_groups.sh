@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 #
-# Runs the ENTIRE UI suite as 4 sharded BrowserStack builds — but builds the APKs and
-# uploads them (and the media) only ONCE, then triggers all four builds reusing those
-# artifacts. Much faster than running the four group scripts separately (which would
+# Runs the ENTIRE UI suite as 5 sharded BrowserStack builds — but builds the APKs and
+# uploads them (and the media) only ONCE, then triggers all five builds reusing those
+# artifacts. Much faster than running the five group scripts separately (which would
 # rebuild + re-upload each time).
 #
 # Usage:
@@ -34,7 +34,7 @@ if [ -z "$APP_URL" ] || [ -z "$TEST_URL" ]; then
 fi
 
 # ── Step B: trigger each shard, reusing the uploaded artifacts ───────────────────
-# Group name -> class list. Together these cover all 13 UI test classes, no overlap.
+# Group name -> class list. Together these cover all 15 UI test classes, no overlap.
 run_group() {
   local name="$1"; shift
   echo ""
@@ -54,5 +54,8 @@ run_group "extraction" \
 run_group "import" \
   ImportPdfImageTests FileImportErrorDialogTests ErrorScreenTests OpenWithTest
 
+run_group "duedate" \
+  DueDateHintBottomSheetTests SchedulePaymentBottomSheetTests
+
 echo ""
-echo "=== All 4 shards triggered. Check the BrowserStack dashboard for the 4 builds. ==="
+echo "=== All 5 shards triggered. Check the BrowserStack dashboard for the 5 builds. ==="

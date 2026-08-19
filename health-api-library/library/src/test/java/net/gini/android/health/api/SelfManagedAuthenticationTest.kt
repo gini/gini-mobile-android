@@ -19,7 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Tests for self-managed authentication (PP-2363): the consumer's OkHttpClient authenticates
+ * Tests for self-managed authentication: the consumer's OkHttpClient authenticates
  * the API requests and neither a SessionManager nor client credentials are required.
  */
 @RunWith(AndroidJUnit4::class)

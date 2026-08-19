@@ -123,6 +123,8 @@ The canonical PR template is [`.github/pull_request_template.md`](.github/pull_r
 - `bank-sdk:example-app` uses two flavor dimensions (`environment`: prod/dev/qa; `purpose`: exampleApp/paymentProviderN) — build a single variant, e.g. `assembleDevExampleAppDebug` (CI builds `assembleQaExampleAppRelease` and `assembleProdExampleAppRelease`); a plain `assembleDebug` builds every flavor combination.
 - Keep vector-drawable handling as-is (`vectorDrawables.useSupportLibrary = true`); see comments in module build files before touching drawables.
 - Complex automation belongs in fastlane lanes, not GitHub Actions steps (lanes must be runnable locally).
+- In `bank-sdk:example-app` UI tests, don't select system photo-picker views by resource id alone — the Mainline picker (`com.google.android.photopicker`, e.g. Samsung/Android 16) exposes none; extend `ImageUploader`'s content-description fallbacks instead.
+- Filter instrumented runs with ONE class or a `Class#method` list in `-Pandroid.testInstrumentationRunnerArguments.class` — two comma-separated class names start 0 tests under the Test Orchestrator.
 
 ## graphify
 

@@ -10,7 +10,7 @@ import java.util.concurrent.CancellationException
 
 /**
  * Characterizes the exception to [Resource] mapping in [wrapInResource]. The session
- * interceptor (PP-2363) relies on this mapping to reproduce the same [Resource] shapes for
+ * interceptor relies on this mapping to reproduce the same [Resource] shapes for
  * session failures that the repositories returned when they handled tokens themselves.
  */
 class ResourceWrapInResourceTest {

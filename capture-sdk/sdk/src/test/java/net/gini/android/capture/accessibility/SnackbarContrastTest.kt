@@ -21,7 +21,7 @@ import org.robolectric.annotation.Config
  * and in dark mode.
  *
  * These assert the contrast *ratio* rather than concrete colour values on purpose: the requirement
- * is WCAG 2.2 AAA (see PP-2330), so a future palette change that silently drops below the threshold
+ * is WCAG 2.2 AAA, so a future palette change that silently drops below the threshold
  * has to fail here instead of shipping.
  *
  * Each mode is a separate test with its own `@Config`, so a failure in one mode still leaves the

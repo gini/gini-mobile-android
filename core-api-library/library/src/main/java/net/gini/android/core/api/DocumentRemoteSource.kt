@@ -21,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
  * Internal use only.
  */
 // TooManyFunctions: every API method temporarily exists twice - the deprecated accessToken
-// overloads are kept for compatibility until the next major version (PP-2363).
+// overloads are kept for compatibility until the next major version.
 @Suppress("TooManyFunctions")
 abstract class DocumentRemoteSource(
     open val coroutineContext: CoroutineContext,

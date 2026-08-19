@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 #
-# Shard 3/4 — Extraction / review / results / product-tag tests (network extraction).
+# Shard 3/5 — Extraction / review / results / product-tag tests (network extraction).
 #
 # Usage:
 #   BS_USER="myuser" BS_KEY="mykey" ./bs_run_group_extraction.sh
