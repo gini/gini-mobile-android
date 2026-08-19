@@ -145,15 +145,6 @@ data class CaptureConfiguration(
     val paymentDueHintEnabled: Boolean = true,
 
     /**
-     * Enable/disable the scheduled payment state of the due date bottom sheet.
-     *
-     * On by default. Only shown when the client configuration flag
-     * `paymentScheduleHintEnabled` is also on, in which case it takes priority over the
-     * payment due hint state.
-     */
-    val paymentScheduleHintEnabled: Boolean = true,
-
-    /**
      * Set the payment due hint threshold days
      *
      * 5 by default.
@@ -241,6 +232,15 @@ data class CaptureConfiguration(
      *
      */
     val productTag: ProductTag = ProductTag.SepaExtractions,
+
+    /**
+     * Enable/disable the scheduled payment state of the due date bottom sheet.
+     *
+     * On by default. Only shown when the client configuration flag
+     * `paymentScheduleHintEnabled` is also on, in which case it takes priority over the
+     * payment due hint state.
+     */
+    val paymentScheduleHintEnabled: Boolean = true,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
