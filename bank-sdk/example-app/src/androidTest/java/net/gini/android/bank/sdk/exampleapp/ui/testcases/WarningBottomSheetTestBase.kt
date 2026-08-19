@@ -10,6 +10,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import net.gini.android.bank.sdk.exampleapp.ui.MainActivity
+import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
 import net.gini.android.bank.sdk.exampleapp.ui.resources.DueDateFixtures
 import net.gini.android.bank.sdk.exampleapp.ui.resources.ImageUploader
 import net.gini.android.bank.sdk.exampleapp.ui.resources.PaymentHintConfigurator
@@ -128,8 +129,8 @@ abstract class WarningBottomSheetTestBase {
 
     private fun grantStoragePermission() {
         val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        device.executeShellCommand("pm grant net.gini.android.bank.sdk.exampleapp android.permission.READ_EXTERNAL_STORAGE")
-        device.executeShellCommand("pm grant net.gini.android.bank.sdk.exampleapp android.permission.WRITE_EXTERNAL_STORAGE")
+        device.executeShellCommand("pm grant ${AppResources.packageName} android.permission.READ_EXTERNAL_STORAGE")
+        device.executeShellCommand("pm grant ${AppResources.packageName} android.permission.WRITE_EXTERNAL_STORAGE")
     }
 
     private fun cancelTestIfRunOnCi() {
