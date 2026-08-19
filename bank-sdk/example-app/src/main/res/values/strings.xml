@@ -33,7 +33,7 @@
     <string name="custom_help_screen_greeting">This is a custom help screen.</string>
 
     <string name="analyzed_document_id">Analyzed Gini Bank API Document ID: %s</string>
-    <string name="scheduled_payment_indicator">Scheduled payment requested</string>
+    <string name="scheduled_payment_requested">Scheduled payment requested</string>
     <string name="configuration_options_header">Configuration options</string>
     <string name="animated_onboarding_illustrations_switch_label">Animated onboarding illustrations</string>
     <string name="custom_loading_indicator_switch_label">Custom loading indicator animation</string>

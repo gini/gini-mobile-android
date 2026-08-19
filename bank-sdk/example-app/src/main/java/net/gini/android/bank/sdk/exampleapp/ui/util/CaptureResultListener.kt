@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk.exampleapp.ui.util
 
 import android.app.Activity
 import android.widget.Toast
+import net.gini.android.bank.sdk.exampleapp.R
 import net.gini.android.bank.sdk.exampleapp.ui.ExtractionsActivity
 import net.gini.android.capture.CaptureSDKResult
 import net.gini.android.capture.GiniCapture
@@ -66,7 +67,7 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
     private fun handleSchedulePayment(result: CaptureSDKResult.SchedulePayment) {
         Toast.makeText(
             context,
-            "Schedule payment requested",
+            context.getString(R.string.scheduled_payment_requested),
             Toast.LENGTH_SHORT
         ).show()
         context.startActivity(

@@ -160,7 +160,7 @@ class ClientBankSDKFragment :
             is CaptureResult.SchedulePayment -> {
                 Toast.makeText(
                     requireContext(),
-                    "Schedule payment requested",
+                    getString(R.string.scheduled_payment_requested),
                     Toast.LENGTH_SHORT
                 ).show()
                 startActivity(

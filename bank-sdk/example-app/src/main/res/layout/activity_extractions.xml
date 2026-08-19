@@ -25,7 +25,7 @@
         android:paddingStart="10dp"
         android:paddingTop="4dp"
         android:paddingEnd="10dp"
-        android:text="@string/scheduled_payment_indicator"
+        android:text="@string/scheduled_payment_requested"
         android:textStyle="bold"
         android:visibility="gone"
         tools:visibility="visible" />
