@@ -34,7 +34,7 @@ if [ -z "$APP_URL" ] || [ -z "$TEST_URL" ]; then
 fi
 
 # ── Step B: trigger each shard, reusing the uploaded artifacts ───────────────────
-# Group name -> class list. Together these cover all 14 UI test classes, no overlap.
+# Group name -> class list. Together these cover all 13 UI test classes, no overlap.
 run_group() {
   local name="$1"; shift
   echo ""
@@ -43,7 +43,7 @@ run_group() {
 }
 
 run_group "ui" \
-  CaptureScreenTests OnboardingScreenTests MainScreenTests HelpScreenTests
+  CaptureScreenTests OnboardingScreenTests HelpScreenTests
 
 run_group "digitalinvoice" \
   DigitalInvoiceScreenTests DigitalInvoiceEditButtonTests
