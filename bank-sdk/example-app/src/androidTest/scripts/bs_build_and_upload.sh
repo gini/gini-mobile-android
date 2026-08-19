@@ -11,7 +11,7 @@ set -e
 #                   HelpScreenTests#test7_clickHelpButtonAndVerifyContentOnHelpScreen
 #
 # For sharded runs, prefer the preset wrappers in this directory:
-#   bs_run_group_ui.sh            – Capture / Onboarding / MainScreen / Help
+#   bs_run_group_ui.sh            – Capture / Onboarding / Help
 #   bs_run_group_digitalinvoice.sh – DigitalInvoice screens (isolated)
 #   bs_run_group_extraction.sh    – Extraction / Review / NoResults / ProductTag
 #   bs_run_group_import.sh        – Import / FileImportError / ErrorScreen / OpenWith
