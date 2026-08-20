@@ -41,11 +41,31 @@ class ExtractionScreen {
             .perform(replaceText(value))
     }
 
+    fun assertExtractionScreenIsDisplayed(): Boolean {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        return device.findObject(
+            UiSelector().resourceId(AppResources.resId("transfer_summary"))
+        ).waitForExists(EXTRACTION_TIMEOUT)
+    }
+
+    // The scheduled-payment indicator is GONE unless ExtractionsActivity was launched for
+    // a CaptureResult.SchedulePayment; a GONE view is absent from the accessibility tree,
+    // so exists() distinguishes the schedule path from the pay-now Success path.
+    fun isScheduledPaymentIndicatorDisplayed(): Boolean {
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        return device.findObject(
+            UiSelector().resourceId(AppResources.resId("text_scheduled_payment_indicator"))
+        ).exists()
+    }
+
     fun checkTransferSummaryButtonIsClickable(): Boolean {
         waitForExtractionScreen()
         var isTransferSummaryButtonClickable = false
+        // When the view isn't found Espresso passes a null view plus the exception, so the
+        // view must be null-guarded — otherwise a missing extraction screen surfaces as an
+        // opaque NullPointerException instead of a plain assertion failure.
         onView(withId(R.id.transfer_summary))  .check { view, noViewFoundException ->
-            if (noViewFoundException == null || view.isClickable()) {
+            if (noViewFoundException == null || (view != null && view.isClickable())) {
                 isTransferSummaryButtonClickable = true
             }
         }

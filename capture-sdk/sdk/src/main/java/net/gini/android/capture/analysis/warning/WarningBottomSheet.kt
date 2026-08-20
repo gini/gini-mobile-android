@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RestrictTo
 import androidx.core.view.ViewCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -16,30 +17,34 @@ import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcWarningBottomSheetBinding
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
 
+
 /**
  * A reusable bottom sheet (or dialog on tablets) that displays a warning message.
  *
  * Responsibilities:
  * - Presents warning information to the user in a modal sheet/dialog.
- * - Provides two actions: cancel (primary button) and proceed (secondary button).
+ * - Provides two actions: a primary CTA (filled, first button) and a secondary CTA
+ *   (outlined, second button). Their labels come from the [WarningType]; the behavior
+ *   behind them is supplied by the caller through the [Listener].
  * - Handles accessibility (content descriptions, pane title).
  * - Adapts its layout and behavior for phones (BottomSheetDialog) and tablets (AlertDialog).
  *
- * Use [newInstance] with a [WarningType] to configure the title and description.
+ * Use [newInstance] with a [WarningType] to configure the title, description and CTA labels.
  */
 
-class WarningBottomSheet : BottomSheetDialogFragment() {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+internal class WarningBottomSheet : BottomSheetDialogFragment() {
 
     interface Listener {
-        fun onCancelAction()
-        fun onProceedAction()
+        fun onPrimaryAction()
+        fun onSecondaryAction()
     }
 
     private lateinit var binding: GcWarningBottomSheetBinding
 
     private var titleText: CharSequence? = null
     private var descText: CharSequence? = null
-    private var icon: Int? = null
+    private var warningType: WarningType? = null
 
     var listener: Listener? = null
 
@@ -51,11 +56,16 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
             @Suppress("DEPRECATION")
             arguments?.getSerializable(ARG_TYPE) as? WarningType
         }
+        warningType = type
 
         if (type != null) {
-            titleText = getString(type.titleRes)
+            val titleFormatArg = arguments?.getString(ARG_TITLE_FORMAT_ARG)
+            titleText = if (titleFormatArg != null) {
+                getString(type.titleRes, titleFormatArg)
+            } else {
+                getString(type.titleRes)
+            }
             descText = getString(type.descriptionRes)
-            icon = type.iconRes
         }
     }
 
@@ -137,11 +147,9 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
                                 BottomSheetBehavior.STATE_COLLAPSED -> {
                                     state = BottomSheetBehavior.STATE_EXPANDED
                                 }
-
                                 BottomSheetBehavior.STATE_HIDDEN -> {
                                     state = BottomSheetBehavior.STATE_EXPANDED
                                 }
-
                                 else -> Unit
                             }
                         }
@@ -153,13 +161,11 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
             }
         }
     }
-
     override fun onStart() {
         super.onStart()
 
         if (!resources.getBoolean(R.bool.gc_is_tablet) &&
-            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-        ) {
+            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
             val bottomSheet = (dialog as? BottomSheetDialog)
                 ?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
@@ -177,32 +183,52 @@ class WarningBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun bindUi() {
-        binding.gcWarningTitleWarningBottomSheet.text = titleText
-        binding.gcWarningDescriptionWarningBottomSheet.text = descText
-        icon?.let { binding.gcWarningIconWarningBottomSheet?.setImageResource(it) }
+        binding.warningTitle.text = titleText
+        binding.warningDescription.text = descText
 
-        binding.gcWarningIconWarningBottomSheet?.contentDescription =
-            getString(R.string.gc_warning_icon_content_description)
-        binding.gcWarningIconWarningBottomSheet?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        binding.warningIcon?.contentDescription = getString(R.string.gc_warning_icon_content_description)
+        binding.warningIcon?.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
 
-        binding.gcCancelButtonWarningBottomSheet.setOnClickListener {
-            listener?.onCancelAction()
+        warningType?.let { type ->
+            binding.primaryButton.setText(type.primaryButtonTextRes)
+            binding.secondaryButton.setText(type.secondaryButtonTextRes)
+            if (type.iconRes != 0) {
+                // Custom icons (e.g. the credit note warning) bring their own badge shape, so
+                // the default circle background and tint are cleared.
+                binding.warningIcon?.apply {
+                    setImageResource(type.iconRes)
+                    background = null
+                    imageTintList = null
+                }
+            }
+        }
+
+        binding.primaryButton.setOnClickListener {
+            listener?.onPrimaryAction()
             dismissAllowingStateLoss()
         }
-        binding.gcProceedButtonWarningBottomSheet.setOnClickListener {
-            listener?.onProceedAction()
+        binding.secondaryButton.setOnClickListener {
+            listener?.onSecondaryAction()
             dismissAllowingStateLoss()
         }
     }
 
 
+
     companion object {
         private const val ARG_TYPE = "arg_type"
-
+        private const val ARG_TITLE_FORMAT_ARG = "arg_title_format_arg"
         @JvmStatic
-        fun newInstance(type: WarningType) = WarningBottomSheet().apply {
-            arguments = Bundle().apply {
-                putSerializable(ARG_TYPE, type) // WarningType is an enum (Serializable)
+        @JvmOverloads
+        fun newInstance(type: WarningType, titleFormatArg: String? = null): WarningBottomSheet {
+            require(!type.requiresTitleFormatArg() || titleFormatArg != null) {
+                "WarningType.$type has a format placeholder in its title and requires a titleFormatArg"
+            }
+            return WarningBottomSheet().apply {
+                arguments = Bundle().apply {
+                    putSerializable(ARG_TYPE, type) // WarningType is an enum (Serializable)
+                    putString(ARG_TITLE_FORMAT_ARG, titleFormatArg)
+                }
             }
         }
     }

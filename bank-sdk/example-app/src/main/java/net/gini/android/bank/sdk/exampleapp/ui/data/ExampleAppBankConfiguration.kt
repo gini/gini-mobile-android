@@ -135,6 +135,9 @@ data class ExampleAppBankConfiguration(
     // enable payment due hint
     val isPaymentDueHintEnabled: Boolean = true,
 
+    // enable the scheduled payment state of the due date bottom sheet
+    val isPaymentScheduleHintEnabled: Boolean = true,
+
     //  payment due hint threshold days
     val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
 
@@ -185,6 +188,7 @@ data class ExampleAppBankConfiguration(
                 documentImportEnabledFileTypes = defaultCaptureConfiguration.documentImportEnabledFileTypes,
                 isAlreadyPaidHintEnabled = defaultCaptureConfiguration.alreadyPaidHintEnabled,
                 isPaymentDueHintEnabled = defaultCaptureConfiguration.paymentDueHintEnabled,
+                isPaymentScheduleHintEnabled = defaultCaptureConfiguration.paymentScheduleHintEnabled,
                 paymentDueHintThresholdDays = defaultCaptureConfiguration.paymentDueHintThresholdDays,
                 isCreditNoteHintEnabled = defaultCaptureConfiguration.creditNoteHintEnabled,
                 isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,

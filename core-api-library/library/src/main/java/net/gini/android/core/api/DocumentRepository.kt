@@ -6,7 +6,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.gini.android.core.api.Resource.Companion.wrapInResource
 import net.gini.android.core.api.authorization.SessionManager
-import net.gini.android.core.api.models.Box
+import net.gini.android.core.api.mapper.CompositeDocumentJson
+import net.gini.android.core.api.mapper.ExtractionsParser
 import net.gini.android.core.api.models.CompoundExtraction
 import net.gini.android.core.api.models.Document
 import net.gini.android.core.api.models.DocumentLayout
@@ -38,48 +39,45 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
     creates multiple users (equal to number of documents) and we will get a server error (the document does not belong to the user)!
     We are using a Mutex to prevent coroutines from retrieving access tokens in parallel. This way even when multiple uploads are started only one user is created.
      */
+    @Deprecated(
+        "Only used by the deprecated withAccessToken. " +
+                "The SDK's session interceptor serializes session requests with its own mutex."
+    )
     val accessTokenMutex = Mutex()
 
     suspend fun deletePartialDocumentAndParents(documentId: String): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val document = getDocumentInternal(accessToken, documentId)
-                for (uri in document.compositeDocuments) {
-                    documentRemoteSource.deleteDocument(accessToken, uri)
-                }
-                documentRemoteSource.deleteDocument(accessToken, document.id)
+        wrapInResource {
+            val document = getDocumentInternal(documentId)
+            for (uri in document.compositeDocuments) {
+                documentRemoteSource.deleteDocument(uri)
             }
+            documentRemoteSource.deleteDocument(document.id)
         }
 
     suspend fun deleteDocument(documentId: String): Resource<Unit> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.deleteDocument(accessToken, documentId)
-            }
+        wrapInResource {
+            documentRemoteSource.deleteDocument(documentId)
         }
 
-    private suspend fun getDocumentInternal(accessToken: String, uri: Uri): Document =
-        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocumentFromUri(accessToken, uri)))
+    private suspend fun getDocumentInternal(uri: Uri): Document =
+        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocumentFromUri(uri)))
 
-    private suspend fun getDocumentInternal(accessToken: String, documentId: String): Document =
-        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(accessToken, documentId)))
+    private suspend fun getDocumentInternal(documentId: String): Document =
+        Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(documentId)))
 
     open suspend fun createPartialDocument(documentData: ByteArray, contentType: String,
                                            filename: String? = null,
                                            documentType: DocumentManager.DocumentType? = null,
                                            documentMetadata: DocumentMetadata? = null): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val uri = documentRemoteSource.uploadDocument(
-                    accessToken,
-                    documentData,
-                    MediaTypes.forPartialDocument(giniApiType.giniPartialMediaType, contentType),
-                    filename,
-                    documentType?.apiDoctypeHint,
-                    documentMetadata?.metadata
-                )
-                getDocumentInternal(accessToken, uri)
-            }
+        wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(
+                documentData,
+                MediaTypes.forPartialDocument(giniApiType.giniPartialMediaType, contentType),
+                filename,
+                documentType?.apiDoctypeHint,
+                documentMetadata?.metadata
+            )
+            getDocumentInternal(uri)
         }
 
     suspend fun createCompositeDocument(
@@ -93,18 +91,15 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         documentType: DocumentManager.DocumentType?,
         documentMetadata: DocumentMetadata?
     ): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val uri = documentRemoteSource.uploadDocument(
-                    accessToken,
-                    createCompositeJson(documents),
-                    giniApiType.giniCompositeJsonMediaType,
-                    null,
-                    documentType?.apiDoctypeHint,
-                    documentMetadata?.metadata
-                )
-                getDocumentInternal(accessToken, uri)
-            }
+        wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(
+                createCompositeJson(documents),
+                giniApiType.giniCompositeJsonMediaType,
+                null,
+                documentType?.apiDoctypeHint,
+                documentMetadata?.metadata
+            )
+            getDocumentInternal(uri)
         }
 
     suspend fun createCompositeDocument(
@@ -118,32 +113,25 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         documentType: DocumentManager.DocumentType?,
         documentMetadata: DocumentMetadata?
     ): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                val uri = documentRemoteSource.uploadDocument(
-                    accessToken,
-                    createCompositeJson(documentRotationMap),
-                    giniApiType.giniCompositeJsonMediaType,
-                    null,
-                    documentType?.apiDoctypeHint,
-                    documentMetadata?.metadata
-                )
-                getDocumentInternal(accessToken, uri)
-            }
+        wrapInResource {
+            val uri = documentRemoteSource.uploadDocument(
+                createCompositeJson(documentRotationMap),
+                giniApiType.giniCompositeJsonMediaType,
+                null,
+                documentType?.apiDoctypeHint,
+                documentMetadata?.metadata
+            )
+            getDocumentInternal(uri)
         }
 
     suspend fun getDocument(documentId: String): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(accessToken, documentId)))
-            }
+        wrapInResource {
+            Document.fromApiResponse(JSONObject(documentRemoteSource.getDocument(documentId)))
         }
 
     suspend fun getDocument(uri: Uri): Resource<Document> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                getDocumentInternal(accessToken, uri)
-            }
+        wrapInResource {
+            getDocumentInternal(uri)
         }
 
     @Throws(Exception::class)
@@ -152,17 +140,15 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
                                             responseJSON: JSONObject): E
 
     suspend fun getAllExtractions(document: Document): Resource<E> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                val extractionsJSONObject = JSONObject(documentRemoteSource.getExtractions(accessToken, document.id))
-                val candidates = extractionCandidatesFromApiResponse(extractionsJSONObject.getJSONObject("candidates"))
-                val specificExtractions =
-                    parseSpecificExtractions(extractionsJSONObject.getJSONObject("extractions"), candidates)
-                val compoundExtractions =
-                    parseCompoundExtractions(extractionsJSONObject.optJSONObject("compoundExtractions"), candidates)
+        return wrapInResource {
+            val extractionsJSONObject = JSONObject(documentRemoteSource.getExtractions(document.id))
+            val candidates = extractionCandidatesFromApiResponse(extractionsJSONObject.getJSONObject("candidates"))
+            val specificExtractions =
+                parseSpecificExtractions(extractionsJSONObject.getJSONObject("extractions"), candidates)
+            val compoundExtractions =
+                parseCompoundExtractions(extractionsJSONObject.optJSONObject("compoundExtractions"), candidates)
 
-                createExtractionsContainer(specificExtractions, compoundExtractions, extractionsJSONObject)
-            }
+            createExtractionsContainer(specificExtractions, compoundExtractions, extractionsJSONObject)
         }
     }
 
@@ -205,10 +191,8 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         val bodyJSON = JSONObject()
         bodyJSON.put("feedback", feedbackForExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody(JSON_CONTENT_TYPE.toMediaTypeOrNull())
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.sendFeedback(accessToken, document.id, body)
-            }
+        return wrapInResource {
+            documentRemoteSource.sendFeedback(document.id, body)
         }
     }
 
@@ -226,10 +210,8 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         val bodyJSON = JSONObject()
         bodyJSON.put("extractions", feedbackForExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody(JSON_CONTENT_TYPE.toMediaTypeOrNull())
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.sendFeedback(accessToken, document.id, body)
-            }
+        return wrapInResource {
+            documentRemoteSource.sendFeedback(document.id, body)
         }
     }
 
@@ -266,104 +248,52 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
         bodyJSON.put("extractions", feedbackForExtractions)
         bodyJSON.put("compoundExtractions", feedbackForCompoundExtractions)
         val body: RequestBody = bodyJSON.toString().toRequestBody(JSON_CONTENT_TYPE.toMediaTypeOrNull())
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.sendFeedback(accessToken, document.id, body)
-            }
+        return wrapInResource {
+            documentRemoteSource.sendFeedback(document.id, body)
         }
     }
 
     suspend fun getDocumentLayout(documentId: String) : Resource<DocumentLayout> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                 documentRemoteSource.getDocumentLayout(accessToken, documentId)
-            }
+        return wrapInResource {
+            documentRemoteSource.getDocumentLayout(documentId)
         }
     }
 
     suspend fun getDocumentPages(documentId: String) : Resource<List<DocumentPage>> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getDocumentPages(accessToken, documentId)
-            }
+        return wrapInResource {
+            documentRemoteSource.getDocumentPages(documentId)
         }
     }
 
     suspend fun getFile(location: String): Resource<ByteArray> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getFile(accessToken, location)
-            }
+        wrapInResource {
+            documentRemoteSource.getFile(location)
         }
 
     suspend fun getPaymentRequest(id: String): Resource<PaymentRequest> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPaymentRequest(accessToken, id).toPaymentRequest()
-            }
+        return wrapInResource {
+            documentRemoteSource.getPaymentRequest(id).toPaymentRequest()
         }
     }
 
     suspend fun getPaymentRequests(): Resource<List<PaymentRequest>> {
-        return withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPaymentRequests(accessToken).map { it.toPaymentRequest() }
-            }
+        return wrapInResource {
+            documentRemoteSource.getPaymentRequests().map { it.toPaymentRequest() }
         }
     }
 
     suspend fun getPayment(id: String): Resource<Payment> =
-        withAccessToken { accessToken ->
-            wrapInResource {
-                documentRemoteSource.getPayment(accessToken, id)
-            }
+        wrapInResource {
+            documentRemoteSource.getPayment(id)
         }
 
     @Throws(JSONException::class)
-    fun parseSpecificExtractions(specificExtractionsJson: JSONObject, candidates: Map<String, List<Extraction>>): Map<String, SpecificExtraction> {
-        val specificExtractions = mutableMapOf<String, SpecificExtraction>()
-        val extractionsNameIterator = specificExtractionsJson.keys()
-        while (extractionsNameIterator.hasNext()) {
-            val extractionName = extractionsNameIterator.next()
-            val extractionData = specificExtractionsJson.getJSONObject(extractionName)
-            val extraction: Extraction = extractionFromApiResponse(extractionData)
-            var candidatesForExtraction = listOf<Extraction?>()
-            if (extractionData.has("candidates")) {
-                val candidatesName = extractionData.getString("candidates")
-                if (candidates.containsKey(candidatesName)) {
-                    candidatesForExtraction = candidates[candidatesName] ?: emptyList()
-                }
-            }
-            val specificExtraction = SpecificExtraction(
-                extractionName, extraction.value,
-                extraction.entity, extraction.box,
-                candidatesForExtraction
-            )
-            specificExtractions[extractionName] = specificExtraction
-        }
-
-        return specificExtractions
-    }
+    fun parseSpecificExtractions(specificExtractionsJson: JSONObject, candidates: Map<String, List<Extraction>>): Map<String, SpecificExtraction> =
+        ExtractionsParser.parseSpecificExtractions(specificExtractionsJson, candidates, ::extractionFromApiResponse)
 
     @Throws(JSONException::class)
-    protected fun parseCompoundExtractions(compoundExtractionsJson: JSONObject?, candidates: Map<String, List<Extraction>>): Map<String, CompoundExtraction> {
-        if (compoundExtractionsJson == null) {
-            return emptyMap()
-        }
-        val compoundExtractions = HashMap<String, CompoundExtraction>()
-        val extractionsNameIterator = compoundExtractionsJson.keys()
-        while (extractionsNameIterator.hasNext()) {
-            val extractionName = extractionsNameIterator.next()
-            val specificExtractionMaps: MutableList<Map<String, SpecificExtraction>> = ArrayList()
-            val compoundExtractionData = compoundExtractionsJson.getJSONArray(extractionName)
-            for (i in 0 until compoundExtractionData.length()) {
-                val specificExtractionsData = compoundExtractionData.getJSONObject(i)
-                specificExtractionMaps.add(parseSpecificExtractions(specificExtractionsData, candidates))
-            }
-            compoundExtractions[extractionName] = CompoundExtraction(extractionName, specificExtractionMaps)
-        }
-        return compoundExtractions
-    }
+    protected fun parseCompoundExtractions(compoundExtractionsJson: JSONObject?, candidates: Map<String, List<Extraction>>): Map<String, CompoundExtraction> =
+        ExtractionsParser.parseCompoundExtractions(compoundExtractionsJson, candidates, ::extractionFromApiResponse)
 
     /**
      * Helper method which takes the JSON response of the Gini API as input and returns a mapping where the key is the
@@ -374,24 +304,8 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @throws JSONException If the JSON data does not have the expected structure or if there is invalid data.
      */
     @Throws(JSONException::class)
-    protected fun extractionCandidatesFromApiResponse(responseData: JSONObject): HashMap<String, List<Extraction>> {
-        val candidatesByEntity = java.util.HashMap<String, List<Extraction>>()
-        val entityNameIterator = responseData.keys()
-        while (entityNameIterator.hasNext()) {
-            val entityName = entityNameIterator.next()
-            val candidatesListData = responseData.getJSONArray(entityName)
-            val candidates = java.util.ArrayList<Extraction>()
-            var i = 0
-            val length = candidatesListData.length()
-            while (i < length) {
-                val extractionData = candidatesListData.getJSONObject(i)
-                candidates.add(extractionFromApiResponse(extractionData))
-                i += 1
-            }
-            candidatesByEntity[entityName] = candidates
-        }
-        return candidatesByEntity
-    }
+    protected fun extractionCandidatesFromApiResponse(responseData: JSONObject): HashMap<String, List<Extraction>> =
+        HashMap(ExtractionsParser.parseCandidates(responseData, ::extractionFromApiResponse))
 
     /**
      * Helper method which creates an Extraction instance from the JSON data which is returned by the Gini API.
@@ -401,48 +315,28 @@ abstract class DocumentRepository<E: ExtractionsContainer>(
      * @throws JSONException If the JSON data does not have the expected structure or if there is invalid data.
      */
     @Throws(JSONException::class)
-    protected open fun extractionFromApiResponse(responseData: JSONObject): Extraction {
-        val entity = responseData.getString("entity")
-        val value = responseData.getString("value")
-        // The box is optional for some extractions.
-        var box: Box? = null
-        if (responseData.has("box")) {
-            box = Box.fromApiResponse(responseData.getJSONObject("box"))
-        }
-        return Extraction(value, entity, box)
-    }
+    protected open fun extractionFromApiResponse(responseData: JSONObject): Extraction =
+        ExtractionsParser.parseExtraction(responseData)
 
     @Throws(JSONException::class)
-    private fun createCompositeJson(documents: List<Document>): ByteArray {
-        val documentRotationMap = linkedMapOf<Document, Int>()
-        for (document in documents) {
-            documentRotationMap[document] = 0
-        }
-
-        return createCompositeJson(documentRotationMap)
-    }
+    private fun createCompositeJson(documents: List<Document>): ByteArray =
+        CompositeDocumentJson.create(documents)
 
     @Throws(JSONException::class)
-    private fun createCompositeJson(documentRotationMap: LinkedHashMap<Document, Int>): ByteArray {
-        val jsonObject = JSONObject()
-        val partialDocuments = JSONArray()
+    private fun createCompositeJson(documentRotationMap: LinkedHashMap<Document, Int>): ByteArray =
+        CompositeDocumentJson.create(documentRotationMap)
 
-        for (entry in documentRotationMap.entries) {
-            val document = entry.key
-            var rotation = entry.value
-
-            rotation = ((rotation % 360) + 360) % 360
-            val partialDoc = JSONObject()
-            partialDoc.put("document", document.uri)
-            partialDoc.put("rotationDelta", rotation)
-            partialDocuments.put(partialDoc)
-        }
-
-        jsonObject.put("partialDocuments", partialDocuments)
-
-        return jsonObject.toString().toByteArray(Utils.CHARSET_UTF8)
-    }
-
+    /**
+     * The Authorization header is added by the SDK's session interceptor in the OkHttp layer.
+     * Session errors and cancellations are mapped back to [Resource.Error] and
+     * [Resource.Cancelled] by [wrapInResource], so wrapping API calls in [withAccessToken] is
+     * no longer needed.
+     */
+    @Deprecated(
+        "The Authorization header is added by the SDK's session interceptor in the OkHttp layer. " +
+                "Wrap the request in Resource.wrapInResource instead."
+    )
+    @Suppress("DEPRECATION")
     protected suspend inline fun <T> withAccessToken(crossinline block: suspend (String) -> Resource<T>): Resource<T> {
         return accessTokenMutex.withLock {
             return@withLock when (val getSession = sessionManager.getSession()) {

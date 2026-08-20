@@ -135,6 +135,13 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
 
         // Read isCxExtractions
         isCxExtractions = intent.getBooleanExtra(EXTRA_IN_IS_CX_EXTRACTIONS, false)
+
+        // A real bank app would open its scheduled-transfer flow instead; the example app
+        // surfaces the schedule request visibly so it stays distinguishable from a pay-now
+        // Success result (also relied on by the Due Date Hint UI automation tests).
+        if (intent.getBooleanExtra(EXTRA_IN_IS_SCHEDULE_PAYMENT, false)) {
+            binding.textScheduledPaymentIndicator.visibility = View.VISIBLE
+        }
     }
 
     /**
@@ -318,13 +325,15 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
         const val EXTRA_IN_EXTRACTIONS = "EXTRA_IN_EXTRACTIONS"
         const val EXTRA_IN_COMPOUND_EXTRACTIONS = "EXTRA_IN_COMPOUND_EXTRACTIONS"
         const val EXTRA_IN_IS_CX_EXTRACTIONS = "EXTRA_IN_IS_CX_EXTRACTIONS"
+        const val EXTRA_IN_IS_SCHEDULE_PAYMENT = "EXTRA_IN_IS_SCHEDULE_PAYMENT"
         var isCaptureSDKExtractions : Boolean = false
         fun getStartIntent(
-            context: Context, 
+            context: Context,
             extractionsBundle: Map<String, GiniCaptureSpecificExtraction>,
             compoundExtractions: Map<String, GiniCaptureCompoundExtraction> = emptyMap(),
             isCxExtractions: Boolean = false,
-            isCaptureSdkExtractions: Boolean = false
+            isCaptureSdkExtractions: Boolean = false,
+            isSchedulePayment: Boolean = false
         ): Intent {
             isCaptureSDKExtractions = isCaptureSdkExtractions
             return Intent(context, ExtractionsActivity::class.java).apply {
@@ -335,6 +344,7 @@ class ExtractionsActivity : AppCompatActivity(), ExtractionsAdapter.ExtractionsA
                     compoundExtractions.map { putParcelable(it.key, it.value) }
                 })
                 putExtra(EXTRA_IN_IS_CX_EXTRACTIONS, isCxExtractions)
+                putExtra(EXTRA_IN_IS_SCHEDULE_PAYMENT, isSchedulePayment)
             }
         }
     }

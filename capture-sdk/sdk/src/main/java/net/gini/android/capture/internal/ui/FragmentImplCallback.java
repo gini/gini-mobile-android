@@ -51,7 +51,18 @@ public interface FragmentImplCallback {
     @NonNull
     FragmentManager getChildFragmentManager();
 
-    default void showWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {}
+    default void showWarning(@NonNull WarningType warningType, @Nullable String titleFormatArg,
+                             @NonNull Runnable onProceed) {}
+
+    /**
+     * Shows a warning whose primary CTA is neither "proceed" nor "cancel transaction" — currently
+     * only {@link WarningType#SCHEDULE_PAYMENT}, whose primary CTA hands off to the bank app.
+     *
+     * @param onSchedule run when the schedule CTA is tapped; ignored by warning types that have
+     *                   no such CTA
+     */
+    default void showWarning(@NonNull WarningType warningType, @Nullable String titleFormatArg,
+                             @NonNull Runnable onProceed, @Nullable Runnable onSchedule) {}
 
     @NonNull
     FragmentManager getParentFragmentManager();

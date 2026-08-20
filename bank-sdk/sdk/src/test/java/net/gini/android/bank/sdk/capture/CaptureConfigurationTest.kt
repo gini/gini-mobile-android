@@ -52,4 +52,42 @@ class CaptureConfigurationTest {
 
         assertEquals(ProductTag.CxExtractions, GiniCapture.getInstance().productTag)
     }
+
+    @Test
+    fun `paymentScheduleHintEnabled defaults to true`() {
+        GiniBank.setCaptureConfiguration(
+            context,
+            CaptureConfiguration(networkService = mockNetworkService)
+        )
+
+        assertEquals(true, GiniCapture.getInstance().isPaymentScheduleHintEnabled)
+    }
+
+    @Test
+    fun `paymentScheduleHintEnabled is forwarded to GiniCapture`() {
+        GiniBank.setCaptureConfiguration(
+            context,
+            CaptureConfiguration(
+                networkService = mockNetworkService,
+                paymentScheduleHintEnabled = false
+            )
+        )
+
+        assertEquals(false, GiniCapture.getInstance().isPaymentScheduleHintEnabled)
+    }
+
+    @Test
+    fun `paymentScheduleHintEnabled is independent of paymentDueHintEnabled`() {
+        GiniBank.setCaptureConfiguration(
+            context,
+            CaptureConfiguration(
+                networkService = mockNetworkService,
+                paymentDueHintEnabled = false,
+                paymentScheduleHintEnabled = true
+            )
+        )
+
+        assertEquals(false, GiniCapture.getInstance().isPaymentDueHintEnabled)
+        assertEquals(true, GiniCapture.getInstance().isPaymentScheduleHintEnabled)
+    }
 }

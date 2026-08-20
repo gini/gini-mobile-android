@@ -15,6 +15,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
+import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.document.DocumentFactory;
 import net.gini.android.capture.document.ImageDocument;
 import net.gini.android.capture.internal.camera.photo.Photo;
@@ -431,6 +432,114 @@ public class AnalysisFragmentImplTest {
             assertThat(AnalysisHintsAnimatorShadow.startCalled).isTrue();
             assertThat(AnalysisHintsAnimatorShadow.hints).containsExactlyElementsIn(
                     hints);
+        }
+    }
+
+    @Test
+    public void should_stopAndHideHints_whenPaymentDueHintIsShown() {
+        // Given
+        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
+                new AtomicReference<>();
+
+        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
+                analysisFragmentImplRef)) {
+
+            // When
+            scenario.onActivity(
+                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
+                        @Override
+                        public void perform(final AnalysisFragmentHostActivity activity) {
+                            activity.findViewById(R.id.gc_analysis_hint_container)
+                                    .setVisibility(android.view.View.VISIBLE);
+                            final AnalysisFragmentImpl analysisFragment =
+                                    analysisFragmentImplRef.get();
+                            analysisFragment.showPaymentDueHint("13.08.2026", new Runnable() {
+                                @Override
+                                public void run() {
+                                    // no-op: the test only verifies hint suppression
+                                }
+                            });
+                        }
+                    });
+
+            // Then
+            assertThat(AnalysisHintsAnimatorShadow.stopCalled).isTrue();
+            onView(withId(R.id.gc_analysis_hint_container))
+                    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+        }
+    }
+
+    @Test
+    public void should_stopAndHideHints_whenSchedulePaymentHintIsShown() {
+        // Given
+        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
+                new AtomicReference<>();
+
+        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
+                analysisFragmentImplRef)) {
+
+            // When
+            scenario.onActivity(
+                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
+                        @Override
+                        public void perform(final AnalysisFragmentHostActivity activity) {
+                            activity.findViewById(R.id.gc_analysis_hint_container)
+                                    .setVisibility(android.view.View.VISIBLE);
+                            final AnalysisFragmentImpl analysisFragment =
+                                    analysisFragmentImplRef.get();
+                            analysisFragment.showSchedulePaymentHint("13.08.2026", new Runnable() {
+                                @Override
+                                public void run() {
+                                    // no-op: the test only verifies hint suppression
+                                }
+                            }, new Runnable() {
+                                @Override
+                                public void run() {
+                                    // no-op: the test only verifies hint suppression
+                                }
+                            });
+                        }
+                    });
+
+            // Then
+            assertThat(AnalysisHintsAnimatorShadow.stopCalled).isTrue();
+            onView(withId(R.id.gc_analysis_hint_container))
+                    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+        }
+    }
+
+    @Test
+    public void should_stopAndHideHints_whenAlreadyPaidWarningIsShown() {
+        // Given
+        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
+                new AtomicReference<>();
+
+        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
+                analysisFragmentImplRef)) {
+
+            // When
+            scenario.onActivity(
+                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
+                        @Override
+                        public void perform(final AnalysisFragmentHostActivity activity) {
+                            activity.findViewById(R.id.gc_analysis_hint_container)
+                                    .setVisibility(android.view.View.VISIBLE);
+                            final AnalysisFragmentImpl analysisFragment =
+                                    analysisFragmentImplRef.get();
+                            analysisFragment.showAlreadyPaidWarning(
+                                    WarningType.DOCUMENT_MARKED_AS_PAID, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // no-op: the test only verifies hint suppression
+                                        }
+                                    });
+                        }
+                    });
+
+            // Then
+            assertThat(AnalysisHintsAnimatorShadow.stopCalled).isTrue();
+            onView(withId(R.id.gc_analysis_hint_container))
+                    .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         }
     }
 

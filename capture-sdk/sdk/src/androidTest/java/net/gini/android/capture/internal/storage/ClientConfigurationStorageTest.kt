@@ -36,6 +36,7 @@ class ClientConfigurationStorageTest {
             isSkontoEnabled = true,
             isUnsupportedQRCodeWarningEnabled = true,
             isEInvoiceEnabled = true,
+            isPaymentScheduleHintEnabled = true,
         )
 
         storage.saveConfiguration(configuration)
@@ -53,6 +54,7 @@ class ClientConfigurationStorageTest {
         assertThat(result.isAlreadyPaidHintEnabled).isEqualTo(configuration.isAlreadyPaidHintEnabled)
         assertThat(result.isPaymentDueHintEnabled).isEqualTo(configuration.isPaymentDueHintEnabled)
         assertThat(result.isUnsupportedQRCodeWarningEnabled).isTrue()
+        assertThat(result.isPaymentScheduleHintEnabled).isTrue()
     }
 
     @Test
@@ -69,6 +71,7 @@ class ClientConfigurationStorageTest {
         isSkontoEnabled: Boolean = false,
         isUnsupportedQRCodeWarningEnabled: Boolean = false,
         isEInvoiceEnabled: Boolean = false,
+        isPaymentScheduleHintEnabled: Boolean = false,
     ) = Configuration(
         id = UUID.randomUUID(),
         clientID = "test-client-id",
@@ -84,6 +87,7 @@ class ClientConfigurationStorageTest {
         isAlreadyPaidHintEnabled = false,
         isPaymentDueHintEnabled = false,
         isUnsupportedQRCodeWarningEnabled = isUnsupportedQRCodeWarningEnabled,
+        isPaymentScheduleHintEnabled = isPaymentScheduleHintEnabled,
         isCreditNoteHintEnabled = false,
     )
 }

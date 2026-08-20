@@ -27,7 +27,7 @@
             android:padding="@dimen/gc_large">
 
             <TextView
-                android:id="@+id/gc_warningTitle_warningBottomSheet"
+                android:id="@+id/warningTitle"
                 style="@style/GiniCaptureTheme.Typography.Headline5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
                 android:paddingBottom="@dimen/gc_medium" />
 
             <TextView
-                android:id="@+id/gc_warningDescription_warningBottomSheet"
+                android:id="@+id/warningDescription"
                 style="@style/GiniCaptureTheme.Typography.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,25 +56,19 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/gc_proceedButton_warningBottomSheet"
+            android:id="@+id/primary_button"
+            style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/secondary_button"
             style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="@dimen/gc_large"
-            android:layout_marginEnd="@dimen/gc_small"
-            android:text="@string/gc_proceed_anyway" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/gc_cancelButton_warningBottomSheet"
-            style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/gc_small"
-            android:text="@string/gc_cancel_transfer" />
-
-
+            android:layout_marginStart="@dimen/gc_large" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

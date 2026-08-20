@@ -30,7 +30,6 @@ import net.gini.android.capture.Document;
 import net.gini.android.capture.GiniCapture;
 import net.gini.android.capture.R;
 import net.gini.android.capture.analysis.education.EducationCompleteListener;
-import net.gini.android.capture.analysis.paymentDueHint.PaymentDueHintDismissListener;
 import net.gini.android.capture.analysis.warning.WarningType;
 import net.gini.android.capture.error.ErrorFragment;
 import net.gini.android.capture.error.ErrorType;
@@ -74,6 +73,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AnalysisFragmentImpl.class);
     protected static final String INVOICE_SAVING_IN_PROGRESS_KEY = "invoiceSavingInProgress";
+    protected static final String PENDING_SAVING_ACTION_KEY = "pendingSavingAction";
     private final FragmentImplCallback mFragment;
     private final CancelListener mCancelListener;
     private TextView mAnalysisMessageTextView;
@@ -81,6 +81,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     private ConstraintLayout mLayoutRoot;
     private LinearLayout mAnalysisOverlay;
     private AnalysisHintsAnimator mHintsAnimator;
+    private View mHintsContainer;
     private InjectedViewContainer<NavigationBarTopAdapter> topAdapterInjectedViewContainer;
     private InjectedViewContainer<CustomLoadingIndicatorAdapter> injectedLoadingIndicatorContainer;
     private boolean isScanAnimationActive;
@@ -89,6 +90,9 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     AnalysisFragmentExtension fragmentExtension = new AnalysisFragmentExtension();
 
     private boolean isInvoiceSavingInProgress = false;
+    // Which CTA started the invoice saving step. Persisted alongside isInvoiceSavingInProgress so
+    // a recreation during the SAF folder picker does not lose the user's choice.
+    private String pendingSavingAction = null;
 
     AnalysisFragmentImpl(final FragmentImplCallback fragment,
                          final CancelListener cancelListener,
@@ -253,10 +257,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void processInvoiceSaving() {
+    void processInvoiceSaving(@NonNull final String pendingSavingAction) {
         if (mFragment.getActivity() == null) return;
         isInvoiceSavingInProgress = true;
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress);
+        this.pendingSavingAction = pendingSavingAction;
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction);
 
         String folderUri = SharedPreferenceHelper.INSTANCE.getString(
                 SAF_STORAGE_URI_KEY,
@@ -272,6 +277,11 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     public Boolean getIsInvoiceSavingInProgress() {
         return isInvoiceSavingInProgress;
+    }
+
+    @Nullable
+    public String getPendingSavingAction() {
+        return pendingSavingAction;
     }
 
     void hideEducation() {
@@ -347,21 +357,37 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     @Override
     void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
-        mFragment.showWarning(warningType, onProceed);
+        stopAndHideHints();
+        mFragment.showWarning(warningType, null, onProceed);
+    }
+
+    @Override
+    void showPaymentDueHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed) {
+        stopAndHideHints();
+        mFragment.showWarning(WarningType.PAYMENT_DUE_DATE, formattedDueDate, onProceed);
     }
 
     @Override
     void showCreditNoteWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
-        mFragment.showWarning(warningType, onProceed);
+        stopAndHideHints();
+        mFragment.showWarning(warningType, null, onProceed);
     }
 
     @Override
-    void showPaymentDueHint(PaymentDueHintDismissListener listener, String dueDate) {
-        fragmentExtension.showPaymentDueHint(() -> {
-                    listener.onDismiss();
-                    return Unit.INSTANCE;
-                },
-                dueDate);
+    void showSchedulePaymentHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed,
+                                 @NonNull Runnable onSchedule) {
+        stopAndHideHints();
+        mFragment.showWarning(
+                WarningType.SCHEDULE_PAYMENT, formattedDueDate, onProceed, onSchedule);
+    }
+
+    // Keeps TalkBack focus on the warning bottom sheet by removing the rotating
+    // capture suggestions behind it.
+    private void stopAndHideHints() {
+        mHintsAnimator.stop();
+        if (mHintsContainer != null) {
+            mHintsContainer.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -393,8 +419,10 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
 
     // Required by superclass
     public void onCreate(final Bundle savedInstanceState) {
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             isInvoiceSavingInProgress = savedInstanceState.getBoolean(INVOICE_SAVING_IN_PROGRESS_KEY, false);
+            pendingSavingAction = savedInstanceState.getString(PENDING_SAVING_ACTION_KEY);
+        }
     }
 
 
@@ -423,6 +451,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
         final TextView hintTextView = view.findViewById(R.id.gc_analysis_hint_text);
         final View hintContainer = view.findViewById(R.id.gc_analysis_hint_container);
         final TextView hintHeadlineTextView = view.findViewById(R.id.gc_analysis_hint_headline);
+        mHintsContainer = hintContainer;
         mHintsAnimator = new AnalysisHintsAnimator(mFragment.getActivity().getApplication(),
                 hintContainer, hintImageView, hintTextView, hintHeadlineTextView);
     }
@@ -494,7 +523,7 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     public void onResume() {
-        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress);
+        getPresenter().updateInvoiceSavingState(isInvoiceSavingInProgress, pendingSavingAction);
         getPresenter().start();
     }
 

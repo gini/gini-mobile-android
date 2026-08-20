@@ -25,6 +25,7 @@ class GiniBankConfigurationProvider {
             isAlreadyPaidHintEnabled = false,
             isPaymentDueHintEnabled = false,
             isUnsupportedQRCodeWarningEnabled = false,
+            isPaymentScheduleHintEnabled = false,
             isCreditNoteHintEnabled = false,
         )
     )

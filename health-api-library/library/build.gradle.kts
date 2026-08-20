@@ -8,6 +8,7 @@ plugins {
     id("jacoco")
     alias(libs.plugins.devtools.ksp)
     id ("org.sonarqube")
+    alias(libs.plugins.binary.compatibility.validator)
 }
 
 sonar {
@@ -17,6 +18,18 @@ sonar {
         property("sonar.organization", "gini")
         property("sonar.sources", "src/main/java")
         property("sonar.host.url", "https://sonarcloud.io")
+        // S1133 ("remove this deprecated code someday") is by design on the accessToken
+        // compatibility API deprecated in PP-2363: it is scheduled for removal with the
+        // next major version, so the reminder must not fail the quality gate until then.
+        property("sonar.issue.ignore.multicriteria", "deprecatedAccessTokenApi")
+        property(
+            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenApi.ruleKey",
+            "kotlin:S1133"
+        )
+        property(
+            "sonar.issue.ignore.multicriteria.deprecatedAccessTokenApi.resourceKey",
+            "**/net/gini/android/health/api/*RemoteSource.kt"
+        )
     }
 }
 
@@ -119,6 +132,8 @@ dependencies {
     testImplementation(libs.androidx.test.core.ktx)
     testImplementation(libs.androidx.test.junit.ktx)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.okhttp3.mockwebserver)
+    testImplementation(libs.retrofit.moshi.converter)
 }
 
 apply<PublishToMavenPlugin>()

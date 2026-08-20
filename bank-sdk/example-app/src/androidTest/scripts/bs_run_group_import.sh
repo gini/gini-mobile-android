@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 #
-# Shard 4/4 — Import (pdf/image) / file-import errors / error screens / open-with.
+# Shard 4/5 — Import (pdf/image) / file-import errors / error screens / open-with.
 #
 # Note: ErrorScreenTests#test2_verifyNetworkErrorScreen auto-skips on BrowserStack
 # (the device network can't be disabled there); it still runs on local devices.

@@ -1,0 +1,1091 @@
+public final class net/gini/android/internal/payment/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public static final field VERSION_CODE Ljava/lang/String;
+	public static final field VERSION_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public class net/gini/android/internal/payment/GiniHealthException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Integer;Lnet/gini/android/core/api/response/ErrorResponse;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Integer;Lnet/gini/android/core/api/response/ErrorResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getErrorItems ()Ljava/util/List;
+	public final fun getErrorResponse ()Lnet/gini/android/core/api/response/ErrorResponse;
+	public final fun getParsedMessage ()Ljava/lang/String;
+	public final fun getRequestId ()Ljava/lang/String;
+	public final fun getStatusCode ()Ljava/lang/Integer;
+}
+
+public final class net/gini/android/internal/payment/GiniInternalPaymentModule {
+	public static final field Companion Lnet/gini/android/internal/payment/GiniInternalPaymentModule$Companion;
+	public static final field SHARE_WITH_INTENT_FILTER Ljava/lang/String;
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/authorization/SessionManager;Ljava/lang/String;Ljava/lang/String;ZI)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/authorization/SessionManager;Ljava/lang/String;Ljava/lang/String;ZIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Lnet/gini/android/health/api/GiniHealthAPI;)V
+	public final fun emitSdkEvent (Lnet/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents;)V
+	public final fun getConfigurations (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getEventsFlow ()Lkotlinx/coroutines/flow/SharedFlow;
+	public final fun getGiniHealthAPI ()Lnet/gini/android/health/api/GiniHealthAPI;
+	public final fun getLocalizedContext ()Landroid/content/Context;
+	public final fun getPaymentComponent ()Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;
+	public final fun getPaymentFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getPaymentRequest (Ljava/lang/String;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Lnet/gini/android/internal/payment/api/model/PaymentDetails;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getReturningUser ()Z
+	public final fun loadPaymentProviderApps (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun onPayment (Ljava/lang/String;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Lnet/gini/android/internal/payment/api/model/PaymentDetails;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun saveReturningUser ()V
+	public final fun setLocalizedContext (Landroid/content/Context;)V
+	public final fun setPaymentComponent (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;)V
+	public final fun setPaymentDetails (Lnet/gini/android/internal/payment/api/model/PaymentDetails;)V
+	public final fun setSDKLanguage (Lnet/gini/android/internal/payment/utils/GiniLocalization;Landroid/content/Context;)V
+}
+
+public final class net/gini/android/internal/payment/GiniInternalPaymentModule$Companion {
+	public final fun getSDKLanguage (Landroid/content/Context;)Lnet/gini/android/internal/payment/utils/GiniLocalization;
+}
+
+public abstract class net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents {
+}
+
+public final class net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents$NoAction : net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents$NoAction;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents$OnCancelled : net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents$OnCancelled;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents$OnErrorOccurred : net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents {
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun getThrowable ()Ljava/lang/Throwable;
+}
+
+public final class net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents$OnFinishedWithPaymentRequestCreated : net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getPaymentProviderName ()Ljava/lang/String;
+	public final fun getPaymentRequestId ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents$OnLoading : net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents$OnLoading;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents$OnScreenDisplayed : net/gini/android/internal/payment/GiniInternalPaymentModule$InternalPaymentEvents {
+	public fun <init> (Lnet/gini/android/internal/payment/utils/DisplayedScreen;)V
+	public final fun getDisplayedScreen ()Lnet/gini/android/internal/payment/utils/DisplayedScreen;
+}
+
+public final class net/gini/android/internal/payment/api/model/ExtractionResultKt {
+	public static final fun wrapToResult (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/internal/payment/api/model/PaymentDetails : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/internal/payment/api/model/PaymentDetails;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/api/model/PaymentDetails;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/internal/payment/api/model/PaymentDetails;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()Ljava/lang/String;
+	public final fun getIban ()Ljava/lang/String;
+	public final fun getPurpose ()Ljava/lang/String;
+	public final fun getRecipient ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class net/gini/android/internal/payment/api/model/PaymentDetails$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun createFromParcel (Landroid/os/Parcel;)Lnet/gini/android/internal/payment/api/model/PaymentDetails;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+	public final fun newArray (I)[Lnet/gini/android/internal/payment/api/model/PaymentDetails;
+}
+
+public final class net/gini/android/internal/payment/api/model/PaymentRequest {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/internal/payment/api/model/PaymentRequest;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/api/model/PaymentRequest;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/internal/payment/api/model/PaymentRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()Ljava/lang/String;
+	public final fun getBic ()Ljava/lang/String;
+	public final fun getCreatedAt ()Ljava/lang/String;
+	public final fun getExpirationDate ()Ljava/lang/String;
+	public final fun getIban ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getPaymentProviderId ()Ljava/lang/String;
+	public final fun getPurpose ()Ljava/lang/String;
+	public final fun getRecipient ()Ljava/lang/String;
+	public final fun getRequesterUri ()Ljava/lang/String;
+	public final fun getStatus ()Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/api/model/PaymentRequest$Status : java/lang/Enum {
+	public static final field OPEN Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;
+	public static final field PAID Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;
+	public static final field PAID_ADJUSTED Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;
+	public static fun values ()[Lnet/gini/android/internal/payment/api/model/PaymentRequest$Status;
+}
+
+public final class net/gini/android/internal/payment/api/model/PaymentRequestKt {
+	public static final fun toPaymentRequest (Lnet/gini/android/core/api/models/PaymentRequest;Ljava/lang/String;)Lnet/gini/android/internal/payment/api/model/PaymentRequest;
+}
+
+public abstract class net/gini/android/internal/payment/api/model/ResultWrapper {
+}
+
+public final class net/gini/android/internal/payment/api/model/ResultWrapper$Error : net/gini/android/internal/payment/api/model/ResultWrapper {
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun getError ()Ljava/lang/Throwable;
+}
+
+public final class net/gini/android/internal/payment/api/model/ResultWrapper$Loading : net/gini/android/internal/payment/api/model/ResultWrapper {
+	public fun <init> ()V
+}
+
+public final class net/gini/android/internal/payment/api/model/ResultWrapper$Success : net/gini/android/internal/payment/api/model/ResultWrapper {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun getValue ()Ljava/lang/Object;
+}
+
+public final class net/gini/android/internal/payment/bankselection/BankSelectionBottomSheet : net/gini/android/internal/payment/utils/GpsBottomSheetDialogFragment {
+	public static final field Companion Lnet/gini/android/internal/payment/bankselection/BankSelectionBottomSheet$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (Landroidx/lifecycle/ViewModelProvider$Factory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun onCancel (Landroid/content/DialogInterface;)V
+	public fun onCreate (Landroid/os/Bundle;)V
+	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
+	public fun onStart ()V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class net/gini/android/internal/payment/bankselection/BankSelectionBottomSheet$Companion {
+	public final fun newInstance (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Lnet/gini/android/internal/payment/utils/BackListener;)Lnet/gini/android/internal/payment/bankselection/BankSelectionBottomSheet;
+	public static synthetic fun newInstance$default (Lnet/gini/android/internal/payment/bankselection/BankSelectionBottomSheet$Companion;Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Lnet/gini/android/internal/payment/utils/BackListener;ILjava/lang/Object;)Lnet/gini/android/internal/payment/bankselection/BankSelectionBottomSheet;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsBottomSheetBankSelectionBinding : androidx/viewbinding/ViewBinding {
+	public final field dragHandle Lcom/google/android/material/bottomsheet/BottomSheetDragHandleView;
+	public final field gpsMoreInformationLabel Landroid/widget/TextView;
+	public final field gpsPaymentProviderAppsList Landroidx/recyclerview/widget/RecyclerView;
+	public final field gpsPoweredByGiniLayout Lnet/gini/android/internal/payment/databinding/GpsPoweredByGiniBinding;
+	public final field gpsSubtitleLabel Landroid/widget/TextView;
+	public final field gpsTitleLabel Landroid/widget/TextView;
+	public final field scrollView Landroidx/core/widget/NestedScrollView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetBankSelectionBinding;
+	public fun getRoot ()Landroid/view/View;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetBankSelectionBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetBankSelectionBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsBottomSheetInstallAppBinding : androidx/viewbinding/ViewBinding {
+	public final field dragHandle Lcom/google/android/material/bottomsheet/BottomSheetDragHandleView;
+	public final field gpsBarrierForPoweredLayout Landroidx/constraintlayout/widget/Barrier;
+	public final field gpsForwardButton Landroid/widget/Button;
+	public final field gpsInstallAppDetails Landroid/widget/TextView;
+	public final field gpsInstallAppTitle Landroid/widget/TextView;
+	public final field gpsPaymentProviderIcon Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderIconHolderBinding;
+	public final field gpsPlayStoreLogo Landroid/widget/ImageButton;
+	public final field gpsPoweredByGiniLayout Lnet/gini/android/internal/payment/databinding/GpsPoweredByGiniBinding;
+	public final field gpsScrollView Landroidx/core/widget/NestedScrollView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetInstallAppBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetInstallAppBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetInstallAppBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsBottomSheetOpenWithBinding : androidx/viewbinding/ViewBinding {
+	public final field dragHandle Lcom/google/android/material/bottomsheet/BottomSheetDragHandleView;
+	public final field gpsAmountLabel Landroid/widget/TextView;
+	public final field gpsAmountValue Landroid/widget/TextView;
+	public final field gpsDynamicAnchor Landroid/view/View;
+	public final field gpsForwardButton Lcom/google/android/material/button/MaterialButton;
+	public final field gpsIbanLabel Landroid/widget/TextView;
+	public final field gpsIbanValue Landroid/widget/TextView;
+	public final field gpsOpenWithDetails Landroid/widget/TextView;
+	public final field gpsOpenWithDetailsContainer Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field gpsOpenWithTitle Landroid/widget/TextView;
+	public final field gpsPoweredByGiniLayout Lnet/gini/android/internal/payment/databinding/GpsPoweredByGiniBinding;
+	public final field gpsQrImageView Landroid/widget/ImageView;
+	public final field gpsRecipientLabel Landroid/widget/TextView;
+	public final field gpsRecipientValue Landroid/widget/TextView;
+	public final field gpsReferenceLabel Landroid/widget/TextView;
+	public final field gpsReferenceValue Landroid/widget/TextView;
+	public final field guideline Landroidx/constraintlayout/widget/Guideline;
+	public final field scrollView Landroidx/core/widget/NestedScrollView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetOpenWithBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/LinearLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetOpenWithBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetOpenWithBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsBottomSheetPaymentComponentBinding : androidx/viewbinding/ViewBinding {
+	public final field dragHandle Lcom/google/android/material/bottomsheet/BottomSheetDragHandleView;
+	public final field gpsPaymentComponent Lnet/gini/android/internal/payment/paymentComponent/PaymentComponentView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetPaymentComponentBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetPaymentComponentBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetPaymentComponentBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsBottomSheetReviewBinding : androidx/viewbinding/ViewBinding {
+	public final field dragHandle Lcom/google/android/material/bottomsheet/BottomSheetDragHandleView;
+	public final field gpsReviewLayout Lnet/gini/android/internal/payment/review/reviewComponent/ReviewView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetReviewBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetReviewBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsBottomSheetReviewBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsFragmentPaymentMoreInformationBinding : androidx/viewbinding/ViewBinding {
+	public final field gpsFaqRecycler Landroidx/recyclerview/widget/RecyclerView;
+	public final field gpsFaqTitle Landroid/widget/TextView;
+	public final field gpsMoreInformationDetails Landroid/widget/TextView;
+	public final field gpsMoreInformationTitle Landroid/widget/TextView;
+	public final field gpsPaymentProvidersIconsList Landroidx/recyclerview/widget/RecyclerView;
+	public final field gpsPoweredByGini Lnet/gini/android/internal/payment/databinding/GpsPoweredByGiniBinding;
+	public final field nestedScrollView Landroidx/core/widget/NestedScrollView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsFragmentPaymentMoreInformationBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsFragmentPaymentMoreInformationBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsFragmentPaymentMoreInformationBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsItemFaqAnswerBinding : androidx/viewbinding/ViewBinding {
+	public final field divider2 Lcom/google/android/material/divider/MaterialDivider;
+	public final field gpsFaqAnswerLabel Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsItemFaqAnswerBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/LinearLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsItemFaqAnswerBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsItemFaqAnswerBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsItemFaqLabelBinding : androidx/viewbinding/ViewBinding {
+	public final field divider2 Lcom/google/android/material/divider/MaterialDivider;
+	public final field faqAnswerClickableArea Landroid/widget/LinearLayout;
+	public final field faqItemRoot Landroid/widget/LinearLayout;
+	public final field faqQuestionClickableArea Landroid/widget/LinearLayout;
+	public final field gpsExpandIcon Landroid/widget/ImageView;
+	public final field gpsFaqAnswerLabel Landroid/widget/TextView;
+	public final field gpsFaqLabel Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsItemFaqLabelBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/LinearLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsItemFaqLabelBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsItemFaqLabelBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsItemOpenWithAppBinding : androidx/viewbinding/ViewBinding {
+	public final field gpsAppIcon Lcom/google/android/material/imageview/ShapeableImageView;
+	public final field gpsAppName Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsItemOpenWithAppBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/LinearLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsItemOpenWithAppBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsItemOpenWithAppBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsItemPaymentProviderAppBinding : androidx/viewbinding/ViewBinding {
+	public final field gpsSelectorLayout Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderPickerButtonBinding;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsItemPaymentProviderAppBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroid/widget/FrameLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsItemPaymentProviderAppBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsItemPaymentProviderAppBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsPaymentProviderIconHolderBinding : androidx/viewbinding/ViewBinding {
+	public final field gpsPaymentProviderIcon Lcom/google/android/material/imageview/ShapeableImageView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderIconHolderBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Lcom/google/android/material/imageview/ShapeableImageView;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderIconHolderBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderIconHolderBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsPaymentProviderPickerButtonBinding : androidx/viewbinding/ViewBinding {
+	public final field gpsPaymentProviderAppIconHolder Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderIconHolderBinding;
+	public final field gpsSelectBankButton Landroid/widget/Button;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderPickerButtonBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderPickerButtonBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderPickerButtonBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsPaymentProviderSelectorButtonBinding : androidx/viewbinding/ViewBinding {
+	public final field gpsPaymentProviderAppIconHolder Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderIconHolderBinding;
+	public final field gpsSelectBankButton Lcom/google/android/material/button/MaterialButton;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderSelectorButtonBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderSelectorButtonBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderSelectorButtonBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsPoweredByGiniBinding : androidx/viewbinding/ViewBinding {
+	public final field gpsGiniLogo Landroid/widget/ImageView;
+	public final field gpsPoweredByGiniLabel Landroid/widget/TextView;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsPoweredByGiniBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsPoweredByGiniBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsPoweredByGiniBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsReviewBinding : androidx/viewbinding/ViewBinding {
+	public final field amount Lcom/google/android/material/textfield/TextInputEditText;
+	public final field amountLayout Lcom/google/android/material/textfield/TextInputLayout;
+	public final field gpsBackgroundView Landroid/view/View;
+	public final field gpsBottomLayout Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field gpsFieldsLayout Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field gpsPaymentDetails Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field gpsPaymentProviderAppIconHolder Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderIconHolderBinding;
+	public final field gpsPoweredByGiniLayout Lnet/gini/android/internal/payment/databinding/GpsPoweredByGiniBinding;
+	public final field gpsSelectBankButton Landroid/widget/Button;
+	public final field gpsSelectBankLayout Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field guideline Landroidx/constraintlayout/widget/Guideline;
+	public final field iban Lcom/google/android/material/textfield/TextInputEditText;
+	public final field ibanAmountBarrierBottom Landroidx/constraintlayout/widget/Barrier;
+	public final field ibanLayout Lcom/google/android/material/textfield/TextInputLayout;
+	public final field ibanRecipientBarrierBottom Landroidx/constraintlayout/widget/Barrier;
+	public final field payment Lcom/google/android/material/button/MaterialButton;
+	public final field paymentProgress Landroid/widget/ProgressBar;
+	public final field purpose Lcom/google/android/material/textfield/TextInputEditText;
+	public final field purposeLayout Lcom/google/android/material/textfield/TextInputLayout;
+	public final field recipient Lcom/google/android/material/textfield/TextInputEditText;
+	public final field recipientLayout Lcom/google/android/material/textfield/TextInputLayout;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsReviewBinding;
+	public fun getRoot ()Landroid/view/View;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;)Lnet/gini/android/internal/payment/databinding/GpsReviewBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsViewPaymentComponentBinding : androidx/viewbinding/ViewBinding {
+	public final field gpsMoreInformation Landroid/widget/TextView;
+	public final field gpsPayInvoiceButtonTwoRows Lcom/google/android/material/button/MaterialButton;
+	public final field gpsPoweredByGini Landroid/widget/FrameLayout;
+	public final field gpsSelectBankLabel Landroid/widget/TextView;
+	public final field gpsSelectBankPicker Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderSelectorButtonBinding;
+	public final field gpsSelectBankPickerLayout Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field gpsSingleRowBankSelection Lnet/gini/android/internal/payment/databinding/GpsViewSingleLineBankSelectionBinding;
+	public final field gpsTwoRowsBankSelection Landroidx/constraintlayout/widget/ConstraintLayout;
+	public final field gpsTwoRowsContainer Landroid/widget/FrameLayout;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsViewPaymentComponentBinding;
+	public fun getRoot ()Landroid/view/View;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;)Lnet/gini/android/internal/payment/databinding/GpsViewPaymentComponentBinding;
+}
+
+public final class net/gini/android/internal/payment/databinding/GpsViewSingleLineBankSelectionBinding : androidx/viewbinding/ViewBinding {
+	public final field gpsBackgroundView Landroid/view/View;
+	public final field gpsPayInvoiceButton Lcom/google/android/material/button/MaterialButton;
+	public final field gpsPaymentProviderAppIconHolder Lnet/gini/android/internal/payment/databinding/GpsPaymentProviderIconHolderBinding;
+	public final field gpsSelectBankButton Lcom/google/android/material/button/MaterialButton;
+	public static fun bind (Landroid/view/View;)Lnet/gini/android/internal/payment/databinding/GpsViewSingleLineBankSelectionBinding;
+	public synthetic fun getRoot ()Landroid/view/View;
+	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/internal/payment/databinding/GpsViewSingleLineBankSelectionBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/internal/payment/databinding/GpsViewSingleLineBankSelectionBinding;
+}
+
+public abstract class net/gini/android/internal/payment/moreinformation/FaqItem {
+}
+
+public final class net/gini/android/internal/payment/moreinformation/FaqItem$Entry : net/gini/android/internal/payment/moreinformation/FaqItem {
+	public fun <init> (Ljava/lang/String;Ljava/lang/CharSequence;Z)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/CharSequence;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/CharSequence;
+	public final fun component3 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/lang/CharSequence;Z)Lnet/gini/android/internal/payment/moreinformation/FaqItem$Entry;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/moreinformation/FaqItem$Entry;Ljava/lang/String;Ljava/lang/CharSequence;ZILjava/lang/Object;)Lnet/gini/android/internal/payment/moreinformation/FaqItem$Entry;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAnswer ()Ljava/lang/CharSequence;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isExpanded ()Z
+	public final fun setExpanded (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/moreinformation/FaqRecyclerAdapter : androidx/recyclerview/widget/RecyclerView$Adapter {
+	public fun <init> (Ljava/util/Locale;Ljava/util/List;)V
+	public fun getItemCount ()I
+	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
+	public fun onBindViewHolder (Lnet/gini/android/internal/payment/moreinformation/FaqRecyclerAdapter$FaqViewHolder;I)V
+	public synthetic fun onCreateViewHolder (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
+	public fun onCreateViewHolder (Landroid/view/ViewGroup;I)Lnet/gini/android/internal/payment/moreinformation/FaqRecyclerAdapter$FaqViewHolder;
+}
+
+public final class net/gini/android/internal/payment/moreinformation/FaqRecyclerAdapter$FaqViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
+	public fun <init> (Lnet/gini/android/internal/payment/moreinformation/FaqRecyclerAdapter;Landroid/view/View;)V
+	public final fun bind (Lnet/gini/android/internal/payment/moreinformation/FaqItem$Entry;I)V
+}
+
+public final class net/gini/android/internal/payment/moreinformation/MoreInformationFragment : androidx/fragment/app/Fragment {
+	public static final field Companion Lnet/gini/android/internal/payment/moreinformation/MoreInformationFragment$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (Landroidx/lifecycle/ViewModelProvider$Factory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun onCreate (Landroid/os/Bundle;)V
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class net/gini/android/internal/payment/moreinformation/MoreInformationFragment$Companion {
+	public final fun newInstance (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;)Lnet/gini/android/internal/payment/moreinformation/MoreInformationFragment;
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/BankPickerRows : java/lang/Enum {
+	public static final field SINGLE Lnet/gini/android/internal/payment/paymentComponent/BankPickerRows;
+	public static final field TWO Lnet/gini/android/internal/payment/paymentComponent/BankPickerRows;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/internal/payment/paymentComponent/BankPickerRows;
+	public static fun values ()[Lnet/gini/android/internal/payment/paymentComponent/BankPickerRows;
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/PaymentComponent {
+	public fun <init> (Landroid/content/Context;Lnet/gini/android/internal/payment/GiniInternalPaymentModule;)V
+	public final fun checkReturningUser ()Z
+	public final fun getBankPickerRows ()Lnet/gini/android/internal/payment/paymentComponent/BankPickerRows;
+	public final fun getGiniPaymentLanguage (Landroid/content/Context;)Ljava/util/Locale;
+	public static synthetic fun getGiniPaymentLanguage$default (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Landroid/content/Context;ILjava/lang/Object;)Ljava/util/Locale;
+	public final fun getListener ()Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent$Listener;
+	public final fun getPaymentModule ()Lnet/gini/android/internal/payment/GiniInternalPaymentModule;
+	public final fun getPaymentProviderAppsFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getSelectedPaymentProviderAppFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getShouldCheckReturningUser ()Z
+	public final fun loadPaymentProviderApps (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun onPayInvoiceClicked (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun onPayInvoiceClicked$default (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun recheckWhichPaymentProviderAppsAreInstalled ()V
+	public final fun setBankPickerRows (Lnet/gini/android/internal/payment/paymentComponent/BankPickerRows;)V
+	public final fun setListener (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent$Listener;)V
+	public final fun setShouldCheckReturningUser (Z)V
+}
+
+public abstract interface class net/gini/android/internal/payment/paymentComponent/PaymentComponent$Listener {
+	public abstract fun onBankPickerClicked ()V
+	public abstract fun onMoreInformationClicked ()V
+	public abstract fun onPayInvoiceClicked (Ljava/lang/String;)V
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/PaymentComponentPreferences {
+	public fun <init> (Landroid/content/Context;)V
+	public final fun clearData (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deleteSelectedPaymentProviderId (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getSelectedPaymentProviderId (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun saveSelectedPaymentProviderId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/PaymentComponentView : androidx/constraintlayout/widget/ConstraintLayout {
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public final fun getBankPickerButton ()Landroid/widget/Button;
+	public final fun getDismissListener ()Lnet/gini/android/internal/payment/paymentComponent/PaymentComponentView$ButtonClickListener;
+	public final fun getDocumentId ()Ljava/lang/String;
+	public final fun getMoreInformationLabel ()Landroid/widget/TextView;
+	public final fun getPaymentComponent ()Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;
+	public final fun getReviewFragmentWillBeShown ()Z
+	public final fun prepareForReuse ()V
+	public final fun setDismissListener (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponentView$ButtonClickListener;)V
+	public final fun setDocumentId (Ljava/lang/String;)V
+	public final fun setPaymentComponent (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;)V
+	public final fun setReviewFragmentWillBeShown (Z)V
+}
+
+public abstract interface class net/gini/android/internal/payment/paymentComponent/PaymentComponentView$ButtonClickListener {
+	public abstract fun onButtonClick (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponentView$Buttons;)V
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/PaymentComponentView$Buttons : java/lang/Enum {
+	public static final field MORE_INFORMATION Lnet/gini/android/internal/payment/paymentComponent/PaymentComponentView$Buttons;
+	public static final field PAY_INVOICE Lnet/gini/android/internal/payment/paymentComponent/PaymentComponentView$Buttons;
+	public static final field SELECT_BANK Lnet/gini/android/internal/payment/paymentComponent/PaymentComponentView$Buttons;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/internal/payment/paymentComponent/PaymentComponentView$Buttons;
+	public static fun values ()[Lnet/gini/android/internal/payment/paymentComponent/PaymentComponentView$Buttons;
+}
+
+public abstract class net/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState {
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState$Error : net/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState {
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun getThrowable ()Ljava/lang/Throwable;
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState$Loading : net/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState$Loading;
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState$Nothing : net/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState$Nothing;
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState$Success : net/gini/android/internal/payment/paymentComponent/PaymentProviderAppsState {
+	public fun <init> (Ljava/util/List;)V
+	public final fun getPaymentProviderApps ()Ljava/util/List;
+}
+
+public abstract class net/gini/android/internal/payment/paymentComponent/SelectedPaymentProviderAppState {
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/SelectedPaymentProviderAppState$AppSelected : net/gini/android/internal/payment/paymentComponent/SelectedPaymentProviderAppState {
+	public fun <init> (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;)V
+	public final fun getPaymentProviderApp ()Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;
+}
+
+public final class net/gini/android/internal/payment/paymentComponent/SelectedPaymentProviderAppState$NothingSelected : net/gini/android/internal/payment/paymentComponent/SelectedPaymentProviderAppState {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/paymentComponent/SelectedPaymentProviderAppState$NothingSelected;
+}
+
+public final class net/gini/android/internal/payment/paymentComponentBottomSheet/PaymentComponentBottomSheet : net/gini/android/internal/payment/utils/GpsBottomSheetDialogFragment {
+	public static final field Companion Lnet/gini/android/internal/payment/paymentComponentBottomSheet/PaymentComponentBottomSheet$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (Landroidx/lifecycle/ViewModelProvider$Factory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun onCancel (Landroid/content/DialogInterface;)V
+	public fun onCreate (Landroid/os/Bundle;)V
+	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class net/gini/android/internal/payment/paymentComponentBottomSheet/PaymentComponentBottomSheet$Companion {
+	public final fun newInstance (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;ZLnet/gini/android/internal/payment/utils/BackListener;)Lnet/gini/android/internal/payment/paymentComponentBottomSheet/PaymentComponentBottomSheet;
+}
+
+public final class net/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp {
+	public static final field Companion Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Landroid/content/Intent;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Landroid/content/Intent;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Landroid/content/Intent;)Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp;Ljava/lang/String;Ljava/lang/String;Landroid/content/Intent;ILjava/lang/Object;)Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLaunchIntent ()Landroid/content/Intent;
+	public final fun getPackageName ()Ljava/lang/String;
+	public final fun getVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp$Companion {
+}
+
+public final class net/gini/android/internal/payment/paymentProvider/PaymentProviderApp {
+	public static final field Companion Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp$Companion;
+	public static final field ICON_SIZE F
+	public fun <init> (Ljava/lang/String;Landroid/graphics/drawable/BitmapDrawable;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors;Lnet/gini/android/health/api/models/PaymentProvider;Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp;)V
+	public synthetic fun <init> (Ljava/lang/String;Landroid/graphics/drawable/BitmapDrawable;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors;Lnet/gini/android/health/api/models/PaymentProvider;Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Landroid/graphics/drawable/BitmapDrawable;
+	public final fun component3 ()Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors;
+	public final fun component4 ()Lnet/gini/android/health/api/models/PaymentProvider;
+	public final fun component5 ()Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp;
+	public final fun copy (Ljava/lang/String;Landroid/graphics/drawable/BitmapDrawable;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors;Lnet/gini/android/health/api/models/PaymentProvider;Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp;)Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Ljava/lang/String;Landroid/graphics/drawable/BitmapDrawable;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors;Lnet/gini/android/health/api/models/PaymentProvider;Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp;ILjava/lang/Object;)Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColors ()Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors;
+	public final fun getIcon ()Landroid/graphics/drawable/BitmapDrawable;
+	public final fun getInstalledPaymentProviderApp ()Lnet/gini/android/internal/payment/paymentProvider/InstalledPaymentProviderApp;
+	public final fun getIntent (Ljava/lang/String;)Landroid/content/Intent;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getPaymentProvider ()Lnet/gini/android/health/api/models/PaymentProvider;
+	public final fun hasPlayStoreUrl ()Z
+	public final fun hasSamePaymentProviderId (Ljava/lang/String;)Z
+	public final fun hasSamePaymentProviderId (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;)Z
+	public fun hashCode ()I
+	public final fun isInstalled ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/paymentProvider/PaymentProviderApp$Companion {
+}
+
+public final class net/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors {
+	public fun <init> (II)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors;IIILjava/lang/Object;)Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderAppColors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundColor ()I
+	public final fun getTextColor ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/paymentProvider/PaymentProviderAppKt {
+	public static final fun getInstalledPaymentProviderApps (Landroid/content/pm/PackageManager;)Ljava/util/List;
+	public static final fun getPaymentProviderAppUri (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun getPaymentProviderApps (Landroid/content/pm/PackageManager;Ljava/util/List;Landroid/content/Context;)Ljava/util/List;
+}
+
+public final class net/gini/android/internal/payment/review/PaymentField : java/lang/Enum {
+	public static final field Amount Lnet/gini/android/internal/payment/review/PaymentField;
+	public static final field Iban Lnet/gini/android/internal/payment/review/PaymentField;
+	public static final field Purpose Lnet/gini/android/internal/payment/review/PaymentField;
+	public static final field Recipient Lnet/gini/android/internal/payment/review/PaymentField;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/internal/payment/review/PaymentField;
+	public static fun values ()[Lnet/gini/android/internal/payment/review/PaymentField;
+}
+
+public final class net/gini/android/internal/payment/review/ReviewConfiguration : android/os/Parcelable {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> ()V
+	public fun <init> (ZLjava/util/List;Z)V
+	public synthetic fun <init> (ZLjava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun copy (ZLjava/util/List;Z)Lnet/gini/android/internal/payment/review/ReviewConfiguration;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/review/ReviewConfiguration;ZLjava/util/List;ZILjava/lang/Object;)Lnet/gini/android/internal/payment/review/ReviewConfiguration;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHandleErrorsInternally ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class net/gini/android/internal/payment/review/ReviewConfiguration$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun createFromParcel (Landroid/os/Parcel;)Lnet/gini/android/internal/payment/review/ReviewConfiguration;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+	public final fun newArray (I)[Lnet/gini/android/internal/payment/review/ReviewConfiguration;
+}
+
+public abstract interface class net/gini/android/internal/payment/review/ReviewViewStateLandscape : java/io/Serializable {
+}
+
+public final class net/gini/android/internal/payment/review/ReviewViewStateLandscape$COLLAPSED : net/gini/android/internal/payment/review/ReviewViewStateLandscape {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/review/ReviewViewStateLandscape$COLLAPSED;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/review/ReviewViewStateLandscape$EXPANDED : net/gini/android/internal/payment/review/ReviewViewStateLandscape {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/review/ReviewViewStateLandscape$EXPANDED;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class net/gini/android/internal/payment/review/ValidationMessage {
+	public synthetic fun <init> (Lnet/gini/android/internal/payment/review/PaymentField;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getField ()Lnet/gini/android/internal/payment/review/PaymentField;
+}
+
+public final class net/gini/android/internal/payment/review/ValidationMessage$AmountFormat : net/gini/android/internal/payment/review/ValidationMessage {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/review/ValidationMessage$AmountFormat;
+}
+
+public final class net/gini/android/internal/payment/review/ValidationMessage$Empty : net/gini/android/internal/payment/review/ValidationMessage {
+	public fun <init> (Lnet/gini/android/internal/payment/review/PaymentField;)V
+	public final fun component1 ()Lnet/gini/android/internal/payment/review/PaymentField;
+	public final fun copy (Lnet/gini/android/internal/payment/review/PaymentField;)Lnet/gini/android/internal/payment/review/ValidationMessage$Empty;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/review/ValidationMessage$Empty;Lnet/gini/android/internal/payment/review/PaymentField;ILjava/lang/Object;)Lnet/gini/android/internal/payment/review/ValidationMessage$Empty;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPaymentField ()Lnet/gini/android/internal/payment/review/PaymentField;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/review/ValidationMessage$InvalidIban : net/gini/android/internal/payment/review/ValidationMessage {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/review/ValidationMessage$InvalidIban;
+}
+
+public final class net/gini/android/internal/payment/review/installApp/InstallAppBottomSheet : net/gini/android/internal/payment/utils/GpsBottomSheetDialogFragment {
+	public static final field Companion Lnet/gini/android/internal/payment/review/installApp/InstallAppBottomSheet$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (Landroidx/lifecycle/ViewModelProvider$Factory;Ljava/lang/Integer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getViewModelFactory ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public fun onCancel (Landroid/content/DialogInterface;)V
+	public fun onCreate (Landroid/os/Bundle;)V
+	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class net/gini/android/internal/payment/review/installApp/InstallAppBottomSheet$Companion {
+	public final fun newInstance (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Lnet/gini/android/internal/payment/review/installApp/InstallAppForwardListener;Lnet/gini/android/internal/payment/utils/BackListener;Ljava/lang/Integer;)Lnet/gini/android/internal/payment/review/installApp/InstallAppBottomSheet;
+}
+
+public abstract interface class net/gini/android/internal/payment/review/installApp/InstallAppForwardListener {
+	public abstract fun onForwardToBankSelected ()V
+}
+
+public final class net/gini/android/internal/payment/review/openWith/OpenWithBottomSheet : net/gini/android/internal/payment/utils/GpsBottomSheetDialogFragment {
+	public static final field Companion Lnet/gini/android/internal/payment/review/openWith/OpenWithBottomSheet$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (Landroidx/lifecycle/ViewModelProvider$Factory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getViewmodelFactory ()Landroidx/lifecycle/ViewModelProvider$Factory;
+	public fun onCancel (Landroid/content/DialogInterface;)V
+	public fun onCreate (Landroid/os/Bundle;)V
+	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class net/gini/android/internal/payment/review/openWith/OpenWithBottomSheet$Companion {
+	public final fun newInstance (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Lnet/gini/android/internal/payment/review/openWith/OpenWithForwardListener;Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Lnet/gini/android/internal/payment/utils/BackListener;Lnet/gini/android/internal/payment/api/model/PaymentDetails;Ljava/lang/String;)Lnet/gini/android/internal/payment/review/openWith/OpenWithBottomSheet;
+	public static synthetic fun newInstance$default (Lnet/gini/android/internal/payment/review/openWith/OpenWithBottomSheet$Companion;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Lnet/gini/android/internal/payment/review/openWith/OpenWithForwardListener;Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Lnet/gini/android/internal/payment/utils/BackListener;Lnet/gini/android/internal/payment/api/model/PaymentDetails;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/internal/payment/review/openWith/OpenWithBottomSheet;
+}
+
+public abstract interface class net/gini/android/internal/payment/review/openWith/OpenWithForwardListener {
+	public abstract fun onForwardSelected ()V
+}
+
+public final class net/gini/android/internal/payment/review/reviewBottomSheet/ReviewBottomSheet : net/gini/android/internal/payment/utils/GpsBottomSheetDialogFragment {
+	public static final field Companion Lnet/gini/android/internal/payment/review/reviewBottomSheet/ReviewBottomSheet$Companion;
+	public fun <init> ()V
+	public synthetic fun <init> (Landroidx/lifecycle/ViewModelProvider$Factory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun onCancel (Landroid/content/DialogInterface;)V
+	public fun onCreate (Landroid/os/Bundle;)V
+	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDestroyView ()V
+	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
+	public fun onSaveInstanceState (Landroid/os/Bundle;)V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class net/gini/android/internal/payment/review/reviewBottomSheet/ReviewBottomSheet$Companion {
+	public final fun newInstance (Lnet/gini/android/internal/payment/review/ReviewConfiguration;Lnet/gini/android/internal/payment/review/reviewComponent/ReviewViewListener;Lnet/gini/android/internal/payment/GiniInternalPaymentModule;Lnet/gini/android/internal/payment/utils/BackListener;)Lnet/gini/android/internal/payment/review/reviewBottomSheet/ReviewBottomSheet;
+	public static synthetic fun newInstance$default (Lnet/gini/android/internal/payment/review/reviewBottomSheet/ReviewBottomSheet$Companion;Lnet/gini/android/internal/payment/review/ReviewConfiguration;Lnet/gini/android/internal/payment/review/reviewComponent/ReviewViewListener;Lnet/gini/android/internal/payment/GiniInternalPaymentModule;Lnet/gini/android/internal/payment/utils/BackListener;ILjava/lang/Object;)Lnet/gini/android/internal/payment/review/reviewBottomSheet/ReviewBottomSheet;
+}
+
+public final class net/gini/android/internal/payment/review/reviewComponent/ReviewComponent {
+	public static final field Companion Lnet/gini/android/internal/payment/review/reviewComponent/ReviewComponent$Companion;
+	public fun <init> (Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Lnet/gini/android/internal/payment/review/ReviewConfiguration;Lnet/gini/android/internal/payment/GiniInternalPaymentModule;Lkotlinx/coroutines/CoroutineScope;)V
+	public final fun getGiniInternalPaymentModule ()Lnet/gini/android/internal/payment/GiniInternalPaymentModule;
+	public final fun getLoadingFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getPaymentComponent ()Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;
+	public final fun getPaymentDetails ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getPaymentProviderApp ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getPaymentValidation ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getReviewConfig ()Lnet/gini/android/internal/payment/review/ReviewConfiguration;
+	public final fun getReviewViewStateInLandscapeMode ()Lkotlinx/coroutines/flow/Flow;
+	public final fun getReviewViewStateInLandscapeMode ()Lnet/gini/android/internal/payment/review/ReviewViewStateLandscape;
+	public final fun isPaymentButtonEnabled ()Lkotlinx/coroutines/flow/Flow;
+	public final fun setAmount (Ljava/lang/String;)V
+	public final fun setIban (Ljava/lang/String;)V
+	public final fun setPurpose (Ljava/lang/String;)V
+	public final fun setRecipient (Ljava/lang/String;)V
+	public final fun setReviewViewModeInLandscapeMode (Lnet/gini/android/internal/payment/review/ReviewViewStateLandscape;)V
+	public final fun shouldShowBankSelectionButton ()Z
+	public final fun validatePaymentDetails (Lnet/gini/android/internal/payment/api/model/PaymentDetails;)Z
+}
+
+public final class net/gini/android/internal/payment/review/reviewComponent/ReviewComponent$Companion {
+}
+
+public final class net/gini/android/internal/payment/review/reviewComponent/ReviewFields : java/lang/Enum, android/os/Parcelable {
+	public static final field AMOUNT Lnet/gini/android/internal/payment/review/reviewComponent/ReviewFields;
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public static final field IBAN Lnet/gini/android/internal/payment/review/reviewComponent/ReviewFields;
+	public static final field PURPOSE Lnet/gini/android/internal/payment/review/reviewComponent/ReviewFields;
+	public static final field RECIPIENT Lnet/gini/android/internal/payment/review/reviewComponent/ReviewFields;
+	public final fun describeContents ()I
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/internal/payment/review/reviewComponent/ReviewFields;
+	public static fun values ()[Lnet/gini/android/internal/payment/review/reviewComponent/ReviewFields;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class net/gini/android/internal/payment/review/reviewComponent/ReviewFields$Creator : android/os/Parcelable$Creator {
+	public fun <init> ()V
+	public synthetic fun createFromParcel (Landroid/os/Parcel;)Ljava/lang/Object;
+	public final fun createFromParcel (Landroid/os/Parcel;)Lnet/gini/android/internal/payment/review/reviewComponent/ReviewFields;
+	public synthetic fun newArray (I)[Ljava/lang/Object;
+	public final fun newArray (I)[Lnet/gini/android/internal/payment/review/reviewComponent/ReviewFields;
+}
+
+public final class net/gini/android/internal/payment/review/reviewComponent/ReviewView : androidx/constraintlayout/widget/ConstraintLayout {
+	public static final field Companion Lnet/gini/android/internal/payment/review/reviewComponent/ReviewView$Companion;
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public final fun getListener ()Lnet/gini/android/internal/payment/review/reviewComponent/ReviewViewListener;
+	public final fun getPaymentDetails ()Lnet/gini/android/internal/payment/api/model/PaymentDetails;
+	public final fun getReviewComponent ()Lnet/gini/android/internal/payment/review/reviewComponent/ReviewComponent;
+	public final fun setListener (Lnet/gini/android/internal/payment/review/reviewComponent/ReviewViewListener;)V
+	public final fun setPaymentDetails (Lnet/gini/android/internal/payment/api/model/PaymentDetails;)V
+	public final fun setReviewComponent (Lnet/gini/android/internal/payment/review/reviewComponent/ReviewComponent;)V
+}
+
+public final class net/gini/android/internal/payment/review/reviewComponent/ReviewView$Companion {
+}
+
+public abstract interface class net/gini/android/internal/payment/review/reviewComponent/ReviewViewListener {
+	public abstract fun onPaymentButtonTapped (Lnet/gini/android/internal/payment/api/model/PaymentDetails;)V
+	public abstract fun onSelectBankButtonTapped ()V
+}
+
+public final class net/gini/android/internal/payment/utils/AutoClearedValue : kotlin/properties/ReadWriteProperty {
+	public fun <init> (Landroidx/fragment/app/Fragment;)V
+	public final fun getFragment ()Landroidx/fragment/app/Fragment;
+	public fun getValue (Landroidx/fragment/app/Fragment;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+	public synthetic fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+	public fun setValue (Landroidx/fragment/app/Fragment;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+	public synthetic fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+}
+
+public final class net/gini/android/internal/payment/utils/AutoClearedValueKt {
+	public static final fun autoCleared (Landroidx/fragment/app/Fragment;)Lnet/gini/android/internal/payment/utils/AutoClearedValue;
+}
+
+public abstract interface class net/gini/android/internal/payment/utils/BackListener {
+	public abstract fun backCalled ()V
+}
+
+public final class net/gini/android/internal/payment/utils/CustomLocaleContextWrapper : android/content/ContextWrapper {
+	public static final field Companion Lnet/gini/android/internal/payment/utils/CustomLocaleContextWrapper$Companion;
+	public fun <init> (Landroid/content/Context;)V
+}
+
+public final class net/gini/android/internal/payment/utils/CustomLocaleContextWrapper$Companion {
+	public final fun wrap (Landroid/content/Context;Ljava/util/Locale;)Landroid/content/ContextWrapper;
+}
+
+public abstract class net/gini/android/internal/payment/utils/DisplayedScreen {
+}
+
+public final class net/gini/android/internal/payment/utils/DisplayedScreen$BankSelectionBottomSheet : net/gini/android/internal/payment/utils/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/DisplayedScreen$BankSelectionBottomSheet;
+}
+
+public final class net/gini/android/internal/payment/utils/DisplayedScreen$InstallAppBottomSheet : net/gini/android/internal/payment/utils/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/DisplayedScreen$InstallAppBottomSheet;
+}
+
+public final class net/gini/android/internal/payment/utils/DisplayedScreen$MoreInformationFragment : net/gini/android/internal/payment/utils/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/DisplayedScreen$MoreInformationFragment;
+}
+
+public final class net/gini/android/internal/payment/utils/DisplayedScreen$Nothing : net/gini/android/internal/payment/utils/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/DisplayedScreen$Nothing;
+}
+
+public final class net/gini/android/internal/payment/utils/DisplayedScreen$OpenWithBottomSheet : net/gini/android/internal/payment/utils/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/DisplayedScreen$OpenWithBottomSheet;
+}
+
+public final class net/gini/android/internal/payment/utils/DisplayedScreen$PaymentComponentBottomSheet : net/gini/android/internal/payment/utils/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/DisplayedScreen$PaymentComponentBottomSheet;
+}
+
+public final class net/gini/android/internal/payment/utils/DisplayedScreen$ReviewScreen : net/gini/android/internal/payment/utils/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/DisplayedScreen$ReviewScreen;
+}
+
+public final class net/gini/android/internal/payment/utils/DisplayedScreen$ShareSheet : net/gini/android/internal/payment/utils/DisplayedScreen {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/DisplayedScreen$ShareSheet;
+}
+
+public final class net/gini/android/internal/payment/utils/ExtensionsKt {
+	public static final fun showKeyboard (Landroid/view/View;)V
+}
+
+public final class net/gini/android/internal/payment/utils/FileKt {
+	public static final fun createTempPdfFile (Ljava/io/File;[BLjava/lang/String;)Ljava/io/File;
+}
+
+public abstract interface class net/gini/android/internal/payment/utils/FlowBottomSheetsManager {
+	public abstract fun checkNextStep (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Ljava/io/File;Lkotlinx/coroutines/CoroutineScope;)V
+	public abstract fun getGiniInternalPaymentModule ()Lnet/gini/android/internal/payment/GiniInternalPaymentModule;
+	public abstract fun getPaymentNextStepFlow ()Lkotlinx/coroutines/flow/MutableSharedFlow;
+	public abstract fun getPaymentRequest (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getPaymentRequestDocument (Lnet/gini/android/internal/payment/api/model/PaymentRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getPaymentRequestFlow ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public abstract fun getPaymentRequestImage (Lnet/gini/android/internal/payment/api/model/PaymentRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getShareWithFlowStarted ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public abstract fun sharePdf (Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Ljava/io/File;Ljava/lang/String;Lkotlinx/coroutines/CoroutineScope;Lnet/gini/android/internal/payment/api/model/PaymentRequest;)V
+}
+
+public final class net/gini/android/internal/payment/utils/FlowBottomSheetsManager$DefaultImpls {
+	public static fun checkNextStep (Lnet/gini/android/internal/payment/utils/FlowBottomSheetsManager;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Ljava/io/File;Lkotlinx/coroutines/CoroutineScope;)V
+	public static fun sharePdf (Lnet/gini/android/internal/payment/utils/FlowBottomSheetsManager;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Ljava/io/File;Ljava/lang/String;Lkotlinx/coroutines/CoroutineScope;Lnet/gini/android/internal/payment/api/model/PaymentRequest;)V
+}
+
+public final class net/gini/android/internal/payment/utils/GiniLocalization : java/lang/Enum {
+	public static final field ENGLISH Lnet/gini/android/internal/payment/utils/GiniLocalization;
+	public static final field GERMAN Lnet/gini/android/internal/payment/utils/GiniLocalization;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getReadableName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/internal/payment/utils/GiniLocalization;
+	public static fun values ()[Lnet/gini/android/internal/payment/utils/GiniLocalization;
+}
+
+public class net/gini/android/internal/payment/utils/GpsBottomSheetDialogFragment : com/google/android/material/bottomsheet/BottomSheetDialogFragment {
+	public fun <init> ()V
+	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
+	public fun onGetLayoutInflater (Landroid/os/Bundle;)Landroid/view/LayoutInflater;
+}
+
+public final class net/gini/android/internal/payment/utils/IbanValidatorKt {
+	public static final fun isValidIban (Ljava/lang/String;)Z
+}
+
+public final class net/gini/android/internal/payment/utils/IntervalClickListener : net/gini/android/internal/payment/utils/IntervalClickListenerHelper, android/view/View$OnClickListener {
+	public fun <init> (Landroid/view/View$OnClickListener;)V
+	public fun onClick (Landroid/view/View;)V
+}
+
+public abstract class net/gini/android/internal/payment/utils/IntervalClickListenerHelper {
+	public fun <init> ()V
+	protected abstract fun getEnabled ()Ljava/lang/Runnable;
+	public fun getInterval ()J
+	public fun isEnabled ()Z
+	protected abstract fun setEnabled (Ljava/lang/Runnable;)V
+	public fun setEnabled (Z)V
+	public fun setInterval (J)V
+}
+
+public abstract interface class net/gini/android/internal/payment/utils/PaymentEventListener {
+	public abstract fun onError (Ljava/lang/Throwable;)V
+	public abstract fun onLoading ()V
+	public abstract fun onPaymentRequestCreated (Lnet/gini/android/internal/payment/api/model/PaymentRequest;Ljava/lang/String;)V
+}
+
+public abstract class net/gini/android/internal/payment/utils/PaymentNextStep {
+}
+
+public final class net/gini/android/internal/payment/utils/PaymentNextStep$OpenSharePdf : net/gini/android/internal/payment/utils/PaymentNextStep {
+	public fun <init> (Ljava/io/File;)V
+	public final fun component1 ()Ljava/io/File;
+	public final fun copy (Ljava/io/File;)Lnet/gini/android/internal/payment/utils/PaymentNextStep$OpenSharePdf;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/utils/PaymentNextStep$OpenSharePdf;Ljava/io/File;ILjava/lang/Object;)Lnet/gini/android/internal/payment/utils/PaymentNextStep$OpenSharePdf;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFile ()Ljava/io/File;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/utils/PaymentNextStep$RedirectToBank : net/gini/android/internal/payment/utils/PaymentNextStep {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/PaymentNextStep$RedirectToBank;
+}
+
+public final class net/gini/android/internal/payment/utils/PaymentNextStep$SetLoadingVisibility : net/gini/android/internal/payment/utils/PaymentNextStep {
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lnet/gini/android/internal/payment/utils/PaymentNextStep$SetLoadingVisibility;
+	public static synthetic fun copy$default (Lnet/gini/android/internal/payment/utils/PaymentNextStep$SetLoadingVisibility;ZILjava/lang/Object;)Lnet/gini/android/internal/payment/utils/PaymentNextStep$SetLoadingVisibility;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun isVisible ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/utils/PaymentNextStep$ShowInstallApp : net/gini/android/internal/payment/utils/PaymentNextStep {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/PaymentNextStep$ShowInstallApp;
+}
+
+public final class net/gini/android/internal/payment/utils/PaymentNextStep$ShowOpenWithSheet : net/gini/android/internal/payment/utils/PaymentNextStep {
+	public static final field INSTANCE Lnet/gini/android/internal/payment/utils/PaymentNextStep$ShowOpenWithSheet;
+}
+
+public final class net/gini/android/internal/payment/utils/ShareWithBroadcastReceiver : android/content/BroadcastReceiver {
+	public fun <init> ()V
+	public final fun getSHARE_WITH_INTENT_FILTER ()Ljava/lang/String;
+	public fun onReceive (Landroid/content/Context;Landroid/content/Intent;)V
+}
+
+public final class net/gini/android/internal/payment/utils/UrlSpanNoUnderline : android/text/style/URLSpan {
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;)V
+	public fun onClick (Landroid/view/View;)V
+	public fun updateDrawState (Landroid/text/TextPaint;)V
+}
+
+public final class net/gini/android/internal/payment/utils/extensions/BottomSheetDialogFragmentKt {
+	public static final fun isViewModelInitialized (Landroidx/fragment/app/Fragment;Lkotlin/reflect/KClass;)Z
+}
+
+public final class net/gini/android/internal/payment/utils/extensions/ContextKt {
+	public static final fun createShareWithPendingIntent (Landroid/content/Context;)Landroid/app/PendingIntent;
+	public static final fun getFontScale (Landroid/content/Context;)F
+	public static final fun wrappedWithGiniPaymentThemeAndLocale (Landroid/content/Context;Ljava/util/Locale;)Landroid/content/Context;
+	public static synthetic fun wrappedWithGiniPaymentThemeAndLocale$default (Landroid/content/Context;Ljava/util/Locale;ILjava/lang/Object;)Landroid/content/Context;
+}
+
+public final class net/gini/android/internal/payment/utils/extensions/FragmentKt {
+	public static final fun getLayoutInflaterWithGiniPaymentThemeAndLocale (Landroidx/fragment/app/Fragment;Landroid/view/LayoutInflater;Ljava/util/Locale;)Landroid/view/LayoutInflater;
+	public static synthetic fun getLayoutInflaterWithGiniPaymentThemeAndLocale$default (Landroidx/fragment/app/Fragment;Landroid/view/LayoutInflater;Ljava/util/Locale;ILjava/lang/Object;)Landroid/view/LayoutInflater;
+	public static final fun getLocaleStringResource (Landroidx/fragment/app/Fragment;ILnet/gini/android/internal/payment/GiniInternalPaymentModule;)Ljava/lang/String;
+	public static final fun startSharePdfIntent (Landroidx/fragment/app/Fragment;Ljava/io/File;Landroid/app/PendingIntent;)V
+	public static synthetic fun startSharePdfIntent$default (Landroidx/fragment/app/Fragment;Ljava/io/File;Landroid/app/PendingIntent;ILjava/lang/Object;)V
+}
+
+public final class net/gini/android/internal/payment/utils/extensions/GenericHelperMethodsKt {
+	public static final fun atLeastOneIsTrue ([Z)Z
+}
+
+public final class net/gini/android/internal/payment/utils/extensions/ResourcesKt {
+	public static final fun getWidthPixels (Landroid/content/res/Resources;)I
+	public static final fun isLandscapeOrientation (Landroid/content/res/Resources;)Z
+}
+
+public final class net/gini/android/internal/payment/utils/extensions/StringKt {
+	public static final fun addEuroSymbol (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun isValidPdfName (Ljava/lang/String;)Z
+	public static final fun sanitizeAmount (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun toBackendFormat (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class net/gini/android/internal/payment/utils/extensions/SupportFragmentManagerKt {
+	public static final fun add (Landroidx/fragment/app/FragmentManager;ILandroidx/fragment/app/Fragment;Z)V
+	public static final fun replace (Landroidx/fragment/app/FragmentManager;ILandroidx/fragment/app/Fragment;Z)V
+	public static final fun showInstallAppBottomSheet (Landroidx/fragment/app/FragmentManager;Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Ljava/lang/Integer;Lnet/gini/android/internal/payment/utils/BackListener;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun showInstallAppBottomSheet$default (Landroidx/fragment/app/FragmentManager;Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Ljava/lang/Integer;Lnet/gini/android/internal/payment/utils/BackListener;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static final fun showOpenWithBottomSheet (Landroidx/fragment/app/FragmentManager;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Lnet/gini/android/internal/payment/utils/BackListener;Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Lnet/gini/android/internal/payment/api/model/PaymentDetails;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun showOpenWithBottomSheet$default (Landroidx/fragment/app/FragmentManager;Lnet/gini/android/internal/payment/paymentProvider/PaymentProviderApp;Lnet/gini/android/internal/payment/utils/BackListener;Lnet/gini/android/internal/payment/paymentComponent/PaymentComponent;Lnet/gini/android/internal/payment/api/model/PaymentDetails;Ljava/lang/String;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+}
+
+public final class net/gini/android/internal/payment/utils/extensions/ViewKt {
+	public static final fun applyWindowInsetsWithTopPadding (Landroid/view/View;Landroid/view/View;ZZZ)V
+	public static synthetic fun applyWindowInsetsWithTopPadding$default (Landroid/view/View;Landroid/view/View;ZZZILjava/lang/Object;)V
+	public static final fun getLayoutInflaterWithGiniPaymentThemeAndLocale (Landroid/view/View;Ljava/util/Locale;)Landroid/view/LayoutInflater;
+	public static synthetic fun getLayoutInflaterWithGiniPaymentThemeAndLocale$default (Landroid/view/View;Ljava/util/Locale;ILjava/lang/Object;)Landroid/view/LayoutInflater;
+	public static final fun onKeyboardAction (Landroid/view/View;Lkotlin/jvm/functions/Function0;)V
+	public static final fun setIntervalClickListener (Landroid/view/View;Landroid/view/View$OnClickListener;)V
+}
+

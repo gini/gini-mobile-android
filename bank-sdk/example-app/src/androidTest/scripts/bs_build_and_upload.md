@@ -23,9 +23,9 @@ Builds the `example-app` and Espresso test suite APKs, uploads them to BrowserSt
 
 | Value | Description |
 |---|---|
-| `test_image.jpeg` | Camera injection file (`CaptureInjectionImage`) |
+| `camera_injection_image.jpeg` (androidTest assets) | Camera injection file (`CaptureInjectionImage`) |
 | `Testrechnung-RA-1.pdf` | PDF used in file picker upload tests (`UploadPDF`) |
-| `sample.pdf` | PDF used in file picker upload tests (`SamplePDF`) |
+| `sample.pdf` | PDF used in file picker upload tests (`SamplePDF`) — a copy of Gini's anonymised example invoice (`Gini_invoice_example.pdf`); keep test documents free of real names, addresses and bank details |
 | `Google Pixel 9-16.0` | Target BrowserStack device 1 |
 | `Google Pixel 10 Pro-16.0` | Target BrowserStack device 2 |
 | `net.gini.android.bank.sdk.exampleapp.ui.testcases` | Default test package (runs all test classes) |
@@ -84,7 +84,7 @@ export BS_KEY="my_bs_key"
 | 1 | Validates that all three media files exist before starting the build |
 | 2 | Builds the app APK and test suite APK using Gradle (`assembleDevExampleAppDebug` + `assembleDevExampleAppDebugAndroidTest`) |
 | 3 | Validates that both APK outputs exist |
-| 4 | Uploads `test_image.jpeg` to BrowserStack as `CaptureInjectionImage` (camera injection) |
+| 4 | Uploads `camera_injection_image.jpeg` to BrowserStack as `CaptureInjectionImage` (camera injection) |
 | 5 | Uploads `Testrechnung-RA-1.pdf` to BrowserStack as `UploadPDF` (file picker tests) |
 | 6 | Uploads `sample.pdf` to BrowserStack as `SamplePDF` (file picker tests) |
 | 7 | Uploads the app APK to the Espresso app endpoint |
@@ -110,7 +110,7 @@ export BS_KEY="your_browserstack_access_key"
 ```bash
 curl -u "$BS_USER:$BS_KEY" \
   -X POST "https://api-cloud.browserstack.com/app-automate/upload-media" \
-  -F "file=@/path/to/test_image.jpeg" \
+  -F "file=@/path/to/camera_injection_image.jpeg" \
   -F "custom_id=CaptureInjectionImage"
 ```
 

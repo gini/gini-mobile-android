@@ -194,9 +194,22 @@
     <!--   endregion -->
 
     <!--   region Due Date -->
+    <string name="gc_due_date_hint_title">Your invoice is due on %1$s.</string>
+    <string name="gc_due_date_hint_desc">You could set it up as a scheduled transfer.</string>
+
+    <!-- Deprecated: no longer used since the due date hint was redesigned as a bottom sheet (PP-3262).
+         Kept for one release so integrator overrides don't break silently; overrides have no effect.
+         Override gc_due_date_hint_title and gc_due_date_hint_desc instead.
+         These keys will be removed in the next major version. -->
     <string name="gc_dismiss_message">Dismiss Message</string>
     <string name="gc_due_date_hint">\u0020Your invoice is due on %1$s. You could set it up as a scheduled transfer.</string>
     <string name="gc_due_date_hint_tip">Tip:</string>
+    <!--   endregion -->
+
+    <!--   region Schedule Payment -->
+    <!--   The title is shared with the due date state (see gc_due_date_hint_title). -->
+    <string name="gc_schedule_payment_hint_desc">You can proceed with this Transaction now or schedule it for a future execution.</string>
+    <string name="gc_schedule_payment">Schedule Payment</string>
     <!--   endregion -->
 
 </resources>

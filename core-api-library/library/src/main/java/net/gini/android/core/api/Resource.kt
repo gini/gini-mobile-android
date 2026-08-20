@@ -2,6 +2,7 @@ package net.gini.android.core.api
 
 import com.squareup.moshi.Moshi
 import net.gini.android.core.api.requests.ApiException
+import net.gini.android.core.api.requests.SessionCancellationException
 import net.gini.android.core.api.response.ErrorResponse
 import java.util.concurrent.CancellationException
 
@@ -110,11 +111,16 @@ sealed class Resource<T>(
         /**
          * Internal use only.
          */
+        // SwallowedException: the cancellation exceptions carry no error details - they are
+        // signals which are fully represented by the returned Resource.Cancelled.
+        @Suppress("SwallowedException")
         suspend inline fun <T> wrapInResource(crossinline request: suspend () -> T) =
             try {
                 Success(request())
             } catch (e: ApiException) {
                 Error.fromApiException(e)
+            } catch (e: SessionCancellationException) {
+                Cancelled()
             } catch (e: CancellationException) {
                 Cancelled()
             } catch (e: Exception) {

@@ -212,6 +212,7 @@ internal constructor(
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
             isSavePhotosLocallyEnabled = configuration.isSavePhotosLocallyEnabled,
             isUnsupportedQRCodeWarningEnabled = configuration.isUnsupportedQRCodeWarningEnabled,
+            isPaymentScheduleHintEnabled = configuration.isPaymentScheduleHintEnabled,
             isCreditNoteHintEnabled = configuration.isCreditNoteHintEnabled,
         )
 
@@ -653,6 +654,7 @@ internal constructor(
         private var trustManager: TrustManager? = null
         private var httpClientProvider: GiniHttpClientProvider? = null
         private var isDebuggingEnabled = false
+        private var isSelfManagedAuthentication = false
 
         /**
          * Create a new instance of the [GiniCaptureDefaultNetworkService].
@@ -660,11 +662,11 @@ internal constructor(
          * @return new [GiniCaptureDefaultNetworkService] instance
          */
         fun build(): GiniCaptureDefaultNetworkService {
-            val giniApiBuilder = if (sessionManager != null) {
-                GiniBankAPIBuilder(mContext, sessionManager = sessionManager)
-            } else {
-                GiniBankAPIBuilder(mContext, clientId, clientSecret, emailDomain)
-            }
+            // The SessionManager and the client credentials are passed through even when
+            // self-managed authentication is enabled: the GiniBankAPIBuilder ignores them in
+            // that mode and warns about the ignored configuration.
+            val giniApiBuilder = GiniBankAPIBuilder(mContext, clientId, clientSecret, emailDomain, sessionManager)
+                .setSelfManagedAuthentication(isSelfManagedAuthentication)
             if (!TextUtils.isEmpty(baseUrl)) {
                 giniApiBuilder.setApiBaseUrl(baseUrl)
             }
@@ -720,6 +722,27 @@ internal constructor(
          */
         fun setSessionManager(sessionManager: SessionManager): Builder {
             this.sessionManager = sessionManager
+            return this
+        }
+
+        /**
+         * Enable self-managed authentication: the SDK will not authenticate API requests and
+         * neither a [SessionManager] nor client credentials are required.
+         *
+         * When enabled, your [GiniHttpClientProvider]'s OkHttpClient is responsible for adding
+         * the `Authorization` header to API requests (for example with your own application or
+         * network interceptor - either works, because the SDK installs no authentication of its
+         * own in this mode). Your access token is never passed through the SDK.
+         *
+         * A custom [GiniHttpClientProvider] must be set via [setHttpClientProvider], otherwise
+         * [build] will throw an [IllegalStateException]. When enabled, any [SessionManager] or
+         * client credentials set on this builder are ignored. Disabled by default.
+         *
+         * @param enabled pass `true` to authenticate API requests yourself
+         * @return the [Builder] instance
+         */
+        fun setSelfManagedAuthentication(enabled: Boolean): Builder {
+            this.isSelfManagedAuthentication = enabled
             return this
         }
 

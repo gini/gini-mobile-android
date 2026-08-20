@@ -1,6 +1,7 @@
 package net.gini.android.capture.internal.storage
 
 import android.content.Context
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
@@ -32,6 +33,8 @@ internal class ClientConfigurationStorage(private val context: Context) {
     private val keyIsPaymentDueHintEnabled = booleanPreferencesKey("is_payment_due_hint_enabled")
     private val keyIsUnsupportedQRCodeWarningEnabled =
         booleanPreferencesKey("is_unsupported_qr_code_warning_enabled")
+    private val keyIsPaymentScheduleHintEnabled =
+        booleanPreferencesKey("is_payment_schedule_hint_enabled")
     private val keyIsCreditNoteHintEnabled = booleanPreferencesKey("is_credit_note_hint_enabled")
 
     fun getConfiguration(): Flow<Configuration?> = context.dataStore.data.map { prefs ->
@@ -39,21 +42,23 @@ internal class ClientConfigurationStorage(private val context: Context) {
         Configuration(
             clientID = "",
             amplitudeApiKey = "",
-            isUserJourneyAnalyticsEnabled = prefs[keyIsUserJourneyAnalyticsEnabled] ?: false,
-            isSkontoEnabled = prefs[keyIsSkontoEnabled] ?: false,
-            isReturnAssistantEnabled = prefs[keyIsReturnAssistantEnabled] ?: false,
-            isTransactionDocsEnabled = prefs[keyIsTransactionDocsEnabled] ?: false,
-            isQrCodeEducationEnabled = prefs[keyIsQrCodeEducationEnabled] ?: false,
-            isInstantPaymentEnabled = prefs[keyIsInstantPaymentEnabled] ?: false,
-            isEInvoiceEnabled = prefs[keyIsEInvoiceEnabled] ?: false,
-            isSavePhotosLocallyEnabled = prefs[keyIsSavePhotosLocallyEnabled] ?: false,
-            isAlreadyPaidHintEnabled = prefs[keyIsAlreadyPaidHintEnabled] ?: false,
-            isPaymentDueHintEnabled = prefs[keyIsPaymentDueHintEnabled] ?: false,
-            isUnsupportedQRCodeWarningEnabled = prefs[keyIsUnsupportedQRCodeWarningEnabled]
-                ?: false,
-            isCreditNoteHintEnabled = prefs[keyIsCreditNoteHintEnabled] ?: false,
+            isUserJourneyAnalyticsEnabled = prefs.flag(keyIsUserJourneyAnalyticsEnabled),
+            isSkontoEnabled = prefs.flag(keyIsSkontoEnabled),
+            isReturnAssistantEnabled = prefs.flag(keyIsReturnAssistantEnabled),
+            isTransactionDocsEnabled = prefs.flag(keyIsTransactionDocsEnabled),
+            isQrCodeEducationEnabled = prefs.flag(keyIsQrCodeEducationEnabled),
+            isInstantPaymentEnabled = prefs.flag(keyIsInstantPaymentEnabled),
+            isEInvoiceEnabled = prefs.flag(keyIsEInvoiceEnabled),
+            isSavePhotosLocallyEnabled = prefs.flag(keyIsSavePhotosLocallyEnabled),
+            isAlreadyPaidHintEnabled = prefs.flag(keyIsAlreadyPaidHintEnabled),
+            isPaymentDueHintEnabled = prefs.flag(keyIsPaymentDueHintEnabled),
+            isUnsupportedQRCodeWarningEnabled = prefs.flag(keyIsUnsupportedQRCodeWarningEnabled),
+            isPaymentScheduleHintEnabled = prefs.flag(keyIsPaymentScheduleHintEnabled),
+            isCreditNoteHintEnabled = prefs.flag(keyIsCreditNoteHintEnabled),
         )
     }
+
+    private fun Preferences.flag(key: Preferences.Key<Boolean>): Boolean = this[key] ?: false
 
     suspend fun clearConfiguration() {
         context.dataStore.edit { it.clear() }
@@ -73,6 +78,7 @@ internal class ClientConfigurationStorage(private val context: Context) {
             prefs[keyIsPaymentDueHintEnabled] = configuration.isPaymentDueHintEnabled
             prefs[keyIsUnsupportedQRCodeWarningEnabled] =
                 configuration.isUnsupportedQRCodeWarningEnabled
+            prefs[keyIsPaymentScheduleHintEnabled] = configuration.isPaymentScheduleHintEnabled
             prefs[keyIsCreditNoteHintEnabled] =
                 configuration.isCreditNoteHintEnabled
             prefs[keyIsCached] = true

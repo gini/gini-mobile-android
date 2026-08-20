@@ -11,7 +11,7 @@ import java.util.Locale
  * - Removes grouping separators (like ',' or '.') and standardizes decimals to '.'.
  * - Ensures the output is formatted with thousands separators and two decimal places.
  *
- * According to IPC-566, the formatting should follow Locale.GERMAN conventions, no matter what locale
+ * The formatting should follow Locale.GERMAN conventions, no matter what locale
  * formatting the input comes in.
  *
  * Examples:
