@@ -436,6 +436,42 @@ public class AnalysisFragmentImplTest {
     }
 
     @Test
+    public void should_throw_whenSchedulePaymentWarningIsShown_withoutOnScheduleAction() {
+        // Given
+        final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
+                new AtomicReference<>();
+        final AtomicReference<IllegalArgumentException> thrownRef = new AtomicReference<>();
+
+        try (final ActivityScenario<AnalysisFragmentHostActivity> scenario = launchHostActivity(
+                analysisFragmentImplRef)) {
+
+            // When
+            scenario.onActivity(
+                    new ActivityScenario.ActivityAction<AnalysisFragmentHostActivity>() {
+                        @Override
+                        public void perform(final AnalysisFragmentHostActivity activity) {
+                            final AnalysisFragmentImpl analysisFragment =
+                                    analysisFragmentImplRef.get();
+                            try {
+                                analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
+                                        "13.08.2026", new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                // no-op: the call must fail before running this
+                                            }
+                                        }, null);
+                            } catch (final IllegalArgumentException e) {
+                                thrownRef.set(e);
+                            }
+                        }
+                    });
+
+            // Then
+            assertThat(thrownRef.get()).isNotNull();
+        }
+    }
+
+    @Test
     public void should_stopAndHideHints_whenPaymentDueHintIsShown() {
         // Given
         final AtomicReference<AnalysisFragmentImpl> analysisFragmentImplRef =
@@ -453,12 +489,13 @@ public class AnalysisFragmentImplTest {
                                     .setVisibility(android.view.View.VISIBLE);
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.showPaymentDueHint("13.08.2026", new Runnable() {
-                                @Override
-                                public void run() {
-                                    // no-op: the test only verifies hint suppression
-                                }
-                            });
+                            analysisFragment.showWarning(WarningType.PAYMENT_DUE_DATE,
+                                    "13.08.2026", new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // no-op: the test only verifies hint suppression
+                                        }
+                                    }, null);
                         }
                     });
 
@@ -487,17 +524,18 @@ public class AnalysisFragmentImplTest {
                                     .setVisibility(android.view.View.VISIBLE);
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.showSchedulePaymentHint("13.08.2026", new Runnable() {
-                                @Override
-                                public void run() {
-                                    // no-op: the test only verifies hint suppression
-                                }
-                            }, new Runnable() {
-                                @Override
-                                public void run() {
-                                    // no-op: the test only verifies hint suppression
-                                }
-                            });
+                            analysisFragment.showWarning(WarningType.SCHEDULE_PAYMENT,
+                                    "13.08.2026", new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // no-op: the test only verifies hint suppression
+                                        }
+                                    }, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // no-op: the test only verifies hint suppression
+                                        }
+                                    });
                         }
                     });
 
@@ -526,13 +564,13 @@ public class AnalysisFragmentImplTest {
                                     .setVisibility(android.view.View.VISIBLE);
                             final AnalysisFragmentImpl analysisFragment =
                                     analysisFragmentImplRef.get();
-                            analysisFragment.showAlreadyPaidWarning(
-                                    WarningType.DOCUMENT_MARKED_AS_PAID, new Runnable() {
+                            analysisFragment.showWarning(
+                                    WarningType.DOCUMENT_MARKED_AS_PAID, null, new Runnable() {
                                         @Override
                                         public void run() {
                                             // no-op: the test only verifies hint suppression
                                         }
-                                    });
+                                    }, null);
                         }
                     });
 

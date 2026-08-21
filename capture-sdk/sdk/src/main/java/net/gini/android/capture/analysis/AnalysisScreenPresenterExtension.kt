@@ -187,19 +187,19 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                val onProceed = Runnable {
-                    handleSaveInvoicesLocally(
-                        mIsInvoiceSavingEnabled,
-                        false,
-                        resultHolder,
-                        activity
-                    )
-                }
-                if (warningType == WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE) {
-                    view.showCreditNoteWarning(warningType, onProceed)
-                } else {
-                    view.showAlreadyPaidWarning(warningType, onProceed)
-                }
+                view.showWarning(
+                    warningType,
+                    null,
+                    {
+                        handleSaveInvoicesLocally(
+                            mIsInvoiceSavingEnabled,
+                            false,
+                            resultHolder,
+                            activity
+                        )
+                    },
+                    null
+                )
             }
         }
     }
@@ -300,16 +300,19 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showPaymentDueHint(
-                    DueDateFormatter.formatToLocalStyle(dueDate)
-                ) {
-                    handleSaveInvoicesLocally(
-                        mIsInvoiceSavingEnabled,
-                        false,
-                        resultHolder,
-                        activity
-                    )
-                }
+                view.showWarning(
+                    WarningType.PAYMENT_DUE_DATE,
+                    DueDateFormatter.formatToLocalStyle(dueDate),
+                    {
+                        handleSaveInvoicesLocally(
+                            mIsInvoiceSavingEnabled,
+                            false,
+                            resultHolder,
+                            activity
+                        )
+                    },
+                    null
+                )
             }
         }
     }
@@ -334,7 +337,8 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showSchedulePaymentHint(
+                view.showWarning(
+                    WarningType.SCHEDULE_PAYMENT,
                     DueDateFormatter.formatToLocalStyle(dueDate),
                     {
                         handleSaveInvoicesLocally(

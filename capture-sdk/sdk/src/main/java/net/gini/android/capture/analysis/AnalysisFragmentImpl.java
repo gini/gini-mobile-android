@@ -356,29 +356,14 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
+    void showWarning(@NonNull WarningType warningType, @Nullable String titleFormatArg,
+                     @NonNull Runnable onProceed, @Nullable Runnable onSchedule) {
+        if (warningType == WarningType.SCHEDULE_PAYMENT && onSchedule == null) {
+            throw new IllegalArgumentException(
+                    "WarningType.SCHEDULE_PAYMENT requires an onSchedule action");
+        }
         stopAndHideHints();
-        mFragment.showWarning(warningType, null, onProceed);
-    }
-
-    @Override
-    void showPaymentDueHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed) {
-        stopAndHideHints();
-        mFragment.showWarning(WarningType.PAYMENT_DUE_DATE, formattedDueDate, onProceed);
-    }
-
-    @Override
-    void showCreditNoteWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
-        stopAndHideHints();
-        mFragment.showWarning(warningType, null, onProceed);
-    }
-
-    @Override
-    void showSchedulePaymentHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed,
-                                 @NonNull Runnable onSchedule) {
-        stopAndHideHints();
-        mFragment.showWarning(
-                WarningType.SCHEDULE_PAYMENT, formattedDueDate, onProceed, onSchedule);
+        mFragment.showWarning(warningType, titleFormatArg, onProceed, onSchedule);
     }
 
     // Keeps TalkBack focus on the warning bottom sheet by removing the rotating

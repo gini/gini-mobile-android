@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.atLeast
 import com.nhaarman.mockitokotlin2.atLeastOnce
@@ -1187,7 +1188,7 @@ class AnalysisScreenPresenterTest {
         // Then
         val formattedDueDate = dueDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         idleMainLooperUntil {
-            verify(mView).showPaymentDueHint(eq(formattedDueDate), any())
+            verify(mView).showWarning(eq(WarningType.PAYMENT_DUE_DATE), eq(formattedDueDate), any(), anyOrNull())
         }
         verify(listener, never()).onExtractionsAvailable(any(), any(), any())
     }
@@ -1205,7 +1206,7 @@ class AnalysisScreenPresenterTest {
 
         // Then
         idleMainLooperUntil {
-            verify(mView).showPaymentDueHint(any(), any())
+            verify(mView).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), any(), anyOrNull())
         }
     }
 
@@ -1336,12 +1337,9 @@ class AnalysisScreenPresenterTest {
 
         // Then
         idleMainLooperUntil {
-            verify(mView).showAlreadyPaidWarning(
-                eq(WarningType.DOCUMENT_MARKED_AS_PAID),
-                any()
-            )
+            verify(mView).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_PAID), anyOrNull(), any(), anyOrNull())
         }
-        verify(mView, never()).showPaymentDueHint(any(), any())
+        verify(mView, never()).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), any(), anyOrNull())
     }
 
     @Test
@@ -1392,7 +1390,7 @@ class AnalysisScreenPresenterTest {
         val listener = startPresenterForDueHint(extractions)
         val onProceedCaptor = argumentCaptor<Runnable>()
         idleMainLooperUntil {
-            verify(mView).showPaymentDueHint(any(), onProceedCaptor.capture())
+            verify(mView).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), onProceedCaptor.capture(), anyOrNull())
         }
 
         // When the user taps "Proceed Anyway"
@@ -1480,7 +1478,130 @@ class AnalysisScreenPresenterTest {
         idleMainLooperUntil {
             verify(listener).onExtractionsAvailable(any(), any(), any())
         }
-        verify(mView, never()).showPaymentDueHint(any(), any())
+        verify(mView, never()).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), any(), anyOrNull())
+    }
+
+    // endregion
+
+    // region Credit note warning bottom sheet
+
+    @Test
+    fun `should show credit note warning when flags on and document is a credit note`() {
+        // Given
+        configurationProvider.update { it.copy(isCreditNoteHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(creditNoteExtractions())
+
+        // Then
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE), anyOrNull(), any(), anyOrNull())
+        }
+        verify(listener, never()).onExtractionsAvailable(any(), any(), any())
+    }
+
+    @Test
+    fun `proceed continuation of credit note warning should strip amountToPay from extractions`() {
+        // Given
+        configurationProvider.update { it.copy(isCreditNoteHintEnabled = true) }
+        val listener = startPresenterForDueHint(creditNoteExtractions())
+        val onProceedCaptor = argumentCaptor<Runnable>()
+        idleMainLooperUntil {
+            verify(mView).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE), anyOrNull(), onProceedCaptor.capture(), anyOrNull())
+        }
+
+        // When the user taps "Proceed Anyway"
+        onProceedCaptor.lastValue.run()
+
+        // Then
+        val extractionsCaptor = argumentCaptor<Map<String, GiniCaptureSpecificExtraction>>()
+        verify(listener).onExtractionsAvailable(extractionsCaptor.capture(), any(), any())
+        Truth.assertThat(extractionsCaptor.lastValue).doesNotContainKey("amountToPay")
+        Truth.assertThat(extractionsCaptor.lastValue.keys)
+            .containsAtLeast("businessDocType", "paymentState")
+    }
+
+    @Test
+    fun `should not show credit note warning when SDK flag is off`() {
+        // Given
+        configurationProvider.update { it.copy(isCreditNoteHintEnabled = true) }
+        GiniCapture.newInstance(InstrumentationRegistry.getInstrumentation().context)
+            .setGiniCaptureNetworkService(mock())
+            .setCreditNoteHintEnabled(false)
+            .build()
+
+        // When
+        val listener = startPresenterForDueHint(
+            creditNoteExtractions(),
+            giniCapture = GiniCapture.getInstance()
+        )
+
+        // Then
+        assertProceedsWithoutCreditNoteWarning(listener)
+    }
+
+    @Test
+    fun `should not show credit note warning when client configuration flag is off`() {
+        // Given the provider default (isCreditNoteHintEnabled = false)
+
+        // When
+        val listener = startPresenterForDueHint(creditNoteExtractions())
+
+        // Then
+        assertProceedsWithoutCreditNoteWarning(listener)
+    }
+
+    @Test
+    fun `should not show credit note warning when business doc type is not CreditNote`() {
+        // Given
+        configurationProvider.update { it.copy(isCreditNoteHintEnabled = true) }
+        val extractions = creditNoteExtractions(businessDocType = "Invoice")
+
+        // When
+        val listener = startPresenterForDueHint(extractions)
+
+        // Then the extractions are forwarded unchanged (amountToPay is not stripped)
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(eq(extractions), any(), any())
+        }
+        verify(mView, never()).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE), anyOrNull(), any(), anyOrNull())
+    }
+
+    @Test
+    fun `should not show credit note warning when business doc type extraction is missing`() {
+        // Given
+        configurationProvider.update { it.copy(isCreditNoteHintEnabled = true) }
+
+        // When
+        val listener = startPresenterForDueHint(creditNoteExtractions(businessDocType = null))
+
+        // Then
+        assertProceedsWithoutCreditNoteWarning(listener)
+    }
+
+    /**
+     * The payment state must not be "Paid": the already-paid warning is checked before the
+     * credit note warning in the presenter and would win otherwise.
+     */
+    private fun creditNoteExtractions(
+        businessDocType: String? = "CreditNote"
+    ): Map<String, GiniCaptureSpecificExtraction> {
+        val extractions = mutableMapOf(
+            "paymentState" to specificExtraction("paymentState", "ToBePaid"),
+            "amountToPay" to specificExtraction("amountToPay", "42.00:EUR")
+        )
+        if (businessDocType != null) {
+            extractions["businessDocType"] =
+                specificExtraction("businessDocType", businessDocType)
+        }
+        return extractions
+    }
+
+    private fun assertProceedsWithoutCreditNoteWarning(listener: AnalysisFragmentListener) {
+        idleMainLooperUntil {
+            verify(listener).onExtractionsAvailable(any(), any(), any())
+        }
+        verify(mView, never()).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE), anyOrNull(), any(), anyOrNull())
     }
 
     // endregion
@@ -1499,7 +1620,7 @@ class AnalysisScreenPresenterTest {
         // Then
         val formattedDueDate = dueDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(eq(formattedDueDate), any(), any())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), eq(formattedDueDate), any(), any())
         }
         verify(listener, never()).onExtractionsAvailable(any(), any(), any())
         verify(listener, never()).onSchedulePayment(any(), any(), any())
@@ -1524,9 +1645,9 @@ class AnalysisScreenPresenterTest {
 
         // Then
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(any(), any(), any())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), any())
         }
-        verify(mView, never()).showPaymentDueHint(any(), any())
+        verify(mView, never()).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), any(), anyOrNull())
     }
 
     /**
@@ -1548,9 +1669,9 @@ class AnalysisScreenPresenterTest {
 
         // Then
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(any(), any(), any())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), any())
         }
-        verify(mView, never()).showPaymentDueHint(any(), any())
+        verify(mView, never()).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), any(), anyOrNull())
     }
 
     @Test
@@ -1566,9 +1687,9 @@ class AnalysisScreenPresenterTest {
 
         // Then
         idleMainLooperUntil {
-            verify(mView).showPaymentDueHint(any(), any())
+            verify(mView).showWarning(eq(WarningType.PAYMENT_DUE_DATE), any(), any(), anyOrNull())
         }
-        verify(mView, never()).showSchedulePaymentHint(any(), any(), any())
+        verify(mView, never()).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), any())
     }
 
     @Test
@@ -1586,12 +1707,9 @@ class AnalysisScreenPresenterTest {
 
         // Then
         idleMainLooperUntil {
-            verify(mView).showAlreadyPaidWarning(
-                eq(WarningType.DOCUMENT_MARKED_AS_PAID),
-                any()
-            )
+            verify(mView).showWarning(eq(WarningType.DOCUMENT_MARKED_AS_PAID), anyOrNull(), any(), anyOrNull())
         }
-        verify(mView, never()).showSchedulePaymentHint(any(), any(), any())
+        verify(mView, never()).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), any())
     }
 
     @Test
@@ -1607,7 +1725,7 @@ class AnalysisScreenPresenterTest {
 
         // Then
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(any(), any(), any())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), any())
         }
     }
 
@@ -1777,7 +1895,7 @@ class AnalysisScreenPresenterTest {
         val listener = startPresenterForDueHint(extractions)
         val onScheduleCaptor = argumentCaptor<Runnable>()
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(any(), any(), onScheduleCaptor.capture())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), onScheduleCaptor.capture())
         }
 
         // When the user taps "Schedule Payment"
@@ -1801,7 +1919,7 @@ class AnalysisScreenPresenterTest {
         val listener = startPresenterForDueHint(extractions)
         val onProceedCaptor = argumentCaptor<Runnable>()
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(any(), onProceedCaptor.capture(), any())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), onProceedCaptor.capture(), any())
         }
 
         // When the user taps "Proceed Anyway"
@@ -1830,7 +1948,7 @@ class AnalysisScreenPresenterTest {
         val listener = startPresenterForDueHint(extractions, isInvoiceSavingEnabled = true)
         val onScheduleCaptor = argumentCaptor<Runnable>()
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(any(), any(), onScheduleCaptor.capture())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), onScheduleCaptor.capture())
         }
 
         // When the user taps "Schedule Payment"
@@ -1864,7 +1982,7 @@ class AnalysisScreenPresenterTest {
         val listener = presenter.second
         val onScheduleCaptor = argumentCaptor<Runnable>()
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(any(), any(), onScheduleCaptor.capture())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), onScheduleCaptor.capture())
         }
         onScheduleCaptor.lastValue.run()
         verify(mView).processInvoiceSaving(any())
@@ -1894,7 +2012,7 @@ class AnalysisScreenPresenterTest {
         val listener = presenter.second
         val onProceedCaptor = argumentCaptor<Runnable>()
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(any(), onProceedCaptor.capture(), any())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), onProceedCaptor.capture(), any())
         }
         onProceedCaptor.lastValue.run()
         verify(mView).processInvoiceSaving(any())
@@ -1919,7 +2037,7 @@ class AnalysisScreenPresenterTest {
         val listener = startPresenterForDueHint(extractions, isInvoiceSavingEnabled = false)
         val onScheduleCaptor = argumentCaptor<Runnable>()
         idleMainLooperUntil {
-            verify(mView).showSchedulePaymentHint(any(), any(), onScheduleCaptor.capture())
+            verify(mView).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), onScheduleCaptor.capture())
         }
 
         // When
@@ -2019,7 +2137,7 @@ class AnalysisScreenPresenterTest {
         idleMainLooperUntil {
             verify(listener).onExtractionsAvailable(any(), any(), any())
         }
-        verify(mView, never()).showSchedulePaymentHint(any(), any(), any())
+        verify(mView, never()).showWarning(eq(WarningType.SCHEDULE_PAYMENT), any(), any(), any())
         verify(listener, never()).onSchedulePayment(any(), any(), any())
     }
 
