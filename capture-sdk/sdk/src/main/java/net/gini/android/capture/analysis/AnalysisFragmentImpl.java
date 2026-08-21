@@ -1,8 +1,5 @@
 package net.gini.android.capture.analysis;
 
-import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
-import static net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -67,6 +64,7 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 import kotlin.Unit;
 
 import static net.gini.android.capture.tracking.EventTrackingHelper.trackAnalysisScreenEvent;
+import static net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY;
 
 /**
  * Main logic implementation for analysis UI presented by {@link AnalysisFragment}
@@ -358,23 +356,14 @@ class AnalysisFragmentImpl extends AnalysisScreenContract.View {
     }
 
     @Override
-    void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed) {
+    void showWarning(@NonNull WarningType warningType, @Nullable String titleFormatArg,
+                     @NonNull Runnable onProceed, @Nullable Runnable onSchedule) {
+        if (warningType == WarningType.SCHEDULE_PAYMENT && onSchedule == null) {
+            throw new IllegalArgumentException(
+                    "WarningType.SCHEDULE_PAYMENT requires an onSchedule action");
+        }
         stopAndHideHints();
-        mFragment.showWarning(warningType, null, onProceed);
-    }
-
-    @Override
-    void showPaymentDueHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed) {
-        stopAndHideHints();
-        mFragment.showWarning(WarningType.PAYMENT_DUE_DATE, formattedDueDate, onProceed);
-    }
-
-    @Override
-    void showSchedulePaymentHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed,
-                                 @NonNull Runnable onSchedule) {
-        stopAndHideHints();
-        mFragment.showWarning(
-                WarningType.SCHEDULE_PAYMENT, formattedDueDate, onProceed, onSchedule);
+        mFragment.showWarning(warningType, titleFormatArg, onProceed, onSchedule);
     }
 
     // Keeps TalkBack focus on the warning bottom sheet by removing the rotating

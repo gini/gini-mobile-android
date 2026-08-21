@@ -254,6 +254,7 @@ class GiniCaptureFragmentTest {
             isPaymentDueHintEnabled = false,
             isAlreadyPaidHintEnabled = false,
             isUnsupportedQRCodeWarningEnabled = isUnsupportedQRCodeWarningEnabled,
+            isCreditNoteHintEnabled = false
         )
 
         return ConfigurationNetworkResult(testConfig, UUID.randomUUID())

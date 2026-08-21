@@ -212,7 +212,8 @@ internal constructor(
             amplitudeApiKey = configuration.amplitudeApiKey ?: "",
             isSavePhotosLocallyEnabled = configuration.isSavePhotosLocallyEnabled,
             isUnsupportedQRCodeWarningEnabled = configuration.isUnsupportedQRCodeWarningEnabled,
-            isPaymentScheduleHintEnabled = configuration.isPaymentScheduleHintEnabled
+            isPaymentScheduleHintEnabled = configuration.isPaymentScheduleHintEnabled,
+            isCreditNoteHintEnabled = configuration.isCreditNoteHintEnabled,
         )
 
     @Suppress("LongMethod")

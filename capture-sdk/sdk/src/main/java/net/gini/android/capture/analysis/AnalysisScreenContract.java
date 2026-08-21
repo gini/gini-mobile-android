@@ -65,10 +65,20 @@ interface AnalysisScreenContract {
         abstract void showHints(List<AnalysisHint> hints);
 
         abstract void showError(String errorMessage, Document document);
-        abstract void showAlreadyPaidWarning(@NonNull WarningType warningType, @NonNull Runnable onProceed);
-        abstract void showPaymentDueHint(@NonNull String formattedDueDate, @NonNull Runnable onProceed);
-        abstract void showSchedulePaymentHint(@NonNull String formattedDueDate,
-                @NonNull Runnable onProceed, @NonNull Runnable onSchedule);
+        /**
+         * Shows the warning bottom sheet for the given warning type (already paid, credit note,
+         * payment due date, scheduled payment). The type selects the texts and CTA labels; the
+         * presenter supplies the behavior behind the CTAs.
+         *
+         * @param warningType    the warning to show
+         * @param titleFormatArg the title's format argument (e.g. the formatted due date);
+         *                       required iff {@link WarningType#requiresTitleFormatArg()}
+         * @param onProceed      runs when the user chooses to continue the pay-now flow
+         * @param onSchedule     hands off to the scheduled payment flow; required for
+         *                       {@link WarningType#SCHEDULE_PAYMENT}, ignored otherwise
+         */
+        abstract void showWarning(@NonNull WarningType warningType, @Nullable String titleFormatArg,
+                @NonNull Runnable onProceed, @Nullable Runnable onSchedule);
         abstract void showError(ErrorType errorType, Document document);
 
         abstract void showEducation(EducationCompleteListener listener);

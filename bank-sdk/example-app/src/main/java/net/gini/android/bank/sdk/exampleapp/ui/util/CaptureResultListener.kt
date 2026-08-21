@@ -37,7 +37,8 @@ class CaptureResultListener(val context: Activity) : GiniCaptureFragmentListener
             is CaptureSDKResult.Error -> {
                 Toast.makeText(
                     context,
-                    "Error: ${result.value.errorCode} ${result.value.message}",
+                    "Error: ${result.value.errorCode} " +
+                            "${result.value.message}",
                     Toast.LENGTH_LONG
                 ).show()
 

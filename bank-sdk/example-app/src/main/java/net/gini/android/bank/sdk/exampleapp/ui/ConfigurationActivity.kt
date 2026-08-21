@@ -27,6 +27,7 @@ import net.gini.android.capture.util.SharedPreferenceHelper.SAF_STORAGE_URI_KEY
 import javax.inject.Inject
 import net.gini.android.capture.ProductTag
 
+@Suppress("LargeClass")
 @AndroidEntryPoint
 class ConfigurationActivity : AppCompatActivity() {
 
@@ -43,7 +44,11 @@ class ConfigurationActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         configurationViewModel.setConfiguration(
-            IntentCompat.getParcelableExtra(intent, CONFIGURATION_BUNDLE, ExampleAppBankConfiguration::class.java)!!
+            IntentCompat.getParcelableExtra(
+                intent,
+                CONFIGURATION_BUNDLE,
+                ExampleAppBankConfiguration::class.java
+            )!!
         )
         configurationViewModel.disableCameraPermission(
             intent.getBooleanExtra(CAMERA_PERMISSION_BUNDLE, false)
@@ -111,6 +116,7 @@ class ConfigurationActivity : AppCompatActivity() {
         finish()
     }
 
+    @Suppress("LongMethod")
     private fun updateUIWithConfigurationObject(configuration: ExampleAppBankConfiguration) {
         // setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.isChecked =
@@ -120,7 +126,8 @@ class ConfigurationActivity : AppCompatActivity() {
         // Capture SDK
         binding.layoutFeatureToggle.switchCaptureSdk.isChecked = configuration.isCaptureSDK
         // Saving Invoices Locally
-        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature.isChecked = configuration.saveInvoicesLocallyEnabled
+        binding.layoutFeatureToggle.switchSaveInvoicesLocallyFeature.isChecked =
+            configuration.saveInvoicesLocallyEnabled
         // QR code scanning
         binding.layoutFeatureToggle.switchQrCodeScanning.isChecked = configuration.isQrCodeEnabled
         // only QR code scanning
@@ -215,6 +222,10 @@ class ConfigurationActivity : AppCompatActivity() {
         binding.layoutFeatureToggle.editTextPaymentDueHintThresholdDays.hint =
             configuration.paymentDueHintThresholdDays.toString()
 
+        // enable credit note hint
+        binding.layoutFeatureToggle.switchCreditNoteHint.isChecked =
+            configuration.isCreditNoteHintEnabled
+
         // Digital invoice onboarding custom illustration
         binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration.isChecked =
             configuration.isDigitalInvoiceOnboardingCustomIllustrationEnabled
@@ -265,7 +276,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // setup sdk with default configuration
         binding.layoutFeatureToggle.switchSetupSdkWithDefaultConfiguration.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isDefaultSDKConfigurationsEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isDefaultSDKConfigurationsEnabled = isChecked
+                )
             )
             if (isChecked) configurationViewModel.setupSDKWithDefaultConfigurations()
         }
@@ -371,9 +384,11 @@ class ConfigurationActivity : AppCompatActivity() {
                     R.id.btn_fileImportOnlyPdf -> configurationViewModel.configurationFlow.value.copy(
                         documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF
                     )
+
                     R.id.btn_fileImportPdfAndImage -> configurationViewModel.configurationFlow.value.copy(
                         documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES
                     )
+
                     else -> configurationViewModel.configurationFlow.value.copy(
                         documentImportEnabledFileTypes = DocumentImportEnabledFileTypes.NONE
                     )
@@ -404,25 +419,33 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable align corners onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingAlignCornersPage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isAlignCornersInCustomOnboardingEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isAlignCornersInCustomOnboardingEnabled = isChecked
+                )
             )
         }
         // enable lighting in custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingLightingPage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isLightingInCustomOnboardingEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isLightingInCustomOnboardingEnabled = isChecked
+                )
             )
         }
         // enable QR code in custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingQRCodePage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isQRCodeInCustomOnboardingEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isQRCodeInCustomOnboardingEnabled = isChecked
+                )
             )
         }
         // enable multi page in custom onboarding pages
         binding.layoutOnboardingToggles.switchCustomOnboardingMultiPage.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isMultiPageInCustomOnboardingEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isMultiPageInCustomOnboardingEnabled = isChecked
+                )
             )
         }
     }
@@ -431,19 +454,25 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable button's custom loading indicator
         binding.layoutGeneralUiCustomizationToggles.switchButtonsCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isButtonsCustomLoadingIndicatorEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isButtonsCustomLoadingIndicatorEnabled = isChecked
+                )
             )
         }
         // enable screen's custom loading indicator
         binding.layoutAnalysisToggles.switchScreenCustomLoadingIndicator.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isScreenCustomLoadingIndicatorEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isScreenCustomLoadingIndicatorEnabled = isChecked
+                )
             )
         }
         // enable supported format help screen
         binding.layoutHelpToggles.switchSupportedFormatsScreen.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isSupportedFormatsHelpScreenEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isSupportedFormatsHelpScreenEnabled = isChecked
+                )
             )
         }
         // enable custom help items
@@ -461,7 +490,9 @@ class ConfigurationActivity : AppCompatActivity() {
         // enable custom primary button in compose
         binding.layoutGeneralUiCustomizationToggles.switchCustomPrimaryComposeButton.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isCustomPrimaryComposeButtonEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isCustomPrimaryComposeButtonEnabled = isChecked
+                )
             )
         }
         // enable event tracker
@@ -501,6 +532,16 @@ class ConfigurationActivity : AppCompatActivity() {
                 )
             }
         }
+
+        //enable credit note hint for showing warning
+        binding.layoutFeatureToggle.switchCreditNoteHint.setOnCheckedChangeListener { _, isChecked ->
+            configurationViewModel.setConfiguration(
+                configurationViewModel.configurationFlow.value.copy(
+                    isCreditNoteHintEnabled = isChecked
+                )
+            )
+        }
+
         // enable return assistant
         binding.layoutFeatureToggle.switchReturnAssistantFeature.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
@@ -510,12 +551,15 @@ class ConfigurationActivity : AppCompatActivity() {
         // Digital invoice onboarding custom illustration
         binding.layoutReturnAssistantToggles.switchDigitalInvoiceOnboardingCustomIllustration.setOnCheckedChangeListener { _, isChecked ->
             configurationViewModel.setConfiguration(
-                configurationViewModel.configurationFlow.value.copy(isDigitalInvoiceOnboardingCustomIllustrationEnabled = isChecked)
+                configurationViewModel.configurationFlow.value.copy(
+                    isDigitalInvoiceOnboardingCustomIllustrationEnabled = isChecked
+                )
             )
         }
         // Product Tag switch - OFF = SEPA, ON = CX
         binding.layoutFeatureToggle.switchProductTagCx.setOnCheckedChangeListener { _, isChecked ->
-            val productTag = if (isChecked) ProductTag.CxExtractions else ProductTag.SepaExtractions
+            val productTag =
+                if (isChecked) ProductTag.CxExtractions else ProductTag.SepaExtractions
             configurationViewModel.setConfiguration(
                 configurationViewModel.configurationFlow.value.copy(productTag = productTag)
             )
@@ -550,7 +594,8 @@ class ConfigurationActivity : AppCompatActivity() {
                 configurationViewModel.configurationFlow.value.copy(clientId = it.toString())
             )
             if (it.toString().isNotEmpty() &&
-                binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.toString().isNotEmpty()
+                binding.layoutDebugDevelopmentOptionsToggles.editTextClientSecret.toString()
+                    .isNotEmpty()
             ) {
                 applyClientSecretAndClientId()
             }
@@ -560,7 +605,8 @@ class ConfigurationActivity : AppCompatActivity() {
                 configurationViewModel.configurationFlow.value.copy(clientSecret = it.toString())
             )
             if (it.toString().isNotEmpty() &&
-                binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.toString().isNotEmpty()
+                binding.layoutDebugDevelopmentOptionsToggles.editTextClientId.toString()
+                    .isNotEmpty()
             ) {
                 applyClientSecretAndClientId()
             }
@@ -580,7 +626,11 @@ class ConfigurationActivity : AppCompatActivity() {
         // Custom HTTP client
         binding.layoutDebugDevelopmentOptionsToggles.switchCustomHttpClient.setOnCheckedChangeListener { _, isChecked ->
             val configurationFlow = configurationViewModel.configurationFlow.value
-            configurationViewModel.setConfiguration(configurationFlow.copy(isCustomHttpClientEnabled = isChecked))
+            configurationViewModel.setConfiguration(
+                configurationFlow.copy(
+                    isCustomHttpClientEnabled = isChecked
+                )
+            )
             // Reinitialize network services with the new flag
             defaultNetworkServicesProvider.reinitNetworkServices(
                 configurationFlow.clientId.ifEmpty { getString(R.string.gini_api_client_id) },
@@ -601,22 +651,34 @@ class ConfigurationActivity : AppCompatActivity() {
     private fun setupForceSdkThemeToggles() {
         val toggles = binding.layoutGeneralUiCustomizationToggles
         // Reflect the persisted setting when (re)opening the screen.
-        when (SharedPreferenceHelper.getString(CaptureFlowHostActivity.FORCE_SDK_THEME_KEY, this)) {
-            CaptureFlowHostActivity.FORCE_SDK_THEME_DARK -> toggles.switchForceDarkTheme.isChecked = true
-            CaptureFlowHostActivity.FORCE_SDK_THEME_LIGHT -> toggles.switchForceLightTheme.isChecked = true
+        when (SharedPreferenceHelper.getString(
+            CaptureFlowHostActivity.FORCE_SDK_THEME_KEY,
+            this
+        )) {
+            CaptureFlowHostActivity.FORCE_SDK_THEME_DARK -> toggles.switchForceDarkTheme.isChecked =
+                true
+
+            CaptureFlowHostActivity.FORCE_SDK_THEME_LIGHT -> toggles.switchForceLightTheme.isChecked =
+                true
         }
 
         toggles.switchForceDarkTheme.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked && toggles.switchForceLightTheme.isChecked) {
                 toggles.switchForceLightTheme.isChecked = false
             }
-            persistForcedSdkTheme(toggles.switchForceDarkTheme.isChecked, toggles.switchForceLightTheme.isChecked)
+            persistForcedSdkTheme(
+                toggles.switchForceDarkTheme.isChecked,
+                toggles.switchForceLightTheme.isChecked
+            )
         }
         toggles.switchForceLightTheme.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked && toggles.switchForceDarkTheme.isChecked) {
                 toggles.switchForceDarkTheme.isChecked = false
             }
-            persistForcedSdkTheme(toggles.switchForceDarkTheme.isChecked, toggles.switchForceLightTheme.isChecked)
+            persistForcedSdkTheme(
+                toggles.switchForceDarkTheme.isChecked,
+                toggles.switchForceLightTheme.isChecked
+            )
         }
     }
 
@@ -626,7 +688,11 @@ class ConfigurationActivity : AppCompatActivity() {
             forceLight -> CaptureFlowHostActivity.FORCE_SDK_THEME_LIGHT
             else -> ""
         }
-        SharedPreferenceHelper.saveString(CaptureFlowHostActivity.FORCE_SDK_THEME_KEY, value, this)
+        SharedPreferenceHelper.saveString(
+            CaptureFlowHostActivity.FORCE_SDK_THEME_KEY,
+            value,
+            this
+        )
     }
 
     private fun applyClientSecretAndClientId() {

@@ -20,6 +20,7 @@ data class ConfigurationResponse(
     @Json(name = "savePhotosLocallyEnabled") val savePhotosLocallyEnabled: Boolean?,
     @Json(name = "unsupportedQRCodeWarningEnabled") val unsupportedQRCodeWarningEnabled: Boolean?,
     @Json(name = "paymentScheduleHintEnabled") val paymentScheduleHintEnabled: Boolean? = null,
+    @Json(name = "creditNoteHintEnabled") val creditNoteHintEnabled: Boolean? = null,
 )
 
 /**
@@ -41,5 +42,6 @@ internal fun ConfigurationResponse.toConfiguration() = Configuration(
     isSavePhotosLocallyEnabled = savePhotosLocallyEnabled ?: false,
     isUnsupportedQRCodeWarningEnabled = unsupportedQRCodeWarningEnabled ?: false,
     isPaymentScheduleHintEnabled = paymentScheduleHintEnabled ?: false,
+    isCreditNoteHintEnabled = creditNoteHintEnabled ?: false,
 )
 

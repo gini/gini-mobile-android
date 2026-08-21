@@ -132,7 +132,8 @@ class GiniCaptureDefaultNetworkServiceTest {
             isSavePhotosLocallyEnabled = true,
             isAlreadyPaidHintEnabled = true,
             isPaymentDueHintEnabled = true,
-            isPaymentScheduleHintEnabled = true
+            isPaymentScheduleHintEnabled = true,
+            isCreditNoteHintEnabled = true
         )
 
         // Add more stubs if mapBankConfigurationToConfiguration uses other properties

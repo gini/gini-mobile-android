@@ -40,8 +40,10 @@ data class ExampleAppBankConfiguration(
     val isFlashDefaultStateEnabled: Boolean = false,
 
     // set import document type support
-    // net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes → radio buttons to select an available enum value
-    val documentImportEnabledFileTypes: DocumentImportEnabledFileTypes = DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
+    // net.gini.android.capture.GiniCapture.Builder#setDocumentImportEnabledFileTypes →
+    //      radio buttons to select an available enum value
+    val documentImportEnabledFileTypes: DocumentImportEnabledFileTypes =
+        DocumentImportEnabledFileTypes.PDF_AND_IMAGES,
 
     // enable onboarding screens at first launch
     // net.gini.android.capture.GiniCapture.Builder#setShouldShowOnboardingAtFirstRun → on/off switch
@@ -52,7 +54,8 @@ data class ExampleAppBankConfiguration(
     val isOnboardingAtEveryLaunchEnabled: Boolean = false,
 
     // enable custom onboarding pages
-    // net.gini.android.capture.GiniCapture.Builder#setCustomOnboardingPages → on/off switch to show custom onboarding pages
+    // net.gini.android.capture.GiniCapture.Builder#setCustomOnboardingPages →
+    //      on/off switch to show custom onboarding pages
     val isCustomOnboardingPagesEnabled: Boolean = false,
 
     // enable align corners in custom onboarding pages
@@ -64,7 +67,8 @@ data class ExampleAppBankConfiguration(
     val isLightingInCustomOnboardingEnabled: Boolean = false,
 
     // enable QR code in custom onboarding pages
-    // net.gini.android.capture.GiniCapture.Builder#setOnboardingQRCodeIllustrationAdapter-> on/off switch to show custom adapter with animated illustrations
+    // net.gini.android.capture.GiniCapture.Builder#setOnboardingQRCodeIllustrationAdapter->
+    //      on/off switch to show custom adapter with animated illustrations
     val isQRCodeInCustomOnboardingEnabled: Boolean = false,
 
     // enable multi page in custom onboarding pages
@@ -72,11 +76,13 @@ data class ExampleAppBankConfiguration(
     val isMultiPageInCustomOnboardingEnabled: Boolean = false,
 
     // enable button's custom loading indicator
-    // net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setOnButtonLoadingIndicatorAdapter →
+    //      on/off switch to show a custom adapter implementation
     val isButtonsCustomLoadingIndicatorEnabled: Boolean = false,
 
     // enable screen's custom loading indicator
-    // net.gini.android.capture.GiniCapture.Builder#setLoadingIndicatorAdapter →  on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setLoadingIndicatorAdapter →
+    //      on/off switch to show a custom adapter implementation
 
     val isScreenCustomLoadingIndicatorEnabled: Boolean = false,
 
@@ -89,7 +95,8 @@ data class ExampleAppBankConfiguration(
     val isCustomHelpItemsEnabled: Boolean = false,
 
     // enable custom navigation bar
-    // net.gini.android.capture.GiniCapture.Builder#setNavigationBarTopAdapter →  on/off switch to show a custom adapter implementation
+    // net.gini.android.capture.GiniCapture.Builder#setNavigationBarTopAdapter →
+    //    on/off switch to show a custom adapter implementation
     val isCustomNavBarEnabled: Boolean = false,
 
     // enable custom primary button in compose
@@ -133,6 +140,9 @@ data class ExampleAppBankConfiguration(
 
     //  payment due hint threshold days
     val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
+
+    // enable credit note hint
+    val isCreditNoteHintEnabled: Boolean = true,
 
     // Digital invoice onboarding custom illustration
     val isDigitalInvoiceOnboardingCustomIllustrationEnabled: Boolean = false,
@@ -180,6 +190,7 @@ data class ExampleAppBankConfiguration(
                 isPaymentDueHintEnabled = defaultCaptureConfiguration.paymentDueHintEnabled,
                 isPaymentScheduleHintEnabled = defaultCaptureConfiguration.paymentScheduleHintEnabled,
                 paymentDueHintThresholdDays = defaultCaptureConfiguration.paymentDueHintThresholdDays,
+                isCreditNoteHintEnabled = defaultCaptureConfiguration.creditNoteHintEnabled,
                 isOnboardingAtFirstRunEnabled = defaultCaptureConfiguration.showOnboardingAtFirstRun,
                 isOnboardingAtEveryLaunchEnabled = defaultCaptureConfiguration.showOnboarding,
                 isSupportedFormatsHelpScreenEnabled = defaultCaptureConfiguration.supportedFormatsHelpScreenEnabled,

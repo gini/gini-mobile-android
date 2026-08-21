@@ -31,6 +31,7 @@ import net.gini.android.capture.network.model.GiniCaptureCompoundExtraction
 import net.gini.android.capture.network.model.GiniCaptureReturnReason
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.capture.paymentHints.GetAlreadyPaidHintEnabledUseCase
+import net.gini.android.capture.paymentHints.GetCreditNoteHintEnabledUseCase
 import net.gini.android.capture.paymentHints.GetPaymentDueHintEnabledUseCase
 import net.gini.android.capture.paymentHints.GetPaymentScheduleHintEnabledUseCase
 import net.gini.android.capture.tracking.AnalysisScreenEvent
@@ -49,6 +50,9 @@ internal class AnalysisScreenPresenterExtension(
 
     val paymentDueHintEnabledUseCase:
             GetPaymentDueHintEnabledUseCase by getGiniCaptureKoin().inject()
+
+    val creditNoteHintEnabledUseCase:
+            GetCreditNoteHintEnabledUseCase by getGiniCaptureKoin().inject()
 
     val paymentScheduleHintEnabledUseCase:
             GetPaymentScheduleHintEnabledUseCase by getGiniCaptureKoin().inject()
@@ -162,7 +166,13 @@ internal class AnalysisScreenPresenterExtension(
             )
     }
 
-    fun showAlreadyPaidHint(
+    /**
+     * Shows the already-paid or credit-note warning for [warningType], running the local invoice
+     * saving step before continuing. The two warnings share this flow; only the view method
+     * showing the bottom sheet differs.
+     */
+    fun showDocumentMarkedWarning(
+        warningType: WarningType,
         mIsInvoiceSavingEnabled: Boolean,
         isSavingInvoicesInProgress: Boolean,
         resultHolder: ResultHolder,
@@ -177,16 +187,19 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showAlreadyPaidWarning(
-                    WarningType.DOCUMENT_MARKED_AS_PAID
-                ) {
-                    handleSaveInvoicesLocally(
-                        mIsInvoiceSavingEnabled,
-                        false,
-                        resultHolder,
-                        activity
-                    )
-                }
+                view.showWarning(
+                    warningType,
+                    null,
+                    {
+                        handleSaveInvoicesLocally(
+                            mIsInvoiceSavingEnabled,
+                            false,
+                            resultHolder,
+                            activity
+                        )
+                    },
+                    null
+                )
             }
         }
     }
@@ -287,16 +300,19 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showPaymentDueHint(
-                    DueDateFormatter.formatToLocalStyle(dueDate)
-                ) {
-                    handleSaveInvoicesLocally(
-                        mIsInvoiceSavingEnabled,
-                        false,
-                        resultHolder,
-                        activity
-                    )
-                }
+                view.showWarning(
+                    WarningType.PAYMENT_DUE_DATE,
+                    DueDateFormatter.formatToLocalStyle(dueDate),
+                    {
+                        handleSaveInvoicesLocally(
+                            mIsInvoiceSavingEnabled,
+                            false,
+                            resultHolder,
+                            activity
+                        )
+                    },
+                    null
+                )
             }
         }
     }
@@ -321,7 +337,8 @@ internal class AnalysisScreenPresenterExtension(
             )
         } else {
             doWhenEducationFinished {
-                view.showSchedulePaymentHint(
+                view.showWarning(
+                    WarningType.SCHEDULE_PAYMENT,
                     DueDateFormatter.formatToLocalStyle(dueDate),
                     {
                         handleSaveInvoicesLocally(

@@ -192,6 +192,15 @@ internal class WarningBottomSheet : BottomSheetDialogFragment() {
         warningType?.let { type ->
             binding.primaryButton.setText(type.primaryButtonTextRes)
             binding.secondaryButton.setText(type.secondaryButtonTextRes)
+            if (type.iconRes != 0) {
+                // Custom icons (e.g. the credit note warning) bring their own badge shape, so
+                // the default circle background and tint are cleared.
+                binding.warningIcon?.apply {
+                    setImageResource(type.iconRes)
+                    background = null
+                    imageTintList = null
+                }
+            }
         }
 
         binding.primaryButton.setOnClickListener {

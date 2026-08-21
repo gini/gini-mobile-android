@@ -129,7 +129,7 @@ class ConfigurationViewModel @Inject constructor(
             flashOnByDefault = configuration.isFlashDefaultStateEnabled,
             // set file import type
             documentImportEnabledFileTypes = configuration.documentImportEnabledFileTypes,
-            // enable payment hints
+            // enable already paid hint
             alreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
             // enable payment due hint
             paymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
@@ -137,6 +137,8 @@ class ConfigurationViewModel @Inject constructor(
             paymentScheduleHintEnabled = configuration.isPaymentScheduleHintEnabled,
             // set payment due hint threshold days
             paymentDueHintThresholdDays = configuration.paymentDueHintThresholdDays,
+            // enable credit note hint
+            creditNoteHintEnabled = configuration.isCreditNoteHintEnabled,
             // enable onboarding screens at first launch
             showOnboardingAtFirstRun = configuration.isOnboardingAtFirstRunEnabled,
             // enable onboarding at every launch
