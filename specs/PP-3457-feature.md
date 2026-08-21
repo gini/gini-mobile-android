@@ -1,6 +1,6 @@
 # PP-3457: [On device] Investigate ways to encrypt models so no one can use them
 
-Status: investigation complete — report (R9) finalized 2026-08-20; PoC (R1–R8) pending via /gini-build
+Status: implementing (0/9)
 Ticket: https://ginis.atlassian.net/browse/PP-3457
 Type: **Spike** — timeboxed to 2 days (per ticket comment). The deliverable is an
 investigation report (this document's Design section, finalized) **plus a
@@ -622,3 +622,24 @@ Still open:
 - Only if packer layering is ever pursued: vendor confirmation that asset
   encryption is available in AAR/library mode (unverified publicly for
   DexGuard and Promon; Licel DexProtector documents it).
+
+## Implementation plan
+
+PoC lives at `/Users/mahdiabolfazli/AndroidStudioProjects/gini-ondevice-model-encryption-poc`
+(standalone; monorepo gains only this spec). Versions reuse the monorepo
+catalog where possible (AGP 8.10.1, Kotlin 2.0.20, Gradle 8.13) so local
+caches serve them. Note: Robolectric has no `AndroidKeyStore` provider, so
+key wrapping is behind a small `KeyWrapper` interface — the
+`AndroidKeystoreKeyWrapper` implementation is covered by the instrumented
+test (R7), unit tests use a software AES-GCM wrapper with identical wire
+format; "wrapped blob ≠ raw key" is asserted at the repository level.
+
+- [ ] 1. Scaffold standalone project: Gradle 8.13 wrapper, version catalog, `app` module (Compose M3, LiteRT `com.google.ai.edge.litert:litert:2.2.0`, OkHttp, ktlint plugin), empty Activity/Application; `assembleDebug` green (conventions 1–2, 6, 8)
+- [ ] 2. `tools/`: fetch small public stand-in `.tflite` (hello_world sine model), `encrypt_model.py` (AES-256-GCM), generate encrypted asset into `app/src/main/assets/`, capture reference input/output values from the unencrypted model into a checked-in fixture (R2/R4 fixtures)
+- [ ] 3. Domain errors + `ModelCrypto` (AES-256-GCM decrypt → direct `nativeOrder()` ByteBuffer, never a file) + `ModelCryptoTest` (R2 support, R4, R5)
+- [ ] 4. `RemoteKeySource` (OkHttp + bearer) + `KeyWrapper`/`AndroidKeystoreKeyWrapper` + `WrappedKeyStore` persistence + `ModelKeyRepository` + `ModelKeyRepositoryTest` (MockWebServer + Robolectric) (R1, R3, R7 persistence, R8)
+- [ ] 5. `InterpreterFactory` (LiteRT `Interpreter(ByteBuffer)`, tensor shape info) + `ModelProvisioningUseCase` composing fetch→decrypt→interpreter (R1, R5)
+- [ ] 6. `ModelUiState` sealed interface + `ModelPoCViewModel` (StateFlow via `.value =`, injected dispatcher) + `ModelPoCViewModelTest` (Turbine) (R3, R4, R6, R8)
+- [ ] 7. Compose single screen (Initialize/Run buttons, state rendering, light/dark previews) + embedded key-server stub in the app + manual toggles demoing 403/offline (R1, R3, R6, R8 demo surface)
+- [ ] 8. `EncryptedModelInferenceTest` (instrumented): full pipeline with real Keystore, reference-output equality within float tolerance, offline re-run after cache clear, no new files in writable dirs (R1, R2, R5, R7)
+- [ ] 9. Verify: `assembleDebug`, `testDebugUnitTest`, `ktlintCheck` on the PoC; `connectedAndroidTest` on emulator if one is available (else report as manual step)
