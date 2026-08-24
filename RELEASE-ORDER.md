@@ -26,16 +26,16 @@ Release order for :health-sdk:sdk 6.1.0:
  3. :internal-payment-sdk:sdk 2.1.0
  4. :health-sdk:sdk 6.1.0
 
-Release order for :capture-sdk:default-network 4.4.0:
+Release order for :capture-sdk:default-network 4.5.0:
  1. :core-api-library:library 3.6.0
  2. :bank-api-library:library 4.5.0
  3. :capture-sdk:sdk 4.5.0
- 4. :capture-sdk:default-network 4.4.0
+ 4. :capture-sdk:default-network 4.5.0
 
 Release order for :bank-sdk:sdk 4.4.0:
  1. :core-api-library:library 3.6.0
  2. :bank-api-library:library 4.5.0
  3. :capture-sdk:sdk 4.5.0
- 4. :capture-sdk:default-network 4.4.0
+ 4. :capture-sdk:default-network 4.5.0
  5. :bank-sdk:sdk 4.4.0
 
