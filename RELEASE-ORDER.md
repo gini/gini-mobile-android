@@ -7,9 +7,9 @@ Release order for :capture-sdk:sdk 4.4.0:
 Release order for :core-api-library:library 3.6.0:
  1. :core-api-library:library 3.6.0
 
-Release order for :bank-api-library:library 4.4.0:
+Release order for :bank-api-library:library 4.5.0:
  1. :core-api-library:library 3.6.0
- 2. :bank-api-library:library 4.4.0
+ 2. :bank-api-library:library 4.5.0
 
 Release order for :health-api-library:library 6.1.0:
  1. :core-api-library:library 3.6.0
@@ -28,13 +28,13 @@ Release order for :health-sdk:sdk 6.1.0:
 
 Release order for :capture-sdk:default-network 4.4.0:
  1. :core-api-library:library 3.6.0
- 2. :bank-api-library:library 4.4.0
+ 2. :bank-api-library:library 4.5.0
  3. :capture-sdk:sdk 4.4.0
  4. :capture-sdk:default-network 4.4.0
 
 Release order for :bank-sdk:sdk 4.4.0:
  1. :core-api-library:library 3.6.0
- 2. :bank-api-library:library 4.4.0
+ 2. :bank-api-library:library 4.5.0
  3. :capture-sdk:sdk 4.4.0
  4. :capture-sdk:default-network 4.4.0
  5. :bank-sdk:sdk 4.4.0
