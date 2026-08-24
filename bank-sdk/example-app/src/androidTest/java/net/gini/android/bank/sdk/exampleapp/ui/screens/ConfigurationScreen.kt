@@ -66,4 +66,34 @@ class ConfigurationScreen {
         return this
     }
 
+    /**
+     * The Credit Note Hint switch is the last toggle in the feature-toggle block, so it
+     * needs a scroll before it can be read or clicked.
+     */
+    fun scrollToCreditNoteHintSwitch(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_creditNoteHint))
+            .perform(closeSoftKeyboard(), scrollTo())
+        return this
+    }
+
+    fun assertCreditNoteHintSwitchIsChecked(): ConfigurationScreen {
+        scrollToCreditNoteHintSwitch()
+        onView(ViewMatchers.withId(R.id.switch_creditNoteHint))
+            .check(matches(ViewMatchers.isChecked()))
+        return this
+    }
+
+    fun assertCreditNoteHintSwitchIsUnchecked(): ConfigurationScreen {
+        scrollToCreditNoteHintSwitch()
+        onView(ViewMatchers.withId(R.id.switch_creditNoteHint))
+            .check(matches(ViewMatchers.isNotChecked()))
+        return this
+    }
+
+    fun clickCreditNoteHintSwitch(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_creditNoteHint))
+            .perform(closeSoftKeyboard(), scrollTo(), click())
+        return this
+    }
+
 }

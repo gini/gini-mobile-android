@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 #
-# Shard 1/5 — UI / navigation tests (fast, stable, no network extraction).
+# Shard 1/6 — UI / navigation tests (fast, stable, no network extraction).
 #
 # The five bs_run_group_*.sh scripts together cover ALL 15 UI test classes with no
 # overlap, so running all five = the full suite, but split into small isolated builds
