@@ -25,7 +25,7 @@ You will see the [fieldName] extraction inside the specific extractions of `[ter
 [Example extraction payload showing the new field among existing ones, copied from verified source or the Gini Bank API documentation. Mark the new field with a comment.]
 ```
 
-For more information about the document's extractions, see the Gini Bank API's [Document Extractions documentation](https://gini.atlassian.net/wiki/spaces/PA1/pages/Document+Extractions).
+For more information about the document's extractions, see the Gini Bank API's [Document Extractions documentation](https://gini.atlassian.net/wiki/spaces/PA1/pages/36831473/Document+Extractions).
 
 ## Transfer summary with [feature name] information
 
