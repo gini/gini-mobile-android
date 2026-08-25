@@ -119,7 +119,7 @@ Extract two things from the source:
 To use exact button and screen names in step wording, you may read the product's localization `.strings` files for the target platform. Rules:
 - **Repo-only.** This step applies only when running inside a repository that contains the product's localization files. In stand-alone use (no repo), skip it entirely and take labels from the AC/spec and the example CSV wording.
 - **Label accuracy only.** Use strings files only to get precise wording (e.g. the button says `"Photopayment"` not `"Photo Payment"`). Never use them to infer feature behaviour.
-- **This repository's strings.** Read `src/main/res/values-en/strings.xml` for English and `src/main/res/values/strings.xml` for German — note that `values/` is the **German** default here, the reverse of most Android projects. Skip if strings are unavailable or would make the test platform-specific.
+- **This repository's strings.** Strings live per module, at `<project>/<module>/src/main/res/` — for example `bank-sdk/sdk/src/main/res/`, `capture-sdk/sdk/src/main/res/`, or `bank-sdk/example-app/src/main/res/`. There is no repository-root `src/main/res`. Read `values-en/strings.xml` for English and `values/strings.xml` for German — note that `values/` is the **German** default here, the reverse of most Android projects. Skip if strings are unavailable or would make the test platform-specific.
 - **Optional.** If the strings file is unavailable or the label is sufficiently clear from the AC, skip this step.
 
 ### Step 2 — Infer coverage areas

@@ -23,7 +23,7 @@ TC-006,,Manual,Scan / Upload a document,,The document is successfully captured.
 TC-006,,Manual,Process the image/pdf successfully OR upload the image/pdf successfully,pdf/image,User is navigated to review screen
 TC-006,,Manual,"Tap on the ""+"" icon to add more pages",,"- User is navigated to ""scan invoice"" screen to add more pages of the invoice - User can perform both capture and upload functions here"
 TC-007,"Already paid Feature Flag ON > “Already paid hint"" bottom sheet is displayed",Manual,Launch the Banking app,,The Banking app is launched
-,,Manual,Make sure that the already paid feature flag is ON; Go to Settings/Configuration screen,,The already paid feature flag is ON
+TC-007,,Manual,Make sure that the already paid feature flag is ON; Go to Settings/Configuration screen,,The already paid feature flag is ON
 TC-007,,Manual,Scan / Upload a document,pdf/image,The document is successfully captured.
 TC-007,,Manual,Process the image/pdf successfully OR upload the image/pdf successfully,,User is navigated to review screen
 TC-007,,Manual,Wait for data extraction to complete,,"Observe if the UI for Already paid feature is visible.
