@@ -19,7 +19,7 @@
 
 [One paragraph: what triggers the new extraction — document content, QR code data, user action — and what the user experiences in the integrating app.]
 
-You will see the [fieldName] extraction inside the specific extractions of the `AnalysisResult`:
+You will see the [fieldName] extraction inside the specific extractions of `[term: success-result-case]`:
 
 ```json
 [Example extraction payload showing the new field among existing ones, copied from verified source or the Gini Bank API documentation. Mark the new field with a comment.]

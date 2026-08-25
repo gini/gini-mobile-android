@@ -20,6 +20,8 @@ scope:
 - `bank-api-library/library/src/main/` (Bank API library source root)
 - `capture-sdk/sdk/src/main/` (Capture SDK source root, if the feature touches
   shared capture logic)
+- `capture-sdk/default-network/src/main/` (default network layer — transfer
+  summary and extraction handling)
 
 Skip test files, example apps, CI scripts, package manifests, localization
 strings (collected separately via the localization step), and build output.
@@ -31,11 +33,16 @@ strings (collected separately via the localization step), and build output.
 - `res/values-en/strings.xml` holds the **English strings** (maps to the
   "Default (en)" column).
 
-Search the relevant modules for keys matching the feature prefix:
+Resource keys are snake_case with a module prefix: `gbs_` in bank-sdk and
+`gc_` in capture-sdk. Derive feature key patterns from these conventions —
+e.g. `cross-border-payments` → keys starting with `gbs_`/`gc_` that contain
+`cx` or the feature term — never from camelCase guesses.
+
+Search the relevant modules for keys matching the feature pattern:
 
 ```bash
-grep -r "<featureprefix>" --include="strings.xml" bank-sdk/sdk/src/main/res/
-grep -r "<featureprefix>" --include="strings.xml" capture-sdk/sdk/src/main/res/
+grep -r "<feature-key-pattern>" --include="strings.xml" bank-sdk/sdk/src/main/res/
+grep -r "<feature-key-pattern>" --include="strings.xml" capture-sdk/sdk/src/main/res/
 ```
 
 ## Configuration surface
@@ -56,16 +63,17 @@ Infer `AndroidManifest.xml` requirements from OS APIs used in source:
 ## Symbols to skip
 
 - Anything `internal`, `private`, or prefixed with `_`
-- Internal classes like `GiniCaptureUserDefaultsStorage` or `GiniConfiguration`
+- Internal wiring such as the isolated DI contexts
+  (`BankSdkIsolatedKoinContext`, `CaptureSdkIsolatedKoinContext`)
 
 ## Code sample conventions
 
 - Code block language tags: `kotlin` for SDK usage, `xml` for manifest and
   resource snippets, `json` for extraction payload examples.
-- The capture flow result callback in published docs handles
-  `CaptureResult.Success / Error / Empty / Cancel` (see the `result-callback`
-  snippet below). Include the `EnterManually` branch only when the documented
-  feature involves it.
+- The capture flow result callback in published docs handles every
+  `CaptureResult` case — `Success / Error / Empty / Cancel / EnterManually`
+  (see the `result-callback` snippet below). The `when` must stay exhaustive:
+  Kotlin rejects a non-exhaustive `when` over a sealed class.
 
 ## Terms
 
@@ -79,7 +87,7 @@ Values for the `[term: name]` references used in the shared templates.
 | `result-type` | `CaptureResult` |
 | `success-result-case` | `CaptureResult.Success` |
 | `empty-result-case` | `CaptureResult.Empty` |
-| `cleanup-call` | `GiniBank.cleanupCapture()` |
+| `cleanup-call` | `GiniBank.cleanupCapture(context)` |
 | `code-language` | Kotlin (code block tag `kotlin`) |
 | `ui-customization-guide-url` | `https://gini.atlassian.net/wiki/spaces/GBSV/pages/76283941` |
 
@@ -115,6 +123,7 @@ GiniBank.setCaptureConfiguration(context, captureConfiguration)
 
 ```kotlin
 val captureConfiguration = CaptureConfiguration(
+    networkService = yourNetworkService,
     [propertyName] = true,
     [tuningPropertyName] = [value], // include tuning properties, e.g. thresholds
     // ...
@@ -128,13 +137,14 @@ GiniBank.setCaptureConfiguration(context, captureConfiguration)
 GiniBank.startCaptureFlow(resultLauncher)
 
 private val resultLauncher = registerForActivityResult(
-    GiniBank.createCaptureFlowContract()
+    CaptureFlowContract()
 ) { result ->
     when (result) {
         is CaptureResult.Success -> handleExtractions(result.specificExtractions, result.compoundExtractions)
         is CaptureResult.Error -> handleError(result.value)
         CaptureResult.Empty -> handleNoResults()
         CaptureResult.Cancel -> handleCancellation()
+        CaptureResult.EnterManually -> handleEnterManually()
     }
 }
 ```

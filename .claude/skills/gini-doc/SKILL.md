@@ -87,7 +87,7 @@ Documentation serves three audiences simultaneously:
   - ✅ "The SDK shows the no-results screen."
   - ❌ "The no-results screen is shown by the SDK."
 - **Instructions:** Use imperative verbs for procedural content.
-  - ✅ "Set `productTag` to `.cxExtractions`."
+  - ✅ "Set the `productTag` property to the cross-border payments value."
 
 ### Plain Language
 
@@ -156,10 +156,13 @@ Read `platform.md` in this skill's directory. It defines this repository's sourc
 
 ### Step 1 — Identify changed GiniBankSDK source files on the current branch
 
-Run:
+Determine the base branch the current branch was cut from — usually the
+default branch, but fixes for older majors branch from a parallel version
+branch (see the repository's release docs). If the base is ambiguous, ask the
+user instead of assuming. Then run:
 
 ```bash
-git diff main...HEAD --name-only
+git diff <base-branch>...HEAD --name-only
 ```
 
 Keep only files under the source roots listed in `platform.md` — everything else is out of scope. Apply the skip list from `platform.md` (test files, example apps, CI scripts, and so on; localization strings are collected separately in Step 2).
@@ -167,14 +170,14 @@ Keep only files under the source roots listed in `platform.md` — everything el
 Read each kept file. For large files, focus on the diff:
 
 ```bash
-git diff main...HEAD -- <file>
+git diff <base-branch>...HEAD -- <file>
 ```
 
 **If `--note` was provided**, apply it as the primary filter: only read and document files related to that scope. Skip everything else even if it is public API.
 
 ### Step 2 — Collect localization strings for the feature
 
-Search the localization string locations defined in `platform.md` for keys matching the feature prefix. Derive the prefix from the feature slug (e.g. `cross-border-payments` → try `crossborder`, `cx`, `crossBorder`). `platform.md` also defines which file maps to which language column in the output tables.
+Search the localization string locations defined in `platform.md` for keys matching the feature. Derive the key patterns from the feature slug using the key-naming convention defined in `platform.md` — never guess a naming style. `platform.md` also defines which file maps to which language column in the output tables.
 
 Collect all matching keys. Typical groups:
 - **Feature UI strings** — labels, titles, descriptions shown in the feature's views
