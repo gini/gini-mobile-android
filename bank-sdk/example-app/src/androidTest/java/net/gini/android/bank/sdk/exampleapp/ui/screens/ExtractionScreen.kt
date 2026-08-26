@@ -12,8 +12,8 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import net.gini.android.bank.sdk.exampleapp.R
-import org.hamcrest.Matchers.allOf
 import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
+import org.hamcrest.Matchers.allOf
 
 class ExtractionScreen {
 
@@ -81,8 +81,12 @@ class ExtractionScreen {
      *
      * The rows live in a RecyclerView, so a row that is merely off-screen is absent from the
      * view hierarchy and indistinguishable from a missing extraction. This scrolls the list from
-     * the top and only reports null once the list can no longer scroll — which is what makes
-     * "amountToPay was removed" a safe assertion rather than a false negative.
+     * the top and only reports null once the list can no longer scroll, so a null here means
+     * "no such row anywhere in the list" rather than "not currently visible".
+     *
+     * Null is NOT how you detect a stripped extraction. The example app re-adds every missing
+     * SEPA field as an empty editable row, so keys like `amountToPay` come back as "" and never
+     * as null. Use [isExtractionFieldFilled] for that assertion.
      *
      * Matching is on the TextInputLayout hint via Espresso's withHint (EditText.getHint()) rather
      * than on the accessibility node's hintText, so it does not depend on how Material forwards

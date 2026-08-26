@@ -67,7 +67,7 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
      * Note for whoever maintains this: with a *plain* invoice this case cannot fail even if the
      * feature is broken, because a plain invoice never triggers the warning whatever the flag
      * says. [test8_noWarningWhenSdkFlagIsOffForCreditNote] (PP-3447) is the test that actually
-     * proves the flag works. Raised with QA — see specs/PP-3427-feature.md.
+     * proves the flag works. Raised with QA under PP-3427.
      */
     @Test
     fun test2_noCreditNoteWarningForPlainInvoiceWhenSdkFlagIsOff() {
