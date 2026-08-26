@@ -1,5 +1,4 @@
 ---
-name: generate-xray-tests
 description: "Generates manual test cases from Jira tickets, local spec files, or pasted acceptance criteria and writes them as a CSV ready to import into Xray Cloud (Jira). Runs stand-alone (no repo required) or inside a repository. Use when asked to generate, create, or write Xray test cases for any product or feature."
 ---
 
@@ -11,8 +10,15 @@ Generate manual test cases for a mobile SDK feature and write them as a CSV file
 
 ## Usage
 
+This file is not a slash command — Claude Code only registers `SKILL.md` one level
+under `.claude/skills/`, so this document is reached through `/gini-test-skill`,
+which routes here once it has decided the job is *generate*. Do not try to invoke
+it directly.
+
+The generate job takes these arguments, however the user phrases them:
+
 ```
-/generate-xray-tests --product <product> [--platform <ios|android>] [--test-type <type>] [--summary-prefix <prefix>] --out <path> [<source>]
+--product <product> [--platform <ios|android>] [--test-type <type>] [--summary-prefix <prefix>] --out <path> [<source>]
 ```
 
 `--product` and `--out` are **required**.
@@ -43,7 +49,7 @@ valid; steps then reference "the <product> app" (or the app name the user gives)
 |---|---|---|
 | `bank-sdk` | GiniBankSDK | `bank-sdk/example-app` — "Gini Bank" |
 | `health-sdk` | GiniHealthSDK | `health-sdk/example-app` — "Gini Health" |
-| `merchant-sdk` | GiniMerchantSDK | `merchant-sdk/example-app` |
+| `merchant-sdk` | GiniMerchantSDK | **iOS only** — the demo app lives in `gini-mobile-ios`; there is no `merchant-sdk` project in `gini-mobile-android` |
 
 ### `--platform`
 

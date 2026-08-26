@@ -49,6 +49,10 @@ not land in shell history). Default location: ~/.config/gini/xray.env
     # optional, defaults to the EU region:
     # XRAY_BASE_URL=https://eu.xray.cloud.getxray.app
 
+The output filename prefix comes from --prefix. With --test-set and no --prefix it
+defaults to the lower-cased Test Set key (PP-3483 -> pp-3483.csv); with --jql,
+--prefix is required, so no run can silently reuse another feature's filename.
+
 Usage:
     python3 xray_export_testset_csv.py --test-set PP-3483 --out-dir ./out
 """
@@ -252,7 +256,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--creds", default=DEFAULT_CREDS, help="credentials file (default: %s)" % DEFAULT_CREDS)
     parser.add_argument("--out-dir", default=".", help="directory to write the CSVs into")
-    parser.add_argument("--prefix", default="credit-note", help="output filename prefix")
+    parser.add_argument("--prefix", default=None,
+                        help="output filename prefix (default: the lower-cased --test-set key)")
     parser.add_argument("--test-set", default=None, help="Test Set issue key, e.g. PP-3483 (the normal way to scope this)")
     parser.add_argument("--jql", default=None, help="raw JQL, for the rare case a Test Set does not exist yet")
     parser.add_argument("--no-split", action="store_true", help="write a single CSV instead of functional + accessibility")
@@ -267,6 +272,13 @@ def main():
     else:
         sys.exit("Pass --test-set <KEY> (preferred) or --jql. A Test Set is the "
                  "curated scope; a raw JQL search will pull in retired cases.")
+
+    prefix = args.prefix
+    if not prefix:
+        if not args.test_set:
+            sys.exit("Pass --prefix <name>. It is only optional together with "
+                     "--test-set, where it defaults to the Test Set key.")
+        prefix = args.test_set.strip().lower()
 
     print("Region   : %s" % base_url)
     print("JQL      : %s" % (jql[:120] + ("..." if len(jql) > 120 else "")))
@@ -305,7 +317,7 @@ def main():
     for suffix, group in groups:
         if not group:
             continue
-        path = os.path.join(args.out_dir, "%s%s.csv" % (args.prefix, suffix))
+        path = os.path.join(args.out_dir, "%s%s.csv" % (prefix, suffix))
         rows = write_csv(path, group)
         print("Wrote    : %s  (%d tests, %d step rows)" % (path, len(group), rows))
 
