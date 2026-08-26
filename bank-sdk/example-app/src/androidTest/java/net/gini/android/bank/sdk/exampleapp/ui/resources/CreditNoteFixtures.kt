@@ -34,7 +34,8 @@ package net.gini.android.bank.sdk.exampleapp.ui.resources
  *
  * Two quirks of this document, both harmless for what these tests assert:
  * - the printed IBAN is `DE12345678` (10 characters; a German IBAN is 22), so `iban` may not
- *   extract. PP-2696 therefore asserts only what the warning path guarantees.
+ *   extract. The proceed-anyway test therefore asserts only what the warning path
+ *   guarantees.
  * - the amounts are negative (`Gesamtbetrag -31,20 €`), which PP-2180's notes say should not
  *   happen for credit notes in production. It does not affect classification.
  *
