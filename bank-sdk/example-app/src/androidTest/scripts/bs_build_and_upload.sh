@@ -13,13 +13,21 @@ set -e
 # For sharded runs, prefer the preset wrappers in this directory:
 #   bs_run_group_ui.sh            – Capture / Onboarding / Help
 #   bs_run_group_digitalinvoice.sh – DigitalInvoice screens (isolated)
-#   bs_run_group_extraction.sh    – Extraction / Review / NoResults / ProductTag
-#   bs_run_group_import.sh        – Import / FileImportError / ErrorScreen / OpenWith
-#   bs_run_all_groups.sh          – builds+uploads ONCE, then triggers all four shards
+#   bs_run_group_extraction.sh     – Extraction / Review / NoResults / ProductTag
+#   bs_run_group_import.sh         – Import / FileImportError / ErrorScreen / OpenWith
+#   bs_run_group_duedate.sh        – Due Date Hint / Schedule Payment bottom sheet
+#   bs_run_group_creditnote.sh     – Credit Note warning bottom sheet
+#   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers all six shards
+#   bs_run_release.sh              – the shards in this release's scope (see its header)
 #
 # BrowserStack credentials must be set via environment variables:
 #   export BS_USER="your_username"
 #   export BS_KEY="your_access_key"
+#
+# Every build this script triggers lands under the BrowserStack project set in the
+# Configuration section below (currently "GiniBankSDK-Android-4.5.0"), so one release's
+# runs stay together in the App Automate dashboard. Override it per run:
+#   BS_PROJECT="GiniBankSDK-Android-4.5.0-RC1" ./bs_run_group_creditnote.sh
 #
 # Advanced env vars (used by bs_run_all_groups.sh to avoid rebuilding/re-uploading):
 #   APP_URL, TEST_URL, IMAGE_URL, PDF_URL, SAMPLE_PDF_URL
@@ -39,6 +47,18 @@ BS_KEY="${BS_KEY:-<your_browserstack_access_key>}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../../.." && pwd)"
+
+# BrowserStack project — one per release. This is the release container in the App
+# Automate dashboard, matching the iOS convention (BS_PROJECT in the iOS repo's
+# bs_shared.sh, e.g. "GiniBankSDK-LiquidGlass-4.3.0").
+#
+# Set to the version BEING released, and deliberately NOT read from
+# bank-sdk/sdk/gradle.properties: the suite runs against the release branch
+# (release/bank-sdk-4.5) while the version bump has not landed there yet, so
+# gradle.properties still holds the previous version.
+#
+# Bump this line when a new release cycle starts.
+BS_PROJECT="${BS_PROJECT:-GiniBankSDK-Android-4.5.0}"
 
 FLAVOR="devExampleApp"
 BUILD_TYPE="debug"
@@ -214,11 +234,14 @@ fi
 
 BUILD_NAME="${BUILD_NAME:-local-$(date +%Y%m%d-%H%M%S)}"
 
+echo "BrowserStack project: $BS_PROJECT"
+echo "Build name:           $BUILD_NAME"
+
 BUILD_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
   -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/build" \
   -H "Content-Type: application/json" \
   -d "{
-    \"project\": \"gini-mobile-android\",
+    \"project\": \"$BS_PROJECT\",
     \"name\": \"$BUILD_NAME\",
     \"devices\": [\"$DEVICE_1\", \"$DEVICE_2\"],
     \"app\": \"$APP_URL\",
@@ -232,4 +255,4 @@ BUILD_RESPONSE=$(curl -s -u "$BS_USER:$BS_KEY" \
   }")
 echo "Build response: $BUILD_RESPONSE"
 echo ""
-echo "Done! Check BrowserStack App Automate dashboard for results."
+echo "Done! Check the \"$BS_PROJECT\" project in the BrowserStack App Automate dashboard."

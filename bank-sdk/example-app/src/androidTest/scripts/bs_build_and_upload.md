@@ -18,6 +18,8 @@ Builds the `example-app` and Espresso test suite APKs, uploads them to BrowserSt
 |---|---|---|
 | `BS_USER` | `<your_browserstack_user_name>` | BrowserStack username |
 | `BS_KEY` | `<your_browserstack_access_key>` | BrowserStack access key |
+| `BS_PROJECT` | `GiniBankSDK-Android-4.5.0` | BrowserStack App Automate project — the **release container** in the dashboard. One project per release; every build the script triggers lands under it. The default is a constant in the script's Configuration section, set to the version *being released* — it is **not** read from `bank-sdk/sdk/gradle.properties`, because the suite runs against the release branch before the version bump lands there. Bump that line when a new release cycle starts, or override per run for an RC (`GiniBankSDK-Android-4.5.0-RC1`). Mirrors the iOS convention (`BS_PROJECT` in the iOS repo's `bs_shared.sh`). |
+| `BUILD_NAME` | `local-<timestamp>` | Build name inside the project. The `bs_run_group_*.sh` wrappers set this to `group-<feature>-<timestamp>`. |
 
 ### Fixed (not parameterised)
 
@@ -182,7 +184,7 @@ curl -u "$BS_USER:$BS_KEY" \
   -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/build" \
   -H "Content-Type: application/json" \
   -d '{
-    "project": "gini-mobile-android",
+    "project": "GiniBankSDK-Android-4.5.0",
     "devices": ["Google Pixel 9-16.0", "Google Pixel 10 Pro-16.0"],
     "app": "APP_URL",
     "testSuite": "TEST_SUITE_URL",
@@ -197,7 +199,7 @@ curl -u "$BS_USER:$BS_KEY" \
   -X POST "https://api-cloud.browserstack.com/app-automate/espresso/v2/build" \
   -H "Content-Type: application/json" \
   -d '{
-    "project": "gini-mobile-android",
+    "project": "GiniBankSDK-Android-4.5.0",
     "devices": ["Google Pixel 9-16.0", "Google Pixel 10 Pro-16.0"],
     "app": "APP_URL",
     "testSuite": "TEST_SUITE_URL",
