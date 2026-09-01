@@ -1,9 +1,7 @@
 package net.gini.android.bank.sdk.exampleapp.ui.testcases
 
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import net.gini.android.bank.sdk.exampleapp.ui.resources.CreditNoteFixtures
 import net.gini.android.bank.sdk.exampleapp.ui.resources.DueDateFixtures
-import net.gini.android.bank.sdk.exampleapp.ui.resources.PdfUploader
-import net.gini.android.bank.sdk.exampleapp.ui.screens.DigitalInvoiceScreen
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -22,8 +20,6 @@ import org.junit.Test
  */
 class DueDateHintBottomSheetTests : WarningBottomSheetTestBase() {
 
-    private val pdfUploader = PdfUploader()
-    private val digitalInvoiceScreen = DigitalInvoiceScreen()
 
     /**
      * R1: with due=ON / schedule=OFF and a qualifying invoice the Due Date Hint sheet
@@ -163,23 +159,13 @@ class DueDateHintBottomSheetTests : WarningBottomSheetTestBase() {
 
     /**
      * R7: a Return Assistant invoice suppresses the sheet — the digital invoice flow
-     * starts instead. Uses the existing Testrechnung-RA-1.pdf (BrowserStack uploads it as
-     * media; see bs_build_and_upload.sh).
+     * starts instead. The PDF import flow (and why the copy to Downloads is wrapped) lives in
+     * [WarningBottomSheetTestBase.uploadFixturePdfAndProcess]; this test used to inline it.
      */
     @Test
     fun test10_noSheetForReturnAssistantInvoice() {
         configureHints(paymentDueHintEnabled = true, paymentScheduleHintEnabled = true)
-        // BrowserStack pre-loads this PDF as uploaded media; on a local device it must be
-        // copied from the test assets so the file picker can find it. Wrapped because on
-        // BrowserStack the same-named, shell-owned file already exists and MediaStore may
-        // refuse the delete/insert — the picker then simply uses the pre-loaded file.
-        runCatching { pdfUploader.copyPdfToDownloads(getApplicationContext(), "Testrechnung-RA-1.pdf") }
-        mainScreen.clickPhotoPaymentButton()
-        onboardingScreen.clickSkipButtonIfPresent()
-        captureScreen.clickFilesButton()
-        captureScreen.clickFiles()
-        pdfUploader.uploadPdfFromFiles("Testrechnung-RA-1.pdf")
-        idlingResource.waitForIdle()
+        uploadFixturePdfAndProcess(CreditNoteFixtures.RETURN_ASSISTANT_ASSET)
 
         assertTrue(
             "Digital invoice onboarding did not appear",

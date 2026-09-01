@@ -20,12 +20,16 @@ import org.junit.Test
  *
  * The warning needs both gates open (`AnalysisScreenPresenter.shouldShowCreditNoteWarning`):
  *
- * | Xray step (Charles)    | What the test does | Expected  |
- * |------------------------|--------------------|-----------|
- * | Frontend ON + SDK ON   | switch ON          | shown     |
- * | Frontend ON + SDK OFF  | switch OFF         | not shown |
- * | Frontend OFF + SDK ON  | not reproducible   | manual    |
- * | Frontend OFF + SDK OFF | not reproducible   | manual    |
+ * | Xray step (Charles)    | What the test does      | Expected  |
+ * |------------------------|-------------------------|-----------|
+ * | Frontend ON + SDK ON   | client default (on)     | shown     |
+ * | Frontend ON + SDK OFF  | configureCreditNoteHint | not shown |
+ * | Frontend OFF + SDK ON  | not reproducible        | manual    |
+ * | Frontend OFF + SDK OFF | not reproducible        | manual    |
+ *
+ * The SDK flag is set through `CreditNoteHintConfigurator`, not the Settings switch — see
+ * that class for why the switch must not be tapped. The switch itself stays covered by
+ * [test1_creditNoteHintFlagIsEnabledByDefault], which only reads it.
  *
  * "Frontend Feature Flag" is the server `/configurations` flag `creditNoteHintEnabled`, which
  * cannot be changed from a device. The gate is `!clientFlag || !sdkFlag`, so the three negative
@@ -70,7 +74,7 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
      */
     @Test
     fun test2_noCreditNoteWarningForPlainInvoiceWhenSdkFlagIsOff() {
-        turnCreditNoteHintSwitchOff()
+        configureCreditNoteHint(enabled = false)
         uploadFixtureInvoiceAndProcess(CreditNoteFixtures.PLAIN_INVOICE_ASSET)
 
         assertTrue(
@@ -207,7 +211,7 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
      */
     @Test
     fun test8_noWarningWhenSdkFlagIsOffForCreditNote() {
-        turnCreditNoteHintSwitchOff()
+        configureCreditNoteHint(enabled = false)
         uploadFixtureInvoiceAndProcess(CreditNoteFixtures.CREDIT_NOTE_ASSET)
 
         assertTrue(
@@ -225,21 +229,83 @@ class CreditNoteWarningTests : WarningBottomSheetTestBase() {
         )
     }
 
-    private fun uploadCreditNoteAndProcess() {
-        uploadFixtureInvoiceAndProcess(CreditNoteFixtures.CREDIT_NOTE_ASSET)
+    /**
+     * Return Assistant on, credit note in: the warning still wins, and "Proceed anyway" lands on
+     * the extraction screen rather than the Digital Invoice screen.
+     *
+     * Two SDK behaviours make this so, both worth locking down:
+     * - The credit note branch sits above the routing. `shouldShowCreditNoteWarning` is checked on
+     *   the Analysis screen (`AnalysisScreenPresenter`, in the SUCCESS_WITH_EXTRACTIONS chain),
+     *   which runs before `CaptureFlowFragment.processOnFinishedResultSuccessState` gets to decide
+     *   between Return Assistant, Skonto and plain extractions.
+     * - The proceed path cannot reach the Digital Invoice screen even if it tried.
+     *   `AnalysisScreenPresenter.removeAmountToPay` rebuilds the ResultHolder with an empty
+     *   compound-extraction map, so `LineItemsValidator.validate` finds no `lineItems` and
+     *   `tryShowingReturnAssistant` throws `DigitalInvoiceException`.
+     *
+     * SCOPE, and why the name is narrow: with a real document this can only prove the first half.
+     * [CreditNoteFixtures.CREDIT_NOTE_ASSET] is not known to extract `lineItems`, so the absence of
+     * the Digital Invoice screen would hold even if the stripping regressed. The stripping itself is
+     * covered by `CreditNoteMockBackendTests.test5_returnAssistantIsSkippedForCreditNoteWithLineItems`,
+     * where the mock supplies line items that really would open the screen. What this test adds over
+     * that one is the real backend and a real document.
+     */
+    @Test
+    fun test9_warningIsNotSkippedWhenReturnAssistantIsEnabled() {
+        configureReturnAssistantAndSkonto(returnAssistantEnabled = true, skontoEnabled = false)
+        uploadCreditNoteAndProcess()
+        assertTrue("Credit Note warning did not appear", warningBottomSheet.waitForSheet())
+        warningBottomSheet.assertCreditNoteState()
+
+        warningBottomSheet.clickSecondaryButton()
+
+        assertTrue(
+            "Extraction screen did not appear",
+            extractionScreen.assertExtractionScreenIsDisplayed()
+        )
+        assertFalse(
+            "Digital Invoice screen must not appear on the credit note proceed path",
+            digitalInvoiceScreen.isScreenDisplayed()
+        )
     }
 
     /**
-     * Turns the SDK Feature Flag off through the example app's own switch, which is what the
-     * Xray steps describe ("In Settings, turn the Credit Note Feature Flag OFF"). Asserting the
-     * state before and after means a moved or renamed switch fails loudly here instead of
-     * silently leaving the flag on and turning a negative test green.
+     * The control case with a REAL document: a Return Assistant invoice, with the credit note
+     * feature fully on, must start the digital invoice flow and show no warning.
+     *
+     * This is the counterpart of `CreditNoteMockBackendTests.test5`, from the other direction.
+     * test5 proves a credit note carrying line items does NOT reach the Digital Invoice screen;
+     * this proves an ordinary invoice carrying line items still DOES, so test5's result is the
+     * credit note gate working rather than the Return Assistant flow being broken outright. Neither
+     * test means much without the other.
+     *
+     * Built on `DueDateHintBottomSheetTests.test10_noSheetForReturnAssistantInvoice`, which
+     * establishes that [CreditNoteFixtures.RETURN_ASSISTANT_ASSET] really extracts line items — it
+     * could not reach the digital invoice onboarding otherwise.
+     *
+     * iOS's equivalent (`testInvoiceFlowUnaffectedWhenHintFlagDisabled`) uses a skonto invoice. We
+     * have no skonto document anywhere in `assets/`, so Return Assistant is the control here. Skonto
+     * is deliberately not covered: it goes through the same compound-extraction stripping, so one
+     * side is enough, and this is the side with a real document.
      */
-    private fun turnCreditNoteHintSwitchOff() {
-        mainScreen.clickSettingButton()
-        configurationScreen.assertCreditNoteHintSwitchIsChecked()
-        configurationScreen.clickCreditNoteHintSwitch()
-        configurationScreen.assertCreditNoteHintSwitchIsUnchecked()
-        pressBack()
+    @Test
+    fun test10_returnAssistantInvoiceIsUnaffectedByTheCreditNoteFeature() {
+        configureCreditNoteHint(enabled = true)
+        configureReturnAssistantAndSkonto(returnAssistantEnabled = true, skontoEnabled = true)
+
+        uploadFixturePdfAndProcess(CreditNoteFixtures.RETURN_ASSISTANT_ASSET)
+
+        assertTrue(
+            "Digital invoice onboarding did not appear for a Return Assistant invoice",
+            digitalInvoiceScreen.checkDigitalInvoiceTextOnOnboardingScreenIsDisplayed()
+        )
+        assertFalse(
+            "Credit Note warning must not appear for an invoice that is not a credit note",
+            warningBottomSheet.isSheetDisplayed()
+        )
+    }
+
+    private fun uploadCreditNoteAndProcess() {
+        uploadFixtureInvoiceAndProcess(CreditNoteFixtures.CREDIT_NOTE_ASSET)
     }
 }

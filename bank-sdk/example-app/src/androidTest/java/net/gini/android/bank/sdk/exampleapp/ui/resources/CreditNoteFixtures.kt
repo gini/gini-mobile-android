@@ -54,4 +54,16 @@ object CreditNoteFixtures {
      * extracted for this fixture.
      */
     const val PLAIN_INVOICE_ASSET = "test_image.jpeg"
+
+    /**
+     * A Return Assistant invoice — not a credit note, but it really does extract `lineItems`:
+     * DigitalInvoiceScreenTests and DigitalInvoiceEditButtonTests drive the digital invoice screen
+     * with it, which is impossible without them. That is what makes it usable as the control for
+     * the credit note feature.
+     *
+     * Shared, and a PDF rather than an image, so it arrives through the file picker
+     * ([WarningBottomSheetTestBase.uploadFixturePdfAndProcess]) instead of the photo picker.
+     * BrowserStack pre-loads it as uploaded media; see `bs_build_and_upload.sh`.
+     */
+    const val RETURN_ASSISTANT_ASSET = "Testrechnung-RA-1.pdf"
 }

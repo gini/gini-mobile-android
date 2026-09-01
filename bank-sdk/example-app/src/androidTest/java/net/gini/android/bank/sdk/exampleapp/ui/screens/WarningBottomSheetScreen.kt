@@ -134,5 +134,6 @@ class WarningBottomSheetScreen {
     companion object {
         private const val SHEET_TIMEOUT = 30_000L
         private const val MIN_OUTSIDE_TAP_Y = 200
+
     }
 }
