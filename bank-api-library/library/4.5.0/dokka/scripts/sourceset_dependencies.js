@@ -1,0 +1,1 @@
+sourceset_dependencies='{":bank-api-library:library:dokkaHtml/debug":[],":bank-api-library:library:dokkaHtml/main":[],":bank-api-library:library:dokkaHtml/release":[],":core-api-library:library:dokkaHtml/debug":[],":core-api-library:library:dokkaHtml/main":[],":core-api-library:library:dokkaHtml/release":[]}'
