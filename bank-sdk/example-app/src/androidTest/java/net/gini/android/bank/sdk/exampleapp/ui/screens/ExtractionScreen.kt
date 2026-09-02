@@ -1,16 +1,19 @@
 package net.gini.android.bank.sdk.exampleapp.ui.screens
 
+import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import net.gini.android.bank.sdk.exampleapp.R
-import org.hamcrest.Matchers.allOf
 import net.gini.android.bank.sdk.exampleapp.ui.resources.AppResources
+import org.hamcrest.Matchers.allOf
 
 class ExtractionScreen {
 
@@ -72,7 +75,71 @@ class ExtractionScreen {
         return isTransferSummaryButtonClickable
     }
 
+    /**
+     * Value of the extraction row whose label is [extractionName] (the raw extraction key, e.g.
+     * "amountToPay"), or null when the extraction is not in the result at all.
+     *
+     * The rows live in a RecyclerView, so a row that is merely off-screen is absent from the
+     * view hierarchy and indistinguishable from a missing extraction. This scrolls the list from
+     * the top and only reports null once the list can no longer scroll, so a null here means
+     * "no such row anywhere in the list" rather than "not currently visible".
+     *
+     * Null is NOT how you detect a stripped extraction. The example app re-adds every missing
+     * SEPA field as an empty editable row, so keys like `amountToPay` come back as "" and never
+     * as null. Use [isExtractionFieldFilled] for that assertion.
+     *
+     * Matching is on the TextInputLayout hint via Espresso's withHint (EditText.getHint()) rather
+     * than on the accessibility node's hintText, so it does not depend on how Material forwards
+     * the hint to the accessibility tree.
+     */
+    fun extractionFieldValue(extractionName: String): String? {
+        waitForExtractionScreen()
+        val list = UiScrollable(
+            UiSelector().resourceId(AppResources.resId("recyclerview_extractions"))
+        ).setAsVerticalList()
+
+        runCatching { list.scrollToBeginning(MAX_LIST_SWIPES) }
+
+        do {
+            readVisibleFieldValue(extractionName)?.let { return it }
+        } while (runCatching { list.scrollForward() }.getOrDefault(false))
+
+        return readVisibleFieldValue(extractionName)
+    }
+
+    /**
+     * True when the extraction is present and carries a non-blank value.
+     *
+     * Always ask this rather than "is the row present". The example app re-adds every missing
+     * SEPA field as an empty editable row, so an `amountToPay` row exists even after the SDK
+     * has stripped the extraction — presence proves nothing, the value does.
+     */
+    fun isExtractionFieldFilled(extractionName: String): Boolean =
+        extractionFieldValue(extractionName)?.isNotBlank() == true
+
+    /**
+     * Reads the row currently in the hierarchy, or null when it is not bound. A
+     * NoMatchingViewException here means "not on screen", which the caller resolves by
+     * scrolling — it is not a test failure.
+     */
+    private fun readVisibleFieldValue(extractionName: String): String? {
+        var value: String? = null
+        try {
+            onView(allOf(withId(R.id.text_value), withHint(extractionName)))
+                .check { view, noViewFoundException ->
+                    if (noViewFoundException == null && view is EditText) {
+                        value = view.text.toString()
+                    }
+                }
+        } catch (_: NoMatchingViewException) {
+            return null
+        }
+        return value
+    }
+
     companion object {
         private const val EXTRACTION_TIMEOUT = 30_000L
+        private const val MAX_LIST_SWIPES = 20
     }
 }
+

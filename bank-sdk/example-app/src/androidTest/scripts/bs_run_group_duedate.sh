@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 #
-# Shard 5/5 — Due Date Hint / Schedule Payment bottom sheet tests.
+# Shard 5/6 — Due Date Hint / Schedule Payment bottom sheet tests.
 #
 # Every test performs a real upload + analysis round trip against the Gini API. Most
 # tests use the validated fixtures invoice_future_due.jpeg / invoice_no_due_date.jpeg

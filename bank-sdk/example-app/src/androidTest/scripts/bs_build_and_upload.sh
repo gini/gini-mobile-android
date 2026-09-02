@@ -11,11 +11,13 @@ set -e
 #                   HelpScreenTests#test7_clickHelpButtonAndVerifyContentOnHelpScreen
 #
 # For sharded runs, prefer the preset wrappers in this directory:
-#   bs_run_group_ui.sh            – Capture / Onboarding / Help
+#   bs_run_group_ui.sh             – Capture / Onboarding / Help
 #   bs_run_group_digitalinvoice.sh – DigitalInvoice screens (isolated)
-#   bs_run_group_extraction.sh    – Extraction / Review / NoResults / ProductTag
-#   bs_run_group_import.sh        – Import / FileImportError / ErrorScreen / OpenWith
-#   bs_run_all_groups.sh          – builds+uploads ONCE, then triggers all four shards
+#   bs_run_group_extraction.sh     – Extraction / Review / NoResults / ProductTag
+#   bs_run_group_import.sh         – Import / FileImportError / ErrorScreen / OpenWith
+#   bs_run_group_duedate.sh        – Due Date Hint / Schedule Payment bottom sheet
+#   bs_run_group_creditnote.sh     – Credit Note warning bottom sheet
+#   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers all six shards
 #
 # BrowserStack credentials must be set via environment variables:
 #   export BS_USER="your_username"

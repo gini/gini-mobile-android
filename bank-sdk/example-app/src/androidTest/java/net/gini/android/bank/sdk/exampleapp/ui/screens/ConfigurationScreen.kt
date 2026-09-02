@@ -66,4 +66,41 @@ class ConfigurationScreen {
         return this
     }
 
+    /**
+     * The Credit Note Hint switch is the last toggle in the feature-toggle block, so it
+     * needs a scroll before it can be read or clicked.
+     */
+    fun scrollToCreditNoteHintSwitch(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_creditNoteHint))
+            .perform(closeSoftKeyboard(), scrollTo())
+        return this
+    }
+
+    fun assertCreditNoteHintSwitchIsChecked(): ConfigurationScreen {
+        scrollToCreditNoteHintSwitch()
+        onView(ViewMatchers.withId(R.id.switch_creditNoteHint))
+            .check(matches(ViewMatchers.isChecked()))
+        return this
+    }
+
+    fun assertCreditNoteHintSwitchIsUnchecked(): ConfigurationScreen {
+        scrollToCreditNoteHintSwitch()
+        onView(ViewMatchers.withId(R.id.switch_creditNoteHint))
+            .check(matches(ViewMatchers.isNotChecked()))
+        return this
+    }
+
+    /**
+     * Kept for completeness, but do NOT use it to drive the flag in a test — set the flag with
+     * `CreditNoteHintConfigurator` instead. `scrollTo()` parks this switch flush against the
+     * bottom of the ScrollView viewport, where on some devices the navigation bar swallows the
+     * tap and the app loses the foreground (see that class for the full story). Reading the
+     * switch is safe; tapping it is not.
+     */
+    fun clickCreditNoteHintSwitch(): ConfigurationScreen {
+        onView(ViewMatchers.withId(R.id.switch_creditNoteHint))
+            .perform(closeSoftKeyboard(), scrollTo(), click())
+        return this
+    }
+
 }
