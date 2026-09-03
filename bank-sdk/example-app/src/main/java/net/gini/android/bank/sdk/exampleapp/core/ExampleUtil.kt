@@ -1,7 +1,9 @@
 package net.gini.android.bank.sdk.exampleapp.core
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import androidx.core.content.IntentCompat
 import net.gini.android.capture.network.model.GiniCaptureSpecificExtraction
 import net.gini.android.core.api.models.SpecificExtraction
 
@@ -9,6 +11,18 @@ object ExampleUtil {
     fun isIntentActionViewOrSend(intent: Intent): Boolean {
         val action = intent.action
         return Intent.ACTION_VIEW == action || Intent.ACTION_SEND == action || Intent.ACTION_SEND_MULTIPLE == action
+    }
+
+    fun getOpenWithUris(intent: Intent): List<Uri> = when (intent.action) {
+        Intent.ACTION_VIEW -> listOfNotNull(intent.data)
+        Intent.ACTION_SEND -> listOfNotNull(
+            IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+        )
+        Intent.ACTION_SEND_MULTIPLE ->
+            IntentCompat.getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+                ?.filterNotNull()
+                .orEmpty()
+        else -> emptyList()
     }
 
     fun hasNoPay5Extractions(extractionNames: Set<String>): Boolean {

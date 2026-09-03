@@ -22,6 +22,7 @@ import net.gini.android.bank.sdk.capture.CaptureResult
 import net.gini.android.bank.sdk.capture.ResultError
 import net.gini.android.bank.sdk.exampleapp.ExampleApp
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil
 import net.gini.android.bank.sdk.exampleapp.core.ExampleUtil.isIntentActionViewOrSend
 import net.gini.android.bank.sdk.exampleapp.core.PermissionHandler
 import net.gini.android.bank.sdk.exampleapp.databinding.ActivityMainBinding
@@ -33,6 +34,7 @@ import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.ProductTag
 import net.gini.android.capture.util.CancellationToken
 import net.gini.android.capture.util.SharedPreferenceHelper
+import org.slf4j.LoggerFactory
 
 /**
  * Entry point for the screen api example app.
@@ -215,11 +217,57 @@ class MainActivity : AppCompatActivity() {
         applyForcedSdkThemeGlobally()
 
         if (intent != null) {
-            cancellationToken = GiniBank.startCaptureFlowForIntent(
-                captureImportLauncher, this@MainActivity, intent
-            )
+            if (configurationViewModel.configurationFlow.value.isOpenWithUriBasedApiEnabled) {
+                startCaptureFlowForOpenWithUris(intent)
+            } else {
+                LOG.info("Open with: using Intent-based API")
+                cancellationToken = GiniBank.startCaptureFlowForIntent(
+                    captureImportLauncher, this@MainActivity, intent
+                )
+            }
         } else {
             GiniBank.startCaptureFlow(captureLauncher)
+        }
+    }
+
+    private fun startCaptureFlowForOpenWithUris(intent: Intent) {
+        val uris = ExampleUtil.getOpenWithUris(intent)
+        if (uris.isEmpty()) {
+            Toast.makeText(
+                this,
+                getString(R.string.open_with_uri_based_api_no_uris_toast),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        Toast.makeText(
+            this,
+            getString(R.string.open_with_uri_based_api_toast),
+            Toast.LENGTH_SHORT
+        ).show()
+        LOG.info("Open with: using Uri-based API (createDocumentForImportedFiles)")
+        cancellationToken = GiniBank.createDocumentForImportedFiles(
+            uris = uris,
+            context = this
+        ) { result ->
+            when (result) {
+                GiniBank.CreateDocumentFromImportedFileResult.Cancelled ->
+                    Toast.makeText(this, "Open with cancelled", Toast.LENGTH_SHORT).show()
+
+                is GiniBank.CreateDocumentFromImportedFileResult.Error ->
+                    Toast.makeText(
+                        this,
+                        "Open with failed with error ${result.error}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                is GiniBank.CreateDocumentFromImportedFileResult.Success ->
+                    result.document?.let {
+                        startCaptureFlowForDocument(it)
+                    } ?: run {
+                        Toast.makeText(this, "Open with failed", Toast.LENGTH_SHORT).show()
+                    }
+            }
         }
     }
 
@@ -320,5 +368,6 @@ class MainActivity : AppCompatActivity() {
         const val CAMERA_PERMISSION_BUNDLE = "CAMERA_PERMISSION_BUNDLE"
         const val EXTRA_IN_OPEN_WITH_DOCUMENT = "EXTRA_IN_OPEN_WITH_DOCUMENT"
         private const val REQUEST_CONFIGURATION = 3
+        private val LOG = LoggerFactory.getLogger(MainActivity::class.java)
     }
 }

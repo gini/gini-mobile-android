@@ -66,6 +66,9 @@
     <string name="payment_due_hint_threshold_days_label">Payment Due Hint Threshold Days</string>
     <string name="credit_note_hint_switch_label">Credit Note Hint</string>
     <string name="open_with_switch_label">Open with</string>
+    <string name="open_with_uri_based_api_switch_label">Open with: use URI-based API</string>
+    <string name="open_with_uri_based_api_toast">Open with: URI-based API</string>
+    <string name="open_with_uri_based_api_no_uris_toast">Open with failed: no URIs in intent</string>
     <string name="qr_code_scanning_switch_label">QR code scanning</string>
     <string name="only_qr_code_scanning_switch_label">QR code scanning only</string>
     <string name="only_qr_code_scanning_switch_description">This will work if the \'Qr code scanning\' switch is also enabled.</string>
