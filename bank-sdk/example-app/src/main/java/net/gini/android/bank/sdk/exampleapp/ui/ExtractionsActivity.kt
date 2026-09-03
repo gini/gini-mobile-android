@@ -368,10 +368,13 @@ private class ExtractionsAdapter(
                         .inflate(R.layout.item_extraction, parent, false)
                 ).also { holder ->
                     holder.mTextValue.addTextChangedListener {
-                        listener?.valueChanged(
-                            holder.mTextInputLayout.hint.toString(),
-                            it.toString()
-                        )
+                        // setText() in onBindViewHolder always fires this watcher, so a recycled
+                        // holder would otherwise report the *previous* row's edit and overwrite
+                        // that extraction's value.
+                        if (holder.isBinding) return@addTextChangedListener
+                        holder.boundExtractionName?.let { extractionName ->
+                            listener?.valueChanged(extractionName, it.toString())
+                        }
                     }
                 }
             }
@@ -402,9 +405,12 @@ private class ExtractionsAdapter(
         when (holder) {
             is ExtractionsViewHolder -> {
                 extractions.getOrNull(position)?.run {
-                    holder.mTextValue.setText(value)
+                    holder.isBinding = true
+                    holder.boundExtractionName = name
                     holder.mTextInputLayout.hint = name
+                    holder.mTextValue.setText(value)
                     holder.mTextValue.isEnabled = name in editableSpecificExtractions
+                    holder.isBinding = false
                 }
             }
         }
@@ -428,6 +434,12 @@ private class ExtractionsAdapter(
 private class ExtractionsViewHolder(itemView: View) : ViewHolder(itemView) {
     var mTextInputLayout: TextInputLayout = itemView.findViewById(R.id.text_input_layout)
     var mTextValue: TextInputEditText = itemView.findViewById(R.id.text_value)
+
+    /** Name of the extraction currently shown, used to attribute user edits to the right field. */
+    var boundExtractionName: String? = null
+
+    /** True while onBindViewHolder writes into the views, so the text watcher ignores its own writes. */
+    var isBinding: Boolean = false
 }
 
 private class ExtractionsDocsViewHolder(itemView: View) : ViewHolder(itemView) {
