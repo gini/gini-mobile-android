@@ -11,11 +11,13 @@ set -e
 #                   HelpScreenTests#test7_clickHelpButtonAndVerifyContentOnHelpScreen
 #
 # For sharded runs, prefer the preset wrappers in this directory:
-#   bs_run_group_ui.sh            – Capture / Onboarding / MainScreen / Help
+#   bs_run_group_ui.sh             – Capture / Onboarding / Help
 #   bs_run_group_digitalinvoice.sh – DigitalInvoice screens (isolated)
-#   bs_run_group_extraction.sh    – Extraction / Review / NoResults / ProductTag
-#   bs_run_group_import.sh        – Import / FileImportError / ErrorScreen / OpenWith
-#   bs_run_all_groups.sh          – builds+uploads ONCE, then triggers all four shards
+#   bs_run_group_extraction.sh     – Extraction / Review / NoResults / ProductTag
+#   bs_run_group_import.sh         – Import / FileImportError / ErrorScreen / OpenWith
+#   bs_run_group_duedate.sh        – Due Date Hint / Schedule Payment bottom sheet
+#   bs_run_group_creditnote.sh     – Credit Note warning bottom sheet
+#   bs_run_all_groups.sh           – builds+uploads ONCE, then triggers all six shards
 #
 # BrowserStack credentials must be set via environment variables:
 #   export BS_USER="your_username"
@@ -47,10 +49,14 @@ APK_DIR="$REPO_ROOT/bank-sdk/example-app/build/outputs/apk"
 APP_APK="$APK_DIR/$FLAVOR/$BUILD_TYPE/example-app-dev-exampleApp-debug.apk"
 TEST_APK="$APK_DIR/androidTest/$FLAVOR/$BUILD_TYPE/example-app-dev-exampleApp-debug-androidTest.apk"
 
-TEST_DOCUMENTS="$SCRIPT_DIR/../testDocuments"
-TEST_IMAGE="$TEST_DOCUMENTS/test_image.jpeg"
-TEST_PDF="$TEST_DOCUMENTS/Testrechnung-RA-1.pdf"
-SAMPLE_PDF="$TEST_DOCUMENTS/sample.pdf"
+# Media files live in the androidTest assets (single source of truth — the test APK
+# copies them onto the device itself for local runs; this script uploads the same files
+# to BrowserStack's device storage). camera_injection_image.jpeg is deliberately NOT the
+# same file as test_image.jpeg — it is the image BrowserStack injects into the camera.
+TEST_ASSETS="$SCRIPT_DIR/../assets"
+TEST_IMAGE="$TEST_ASSETS/camera_injection_image.jpeg"
+TEST_PDF="$TEST_ASSETS/Testrechnung-RA-1.pdf"
+SAMPLE_PDF="$TEST_ASSETS/sample.pdf"
 
 DEVICE_1="Google Pixel 9-16.0"
 DEVICE_2="Google Pixel 10 Pro-16.0"

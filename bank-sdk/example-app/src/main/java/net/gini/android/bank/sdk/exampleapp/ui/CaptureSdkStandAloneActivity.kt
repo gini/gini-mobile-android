@@ -55,7 +55,9 @@ class CaptureSdkStandAloneActivity : AppCompatActivity() {
 
     private fun restoreFragmentListener() {
         val fragment =
-            supportFragmentManager.findFragmentByTag(ClientCaptureSDKFragment::class.java.name) as? ClientCaptureSDKFragment?
+            supportFragmentManager.findFragmentByTag(
+                ClientCaptureSDKFragment::class.java.name
+            ) as? ClientCaptureSDKFragment?
         listener?.let { fragment?.setListener(it) }
     }
 

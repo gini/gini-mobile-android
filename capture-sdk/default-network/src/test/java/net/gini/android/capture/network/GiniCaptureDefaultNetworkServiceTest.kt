@@ -131,7 +131,9 @@ class GiniCaptureDefaultNetworkServiceTest {
             isQrCodeEducationEnabled = true,
             isSavePhotosLocallyEnabled = true,
             isAlreadyPaidHintEnabled = true,
-            isPaymentDueHintEnabled = true
+            isPaymentDueHintEnabled = true,
+            isPaymentScheduleHintEnabled = true,
+            isCreditNoteHintEnabled = true
         )
 
         // Add more stubs if mapBankConfigurationToConfiguration uses other properties
@@ -146,6 +148,7 @@ class GiniCaptureDefaultNetworkServiceTest {
             override fun success(result: Configuration) {
                 called = true
                 assertThat(result).isNotNull()
+                assertThat(result.isPaymentScheduleHintEnabled).isTrue()
             }
 
             override fun failure(error: Error) {

@@ -54,7 +54,7 @@ internal val amountWatcher = object : TextWatcher {
     }
 }
 
-// Based on IPC-566, Locale.GERMAN is used to always format amount in the same way.
+// Locale.GERMAN is used to always format amount in the same way.
 internal fun currencyFormatterWithoutSymbol(): NumberFormat =
     NumberFormat.getCurrencyInstance(Locale.GERMAN).apply {
         (this as? DecimalFormat)?.apply {

@@ -1,15 +1,12 @@
 package net.gini.android.capture.help
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
@@ -104,15 +101,9 @@ class FileImportHelpFragment : Fragment() {
         snackbar = Snackbar.make(constraintLayout, getString(R.string.gc_snackbar_illustrations), Snackbar.LENGTH_INDEFINITE).apply {
             setTextMaxLines(5)
 
-            val typedValue = TypedValue()
-            val theme: Resources.Theme = requireContext().theme
-            theme.resolveAttribute(androidx.appcompat.R.attr.colorAccent, typedValue, true)
-            @ColorInt val color = typedValue.data
-
             setAction(getString(R.string.gc_snackbar_dismiss)) {
                 dismiss()
             }
-            setActionTextColor(color) // snackbar action text color
 
             val bottomPadding =
                 if (GiniCapture.getInstance().isBottomNavigationBarEnabled) resources.getDimension(R.dimen.gc_large_96)

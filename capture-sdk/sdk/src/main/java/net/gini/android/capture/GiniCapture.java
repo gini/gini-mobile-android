@@ -135,7 +135,9 @@ public class GiniCapture {
     private final InjectedViewAdapterInstance<ErrorNavigationBarBottomAdapter> errorNavigationBarBottomAdapterInstance;
     private final boolean isAlreadyPaidHintEnabled;
     private final boolean isPaymentDueHintEnabled;
+    private final boolean isPaymentScheduleHintEnabled;
     private final int paymentDueHintThresholdDays;
+    private final boolean isCreditNoteHintEnabled;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
     private final InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -508,7 +510,9 @@ public class GiniCapture {
         errorNavigationBarBottomAdapterInstance = builder.getErrorNavigationBarBottomAdapterInstance();
         isAlreadyPaidHintEnabled = builder.isAlreadyPaidHintEnabled();
         isPaymentDueHintEnabled = builder.isPaymentDueHintEnabled();
+        isPaymentScheduleHintEnabled = builder.isPaymentScheduleHintEnabled();
         paymentDueHintThresholdDays = builder.getPaymentDueHintThresholdDays();
+        isCreditNoteHintEnabled = builder.isCreditNoteHintEnabled();
         onboardingAlignCornersIllustrationAdapterInstance = builder.getOnboardingAlignCornersIllustrationAdapterInstance();
         onboardingLightingIllustrationAdapterInstance = builder.getOnboardingLightingIllustrationAdapterInstance();
         onboardingMultiPageIllustrationAdapterInstance = builder.getOnboardingMultiPageIllustrationAdapterInstance();
@@ -827,8 +831,20 @@ public class GiniCapture {
         return isPaymentDueHintEnabled;
     }
 
+    /**
+     * Whether the scheduled payment state of the due date bottom sheet may be shown. When the
+     * client configuration also enables it, this state takes priority over the payment due hint.
+     */
+    public boolean isPaymentScheduleHintEnabled() {
+        return isPaymentScheduleHintEnabled;
+    }
+
     public int getPaymentDueHintThresholdDays() {
         return paymentDueHintThresholdDays;
+    }
+
+    public boolean isCreditNoteHintEnabled() {
+        return isCreditNoteHintEnabled;
     }
 
     @Nullable
@@ -1039,7 +1055,9 @@ public class GiniCapture {
         private final InjectedViewAdapterInstance<CameraNavigationBarBottomAdapter> cameraNavigationBarBottomAdapterInstance = new InjectedViewAdapterInstance<>(new DefaultCameraNavigationBarBottomAdapter());
         private boolean isAlreadyPaidHintEnabled = true;
         private boolean isPaymentDueHintEnabled = true;
+        private boolean isPaymentScheduleHintEnabled = true;
         private int paymentDueHintThresholdDays = PAYMENT_DUE_HINT_THRESHOLD_DAYS;
+        private boolean isCreditNoteHintEnabled = true;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingAlignCornersIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingLightingIllustrationAdapterInstance;
         private InjectedViewAdapterInstance<OnboardingIllustrationAdapter> onboardingMultiPageIllustrationAdapterInstance;
@@ -1432,11 +1450,29 @@ public class GiniCapture {
             return this;
         }
 
+        /**
+         * Enable/disable the scheduled payment state of the due date bottom sheet.
+         *
+         * <p>On by default. The state is only shown when the client configuration flag
+         * {@code paymentScheduleHintEnabled} is also on, in which case it takes priority over
+         * the payment due hint state.
+         */
+        public Builder setPaymentScheduleHintEnabled(final Boolean enabled) {
+            isPaymentScheduleHintEnabled = enabled;
+            return this;
+        }
+
         public Builder setPaymentDueHintThresholdDays(final int thresholdDays) {
             paymentDueHintThresholdDays = thresholdDays;
             return this;
         }
-        private boolean isAlreadyPaidHintEnabled() {
+
+        public Builder setCreditNoteHintEnabled(final Boolean enabled){
+            isCreditNoteHintEnabled = enabled;
+            return this;
+        }
+
+        private boolean isAlreadyPaidHintEnabled(){
             return isAlreadyPaidHintEnabled;
         }
 
@@ -1444,8 +1480,16 @@ public class GiniCapture {
             return isPaymentDueHintEnabled;
         }
 
+        private boolean isPaymentScheduleHintEnabled() {
+            return isPaymentScheduleHintEnabled;
+        }
+
         private int getPaymentDueHintThresholdDays() {
             return paymentDueHintThresholdDays;
+        }
+
+        private boolean isCreditNoteHintEnabled(){
+            return isCreditNoteHintEnabled;
         }
 
         @NonNull

@@ -17,4 +17,6 @@ data class Configuration(
     val isAlreadyPaidHintEnabled: Boolean,
     val isPaymentDueHintEnabled: Boolean,
     val isUnsupportedQRCodeWarningEnabled: Boolean = false,
+    val isPaymentScheduleHintEnabled: Boolean = false,
+    val isCreditNoteHintEnabled: Boolean = false,
 )

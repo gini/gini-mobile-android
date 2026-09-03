@@ -36,6 +36,24 @@ public interface AnalysisFragmentListener {
             @NonNull final List<GiniCaptureReturnReason> returnReasons);
 
     /**
+     * Called when the user chose to schedule the payment instead of paying now, from the
+     * scheduled payment state of the due date bottom sheet.
+     * <p>
+     * The extractions are handed over unchanged so the hosting app can open its own scheduled
+     * transfer flow. The capture flow finishes with this instead of
+     * {@link #onExtractionsAvailable}.
+     *
+     * @param extractions a map of the extractions with the extraction labels as keys
+     * @param compoundExtractions a map of the compound extractions with the extraction labels as keys
+     */
+    default void onSchedulePayment(
+            @NonNull final Map<String, GiniCaptureSpecificExtraction> extractions,
+            @NonNull final Map<String, GiniCaptureCompoundExtraction> compoundExtractions,
+            @NonNull final List<GiniCaptureReturnReason> returnReasons) {
+        /* no-op */
+    }
+
+    /**
      * Called when the document has been analyzed and no extractions were received.
      * <p>
      * You should show the {@link NoResultsFragment}.

@@ -17,7 +17,9 @@ internal interface TrackingAnalysisService : DocumentService {
         "Accept: application/json"
     )
     suspend fun sendEvents(
-        @Header("Authorization") token: String,
+        // When null the Authorization header is omitted and added by the SDK's session
+        // interceptor in the OkHttp layer instead.
+        @Header("Authorization") token: String?,
         @Body amplitudeBody: AmplitudeRequestBody
     ): Response<ResponseBody>
 }

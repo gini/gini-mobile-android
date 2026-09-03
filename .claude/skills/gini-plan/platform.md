@@ -21,10 +21,12 @@ bank-sdk. Name the affected Gradle modules with full paths
 
 ## Public API assessment
 
-Integrator-visible means `public` Kotlin/Java declarations. There are no
-`api/*.api` binary-compatibility dumps in this repo (no
-binary-compatibility-validator yet), so assess source-level visibility
-instead of looking for dump files.
+Integrator-visible means `public` Kotlin/Java declarations. Binary
+compatibility dumps exist for the SDK modules (kotlinx
+binary-compatibility-validator; e.g. `bank-sdk/sdk/api/sdk.api`,
+`capture-sdk/sdk/api/sdk.api`) — check the touched module's dump when
+assessing API impact, and note in the spec when public API changes will
+require re-pinning the dump (a stale dump fails `apiCheck`).
 
 ## Architecture patterns in use
 

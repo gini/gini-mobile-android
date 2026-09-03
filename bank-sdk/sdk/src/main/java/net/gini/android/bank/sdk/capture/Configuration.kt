@@ -131,7 +131,7 @@ data class CaptureConfiguration(
     val navigationBarTopAdapter: NavigationBarTopAdapter? = null,
 
     /**
-     * Enable/disable the payment hint.
+     * Enable/disable the already paid hint.
      *
      * On by default.
      */
@@ -150,6 +150,13 @@ data class CaptureConfiguration(
      * 5 by default.
      */
     val paymentDueHintThresholdDays: Int = GiniCapture.PAYMENT_DUE_HINT_THRESHOLD_DAYS,
+
+    /**
+     * Enable/disable the credit note hint.
+     *
+     * On by default.
+     */
+    val creditNoteHintEnabled: Boolean = true,
 
     /**
      * Set an adapter implementation to show a custom illustration on the "align corners" onboarding page.
@@ -232,6 +239,15 @@ data class CaptureConfiguration(
      *
      */
     val productTag: ProductTag = ProductTag.SepaExtractions,
+
+    /**
+     * Enable/disable the scheduled payment state of the due date bottom sheet.
+     *
+     * On by default. Only shown when the client configuration flag
+     * `paymentScheduleHintEnabled` is also on, in which case it takes priority over the
+     * payment due hint state.
+     */
+    val paymentScheduleHintEnabled: Boolean = true,
 )
 
 internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfiguration): GiniCapture.Builder {
@@ -251,7 +267,9 @@ internal fun GiniCapture.Builder.applyConfiguration(configuration: CaptureConfig
         .setImportedFileSizeBytesLimit(configuration.importedFileSizeBytesLimit)
         .setAlreadyPaidHintEnabled(configuration.alreadyPaidHintEnabled)
         .setPaymentDueHintEnabled(configuration.paymentDueHintEnabled)
+        .setPaymentScheduleHintEnabled(configuration.paymentScheduleHintEnabled)
         .setPaymentDueHintThresholdDays(configuration.paymentDueHintThresholdDays)
+        .setCreditNoteHintEnabled(configuration.creditNoteHintEnabled)
         .setEntryPoint(configuration.entryPoint)
         .setAllowScreenshots(configuration.allowScreenshots)
         .setSaveInvoicesLocallyEnabled(configuration.saveInvoicesLocallyEnabled)

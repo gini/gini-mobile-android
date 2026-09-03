@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.capture.CaptureConfiguration
 import net.gini.android.bank.sdk.exampleapp.R
+import net.gini.android.bank.sdk.exampleapp.uitestsupport.UiTestMockBackend
 import net.gini.android.bank.sdk.exampleapp.core.DefaultNetworkServicesProvider
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomLottiLoadingIndicatorAdapter
 import net.gini.android.bank.sdk.exampleapp.ui.adapters.CustomNavigationBarTopAdapter
@@ -111,10 +112,18 @@ class ConfigurationViewModel @Inject constructor(
     private fun buildBaseCaptureConfiguration(configuration: ExampleAppBankConfiguration): CaptureConfiguration {
         return CaptureConfiguration(
             // Debug mode
-            networkService = if (configuration.isDebugModeEnabled)
-                defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled
-            else
-                defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled,
+            // UI tests can replace the Gini API with canned responses; inert in normal runs,
+            // see UiTestMockBackend for why.
+            networkService = when {
+                UiTestMockBackend.isArmed ->
+                    UiTestMockBackend.networkService()
+
+                configuration.isDebugModeEnabled ->
+                    defaultNetworkServicesProvider.defaultNetworkServiceDebugEnabled
+
+                else ->
+                    defaultNetworkServicesProvider.defaultNetworkServiceDebugDisabled
+            },
             // file import
             fileImportEnabled = configuration.isFileImportEnabled,
             // QR code scanning
@@ -129,12 +138,16 @@ class ConfigurationViewModel @Inject constructor(
             flashOnByDefault = configuration.isFlashDefaultStateEnabled,
             // set file import type
             documentImportEnabledFileTypes = configuration.documentImportEnabledFileTypes,
-            // enable payment hints
+            // enable already paid hint
             alreadyPaidHintEnabled = configuration.isAlreadyPaidHintEnabled,
             // enable payment due hint
             paymentDueHintEnabled = configuration.isPaymentDueHintEnabled,
+            // enable the scheduled payment state of the due date bottom sheet
+            paymentScheduleHintEnabled = configuration.isPaymentScheduleHintEnabled,
             // set payment due hint threshold days
             paymentDueHintThresholdDays = configuration.paymentDueHintThresholdDays,
+            // enable credit note hint
+            creditNoteHintEnabled = configuration.isCreditNoteHintEnabled,
             // enable onboarding screens at first launch
             showOnboardingAtFirstRun = configuration.isOnboardingAtFirstRunEnabled,
             // enable onboarding at every launch

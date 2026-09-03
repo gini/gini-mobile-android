@@ -17,6 +17,18 @@ External dependencies are managed using [gradle's version catalogs](https://docs
 Each SDK, library and example app have their own version which is set in their releasable sub-modules' `gradle.properties` file. In case of
 apps this also contains the `versionCode`.
 
+# Public API Compatibility
+
+The releasable modules apply the [binary-compatibility-validator](https://github.com/Kotlin/binary-compatibility-validator) gradle plugin. Each module's public binary API is described by a committed dump file in its `api` folder (e.g., `core-api-library/library/api/library.api`). The `apiCheck` task compares the compiled public API against the dump and fails on any difference. It runs in every module's check workflow, so a public API change fails CI until the dump is updated.
+
+When you intentionally change the public API of a module:
+
+1. Run `./gradlew <project-id>:<module-id>:apiDump` to regenerate the dump.
+2. Review the dump diff — it shows exactly what is added to, removed from or changed in the public API. Removals and signature changes break our clients' builds: they must be avoided, or introduced via deprecation first and removal in the next major version.
+3. Commit the updated dump file together with the code change, so the API change is visible in the pull request.
+
+An unintentional `apiCheck` failure means you changed or exposed public API by accident (remember that Kotlin declarations are public by default) — restrict the visibility instead of updating the dump.
+
 # Documentation
 
 We provide two types of documentation: reference documentation and integration guides.

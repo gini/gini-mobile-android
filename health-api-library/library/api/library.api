@@ -1,0 +1,235 @@
+public final class net/gini/android/health/api/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public static final field VERSION_CODE Ljava/lang/String;
+	public static final field VERSION_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class net/gini/android/health/api/GiniHealthAPI : net/gini/android/core/api/internal/GiniCoreAPI {
+	public fun <init> (Lnet/gini/android/health/api/HealthApiDocumentManager;Lnet/gini/android/core/api/authorization/CredentialsStore;)V
+}
+
+public final class net/gini/android/health/api/GiniHealthAPIBuilder : net/gini/android/core/api/internal/GiniCoreAPIBuilder {
+	public static final field API_VERSION I
+	public static final field Companion Lnet/gini/android/health/api/GiniHealthAPIBuilder$Companion;
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/authorization/SessionManager;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/authorization/SessionManager;I)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/authorization/SessionManager;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun build ()Lnet/gini/android/core/api/internal/GiniCoreAPI;
+	public fun build ()Lnet/gini/android/health/api/GiniHealthAPI;
+	public synthetic fun createDocumentManager ()Lnet/gini/android/core/api/DocumentManager;
+	public synthetic fun createDocumentRepository ()Lnet/gini/android/core/api/DocumentRepository;
+	public fun getGiniApiType ()Lnet/gini/android/core/api/GiniApiType;
+	public synthetic fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setHttpClientProvider (Lnet/gini/android/core/api/http/GiniHttpClientProvider;)Lnet/gini/android/health/api/GiniHealthAPIBuilder;
+	public synthetic fun setSelfManagedAuthentication (Z)Lnet/gini/android/core/api/internal/GiniCoreAPIBuilder;
+	public fun setSelfManagedAuthentication (Z)Lnet/gini/android/health/api/GiniHealthAPIBuilder;
+}
+
+public final class net/gini/android/health/api/GiniHealthAPIBuilder$Companion {
+}
+
+public final class net/gini/android/health/api/GiniHealthApiType : net/gini/android/core/api/GiniApiType {
+	public fun <init> (I)V
+	public fun <init> (ILjava/lang/String;)V
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;)V
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getApiVersion ()I
+	public fun getBaseUrl ()Ljava/lang/String;
+	public fun getGiniCompositeJsonMediaType ()Ljava/lang/String;
+	public fun getGiniJsonMediaType ()Ljava/lang/String;
+	public fun getGiniPartialMediaType ()Ljava/lang/String;
+	public final fun getGiniPaymentRequestDocumentMediaType ()Ljava/lang/String;
+	public final fun getGiniPaymentRequestDocumentPngMediaType ()Ljava/lang/String;
+	public fun hashCode ()I
+}
+
+public final class net/gini/android/health/api/HardcodedFilesLocalDataSource {
+	public fun <init> (Landroid/content/Context;)V
+	public final fun loadTestPdf ()[B
+}
+
+public final class net/gini/android/health/api/HealthApiDocumentManager : net/gini/android/core/api/DocumentManager {
+	public fun <init> (Lnet/gini/android/health/api/HealthApiDocumentRepository;)V
+	public final fun createPaymentRequest (Lnet/gini/android/health/api/models/PaymentRequestInput;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deleteDocuments (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequests (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getConfigurations (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPageImage (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentProvider (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentProviders (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequestDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequestImage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/health/api/HealthApiDocumentRemoteSource : net/gini/android/core/api/DocumentRemoteSource {
+	public final fun createPaymentRequest (Ljava/lang/String;Lnet/gini/android/health/api/models/PaymentRequestInput;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createPaymentRequest (Lnet/gini/android/health/api/models/PaymentRequestInput;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deleteDocuments (Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deleteDocuments (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequest (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequests (Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequests (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getConfigurations (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getConfigurations (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getCoroutineContext ()Lkotlin/coroutines/CoroutineContext;
+	public final fun getPaymentRequestDocument (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequestDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequestImage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequestImage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun setCoroutineContext (Lkotlin/coroutines/CoroutineContext;)V
+}
+
+public final class net/gini/android/health/api/HealthApiDocumentRepository : net/gini/android/core/api/DocumentRepository {
+	public fun <init> (Lnet/gini/android/health/api/HealthApiDocumentRemoteSource;Lnet/gini/android/core/api/authorization/SessionManager;Lnet/gini/android/health/api/GiniHealthApiType;)V
+	public fun createExtractionsContainer (Ljava/util/Map;Ljava/util/Map;Lorg/json/JSONObject;)Lnet/gini/android/core/api/models/ExtractionsContainer;
+	public fun createPartialDocument ([BLjava/lang/String;Ljava/lang/String;Lnet/gini/android/core/api/DocumentManager$DocumentType;Lnet/gini/android/core/api/DocumentMetadata;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createPaymentRequest (Lnet/gini/android/health/api/models/PaymentRequestInput;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deleteDocuments (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequest (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun deletePaymentRequests (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getConfigurations (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPageImage (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentProvider (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentProviders (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequestDocument (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getPaymentRequestImage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class net/gini/android/health/api/models/PaymentProvider {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/health/api/models/PaymentProvider$Colors;[BLjava/lang/String;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/health/api/models/PaymentProvider$Colors;[BLjava/lang/String;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Lnet/gini/android/health/api/models/PaymentProvider$Colors;
+	public final fun component6 ()[B
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/util/List;
+	public final fun component9 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/health/api/models/PaymentProvider$Colors;[BLjava/lang/String;Ljava/util/List;Ljava/util/List;)Lnet/gini/android/health/api/models/PaymentProvider;
+	public static synthetic fun copy$default (Lnet/gini/android/health/api/models/PaymentProvider;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/health/api/models/PaymentProvider$Colors;[BLjava/lang/String;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lnet/gini/android/health/api/models/PaymentProvider;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAppVersion ()Ljava/lang/String;
+	public final fun getColors ()Lnet/gini/android/health/api/models/PaymentProvider$Colors;
+	public final fun getGpcSupportedPlatforms ()Ljava/util/List;
+	public final fun getIcon ()[B
+	public final fun getId ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getOpenWithSupportedPlatforms ()Ljava/util/List;
+	public final fun getPackageName ()Ljava/lang/String;
+	public final fun getPlayStoreUrl ()Ljava/lang/String;
+	public final fun gpcSupported ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/health/api/models/PaymentProvider$Colors {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/health/api/models/PaymentProvider$Colors;
+	public static synthetic fun copy$default (Lnet/gini/android/health/api/models/PaymentProvider$Colors;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/health/api/models/PaymentProvider$Colors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundColorRGBHex ()Ljava/lang/String;
+	public final fun getTextColoRGBHex ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/health/api/models/PaymentProviderKt {
+	public static final field ANDROID_PLATFORM Ljava/lang/String;
+}
+
+public final class net/gini/android/health/api/models/PaymentRequestInput {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/gini/android/health/api/models/PaymentRequestInput;
+	public static synthetic fun copy$default (Lnet/gini/android/health/api/models/PaymentRequestInput;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/health/api/models/PaymentRequestInput;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAmount ()Ljava/lang/String;
+	public final fun getBic ()Ljava/lang/String;
+	public final fun getIban ()Ljava/lang/String;
+	public final fun getPaymentProvider ()Ljava/lang/String;
+	public final fun getPurpose ()Ljava/lang/String;
+	public final fun getRecipient ()Ljava/lang/String;
+	public final fun getSourceDocumentLocation ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/health/api/response/CommunicationTone : java/lang/Enum {
+	public static final field Companion Lnet/gini/android/health/api/response/CommunicationTone$Companion;
+	public static final field FORMAL Lnet/gini/android/health/api/response/CommunicationTone;
+	public static final field INFORMAL Lnet/gini/android/health/api/response/CommunicationTone;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/health/api/response/CommunicationTone;
+	public static fun values ()[Lnet/gini/android/health/api/response/CommunicationTone;
+}
+
+public final class net/gini/android/health/api/response/CommunicationTone$Companion {
+}
+
+public final class net/gini/android/health/api/response/ConfigurationResponse {
+	public fun <init> (Ljava/lang/String;Lnet/gini/android/health/api/response/CommunicationTone;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lnet/gini/android/health/api/response/CommunicationTone;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Lnet/gini/android/health/api/response/CommunicationTone;Ljava/lang/String;)Lnet/gini/android/health/api/response/ConfigurationResponse;
+	public static synthetic fun copy$default (Lnet/gini/android/health/api/response/ConfigurationResponse;Ljava/lang/String;Lnet/gini/android/health/api/response/CommunicationTone;Ljava/lang/String;ILjava/lang/Object;)Lnet/gini/android/health/api/response/ConfigurationResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClientId ()Ljava/lang/String;
+	public final fun getCommunicationTone ()Lnet/gini/android/health/api/response/CommunicationTone;
+	public final fun getIngredientBrandType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/health/api/response/ConfigurationResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lnet/gini/android/health/api/response/ConfigurationResponse;
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lnet/gini/android/health/api/response/ConfigurationResponse;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class net/gini/android/health/api/response/ConfigurationResponseKt {
+	public static final fun getValue (Lnet/gini/android/health/api/response/CommunicationTone$Companion;Ljava/lang/String;)Lnet/gini/android/health/api/response/CommunicationTone;
+	public static final fun getValue (Lnet/gini/android/health/api/response/IngredientBrandType$Companion;Ljava/lang/String;)Lnet/gini/android/health/api/response/IngredientBrandType;
+}
+
+public final class net/gini/android/health/api/response/IngredientBrandType : java/lang/Enum {
+	public static final field Companion Lnet/gini/android/health/api/response/IngredientBrandType$Companion;
+	public static final field FULL_VISIBLE Lnet/gini/android/health/api/response/IngredientBrandType;
+	public static final field INVISIBLE Lnet/gini/android/health/api/response/IngredientBrandType;
+	public static final field PAYMENT_COMPONENT Lnet/gini/android/health/api/response/IngredientBrandType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lnet/gini/android/health/api/response/IngredientBrandType;
+	public static fun values ()[Lnet/gini/android/health/api/response/IngredientBrandType;
+}
+
+public final class net/gini/android/health/api/response/IngredientBrandType$Companion {
+}
+

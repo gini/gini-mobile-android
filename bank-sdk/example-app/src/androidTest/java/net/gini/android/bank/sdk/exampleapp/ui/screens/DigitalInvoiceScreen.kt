@@ -22,6 +22,18 @@ class DigitalInvoiceScreen {
     private var initialValue: String? = null
     private var updatedValue: String? = null
 
+    /**
+     * Whether the Digital Invoice (Return Assistant) screen is on screen right now.
+     *
+     * Absence-safe, unlike [checkDigitalInvoiceTitleIsDisplayed], which throws
+     * `UiObjectNotFoundException` when the screen is not there and matches a hard-coded English
+     * title — neither works for a negative assertion. Matched on the `line_items` list instead:
+     * a view id, so it is locale-independent, and it is the one view the screen cannot render
+     * without.
+     */
+    fun isScreenDisplayed(): Boolean =
+        device.findObject(UiSelector().resourceId(AppResources.resId("line_items"))).exists()
+
     fun checkDigitalInvoiceTitleIsDisplayed(): Boolean {
         val uiCollection =
             UiCollection(UiSelector().className("android.view.ViewGroup"))

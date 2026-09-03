@@ -183,18 +183,33 @@
     <!--   endregion -->
 
     <!--   region Warning -->
-    <string name="gc_cancel_transfer">Cancel Transfer</string>
-    <string name="gc_proceed_anyway">Proceed Anyway</string>
+    <string name="gc_cancel_transfer">Cancel transfer</string>
+    <string name="gc_proceed_anyway">Proceed anyway</string>
     <string name="gc_document_marked_paid_title">Document marked as paid</string>
     <string name="gc_document_marked_paid_desc">This document states that it has already been paid. Please check the note in the document to be sure.</string>
+    <string name="gc_document_marked_credit_note_title">Credit Note Warning</string>
+    <string name="gc_document_marked_credit_note_desc">It seems you submitted a credit note instead of a regular invoice. You might want to check your document mentioning “Gutschrift” or if the amount is negative.</string>
     <string name="gc_warning_title_dialog">Warning Dialog</string>
     <string name="gc_warning_icon_content_description">Warning icon</string>
     <!--   endregion -->
 
     <!--   region Due Date -->
+    <string name="gc_due_date_hint_title">Your invoice is due on %1$s.</string>
+    <string name="gc_due_date_hint_desc">You could set it up as a scheduled transfer.</string>
+
+    <!-- Deprecated: no longer used since the due date hint was redesigned as a bottom sheet (PP-3262).
+         Kept for one release so integrator overrides don't break silently; overrides have no effect.
+         Override gc_due_date_hint_title and gc_due_date_hint_desc instead.
+         These keys will be removed in the next major version. -->
     <string name="gc_dismiss_message">Dismiss Message</string>
     <string name="gc_due_date_hint">\u0020Your invoice is due on %1$s. You could set it up as a scheduled transfer.</string>
     <string name="gc_due_date_hint_tip">Tip:</string>
+    <!--   endregion -->
+
+    <!--   region Schedule Payment -->
+    <!--   The title is shared with the due date state (see gc_due_date_hint_title). -->
+    <string name="gc_schedule_payment_hint_desc">You can proceed with this Transaction now or schedule it for a future execution.</string>
+    <string name="gc_schedule_payment">Schedule Payment</string>
     <!--   endregion -->
 
 </resources>

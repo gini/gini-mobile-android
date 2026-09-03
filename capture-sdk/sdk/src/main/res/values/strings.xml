@@ -206,20 +206,37 @@
     <string name="gc_invoice_education_content_description">analyse der Rechnung läuft</string>
 
     <!--   region Warning -->
-    <string name="gc_cancel_transfer">Überweisung Abbrechen</string>
-    <string name="gc_proceed_anyway">Trotzdem Fortfahren</string>
+    <string name="gc_cancel_transfer">Überweisung abbrechen</string>
+    <string name="gc_proceed_anyway">Trotzdem fortfahren</string>
     <string name="gc_document_marked_paid_title">Dokument als bezahlt gekennzeichnet</string>
     <string name="gc_document_marked_paid_desc">
         Auf diesem Dokument steht, dass es bereits bezahlt wurde. Bitte prüfen Sie den Hinweis in dem Dokument, um sicherzugehen.
     </string>
+    <string name="gc_document_marked_credit_note_title">Achtung: Gutschrift hochgeladen</string>
+    <string name="gc_document_marked_credit_note_desc">Anscheinend haben Sie eine Gutschrift statt einer Rechnung hochgeladen. Bitte überprüfen Sie Ihr Dokument auf den Begriff „Gutschrift“ oder ob der Betrag negativ ist.</string>
     <string name="gc_warning_title_dialog">Warndialog</string>
     <string name="gc_warning_icon_content_description">Warnsymbol</string>
     <!--   endregion -->
 
     <!--   region Due Date -->
+    <string name="gc_due_date_hint_title">Deine Rechnung ist am %1$s fällig.</string>
+    <string name="gc_due_date_hint_desc">Du könntest sie als Terminüberweisung anlegen.</string>
+
+    <!-- Deprecated: no longer used since the due date hint was redesigned as a bottom sheet (PP-3262).
+         Kept for one release so integrator overrides don't break silently; overrides have no effect.
+         Override gc_due_date_hint_title and gc_due_date_hint_desc instead.
+         These keys will be removed in the next major version. -->
     <string name="gc_dismiss_message">Hinweis Schließen</string>
     <string name="gc_due_date_hint">\u0020Deine Rechnung ist am %1$s fällig. Du könntest sie als Terminüberweisung anlegen.</string>
     <string name="gc_due_date_hint_tip">Tipp:</string>
+    <!--   endregion -->
+
+    <!--   region Schedule Payment -->
+    <!--   The title is shared with the due date state (see gc_due_date_hint_title). -->
+    <string name="gc_schedule_payment_hint_desc">
+        Du könntest diese Überweisung jetzt ausführen oder für einen späteren Zeitpunkt terminieren.
+    </string>
+    <string name="gc_schedule_payment">Terminüberweisung</string>
     <!--   endregion -->
 
 </resources>

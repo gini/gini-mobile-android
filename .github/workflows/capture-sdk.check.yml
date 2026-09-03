@@ -43,6 +43,9 @@ jobs:
       - name: run unit tests
         run: ./gradlew capture-sdk:sdk:testDebugUnitTest
 
+      - name: check binary compatibility of the public api
+        run: ./gradlew capture-sdk:sdk:apiCheck
+
       - name: archive unit test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -137,6 +140,9 @@ jobs:
 
       - name: run unit tests
         run: ./gradlew capture-sdk:default-network:testDebugUnitTest
+
+      - name: check binary compatibility of the public api
+        run: ./gradlew capture-sdk:default-network:apiCheck
 
       - name: archive unit test results
         if: always()

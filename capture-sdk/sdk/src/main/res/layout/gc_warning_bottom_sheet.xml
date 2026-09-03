@@ -83,19 +83,17 @@
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/cancel_button"
+                    android:id="@+id/primary_button"
                     style="@style/GiniCaptureTheme.Widget.Button.UnelevatedButton"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/gc_cancel_transfer" />
+                    android:layout_height="wrap_content" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/proceed_button"
+                    android:id="@+id/secondary_button"
                     style="@style/GiniCaptureTheme.Widget.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/gc_medium"
-                    android:text="@string/gc_proceed_anyway" />
+                    android:layout_marginTop="@dimen/gc_medium" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
