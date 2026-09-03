@@ -538,6 +538,7 @@ public final class net/gini/android/capture/GiniCaptureFragmentListener$DefaultI
 
 public class net/gini/android/capture/ImportImageFileUrisAsyncTask : net/gini/android/capture/internal/fileimport/AbstractImportImageUrisAsyncTask {
 	public fun <init> (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
+	public fun <init> (Landroid/content/Context;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
 	protected fun onError (Lnet/gini/android/capture/document/ImageMultiPageDocument;Lnet/gini/android/capture/ImportedFileValidationException;)V
 	protected fun onHaltingError (Lnet/gini/android/capture/ImportedFileValidationException;)V
 	protected synthetic fun onPostExecute (Ljava/lang/Object;)V
@@ -2153,6 +2154,7 @@ public class net/gini/android/capture/internal/document/ImageMultiPageDocumentMe
 
 public abstract class net/gini/android/capture/internal/fileimport/AbstractImportImageUrisAsyncTask : android/os/AsyncTask {
 	protected fun <init> (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
+	protected fun <init> (Landroid/content/Context;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
 	protected fun doInBackground ([Landroid/net/Uri;)Lnet/gini/android/capture/document/ImageMultiPageDocument;
 	protected synthetic fun doInBackground ([Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getCallback ()Lnet/gini/android/capture/AsyncCallback;
