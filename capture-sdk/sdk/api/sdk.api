@@ -425,6 +425,7 @@ public class net/gini/android/capture/GiniCapture$CreateGiniCaptureFragmentForIn
 public class net/gini/android/capture/GiniCapture$Internal {
 	public static final field DEFAULT_ENTRY_POINT Lnet/gini/android/capture/EntryPoint;
 	public fun <init> (Lnet/gini/android/capture/GiniCapture;)V
+	public fun createDocumentForImportedUris (Ljava/util/List;Landroid/content/Context;Lnet/gini/android/capture/AsyncCallback;)Lnet/gini/android/capture/util/CancellationToken;
 	public static fun createGiniCaptureFragmentForOpenWithDocument (Lnet/gini/android/capture/Document;)Lnet/gini/android/capture/GiniCaptureFragment;
 	public fun getCameraNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getCompoundExtractions ()Ljava/util/Map;
@@ -538,6 +539,7 @@ public final class net/gini/android/capture/GiniCaptureFragmentListener$DefaultI
 
 public class net/gini/android/capture/ImportImageFileUrisAsyncTask : net/gini/android/capture/internal/fileimport/AbstractImportImageUrisAsyncTask {
 	public fun <init> (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
+	public fun <init> (Landroid/content/Context;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
 	protected fun onError (Lnet/gini/android/capture/document/ImageMultiPageDocument;Lnet/gini/android/capture/ImportedFileValidationException;)V
 	protected fun onHaltingError (Lnet/gini/android/capture/ImportedFileValidationException;)V
 	protected synthetic fun onPostExecute (Ljava/lang/Object;)V
@@ -1524,6 +1526,7 @@ public final class net/gini/android/capture/document/DocumentFactory {
 	public static fun newImageDocumentFromPhoto (Lnet/gini/android/capture/internal/camera/photo/Photo;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newImageDocumentFromPhoto (Lnet/gini/android/capture/internal/camera/photo/Photo;Landroid/net/Uri;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newImageDocumentFromPhotoAndDocument (Lnet/gini/android/capture/internal/camera/photo/Photo;Lnet/gini/android/capture/document/GiniCaptureDocument;)Lnet/gini/android/capture/document/ImageDocument;
+	public static fun newImageDocumentFromUri (Landroid/net/Uri;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newImageDocumentFromUri (Landroid/net/Uri;Landroid/content/Intent;Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/ImageDocument;
 	public static fun newMultiPageDocument (Lnet/gini/android/capture/document/GiniCaptureDocument;)Lnet/gini/android/capture/document/GiniCaptureMultiPageDocument;
 }
@@ -1623,6 +1626,7 @@ public class net/gini/android/capture/document/ImageMultiPageDocument : net/gini
 public class net/gini/android/capture/document/PdfDocument : net/gini/android/capture/document/GiniCaptureDocument {
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
 	public fun describeContents ()I
+	public static fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/PdfDocument;
 	public fun getFilename ()Ljava/lang/String;
 	public fun loadFilename (Landroid/content/Context;)V
 	public fun writeToParcel (Landroid/os/Parcel;I)V
@@ -1661,6 +1665,7 @@ public final class net/gini/android/capture/document/XmlDocument : net/gini/andr
 	public synthetic fun <init> (Landroid/os/Parcel;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun describeContents ()I
 	public static final fun fromIntent (Landroid/content/Intent;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
+	public static final fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
 	public final fun getFilename ()Ljava/lang/String;
 	public final fun loadFilename (Landroid/content/Context;)V
 	public fun writeToParcel (Landroid/os/Parcel;I)V
@@ -1668,6 +1673,7 @@ public final class net/gini/android/capture/document/XmlDocument : net/gini/andr
 
 public final class net/gini/android/capture/document/XmlDocument$Companion {
 	public final fun fromIntent (Landroid/content/Intent;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
+	public final fun fromUri (Landroid/net/Uri;Lnet/gini/android/capture/Document$ImportMethod;)Lnet/gini/android/capture/document/XmlDocument;
 }
 
 public final class net/gini/android/capture/document/XmlMultiPageDocument : net/gini/android/capture/document/GiniCaptureMultiPageDocument {
@@ -2149,6 +2155,7 @@ public class net/gini/android/capture/internal/document/ImageMultiPageDocumentMe
 
 public abstract class net/gini/android/capture/internal/fileimport/AbstractImportImageUrisAsyncTask : android/os/AsyncTask {
 	protected fun <init> (Landroid/content/Context;Landroid/content/Intent;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
+	protected fun <init> (Landroid/content/Context;Lnet/gini/android/capture/GiniCapture;Lnet/gini/android/capture/Document$Source;Lnet/gini/android/capture/Document$ImportMethod;Lnet/gini/android/capture/AsyncCallback;)V
 	protected fun doInBackground ([Landroid/net/Uri;)Lnet/gini/android/capture/document/ImageMultiPageDocument;
 	protected synthetic fun doInBackground ([Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getCallback ()Lnet/gini/android/capture/AsyncCallback;

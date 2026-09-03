@@ -2,6 +2,7 @@ package net.gini.android.bank.sdk
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
 import net.gini.android.bank.api.GiniBankAPI
 import net.gini.android.bank.api.models.ResolvePaymentInput
@@ -324,6 +325,53 @@ object GiniBank {
     }
 
 
+    /**
+     * Creates a [CaptureFlowFragment] for pdf or image documents received from another app as
+     * content Uris.
+     *
+     * Use this instead of [createCaptureFlowFragmentForIntent] when your app has already resolved
+     * the share Intent and only the document Uris are available.
+     *
+     * The fragment is returned asynchronously in the [callback] wrapped in a
+     * [CreateCaptureFlowFragmentForIntentResult].
+     *
+     * @param context Android context
+     * @param uris the content Uris of the documents shared from another app
+     * @param callback returns the wrapped result of the processing in the form of
+     * [CreateCaptureFlowFragmentForIntentResult]
+     * @return a [CancellationToken] for cancelling the import process
+     * @throws IllegalStateException if the capture feature was not configured.
+     */
+    fun createCaptureFlowFragmentForUris(
+        context: Context,
+        uris: List<Uri>,
+        callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit
+    ): CancellationToken {
+        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        BankSdkIsolatedKoinContext.init(context)
+        return giniCapture!!.internal().createDocumentForImportedUris(
+            uris,
+            context,
+            object : AsyncCallback<Document, ImportedFileValidationException> {
+                override fun onSuccess(document: Document) {
+                    callback(
+                        CreateCaptureFlowFragmentForIntentResult.Success(
+                            createCaptureFlowFragmentForDocument(document)
+                        )
+                    )
+                }
+
+                override fun onError(exception: ImportedFileValidationException) {
+                    callback(CreateCaptureFlowFragmentForIntentResult.Error(exception))
+                }
+
+                override fun onCancelled() {
+                    callback(CreateCaptureFlowFragmentForIntentResult.Cancelled)
+                }
+
+            })
+    }
+
     sealed class CreateCaptureFlowFragmentForIntentResult {
         data class Success(val fragment: CaptureFlowFragment) :
             CreateCaptureFlowFragmentForIntentResult()
@@ -481,6 +529,42 @@ object GiniBank {
     ): CancellationToken? {
         return giniCapture?.createDocumentForImportedFiles(
             intent,
+            context,
+            object : AsyncCallback<Document, ImportedFileValidationException> {
+                override fun onSuccess(result: Document?) {
+                    callback(CreateDocumentFromImportedFileResult.Success(result))
+                }
+
+                override fun onError(exception: ImportedFileValidationException?) {
+                    callback(CreateDocumentFromImportedFileResult.Error(exception))
+                }
+
+                override fun onCancelled() {
+                    callback(CreateDocumentFromImportedFileResult.Cancelled)
+                }
+            }
+        )
+    }
+
+    /**
+     *
+     *  Create a document based on a pdf or image(s) received from another app as content Uris.
+     *
+     *  Use this instead of the [Intent] based overload when your app has already resolved the
+     *  share Intent and only the document Uris are available.
+     *
+     *  @param uris - the content Uris of the documents shared from another app
+     *  @param context - Android context
+     *  @param callback - returns the wrapped result of the file processing in the form of [CreateDocumentFromImportedFileResult]
+     *  @return a [CancellationToken] for cancelling the import process or null if the capture feature was not configured
+     */
+    fun createDocumentForImportedFiles(
+        uris: List<Uri>,
+        context: Context,
+        callback: (CreateDocumentFromImportedFileResult) -> Unit
+    ): CancellationToken? {
+        return giniCapture?.internal()?.createDocumentForImportedUris(
+            uris,
             context,
             object : AsyncCallback<Document, ImportedFileValidationException> {
                 override fun onSuccess(result: Document?) {
