@@ -2,6 +2,7 @@ package net.gini.android.capture;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -1693,6 +1694,28 @@ public class GiniCapture {
 
         public static GiniCaptureFragment createGiniCaptureFragmentForOpenWithDocument(@NonNull Document openWithDocument) {
             return GiniCaptureFragment.createInstance(openWithDocument);
+        }
+
+        /**
+         * Internal use only.
+         *
+         * <p> Creates a {@link Document} for the files pointed to by the given content Uris,
+         * received from another app. Mirrors
+         * {@link GiniCapture#createDocumentForImportedFiles(Intent, Context, AsyncCallback)} but
+         * takes the Uris directly instead of unwrapping them from an Intent.
+         *
+         * @param uris     the content Uris your app received
+         * @param context  Android context
+         * @param callback A {@link AsyncCallback} implementation
+         * @return a {@link CancellationToken} for cancelling the import process
+         * @suppress
+         */
+        @NonNull
+        public CancellationToken createDocumentForImportedUris(@NonNull final List<Uri> uris,
+                @NonNull final Context context,
+                @NonNull final AsyncCallback<Document, ImportedFileValidationException> callback) {
+            return new GiniCaptureUriImport(mGiniCapture)
+                    .createDocumentForImportedUris(uris, context, callback);
         }
 
         @Nullable

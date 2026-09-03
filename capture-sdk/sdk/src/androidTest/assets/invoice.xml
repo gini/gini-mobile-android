@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<invoice>
+    <number>INV-2026-0042</number>
+    <date>2026-08-26</date>
+    <creditor>
+        <name>Acme Ltd</name>
+        <iban>DE75512108001245126199</iban>
+    </creditor>
+    <amount currency="EUR">42.42</amount>
+    <reference>Test invoice for the Uri import instrumented tests</reference>
+</invoice>

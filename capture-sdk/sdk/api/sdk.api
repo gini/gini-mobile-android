@@ -425,6 +425,7 @@ public class net/gini/android/capture/GiniCapture$CreateGiniCaptureFragmentForIn
 public class net/gini/android/capture/GiniCapture$Internal {
 	public static final field DEFAULT_ENTRY_POINT Lnet/gini/android/capture/EntryPoint;
 	public fun <init> (Lnet/gini/android/capture/GiniCapture;)V
+	public fun createDocumentForImportedUris (Ljava/util/List;Landroid/content/Context;Lnet/gini/android/capture/AsyncCallback;)Lnet/gini/android/capture/util/CancellationToken;
 	public static fun createGiniCaptureFragmentForOpenWithDocument (Lnet/gini/android/capture/Document;)Lnet/gini/android/capture/GiniCaptureFragment;
 	public fun getCameraNavigationBarBottomAdapterInstance ()Lnet/gini/android/capture/view/InjectedViewAdapterInstance;
 	public fun getCompoundExtractions ()Ljava/util/Map;
