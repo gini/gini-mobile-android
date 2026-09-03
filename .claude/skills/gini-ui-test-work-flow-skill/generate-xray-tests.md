@@ -11,7 +11,7 @@ Generate manual test cases for a mobile SDK feature and write them as a CSV file
 ## Usage
 
 This file is not a slash command — Claude Code only registers `SKILL.md` one level
-under `.claude/skills/`, so this document is reached through `/gini-test-skill`,
+under `.claude/skills/`, so this document is reached through `/gini-ui-test-work-flow-skill`,
 which routes here once it has decided the job is *generate*. Do not try to invoke
 it directly.
 
