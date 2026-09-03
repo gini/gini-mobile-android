@@ -43,7 +43,6 @@ class HelpFragment : Fragment() {
         binding = GcFragmentHelpBinding.inflate(inflater)
         setUpHelpItems()
         setupTopBarNavigation()
-        setupBottomBarNavigation()
         handleOnBackPressed()
         trackHelpOpenEvent()
         return binding.root
@@ -92,27 +91,12 @@ class HelpFragment : Fragment() {
                 InjectedViewAdapterHolder(
                     GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
                 ) { injectedViewAdapter ->
-                    val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
-                        NavButtonType.NONE else NavButtonType.BACK
-                    injectedViewAdapter.setNavButtonType(navType)
+                    injectedViewAdapter.setNavButtonType(NavButtonType.BACK)
                     injectedViewAdapter.setTitle(getString(R.string.gc_title_help))
                     injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
                         navigateBackToCamera()
                     })
                 }
-        }
-    }
-
-    private fun setupBottomBarNavigation() {
-        val injectedViewContainer = binding.gcInjectedNavigationBarContainerBottom
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-            injectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
-                GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
-            ) { injectedViewAdapter ->
-                injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
-                    navigateBackToCamera()
-                })
-            }
         }
     }
 

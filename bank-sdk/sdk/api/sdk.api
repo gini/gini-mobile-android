@@ -132,8 +132,8 @@ public final class net/gini/android/bank/sdk/SkontoNavGraphArgs$Companion {
 
 public final class net/gini/android/bank/sdk/capture/CaptureConfiguration {
 	public static final field $stable I
-	public fun <init> (Lnet/gini/android/capture/network/GiniCaptureNetworkService;ZLjava/util/List;ZZLnet/gini/android/capture/DocumentImportEnabledFileTypes;ZZZZZZZLnet/gini/android/capture/tracking/EventTracker;Ljava/util/List;ZLnet/gini/android/capture/logging/ErrorLoggerListener;ILnet/gini/android/capture/view/NavigationBarTopAdapter;ZZIZLnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;Lnet/gini/android/capture/view/OnButtonLoadingIndicatorAdapter;Lnet/gini/android/bank/sdk/capture/skonto/SkontoNavigationBarBottomAdapter;Lnet/gini/android/capture/EntryPoint;ZZZLnet/gini/android/capture/ui/components/GiniComposableStyleProvider;ZLnet/gini/android/capture/ProductTag;Z)V
-	public synthetic fun <init> (Lnet/gini/android/capture/network/GiniCaptureNetworkService;ZLjava/util/List;ZZLnet/gini/android/capture/DocumentImportEnabledFileTypes;ZZZZZZZLnet/gini/android/capture/tracking/EventTracker;Ljava/util/List;ZLnet/gini/android/capture/logging/ErrorLoggerListener;ILnet/gini/android/capture/view/NavigationBarTopAdapter;ZZIZLnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;Lnet/gini/android/capture/view/OnButtonLoadingIndicatorAdapter;Lnet/gini/android/bank/sdk/capture/skonto/SkontoNavigationBarBottomAdapter;Lnet/gini/android/capture/EntryPoint;ZZZLnet/gini/android/capture/ui/components/GiniComposableStyleProvider;ZLnet/gini/android/capture/ProductTag;ZIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lnet/gini/android/capture/network/GiniCaptureNetworkService;ZLjava/util/List;ZZLnet/gini/android/capture/DocumentImportEnabledFileTypes;ZZZZZZZLnet/gini/android/capture/tracking/EventTracker;Ljava/util/List;ZLnet/gini/android/capture/logging/ErrorLoggerListener;ILnet/gini/android/capture/view/NavigationBarTopAdapter;ZZIZLnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;Lnet/gini/android/capture/view/OnButtonLoadingIndicatorAdapter;Lnet/gini/android/capture/EntryPoint;ZZZLnet/gini/android/capture/ui/components/GiniComposableStyleProvider;ZLnet/gini/android/capture/ProductTag;Z)V
+	public synthetic fun <init> (Lnet/gini/android/capture/network/GiniCaptureNetworkService;ZLjava/util/List;ZZLnet/gini/android/capture/DocumentImportEnabledFileTypes;ZZZZZZZLnet/gini/android/capture/tracking/EventTracker;Ljava/util/List;ZLnet/gini/android/capture/logging/ErrorLoggerListener;ILnet/gini/android/capture/view/NavigationBarTopAdapter;ZZIZLnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;Lnet/gini/android/capture/view/OnButtonLoadingIndicatorAdapter;Lnet/gini/android/capture/EntryPoint;ZZZLnet/gini/android/capture/ui/components/GiniComposableStyleProvider;ZLnet/gini/android/capture/ProductTag;ZIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lnet/gini/android/capture/network/GiniCaptureNetworkService;
 	public final fun component10 ()Z
 	public final fun component11 ()Z
@@ -157,23 +157,22 @@ public final class net/gini/android/bank/sdk/capture/CaptureConfiguration {
 	public final fun component28 ()Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;
 	public final fun component29 ()Lnet/gini/android/capture/view/OnButtonLoadingIndicatorAdapter;
 	public final fun component3 ()Ljava/util/List;
-	public final fun component30 ()Lnet/gini/android/bank/sdk/capture/skonto/SkontoNavigationBarBottomAdapter;
-	public final fun component31 ()Lnet/gini/android/capture/EntryPoint;
+	public final fun component30 ()Lnet/gini/android/capture/EntryPoint;
+	public final fun component31 ()Z
 	public final fun component32 ()Z
 	public final fun component33 ()Z
-	public final fun component34 ()Z
-	public final fun component35 ()Lnet/gini/android/capture/ui/components/GiniComposableStyleProvider;
-	public final fun component36 ()Z
-	public final fun component37 ()Lnet/gini/android/capture/ProductTag;
-	public final fun component38 ()Z
+	public final fun component34 ()Lnet/gini/android/capture/ui/components/GiniComposableStyleProvider;
+	public final fun component35 ()Z
+	public final fun component36 ()Lnet/gini/android/capture/ProductTag;
+	public final fun component37 ()Z
 	public final fun component4 ()Z
 	public final fun component5 ()Z
 	public final fun component6 ()Lnet/gini/android/capture/DocumentImportEnabledFileTypes;
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (Lnet/gini/android/capture/network/GiniCaptureNetworkService;ZLjava/util/List;ZZLnet/gini/android/capture/DocumentImportEnabledFileTypes;ZZZZZZZLnet/gini/android/capture/tracking/EventTracker;Ljava/util/List;ZLnet/gini/android/capture/logging/ErrorLoggerListener;ILnet/gini/android/capture/view/NavigationBarTopAdapter;ZZIZLnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;Lnet/gini/android/capture/view/OnButtonLoadingIndicatorAdapter;Lnet/gini/android/bank/sdk/capture/skonto/SkontoNavigationBarBottomAdapter;Lnet/gini/android/capture/EntryPoint;ZZZLnet/gini/android/capture/ui/components/GiniComposableStyleProvider;ZLnet/gini/android/capture/ProductTag;Z)Lnet/gini/android/bank/sdk/capture/CaptureConfiguration;
-	public static synthetic fun copy$default (Lnet/gini/android/bank/sdk/capture/CaptureConfiguration;Lnet/gini/android/capture/network/GiniCaptureNetworkService;ZLjava/util/List;ZZLnet/gini/android/capture/DocumentImportEnabledFileTypes;ZZZZZZZLnet/gini/android/capture/tracking/EventTracker;Ljava/util/List;ZLnet/gini/android/capture/logging/ErrorLoggerListener;ILnet/gini/android/capture/view/NavigationBarTopAdapter;ZZIZLnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;Lnet/gini/android/capture/view/OnButtonLoadingIndicatorAdapter;Lnet/gini/android/bank/sdk/capture/skonto/SkontoNavigationBarBottomAdapter;Lnet/gini/android/capture/EntryPoint;ZZZLnet/gini/android/capture/ui/components/GiniComposableStyleProvider;ZLnet/gini/android/capture/ProductTag;ZIILjava/lang/Object;)Lnet/gini/android/bank/sdk/capture/CaptureConfiguration;
+	public final fun copy (Lnet/gini/android/capture/network/GiniCaptureNetworkService;ZLjava/util/List;ZZLnet/gini/android/capture/DocumentImportEnabledFileTypes;ZZZZZZZLnet/gini/android/capture/tracking/EventTracker;Ljava/util/List;ZLnet/gini/android/capture/logging/ErrorLoggerListener;ILnet/gini/android/capture/view/NavigationBarTopAdapter;ZZIZLnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;Lnet/gini/android/capture/view/OnButtonLoadingIndicatorAdapter;Lnet/gini/android/capture/EntryPoint;ZZZLnet/gini/android/capture/ui/components/GiniComposableStyleProvider;ZLnet/gini/android/capture/ProductTag;Z)Lnet/gini/android/bank/sdk/capture/CaptureConfiguration;
+	public static synthetic fun copy$default (Lnet/gini/android/bank/sdk/capture/CaptureConfiguration;Lnet/gini/android/capture/network/GiniCaptureNetworkService;ZLjava/util/List;ZZLnet/gini/android/capture/DocumentImportEnabledFileTypes;ZZZZZZZLnet/gini/android/capture/tracking/EventTracker;Ljava/util/List;ZLnet/gini/android/capture/logging/ErrorLoggerListener;ILnet/gini/android/capture/view/NavigationBarTopAdapter;ZZIZLnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/onboarding/view/OnboardingIllustrationAdapter;Lnet/gini/android/capture/view/CustomLoadingIndicatorAdapter;Lnet/gini/android/capture/view/OnButtonLoadingIndicatorAdapter;Lnet/gini/android/capture/EntryPoint;ZZZLnet/gini/android/capture/ui/components/GiniComposableStyleProvider;ZLnet/gini/android/capture/ProductTag;ZIILjava/lang/Object;)Lnet/gini/android/bank/sdk/capture/CaptureConfiguration;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAllowScreenshots ()Z
 	public final fun getAlreadyPaidHintEnabled ()Z
@@ -210,7 +209,6 @@ public final class net/gini/android/bank/sdk/capture/CaptureConfiguration {
 	public final fun getShowOnboarding ()Z
 	public final fun getShowOnboardingAtFirstRun ()Z
 	public final fun getSkontoEnabled ()Z
-	public final fun getSkontoNavigationBarBottomAdapter ()Lnet/gini/android/bank/sdk/capture/skonto/SkontoNavigationBarBottomAdapter;
 	public final fun getSupportedFormatsHelpScreenEnabled ()Z
 	public final fun getTransactionDocsEnabled ()Z
 	public fun hashCode ()I
@@ -929,20 +927,6 @@ public final class net/gini/android/bank/sdk/capture/digitalinvoice/help/HelpIte
 	public final fun getIconImageView ()Landroid/widget/ImageView;
 }
 
-public final class net/gini/android/bank/sdk/capture/digitalinvoice/help/view/DefaultDigitalInvoiceHelpNavigationBarBottomAdapter : net/gini/android/bank/sdk/capture/digitalinvoice/help/view/DigitalInvoiceHelpNavigationBarBottomAdapter {
-	public static final field $stable I
-	public fun <init> ()V
-	public final fun getViewBinding ()Lnet/gini/android/bank/sdk/databinding/GbsHelpNavigationBarBottomBinding;
-	public fun onCreateView (Landroid/view/ViewGroup;)Landroid/view/View;
-	public fun onDestroy ()V
-	public fun setOnBackButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public final fun setViewBinding (Lnet/gini/android/bank/sdk/databinding/GbsHelpNavigationBarBottomBinding;)V
-}
-
-public abstract interface class net/gini/android/bank/sdk/capture/digitalinvoice/help/view/DigitalInvoiceHelpNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setOnBackButtonClickListener (Landroid/view/View$OnClickListener;)V
-}
-
 public final class net/gini/android/bank/sdk/capture/digitalinvoice/onboarding/DigitalInvoiceOnboardingFragment : androidx/fragment/app/Fragment, net/gini/android/bank/sdk/capture/digitalinvoice/onboarding/DigitalOnboardingScreenContract$View {
 	public static final field $stable I
 	public fun <init> ()V
@@ -1034,11 +1018,6 @@ public final class net/gini/android/bank/sdk/capture/digitalinvoice/skonto/Digit
 public final class net/gini/android/bank/sdk/capture/digitalinvoice/skonto/DigitalInvoiceSkontoFragmentDirections$Companion {
 	public final fun toInvoicePreviewFragment (Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Lnet/gini/android/capture/network/model/GiniCaptureBox;)Landroidx/navigation/NavDirections;
 	public final fun toSkontoHelpFragment ()Landroidx/navigation/NavDirections;
-}
-
-public abstract interface class net/gini/android/bank/sdk/capture/digitalinvoice/skonto/DigitalInvoiceSkontoNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setOnBackClickListener (Lkotlin/jvm/functions/Function0;)V
-	public abstract fun setOnHelpClickListener (Lkotlin/jvm/functions/Function0;)V
 }
 
 public final class net/gini/android/bank/sdk/capture/digitalinvoice/skonto/DigitalInvoiceSkontoScreenModuleKt {
@@ -1232,53 +1211,6 @@ public final class net/gini/android/bank/sdk/capture/digitalinvoice/skonto/color
 	public final fun warning-RGew2ao (JJJLandroidx/compose/runtime/Composer;II)Lnet/gini/android/bank/sdk/capture/digitalinvoice/skonto/colors/section/DigitalInvoiceSkontoSectionColors$InfoBannerColors;
 }
 
-public final class net/gini/android/bank/sdk/capture/digitalinvoice/view/DefaultDigitalInvoiceNavigationBarBottomAdapter : net/gini/android/bank/sdk/capture/digitalinvoice/view/DigitalInvoiceNavigationBarBottomAdapter {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun onCreateView (Landroid/view/ViewGroup;)Landroid/view/View;
-	public fun onDestroy ()V
-	public fun onSkontoPercentageBadgeUpdated (Ljava/lang/String;)V
-	public fun onSkontoPercentageBadgeVisibilityUpdate (Z)V
-	public fun onSkontoSavingsAmountUpdated (Ljava/lang/String;)V
-	public fun onSkontoSavingsAmountVisibilityUpdated (Z)V
-	public fun setOnHelpClickListener (Landroid/view/View$OnClickListener;)V
-	public fun setOnProceedClickListener (Landroid/view/View$OnClickListener;)V
-	public fun setProceedButtonEnabled (Z)V
-	public fun setTotalPrice (Ljava/lang/String;)V
-}
-
-public final class net/gini/android/bank/sdk/capture/digitalinvoice/view/DefaultDigitalInvoiceOnboardingNavigationBarBottomAdapter : net/gini/android/bank/sdk/capture/digitalinvoice/view/DigitalInvoiceOnboardingNavigationBarBottomAdapter {
-	public static final field $stable I
-	public fun <init> ()V
-	public final fun getViewBinding ()Lnet/gini/android/bank/sdk/databinding/GbsDigitalInvoiceOnboardingNavigationBarBottomBinding;
-	public fun onCreateView (Landroid/view/ViewGroup;)Landroid/view/View;
-	public fun onDestroy ()V
-	public fun setGetStartedButtonClickListener (Landroid/view/View$OnClickListener;)V
-	public final fun setViewBinding (Lnet/gini/android/bank/sdk/databinding/GbsDigitalInvoiceOnboardingNavigationBarBottomBinding;)V
-}
-
-public abstract interface class net/gini/android/bank/sdk/capture/digitalinvoice/view/DigitalInvoiceNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun onSkontoPercentageBadgeUpdated (Ljava/lang/String;)V
-	public abstract fun onSkontoPercentageBadgeVisibilityUpdate (Z)V
-	public abstract fun onSkontoSavingsAmountUpdated (Ljava/lang/String;)V
-	public abstract fun onSkontoSavingsAmountVisibilityUpdated (Z)V
-	public abstract fun setOnHelpClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setOnProceedClickListener (Landroid/view/View$OnClickListener;)V
-	public abstract fun setProceedButtonEnabled (Z)V
-	public abstract fun setTotalPrice (Ljava/lang/String;)V
-}
-
-public final class net/gini/android/bank/sdk/capture/digitalinvoice/view/DigitalInvoiceNavigationBarBottomAdapter$DefaultImpls {
-	public static fun onSkontoPercentageBadgeUpdated (Lnet/gini/android/bank/sdk/capture/digitalinvoice/view/DigitalInvoiceNavigationBarBottomAdapter;Ljava/lang/String;)V
-	public static fun onSkontoPercentageBadgeVisibilityUpdate (Lnet/gini/android/bank/sdk/capture/digitalinvoice/view/DigitalInvoiceNavigationBarBottomAdapter;Z)V
-	public static fun onSkontoSavingsAmountUpdated (Lnet/gini/android/bank/sdk/capture/digitalinvoice/view/DigitalInvoiceNavigationBarBottomAdapter;Ljava/lang/String;)V
-	public static fun onSkontoSavingsAmountVisibilityUpdated (Lnet/gini/android/bank/sdk/capture/digitalinvoice/view/DigitalInvoiceNavigationBarBottomAdapter;Z)V
-}
-
-public abstract interface class net/gini/android/bank/sdk/capture/digitalinvoice/view/DigitalInvoiceOnboardingNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setGetStartedButtonClickListener (Landroid/view/View$OnClickListener;)V
-}
-
 public final class net/gini/android/bank/sdk/capture/extractions/skonto/SkontoExtractionsHandler {
 	public static final field $stable I
 	public fun <init> ()V
@@ -1352,17 +1284,6 @@ public final class net/gini/android/bank/sdk/capture/skonto/SkontoFragmentDirect
 
 public abstract interface class net/gini/android/bank/sdk/capture/skonto/SkontoFragmentListener {
 	public abstract fun onPayInvoiceWithSkonto (Ljava/util/Map;Ljava/util/Map;)V
-}
-
-public abstract interface class net/gini/android/bank/sdk/capture/skonto/SkontoNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun onSkontoPercentageBadgeUpdated (Ljava/lang/String;)V
-	public abstract fun onSkontoPercentageBadgeVisibilityUpdate (Z)V
-	public abstract fun onSkontoSavingsAmountUpdated (Ljava/lang/String;)V
-	public abstract fun onSkontoSavingsAmountVisibilityUpdated (Z)V
-	public abstract fun onTotalAmountUpdated (Ljava/lang/String;)V
-	public abstract fun setOnBackClickListener (Lkotlin/jvm/functions/Function0;)V
-	public abstract fun setOnHelpClickListener (Lkotlin/jvm/functions/Function0;)V
-	public abstract fun setOnProceedClickListener (Lkotlin/jvm/functions/Function0;)V
 }
 
 public final class net/gini/android/bank/sdk/capture/skonto/SkontoScreenContentKt {
@@ -1615,10 +1536,6 @@ public final class net/gini/android/bank/sdk/capture/skonto/help/SkontoHelpFragm
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 }
 
-public abstract interface class net/gini/android/bank/sdk/capture/skonto/help/SkontoHelpNavigationBarBottomAdapter : net/gini/android/capture/view/InjectedViewAdapter {
-	public abstract fun setOnBackClickListener (Lkotlin/jvm/functions/Function0;)V
-}
-
 public final class net/gini/android/bank/sdk/capture/skonto/help/colors/SkontoHelpScreenColors {
 	public static final field $stable I
 	public static final field Companion Lnet/gini/android/bank/sdk/capture/skonto/help/colors/SkontoHelpScreenColors$Companion;
@@ -1812,32 +1729,6 @@ public final class net/gini/android/bank/sdk/databinding/GbsActivityCaptureFlowB
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/bank/sdk/databinding/GbsActivityCaptureFlowBinding;
 }
 
-public final class net/gini/android/bank/sdk/databinding/GbsDigitalInvoiceNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gbsBottomDivider Lcom/google/android/material/divider/MaterialDivider;
-	public final field gbsBottomWrapper Landroidx/constraintlayout/widget/ConstraintLayout;
-	public final field gbsHelpBtn Landroid/widget/ImageButton;
-	public final field gbsPay Lcom/google/android/material/button/MaterialButton;
-	public final field gbsPlaceholder Landroid/widget/Space;
-	public final field grossPriceTotal Landroid/widget/TextView;
-	public final field skontoDiscountLabel Landroid/widget/TextView;
-	public final field skontoSavedAmount Landroid/widget/TextView;
-	public final field totalLabel Landroid/widget/TextView;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/bank/sdk/databinding/GbsDigitalInvoiceNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/bank/sdk/databinding/GbsDigitalInvoiceNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/bank/sdk/databinding/GbsDigitalInvoiceNavigationBarBottomBinding;
-}
-
-public final class net/gini/android/bank/sdk/databinding/GbsDigitalInvoiceOnboardingNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gbsBarBottomNextButton Lcom/google/android/material/button/MaterialButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/bank/sdk/databinding/GbsDigitalInvoiceOnboardingNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/bank/sdk/databinding/GbsDigitalInvoiceOnboardingNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/bank/sdk/databinding/GbsDigitalInvoiceOnboardingNavigationBarBottomBinding;
-}
-
 public final class net/gini/android/bank/sdk/databinding/GbsEditItemBottomSheetBinding : androidx/viewbinding/ViewBinding {
 	public final field gbsAddQuantity Landroid/widget/ImageButton;
 	public final field gbsArticleNameDivider Lcom/google/android/material/divider/MaterialDivider;
@@ -1908,7 +1799,6 @@ public final class net/gini/android/bank/sdk/databinding/GbsFragmentDigitalInvoi
 
 public final class net/gini/android/bank/sdk/databinding/GbsFragmentDigitalInvoiceHelpBinding : androidx/viewbinding/ViewBinding {
 	public final field gbsHelpItems Landroidx/recyclerview/widget/RecyclerView;
-	public final field gbsInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field gbsInjectedNavigationBarContainerTop Lnet/gini/android/capture/view/InjectedViewContainer;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/bank/sdk/databinding/GbsFragmentDigitalInvoiceHelpBinding;
 	public synthetic fun getRoot ()Landroid/view/View;
@@ -1920,7 +1810,6 @@ public final class net/gini/android/bank/sdk/databinding/GbsFragmentDigitalInvoi
 public final class net/gini/android/bank/sdk/databinding/GbsFragmentDigitalInvoiceOnboardingBinding : androidx/viewbinding/ViewBinding {
 	public final field digitalInvoiceImageContainer Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field doneButton Lcom/google/android/material/button/MaterialButton;
-	public final field gbsInjectedNavigationBarContainerBottom Lnet/gini/android/capture/view/InjectedViewContainer;
 	public final field onboardingText1 Landroid/widget/TextView;
 	public final field onboardingText2 Landroid/widget/TextView;
 	public static fun bind (Landroid/view/View;)Lnet/gini/android/bank/sdk/databinding/GbsFragmentDigitalInvoiceOnboardingBinding;
@@ -1938,15 +1827,6 @@ public final class net/gini/android/bank/sdk/databinding/GbsFragmentReturnReason
 	public fun getRoot ()Landroid/widget/LinearLayout;
 	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/bank/sdk/databinding/GbsFragmentReturnReasonDialogBinding;
 	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/bank/sdk/databinding/GbsFragmentReturnReasonDialogBinding;
-}
-
-public final class net/gini/android/bank/sdk/databinding/GbsHelpNavigationBarBottomBinding : androidx/viewbinding/ViewBinding {
-	public final field gbsGoBack Landroid/widget/ImageButton;
-	public static fun bind (Landroid/view/View;)Lnet/gini/android/bank/sdk/databinding/GbsHelpNavigationBarBottomBinding;
-	public synthetic fun getRoot ()Landroid/view/View;
-	public fun getRoot ()Landroidx/constraintlayout/widget/ConstraintLayout;
-	public static fun inflate (Landroid/view/LayoutInflater;)Lnet/gini/android/bank/sdk/databinding/GbsHelpNavigationBarBottomBinding;
-	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lnet/gini/android/bank/sdk/databinding/GbsHelpNavigationBarBottomBinding;
 }
 
 public final class net/gini/android/bank/sdk/databinding/GbsItemCurrencyDropdownBinding : androidx/viewbinding/ViewBinding {

@@ -13,7 +13,6 @@ import java.time.LocalDate
  */
 internal data class SkontoDisplayConfig(
     val isLandScape: Boolean,
-    val isBottomNavigationBarEnabled: Boolean,
     val composableProviderConfig: GiniComposableStyleProviderConfig?,
     val shouldFieldShowKeyboard: Boolean = false,
     val isTablet: Boolean = false,
