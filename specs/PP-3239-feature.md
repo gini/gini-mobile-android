@@ -1,6 +1,6 @@
 # PP-3239: Start the Android capture flow with a Uri of a document
 
-Status: draft
+Status: implemented
 Ticket: https://ginis.atlassian.net/browse/PP-3239
 
 ## Problem
@@ -89,8 +89,11 @@ Decisions from clarification (2026-08-26):
   produces today.
 - **R12 (MUST, error):** Given a multi-Uri list that contains no importable
   images, when it is imported, then the callback receives the Error result with
-  an `ImportedFileValidationException` (same failure surface as the Intent
-  path's multi-page branch, which reports that no images were contained).
+  an `ImportedFileValidationException` with message `"Uris did not contain images"`.
+  (Clarified 2026-08-28: the Intent path's multi-page branch records this error
+  but still delivers Success with an EMPTY `ImageMultiPageDocument` — the spec's
+  original premise was wrong. Decision: the new Uri path surfaces the error, as
+  R12 intended; the Intent path stays untouched.)
 - **R13 (MUST, async):** Given any valid input, when either new entry point is
   called, then it returns a `CancellationToken` immediately, nothing else is
   observable while the import is pending, and exactly one of
@@ -321,7 +324,44 @@ Truth with `Helpers.getAssetFileFileContentUri(...)` real content Uris (like
 
 ## Open questions
 
-- Should the Robolectric PDF-path unit tests be kept if ShadowContentResolver
+- ~~Should the Robolectric PDF-path unit tests be kept if ShadowContentResolver
   mime/stream registration proves flaky, or is instrumented-only coverage of
-  the happy paths acceptable? (Matching LOW marker in the test plan; does not
-  change the production design.)
+  the happy paths acceptable?~~ Resolved 2026-08-26: try Robolectric first; if
+  ShadowContentResolver proves unreliable, move those cases to the instrumented
+  class and keep only the error/edge-case unit tests.
+
+## Implementation plan
+
+- [x] 1. capture-sdk:sdk — additive Uri document factories: `PdfDocument.fromUri(uri, importMethod)`,
+     `XmlDocument.fromUri(uri, importMethod)` (companion), Intent-less
+     `ImageDocument.fromUri(uri, context, deviceOrientation, deviceType, importMethod)` +
+     `DocumentFactory.newImageDocumentFromUri` overload; relax the Intent parameter of the
+     existing `PdfDocument`/`XmlDocument` constructors to nullable (annotation/`Intent?` only,
+     binary signature unchanged). Files: `document/PdfDocument.java`, `document/XmlDocument.kt`,
+     `document/ImageDocument.java`, `document/DocumentFactory.java`. (R3, R4, R6)
+- [x] 2. capture-sdk:sdk — `AbstractImportImageUrisAsyncTask`: new `@Nullable`-Intent constructor,
+     relax `mIntent` field to `@Nullable`, branch in private `createDocument` (`mIntent != null`
+     → existing call unchanged; null → new Intent-less factory); matching extra constructor on
+     `ImportImageFileUrisAsyncTask`. (R4, R5, R12)
+- [x] 3. capture-sdk:sdk — new `GiniCaptureUriImport.kt` (internal, `net.gini.android.capture`)
+     mirroring `GiniCaptureFileImport.createDocumentForImportedFiles` for `List<Uri>` +
+     unit tests `src/test/java/net/gini/android/capture/GiniCaptureUriImportTest.kt`
+     (Robolectric + MockK + Truth; fall back to instrumented for PDF happy path if
+     ShadowContentResolver is unreliable). (R1–R6 core path, R8, R10, R11, R13)
+- [x] 4. capture-sdk:sdk — `GiniCapture.Internal.createDocumentForImportedUris(uris, context, callback)`
+     delegating to `GiniCaptureUriImport`, with "Internal use only. @suppress" doc. (R1, R2)
+- [x] 5. bank-sdk:sdk — `GiniBank.createDocumentForImportedFiles(uris, context, callback)` overload
+     and `GiniBank.createCaptureFlowFragmentForUris(context, uris, callback)` with KDoc,
+     mirroring the Intent twins (incl. `BankSdkIsolatedKoinContext.init(context)` and
+     `check(giniCapture != null)` / `giniCapture?.` semantics). (R1, R2, R9)
+- [x] 6. bank-sdk:sdk — unit tests
+     `src/test/java/net/gini/android/bank/sdk/GiniBankUriImportTest.kt` (Robolectric + MockK +
+     Truth). (R1, R2, R8, R9, R11 surface)
+- [x] 7. capture-sdk:sdk — instrumented tests
+     `src/androidTest/java/net/gini/android/capture/GiniCaptureUriImportInstrumentedTest.kt`
+     using `Helpers.getAssetFileFileContentUri` with `invoice.pdf` / `invoice.jpg` /
+     `invoice-password.pdf` + new `invoice.xml` asset. (R3, R4, R5, R6, R11, R12)
+- [x] 8. Re-pin API dumps: `./gradlew capture-sdk:sdk:apiDump bank-sdk:sdk:apiDump`; verify the
+     diff shows additions only. (R7)
+- [x] 9. Verification: `/gini-check` (capture-sdk:sdk, bank-sdk:sdk and dependents) and
+     `/gini-connected-check` for the new instrumented class. (R7, all)
