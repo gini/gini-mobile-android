@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import net.gini.android.bank.sdk.GiniBank
 import net.gini.android.bank.sdk.databinding.GbsFragmentDigitalInvoiceHelpBinding
 import net.gini.android.bank.sdk.util.autoCleared
 import net.gini.android.bank.sdk.util.getLayoutInflaterWithGiniCaptureTheme
@@ -34,7 +33,6 @@ class DigitalInvoiceHelpFragment : Fragment() {
         binding = GbsFragmentDigitalInvoiceHelpBinding.inflate(inflater)
         setupHelpList()
         setupTopBarNavigation()
-        setupBottomNavigationBar()
         return binding.root
     }
 
@@ -50,9 +48,7 @@ class DigitalInvoiceHelpFragment : Fragment() {
             topBarInjectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder(
                 GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
             ) { injectedAdapterView ->
-                val navType = if (GiniCapture.getInstance().isBottomNavigationBarEnabled)
-                    NavButtonType.NONE else NavButtonType.BACK
-                injectedAdapterView.setNavButtonType(navType)
+                injectedAdapterView.setNavButtonType(NavButtonType.BACK)
 
                 injectedAdapterView.setTitle(getString(net.gini.android.capture.R.string.gc_title_help))
 
@@ -60,18 +56,6 @@ class DigitalInvoiceHelpFragment : Fragment() {
                     NavHostFragment.findNavController(this).popBackStack()
                 })
             }
-        }
-    }
-
-    private fun setupBottomNavigationBar() {
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-            val injectedViewContainer = binding.gbsInjectedNavigationBarContainerBottom
-            injectedViewContainer.injectedViewAdapterHolder =
-                InjectedViewAdapterHolder(GiniBank.digitalInvoiceHelpNavigationBarBottomAdapterInstance) { injectedViewAdapter ->
-                    injectedViewAdapter.setOnBackButtonClickListener(IntervalClickListener {
-                        NavHostFragment.findNavController(this).popBackStack()
-                    })
-                }
         }
     }
 

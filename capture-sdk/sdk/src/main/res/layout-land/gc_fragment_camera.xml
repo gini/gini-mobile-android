@@ -58,7 +58,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/gc_guideline_image_start"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
@@ -267,7 +266,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
         app:layout_constraintEnd_toStartOf="@+id/gc_pane_wrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar">
@@ -420,13 +418,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <net.gini.android.capture.view.InjectedViewContainer
-        android:id="@+id/gc_injected_navigation_bar_container_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <ViewStub
         android:id="@+id/gc_stub_camera_no_permission"
@@ -434,7 +425,7 @@
         android:layout_height="0dp"
         android:layout="@layout/gc_layout_camera_no_permission"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/gc_injected_navigation_bar_container_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gc_navigation_top_bar" />

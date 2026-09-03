@@ -14,7 +14,6 @@ import com.google.android.material.snackbar.Snackbar
 import net.gini.android.capture.GiniCapture
 import net.gini.android.capture.R
 import net.gini.android.capture.databinding.GcFragmentFileImportHelpBinding
-import net.gini.android.capture.help.view.HelpNavigationBarBottomAdapter
 import net.gini.android.capture.internal.ui.IntervalClickListener
 import net.gini.android.capture.internal.util.autoCleared
 import net.gini.android.capture.internal.util.getLayoutInflaterWithGiniCaptureTheme
@@ -40,7 +39,6 @@ class FileImportHelpFragment : Fragment() {
     ): View {
         binding = GcFragmentFileImportHelpBinding.inflate(inflater)
         setupTopBarNavigation()
-        setupBottomBarNavigation()
         return binding.root
     }
 
@@ -61,26 +59,9 @@ class FileImportHelpFragment : Fragment() {
             topBarInjectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder<NavigationBarTopAdapter>(
                 GiniCapture.getInstance().internal().navigationBarTopAdapterInstance
             ) { injectedViewAdapter: NavigationBarTopAdapter ->
-                injectedViewAdapter.setNavButtonType(
-                    if (GiniCapture.getInstance()
-                            .isBottomNavigationBarEnabled
-                    ) NavButtonType.NONE else NavButtonType.BACK
-                )
+                injectedViewAdapter.setNavButtonType(NavButtonType.BACK)
                 injectedViewAdapter.setTitle(getString(R.string.gc_title_file_import))
                 injectedViewAdapter.setOnNavButtonClickListener(IntervalClickListener {
-                    NavHostFragment.findNavController(this@FileImportHelpFragment).popBackStack()
-                })
-            }
-        }
-    }
-
-    private fun setupBottomBarNavigation() {
-        val injectedViewContainer = binding.gcInjectedNavigationBarContainerBottom
-        if (GiniCapture.hasInstance() && GiniCapture.getInstance().isBottomNavigationBarEnabled) {
-            injectedViewContainer.injectedViewAdapterHolder = InjectedViewAdapterHolder<HelpNavigationBarBottomAdapter>(
-                GiniCapture.getInstance().internal().helpNavigationBarBottomAdapterInstance
-            ) { injectedViewAdapter: HelpNavigationBarBottomAdapter ->
-                injectedViewAdapter.setOnBackClickListener(IntervalClickListener {
                     NavHostFragment.findNavController(this@FileImportHelpFragment).popBackStack()
                 })
             }
@@ -105,9 +86,7 @@ class FileImportHelpFragment : Fragment() {
                 dismiss()
             }
 
-            val bottomPadding =
-                if (GiniCapture.getInstance().isBottomNavigationBarEnabled) resources.getDimension(R.dimen.gc_large_96)
-                    .toInt() else resources.getDimension(R.dimen.gc_large).toInt()
+            val bottomPadding = resources.getDimension(R.dimen.gc_large).toInt()
             val params = view.layoutParams as FrameLayout.LayoutParams
             params.setMargins(resources.getDimension(R.dimen.gc_large).toInt(), 0, resources.getDimension(R.dimen.gc_large).toInt(), bottomPadding)
             view.layoutParams = params
