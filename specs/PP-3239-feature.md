@@ -320,7 +320,41 @@ Truth with `Helpers.getAssetFileFileContentUri(...)` real content Uris (like
 - Integration-guide/documentation-site updates for the new API (KDoc is in
   scope; the Sphinx guide update should be its own follow-up ticket, since the
   customer explicitly called out missing documentation).
-- Example-app changes demonstrating the new API (optional follow-up).
+- ~~Example-app changes demonstrating the new API (optional follow-up).~~
+  Pulled into scope 2026-09-03 as QA support — see "Example app QA support".
+
+## Example app QA support (added 2026-09-03)
+
+The new Uri entry points have no UI of their own, so manual QA needs the
+`bank-sdk:example-app` open-with flow patched to exercise them:
+
+- **QA-1 (toggle):** A "use Uri-based open-with API" switch in the example
+  app's configuration screen (`layout_feature_toggles.xml`, next to the
+  existing open-with switch), backed by a new
+  `ExampleAppBankConfiguration.isOpenWithUriBasedApiEnabled` field
+  (default `false`).
+- **QA-2 (persistence):** "Open with" cold-starts the app, and the example
+  app's configuration is otherwise in-memory only — so this toggle is
+  persisted in `SharedPreferences`. **Only this single boolean is persisted;
+  no other configuration field.** On cold start the persisted value is read
+  before choosing the import path and seeded back into the in-memory
+  configuration so the configuration screen reflects it.
+- **QA-3 (branching):** With the toggle ON, every open-with call site extracts
+  the Uris from the incoming Intent (`data` / `EXTRA_STREAM`) and calls the
+  new Uri-based APIs (`createDocumentForImportedFiles(uris, ...)`,
+  `createCaptureFlowFragmentForUris(...)`). With the toggle OFF (default) the
+  existing Intent path runs untouched — zero behavior change for all other
+  QA scenarios.
+- **QA-4 (path indicator):** The Uri-based path announces itself (toast + log
+  line) so QA can prove the new code ran; the two paths are otherwise
+  intentionally indistinguishable (R11).
+
+QA scenario matrix (toggle ON, each compared against a toggle-OFF run):
+single pdf, single image, multiple images, xml invoice, password-protected
+pdf (error), share with no importable images (error: "Uris did not contain
+images" — the one intended divergence from the Intent path, see R12), and
+oversized file (validation error). Full cold-start run (app killed, toggle
+persisted ON, share from Files, complete extraction) is a required case.
 
 ## Open questions
 
@@ -365,3 +399,6 @@ Truth with `Helpers.getAssetFileFileContentUri(...)` real content Uris (like
      diff shows additions only. (R7)
 - [x] 9. Verification: `/gini-check` (capture-sdk:sdk, bank-sdk:sdk and dependents) and
      `/gini-connected-check` for the new instrumented class. (R7, all)
+- [x] 10. bank-sdk:example-app — QA toggle for the Uri-based open-with path: persisted
+     single-boolean switch, Uri extraction in `ExampleUtil`, branching at all open-with
+     call sites, path indicator. See "Example app QA support". (QA-1–QA-4)
