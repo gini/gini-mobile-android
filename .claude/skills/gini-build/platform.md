@@ -44,6 +44,37 @@ expanding through the dependency chain. Everything must pass.
 If the spec's test plan includes instrumented/UI tests, also run
 `/gini-connected-check` (needs a device or emulator).
 
+### Self code review — after the gate is green
+
+Once `/gini-check` passes, hand the finished work to the **`code-reviewer`**
+agent (Task tool, `subagent_type: "code-reviewer"`) for a pre-push
+self-review. It reads the branch commits **and** the uncommitted working
+tree, applies the `/gini-review` rulebook (`AGENTS.md`,
+`.claude/skills/gini-review/platform.md`,
+`.claude/skills/gini-review/references/general-rules.md`), and returns
+triaged findings — no verdict, no posted comments, no commits.
+
+Give it the ticket id so it can read the spec and check the implementation
+against the requirements and the "Out of scope" section.
+
+Handling what it returns:
+
+- **Blockers and warnings**: fix them, then re-run `/gini-check` for the
+  affected modules. The same 3-attempt bound from step 5 applies.
+- **Escalations** (`→ escalate to <agent>`): route those to the named
+  specialist via the `gini-orchestrator`, or raise them with the user if the
+  fix would widen the spec's scope.
+- **Nits**: the author's call; do not silently expand the change for them.
+- **No findings is a normal outcome** — report it as-is.
+
+Run this before offering to commit, and report its findings in the step 6
+summary. It is a review, not a gate: it cannot replace `/gini-check`, and a
+clean self-review never means the CI gate passed.
+
+For a full pull-request review against the Jira ticket's acceptance criteria,
+with a coverage ledger and the option to post inline comments, use the
+`/gini-review` skill instead — that is a separate, later step.
+
 ## Coding conventions
 
 The spec's "Technical conventions" section is the feature-specific contract.
