@@ -1915,6 +1915,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
         if (!GiniCapture.hasInstance()) {
             LOG.error(
                     "Cannot save document. GiniCapture instance not available. Create it with GiniCapture.newInstance().");
+            return null;
         }
         final Activity activity = mFragment.getActivity();
         if (activity == null) {
