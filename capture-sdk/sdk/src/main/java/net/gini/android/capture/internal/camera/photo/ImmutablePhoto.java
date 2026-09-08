@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -183,20 +182,10 @@ class ImmutablePhoto implements Photo {
 
     @VisibleForTesting
     public synchronized void savePreviewToFile(final File file) {
-        FileOutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(file);
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
             mBitmapPreview.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
-        } catch (final FileNotFoundException e) {
+        } catch (final IOException e) {
             LOG.error("Failed to save preview to {}", file.getAbsolutePath(), e);
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (final IOException e) {
-                    LOG.error("Closing FileOutputStream failed for {}", file.getAbsolutePath(), e);
-                }
-            }
         }
     }
 
