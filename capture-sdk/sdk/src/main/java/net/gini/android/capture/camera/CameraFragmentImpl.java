@@ -1799,95 +1799,81 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                     throwable);
             mCameraController.startPreview();
             setmIsTakingPicture(false);
-        } else {
-            if (photo != null) {
-                LOG.info("Picture taken");
-                getUpdateFlowTypeUseCase().execute(FlowType.Photo.INSTANCE);
-                showActivityIndicatorAndDisableInteraction();
-                photo.edit()
-                        .crop(mCameraPreview, getRectForCroppingFromImageFrame())
-                        .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
-                            @Override
-                            public void onDone(@NonNull final Photo result) {
-                                hideActivityIndicatorAndEnableInteraction();
-                                if (mInMultiPageState) {
-                                    final ImageDocument document = createSavedDocument(result);
-                                    if (document == null) {
-                                        handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                FAILED_TO_SAVE_PICTURE_MESSAGE,
-                                                null);
-                                        mCameraController.startPreview();
-                                        setmIsTakingPicture(false);
-                                        return;
-                                    }
-                                    mMultiPageDocument.addDocument(document);
-                                    mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
-                                            document.getRotationForDisplay()));
-                                    mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                    proceedToMultiPageReviewScreen(true);
-                                } else {
-                                    if (isMultiPageEnabled()) {
-                                        final ImageDocument document = createSavedDocument(result);
-                                        if (document == null) {
-                                            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                    FAILED_TO_SAVE_PICTURE_MESSAGE,
-                                                    null);
-                                            mCameraController.startPreview();
-                                            setmIsTakingPicture(false);
-                                            return;
-                                        }
-                                        mInMultiPageState = true;
-                                        mMultiPageDocument = new ImageMultiPageDocument(
-                                                Document.Source.newCameraSource(), ImportMethod.NONE);
-                                        GiniCapture.getInstance().internal()
-                                                .getImageMultiPageDocumentMemoryStore()
-                                                .setMultiPageDocument(mMultiPageDocument);
-                                        mMultiPageDocument.addDocument(document);
-                                        mPhotoThumbnail.setImage(
-                                                new PhotoThumbnail.ThumbnailBitmap(result.getBitmapPreview(),
-                                                        document.getRotationForDisplay()));
-                                        mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
-                                        proceedToMultiPageReviewScreen(true);
-                                        setmIsTakingPicture(false);
-                                    } else {
-                                        final ImageDocument document = createSavedDocument(result);
-                                        if (document == null) {
-                                            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                    FAILED_TO_SAVE_PICTURE_MESSAGE,
-                                                    null);
-                                            mCameraController.startPreview();
-                                            setmIsTakingPicture(false);
-                                            return;
-                                        }
-                                        final ImageMultiPageDocument multiPageDocument = new ImageMultiPageDocument(
-                                                Document.Source.newCameraSource(), ImportMethod.NONE);
-                                        GiniCapture.getInstance().internal()
-                                                .getImageMultiPageDocumentMemoryStore()
-                                                .setMultiPageDocument(multiPageDocument);
-                                        multiPageDocument.addDocument(document);
-                                        proceedToMultiPageReviewScreen(false);
-                                        setmIsTakingPicture(false);
-                                    }
-                                    mCameraController.startPreview();
-                                }
-                            }
-
-                            @Override
-                            public void onFailed() {
-                                hideActivityIndicatorAndEnableInteraction();
-                                handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                        "Failed to take picture: picture compression failed", null);
-                                mCameraController.startPreview();
-                                setmIsTakingPicture(false);
-                            }
-                        });
-            } else {
-                handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                        "Failed to take picture: no picture from the camera", null);
-                mCameraController.startPreview();
-                setmIsTakingPicture(false);
-            }
+            return;
         }
+        if (photo == null) {
+            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                    "Failed to take picture: no picture from the camera", null);
+            mCameraController.startPreview();
+            setmIsTakingPicture(false);
+            return;
+        }
+        LOG.info("Picture taken");
+        getUpdateFlowTypeUseCase().execute(FlowType.Photo.INSTANCE);
+        showActivityIndicatorAndDisableInteraction();
+        photo.edit()
+                .crop(mCameraPreview, getRectForCroppingFromImageFrame())
+                .compressByDefault().applyAsync(new PhotoEdit.PhotoEditCallback() {
+                    @Override
+                    public void onDone(@NonNull final Photo result) {
+                        hideActivityIndicatorAndEnableInteraction();
+                        onPictureEdited(result);
+                    }
+
+                    @Override
+                    public void onFailed() {
+                        hideActivityIndicatorAndEnableInteraction();
+                        handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                                "Failed to take picture: picture compression failed", null);
+                        mCameraController.startPreview();
+                        setmIsTakingPicture(false);
+                    }
+                });
+    }
+
+    private void onPictureEdited(@NonNull final Photo result) {
+        final ImageDocument document = createSavedDocument(result);
+        if (document == null) {
+            handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
+                    FAILED_TO_SAVE_PICTURE_MESSAGE,
+                    null);
+            mCameraController.startPreview();
+            setmIsTakingPicture(false);
+            return;
+        }
+        if (mInMultiPageState) {
+            addPageToMultiPageDocumentAndProceed(document, result);
+            return;
+        }
+        if (isMultiPageEnabled()) {
+            mInMultiPageState = true;
+            mMultiPageDocument = new ImageMultiPageDocument(
+                    Document.Source.newCameraSource(), ImportMethod.NONE);
+            GiniCapture.getInstance().internal()
+                    .getImageMultiPageDocumentMemoryStore()
+                    .setMultiPageDocument(mMultiPageDocument);
+            addPageToMultiPageDocumentAndProceed(document, result);
+            setmIsTakingPicture(false);
+        } else {
+            final ImageMultiPageDocument multiPageDocument = new ImageMultiPageDocument(
+                    Document.Source.newCameraSource(), ImportMethod.NONE);
+            GiniCapture.getInstance().internal()
+                    .getImageMultiPageDocumentMemoryStore()
+                    .setMultiPageDocument(multiPageDocument);
+            multiPageDocument.addDocument(document);
+            proceedToMultiPageReviewScreen(false);
+            setmIsTakingPicture(false);
+        }
+        mCameraController.startPreview();
+    }
+
+    private void addPageToMultiPageDocumentAndProceed(@NonNull final ImageDocument document,
+            @NonNull final Photo photo) {
+        mMultiPageDocument.addDocument(document);
+        mPhotoThumbnail.setImage(new PhotoThumbnail.ThumbnailBitmap(photo.getBitmapPreview(),
+                document.getRotationForDisplay()));
+        mPhotoThumbnail.setImageCount(mMultiPageDocument.getDocuments().size());
+        proceedToMultiPageReviewScreen(true);
     }
 
     private Rect getRectForCroppingFromImageFrame() {
