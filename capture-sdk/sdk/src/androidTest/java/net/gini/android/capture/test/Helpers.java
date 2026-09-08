@@ -140,20 +140,11 @@ public class Helpers {
                 ApplicationProvider.getApplicationContext().getExternalFilesDir(null)
                         + File.separator +
                         filename);
-        FileOutputStream fileOutputStream = null;
-        try {
-            if (!file.exists() && !file.createNewFile()) {
-                throw new IOException("Could not create file: " + file.getAbsolutePath());
-            }
-            fileOutputStream = new FileOutputStream(file);
+        if (!file.exists() && !file.createNewFile()) {
+            throw new IOException("Could not create file: " + file.getAbsolutePath());
+        }
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             fileOutputStream.write(data, 0, data.length);
-        } finally {
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (final IOException ignored) {
-                }
-            }
         }
     }
 
