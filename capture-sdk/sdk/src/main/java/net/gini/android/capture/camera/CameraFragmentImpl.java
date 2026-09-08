@@ -1321,54 +1321,60 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     @VisibleForTesting
     void analyzeQRCode(final QRCodeDocument qrCodeDocument) {
         final Activity activity = mFragment.getActivity();
-        if (activity == null) {
+        if (activity == null || !GiniCapture.hasInstance()) {
             return;
         }
-        if (GiniCapture.hasInstance()) {
-            final NetworkRequestsManager networkRequestsManager =
-                    GiniCapture.getInstance().internal().getNetworkRequestsManager();
-            if (networkRequestsManager != null) {
-                showActivityIndicatorAndDisableInteraction();
-                networkRequestsManager
-                        .upload(activity, qrCodeDocument)
-                        .handle((requestResult, throwable) -> {
-                            if (throwable != null) {
-                                hideActivityIndicatorAndEnableInteraction();
-                                if (!isCancellation(throwable)) {
-                                    handleAnalysisError(throwable, qrCodeDocument);
-                                }
-                            }
-                            return requestResult;
-                        })
-                        .thenCompose(
-                                requestResult -> {
-                                    if (requestResult != null) {
-                                        final GiniCaptureMultiPageDocument multiPageDocument =
-                                                DocumentFactory.newMultiPageDocument(
-                                                        qrCodeDocument);
-                                        return networkRequestsManager.analyze(
-                                                multiPageDocument);
-                                    }
-                                    return CompletableFuture.completedFuture(null);
-                                })
-                        .handle((CompletableFuture.BiFun<AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>, Throwable, Void>) (requestResult, throwable) -> {
-                            hideActivityIndicatorAndEnableInteraction();
-                            if (throwable != null
-                                    && !isCancellation(throwable)) {
-                                handleAnalysisError(throwable, qrCodeDocument);
-                            } else if (requestResult != null) {
-                                mPaymentQRCodePopup.hide();
-                                if (requestResult.getAnalysisResult().getExtractions().isEmpty()) {
-                                    //mListener.noExtractionsFromQRCode(qrCodeDocument);
-                                    NoResultsFragment.navigateToNoResultsFragment(mFragment.findNavController(), CameraFragmentDirections.toNoResultsFragment(qrCodeDocument));
-                                    return null;
-                                }
-                                onQrCodeRecognized(requestResult.getAnalysisResult().getExtractions());
-                            }
-                            return null;
-                        });
-            }
+        final NetworkRequestsManager networkRequestsManager =
+                GiniCapture.getInstance().internal().getNetworkRequestsManager();
+        if (networkRequestsManager == null) {
+            return;
         }
+        showActivityIndicatorAndDisableInteraction();
+        networkRequestsManager
+                .upload(activity, qrCodeDocument)
+                .handle((requestResult, throwable) -> {
+                    if (throwable != null) {
+                        hideActivityIndicatorAndEnableInteraction();
+                        if (!isCancellation(throwable)) {
+                            handleAnalysisError(throwable, qrCodeDocument);
+                        }
+                    }
+                    return requestResult;
+                })
+                .thenCompose(
+                        requestResult -> {
+                            if (requestResult != null) {
+                                final GiniCaptureMultiPageDocument multiPageDocument =
+                                        DocumentFactory.newMultiPageDocument(
+                                                qrCodeDocument);
+                                return networkRequestsManager.analyze(
+                                        multiPageDocument);
+                            }
+                            return CompletableFuture.completedFuture(null);
+                        })
+                .handle((CompletableFuture.BiFun<AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>, Throwable, Void>) (requestResult, throwable) -> {
+                    handleQRCodeAnalysisResult(qrCodeDocument, requestResult, throwable);
+                    return null;
+                });
+    }
+
+    private void handleQRCodeAnalysisResult(@NonNull final QRCodeDocument qrCodeDocument,
+            @Nullable final AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument> requestResult,
+            @Nullable final Throwable throwable) {
+        hideActivityIndicatorAndEnableInteraction();
+        if (throwable != null && !isCancellation(throwable)) {
+            handleAnalysisError(throwable, qrCodeDocument);
+            return;
+        }
+        if (requestResult == null) {
+            return;
+        }
+        mPaymentQRCodePopup.hide();
+        if (requestResult.getAnalysisResult().getExtractions().isEmpty()) {
+            NoResultsFragment.navigateToNoResultsFragment(mFragment.findNavController(), CameraFragmentDirections.toNoResultsFragment(qrCodeDocument));
+            return;
+        }
+        onQrCodeRecognized(requestResult.getAnalysisResult().getExtractions());
     }
 
     private void handleAnalysisError(Throwable throwable, Document document) {
