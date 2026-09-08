@@ -159,6 +159,10 @@ class ImmutablePhoto implements Photo {
 
     @Override
     public synchronized void saveToFile(final File file) {
+        if (mData == null) {
+            LOG.error("Failed to save jpeg to {}: photo has no image data", file.getAbsolutePath());
+            return;
+        }
         FileOutputStream fileOutputStream = null;
         try {
             fileOutputStream = new FileOutputStream(file);
