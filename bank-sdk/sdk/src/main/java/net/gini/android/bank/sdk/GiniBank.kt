@@ -549,16 +549,17 @@ object GiniBank {
     }
 
     /**
+     * Creates a document based on a pdf or image(s) received from another app as content Uris.
      *
-     *  Create a document based on a pdf or image(s) received from another app as content Uris.
+     * Use this instead of the [Intent] based overload when your app has already resolved the
+     * share Intent and only the document Uris are available.
      *
-     *  Use this instead of the [Intent] based overload when your app has already resolved the
-     *  share Intent and only the document Uris are available.
-     *
-     *  @param uris - the content Uris of the documents shared from another app
-     *  @param context - Android context
-     *  @param callback - returns the wrapped result of the file processing in the form of [CreateDocumentFromImportedFileResult]
-     *  @return a [CancellationToken] for cancelling the import process or null if the capture feature was not configured
+     * @param uris the content Uris of the documents shared from another app
+     * @param context Android context
+     * @param callback returns the wrapped result of the file processing in the form of
+     * [CreateDocumentFromImportedFileResult]
+     * @return a [CancellationToken] for cancelling the import process or null if the capture
+     * feature was not configured
      */
     fun createDocumentForImportedFiles(
         uris: List<Uri>,
