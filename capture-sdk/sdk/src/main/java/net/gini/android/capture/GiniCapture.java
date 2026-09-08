@@ -93,17 +93,31 @@ public class GiniCapture {
     private static final Logger LOG = LoggerFactory.getLogger(GiniCapture.class);
     private static GiniCapture sInstance;
 
+    // Names of the SEPA specific extractions sent as transfer summary.
+    private static final String EXTRACTION_AMOUNT_TO_PAY = "amountToPay";
+    private static final String EXTRACTION_PAYMENT_RECIPIENT = "paymentRecipient";
+    private static final String EXTRACTION_PAYMENT_REFERENCE = "paymentReference";
+    private static final String EXTRACTION_PAYMENT_PURPOSE = "paymentPurpose";
+    private static final String EXTRACTION_IBAN = "iban";
+    private static final String EXTRACTION_BIC = "bic";
+    private static final String EXTRACTION_INSTANT_PAYMENT = "instantPayment";
+    private static final String COMPOUND_EXTRACTION_SKONTO_DISCOUNTS = "skontoDiscounts";
+    // Entity types of the SEPA specific extractions.
+    private static final String ENTITY_AMOUNT = "amount";
+    private static final String ENTITY_COMPANY_NAME = "companyname";
+    private static final String ENTITY_REFERENCE = "reference";
+
     // Maps known SEPA extraction names to their correct entity types, matching the typed overload.
     private static final Map<String, String> SEPA_ENTITY_TYPES;
     static {
         SEPA_ENTITY_TYPES = new HashMap<>();
-        SEPA_ENTITY_TYPES.put("amountToPay", "amount");
-        SEPA_ENTITY_TYPES.put("paymentRecipient", "companyname");
-        SEPA_ENTITY_TYPES.put("paymentReference", "reference");
-        SEPA_ENTITY_TYPES.put("paymentPurpose", "reference");
-        SEPA_ENTITY_TYPES.put("iban", "iban");
-        SEPA_ENTITY_TYPES.put("bic", "bic");
-        SEPA_ENTITY_TYPES.put("instantPayment", "instantPayment");
+        SEPA_ENTITY_TYPES.put(EXTRACTION_AMOUNT_TO_PAY, ENTITY_AMOUNT);
+        SEPA_ENTITY_TYPES.put(EXTRACTION_PAYMENT_RECIPIENT, ENTITY_COMPANY_NAME);
+        SEPA_ENTITY_TYPES.put(EXTRACTION_PAYMENT_REFERENCE, ENTITY_REFERENCE);
+        SEPA_ENTITY_TYPES.put(EXTRACTION_PAYMENT_PURPOSE, ENTITY_REFERENCE);
+        SEPA_ENTITY_TYPES.put(EXTRACTION_IBAN, EXTRACTION_IBAN);
+        SEPA_ENTITY_TYPES.put(EXTRACTION_BIC, EXTRACTION_BIC);
+        SEPA_ENTITY_TYPES.put(EXTRACTION_INSTANT_PAYMENT, EXTRACTION_INSTANT_PAYMENT);
     }
     private final GiniCaptureNetworkService mGiniCaptureNetworkService;
     private final NetworkRequestsManager mNetworkRequestsManager;
@@ -233,27 +247,25 @@ public class GiniCapture {
             return;
         }
 
-        final String EXTRACTION_AMOUNT_TO_PAY = "amountToPay";
-
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
-        extractionMap.put(EXTRACTION_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_AMOUNT_TO_PAY, amount.amountToPay(), "amount", null, emptyList()));
+        extractionMap.put(EXTRACTION_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_AMOUNT_TO_PAY, amount.amountToPay(), ENTITY_AMOUNT, null, emptyList()));
 
-        extractionMap.put("paymentRecipient", new GiniCaptureSpecificExtraction("paymentRecipient", paymentRecipient, "companyname", null, emptyList()));
+        extractionMap.put(EXTRACTION_PAYMENT_RECIPIENT, new GiniCaptureSpecificExtraction(EXTRACTION_PAYMENT_RECIPIENT, paymentRecipient, ENTITY_COMPANY_NAME, null, emptyList()));
 
-        extractionMap.put("paymentReference", new GiniCaptureSpecificExtraction("paymentReference", paymentReference, "reference", null, emptyList()));
+        extractionMap.put(EXTRACTION_PAYMENT_REFERENCE, new GiniCaptureSpecificExtraction(EXTRACTION_PAYMENT_REFERENCE, paymentReference, ENTITY_REFERENCE, null, emptyList()));
 
-        extractionMap.put("paymentPurpose", new GiniCaptureSpecificExtraction("paymentPurpose", paymentPurpose, "reference", null, emptyList()));
+        extractionMap.put(EXTRACTION_PAYMENT_PURPOSE, new GiniCaptureSpecificExtraction(EXTRACTION_PAYMENT_PURPOSE, paymentPurpose, ENTITY_REFERENCE, null, emptyList()));
 
-        extractionMap.put("iban", new GiniCaptureSpecificExtraction("iban", iban, "iban", null, emptyList()));
+        extractionMap.put(EXTRACTION_IBAN, new GiniCaptureSpecificExtraction(EXTRACTION_IBAN, iban, EXTRACTION_IBAN, null, emptyList()));
 
-        extractionMap.put("bic", new GiniCaptureSpecificExtraction("bic", bic, "bic", null, emptyList()));
+        extractionMap.put(EXTRACTION_BIC, new GiniCaptureSpecificExtraction(EXTRACTION_BIC, bic, EXTRACTION_BIC, null, emptyList()));
 
         if (instantPayment != null) {
-            extractionMap.put("instantPayment", new GiniCaptureSpecificExtraction("instantPayment", instantPayment.toString(), "instantPayment", null, emptyList()));
+            extractionMap.put(EXTRACTION_INSTANT_PAYMENT, new GiniCaptureSpecificExtraction(EXTRACTION_INSTANT_PAYMENT, instantPayment.toString(), EXTRACTION_INSTANT_PAYMENT, null, emptyList()));
         }
         // We should remove skonto from compound extractions as we don't want to override them by clients when sending normal feedback!
-        sInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
+        sInstance.mInternal.getCompoundExtractions().remove(COMPOUND_EXTRACTION_SKONTO_DISCOUNTS);
 
         // Test fails here if for some reason mGiniCaptureNetworkService is null
         // Added null checking to fix test fail -> or figure out something else
@@ -360,7 +372,7 @@ public class GiniCapture {
                         entry.getKey(), entry.getValue(), entity, null, emptyList()));
             }
             // Remove skonto so it isn't overridden when sending normal feedback.
-            oldInstance.mInternal.getCompoundExtractions().remove("skontoDiscounts");
+            oldInstance.mInternal.getCompoundExtractions().remove(COMPOUND_EXTRACTION_SKONTO_DISCOUNTS);
 
             if (oldInstance.mGiniCaptureNetworkService != null) {
                 oldInstance.mGiniCaptureNetworkService.sendFeedback(
@@ -401,12 +413,9 @@ public class GiniCapture {
                                                                  @NonNull final String skontoPercentageDiscountedCalculated,
                                                                  @NonNull final String skontoDueDateCalculated) {
 
-        final String EXTRACTION_AMOUNT_TO_PAY = "amountToPay";
-        final String EXTRACTION_AMOUNT = "amount";
         final String EXTRACTION_SKONTO_AMOUNT_TO_PAY = "skontoAmountToPayCalculated";
         final String EXTRACTION_SKONTO_PERCENTAGE_TO_PAY = "skontoPercentageDiscountedCalculated";
         final String EXTRACTION_SKONTO_DUE_DATE = "skontoDueDateCalculated";
-        final String EXTRACTION_SKONTO_DISCOUNTS = "skontoDiscounts";
 
         if (sInstance == null) {
             return;
@@ -414,18 +423,18 @@ public class GiniCapture {
 
         Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
 
-        extractionMap.put(EXTRACTION_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_AMOUNT_TO_PAY, amount.amountToPay(), EXTRACTION_AMOUNT, null, emptyList()));
+        extractionMap.put(EXTRACTION_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_AMOUNT_TO_PAY, amount.amountToPay(), ENTITY_AMOUNT, null, emptyList()));
 
         final GiniCapture oldInstance = sInstance;
         Map<String, GiniCaptureCompoundExtraction> compoundExtractionMap = new HashMap<>();
         Map<String, GiniCaptureSpecificExtraction> skontoSpecificExtractions = new HashMap<>();
 
-        skontoSpecificExtractions.put(EXTRACTION_SKONTO_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_AMOUNT_TO_PAY, skontoAmountToPayCalculated, EXTRACTION_AMOUNT, null, emptyList()));
+        skontoSpecificExtractions.put(EXTRACTION_SKONTO_AMOUNT_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_AMOUNT_TO_PAY, skontoAmountToPayCalculated, ENTITY_AMOUNT, null, emptyList()));
 
         double percentage = ((int) (Double.parseDouble(skontoPercentageDiscountedCalculated) * 100)) / 100.0;
-        skontoSpecificExtractions.put(EXTRACTION_SKONTO_PERCENTAGE_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_PERCENTAGE_TO_PAY, percentage + "%", EXTRACTION_AMOUNT, null, emptyList()));
-        skontoSpecificExtractions.put(EXTRACTION_SKONTO_DUE_DATE, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_DUE_DATE, skontoDueDateCalculated, EXTRACTION_AMOUNT, null, emptyList()));
-        compoundExtractionMap.put(EXTRACTION_SKONTO_DISCOUNTS, new GiniCaptureCompoundExtraction(EXTRACTION_SKONTO_DISCOUNTS, listOf(skontoSpecificExtractions)));
+        skontoSpecificExtractions.put(EXTRACTION_SKONTO_PERCENTAGE_TO_PAY, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_PERCENTAGE_TO_PAY, percentage + "%", ENTITY_AMOUNT, null, emptyList()));
+        skontoSpecificExtractions.put(EXTRACTION_SKONTO_DUE_DATE, new GiniCaptureSpecificExtraction(EXTRACTION_SKONTO_DUE_DATE, skontoDueDateCalculated, ENTITY_AMOUNT, null, emptyList()));
+        compoundExtractionMap.put(COMPOUND_EXTRACTION_SKONTO_DISCOUNTS, new GiniCaptureCompoundExtraction(COMPOUND_EXTRACTION_SKONTO_DISCOUNTS, listOf(skontoSpecificExtractions)));
 
         // Test fails here if for some reason mGiniCaptureNetworkService is null
         // Added null checking to fix test fail -> or figure out something else
