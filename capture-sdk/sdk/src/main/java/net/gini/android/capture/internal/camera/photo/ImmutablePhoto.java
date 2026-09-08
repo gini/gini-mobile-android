@@ -163,20 +163,10 @@ class ImmutablePhoto implements Photo {
             LOG.error("Failed to save jpeg to {}: photo has no image data", file.getAbsolutePath());
             return;
         }
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(file);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             fileOutputStream.write(mData, 0, mData.length);
         } catch (final IOException e) {
             LOG.error("Failed to save jpeg to {}", file.getAbsolutePath(), e);
-        } finally {
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (final IOException e) {
-                    LOG.error("Closing FileOutputStream failed for {}", file.getAbsolutePath(), e);
-                }
-            }
         }
     }
 
