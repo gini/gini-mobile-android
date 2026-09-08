@@ -1443,41 +1443,43 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                 return;
             }
             handleMultiPageDocumentAndCallListener(activity, data, uris);
-        } else {
-            final Uri uri = IntentHelper.getUri(data);
-            if (uri == null) {
-                LOG.error("Document import failed: Intent has no Uri");
-                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
-                return;
-            }
-            if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
-                LOG.error("Document import failed: InputStream not available for the Uri");
-                showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
-                return;
-            }
+            return;
+        }
+        final Uri uri = IntentHelper.getUri(data);
+        if (uri == null) {
+            LOG.error("Document import failed: Intent has no Uri");
+            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
+            return;
+        }
+        if (!UriHelper.isUriInputStreamAvailable(uri, activity)) {
+            LOG.error("Document import failed: InputStream not available for the Uri");
+            showGenericInvalidFileError(ErrorType.FILE_IMPORT_GENERIC);
+            return;
+        }
 
-            if (isImage(data, activity)) {
-                handleMultiPageDocumentAndCallListener(activity, data,
-                        Collections.singletonList(uri));
-            } else {
-                final int fileSizeLimit;
-                if (GiniCapture.hasInstance()) {
-                    fileSizeLimit = GiniCapture.getInstance().getImportedFileSizeBytesLimit();
-                } else {
-                    fileSizeLimit = FILE_SIZE_LIMIT;
-                }
-                final FileImportValidator fileImportValidator = new FileImportValidator(activity, fileSizeLimit);
-                if (fileImportValidator.matchesCriteria(data, uri)) {
-                    createSinglePageDocumentAndCallListener(data, activity);
-                } else {
-                    final FileImportValidator.Error error = fileImportValidator.getError();
-                    if (error != null) {
-                        Error errorClass = new Error(error);
-                        ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
-                        showGenericInvalidFileError(errorType);
-                    }
-                }
-            }
+        if (isImage(data, activity)) {
+            handleMultiPageDocumentAndCallListener(activity, data,
+                    Collections.singletonList(uri));
+        } else {
+            importNonImageDocumentFromIntent(activity, data, uri);
+        }
+    }
+
+    private void importNonImageDocumentFromIntent(@NonNull final Activity activity,
+            @NonNull final Intent data, @NonNull final Uri uri) {
+        final int fileSizeLimit = GiniCapture.hasInstance()
+                ? GiniCapture.getInstance().getImportedFileSizeBytesLimit()
+                : FILE_SIZE_LIMIT;
+        final FileImportValidator fileImportValidator = new FileImportValidator(activity, fileSizeLimit);
+        if (fileImportValidator.matchesCriteria(data, uri)) {
+            createSinglePageDocumentAndCallListener(data, activity);
+            return;
+        }
+        final FileImportValidator.Error error = fileImportValidator.getError();
+        if (error != null) {
+            final Error errorClass = new Error(error);
+            final ErrorType errorType = ErrorType.typeFromError(errorClass, getGetEInvoiceFeatureEnabledUseCase().invoke());
+            showGenericInvalidFileError(errorType);
         }
     }
 
