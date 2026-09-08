@@ -25,6 +25,7 @@ import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -977,60 +978,66 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     }
 
     private void setTopBarInjectedViewContainer() {
-        if (GiniCapture.hasInstance()) {
-            topAdapterInjectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(), injectedViewAdapter -> {
-                if (mFragment.getActivity() == null)
-                    return;
-
-                boolean isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
-
-                if (isOnlyQRCodeScanningEnabled()) {
-                    injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
-                } else if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
-                    injectedViewAdapter.setNavButtonType(isBottomBarEnabled ? NavButtonType.NONE : NavButtonType.BACK);
-                } else {
-                    injectedViewAdapter.setNavButtonType(NavButtonType.CLOSE);
-                }
-
-                if (isOnlyQRCodeScanningEnabled()) {
-                    injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_qr));
-                } else {
-                    if (ContextHelper.isTablet(mFragment.getActivity())) {
-                        if (isQRCodeScanningAvailable()) {
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_invoice_and_qr));
-                        } else {
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
-                        }
-                    } else {
-                        if (ContextHelper.isPortraitOrientation(mFragment.getActivity()))
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_title_camera));
-                        else if (isQRCodeScanningAvailable())
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_top_bar_title_landscape));
-                        else
-                            injectedViewAdapter.setTitle(mFragment.getActivity().getString(R.string.gc_camera_info_label_only_invoice));
-                    }
-                }
-
-                if (!isBottomBarEnabled && !isOnlyQRCodeScanningEnabled()) {
-                    injectedViewAdapter.setMenuResource(R.menu.gc_camera);
-                    injectedViewAdapter.setOnMenuItemClickListener(new IntervalToolbarMenuItemIntervalClickListener(item -> {
-                        if (item.getItemId() == R.id.gc_action_show_onboarding) {
-                            startHelpActivity();
-                        } else {
-                            throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
-                        }
-                        return true;
-                    }));
-                }
-
-                injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
-                    trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
-                    trackCameraScreenCloseTappedEventIfNeeded();
-                    onBackPressed();
-                }));
-            }));
-
+        if (!GiniCapture.hasInstance()) {
+            return;
         }
+        topAdapterInjectedViewContainer.setInjectedViewAdapterHolder(new InjectedViewAdapterHolder<>(GiniCapture.getInstance().internal().getNavigationBarTopAdapterInstance(), injectedViewAdapter -> {
+            final Activity activity = mFragment.getActivity();
+            if (activity == null)
+                return;
+
+            final boolean isBottomBarEnabled = GiniCapture.getInstance().isBottomNavigationBarEnabled();
+
+            injectedViewAdapter.setNavButtonType(getTopBarNavButtonType(isBottomBarEnabled));
+            injectedViewAdapter.setTitle(activity.getString(getTopBarTitleRes(activity)));
+
+            if (!isBottomBarEnabled && !isOnlyQRCodeScanningEnabled()) {
+                injectedViewAdapter.setMenuResource(R.menu.gc_camera);
+                injectedViewAdapter.setOnMenuItemClickListener(new IntervalToolbarMenuItemIntervalClickListener(item -> {
+                    if (item.getItemId() == R.id.gc_action_show_onboarding) {
+                        startHelpActivity();
+                    } else {
+                        throw new UnsupportedOperationException("Unknown menu item id. Please don't call our OnMenuItemClickListener for custom menu items.");
+                    }
+                    return true;
+                }));
+            }
+
+            injectedViewAdapter.setOnNavButtonClickListener(new IntervalClickListener(v -> {
+                trackCameraAccessPermissionRequiredCloseClickedEventIfNeeded();
+                trackCameraScreenCloseTappedEventIfNeeded();
+                onBackPressed();
+            }));
+        }));
+    }
+
+    @NonNull
+    private NavButtonType getTopBarNavButtonType(final boolean isBottomBarEnabled) {
+        if (isOnlyQRCodeScanningEnabled()) {
+            return NavButtonType.CLOSE;
+        }
+        if (mMultiPageDocument != null && !mMultiPageDocument.getDocuments().isEmpty()) {
+            return isBottomBarEnabled ? NavButtonType.NONE : NavButtonType.BACK;
+        }
+        return NavButtonType.CLOSE;
+    }
+
+    @StringRes
+    private int getTopBarTitleRes(@NonNull final Activity activity) {
+        if (isOnlyQRCodeScanningEnabled()) {
+            return R.string.gc_camera_info_label_only_qr;
+        }
+        if (ContextHelper.isTablet(activity)) {
+            return isQRCodeScanningAvailable()
+                    ? R.string.gc_camera_info_label_invoice_and_qr
+                    : R.string.gc_camera_info_label_only_invoice;
+        }
+        if (ContextHelper.isPortraitOrientation(activity)) {
+            return R.string.gc_title_camera;
+        }
+        return isQRCodeScanningAvailable()
+                ? R.string.gc_camera_top_bar_title_landscape
+                : R.string.gc_camera_info_label_only_invoice;
     }
 
 
