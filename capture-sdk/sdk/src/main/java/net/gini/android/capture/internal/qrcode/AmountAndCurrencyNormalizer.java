@@ -28,7 +28,7 @@ final class AmountAndCurrencyNormalizer {
      */
     @NonNull
     static String normalizeAmount(@Nullable final String amount, @NonNull final String currency) {
-        if (!TextUtils.isEmpty(amount)) {
+        if (amount != null && !amount.isEmpty()) {
             try {
                 BigDecimal amountBigDecimal = new BigDecimal(amount.replace(",", "."));
                 if (amountBigDecimal.scale() < 2) {
