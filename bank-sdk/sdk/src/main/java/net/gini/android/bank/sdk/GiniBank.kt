@@ -65,6 +65,8 @@ object GiniBank {
 
     private const val CAPTURE_NOT_CONFIGURED_MSG =
         "Capture feature is not configured. Call setCaptureConfiguration before starting the flow."
+    private const val CAPTURE_NOT_CONFIGURED_FRAGMENT_MSG =
+        "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment."
 
     private var giniCapture: GiniCapture? = null
     private var captureConfiguration: CaptureConfiguration? = null
@@ -290,7 +292,7 @@ object GiniBank {
     }
 
     fun createCaptureFlowFragment(): CaptureFlowFragment {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_FRAGMENT_MSG }
         return CaptureFlowFragment.createInstance()
     }
 
@@ -299,7 +301,7 @@ object GiniBank {
         intent: Intent,
         callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit
     ): CancellationToken {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_FRAGMENT_MSG }
         BankSdkIsolatedKoinContext.init(context)
         return giniCapture!!.createDocumentForImportedFiles(
             intent,
@@ -347,7 +349,7 @@ object GiniBank {
         uris: List<Uri>,
         callback: (CreateCaptureFlowFragmentForIntentResult) -> Unit
     ): CancellationToken {
-        check(giniCapture != null) { "Capture feature is not configured. Call setCaptureConfiguration before creating the CaptureFlowFragment." }
+        check(giniCapture != null) { CAPTURE_NOT_CONFIGURED_FRAGMENT_MSG }
         BankSdkIsolatedKoinContext.init(context)
         return giniCapture!!.internal().createDocumentForImportedUris(
             uris,
