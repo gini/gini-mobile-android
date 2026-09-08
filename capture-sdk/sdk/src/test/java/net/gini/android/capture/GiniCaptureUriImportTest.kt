@@ -6,8 +6,11 @@ import android.os.Looper
 import android.webkit.MimeTypeMap
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import net.gini.android.capture.document.ImageMultiPageDocument
 import net.gini.android.capture.document.PdfDocument
+import net.gini.android.capture.document.XmlDocument
 import net.gini.android.capture.internal.util.FileImportValidator
+import net.gini.android.capture.test.Helpers
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -21,10 +24,10 @@ import java.util.concurrent.CountDownLatch
 /**
  * Unit tests for [GiniCaptureUriImport].
  *
- * Covers the error paths and the single pdf Uri happy path using file Uris pointing to real
- * temporary files ([net.gini.android.capture.util.UriHelper] falls back to the file behind the
- * Uri's path for mime type, file size and input stream). The image and multi-Uri paths are
- * covered by the instrumented tests in GiniCaptureUriImportInstrumentedTest.
+ * Covers the error paths and the pdf, xml, image and multi-image branches using file Uris
+ * pointing to real temporary files ([net.gini.android.capture.util.UriHelper] falls back to the
+ * file behind the Uri's path for mime type, file size and input stream). The same branches are
+ * exercised with real content Uris in GiniCaptureUriImportInstrumentedTest.
  */
 // sdk 33: on newer emulated SDKs PdfRenderer delegates to PdfProcessor, which throws
 // NoSuchMethodError under Robolectric and cannot be caught by FileImportValidator
@@ -38,8 +41,12 @@ class GiniCaptureUriImportTest {
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
-        shadowOf(MimeTypeMap.getSingleton())
-            .addExtensionMimeTypeMapping("pdf", "application/pdf")
+        shadowOf(MimeTypeMap.getSingleton()).apply {
+            addExtensionMimeTypeMapping("pdf", "application/pdf")
+            addExtensionMimeTypeMapping("xml", "text/xml")
+            addExtensionMimeTypeMapping("jpg", "image/jpeg")
+            addExtensionMimeTypeMapping("jpeg", "image/jpeg")
+        }
     }
 
     @After
@@ -167,6 +174,139 @@ class GiniCaptureUriImportTest {
         assertThat(callback.terminalCallbackCount).isEqualTo(1)
     }
 
+    @Test
+    fun `creates an XmlDocument with the data behind a single xml Uri`() {
+        // Given
+        val giniCapture = buildGiniCapture()
+        val xmlBytes = "<invoice/>".toByteArray()
+        val uri = createUri(xmlBytes, ".xml")
+        val callback = RecordingCallback()
+
+        // When
+        GiniCaptureUriImport(giniCapture)
+            .createDocumentForImportedUris(listOf(uri), context, callback)
+        awaitTerminalCallback(callback)
+
+        // Then
+        assertThat(callback.errors).isEmpty()
+        val document = callback.successes.single()
+        assertThat(document).isInstanceOf(XmlDocument::class.java)
+        assertThat(document.importMethod).isEqualTo(Document.ImportMethod.OPEN_WITH)
+        assertThat(document.uri).isEqualTo(uri)
+        assertThat(document.data).isEqualTo(xmlBytes)
+    }
+
+    @Test
+    fun `creates a one page ImageMultiPageDocument for a single image Uri and stores it in memory`() {
+        // Given
+        val giniCapture = buildGiniCapture()
+        val uri = createUri(Helpers.getTestJpeg(), ".jpg")
+        val callback = RecordingCallback()
+
+        // When
+        GiniCaptureUriImport(giniCapture)
+            .createDocumentForImportedUris(listOf(uri), context, callback)
+        awaitTerminalCallback(callback)
+
+        // Then
+        assertThat(callback.errors).isEmpty()
+        val document = callback.successes.single()
+        assertThat(document).isInstanceOf(ImageMultiPageDocument::class.java)
+        val multiPageDocument = document as ImageMultiPageDocument
+        assertThat(multiPageDocument.importMethod).isEqualTo(Document.ImportMethod.OPEN_WITH)
+        assertThat(multiPageDocument.documents).hasSize(1)
+        // The page was compressed and saved to the ImageDiskStore
+        assertThat(multiPageDocument.documents.first().uri).isNotNull()
+        assertThat(
+            GiniCapture.getInstance().internal()
+                .imageMultiPageDocumentMemoryStore.multiPageDocument
+        ).isEqualTo(multiPageDocument)
+    }
+
+    @Test
+    fun `creates one page per image Uri when multiple image Uris are imported`() {
+        // Given
+        val giniCapture = buildGiniCapture()
+        val uris = listOf(
+            createUri(Helpers.getTestJpeg(), ".jpg"),
+            createUri(Helpers.loadAsset("invoice-valid-user-comment.jpeg"), ".jpeg")
+        )
+        val callback = RecordingCallback()
+
+        // When
+        GiniCaptureUriImport(giniCapture)
+            .createDocumentForImportedUris(uris, context, callback)
+        awaitTerminalCallback(callback)
+
+        // Then
+        assertThat(callback.errors).isEmpty()
+        val multiPageDocument = callback.successes.single() as ImageMultiPageDocument
+        assertThat(multiPageDocument.documents).hasSize(2)
+        assertThat(multiPageDocument.documents.map { it.uri }).containsNoDuplicates()
+    }
+
+    @Test
+    fun `calls onError when multiple Uris contain no images`() {
+        // Given
+        val giniCapture = buildGiniCapture()
+        val pdfUri = createPdfUri()
+        val callback = RecordingCallback()
+
+        // When
+        GiniCaptureUriImport(giniCapture)
+            .createDocumentForImportedUris(listOf(pdfUri, pdfUri), context, callback)
+        awaitTerminalCallback(callback)
+
+        // Then
+        assertThat(callback.successes).isEmpty()
+        assertThat(callback.errors.single().message).isEqualTo("Uris did not contain images")
+        assertThat(callback.errors.single().validationError).isNull()
+        assertThat(callback.terminalCallbackCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `calls onError with the validation error when an image Uri fails validation`() {
+        // Given
+        val fileSizeLimit = 1024
+        val giniCapture = buildGiniCapture(importedFileSizeBytesLimit = fileSizeLimit)
+        val jpegBytes = Helpers.getTestJpeg()
+        assertThat(jpegBytes.size).isGreaterThan(fileSizeLimit)
+        val uri = createUri(jpegBytes, ".jpg")
+        val callback = RecordingCallback()
+
+        // When
+        GiniCaptureUriImport(giniCapture)
+            .createDocumentForImportedUris(listOf(uri), context, callback)
+        awaitTerminalCallback(callback)
+
+        // Then
+        assertThat(callback.successes).isEmpty()
+        assertThat(callback.errors.single().validationError)
+            .isEqualTo(FileImportValidator.Error.SIZE_TOO_LARGE)
+        assertThat(callback.terminalCallbackCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `GiniCapture Internal delegates to the Uri import`() {
+        // Given
+        val giniCapture = buildGiniCapture()
+        val pdfBytes = pdfBytes()
+        val uri = createPdfUri(pdfBytes)
+        val callback = RecordingCallback()
+
+        // When
+        val token = giniCapture.internal()
+            .createDocumentForImportedUris(listOf(uri), context, callback)
+        awaitTerminalCallback(callback)
+
+        // Then
+        assertThat(token).isNotNull()
+        assertThat(callback.errors).isEmpty()
+        val document = callback.successes.single()
+        assertThat(document).isInstanceOf(PdfDocument::class.java)
+        assertThat(document.data).isEqualTo(pdfBytes)
+    }
+
     private fun buildGiniCapture(importedFileSizeBytesLimit: Int? = null): GiniCapture {
         val builder = GiniCapture.newInstance(context)
         importedFileSizeBytesLimit?.let { builder.setImportedFileSizeBytesLimit(it) }
@@ -183,8 +323,10 @@ class GiniCaptureUriImportTest {
         }
     }
 
-    private fun createPdfUri(bytes: ByteArray = pdfBytes()): Uri {
-        val file = File.createTempFile("gini-uri-import-test", ".pdf", context.cacheDir)
+    private fun createPdfUri(bytes: ByteArray = pdfBytes()): Uri = createUri(bytes, ".pdf")
+
+    private fun createUri(bytes: ByteArray, extension: String): Uri {
+        val file = File.createTempFile("gini-uri-import-test", extension, context.cacheDir)
         file.writeBytes(bytes)
         tempFiles.add(file)
         return Uri.fromFile(file)
