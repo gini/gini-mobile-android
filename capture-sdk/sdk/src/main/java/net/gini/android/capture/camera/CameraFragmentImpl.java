@@ -154,6 +154,8 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(CameraFragmentImpl.class);
     private static final String FAILED_TO_OPEN_CAMERA_MESSAGE = "Failed to open camera";
+    private static final String FAILED_TO_SAVE_PICTURE_MESSAGE =
+            "Failed to take picture: could not save picture to disk";
 
     private static final UserAnalyticsScreen.CameraAccess sScreenNamePermission =
             UserAnalyticsScreen.CameraAccess.INSTANCE;
@@ -1797,7 +1799,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                     final ImageDocument document = createSavedDocument(result);
                                     if (document == null) {
                                         handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                "Failed to take picture: could not save picture to disk",
+                                                FAILED_TO_SAVE_PICTURE_MESSAGE,
                                                 null);
                                         mCameraController.startPreview();
                                         setmIsTakingPicture(false);
@@ -1813,7 +1815,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                         final ImageDocument document = createSavedDocument(result);
                                         if (document == null) {
                                             handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                    "Failed to take picture: could not save picture to disk",
+                                                    FAILED_TO_SAVE_PICTURE_MESSAGE,
                                                     null);
                                             mCameraController.startPreview();
                                             setmIsTakingPicture(false);
@@ -1836,7 +1838,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                         final ImageDocument document = createSavedDocument(result);
                                         if (document == null) {
                                             handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                                    "Failed to take picture: could not save picture to disk",
+                                                    FAILED_TO_SAVE_PICTURE_MESSAGE,
                                                     null);
                                             mCameraController.startPreview();
                                             setmIsTakingPicture(false);
