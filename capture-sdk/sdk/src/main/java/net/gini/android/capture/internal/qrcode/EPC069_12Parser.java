@@ -67,7 +67,7 @@ class EPC069_12Parser implements QRCodeParser<PaymentQRCodeData> {
 
     @NonNull
     private String processAmount(@Nullable final String amount) {
-        if (TextUtils.isEmpty(amount)) {
+        if (amount == null || amount.isEmpty()) {
             return "";
         }
         return amount.length() > 3 ? amount.substring(3) : "";
