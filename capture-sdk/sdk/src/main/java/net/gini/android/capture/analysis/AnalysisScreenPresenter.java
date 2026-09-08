@@ -317,98 +317,102 @@ class AnalysisScreenPresenter extends AnalysisScreenContract.Presenter {
                             handleAnalysisError(throwable);
                             return null;
                         }
-                        RemoteAnalyzedDocument remoteAnalyzedDocument =
-                                new RemoteAnalyzedDocument(
-                                        resultHolder.getDocumentId(),
-                                        resultHolder.getDocumentFileName()
-                                );
-                        final AnalysisInteractor.Result result = resultHolder.getResult();
-                        boolean shouldClearImageCaches = true;
-                        switch (result) {
-                            case SUCCESS_NO_EXTRACTIONS:
-                                mAnalysisCompleted = true;
-                                extension.getLastAnalyzedDocumentProvider()
-                                        .update(remoteAnalyzedDocument);
-                                try {
-                                    extension.getAttachDocToTransactionDialogProvider()
-                                            .update(remoteAnalyzedDocument);
-                                } catch (Exception ignored) {
-
-                                }
-                                proceedSuccessNoExtractions();
-                                break;
-                            case SUCCESS_WITH_EXTRACTIONS: {
-
-                                mAnalysisCompleted = true;
-                                extension.getLastAnalyzedDocumentProvider()
-                                        .update(remoteAnalyzedDocument);
-                                try {
-                                    extension.getAttachDocToTransactionDialogProvider()
-                                            .update(remoteAnalyzedDocument);
-                                } catch (Exception ignored) {
-
-                                }
-
-                                if (resultHolder.getExtractions().isEmpty() && !isCxMode()) {
-                                    proceedSuccessNoExtractions();
-                                } else if (isCxEmptyExtractions(resultHolder)) {
-                                    proceedSuccessNoExtractions();
-                                } else if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)) {
-                                    successResultHolder = resultHolder;
-                                    shouldClearImageCaches = false;
-                                    extension.showDocumentMarkedWarning(
-                                            WarningType.DOCUMENT_MARKED_AS_PAID,
-                                            mIsInvoiceSavingEnabled,
-                                            isSavingInvoicesInProgress,
-                                            successResultHolder,
-                                            getActivity());
-                                } else if (shouldShowCreditNoteWarning(resultHolder)) {
-                                    successResultHolder = removeAmountToPay(resultHolder);
-                                    shouldClearImageCaches = false;
-                                    extension.showDocumentMarkedWarning(
-                                            WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE,
-                                            mIsInvoiceSavingEnabled,
-                                            isSavingInvoicesInProgress,
-                                            successResultHolder,
-                                            getActivity());
-                                } else if (shouldShowSchedulePaymentHint(resultHolder)) {
-                                    successResultHolder = resultHolder;
-                                    shouldClearImageCaches = false;
-                                    extension.showSchedulePaymentHint(
-                                            resultHolder,
-                                            extractPaymentDueDateFromExtraction(resultHolder),
-                                            mIsInvoiceSavingEnabled,
-                                            isSavingInvoicesInProgress,
-                                            getActivity());
-                                } else if (shouldShowPaymentDueHint(resultHolder)) {
-                                    successResultHolder = resultHolder;
-                                    shouldClearImageCaches = false;
-                                    extension.showPaymentDueHint(
-                                            resultHolder,
-                                            extractPaymentDueDateFromExtraction(resultHolder),
-                                            mIsInvoiceSavingEnabled,
-                                            isSavingInvoicesInProgress,
-                                            getActivity());
-                                } else {
-                                    successResultHolder = resultHolder;
-                                    shouldClearImageCaches = false;
-                                    proceedWithExtractions(resultHolder);
-                                }
-                                break;
-                            }
-                            case NO_NETWORK_SERVICE:
-                                break;
-                            default:
-                                throw new UnsupportedOperationException(
-                                        "Unknown AnalysisInteractor result: " + result);
-                        }
-                        if (result != AnalysisInteractor.Result.NO_NETWORK_SERVICE
-                                && shouldClearImageCaches) {
-                            clearSavedImages();
-                        }
+                        handleAnalysisResult(resultHolder);
                         return null;
                     }
                 });
+    }
+
+    private void handleAnalysisResult(@NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        final RemoteAnalyzedDocument remoteAnalyzedDocument = new RemoteAnalyzedDocument(
+                resultHolder.getDocumentId(),
+                resultHolder.getDocumentFileName()
+        );
+        final AnalysisInteractor.Result result = resultHolder.getResult();
+        boolean shouldClearImageCaches = true;
+        switch (result) {
+            case SUCCESS_NO_EXTRACTIONS:
+                mAnalysisCompleted = true;
+                updateAnalyzedDocumentProviders(remoteAnalyzedDocument);
+                proceedSuccessNoExtractions();
+                break;
+            case SUCCESS_WITH_EXTRACTIONS:
+                mAnalysisCompleted = true;
+                updateAnalyzedDocumentProviders(remoteAnalyzedDocument);
+                shouldClearImageCaches = handleSuccessWithExtractions(resultHolder);
+                break;
+            case NO_NETWORK_SERVICE:
+                break;
+            default:
+                throw new UnsupportedOperationException(
+                        "Unknown AnalysisInteractor result: " + result);
+        }
+        if (result != AnalysisInteractor.Result.NO_NETWORK_SERVICE
+                && shouldClearImageCaches) {
+            clearSavedImages();
+        }
+    }
+
+    private void updateAnalyzedDocumentProviders(
+            @NonNull final RemoteAnalyzedDocument remoteAnalyzedDocument) {
+        extension.getLastAnalyzedDocumentProvider().update(remoteAnalyzedDocument);
+        try {
+            extension.getAttachDocToTransactionDialogProvider().update(remoteAnalyzedDocument);
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    /**
+     * Continues the flow for an analysis which returned extractions.
+     *
+     * @return {@code true} if the saved images may be cleared right away, {@code false} if the
+     * extractions are still needed by the screen shown next
+     */
+    private boolean handleSuccessWithExtractions(
+            @NonNull final AnalysisInteractor.ResultHolder resultHolder) {
+        if ((resultHolder.getExtractions().isEmpty() && !isCxMode())
+                || isCxEmptyExtractions(resultHolder)) {
+            proceedSuccessNoExtractions();
+            return true;
+        }
+        if (shouldShowAlreadyPaidInvoiceWarning(resultHolder)) {
+            successResultHolder = resultHolder;
+            extension.showDocumentMarkedWarning(
+                    WarningType.DOCUMENT_MARKED_AS_PAID,
+                    mIsInvoiceSavingEnabled,
+                    isSavingInvoicesInProgress,
+                    successResultHolder,
+                    getActivity());
+        } else if (shouldShowCreditNoteWarning(resultHolder)) {
+            successResultHolder = removeAmountToPay(resultHolder);
+            extension.showDocumentMarkedWarning(
+                    WarningType.DOCUMENT_MARKED_AS_CREDIT_NOTE,
+                    mIsInvoiceSavingEnabled,
+                    isSavingInvoicesInProgress,
+                    successResultHolder,
+                    getActivity());
+        } else if (shouldShowSchedulePaymentHint(resultHolder)) {
+            successResultHolder = resultHolder;
+            extension.showSchedulePaymentHint(
+                    resultHolder,
+                    extractPaymentDueDateFromExtraction(resultHolder),
+                    mIsInvoiceSavingEnabled,
+                    isSavingInvoicesInProgress,
+                    getActivity());
+        } else if (shouldShowPaymentDueHint(resultHolder)) {
+            successResultHolder = resultHolder;
+            extension.showPaymentDueHint(
+                    resultHolder,
+                    extractPaymentDueDateFromExtraction(resultHolder),
+                    mIsInvoiceSavingEnabled,
+                    isSavingInvoicesInProgress,
+                    getActivity());
+        } else {
+            successResultHolder = resultHolder;
+            proceedWithExtractions(resultHolder);
+        }
+        return false;
     }
 
     private boolean isCxMode() {
