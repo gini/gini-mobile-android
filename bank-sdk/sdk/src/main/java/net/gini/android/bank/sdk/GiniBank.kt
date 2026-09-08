@@ -566,23 +566,25 @@ object GiniBank {
         context: Context,
         callback: (CreateDocumentFromImportedFileResult) -> Unit
     ): CancellationToken? {
-        return giniCapture?.internal()?.createDocumentForImportedUris(
-            uris,
-            context,
-            object : AsyncCallback<Document, ImportedFileValidationException> {
-                override fun onSuccess(result: Document?) {
-                    callback(CreateDocumentFromImportedFileResult.Success(result))
-                }
+        return giniCapture?.let { capture ->
+            capture.internal().createDocumentForImportedUris(
+                uris,
+                context,
+                object : AsyncCallback<Document, ImportedFileValidationException> {
+                    override fun onSuccess(result: Document?) {
+                        callback(CreateDocumentFromImportedFileResult.Success(result))
+                    }
 
-                override fun onError(exception: ImportedFileValidationException?) {
-                    callback(CreateDocumentFromImportedFileResult.Error(exception))
-                }
+                    override fun onError(exception: ImportedFileValidationException?) {
+                        callback(CreateDocumentFromImportedFileResult.Error(exception))
+                    }
 
-                override fun onCancelled() {
-                    callback(CreateDocumentFromImportedFileResult.Cancelled)
+                    override fun onCancelled() {
+                        callback(CreateDocumentFromImportedFileResult.Cancelled)
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     /**

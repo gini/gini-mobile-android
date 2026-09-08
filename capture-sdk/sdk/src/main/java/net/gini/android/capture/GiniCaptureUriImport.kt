@@ -88,12 +88,8 @@ internal class GiniCaptureUriImport(private val giniCapture: GiniCapture) {
         if (!UriHelper.isUriInputStreamAvailable(uri, context)) {
             throw ImportedFileValidationException("InputStream not available for the Uri")
         }
-        val fileSizeLimit = if (GiniCapture.hasInstance()) {
-            GiniCapture.getInstance().importedFileSizeBytesLimit
-        } else {
-            FileImportValidator.FILE_SIZE_LIMIT
-        }
-        val fileImportValidator = FileImportValidator(context, fileSizeLimit)
+        val fileImportValidator =
+            FileImportValidator(context, giniCapture.importedFileSizeBytesLimit)
         if (!fileImportValidator.matchesCriteria(uri)) {
             throw ImportedFileValidationException(fileImportValidator.error)
         }
