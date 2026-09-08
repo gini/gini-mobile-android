@@ -63,7 +63,7 @@ class RendererLollipop implements Renderer {
                 return bitmap;
             }
         } catch (final IOException | SecurityException e) {
-            LOG.error("Could not read pdf", e);
+            LOG.error(LOG_COULD_NOT_READ_PDF, e);
         }
         return null;
     }
@@ -122,7 +122,7 @@ class RendererLollipop implements Renderer {
             }
             return pdfRendererHelper.getPageCount();
         } catch (final IOException | SecurityException e) {
-            LOG.error("Could not read pdf", e);
+            LOG.error(LOG_COULD_NOT_READ_PDF, e);
         }
         return 0;
     }
