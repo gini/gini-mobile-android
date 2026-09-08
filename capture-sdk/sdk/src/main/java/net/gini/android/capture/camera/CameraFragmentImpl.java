@@ -153,6 +153,7 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
     private static final long HIDE_QRCODE_DETECTED_POPUP_DELAY_MS = 2000;
     private static final long DIFFERENT_QRCODE_DETECTED_POPUP_DELAY_MS = 1000;
     private static final Logger LOG = LoggerFactory.getLogger(CameraFragmentImpl.class);
+    private static final String FAILED_TO_OPEN_CAMERA_MESSAGE = "Failed to open camera";
 
     private static final UserAnalyticsScreen.CameraAccess sScreenNamePermission =
             UserAnalyticsScreen.CameraAccess.INSTANCE;
@@ -841,20 +842,20 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
                                 case NO_BACK_CAMERA:
                                 case OPEN_FAILED:
                                     handleError(GiniCaptureError.ErrorCode.CAMERA_OPEN_FAILED,
-                                            "Failed to open camera", cameraException);
+                                            FAILED_TO_OPEN_CAMERA_MESSAGE, cameraException);
                                     break;
                                 case NO_PREVIEW:
                                     handleError(GiniCaptureError.ErrorCode.CAMERA_NO_PREVIEW,
-                                            "Failed to open camera", cameraException);
+                                            FAILED_TO_OPEN_CAMERA_MESSAGE, cameraException);
                                     break;
                                 case SHOT_FAILED:
                                     handleError(GiniCaptureError.ErrorCode.CAMERA_SHOT_FAILED,
-                                            "Failed to open camera", cameraException);
+                                            FAILED_TO_OPEN_CAMERA_MESSAGE, cameraException);
                                     break;
                             }
                         } else {
                             handleError(GiniCaptureError.ErrorCode.CAMERA_UNKNOWN,
-                                    "Failed to open camera", throwable.getCause());
+                                    FAILED_TO_OPEN_CAMERA_MESSAGE, throwable.getCause());
                         }
                     } else {
                         LOG.info("Camera opened");
