@@ -121,22 +121,14 @@ public class ImageDiskStore {
 
     private void writeToFile(@NonNull final File file, @NonNull final InputStream inputStream)
             throws IOException {
-        OutputStream outputStream = null;
-        try {
-            outputStream = new BufferedOutputStream(new FileOutputStream(file), 65536);
+        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file),
+                65536)) {
             final byte[] buffer = new byte[8192];
             int read;
             while ((read = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, read);
             }
             outputStream.flush();
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (final IOException ignore) {
-                }
-            }
         }
     }
 
