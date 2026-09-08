@@ -1,7 +1,5 @@
 package net.gini.android.capture.internal.qrcode;
 
-import android.text.TextUtils;
-
 import java.math.BigDecimal;
 import java.util.Locale;
 
@@ -49,7 +47,7 @@ final class AmountAndCurrencyNormalizer {
      */
     @NonNull
     static String normalizeCurrency(@Nullable final String currency) {
-        return TextUtils.isEmpty(currency) ? "" : currency.toUpperCase(Locale.ENGLISH);
+        return currency == null || currency.isEmpty() ? "" : currency.toUpperCase(Locale.ENGLISH);
     }
 
     private AmountAndCurrencyNormalizer() {
