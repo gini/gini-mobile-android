@@ -105,24 +105,14 @@ public class Helpers {
     public static void copyAssetToStorage(@NonNull final String assetFilePath,
             @NonNull final String storageDirPath) throws IOException {
         final AssetManager assetManager = ApplicationProvider.getApplicationContext().getAssets();
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
-            inputStream = assetManager.open(assetFilePath);
+        try (InputStream inputStream = assetManager.open(assetFilePath)) {
             final File file = new File(storageDirPath,
                     Uri.parse(assetFilePath).getLastPathSegment());
-            if (file.exists() || file.createNewFile()) {
-                outputStream = new FileOutputStream(file);
-                copyFile(inputStream, outputStream);
-            } else {
+            if (!file.exists() && !file.createNewFile()) {
                 throw new IOException("Could not create file: " + file.getAbsolutePath());
             }
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            if (outputStream != null) {
-                outputStream.close();
+            try (OutputStream outputStream = new FileOutputStream(file)) {
+                copyFile(inputStream, outputStream);
             }
         }
     }
