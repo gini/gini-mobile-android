@@ -3,6 +3,7 @@ package net.gini.android.capture.analysis;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import net.gini.android.capture.CaptureSDKResult;
 import net.gini.android.capture.GiniCapture;
@@ -49,58 +50,70 @@ public class AnalysisInteractor {
     public CompletableFuture<ResultHolder> analyzeMultiPageDocument(
             final GiniCaptureMultiPageDocument<GiniCaptureDocument, GiniCaptureDocumentError>
                     multiPageDocument) {
-        if (GiniCapture.hasInstance()) {
-            final NetworkRequestsManager networkRequestsManager = GiniCapture.getInstance()
-                    .internal().getNetworkRequestsManager();
-            if (networkRequestsManager != null) {
-                GiniCaptureDebug.writeDocumentToFile(mApp, multiPageDocument, "_for_analysis");
-                for (final Object document : multiPageDocument.getDocuments()) {
-                    final GiniCaptureDocument giniCaptureDocument = (GiniCaptureDocument) document;
-                    networkRequestsManager.upload(mApp, giniCaptureDocument);
-                }
-                return networkRequestsManager.analyze(multiPageDocument)
-                        .handle(new CompletableFuture.BiFun<AnalysisNetworkRequestResult<
-                                GiniCaptureMultiPageDocument>, Throwable, ResultHolder>() {
-                            @Override
-                            public ResultHolder apply(
-                                    final AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>
-                                            requestResult,
-                                    final Throwable throwable) {
-                                if (throwable != null && !isCancellation(throwable)) {
-                                    final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
-                                    if (failureException != null) {
-                                        throw new FailureException(failureException.getErrorType());
-                                    } else {
-                                        throw new RuntimeException(throwable); // NOPMD
-                                    }
-                                } else if (requestResult != null) {
-                                    final Map<String, GiniCaptureSpecificExtraction> extractions =
-                                            requestResult.getAnalysisResult().getExtractions();
-                                    final Map<String, GiniCaptureCompoundExtraction> compoundExtractions =
-                                            requestResult.getAnalysisResult().getCompoundExtractions();
-                                    if (extractions.isEmpty() && compoundExtractions.isEmpty()) {
-                                        return new ResultHolder(Result.SUCCESS_NO_EXTRACTIONS,
-                                                requestResult.getApiDocumentId(),
-                                                requestResult.getApiDocumentFilename());
-                                    } else {
-                                        return new ResultHolder(Result.SUCCESS_WITH_EXTRACTIONS,
-                                                extractions,
-                                                compoundExtractions,
-                                                requestResult.getAnalysisResult().getReturnReasons(),
-                                                requestResult.getApiDocumentId(),
-                                                requestResult.getApiDocumentFilename());
-                                    }
-                                }
-                                return null;
-                            }
-                        });
-            } else {
-                return CompletableFuture.completedFuture(
-                        new ResultHolder(Result.NO_NETWORK_SERVICE, null, null));
-            }
-        } else {
-            return CompletableFuture.completedFuture(new ResultHolder(Result.NO_NETWORK_SERVICE, null, null));
+        if (!GiniCapture.hasInstance()) {
+            return CompletableFuture.completedFuture(
+                    new ResultHolder(Result.NO_NETWORK_SERVICE, null, null));
         }
+        final NetworkRequestsManager networkRequestsManager = GiniCapture.getInstance()
+                .internal().getNetworkRequestsManager();
+        if (networkRequestsManager == null) {
+            return CompletableFuture.completedFuture(
+                    new ResultHolder(Result.NO_NETWORK_SERVICE, null, null));
+        }
+        GiniCaptureDebug.writeDocumentToFile(mApp, multiPageDocument, "_for_analysis");
+        for (final Object document : multiPageDocument.getDocuments()) {
+            final GiniCaptureDocument giniCaptureDocument = (GiniCaptureDocument) document;
+            networkRequestsManager.upload(mApp, giniCaptureDocument);
+        }
+        return networkRequestsManager.analyze(multiPageDocument)
+                .handle(new CompletableFuture.BiFun<AnalysisNetworkRequestResult<
+                        GiniCaptureMultiPageDocument>, Throwable, ResultHolder>() {
+                    @Override
+                    public ResultHolder apply(
+                            final AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument>
+                                    requestResult,
+                            final Throwable throwable) {
+                        return toResultHolder(requestResult, throwable);
+                    }
+                });
+    }
+
+    /**
+     * Maps the outcome of the analysis request to a {@link ResultHolder}.
+     *
+     * @return the result holder, or {@code null} when the request was cancelled
+     * @throws FailureException when the request failed with a known error type
+     * @throws RuntimeException wrapping any other failure
+     */
+    @Nullable
+    private ResultHolder toResultHolder(
+            @Nullable final AnalysisNetworkRequestResult<GiniCaptureMultiPageDocument> requestResult,
+            @Nullable final Throwable throwable) {
+        if (throwable != null && !isCancellation(throwable)) {
+            final FailureException failureException = FailureException.tryCastFromCompletableFutureThrowable(throwable);
+            if (failureException != null) {
+                throw new FailureException(failureException.getErrorType());
+            }
+            throw new RuntimeException(throwable); // NOPMD
+        }
+        if (requestResult == null) {
+            return null;
+        }
+        final Map<String, GiniCaptureSpecificExtraction> extractions =
+                requestResult.getAnalysisResult().getExtractions();
+        final Map<String, GiniCaptureCompoundExtraction> compoundExtractions =
+                requestResult.getAnalysisResult().getCompoundExtractions();
+        if (extractions.isEmpty() && compoundExtractions.isEmpty()) {
+            return new ResultHolder(Result.SUCCESS_NO_EXTRACTIONS,
+                    requestResult.getApiDocumentId(),
+                    requestResult.getApiDocumentFilename());
+        }
+        return new ResultHolder(Result.SUCCESS_WITH_EXTRACTIONS,
+                extractions,
+                compoundExtractions,
+                requestResult.getAnalysisResult().getReturnReasons(),
+                requestResult.getApiDocumentId(),
+                requestResult.getApiDocumentFilename());
     }
 
     public CompletableFuture<Void> deleteMultiPageDocument(
