@@ -10,8 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static com.google.common.truth.Truth.assertThat;
-import static net.gini.android.capture.onboarding.PageIndicatorsHelper.isPageActive;
-import static net.gini.android.capture.onboarding.PageIndicatorsHelper.isPageInactive;
+import static net.gini.android.capture.onboarding.PageIndicatorsHelper.assertPageActive;
+import static net.gini.android.capture.onboarding.PageIndicatorsHelper.assertPageInactive;
 
 @RunWith(AndroidJUnit4.class)
 public class PageIndicatorsTest {
@@ -28,13 +28,13 @@ public class PageIndicatorsTest {
         final OnboardingFragment.PageIndicators pageIndicators = createPageIndicatorsInstance(2);
         pageIndicators.setActive(0);
 
-        isPageActive(pageIndicators, 0);
-        isPageInactive(pageIndicators, 1);
+        assertPageActive(pageIndicators, 0);
+        assertPageInactive(pageIndicators, 1);
 
         pageIndicators.setActive(1);
 
-        isPageInactive(pageIndicators, 0);
-        isPageActive(pageIndicators, 1);
+        assertPageInactive(pageIndicators, 0);
+        assertPageActive(pageIndicators, 1);
     }
 
     @NonNull

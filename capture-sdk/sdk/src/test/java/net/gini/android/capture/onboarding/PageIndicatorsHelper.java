@@ -10,13 +10,13 @@ import net.gini.android.capture.R;
 
 public final class PageIndicatorsHelper {
 
-    public static void isPageActive(final OnboardingFragment.PageIndicators pageIndicators,
+    public static void assertPageActive(final OnboardingFragment.PageIndicators pageIndicators,
             final int pageNr) {
         Truth.assertThat(pageIndicators.getPageIndicatorImageViews().get(pageNr).getImageAlpha())
                 .isEqualTo(255);
     }
 
-    public static void isPageInactive(final OnboardingFragment.PageIndicators pageIndicators,
+    public static void assertPageInactive(final OnboardingFragment.PageIndicators pageIndicators,
             final int pageNr) {
         Truth.assertThat(pageIndicators.getPageIndicatorImageViews().get(pageNr).getImageAlpha())
                 .isLessThan(255);
