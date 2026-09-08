@@ -113,18 +113,9 @@ public class ImageDiskStore {
     @VisibleForTesting
     void writeToFile(@NonNull final File file, @NonNull final byte[] bytes)
             throws IOException {
-        OutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(file);
+        try (OutputStream outputStream = new FileOutputStream(file)) {
             outputStream.write(bytes);
             outputStream.flush();
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (final IOException ignore) {
-                }
-            }
         }
     }
 
