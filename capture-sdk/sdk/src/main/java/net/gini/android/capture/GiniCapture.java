@@ -271,28 +271,9 @@ public class GiniCapture {
         // Added null checking to fix test fail -> or figure out something else
         final GiniCapture oldInstance = sInstance;
         if (oldInstance.mGiniCaptureNetworkService != null) {
-            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap, oldInstance.mInternal.getCompoundExtractions(), new GiniCaptureNetworkCallback<Void, Error>() {
-                @Override
-                public void failure(Error error) {
-                    if (oldInstance.mNetworkRequestsManager != null) {
-                        oldInstance.mNetworkRequestsManager.cleanup();
-                    }
-                }
-
-                @Override
-                public void success(Void result) {
-                    if (oldInstance.mNetworkRequestsManager != null) {
-                        oldInstance.mNetworkRequestsManager.cleanup();
-                    }
-                }
-
-                @Override
-                public void cancelled() {
-                    if (oldInstance.mNetworkRequestsManager != null) {
-                        oldInstance.mNetworkRequestsManager.cleanup();
-                    }
-                }
-            });
+            oldInstance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
+                    oldInstance.mInternal.getCompoundExtractions(),
+                    newCleanupNetworkRequestsCallback(oldInstance));
         }
 
     }
@@ -327,80 +308,78 @@ public class GiniCapture {
         final GiniCapture oldInstance = sInstance;
 
         if (oldInstance.mProductTag instanceof ProductTag.CxExtractions) {
-            final Map<String, GiniCaptureSpecificExtraction> cbpRow = new HashMap<>();
-            for (Map.Entry<String, String> entry : extractions.entrySet()) {
-                cbpRow.put(entry.getKey(), new GiniCaptureSpecificExtraction(
-                        entry.getKey(), entry.getValue(), entry.getKey(), null, emptyList()));
-            }
-            final Map<String, GiniCaptureCompoundExtraction> compoundExtractionMap = new HashMap<>();
-            compoundExtractionMap.put("crossBorderPayment",
-                    new GiniCaptureCompoundExtraction("crossBorderPayment", listOf(cbpRow)));
-
-            if (oldInstance.mGiniCaptureNetworkService != null) {
-                oldInstance.mGiniCaptureNetworkService.sendFeedback(
-                        new HashMap<>(), compoundExtractionMap,
-                        new GiniCaptureNetworkCallback<Void, Error>() {
-                            @Override
-                            public void failure(Error error) {
-                                if (oldInstance.mNetworkRequestsManager != null) {
-                                    oldInstance.mNetworkRequestsManager.cleanup();
-                                }
-                            }
-
-                            @Override
-                            public void success(Void result) {
-                                if (oldInstance.mNetworkRequestsManager != null) {
-                                    oldInstance.mNetworkRequestsManager.cleanup();
-                                }
-                            }
-
-                            @Override
-                            public void cancelled() {
-                                if (oldInstance.mNetworkRequestsManager != null) {
-                                    oldInstance.mNetworkRequestsManager.cleanup();
-                                }
-                            }
-                        });
-            }
+            sendCxTransferSummary(oldInstance, extractions);
         } else {
-            final Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
-            for (Map.Entry<String, String> entry : extractions.entrySet()) {
-                final String entity = SEPA_ENTITY_TYPES.containsKey(entry.getKey())
-                        ? SEPA_ENTITY_TYPES.get(entry.getKey())
-                        : entry.getKey();
-                extractionMap.put(entry.getKey(), new GiniCaptureSpecificExtraction(
-                        entry.getKey(), entry.getValue(), entity, null, emptyList()));
-            }
-            // Remove skonto so it isn't overridden when sending normal feedback.
-            oldInstance.mInternal.getCompoundExtractions().remove(COMPOUND_EXTRACTION_SKONTO_DISCOUNTS);
-
-            if (oldInstance.mGiniCaptureNetworkService != null) {
-                oldInstance.mGiniCaptureNetworkService.sendFeedback(
-                        extractionMap, oldInstance.mInternal.getCompoundExtractions(),
-                        new GiniCaptureNetworkCallback<Void, Error>() {
-                            @Override
-                            public void failure(Error error) {
-                                if (oldInstance.mNetworkRequestsManager != null) {
-                                    oldInstance.mNetworkRequestsManager.cleanup();
-                                }
-                            }
-
-                            @Override
-                            public void success(Void result) {
-                                if (oldInstance.mNetworkRequestsManager != null) {
-                                    oldInstance.mNetworkRequestsManager.cleanup();
-                                }
-                            }
-
-                            @Override
-                            public void cancelled() {
-                                if (oldInstance.mNetworkRequestsManager != null) {
-                                    oldInstance.mNetworkRequestsManager.cleanup();
-                                }
-                            }
-                        });
-            }
+            sendSepaTransferSummary(oldInstance, extractions);
         }
+    }
+
+    private static void sendCxTransferSummary(@NonNull final GiniCapture instance,
+            @NonNull final Map<String, String> extractions) {
+        final Map<String, GiniCaptureSpecificExtraction> cbpRow = new HashMap<>();
+        for (Map.Entry<String, String> entry : extractions.entrySet()) {
+            cbpRow.put(entry.getKey(), new GiniCaptureSpecificExtraction(
+                    entry.getKey(), entry.getValue(), entry.getKey(), null, emptyList()));
+        }
+        final Map<String, GiniCaptureCompoundExtraction> compoundExtractionMap = new HashMap<>();
+        compoundExtractionMap.put("crossBorderPayment",
+                new GiniCaptureCompoundExtraction("crossBorderPayment", listOf(cbpRow)));
+
+        if (instance.mGiniCaptureNetworkService != null) {
+            instance.mGiniCaptureNetworkService.sendFeedback(new HashMap<>(),
+                    compoundExtractionMap, newCleanupNetworkRequestsCallback(instance));
+        }
+    }
+
+    private static void sendSepaTransferSummary(@NonNull final GiniCapture instance,
+            @NonNull final Map<String, String> extractions) {
+        final Map<String, GiniCaptureSpecificExtraction> extractionMap = new HashMap<>();
+        for (Map.Entry<String, String> entry : extractions.entrySet()) {
+            final String entity = SEPA_ENTITY_TYPES.containsKey(entry.getKey())
+                    ? SEPA_ENTITY_TYPES.get(entry.getKey())
+                    : entry.getKey();
+            extractionMap.put(entry.getKey(), new GiniCaptureSpecificExtraction(
+                    entry.getKey(), entry.getValue(), entity, null, emptyList()));
+        }
+        // Remove skonto so it isn't overridden when sending normal feedback.
+        instance.mInternal.getCompoundExtractions().remove(COMPOUND_EXTRACTION_SKONTO_DISCOUNTS);
+
+        if (instance.mGiniCaptureNetworkService != null) {
+            instance.mGiniCaptureNetworkService.sendFeedback(extractionMap,
+                    instance.mInternal.getCompoundExtractions(),
+                    newCleanupNetworkRequestsCallback(instance));
+        }
+    }
+
+    /**
+     * Creates a feedback callback which releases the network requests of the given instance once
+     * the transfer summary request finished, whatever its outcome.
+     */
+    @NonNull
+    private static GiniCaptureNetworkCallback<Void, Error> newCleanupNetworkRequestsCallback(
+            @NonNull final GiniCapture instance) {
+        return new GiniCaptureNetworkCallback<Void, Error>() {
+            @Override
+            public void failure(Error error) {
+                cleanupNetworkRequests();
+            }
+
+            @Override
+            public void success(Void result) {
+                cleanupNetworkRequests();
+            }
+
+            @Override
+            public void cancelled() {
+                cleanupNetworkRequests();
+            }
+
+            private void cleanupNetworkRequests() {
+                if (instance.mNetworkRequestsManager != null) {
+                    instance.mNetworkRequestsManager.cleanup();
+                }
+            }
+        };
     }
 
     /**
