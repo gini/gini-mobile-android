@@ -146,6 +146,9 @@ internal class GiniCaptureUriImport(private val giniCapture: GiniCapture) {
                 }
             }
         )
+        // AsyncTask is deprecated since API 30, but the image import pipeline is still built on
+        // ImportImageFileUrisAsyncTask, mirroring the Intent-based path in GiniCaptureFileImport
+        @Suppress("DEPRECATION")
         asyncTask.execute(*uris.toTypedArray())
         return CancellationToken {
             // No-op - mirrors the Intent-based import path
