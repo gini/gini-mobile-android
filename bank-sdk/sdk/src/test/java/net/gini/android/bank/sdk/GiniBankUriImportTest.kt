@@ -136,6 +136,28 @@ class GiniBankUriImportTest {
         assertThat(exception.validationError).isNull()
     }
 
+    @Test
+    fun `createDocumentForImportedFiles with uris returns Error for an empty Uri list`() {
+        // Given
+        configureCapture()
+        val result = AtomicReference<GiniBank.CreateDocumentFromImportedFileResult>()
+
+        // When
+        val token = GiniBank.createDocumentForImportedFiles(emptyList(), context) {
+            result.set(it)
+        }
+        awaitResult(result)
+
+        // Then
+        assertThat(token).isNotNull()
+        val error = result.get()
+        assertThat(error)
+            .isInstanceOf(GiniBank.CreateDocumentFromImportedFileResult.Error::class.java)
+        val exception = (error as GiniBank.CreateDocumentFromImportedFileResult.Error).error
+        assertThat(exception?.message).isEqualTo("Uri list is empty")
+        assertThat(exception?.validationError).isNull()
+    }
+
     private fun configureCapture() {
         val mockNetworkService = mockk<GiniCaptureNetworkService>(relaxed = true)
         GiniBank.setCaptureConfiguration(context, CaptureConfiguration(networkService = mockNetworkService))
