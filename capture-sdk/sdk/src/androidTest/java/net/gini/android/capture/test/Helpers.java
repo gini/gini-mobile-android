@@ -65,19 +65,14 @@ public class Helpers {
     }
 
     private static byte[] inputStreamToByteArray(final InputStream inputStream) throws IOException {
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] bytes;
-        try {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             final byte[] buffer = new byte[8192];
             int readBytes;
             while ((readBytes = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, readBytes);
             }
-            bytes = outputStream.toByteArray();
-        } finally {
-            outputStream.close();
+            return outputStream.toByteArray();
         }
-        return bytes;
     }
 
     public static Document createDocument(final byte[] jpeg, final int orientation,
