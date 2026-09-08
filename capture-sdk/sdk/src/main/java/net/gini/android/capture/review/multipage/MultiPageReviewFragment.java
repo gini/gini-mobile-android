@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
@@ -365,7 +366,7 @@ public class MultiPageReviewFragment extends Fragment implements PreviewFragment
             return;
 
         //Custom LayoutManager for keeping the page in the middle
-        mSnapManager = new MiddlePageManager(requireContext(), MiddlePageManager.HORIZONTAL, false);
+        mSnapManager = new MiddlePageManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mSnapManager);
         mRecyclerView.setClipToPadding(false);
 
