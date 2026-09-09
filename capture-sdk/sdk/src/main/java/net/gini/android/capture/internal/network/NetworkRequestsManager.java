@@ -293,12 +293,7 @@ public class NetworkRequestsManager {
         final List<CompletableFuture> documentFutures = collectRelatedFutures(document);
         return CompletableFuture
                 .allOf(documentFutures.toArray(new CompletableFuture[documentFutures.size()]))
-                .handle((aVoid, throwable) -> {
-                    if (throwable != null) {
-                        return false;
-                    }
-                    return true;
-                })
+                .handle((aVoid, throwable) -> throwable == null)
                 .thenCompose(
                         relatedFuturesSucceeded -> {
                             return deleteDocument(document, relatedFuturesSucceeded);
