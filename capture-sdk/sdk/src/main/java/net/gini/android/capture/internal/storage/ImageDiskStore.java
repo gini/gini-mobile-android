@@ -99,14 +99,14 @@ public class ImageDiskStore {
     @Nullable
     private File createFile(final Uri uri) {
         final File file = new File(uri.getPath());
-        if (!file.exists()) {
-            try {
-                //noinspection ResultOfMethodCallIgnored
-                file.createNewFile();
-            } catch (final IOException e) {
-                LOG.error("Failed to create file", e);
+        try {
+            if (!file.exists() && !file.createNewFile()) {
+                LOG.error("Failed to create file {}", file.getAbsolutePath());
                 return null;
             }
+        } catch (final IOException e) {
+            LOG.error("Failed to create file", e);
+            return null;
         }
         return file;
     }
@@ -148,9 +148,7 @@ public class ImageDiskStore {
     }
 
     public void delete(@NonNull final Uri uri) {
-        final File file = new File(uri.getPath());
-        //noinspection ResultOfMethodCallIgnored
-        file.delete();
+        deleteFile(new File(uri.getPath()));
     }
 
     public static void clear(@NonNull final Context context) {
@@ -161,12 +159,16 @@ public class ImageDiskStore {
         final File[] files = storeDir.listFiles();
         if (files != null) {
             for (final File file : files) {
-                //noinspection ResultOfMethodCallIgnored
-                file.delete();
+                deleteFile(file);
             }
         }
-        //noinspection ResultOfMethodCallIgnored
-        storeDir.delete();
+        deleteFile(storeDir);
+    }
+
+    private static void deleteFile(@NonNull final File file) {
+        if (!file.delete()) {
+            LOG.warn("Failed to delete {}", file.getAbsolutePath());
+        }
     }
 
     @NonNull
