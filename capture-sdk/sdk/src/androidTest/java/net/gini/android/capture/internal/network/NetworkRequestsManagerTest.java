@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 
 import android.content.Context;
 
+import java.util.Random;
 import net.gini.android.capture.Document;
 import net.gini.android.capture.document.GiniCaptureDocument;
 import net.gini.android.capture.document.GiniCaptureDocumentHelper;
@@ -259,7 +260,7 @@ public class NetworkRequestsManagerTest {
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
                 final Thread delayThread = new Thread(() -> {
                     try {
-                        Thread.sleep((long) (200 + Math.random() * 300));
+                        Thread.sleep(200 + new Random().nextInt(300));
                         uploadCompletionRunnables.add(() -> {
                             callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
                         });
@@ -368,7 +369,7 @@ public class NetworkRequestsManagerTest {
                     @NonNull final GiniCaptureNetworkCallback<Result, Error> callback) {
                 final Thread delayThread = new Thread(() -> {
                     try {
-                        Thread.sleep((long) (200 + Math.random() * 300));
+                        Thread.sleep(200 + new Random().nextInt(300));
                         uploadCompletionRunnables.add(() -> {
                             callback.success(new Result(DEFAULT_DOCUMENT_ID, DEFAULT_DOCUMENT_FILENAME));
                         });
