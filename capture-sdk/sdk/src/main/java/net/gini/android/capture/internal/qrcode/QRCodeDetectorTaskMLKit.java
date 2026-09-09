@@ -86,7 +86,7 @@ public class QRCodeDetectorTaskMLKit implements QRCodeDetectorTask {
         if (DEBUG) {
             LOG.debug("Processing finished");
         }
-        if (barcodes.size() > 0 && DEBUG) {
+        if (DEBUG && !barcodes.isEmpty() && LOG.isDebugEnabled()) {
             LOG.debug("Detected QRCodes:\n{}", barcodesToString(barcodes));
         }
         return barcodesToStrings(barcodes);
