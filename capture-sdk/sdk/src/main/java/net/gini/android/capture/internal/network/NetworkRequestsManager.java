@@ -276,8 +276,8 @@ public class NetworkRequestsManager {
     }
 
     public static boolean isCancellation(@NonNull final Throwable throwable) {
-        return throwable instanceof CancellationException ||
-                (throwable.getCause() != null && throwable.getCause() instanceof CancellationException);
+        return throwable instanceof CancellationException
+                || throwable.getCause() instanceof CancellationException;
     }
 
     public CompletableFuture<NetworkRequestResult<GiniCaptureDocument>> delete(
