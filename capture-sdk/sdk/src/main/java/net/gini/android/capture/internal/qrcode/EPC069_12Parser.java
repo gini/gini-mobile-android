@@ -44,7 +44,7 @@ class EPC069_12Parser implements QRCodeParser<PaymentQRCodeData> {
         // Replace occurrences of the line separators "\r\n" and "\r\r\n" with the line feed character "\n"
         // and split the string into lines with either the new line (\n) or carriage feed (\r) delimiter.
         final String[] lines = qrCodeContent.replaceAll("\r\r?\n", "\n")
-                .split("\n|\r", 12);
+                .split("[\n\r]", 12);
         if (lines.length == 0 || !"BCD".equals(lines[0])) {
             throw new IllegalArgumentException(
                     "QRCode content does not conform to the EPC069-12 format.");
