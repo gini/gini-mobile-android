@@ -34,7 +34,7 @@ public class ZoomInPreviewFragment extends Fragment {
     private ImageDocument mImageDocument;
 
     private RotatableTouchImageViewContainer mRotatableTouchImageViewContainer;
-    private final UserAnalyticsScreen screenName = UserAnalyticsScreen.ReviewZoom.INSTANCE;
+    private static final UserAnalyticsScreen screenName = UserAnalyticsScreen.ReviewZoom.INSTANCE;
     private UserAnalyticsEventTracker userAnalyticsEventTracker = null;
 
     public static ZoomInPreviewFragment newInstance(ImageDocument imageDocument) {
