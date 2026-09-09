@@ -61,9 +61,8 @@ public class AnalysisInteractor {
                     new ResultHolder(Result.NO_NETWORK_SERVICE, null, null));
         }
         GiniCaptureDebug.writeDocumentToFile(mApp, multiPageDocument, "_for_analysis");
-        for (final Object document : multiPageDocument.getDocuments()) {
-            final GiniCaptureDocument giniCaptureDocument = (GiniCaptureDocument) document;
-            networkRequestsManager.upload(mApp, giniCaptureDocument);
+        for (final GiniCaptureDocument document : multiPageDocument.getDocuments()) {
+            networkRequestsManager.upload(mApp, document);
         }
         return networkRequestsManager.analyze(multiPageDocument)
                 .handle((requestResult, throwable) -> {
