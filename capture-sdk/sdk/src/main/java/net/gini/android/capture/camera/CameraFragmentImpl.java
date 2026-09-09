@@ -815,10 +815,10 @@ class CameraFragmentImpl extends CameraFragmentExtension implements CameraFragme
             return;
         }
 
-        final float offsetX = (float) (previewViewSize.width - mCameraPreviewContainer.getWidth()) / 2.0f;
-        final float centerOffsetX = (float) mCameraFocusIndicator.getWidth() / 2.0f;
-        final float offsetY = (float) (previewViewSize.height - mCameraPreviewContainer.getHeight()) / 2.0f;
-        final float centerOffsetY = (float) mCameraFocusIndicator.getHeight() / 2.0f;
+        final float offsetX = (previewViewSize.width - mCameraPreviewContainer.getWidth()) / 2.0f;
+        final float centerOffsetX = mCameraFocusIndicator.getWidth() / 2.0f;
+        final float offsetY = (previewViewSize.height - mCameraPreviewContainer.getHeight()) / 2.0f;
+        final float centerOffsetY = mCameraFocusIndicator.getHeight() / 2.0f;
 
         mCameraFocusIndicator.setX(point.x - offsetX - centerOffsetX);
         mCameraFocusIndicator.setY(point.y - offsetY - centerOffsetY);
